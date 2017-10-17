@@ -46,8 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.vaadin.ui.*;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -65,6 +64,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 /**
  * 
@@ -75,7 +75,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 {
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrenceImpl errorOccurrence;
+	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
 
 
@@ -85,7 +85,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 	 * @param errorOccurrence
 	 * @param errorReportingManagementService
      */
-	public ActionedErrorOccurrenceViewPanel(ErrorOccurrenceImpl errorOccurrence,
+	public ActionedErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();
@@ -109,7 +109,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		super();
 		
 		this.errorReportingManagementService = errorReportingManagementService;
-		this.errorOccurrence = (ErrorOccurrenceImpl)errorReportingService.find(errorUri);
+		this.errorOccurrence = (ErrorOccurrence)errorReportingService.find(errorUri);
 		
 		this.init();
 	}

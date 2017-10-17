@@ -56,7 +56,7 @@ import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -193,7 +193,7 @@ public class ActionedExclusionTab extends TopologyTab
 		    	{
 		    		ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
 			    	
-			    	ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)errorReportingService.find(exclusionEventAction.getErrorUri());
+			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
 			    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
 			    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, 
 			    			action, hospitalManagementService, topologyService);
@@ -324,7 +324,7 @@ public class ActionedExclusionTab extends TopologyTab
         	            {
         	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEventAction", exclusionEventAction);
         	         	    
-        	            	ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)errorReportingService.find(exclusionEventAction.getErrorUri());
+        	            	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
         	     	    	
         	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorOccurrence", errorOccurrence);
         	     			

@@ -55,7 +55,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
@@ -110,7 +110,7 @@ public class LandingViewPanel extends Panel implements View
     private DashboardChart dashboardChart;
     private FlowStateTable flowStateTable;
     
-    private ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
+    private ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
     private TopologyService topologyService;
     private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
     
@@ -125,7 +125,7 @@ public class LandingViewPanel extends Panel implements View
      * @param ikasanModuleService
      */
     public LandingViewPanel(EventExclusionsTable eventExclusionsTable, FlowStateTable flowStateTable,
-    		ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
+    		ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
     		TopologyService topologyService, HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService)
     {
         super();

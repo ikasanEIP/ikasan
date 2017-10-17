@@ -60,8 +60,8 @@ import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -826,7 +826,7 @@ public class CategorisedErrorTab extends TopologyTab
 
     	for(final CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurrences)
     	{
-    		ErrorOccurrenceImpl errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
+    		ErrorOccurrence errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
     		
     		Date date = new Date(errorOccurrence.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

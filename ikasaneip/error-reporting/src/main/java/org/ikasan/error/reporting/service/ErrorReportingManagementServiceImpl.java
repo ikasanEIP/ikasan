@@ -48,7 +48,6 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;

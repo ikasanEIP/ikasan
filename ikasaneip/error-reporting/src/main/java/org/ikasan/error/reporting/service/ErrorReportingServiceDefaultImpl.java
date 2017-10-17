@@ -40,9 +40,10 @@
  */
 package org.ikasan.error.reporting.service;
 
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -155,7 +156,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     @Override
     public String notify(String flowElementName, EVENT event, Throwable throwable, String resolvedAction)
     {
-        ErrorOccurrenceImpl errorOccurrence = newErrorOccurrence(flowElementName, event, throwable);
+        ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, event, throwable);
         errorOccurrence.setAction(resolvedAction);
         this.errorReportingServiceDao.save(errorOccurrence);
         return errorOccurrence.getUri();
@@ -170,7 +171,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     @Override
     public String notify(String flowElementName, Throwable throwable, String resolvedAction)
     {
-        ErrorOccurrenceImpl errorOccurrence = newErrorOccurrence(flowElementName, throwable);
+        ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, throwable);
         errorOccurrence.setAction(resolvedAction);
         this.errorReportingServiceDao.save(errorOccurrence);
         return errorOccurrence.getUri();
@@ -194,12 +195,12 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param throwable
      * @return
      */
-    private ErrorOccurrenceImpl newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
+    private ErrorOccurrence newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
     {
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,Object> flowEvent = (FlowEvent)event;
-            ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
+            ErrorOccurrence errorOccurrence = new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
             return errorOccurrence;
