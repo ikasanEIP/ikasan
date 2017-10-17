@@ -207,7 +207,7 @@
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
 
-	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.SolrErrorReportingManagmentServiceImpl">
+	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl">
 		<constructor-arg ref="solrErrorReportingServiceDao"/>
 	</bean>
 
@@ -290,8 +290,6 @@
 	</bean>
 
 	<bean id="solrReplayDao" class="org.ikasan.replay.dao.SolrReplayDao">
-		<constructor-arg ref="ikasanSerialiserFactory" />
-		<constructor-arg ref="platformConfigurationService" />
 	</bean>
 	
     <bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">

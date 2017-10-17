@@ -33,6 +33,11 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
      */
     public static final String WIRETAP = "wiretap";
 
+    private boolean isBatchDelete = false;
+    private Integer transactionBatchSize;
+    private Integer housekeepingBatchSize;
+
+
     @Override
     public void save(WiretapEvent wiretapEvent)
     {
@@ -63,56 +68,27 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     }
 
     @Override
-    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, String moduleFlow
+            , String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
     {
-        PagedSearchResult results = null;
-
-        HashSet<String> flowNames = new HashSet<String>();
-        if(moduleFlow != null && moduleFlow.length() > 0)
+        HashSet<String> flowNames = new HashSet<>();
+        if(moduleFlow != null)
         {
             flowNames.add(moduleFlow);
         }
 
-        HashSet<String> componentNames = new HashSet<String>();
-        if(componentName != null && componentName.length() > 0)
+        HashSet<String> componentNames = new HashSet<>();
+        if(componentName != null)
         {
-            componentNames.add(moduleFlow);
+            componentNames.add(componentName);
         }
 
-        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
-
-        logger.info("queryString: " + queryString);
-
-        SolrQuery query = new SolrQuery();
-        query.setQuery(queryString);
-        query.setStart(pageNo * pageSize);
-        query.setRows(pageSize);
-        query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
-        query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT);
-
-        try
-        {
-            QueryResponse rsp = this.solrClient.query(query);
-
-            List<SolrWiretapEvent> beans = rsp.getBeans(SolrWiretapEvent.class);
-
-            results = new ArrayListPagedSearchResult(beans, beans.size(), rsp.getResults().getNumFound());
-        }
-        catch (SolrServerException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return results;
+        return this.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, flowNames, componentNames, eventId, payloadId, fromDate, untilDate, payloadContent);
     }
 
     @Override
-    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames
+            , Set<String> flowNames, Set<String> componentNames, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
     {
         PagedSearchResult results = null;
 
@@ -135,15 +111,9 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 
             results = new ArrayListPagedSearchResult(beans, beans.size(), rsp.getResults().getNumFound());
         }
-        catch (SolrServerException e)
+        catch (Exception e)
         {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("An error has occurred preforming a wiretap search against solr: " + e.getMessage(), e);
         }
 
         return results;
@@ -191,37 +161,37 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public boolean isBatchHousekeepDelete()
     {
-        return false;
+        return this.isBatchDelete;
     }
 
     @Override
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
     {
-
+        this.isBatchDelete = batchHousekeepDelete;
     }
 
     @Override
     public Integer getHousekeepingBatchSize()
     {
-        return 0;
+        return this.housekeepingBatchSize;
     }
 
     @Override
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
     {
-
+        this.housekeepingBatchSize = housekeepingBatchSize;
     }
 
     @Override
     public Integer getTransactionBatchSize()
     {
-        return 0;
+        return this.transactionBatchSize;
     }
 
     @Override
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
-
+        this.transactionBatchSize = transactionBatchSize;
     }
 
     @Override

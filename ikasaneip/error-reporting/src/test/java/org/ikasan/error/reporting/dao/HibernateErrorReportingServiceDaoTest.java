@@ -40,7 +40,7 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
@@ -70,7 +70,7 @@ import javax.annotation.Resource;
 public class HibernateErrorReportingServiceDaoTest
 {
     @Resource
-    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao;
 
     Exception exception = new Exception("failed error occurence msg");
 
@@ -81,9 +81,9 @@ public class HibernateErrorReportingServiceDaoTest
     @Test
     public void test_save_and_find()
     {
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+        ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
-        ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        ErrorOccurrenceImpl persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
         Assert.assertNull("Should not be found", persistedErrorOccurrence);
 
         errorReportingServiceDao.save(errorOccurrence);
@@ -99,7 +99,7 @@ public class HibernateErrorReportingServiceDaoTest
     public void test_deleteExpired_operation()
     {
         // new event with 1 milli expiry
-        ErrorOccurrence errorOccurrenceExpired = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), 1L);
+        ErrorOccurrenceImpl errorOccurrenceExpired = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), 1L);
 
         try
         {
@@ -110,7 +110,7 @@ public class HibernateErrorReportingServiceDaoTest
             Assert.fail("sleep woken early!");
         }
 
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+        ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         Assert.assertNull("Non expired should not be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
         Assert.assertNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
 

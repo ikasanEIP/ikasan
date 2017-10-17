@@ -41,7 +41,7 @@
 package org.ikasan.dashboard.ui;
 
 import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
@@ -66,8 +66,8 @@ public class ActionedExcludedEventPopup extends UI
 	@Override
 	protected void init(VaadinRequest request)
 	{		
-		ErrorOccurrence errorOccurrence
-		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
+		ErrorOccurrenceImpl errorOccurrence
+		 	= (ErrorOccurrenceImpl)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
 		ExclusionEventAction exclusionEventAction
 	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
 		

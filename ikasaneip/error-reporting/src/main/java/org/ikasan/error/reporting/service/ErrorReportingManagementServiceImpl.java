@@ -47,7 +47,7 @@ import java.util.List;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
@@ -60,8 +60,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
-		HousekeepService, HarvestService<ErrorOccurrence<byte[]>> {
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount>,
+		HousekeepService, HarvestService<ErrorOccurrenceImpl> {
 	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
 
 	public static final String CLOSE = "close";
@@ -159,9 +159,9 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ErrorOccurrence> find(List<String> moduleName,
-									  List<String> flowName, List<String> flowElementname,
-									  Date startDate, Date endDate) {
+	public List<ErrorOccurrenceImpl> find(List<String> moduleName,
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate) {
 		return this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate);
 	}
 
@@ -277,7 +277,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	@Override
-	public List<ErrorOccurrence<byte[]>> harvest(int transactionBatchSize) {
+	public List<ErrorOccurrenceImpl> harvest(int transactionBatchSize) {
 		return this.errorManagementDao.getHarvestableRecords(transactionBatchSize);
 	}
 
@@ -287,7 +287,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	@Override
-	public void saveHarvestedRecord(ErrorOccurrence<byte[]> harvestedRecord) {
+	public void saveHarvestedRecord(ErrorOccurrenceImpl harvestedRecord) {
 		this.errorManagementDao.saveErrorOccurrence(harvestedRecord);
 	}
 

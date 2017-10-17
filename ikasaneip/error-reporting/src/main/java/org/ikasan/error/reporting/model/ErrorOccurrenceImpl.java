@@ -43,6 +43,7 @@ package org.ikasan.error.reporting.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
@@ -51,7 +52,7 @@ import org.ikasan.harvest.HarvestEvent;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrence<EVENT> implements HarvestEvent
+public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>, HarvestEvent
 {
     /** unique identifier for this instance */
 	@Field("errorUri")
@@ -111,7 +112,7 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
     /**
      * Representation of the Event at the time that the error took place
      */
-    private EVENT event;
+    private byte[] event;
     
     /**
      * Representation of the Event as a String at the time that the error took place
@@ -153,7 +154,7 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
     /**
      * Constructor
      */
-    public ErrorOccurrence()
+    public ErrorOccurrenceImpl()
     {
         // required by the ORM
     }
@@ -166,7 +167,7 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event, String eventAsString)
+    public ErrorOccurrenceImpl(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, byte[] event, String eventAsString)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -213,7 +214,7 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
      * @param flowElementName
      * @param errorDetail
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
+    public ErrorOccurrenceImpl(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
     {
         this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null, null);
     }
@@ -268,12 +269,12 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
         this.eventLifeIdentifier = eventLifeIdentifier;
     }
 
-    public EVENT getEvent() 
+    public byte[] getEvent()
     {
         return event;
     }
 
-	public void setEvent(EVENT event)
+	public void setEvent(byte[] event)
     {
         this.event = event;
     }
@@ -484,7 +485,7 @@ public class ErrorOccurrence<EVENT> implements HarvestEvent
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ErrorOccurrence other = (ErrorOccurrence) obj;
+		ErrorOccurrenceImpl other = (ErrorOccurrenceImpl) obj;
 		if (action == null)
 		{
 			if (other.action != null)

@@ -54,7 +54,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.dao.constants.ErrorManagementDaoConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
@@ -74,10 +74,10 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
     public static final String NOW = "now";
 
-    public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrence eo " +
+    public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrenceImpl eo " +
             " where eo.expiry < :" + NOW;
 
-    public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
+    public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrenceImpl eo " +
             " where eo.uri in(:" + EVENT_IDS + ")";
 
     public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
@@ -98,7 +98,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     }
 
 	@Override
-	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence)
+	public void saveErrorOccurrence(ErrorOccurrenceImpl errorOccurrence)
 	{
 		this.getHibernateTemplate().saveOrUpdate(errorOccurrence);
 	}
@@ -155,7 +155,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.window.ErrorOccurrence)
      */
     @Override
-    public void deleteErrorOccurence(ErrorOccurrence errorOccurrence)
+    public void deleteErrorOccurence(ErrorOccurrenceImpl errorOccurrence)
     {
         this.getHibernateTemplate().delete(errorOccurrence);
     }
@@ -164,15 +164,15 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrences(java.util.List)
      */
     @Override
-    public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris)
+    public List<ErrorOccurrenceImpl> findErrorOccurrences(List<String> errorUris)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (errorUris != null && errorUris.size() > 0)
         {
             criteria.add(Restrictions.in("uri", errorUris));
         }
         criteria.addOrder(Order.desc("timestamp"));
-        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return (List<ErrorOccurrenceImpl>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
     }
 
     /* (non-Javadoc)
@@ -198,11 +198,11 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrenceActions(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
      */
     @Override
-    public List<ErrorOccurrence> findActionErrorOccurrences(
+    public List<ErrorOccurrenceImpl> findActionErrorOccurrences(
             List<String> moduleName, List<String> flowName,
             List<String> flowElementname, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (moduleName != null && moduleName.size() > 0)
         {
             criteria.add(Restrictions.in("moduleName", moduleName));
@@ -225,7 +225,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
         }
         criteria.add(Restrictions.isNotNull("userAction"));
         criteria.addOrder(Order.desc("userActionTimestamp"));
-        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return (List<ErrorOccurrenceImpl>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
     }
 
     /* (non-Javadoc)
@@ -305,7 +305,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (moduleName != null)
         {
             criteria.add(Restrictions.eq("moduleName", moduleName));
@@ -377,18 +377,18 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 	}
 
 	@Override
-	public List<ErrorOccurrence<byte[]>> getHarvestableRecords(final int harvestingBatchSize)
+	public List<ErrorOccurrenceImpl> getHarvestableRecords(final int harvestingBatchSize)
 	{
-		return (List<ErrorOccurrence<byte[]>>) this.getHibernateTemplate().execute(new HibernateCallback()
+		return (List<ErrorOccurrenceImpl>) this.getHibernateTemplate().execute(new HibernateCallback()
 		{
 			public Object doInHibernate(Session session) throws HibernateException
 			{
-				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
 				criteria.add(Restrictions.eq("harvested", false));
 				criteria.setMaxResults(harvestingBatchSize);
 				criteria.addOrder(Order.asc("timestamp"));
 
-				List<ErrorOccurrence> flowInvocationMetrics = criteria.list();
+				List<ErrorOccurrenceImpl> flowInvocationMetrics = criteria.list();
 
 				return flowInvocationMetrics;
 			}

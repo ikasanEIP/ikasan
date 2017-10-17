@@ -6,10 +6,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.
@@ -85,10 +82,10 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param type
      * @return String
      */
-    protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
+    protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type)
     {
-        ArrayList<String> types = new ArrayList<>();
+        ArrayList<String> types = new ArrayList<String>();
         types.add(type);
 
         return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, types);
@@ -107,7 +104,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param types
      * @return String
      */
-    protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
+    protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, List<String> types)
     {
         StringBuffer moduleNamesBuffer = new StringBuffer();
@@ -180,17 +177,17 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         {
             delim = "";
 
-            componentNamesBuffer.append(TYPE + COLON);
+            typeBuffer.append(TYPE + COLON);
 
-            componentNamesBuffer.append(OPEN_BRACKET);
+            typeBuffer.append(OPEN_BRACKET);
 
             for (String type : types)
             {
-                componentNamesBuffer.append(delim).append("\"").append(type).append("\" ");
+                typeBuffer.append(delim).append("\"").append(type).append("\" ");
                 delim = OR;
             }
 
-            componentNamesBuffer.append(CLOSE_BRACKET);
+            typeBuffer.append(CLOSE_BRACKET);
         }
 
         if(fromDate != null && untilDate != null)
@@ -200,7 +197,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
         if(payloadContent != null && !payloadContent.trim().isEmpty())
         {
-            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("").append(payloadContent).append("");
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(payloadContent).append("\"");
 
         }
 
@@ -291,15 +288,10 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     protected String buildIdQuery(Long id, String type)
     {
         StringBuffer idBuffer = new StringBuffer();
-        StringBuffer flowNamesBuffer = new StringBuffer();
-        StringBuffer componentNamesBuffer = new StringBuffer();
-        StringBuffer dateBuffer = new StringBuffer();
-        StringBuffer payloadBuffer = new StringBuffer();
-        StringBuffer eventIdBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();
 
 
-       idBuffer.append(ID + COLON + id);
+        idBuffer.append(ID + COLON + id);
 
         if(type != null && !type.trim().isEmpty())
         {
@@ -309,9 +301,9 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         }
 
 
-        StringBuffer bufferFinalQuery = new StringBuffer();
+        StringBuffer bufferFinalQuery = new StringBuffer(idBuffer);
 
-        boolean hasPrevious = false;
+        boolean hasPrevious = true;
 
         if(typeBuffer.length() > 0)
         {
@@ -351,8 +343,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         }
         catch (Exception e)
         {
-            throw new RuntimeException("An error has occurred ");
+            throw new RuntimeException("An error has occurred deleting " + type + ": " + e.getMessage(), e);
         }
     }
 
+    public void setDaysToKeep(int daysToKeep)
+    {
+        this.daysToKeep = daysToKeep;
+    }
 }

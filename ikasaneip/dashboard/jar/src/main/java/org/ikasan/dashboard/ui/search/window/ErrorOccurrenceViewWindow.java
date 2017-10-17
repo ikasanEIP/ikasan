@@ -42,9 +42,8 @@ package org.ikasan.dashboard.ui.search.window;
 
 import com.vaadin.ui.Window;
 import org.ikasan.dashboard.ui.search.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
  * 
@@ -58,7 +57,7 @@ public class ErrorOccurrenceViewWindow extends Window
 	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private PlatformConfigurationService platformConfigurationService;
 
 
@@ -68,7 +67,7 @@ public class ErrorOccurrenceViewWindow extends Window
 	 * @param errorOccurrence
 	 * @param platformConfigurationService
      */
-	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
+	public ErrorOccurrenceViewWindow(ErrorOccurrenceImpl errorOccurrence,
                                      PlatformConfigurationService platformConfigurationService)
 	{
 		super();

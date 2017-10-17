@@ -57,7 +57,7 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -109,7 +109,7 @@ public class ExclusionEventViewPanel extends Panel
 	private TextField roleName;
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
@@ -118,9 +118,9 @@ public class ExclusionEventViewPanel extends Panel
 	private TextArea comments;
 
 
-	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
-			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
+	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrenceImpl errorOccurrence, ExclusionEventAction action,
+                                   HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+                                   ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;

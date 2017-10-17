@@ -42,7 +42,7 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
@@ -68,7 +68,7 @@ public class ActionedExclusionEventViewWindow extends Window
 	
 	private TextField roleName;
 	private TextField roleDescription;
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
@@ -76,8 +76,8 @@ public class ActionedExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
+	public ActionedExclusionEventViewWindow(ErrorOccurrenceImpl errorOccurrence, ExclusionEventAction action,
+                                            HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;

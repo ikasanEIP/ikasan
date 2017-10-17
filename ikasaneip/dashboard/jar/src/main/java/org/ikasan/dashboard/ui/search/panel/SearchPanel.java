@@ -22,10 +22,11 @@ import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.search.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -75,22 +76,22 @@ public class SearchPanel extends Panel implements View
     private PopupDateField fromDate;
     private PopupDateField toDate;
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
-    private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence> errorReportingService;
+    private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrenceImpl> errorReportingService;
     private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
     private ReplayService<ReplayEvent, ReplayAudit> replayService;
     private TopologyService topologyService;
     private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
     private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
-    private ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
+    private ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
     private HospitalService<byte[]> hospitalService;
     private ExclusionManagementService<ExclusionEvent, String> solrExclusionManagementService;
 
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
                        WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService, ErrorReportingService<ErrorOccurrence<byte[]>,
-                       ErrorOccurrence> errorReportingService, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService,
+            ErrorOccurrenceImpl> errorReportingService, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService,
                        ReplayService<ReplayEvent, ReplayAudit> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                        HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
-                       ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
+                       ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
                        HospitalService<byte[]> hospitalService)
     {
         this.solrSearchService = solrSearchService;
@@ -144,7 +145,7 @@ public class SearchPanel extends Panel implements View
                     }
                     else if(ikasanSolrDocument.getType().equals("error"))
                     {
-                        ErrorOccurrence errorOccurrence = errorReportingService.find(ikasanSolrDocument.getErrorUri());
+                        ErrorOccurrenceImpl errorOccurrence = errorReportingService.find(ikasanSolrDocument.getErrorUri());
                         ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence,
                                 platformConfigurationService);
 
@@ -161,7 +162,7 @@ public class SearchPanel extends Panel implements View
                     else if(ikasanSolrDocument.getType().equals("exclusion"))
                     {
                         ExclusionEvent exclusionEvent = exclusionManagementService.find(ikasanSolrDocument.getId());
-                        ErrorOccurrence errorOccurrence = errorReportingService.find(ikasanSolrDocument.getId());
+                        ErrorOccurrenceImpl errorOccurrence = errorReportingService.find(ikasanSolrDocument.getId());
                         ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
                         ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
                                 , action, hospitalManagementService, topologyService, errorReportingManagementService, hospitalService);

@@ -43,7 +43,7 @@ package org.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -180,7 +180,7 @@ public class ApplicationTest
 
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
-        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        ErrorOccurrenceImpl error = (ErrorOccurrenceImpl) errors.get(0);
         assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
         assertEquals("ExcludeEvent", error.getAction());
 
@@ -219,7 +219,7 @@ public class ApplicationTest
         // Verify the error was stored in DB
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
-        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        ErrorOccurrenceImpl error = (ErrorOccurrenceImpl) errors.get(0);
         assertEquals(EndpointException.class.getName(), error.getExceptionClass());
         assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
 
@@ -252,7 +252,7 @@ public class ApplicationTest
         // Verify the error was stored in DB
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
-        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        ErrorOccurrenceImpl error = (ErrorOccurrenceImpl) errors.get(0);
         assertEquals(RuntimeException.class.getName(), error.getExceptionClass());
         assertEquals("Stop", error.getAction());
 
