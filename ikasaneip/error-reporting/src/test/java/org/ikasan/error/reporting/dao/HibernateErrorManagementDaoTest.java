@@ -40,15 +40,10 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,6 +51,11 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -158,7 +158,7 @@ public class HibernateErrorManagementDaoTest
     	uris.add(eo1.getUri());
     	uris.add(eo2.getUri());
     	
-    	List<ErrorOccurrenceImpl> eoList = this.errorManagementDao.findErrorOccurrences(uris);
+    	List<ErrorOccurrence> eoList = this.errorManagementDao.findErrorOccurrences(uris);
     	
     	Assert.assertTrue(eoList.size() == 3);
     	

@@ -40,6 +40,7 @@
  */
 package org.ikasan.error.reporting.service;
 
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -55,7 +56,7 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingService<EVENT,ErrorOccurrenceImpl>
+public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingService<EVENT,ErrorOccurrence>
 {
     /** module name */
     String moduleName;
@@ -64,7 +65,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     String flowName;
 
     /** handle to the underlying DAO */
-    ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
 
     /** allow override of timeToLive */
     Long timeToLive = ErrorReportingService.DEFAULT_TIME_TO_LIVE;
@@ -79,7 +80,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao)
     {
         this(serialiser,errorReportingServiceDao);
         this.moduleName = moduleName;
@@ -100,7 +101,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao)
     {
         this.serialiser = serialiser;
         if(serialiser == null)
@@ -134,13 +135,13 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     }
 
     @Override
-    public ErrorOccurrenceImpl find(String uri)
+    public ErrorOccurrence find(String uri)
     {
         return this.errorReportingServiceDao.find(uri);
     }
 
     @Override
-    public Map<String, ErrorOccurrenceImpl> find(List<String> uris)
+    public Map<String, ErrorOccurrence> find(List<String> uris)
     {
         return this.errorReportingServiceDao.find(uris);
     }
@@ -245,7 +246,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ErrorOccurrenceImpl> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+	public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
                                           Date startDate, Date endDate, int size)
 	{
 		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate, size);
@@ -265,7 +266,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
 	 */
 	@Override
-	public List<ErrorOccurrenceImpl> find(List<String> moduleName,
+	public List<ErrorOccurrence> find(List<String> moduleName,
                                           List<String> flowName, List<String> flowElementname,
                                           Date startDate, Date endDate, String action, String exceptionClass,
                                           int size)
