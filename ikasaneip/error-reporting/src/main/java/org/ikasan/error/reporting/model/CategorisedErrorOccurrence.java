@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.model;
 
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -47,14 +49,14 @@ package org.ikasan.error.reporting.model;
  */
 public class CategorisedErrorOccurrence
 {
-	private ErrorOccurrenceImpl errorOccurrence;
+	private ErrorOccurrence errorOccurrence;
 	private ErrorCategorisation errorCategorisation;
 
 	/**
 	 * @param errorOccurrence
 	 * @param errorCategorisation
 	 */
-	public CategorisedErrorOccurrence(ErrorOccurrenceImpl errorOccurrence,
+	public CategorisedErrorOccurrence(ErrorOccurrence errorOccurrence,
 			ErrorCategorisation errorCategorisation)
 	{
 		super();
@@ -65,7 +67,7 @@ public class CategorisedErrorOccurrence
 	/**
 	 * @return the errorOccurrence
 	 */
-	public ErrorOccurrenceImpl getErrorOccurrence()
+	public ErrorOccurrence getErrorOccurrence()
 	{
 		return errorOccurrence;
 	}

@@ -69,7 +69,7 @@ import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.panel.ResubmitIgnoreStatusPanel;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -211,7 +211,7 @@ public class ExclusionsTab extends TopologyTab
 				if(itemClickEvent.isDoubleClick())
 				{
 					ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-					ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)errorReportingService.find(exclusionEvent.getErrorUri());
+					ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 					ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 					ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
 							, action, hospitalManagementService, topologyService, errorReportingManagementService, hospitalService);
@@ -636,7 +636,7 @@ public class ExclusionsTab extends TopologyTab
 		this.resultsLabel = new Label("Number of records returned: " + exclusionEvents.size() + " of " + resultSize);
 		searchResultsSizeLayout.addComponent(this.resultsLabel);
 
-		Map<String, ErrorOccurrenceImpl> errorOccurrences = null;
+		Map<String, ErrorOccurrence> errorOccurrences = null;
 
 		if(resultSize > platformConfigurationService.getSearchResultSetSize())
 		{
@@ -675,7 +675,7 @@ public class ExclusionsTab extends TopologyTab
 			SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
 			String timestamp = format.format(date);
 
-			final ErrorOccurrenceImpl errorOccurrence = errorOccurrences.get(exclusionEvent.getErrorUri());
+			final ErrorOccurrence errorOccurrence = errorOccurrences.get(exclusionEvent.getErrorUri());
 
 			Item item = container.addItem(exclusionEvent);
 

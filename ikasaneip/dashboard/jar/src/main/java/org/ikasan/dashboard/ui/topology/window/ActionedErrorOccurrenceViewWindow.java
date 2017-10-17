@@ -41,7 +41,7 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import org.ikasan.dashboard.ui.topology.panel.ActionedErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 import com.vaadin.ui.Window;
@@ -58,14 +58,17 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrenceImpl errorOccurrence;
+	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	
+
 
 	/**
-	 * @param policy
-	 */
-	public ActionedErrorOccurrenceViewWindow(ErrorOccurrenceImpl errorOccurrence,
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+     */
+	public ActionedErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();

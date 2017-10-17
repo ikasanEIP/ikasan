@@ -46,7 +46,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
@@ -64,7 +64,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 {
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrenceImpl errorOccurrence;
+	private ErrorOccurrence errorOccurrence;
 	private PlatformConfigurationService platformConfigurationService;
 
 	/**
@@ -73,7 +73,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 	 * @param errorOccurrence
 	 * @param platformConfigurationService
      */
-	public ErrorOccurrenceViewPanel(ErrorOccurrenceImpl errorOccurrence,
+	public ErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
                                     PlatformConfigurationService platformConfigurationService)
 	{
 		super();

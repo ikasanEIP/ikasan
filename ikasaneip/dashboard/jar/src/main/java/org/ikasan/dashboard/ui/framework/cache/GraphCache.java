@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 //import com.googlecode.wickedcharts.highcharts.jackson.JsonRenderer;
@@ -114,10 +114,10 @@ public class GraphCache
 		moduleErrorOccurrencesMap = new HashMap<String, Integer>();
 		
 		logger.debug("Synchronising topology state cache.");
-		List<ErrorOccurrenceImpl> errorOccurrences
+		List<ErrorOccurrence> errorOccurrences
 			= errorReportingService.find(null, null, null, getMidnightToday(), getTwentyThreeFixtyNineToday(), 1000);
 		
-		for(ErrorOccurrenceImpl errorOccurrence: errorOccurrences)
+		for(ErrorOccurrence errorOccurrence: errorOccurrences)
 		{
 			ErrorOccurrenceKey key = new ErrorOccurrenceKey();
 			key.moduleName = errorOccurrence.getModuleName();

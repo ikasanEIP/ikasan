@@ -52,8 +52,8 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.topology.model.BusinessStream;
@@ -176,7 +176,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)itemClickEvent.getItemId();
+			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
 			    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
 			    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
 			    	
@@ -350,7 +350,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		this.addComponent(wrapper);
 	}
 	
-	protected void refreshTable(boolean showError, Collection<ErrorOccurrenceImpl> myItems)
+	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
 	{
 		errorOccurenceTable.removeAllItems();
 
@@ -402,7 +402,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-		List<ErrorOccurrenceImpl> errorOccurrences = errorReportingManagementService
+		List<ErrorOccurrence> errorOccurrences = errorReportingManagementService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	if((errorOccurrences == null || errorOccurrences.size() == 0) && showError)
@@ -412,7 +412,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     	
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
 
-    	for(ErrorOccurrenceImpl errorOccurrence: errorOccurrences)
+    	for(ErrorOccurrence errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getUserActionTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

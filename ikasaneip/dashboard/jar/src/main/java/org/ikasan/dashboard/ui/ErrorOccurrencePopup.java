@@ -40,17 +40,16 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 /**
  * 
@@ -75,7 +74,7 @@ public class ErrorOccurrencePopup extends UI
 		 PlatformConfigurationService platformConfigurationService 
 		 	= (PlatformConfigurationService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("platformConfigurationService");
 	        	
-		ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
+		ErrorOccurrence errorOccurrence = (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
 		
 		
 		ErrorOccurrenceViewPanel panel 
