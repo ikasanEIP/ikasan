@@ -46,11 +46,11 @@ import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 
@@ -83,11 +83,18 @@ public class ErrorOccurrenceDeepLinkPanel extends UI
 	private ErrorReportingService errorReportingService;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private PlatformConfigurationService platformConfigurationService;
-	
+
 	/**
-	 * @param errorOccurrence
+	 * Constructor
+	 *
 	 * @param errorReportingManagementService
-	 */
+	 * @param errorReportingService
+	 * @param navigationPanel
+	 * @param authenticationService
+	 * @param visibilityGroup
+	 * @param userService
+	 * @param platformConfigurationService
+     */
 	public ErrorOccurrenceDeepLinkPanel(ErrorReportingManagementService errorReportingManagementService,
 			ErrorReportingService errorReportingService, NavigationPanel navigationPanel,
 			AuthenticationService authenticationService, VisibilityGroup visibilityGroup, UserService userService,

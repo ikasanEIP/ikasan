@@ -45,7 +45,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
@@ -92,7 +92,7 @@ public class ActionedExclusionEventViewPanel extends Panel
 	 * @param policy
 	 */
 	public ActionedExclusionEventViewPanel(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
+                                           HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;

@@ -45,7 +45,7 @@ package org.ikasan.error.reporting.model;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceAction<EVENT>
+public class ErrorOccurrenceAction
 {
 	/** unique identifier for this instance */
     private String uri;
@@ -96,7 +96,7 @@ public class ErrorOccurrenceAction<EVENT>
     /**
      * Representation of the Event at the time that the error took place
      */
-    private EVENT event;
+    private byte[] event;
 
     /**
 	 * Time that this error was logged
@@ -139,8 +139,8 @@ public class ErrorOccurrenceAction<EVENT>
     * @param actionedBy
     * @param timeToLive
     */
-    public ErrorOccurrenceAction(ErrorOccurrence<EVENT> errorOccurrence, String userAction, String actionedBy,
-    		long timeToLive)
+    public ErrorOccurrenceAction(ErrorOccurrenceImpl errorOccurrence, String userAction, String actionedBy,
+                                 long timeToLive)
     {
     	if(errorOccurrence == null)
     	{
@@ -239,12 +239,12 @@ public class ErrorOccurrenceAction<EVENT>
         this.eventLifeIdentifier = eventLifeIdentifier;
     }
 
-    public EVENT getEvent() 
+    public byte[] getEvent()
     {
         return event;
     }
 
-    private void setEvent(EVENT event) 
+    private void setEvent(byte[] event)
     {
         this.event = event;
     }

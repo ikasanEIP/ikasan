@@ -48,7 +48,7 @@ import org.junit.Test;
  * 
  * @author Ikasan Development Team
  */
-public class ErrorOccurrencesLinkedHashMapTest
+public class ErrorOccurrencesLinkedHashMapTestImpl
 {
     /**
      * Test roilloff

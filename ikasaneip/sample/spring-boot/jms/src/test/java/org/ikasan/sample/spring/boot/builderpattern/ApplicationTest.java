@@ -43,7 +43,7 @@ package org.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;

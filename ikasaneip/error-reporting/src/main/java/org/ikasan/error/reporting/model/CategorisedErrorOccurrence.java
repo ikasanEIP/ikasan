@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.model;
 
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -73,7 +75,7 @@ public class CategorisedErrorOccurrence
 	/**
 	 * @param errorOccurrence the errorOccurrence to set
 	 */
-	public void setErrorOccurrence(ErrorOccurrence errorOccurrence)
+	public void setErrorOccurrence(ErrorOccurrenceImpl errorOccurrence)
 	{
 		this.errorOccurrence = errorOccurrence;
 	}

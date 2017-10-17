@@ -40,44 +40,11 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.topology.panel.ActionedErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.vaadin.aceeditor.AceEditor;
-import org.vaadin.aceeditor.AceMode;
-import org.vaadin.aceeditor.AceTheme;
-import org.xwiki.component.embed.EmbeddableComponentManager;
-import org.xwiki.rendering.converter.Converter;
-import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
-import org.xwiki.rendering.renderer.printer.WikiPrinter;
-import org.xwiki.rendering.syntax.Syntax;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.ExternalResource;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -93,11 +60,14 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 	
 	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	
+
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+     */
 	public ActionedErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService)
 	{
