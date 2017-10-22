@@ -1,18 +1,18 @@
-# sample-spring-boot-sftp
+# sample-spring-boot-ftp
 
 Sample spring-boot-ftp project provides self contained example of Ikasan integration module. 
 The sample is build as fat-jar containing all dependencies and bootstraps as a spring-boot web application with embedded tomcat web-container. 
 As majority of core ikasan services depend on persistent store this sample starts up with embedded in memory H2 database.
 
-sample-spring-boot-sftp provides example of integration module using SFTP. The module contains two flow:
-* Sftp To Log Flow (This flow downloads file from SFTP server and logs it to log file)
-  * Sftp Consumer -  Connects to SFTP server to download file
-  * SFTP payload to String Converter
+sample-spring-boot-ftp provides example of integration module using FTP. The module contains two flow:
+* ftpToLogFlow (This flow downloads file from FTP server and logs it to log file)
+  * Ftp Consumer -  Connects to FTP server to download file
+  * FTP payload to String Converter
   * Log - Producer logging message content to log file
-* timeGeneratorToSftpFlow (This flow triggers on timely bases, generates file 'test(Datetime).txt' and sends it of to SFTP server.)
+* timeGeneratorToFtpFlow (This flow triggers on timely bases, generates file 'test(Datetime).txt' and sends it of to FTP server.)
   * Scheduled Consumer
   * Random String Generator - Generates file name and file content
-  * Sftp Producer - Delivers the file to SFTP server
+  * Ftp Producer - Delivers the file to FTP server
 
 ## How to build from source
 
@@ -24,16 +24,16 @@ mvn clean install
 ## How to startup
 
 If you managed to obtain the jar by building it or by downloading it from mvn repo:
-* https://oss.sonatype.org/content/repositories/snapshots/org/ikasan/sample-spring-boot-sftp/2.0.0-SNAPSHOT/ 
+* https://oss.sonatype.org/content/repositories/snapshots/org/ikasan/sample-spring-boot-ftp/2.0.0-SNAPSHOT/ 
 
 You can start up the sample 
 
-```java -jar sample-spring-boot-sftp-2.0.0-SNAPSHOT.jar```
+```java -jar sample-spring-boot-ftp-2.0.0-SNAPSHOT.jar```
 
 If all went well you will see following 
 ```
 2017-10-22 20:42:55.896  INFO 2837 --- [           main] o.i.m.s.ModuleInitialisationServiceImpl  : Module host [localhost:8080] running with PID [2837]
-2017-10-22 20:42:55.907  INFO 2837 --- [           main] o.i.m.s.ModuleInitialisationServiceImpl  : Server instance  [Server [id=null, name=localhost, description=http://localhost:8080//sample-boot-sftp, url=http://localhost, port=8080, createdDateTime=Sun Oct 22 20:42:55 BST 2017, updatedDateTime=Sun Oct 22 20:42:55 BST 2017]], creating...
+2017-10-22 20:42:55.907  INFO 2837 --- [           main] o.i.m.s.ModuleInitialisationServiceImpl  : Server instance  [Server [id=null, name=localhost, description=http://localhost:8080//sample-boot-ftp, url=http://localhost, port=8080, createdDateTime=Sun Oct 22 20:42:55 BST 2017, updatedDateTime=Sun Oct 22 20:42:55 BST 2017]], creating...
 (...)
 
 2017-10-22 20:11:10.628  INFO 2734 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
@@ -43,7 +43,7 @@ If all went well you will see following
 Context ready
 ```
 
-You can now access the basic web interface http://localhost:8080/sample-boot-sftp/ 
+You can now access the basic web interface http://localhost:8080/sample-boot-ftp/ 
 
 
 ## How to navigate the web console
