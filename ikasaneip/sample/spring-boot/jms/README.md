@@ -1,11 +1,20 @@
 # sample-spring-boot-jms
 
-Sample spring-boot-jms project provides self contained example of Ikasan integration module. The sample is build as fat-jar containing all dependencies. The sample bootstraps as a spring-boot web application with embeded tomcat web-container. 
+Sample spring-boot-jms project provides self contained example of Ikasan integration module. 
+The sample is build as fat-jar containing all dependencies and bootstraps as a spring-boot web application with embedded tomcat web-container. 
+As majority of core ikasan services depend on persistent store this sample starts up with embedded in memory H2 database.
+
+sample-spring-boot-jms provides example of integration module using JMS, in order to keep the sample self contained an embedded ActiveMQ broker is used. The module contains single flow with following components:
+* JMS Consumer (subscribing to 'source' queue )
+* Exception Generating Broker 
+* JMS Producer (sends messages to 'target' queue)
 
 
 ## How to build from source
 
-```mvn clean install```
+```
+mvn clean install
+```
 
 
 ## How to startup
@@ -40,20 +49,22 @@ You can now access the basic web interface http://localhost:8080/sample-boot-jms
 ## How to navigate the web console
 
 
-![Login](../../../developer/docs/sample-images/sample-login.png) 
+* Open Login Page ![Login](../../../developer/docs/sample-images/sample-login.png) 
 
-Login using admin/admin as username and password
+* Login using admin/admin as username and password ![Home](../../../developer/docs/sample-images/home-page.png) 
 
-![Home](../../../developer/docs/sample-images/home-page.png) 
+* Click on Modules ![Modules](../../../developer/docs/sample-images/modules.png) 
 
-Click on Modules
+* Click on sample-module ![sample-boot-jms](../../../developer/docs/sample-images/sample-boot-jms-module.png) 
 
-![Modules](../../../developer/docs/sample-images/modules.png) 
+* Click on JMS Sample Flow ![JMS Sample Flow](../../../developer/docs/sample-images/jms-sample-flow.png) 
 
-Click on sample-module
+* Click on JMS consumer ![JMS Consumer Components](../../../developer/docs/sample-images/jms-consumer.png) 
 
-![Sample Module](../../../developer/docs/sample-images/sample-module.png) 
+* Click on JMS Configuration ![JMS Configuration Create](../../../developer/docs/sample-images/jms-consumer-config-create.png) 
 
-Click on flowName
-
-![Sample Flow Components](../../../developer/docs/sample-images/flowName-components.png) 
+* Click Create
+ 
+* The configuration screen allows you to chage the JMS consumer configuration, like:
+** change jms destination name
+** provide JNDI properties
