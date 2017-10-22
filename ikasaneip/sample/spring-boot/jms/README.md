@@ -36,5 +36,5 @@ Context ready
 
 You can now access the basic web interface http://localhost:8080/sample-boot-jms/ 
 
-![Login](../../../developer/sample-images/sample-login.png) 
+![Login](../../../developer/docs/sample-images/sample-login.png) 
 Login using admin/admin as username and password
