@@ -96,7 +96,7 @@ public class MyApplicationTest
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-builder-pattern");
         Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, builderFactory.getComponentBuilder());
 
         Module module = moduleBuilder.addFlow(scheduldeFlow).build();
@@ -119,7 +119,7 @@ public class MyApplicationTest
     public void test_jmsFlow_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-builder-pattern");
 
         Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder, builderFactory.getComponentBuilder() );
 
