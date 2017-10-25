@@ -39,7 +39,7 @@ Using Eclipse
 8. Wait (m2e takes awhile on initial import)
 
 
-[Getting Started Guide](ikasaneip/developer/README.md)
+[Getting Started Guide](ikasaneip/developer/)
 
 | Samples overview |
 |-------------|
