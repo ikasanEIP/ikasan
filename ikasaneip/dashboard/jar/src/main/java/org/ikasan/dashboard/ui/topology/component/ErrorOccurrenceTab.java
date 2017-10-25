@@ -61,9 +61,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellSty
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.topology.model.BusinessStream;

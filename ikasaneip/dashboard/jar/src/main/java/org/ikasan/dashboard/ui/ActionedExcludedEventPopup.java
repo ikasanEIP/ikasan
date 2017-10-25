@@ -41,9 +41,9 @@
 package org.ikasan.dashboard.ui;
 
 import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.topology.service.TopologyService;
 

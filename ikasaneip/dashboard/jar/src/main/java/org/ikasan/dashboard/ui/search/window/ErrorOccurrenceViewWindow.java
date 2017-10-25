@@ -42,9 +42,8 @@ package org.ikasan.dashboard.ui.search.window;
 
 import com.vaadin.ui.Window;
 import org.ikasan.dashboard.ui.search.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
  * 

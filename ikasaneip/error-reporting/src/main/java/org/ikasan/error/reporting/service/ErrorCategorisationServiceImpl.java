@@ -45,7 +45,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,10 +142,10 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
             List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
             int size)
     {
-        List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate, size);
+        List<ErrorOccurrenceImpl> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate, size);
         Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();
         ArrayList<CategorisedErrorOccurrence> categorisedErrorOccurrences = new ArrayList<>();
-        for (ErrorOccurrence errorOccurrence : errorOccurrences)
+        for (ErrorOccurrenceImpl errorOccurrence : errorOccurrences)
         {
             logger.debug("Action: " + this.getAction(errorOccurrence));
             if (errorOccurrence.getExceptionClass() == null)
@@ -292,7 +292,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
         return map;
     }
 
-    protected String getAction(ErrorOccurrence errorOccurrence)
+    protected String getAction(ErrorOccurrenceImpl errorOccurrence)
     {
         if (errorOccurrence.getAction() == null)
         {

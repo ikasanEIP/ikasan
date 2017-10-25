@@ -62,7 +62,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.FileSystems;
@@ -78,7 +80,6 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Ikasan Development Team
  */
-@Ignore
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
 
@@ -115,7 +116,8 @@ public class ApplicationTest {
 
         putFile();
 
-        String[] args = {""};
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
+
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
 
@@ -160,18 +162,21 @@ public class ApplicationTest {
 
     @After
     public void teardown() throws Exception {
-        sshd.stop();
 
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txtb"));
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
 
         ikasanApplication.close();
+
+        sshd.stop();
+
     }
 
     /**
      * The SFTP test does not work on windows
      */
+    @DirtiesContext
     @Test
     public void test_sftpConsumer_flow() throws Exception {
 
@@ -195,13 +200,10 @@ public class ApplicationTest {
     /**
      * The SFTP test does not work on windows
      */
+    @DirtiesContext
     @Test
     @Ignore
     public void test_sftpProducer_flow() throws Exception {
-        String[] args = {""};
-
-
-        System.out.println("Check is module healthy.");
 
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean

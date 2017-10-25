@@ -35,9 +35,10 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
     /**
      * Constructor
      *
-     * @param wiretapDao - The wire tap DAO
+     * @param wiretapDao
+     * @param moduleService
      */
-    public SolrWiretapServiceImpl(WiretapDao wiretapDao,ModuleService moduleService) {
+    public SolrWiretapServiceImpl(WiretapDao wiretapDao, ModuleService moduleService) {
         this.wiretapDao = wiretapDao;
         if (wiretapDao == null) {
             throw new IllegalArgumentException("wiretapDao cannot be 'null'");
@@ -56,14 +57,10 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
     }
 
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see org.ikasan.spec.management.HousekeeperService#housekeepablesExist()
-     */
     @Override
-    public boolean housekeepablesExist() {
-        return this.wiretapDao.housekeepablesExist();
+    public boolean housekeepablesExist()
+    {
+        return false;
     }
 
     /**
@@ -150,9 +147,9 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
         if (wiretapEvent != null)
         {
             // before returning wiretapFlowEvent, check that we can access the
-            // associated module
-            // this is an easier security check that access controlling every
-            // WiretapFlowEvent individually
+            // associated module.
+            // This is an easier security check than access controlling every
+            // WiretapFlowEvent individually.
             // If the user can 'read' the module, then they are allowed to read
             // its associated WiretapFlowEvents
             moduleService.getModule(wiretapEvent.getModuleName());

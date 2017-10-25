@@ -18,10 +18,34 @@
 <schema name="minimal" version="1.1">
   <fieldType name="string" class="solr.StrField"/>
   <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+  <fieldType name="binary" class="solr.BinaryField"/>
 
   <dynamicField name="type*" type="string" indexed="true" stored="true"/>
 
   <dynamicField name="expiry*" type="long" indexed="true" stored="true" multiValued="false"/>
 
   <dynamicField name="timestamp*" type="long" indexed="true" stored="true" multiValued="false"/>
+
+  <dynamicField name="id*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="moduleName*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="flowName*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="componentName*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="event*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="payload*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="errorUri*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="errorDetail*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="exceptionClass*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="errorMessage*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="payloadRaw*" type="binary" indexed="true" stored="true"/>
+
 </schema>
