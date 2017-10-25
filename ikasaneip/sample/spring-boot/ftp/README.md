@@ -14,6 +14,43 @@ sample-spring-boot-ftp provides example of integration module using FTP. The mod
   * Random String Generator - Generates file name and file content
   * Ftp Producer - Delivers the file to FTP server
 
+## How to construct ftpToLogFlow using builder pattern
+Check out the source code at [Application](src/main/java/org/ikasan/sample/spring/boot/builderpattern/Application.java)
+```java
+public Flow getFtpToLogFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder) {
+  FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("ftpToLogFlow");
+
+  Flow ftpToLogFlow = ftpToLogFlowBuilder
+    .withDescription("Ftp to Log")
+    .consumer("Ftp Consumer", componentBuilder.ftpConsumer()
+       .setCronExpression(ftpConsumerCronExpression)
+       .setClientID(ftpConsumerClientID)
+       .setUsername(ftpConsumerUsername)
+       .setPassword(ftpConsumerPassword)
+       .setRemoteHost(ftpConsumerRemoteHost)
+       .setRemotePort(ftpConsumerRemotePort)
+       .setSourceDirectory(ftpConsumerSourceDirectory)
+       .setFilenamePattern(ftpConsumerFilenamePattern)
+       .setChronological(true)
+       .setAgeOfFiles(30)
+       .setMinAge(1l)
+       .setFilterDuplicates(true)
+       .setFilterOnLastModifiedDate(true)
+       .setRenameOnSuccess(false)
+       .setRenameOnSuccessExtension(".tmp")
+       .setDestructive(false)
+       .setChunking(false)
+       .setConfiguredResourceId("configuredResourceId")
+       .setScheduledJobGroupName("FtpToLogFlow")
+       .setScheduledJobName("FtpConsumer")
+       .build())
+    .converter("FTP payload to String Converter",payloadToStringConverter)
+    .producer("Log", new DevNull()).build();
+
+  return ftpToLogFlow;
+ }
+```
+
 ## How to build from source
 
 ```
@@ -32,14 +69,14 @@ You can start up the sample
 
 If all went well you will see following 
 ```
-2017-10-22 20:42:55.896  INFO 2837 --- [           main] o.i.m.s.ModuleInitialisationServiceImpl  : Module host [localhost:8080] running with PID [2837]
-2017-10-22 20:42:55.907  INFO 2837 --- [           main] o.i.m.s.ModuleInitialisationServiceImpl  : Server instance  [Server [id=null, name=localhost, description=http://localhost:8080//sample-boot-ftp, url=http://localhost, port=8080, createdDateTime=Sun Oct 22 20:42:55 BST 2017, updatedDateTime=Sun Oct 22 20:42:55 BST 2017]], creating...
+2017-10-22 20:42:55.896  INFO 2837 --- [main] o.i.m.s.ModuleInitialisationServiceImpl  : Module host [localhost:8080] running with PID [2837]
+2017-10-22 20:42:55.907  INFO 2837 --- [main] o.i.m.s.ModuleInitialisationServiceImpl  : Server instance  [Server [id=null, name=localhost, description=http://localhost:8080//sample-boot-ftp, url=http://localhost, port=8080, createdDateTime=Sun Oct 22 20:42:55 BST 2017, updatedDateTime=Sun Oct 22 20:42:55 BST 2017]], creating...
 (...)
 
-2017-10-22 20:11:10.628  INFO 2734 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
-2017-10-22 20:11:10.640  INFO 2734 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
-2017-10-22 20:11:10.788  INFO 2734 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
-2017-10-22 20:11:10.798  INFO 2734 --- [           main] o.i.s.s.boot.builderpattern.Application  : Started Application in 11.208 seconds (JVM running for 11.712)
+2017-10-22 20:11:10.628  INFO 2734 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2017-10-22 20:11:10.640  INFO 2734 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
+2017-10-22 20:11:10.788  INFO 2734 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2017-10-22 20:11:10.798  INFO 2734 --- [main] o.i.s.s.boot.builderpattern.Application  : Started Application in 11.208 seconds (JVM running for 11.712)
 Context ready
 ```
 

@@ -10,6 +10,43 @@ sample-spring-boot-jms provides example of integration module using JMS, in orde
 * JMS Producer (sends messages to 'target' queue)
 
 
+## How to construct 'Jms Sample Flow' using builder pattern
+Check out the source code at [Application](src/main/java/org/ikasan/sample/spring/boot/builderpattern/Application.java)
+```java
+public Module getModule(){
+
+  ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
+
+  FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
+
+  ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+  Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
+          .setConnectionFactory(connectionFactory)
+          .setDestinationJndiName("source")
+          .setAutoContentConversion(true)
+          .setConfiguredResourceId("jmsConsumer")
+          .build();
+
+
+  Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
+          .setConnectionFactory(connectionFactory)
+          .setDestinationJndiName("target")
+          .setConfiguredResourceId("jmsProducer")
+          .build();
+
+  Flow flow = fb
+          .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+          .withErrorReportingServiceFactory(errorReportingServiceFactory)
+          .consumer("JMS Consumer", jmsConsumer)
+          .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
+          .producer("JMS Producer", jmsProducer)
+          .build();
+
+  Module module = mb.withDescription("Sample Module").addFlow(flow).build();
+  return module;
+}
+```
+
 ## How to build from source
 
 ```
