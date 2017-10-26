@@ -454,9 +454,11 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 this.recoveryManager.cancelAll();
             }
 
-            // stop consumer and remove the listener
-            Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            Consumer<EventListener<?>,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();;
             consumer.stop();
+
+            // ensure we are still listening to this consumer if we are paused
+            consumer.setListener(this);
 
             this.consumerPaused = true;
             logger.info("Paused Flow[" + this.name + "] in Module[" + this.moduleName + "]");
