@@ -71,7 +71,7 @@ public class MyApplication
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         // get a module builder from the ikasanApplication
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName").withDescription("Example module with pattern builder");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-builder-pattern").withDescription("Example module with pattern builder");
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
         Flow scheduledFlow = getScheduledFlow(moduleBuilder, builderFactory.getComponentBuilder());

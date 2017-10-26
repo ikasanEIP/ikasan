@@ -30,41 +30,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- web console -->
-
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms-client</artifactId>
-            <version>2.3.25.Final</version>
-        </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/org.jboss/jboss-remote-naming -->
-        <dependency>
-            <groupId>org.jboss</groupId>
-            <artifactId>jboss-remote-naming</artifactId>
-            <version>2.0.5.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.xnio</groupId>
-                    <artifactId>xnio-api</artifactId>
-                </exclusion>
-
-            </exclusions>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.jboss.xnio/xnio-nio -->
-        <dependency>
-            <groupId>org.jboss.xnio</groupId>
-            <artifactId>xnio-nio</artifactId>
-            <version>3.1.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.xnio</groupId>
-            <artifactId>xnio-api</artifactId>
-            <version>3.1.0.Final</version>
-        </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
