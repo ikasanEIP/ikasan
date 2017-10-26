@@ -62,6 +62,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -116,7 +117,7 @@ public class ApplicationTest
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = ikasanApplication.getBean(Module.class);
-        flowUUT = (Flow) module.getFlow("flowName");
+        flowUUT = (Flow) module.getFlow("Jms Sample Flow");
 
         // get hold of errorReportingService
         ErrorReportingServiceFactory errorReportingServiceFactory = ikasanApplication
@@ -131,7 +132,7 @@ public class ApplicationTest
         wiretapService = ikasanApplication.getBean("wiretapService", WiretapService.class);
 
         // add wiretap to flow
-        Trigger trigger = new Trigger(module.getName(), flowUUT.getName(), "after", "wiretapJob", "consumer",
+        Trigger trigger = new Trigger(module.getName(), flowUUT.getName(), "after", "wiretapJob", "JMS Consumer",
                 new HashMap<String, String>()
                 {{put("timeToLive", "100");}});
         JobAwareFlowEventListener wiretapListener = ikasanApplication.getBean(JobAwareFlowEventListener.class);
@@ -180,7 +181,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowExclusionException(true);
 
         // Perform Test
@@ -214,7 +215,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowRecoveryException(true);
 
         // Perform Test
@@ -252,7 +253,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowStoppedInErrorException(true);
 
         // Perform Test
