@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: SchedulerFactoryTest.java 3629 2011-04-18 10:00:52Z mitcje $
+ * $URL: http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler/src/test/java/org/ikasan/scheduler/SchedulerFactoryTest.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,47 +38,77 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.model;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.junit.Assert;
+import org.apache.activemq.junit.EmbeddedActiveMQBroker;
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Test class for ErrorOccurrencesLinkedHashMap.
+ * This test class supports the <code>SimpleExample</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ErrorOccurrencesLinkedHashMapTest
+@RunWith(SpringRunner.class)
+public class ApplicationTest
 {
-    /**
-     * Test roilloff
-     */
-    @Test
-    public void test_rolloff()
+    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+
+    @Before
+    public void setup()
     {
-        ErrorOccurrencesLinkedHashMap<String,String> errorOccurrences = new ErrorOccurrencesLinkedHashMap<String,String>(5);
-        errorOccurrences.put("1", "one");
-        errorOccurrences.put("2", "two");
-        errorOccurrences.put("3", "three");
-        errorOccurrences.put("4", "four");
-        errorOccurrences.put("5", "five");
-
-        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
-        Assert.assertTrue("Should contain entry 1", errorOccurrences.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
-
-        errorOccurrences.put("6", "six");
-        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
-        Assert.assertFalse("Should not contain entry 1", errorOccurrences.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
-        Assert.assertTrue("Should contain entry 6", errorOccurrences.containsKey("6"));
-
+        broker.start();
     }
 
+    
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_createModule_start_and_stop_flow() throws Exception
+    {
+        String[] args = {""};
+
+        Application myApplication = new Application();
+        IkasanApplication ikasanApplication = myApplication.boot(args);
+        System.out.println("Check is module healthy.");
+
+        List<Module> modules  = ikasanApplication.getModules();
+        assertTrue("There should only be 1 module in this application, but found " + modules.size(), modules.size() == 1);
+        Module<Flow> module = modules.get(0);
+        Flow flow = module.getFlow("sourceFileFlow");
+
+
+        // start flow
+        flow.start();
+        assertEquals("running",flow.getState());
+        flow.stop();
+        assertEquals("stopped",flow.getState());
+    }
+
+    /**
+     * Sleep for value in millis
+     * @param value
+     */
+    private void pause(long value)
+    {
+        try
+        {
+            Thread.sleep(value);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 }

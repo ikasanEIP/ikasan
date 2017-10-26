@@ -1,7 +1,6 @@
 package org.ikasan.replay.dao;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.replay.model.SolrReplayEvent;
@@ -12,22 +11,16 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.support.DataAccessUtils;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by stewmi on 25/08/2017.
+ * Created by Ikasan Development Team on 25/08/2017.
  */
 public class SolrReplayDao extends SolrDaoBase implements ReplayDao
 {
     private static Logger logger = LoggerFactory.getLogger(SolrReplayDao.class);
-
-    /** handle to the serialiser factory */
-    private SerialiserFactory serialiserFactory;
-    private PlatformConfigurationService platformConfigurationService;
 
     /**
      * We need to give this dao it's context.
@@ -37,21 +30,6 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
     public SolrReplayDao()
     {
 
-    }
-
-    public SolrReplayDao(SerialiserFactory serialiserFactory,
-                         PlatformConfigurationService platformConfigurationService)
-    {
-        this.serialiserFactory = serialiserFactory;
-        if(this.serialiserFactory == null)
-        {
-            throw new IllegalArgumentException("serialiserFactory cannot be null!");
-        }
-        this.platformConfigurationService = platformConfigurationService;
-        if(this.platformConfigurationService == null)
-        {
-            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
-        }
     }
 
     @Override
@@ -188,7 +166,13 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
             throw new RuntimeException("Exception performing solr query: " + query, e);
         }
 
-
-        return (ReplayEvent)DataAccessUtils.uniqueResult(results);
+        if(results.size() > 0)
+        {
+            return results.get(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 }

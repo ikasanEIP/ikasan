@@ -40,19 +40,18 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -77,8 +76,8 @@ public class ExclusionEventViewWindow extends Window
 
 
 	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
-			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
+                                    HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+                                    ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;

@@ -4,10 +4,8 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
-import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -27,17 +25,9 @@ import javax.jms.ConnectionFactory;
         "classpath:ikasan-transaction-pointcut-jms.xml",
         "classpath:logger-conf.xml",
         "classpath:exception-conf.xml",
-        "classpath:jms-conf.xml",
-
-
 } )
 public class ModuleConfig {
 
-    @Resource
-    private JmsContainerConsumer jmsConsumer;
-
-    @Resource
-    private JmsTemplateProducer jmsProducer;
 
     @Resource
     private BuilderFactory builderFactory;
@@ -45,53 +35,37 @@ public class ModuleConfig {
     @Resource
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
-    /**
-     *
-     *
-     * <bean id="sourceFlow"                   class="org.ikasan.builder.FlowFactory">
-     <property name="moduleName"         ref="moduleName" />
-     <property name="name"               value="JMS Source" />
-     <property name="description"        value="JMS Source Description" />
-     <property name="exceptionResolver"  ref="exceptionResolver" />
-     <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
-     <property name="consumer">
-     <bean class="org.ikasan.builder.FlowElementFactory">
-     <property name="name"       value="JMS Consumer"/>
-     <property name="component"  ref="jmsConsumer"/>
-     <property name="transition" ref="jmsProducerFlowElement"/>
-     </bean>
-     </property>
-     <property name="monitor" ref="monitor"/>
-     </bean>
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
-     <bean id="jmsProducerFlowElement" class="org.ikasan.builder.FlowElementFactory">
-     <property name="name"               value="JMS Producer"/>
-     <property name="component"          ref="jmsProducer" />
-     </bean>
-
-
-     * @return
-     */
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-module");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
 
-        FlowBuilder fb = mb.getFlowBuilder("flowName");
+        FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
 
-        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory("failover:(vm://embedded-broker?create=false)");
-        Consumer localJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
+        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("source")
                 .setAutoContentConversion(true)
+                .setConfiguredResourceId("jmsConsumer")
+                .build();
+
+
+        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
+                .setConnectionFactory(connectionFactory)
+                .setDestinationJndiName("target")
+                .setConfiguredResourceId("jmsProducer")
                 .build();
 
         Flow flow = fb
-                .withDescription("flowDescription")
+                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
                 .withErrorReportingServiceFactory(errorReportingServiceFactory)
-                .consumer("consumer", localJmsConsumer)     // jmsConsumer
-                .broker( "exception generating broker", new ExceptionGenerationgBroker())
-                .producer("producer", jmsProducer)
+                .consumer("JMS Consumer", jmsConsumer)
+                .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
+                .producer("JMS Producer", jmsProducer)
                 .build();
 
         Module module = mb.withDescription("Sample Module").addFlow(flow).build();

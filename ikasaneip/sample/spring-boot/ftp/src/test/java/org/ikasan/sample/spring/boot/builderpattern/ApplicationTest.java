@@ -48,16 +48,16 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.*;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
@@ -90,14 +90,14 @@ public class ApplicationTest {
 
         FileSystem fileSystem = new UnixFakeFileSystem();
 
-     //   DirectoryEntry directoryEntry1 = new DirectoryEntry(HOME_DIR);
+        // DirectoryEntry directoryEntry1 = new DirectoryEntry(HOME_DIR);
         DirectoryEntry directoryEntry2 = new DirectoryEntry(FTP_DIR);
         directoryEntry2.setPermissions(new Permissions("rwxrwxrwx"));
 
-        //fileSystem.add(directoryEntry1);
+        // fileSystem.add(directoryEntry1);
         fileSystem.add(directoryEntry2);
         fileSystem.add(new FileEntry(FTP_DIR+FILE_1, CONTENTS_1));
-       // fileSystem.add(new FileEntry(FTP_DIR+"/"+FILE_2, CONTENTS_2));
+        // fileSystem.add(new FileEntry(FTP_DIR+"/"+FILE_2, CONTENTS_2));
 
         fakeFtpServer.setFileSystem(fileSystem);
 
@@ -107,7 +107,7 @@ public class ApplicationTest {
         fakeFtpServer.start();
         port = fakeFtpServer.getServerControlPort();
 
-        String[] args = {""};
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
@@ -130,6 +130,7 @@ public class ApplicationTest {
      *
      * @throws Exception
      */
+    @DirtiesContext
     @Test
     public void test_ftpConsumer_flow() throws Exception {
 
@@ -153,6 +154,7 @@ public class ApplicationTest {
      *
      * @throws Exception
      */
+    @DirtiesContext
     @Test
     public void test_ftpProducer_flow() throws Exception {
 

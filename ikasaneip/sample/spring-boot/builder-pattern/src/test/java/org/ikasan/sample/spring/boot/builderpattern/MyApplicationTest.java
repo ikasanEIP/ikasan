@@ -52,6 +52,7 @@ import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -68,21 +69,24 @@ public class MyApplicationTest
     private IkasanApplication ikasanApplication;
     private MyApplication myApplication;
 
-    @Rule
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     @Before
     public  void setup(){
-        String[] args = {""};
+        broker = new EmbeddedActiveMQBroker();
+        broker.start();
+
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
 
         myApplication = new MyApplication();
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-        broker.start();
     }
 
     @After
     public void shutdown(){
+
         ikasanApplication.close();
+        broker.stop();
     }
     /**
      * Test simple invocation.
@@ -92,7 +96,7 @@ public class MyApplicationTest
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-builder-pattern");
         Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, builderFactory.getComponentBuilder());
 
         Module module = moduleBuilder.addFlow(scheduldeFlow).build();
@@ -115,7 +119,7 @@ public class MyApplicationTest
     public void test_jmsFlow_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-builder-pattern");
 
         Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder, builderFactory.getComponentBuilder() );
 

@@ -40,10 +40,11 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -128,8 +129,8 @@ public class MapErrorReportingServiceDao<T>
          */
     @Override
     public List<ErrorOccurrence> find(List<String> moduleName,
-            List<String> flowName, List<String> flowElementname,
-            Date startDate, Date endDate, int size)
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, int size)
     {
         // TODO Auto-generated method stub
         return null;
@@ -151,9 +152,9 @@ public class MapErrorReportingServiceDao<T>
      */
     @Override
     public List<ErrorOccurrence> find(List<String> moduleName,
-            List<String> flowName, List<String> flowElementname,
-            Date startDate, Date endDate, String action, String exceptionClass,
-            int size)
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, String action, String exceptionClass,
+                                          int size)
     {
         // TODO Auto-generated method stub
         return null;

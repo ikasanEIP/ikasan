@@ -49,7 +49,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -61,18 +62,18 @@ import java.util.*;
  * @author Ikasan Development Team
  */
 public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
-        implements ErrorReportingServiceDao<ErrorOccurrence<byte[]>, String>
+        implements ErrorReportingServiceDao<ErrorOccurrence, String>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
 
     /** batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete ErrorOccurrence s where s.uri in (:event_uris)";
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete ErrorOccurrenceImpl s where s.uri in (:event_uris)";
 
     @Override
     public ErrorOccurrence find(String uri)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         criteria.add(Restrictions.eq("uri", uri));
 
         List<ErrorOccurrence> results = (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria);
@@ -86,20 +87,20 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
     }
 
 	@Override
-	public Map<String, ErrorOccurrence<byte[]>> find(List<String> uris)
+	public Map<String, ErrorOccurrence> find(List<String> uris)
 	{
-		Map<String, ErrorOccurrence<byte[]>> results = new HashMap<String, ErrorOccurrence<byte[]>>();
+		Map<String, ErrorOccurrence> results = new HashMap<String, ErrorOccurrence>();
 
 		List<List<String>> partitions = Lists.partition(uris, 300);
 
 		for(List<String> partition: partitions)
 		{
-			DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+			DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
 			criteria.add(Restrictions.in("uri", partition));
 
-			List<ErrorOccurrence> queryResults = (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria);
+			List<ErrorOccurrenceImpl> queryResults = (List<ErrorOccurrenceImpl>)this.getHibernateTemplate().findByCriteria(criteria);
 
-			for(ErrorOccurrence errorOccurrence: queryResults)
+			for(ErrorOccurrenceImpl errorOccurrence: queryResults)
 			{
 				results.put(errorOccurrence.getUri(), errorOccurrence);
 			}
@@ -112,8 +113,8 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
      * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
      */
 	@Override
-	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, int size)
+	public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+                                                  Date startDate, Date endDate, int size)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
 		
@@ -145,7 +146,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		criteria.add(Restrictions.isNull("userAction"));
 		criteria.addOrder(Order.desc("timestamp"));
 
-        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
+        return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
     
     @Override
@@ -188,13 +189,13 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
             {
                 List<String> ids = new ArrayList<String>();
 
-                Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+                Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
                 criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
                 criteria.setMaxResults(housekeepingBatchSize);
 
                 for (Object errorOccurrenceObj : criteria.list())
                 {
-                    ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorOccurrenceObj;
+                    ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)errorOccurrenceObj;
                     ids.add(errorOccurrence.getUri());
                 }
 
@@ -208,7 +209,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+                Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
                 criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);
@@ -236,7 +237,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
             public Object doInHibernate(Session session) throws HibernateException
             {
 			
-				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
 				
 				if(moduleName != null && moduleName.size() > 0)
 				{
@@ -281,12 +282,12 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
 	 */
 	@Override
-	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName,
-			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, String action, String exceptionClass,
-			int size)
+	public List<ErrorOccurrence> find(List<String> moduleName,
+                                                  List<String> flowName, List<String> flowElementname,
+                                                  Date startDate, Date endDate, String action, String exceptionClass,
+                                                  int size)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
 		
 		if(moduleName != null && moduleName.size() > 0)
 		{
@@ -326,7 +327,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		criteria.add(Restrictions.isNull("userAction"));
 		criteria.addOrder(Order.desc("timestamp"));
 
-        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
+        return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
 
 }

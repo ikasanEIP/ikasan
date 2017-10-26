@@ -43,7 +43,7 @@ package org.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -61,12 +61,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -77,10 +77,11 @@ import static org.junit.Assert.assertThat;
  * 
  * @author Ikasan Development Team
  */
+
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     private IkasanApplication ikasanApplication;
 
@@ -98,15 +99,25 @@ public class ApplicationTest
 
     @Before public void setup()
     {
+        broker = new EmbeddedActiveMQBroker();
+
+        int randomeValue = new Random(10).nextInt();
+        String brokerName = "embedded-broker"+randomeValue;
+
+        broker.setBrokerName(brokerName);
+
         broker.start();
         // startup spring context
-        String[] args = { "" };
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000),
+                "--jms.broker.name="+brokerName
+        };
+
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
         System.out.println("Check is module healthy.");
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = ikasanApplication.getBean(Module.class);
-        flowUUT = (Flow) module.getFlow("flowName");
+        flowUUT = (Flow) module.getFlow("Jms Sample Flow");
 
         // get hold of errorReportingService
         ErrorReportingServiceFactory errorReportingServiceFactory = ikasanApplication
@@ -121,7 +132,7 @@ public class ApplicationTest
         wiretapService = ikasanApplication.getBean("wiretapService", WiretapService.class);
 
         // add wiretap to flow
-        Trigger trigger = new Trigger(module.getName(), flowUUT.getName(), "after", "wiretapJob", "consumer",
+        Trigger trigger = new Trigger(module.getName(), flowUUT.getName(), "after", "wiretapJob", "JMS Consumer",
                 new HashMap<String, String>()
                 {{put("timeToLive", "100");}});
         JobAwareFlowEventListener wiretapListener = ikasanApplication.getBean(JobAwareFlowEventListener.class);
@@ -141,6 +152,7 @@ public class ApplicationTest
         broker.stop();
     }
 
+    @DirtiesContext
     @Test
     public void test_successful_message_processing() throws Exception
     {
@@ -161,6 +173,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_exclusion() throws Exception
     {
@@ -168,7 +181,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowExclusionException(true);
 
         // Perform Test
@@ -194,6 +207,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_in_recovery() throws Exception
     {
@@ -201,7 +215,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowRecoveryException(true);
 
         // Perform Test
@@ -231,6 +245,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_stopped_in_error() throws Exception
     {
@@ -238,7 +253,7 @@ public class ApplicationTest
         // Prepare test data
 
         // setup custome broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("Exception Generating Broker").getFlowComponent();
         exceptionGenerationgBroker.setShouldThrowStoppedInErrorException(true);
 
         // Perform Test
@@ -269,10 +284,9 @@ public class ApplicationTest
     private void startFlow(){
         // start flow
         flowUUT.start();
-        pause(2000);
-        assertEquals("running",flowUUT.getState());
 
-        pause(5000);
+        pause(10000);
+        assertEquals("running",flowUUT.getState());
         flowUUT.stop();
         pause(2000);
         assertEquals("stopped",flowUUT.getState());

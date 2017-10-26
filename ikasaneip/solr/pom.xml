@@ -57,7 +57,6 @@
     <name>Ikasan Solr Implementation</name>
     <description>Ikasan EIP Solr Abstraction</description>
 
-
     <dependencies>
 
         <dependency>
@@ -120,20 +119,13 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-error-reporting-service</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-replay</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -150,18 +142,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- required for unit tests -->
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -172,6 +152,18 @@
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-test-framework</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -214,12 +206,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-wiretap</artifactId>
             <scope>test</scope>
         </dependency>
 

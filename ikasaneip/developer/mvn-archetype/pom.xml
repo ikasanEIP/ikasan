@@ -60,6 +60,7 @@
         <module>jboss-6-module-activemq</module>
         <module>ikasan-jboss-6-activemq-im</module>
         <module>ikasan-rt-conf-jboss-6</module>
+        <module>ikasan-standalone-filesystem-im</module>
     </modules>
 
 </project>

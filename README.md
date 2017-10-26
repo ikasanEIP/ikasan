@@ -39,5 +39,13 @@ Using Eclipse
 8. Wait (m2e takes awhile on initial import)
 
 
-[Getting Started Guide](https://github.com/ikasanEIP/ikasan/tree/GettingStarted/ikasaneip/developer/docs)
+[Getting Started Guide](ikasaneip/developer/)
+
+| Samples overview |
+|-------------|
+|  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
+|  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
+|  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
+|  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
+|  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
 ---------------------

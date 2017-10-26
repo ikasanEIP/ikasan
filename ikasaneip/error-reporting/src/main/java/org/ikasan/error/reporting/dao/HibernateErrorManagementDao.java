@@ -40,11 +40,6 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -54,14 +49,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.dao.constants.ErrorManagementDaoConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
-import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Note;
+import org.ikasan.error.reporting.model.*;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Ikasan Development Team
@@ -74,10 +71,10 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
     public static final String NOW = "now";
 
-    public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrence eo " +
+    public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrenceImpl eo " +
             " where eo.expiry < :" + NOW;
 
-    public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
+    public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrenceImpl eo " +
             " where eo.uri in(:" + EVENT_IDS + ")";
 
     public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
@@ -166,7 +163,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (errorUris != null && errorUris.size() > 0)
         {
             criteria.add(Restrictions.in("uri", errorUris));
@@ -202,7 +199,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             List<String> moduleName, List<String> flowName,
             List<String> flowElementname, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (moduleName != null && moduleName.size() > 0)
         {
             criteria.add(Restrictions.in("moduleName", moduleName));
@@ -305,7 +302,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
         if (moduleName != null)
         {
             criteria.add(Restrictions.eq("moduleName", moduleName));
@@ -377,18 +374,18 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 	}
 
 	@Override
-	public List<ErrorOccurrence<byte[]>> getHarvestableRecords(final int harvestingBatchSize)
+	public List<ErrorOccurrence> getHarvestableRecords(final int harvestingBatchSize)
 	{
-		return (List<ErrorOccurrence<byte[]>>) this.getHibernateTemplate().execute(new HibernateCallback()
+		return (List<ErrorOccurrence>) this.getHibernateTemplate().execute(new HibernateCallback()
 		{
 			public Object doInHibernate(Session session) throws HibernateException
 			{
-				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
 				criteria.add(Restrictions.eq("harvested", false));
 				criteria.setMaxResults(harvestingBatchSize);
 				criteria.addOrder(Order.asc("timestamp"));
 
-				List<ErrorOccurrence> flowInvocationMetrics = criteria.list();
+				List<ErrorOccurrenceImpl> flowInvocationMetrics = criteria.list();
 
 				return flowInvocationMetrics;
 			}

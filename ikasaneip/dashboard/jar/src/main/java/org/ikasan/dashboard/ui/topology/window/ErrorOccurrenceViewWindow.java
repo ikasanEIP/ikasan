@@ -41,7 +41,7 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
@@ -62,11 +62,15 @@ public class ErrorOccurrenceViewWindow extends Window
 	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private PlatformConfigurationService platformConfigurationService;
-	
+
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+	 * @param platformConfigurationService
+     */
 	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			PlatformConfigurationService platformConfigurationService)

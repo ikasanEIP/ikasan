@@ -50,7 +50,7 @@ import org.junit.Assert;
 
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,14 +128,14 @@ public class ErrorCategorisationDaoTest
     @Test
     public void test_save_and_find_categorised_error()
     {
-    	ErrorOccurrence errorOccurrence = new ErrorOccurrence
+    	ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl
     			("moduleName", "flowName", "flowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
     	errorOccurrence.setAction("Retry");
 
         errorReportingServiceDao.save(errorOccurrence);
         
-        errorOccurrence = new ErrorOccurrence
+        errorOccurrence = new ErrorOccurrenceImpl
     			("moduleName", "anotherFlowName", "anotherFlowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         errorOccurrence.setAction("Retry");
