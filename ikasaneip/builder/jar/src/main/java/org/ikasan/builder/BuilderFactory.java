@@ -41,6 +41,8 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.monitor.MonitorFactory;
+import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -98,6 +100,15 @@ public class BuilderFactory implements ApplicationContextAware
     public ComponentBuilder getComponentBuilder()
     {
         return new ComponentBuilder(this.applicationContext);
+    }
+
+    /**
+     * Get an instance of a monitor builder.
+     * @return
+     */
+    public MonitorBuilder getMonitorBuilder()
+    {
+        return new MonitorBuilder(this.applicationContext.getBean(MonitorFactory.class), this.applicationContext.getBean(NotifierFactory.class));
     }
 
     /**
