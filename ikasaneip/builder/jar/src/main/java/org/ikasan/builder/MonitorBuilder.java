@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Monitor builder.
+ * A simple Monitor with notifiers builder.
  * 
  * @author Ikasan Development Team
  */
@@ -66,9 +66,6 @@ public class MonitorBuilder
 
     // allow override of default monitor
     Monitor monitor;
-
-    // list of notifiers to associate with the monitor
-    List<Notifier> notifiers = new ArrayList<Notifier>();
 
     /**
      * Constuctor
@@ -94,61 +91,96 @@ public class MonitorBuilder
      * @param monitor
      * @return
      */
-    public MonitorBuilder withMonitor(Monitor monitor)
+    public NotifierBuilder withMonitor(Monitor monitor)
     {
         this.monitor = monitor;
-        return this;
+        return new NotifierBuilder();
     }
 
     /**
      * Default monitor to track and pass flow state changes to any registered notifiers.
      * @return
      */
-    public MonitorBuilder withFlowStateChangeMonitor()
+    public NotifierBuilder withFlowStateChangeMonitor()
     {
         this.monitor = this.monitorFactory.getMonitor();
-        return this;
+        return new NotifierBuilder();
     }
 
-    public MonitorBuilder withNotifier(Notifier notifier)
-    {
-        this.notifiers.add(notifier);
-        return this;
-    }
 
-    public MonitorBuilder withNotifiers(List<Notifier> notifiers)
+    /**
+     * Notifier builder instance for creating notifiers for push notifications of the
+     * associated monitor this notifier is attached to.
+     * @author Ikasan Development Team
+     */
+    class NotifierBuilder
     {
-        this.notifiers = notifiers;
-        return this;
-    }
+        // list of notifiers to associate with the monitor
+        List<Notifier> notifiers = new ArrayList<Notifier>();
 
-    public MonitorBuilder withEmailNotifier(EmailNotifierConfiguration emailNotifierConfiguration)
-    {
-        Notifier notifier = notifierFactory.getEmailNotifier();
-        if(notifier instanceof ConfiguredResource)
+        /**
+         * Allow specification of a specific notifier
+         * @param notifier
+         * @return
+         */
+        public NotifierBuilder withNotifier(Notifier notifier)
         {
-            ((Configured<EmailNotifierConfiguration>)notifier).setConfiguration(emailNotifierConfiguration);
+            this.notifiers.add(notifier);
+            return this;
         }
 
-        return withNotifier(notifier);
-    }
-
-    public MonitorBuilder withDashboardlNotifier()
-    {
-        Notifier notifier = notifierFactory.getEmailNotifier();
-
-        return withNotifier(notifier);
-    }
-
-    public Monitor build()
-    {
-        if(monitor == null)
+        /**
+         * Allow specification of a list of notifiers
+         * @param notifiers
+         * @return
+         */
+        public NotifierBuilder withNotifiers(List<Notifier> notifiers)
         {
-            monitor = this.monitorFactory.getMonitor();
+            this.notifiers = notifiers;
+            return this;
         }
 
-        monitor.setNotifiers(notifiers);
-        return monitor;
+        /**
+         * Get an instance of the default email notifier based on the provided configuration.
+         * @param emailNotifierConfiguration
+         * @return
+         */
+        public NotifierBuilder withEmailNotifier(EmailNotifierConfiguration emailNotifierConfiguration)
+        {
+            Notifier notifier = notifierFactory.getEmailNotifier();
+            if(notifier instanceof ConfiguredResource)
+            {
+                ((Configured<EmailNotifierConfiguration>)notifier).setConfiguration(emailNotifierConfiguration);
+            }
+
+            return withNotifier(notifier);
+        }
+
+        /**
+         * Get an instance of the default dashboard notifier.
+         * @return
+         */
+        public NotifierBuilder withDashboardlNotifier()
+        {
+            Notifier notifier = notifierFactory.getDashboardNotifier();
+            return withNotifier(notifier);
+        }
+
+        /**
+         * Build an instance of the monitor with associated notifiers.
+         * @return
+         */
+        public Monitor build()
+        {
+            if(monitor == null)
+            {
+                monitor = monitorFactory.getMonitor();
+            }
+
+            monitor.setNotifiers(notifiers);
+            return monitor;
+        }
+
     }
 }
 
