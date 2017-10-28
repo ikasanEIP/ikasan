@@ -55,6 +55,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:scheduler-service-conf.xml",
         "classpath:error-reporting-service-conf.xml",
         "classpath:recoveryManager-service-conf.xml",
+        "classpath:monitor-service-conf.xml",
         "classpath:module-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
