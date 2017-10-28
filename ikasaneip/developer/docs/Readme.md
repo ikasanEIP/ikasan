@@ -150,14 +150,12 @@ This should reflect the Maven version you have just installed.
 For instance – the bold output depicts the important information,
 
 ```
-**Apache Maven 3.3.3** (r1232337; 2012-01-17 16:44:56+0800)
-Maven home: /opt/platform/maven-platform/apache-maven-3.0.4
-Java version: 1.7.0\_51, 
-vendor: Oracle Corporation
-Java home: /Library/Java/JavaVirtualMachines/jdk1.7.0\_51.jdk/Contents/Home/jre
-Default locale: en\_US, 
-platform encoding: UTF-8
-OS name: 'mac os x', version: '10.10.2', arch: 'x86\_64', family: 'mac'
+Apache Maven 3.3.9 (bb52d8502b132ec0a5a3f4c09453c07478323dc5; 2015-11-10T16:41:47+00:00)
+Maven home: /usr/local/Cellar/maven/3.3.9/libexec
+Java version: 1.8.0_31, vendor: Oracle Corporation
+Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/jre
+Default locale: en_GB, platform encoding: UTF-8
+OS name: "mac os x", version: "10.12.6", arch: "x86_64", family: "mac"
 ```
 
 # Runtime Environment
@@ -168,6 +166,88 @@ The specifics of each Application Server installation and configuration for Ikas
 
 ## Standalone JVM
 
+Running Ikasan Integration Module (IM) on single JVM does not require any any prior software. IM will run as a web application and would ship with embedded Tomcat web server. Moreover to simplify the setup process all samples are shipped with H2 in memory database. There are two options on how to proceed with standalone JVM approach:
+ * check out one of the ready samples which can be downloaded from public MVN repo and started
+ * Generate new IM from artefact provided
+
+### Use existing standalone samples
+
+| Samples overview |
+|-------------|
+|  [spring-boot-builder-pattern](../../sample/spring-boot/builder-pattern/README.md) |
+|  [spring-boot-file](../../sample/spring-boot/file/README.md) |
+|  [spring-boot-jms](../../sample/spring-boot/jms/README.md) |
+|  [spring-boot-ftp](../../sample/spring-boot/ftp/README.md) |
+|  [spring-boot-sftp](../../sample/spring-boot/sftp/README.md) |
+
+
+### Creating an Integration Module from Sample Artefact
+
+The basic constituents of an Ikasan Integration Module (IM) are the same. Due to this we have created some out of the box IM archetypes based on common technical integration problems.
+
+#### Local File System to JMS / JMS to Local File System Archetype
+
+This archetype creates a working integration module containing two flows,
+
+- **File System to JMS** – local file system files are consumed and published as JMS (ActiveMQ) events
+- **JMS to File System** – JMS (ActiveMQ) events are consumed and published to a local file system
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+    -DtargetFlowName=<Target Flow Name>
+```
+
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always org.ikasan for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke
+
+where the following parameters provide the configuration for the parent pom for your new Integration Module,
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+- **targetFlowName** – target flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
+    \-DarchetypeVersion=2.0.0-SNAPSHOT    
+    \-DgroupId=com.ikasan     
+    \-DartifactId=myIntegrationModule     
+    \-Dversion=1.0.0-SNAPSHOT     \
+    \-DsourceFlowName=fileSystemToJMSFlow     \
+    \-DtargetFlowName=jmsToFileSystemFlow
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean, package assembly.
+
+```
+cd myIntegrationModule
+mvn clean package assembly:assembly 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
 
 
 ## JBoss EAP Application Server
