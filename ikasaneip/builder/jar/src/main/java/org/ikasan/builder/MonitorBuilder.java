@@ -113,7 +113,7 @@ public class MonitorBuilder
      * associated monitor this notifier is attached to.
      * @author Ikasan Development Team
      */
-    class NotifierBuilder
+    public class NotifierBuilder
     {
         // list of notifiers to associate with the monitor
         List<Notifier> notifiers = new ArrayList<Notifier>();
