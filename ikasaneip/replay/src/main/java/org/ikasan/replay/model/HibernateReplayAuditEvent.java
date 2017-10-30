@@ -40,16 +40,21 @@
  */
 package org.ikasan.replay.model;
 
+import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.replay.ReplayAudit;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayAuditEvent
+public class HibernateReplayAuditEvent implements ReplayAuditEvent<ReplayAuditEventKey>
 {
 	private ReplayAuditEventKey id;
+	private String moduleName;
+	private String flowName;
+	private String eventId;
 	private ReplayAudit replayAudit;
 	private ReplayEvent replayEvent;
 	private boolean success;
@@ -58,7 +63,7 @@ public class ReplayAuditEvent
    
     
     @SuppressWarnings("unused")
-	private ReplayAuditEvent()
+	private HibernateReplayAuditEvent()
     {
     }
 
@@ -68,7 +73,7 @@ public class ReplayAuditEvent
      * @param replayAudit
      * @param replayEvent
      */
-	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp)
+	public HibernateReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent,  boolean success, String result, long timestamp)
 	{
 		super();
 		this.replayAudit = replayAudit;
@@ -83,6 +88,9 @@ public class ReplayAuditEvent
 		}
 		
 		this.id = new ReplayAuditEventKey(replayAudit.getId(), replayEvent.getId());
+		this.moduleName = replayEvent.getModuleName();
+		this.flowName = replayEvent.getFlowName();
+		this.eventId = replayEvent.getEventId();
 		this.resultMessage = result;
 		this.success = success;
 		this.timestamp = timestamp;
@@ -106,6 +114,45 @@ public class ReplayAuditEvent
 		this.id = id;
 	}
 
+	public String getModuleName()
+	{
+		return moduleName;
+	}
+
+	public void setModuleName(String moduleName)
+	{
+		this.moduleName = moduleName;
+	}
+
+	public String getFlowName()
+	{
+		return flowName;
+	}
+
+	public void setFlowName(String flowName)
+	{
+		this.flowName = flowName;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
+	}
+
+	public ReplayEvent getReplayEvent()
+	{
+		return replayEvent;
+	}
+
+	public void setReplayEvent(ReplayEvent replayEvent)
+	{
+		this.replayEvent = replayEvent;
+	}
 
 	/**
 	 * @return the replayAudit

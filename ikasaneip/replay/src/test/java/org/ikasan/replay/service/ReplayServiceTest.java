@@ -52,10 +52,10 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestListener;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.ikasan.replay.dao.HibernateReplayDao;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.replay.*;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -96,9 +96,9 @@ public class ReplayServiceTest
 	@Resource ReplayDao replayDao;
 
 
-	@Resource(name = "replayDao") ReplayAuditDao<ReplayAudit, ReplayAuditEvent> replayAuditDao;
+	@Resource(name = "replayDao") ReplayAuditDao<HibernateReplayAudit, HibernateReplayAuditEvent> replayAuditDao;
 
-	@Resource ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+	@Resource ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
@@ -175,11 +175,11 @@ public class ReplayServiceTest
     	this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
     	
     	
-    	List<ReplayAudit> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	List<HibernateReplayAudit> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	ReplayAudit replayAudit = replayAudits.get(0);
+    	HibernateReplayAudit replayAudit = replayAudits.get(0);
     	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
     	
     	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
@@ -301,14 +301,14 @@ public class ReplayServiceTest
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
 
-		List<ReplayAudit> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+		List<HibernateReplayAudit> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
 		Long auditId1 = replayAudits.get(0).getId();
 		Long auditId2 = replayAudits.get(1).getId();
 		Long auditId3 = replayAudits.get(2).getId();
 		Long auditId4 = replayAudits.get(3).getId();
 
-		List<ReplayAuditEvent> auditEvents = this.replayAuditDao.getReplayAuditEventsByAuditId(auditId1);
+		List<HibernateReplayAuditEvent> auditEvents = this.replayAuditDao.getReplayAuditEventsByAuditId(auditId1);
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId2));
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId3));
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId4));
@@ -334,14 +334,14 @@ public class ReplayServiceTest
 	}
     
     
-    class ReplayListenerImpl implements ReplayListener<ReplayAuditEvent>
+    class ReplayListenerImpl implements ReplayListener<HibernateReplayAuditEvent>
     {
     	public int count = 0;
 		/* (non-Javadoc)
 		 * @see org.ikasan.spec.replay.ReplayListener#onReplay(java.lang.Object)
 		 */
 		@Override
-		public void onReplay(ReplayAuditEvent event) 
+		public void onReplay(HibernateReplayAuditEvent event)
 		{
 			++count;
 		}

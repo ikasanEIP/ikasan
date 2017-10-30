@@ -38,56 +38,71 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.replay.window;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
-import org.ikasan.replay.model.HibernateReplayAudit;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayManagementService;
-
-import com.vaadin.ui.Window;
+package org.ikasan.spec.replay;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayAuditViewWindow extends Window
+public interface ReplayAuditEvent<KEY>
 {
-	private Logger logger = Logger.getLogger(ReplayAuditViewWindow.class);
+	/**
+	 * @return the id
+	 */
+	public KEY getId();
 
-	private static final long serialVersionUID = -3347325521531925322L;
-	
-	private HibernateReplayAudit replayAudit;
-	
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(KEY id);
+
+
+	/**
+	 * @return the replayAudit
+	 */
+	public ReplayAudit getReplayAudit();
+
+
+	/**
+	 * @param replayAudit the replayAudit to set
+	 */
+	public void setReplayAudit(ReplayAudit replayAudit);
 	
 
 	/**
-	 * @param policy
+	 * @return the success
 	 */
-	public ReplayAuditViewWindow(HibernateReplayAudit replayAudit, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService)
-	{
-		super();
-		this.replayAudit = replayAudit;
-		this.replayManagementService = replayManagementService;
-		
-		this.init();
-	}
+	public boolean isSuccess();
 
 
-	public void init()
-	{
-		this.setModal(true);
-		this.setResizable(false);
-		this.setHeight("90%");
-		this.setWidth("90%");
-		
-		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(this.replayAudit, replayManagementService);		
-		
-		this.setContent(panel);
-	}
+	/**
+	 * @param success the success to set
+	 */
+	public void setSuccess(boolean success);
 
+
+	/**
+	 * @return the resultMessage
+	 */
+	public String getResultMessage();
+
+
+	/**
+	 * @param resultMessage the resultMessage to set
+	 */
+	public void setResultMessage(String resultMessage);
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp();
+
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp);
+	
 }

@@ -6,12 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.replay.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.codec.binary.Base64;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -25,16 +26,16 @@ import org.springframework.web.client.RestTemplate;
  * @author Ikasan Development Team
  *
  */
-public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent>
+public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse>
 {
 	private static Logger logger = LoggerFactory.getLogger(ReplayService.class);
 	
-	private ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao;
+	private ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent> replayAuditDao;
 	
 	private boolean cancel = false;
     
-    private List<ReplayListener<ReplayAuditEvent>> replayListeners 
-    	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
+    private List<ReplayListener<HibernateReplayAuditEvent>> replayListeners
+    	= new ArrayList<ReplayListener<HibernateReplayAuditEvent>>();
 
     private RestTemplate restTemplate;
 	/**
@@ -60,12 +61,12 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	 */
 	@Override
 	public void replay(String targetServer, List<ReplayEvent> events,
-			String authUser, String authPassword, String user, String replayReason) 
+								 String authUser, String authPassword, String user, String replayReason)
 	{
 		cancel = false;
 
-    	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
-    	logger.debug("Saving replayAudit: " + replayAudit);
+    	HibernateReplayAudit replayAudit = new HibernateReplayAudit(user, replayReason, targetServer);
+    	logger.info("Saving replayAudit: " + replayAudit);
     	
     	this.replayAuditDao.saveOrUpdateAudit(replayAudit);
     	
@@ -82,57 +83,57 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     			targetServer += "/";
     		}
 
-            logger.info("Event: " + event.getEvent());
+            logger.info("Event: " + event.getEventId());
 
             ResponseEntity<String> response = null;
 
-				String url = targetServer
-						+ event.getModuleName().replace(" ", "%20")
-						+ "/rest/replay/eventReplay/"
-						+ event.getModuleName().replace(" ", "%20")
-						+ "/"
-						+ event.getFlowName().replace(" ", "%20");
+			String url = targetServer
+					+ event.getModuleName().replace(" ", "%20")
+					+ "/rest/replay/eventReplay/"
+					+ event.getModuleName().replace(" ", "%20")
+					+ "/"
+					+ event.getFlowName().replace(" ", "%20");
 
-				HttpEntity request = initRequest(event.getEvent(), event.getModuleName(), authUser, authPassword);
+			HttpEntity request = initRequest(event.getEvent(), event.getModuleName(), authUser, authPassword);
 
-				logger.info("Attempting to call URL: " + url);
+			logger.info("Attempting to call URL: " + url);
 
-				String responseBody = null;
+			String responseBody = null;
 
-				try
-				{
-					response = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
-					responseBody = response.getBody();
-				}
-				catch(final HttpClientErrorException e)
-				{
-					logger.error("An error has occurred attempting to relay event: " + e.getResponseBodyAsString(), e);
-					responseBody = e.getResponseBodyAsString();
-				}
-				catch (Exception e)
-				{
-					logger.error("An error has occurred attempting to relay event: " + e.getMessage(),e);
-				}
+			try
+			{
+				response = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+				responseBody = response.getBody();
+			}
+            catch(final HttpClientErrorException e)
+            {
+                responseBody = String.format("An error has occurred attempting to replay event: HTTP Status Code[%s], Response[%s]", e.getRawStatusCode(),
+                        e.getResponseBodyAsString());
+            }
+            catch (Exception e)
+            {
+                responseBody = String.format("An error has occurred attempting to replay event: Error Message[%s]", e.getMessage());
+            }
 
-				boolean success = true;
+			boolean success = true;
 
-				if(response == null || !response.getStatusCode().is2xxSuccessful())
-				{
-					success = false;
-				}
+			if(response == null || !response.getStatusCode().is2xxSuccessful())
+			{
+				success = false;
+			}
 
-				ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
-						responseBody, System.currentTimeMillis());
+			HibernateReplayAuditEvent replayAuditEvent = new HibernateReplayAuditEvent(replayAudit, event, success,
+					responseBody, System.currentTimeMillis());
 
-				logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
+			logger.info("Saving replayAuditEvent: " + replayAuditEvent);
 
-				this.replayAuditDao.saveOrUpdate(replayAuditEvent);
+			this.replayAuditDao.saveOrUpdate(replayAuditEvent);
 
 
-				for(ReplayListener<ReplayAuditEvent> listener: this.replayListeners)
-				{
-					listener.onReplay(replayAuditEvent);
-				}
+			for(ReplayListener<HibernateReplayAuditEvent> listener: this.replayListeners)
+			{
+				listener.onReplay(replayAuditEvent);
+			}
     	}
 	}
 
@@ -140,13 +141,13 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	 * @see org.ikasan.spec.replay.ReplayService#replay(java.util.List)
 	 */
 	@Override
-	public void replay(String targetServer, ReplayEvent event,
+	public ReplayResponse replay(String targetServer, ReplayEvent event,
 					   String authUser, String authPassword, String user, String replayReason)
 	{
 		cancel = false;
 
-		ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
-		logger.debug("Saving replayAudit: " + replayAudit);
+		HibernateReplayAudit replayAudit = new HibernateReplayAudit(user, replayReason, targetServer);
+		logger.info("Saving replayAudit: " + replayAudit);
 
 		this.replayAuditDao.saveOrUpdateAudit(replayAudit);
 
@@ -182,14 +183,15 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		}
 		catch(final HttpClientErrorException e)
 		{
-			logger.error("An error has occurred attempting to replay event: " + e.getResponseBodyAsString(), e);
-			responseBody = e.getResponseBodyAsString();
-			exception = new RuntimeException(e.getResponseBodyAsString(), e);
+			responseBody = String.format("An error has occurred attempting to replay event: HTTP Status Code[%s], Response[%s]", e.getRawStatusCode(),
+					e.getResponseBodyAsString());
+
+			exception = new RuntimeException(responseBody, e);
 		}
 		catch (Exception e)
 		{
-			logger.error("An error has occurred attempting to replay event: " + e.getMessage(),e);
-			exception = new RuntimeException(e.getMessage(), e);
+			responseBody = String.format("An error has occurred attempting to replay event: Error Message[%s]", e.getMessage());
+			exception = new RuntimeException(responseBody, e);
 		}
 
 		boolean success = true;
@@ -199,17 +201,19 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 			success = false;
 		}
 
-		ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
+		HibernateReplayAuditEvent replayAuditEvent = new HibernateReplayAuditEvent(replayAudit, event, success,
 				responseBody, System.currentTimeMillis());
 
-		logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
+		logger.info("Saving replayAuditEvent: " + replayAuditEvent);
 
 		this.replayAuditDao.saveOrUpdate(replayAuditEvent);
 
-		if(exception != null)
+		for(ReplayListener<HibernateReplayAuditEvent> listener: this.replayListeners)
 		{
-			throw exception;
+			listener.onReplay(replayAuditEvent);
 		}
+
+		return new ReplayResponse(success, responseBody, exception);
 	}
 
 
@@ -231,7 +235,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)
 	 */
 	@Override
-	public void addReplayListener(ReplayListener<ReplayAuditEvent> listener) 
+	public void addReplayListener(ReplayListener<HibernateReplayAuditEvent> listener)
 	{
 		this.replayListeners.add(listener);
 	}

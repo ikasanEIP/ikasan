@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
+import org.ikasan.exclusion.model.SolrExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -59,7 +60,7 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
 
             SolrExclusionServiceImpl solrExclusionService = new SolrExclusionServiceImpl(dao);
 
-            ExclusionEvent event = new ExclusionEvent("moduleName", "flowName", "componentName",
+            SolrExclusionEventImpl event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                 "event".getBytes(), "uri");
 
 

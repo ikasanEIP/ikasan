@@ -44,6 +44,7 @@ import java.util.ArrayList;
 
 import javax.annotation.Resource;
 
+import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.junit.Assert;
@@ -78,7 +79,7 @@ public class HibernateExclusionEventDaoTest
     @Test
     public void test_contains_save_find_delete_operations()
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+        ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
         Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
 
         exclusionEventDao.save(exclusionEvent);
@@ -96,23 +97,23 @@ public class HibernateExclusionEventDaoTest
     @Test
     public void test_find_by_various_criteria()
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+        ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
         exclusionEventDao.save(exclusionEvent);
         
         
-        exclusionEvent = new ExclusionEvent("moduleName1", "flowName1", "lifeIdentifier1", "event".getBytes(), "errorUri1");
+        exclusionEvent = new ExclusionEventImpl("moduleName1", "flowName1", "lifeIdentifier1", "event".getBytes(), "errorUri1");
         exclusionEventDao.save(exclusionEvent);
         
-        exclusionEvent = new ExclusionEvent("moduleName5", "flowName5", "lifeIdentifier5", "event".getBytes(), "errorUri2");
+        exclusionEvent = new ExclusionEventImpl("moduleName5", "flowName5", "lifeIdentifier5", "event".getBytes(), "errorUri2");
         exclusionEventDao.save(exclusionEvent);
         
-        exclusionEvent = new ExclusionEvent("moduleName2", "flowName2", "lifeIdentifier2", "event".getBytes(), "errorUri3");
+        exclusionEvent = new ExclusionEventImpl("moduleName2", "flowName2", "lifeIdentifier2", "event".getBytes(), "errorUri3");
         exclusionEventDao.save(exclusionEvent);
         
-        exclusionEvent = new ExclusionEvent("moduleName3", "flowName3", "lifeIdentifier3", "event".getBytes(), "errorUri4");
+        exclusionEvent = new ExclusionEventImpl("moduleName3", "flowName3", "lifeIdentifier3", "event".getBytes(), "errorUri4");
         exclusionEventDao.save(exclusionEvent);
         
-        exclusionEvent = new ExclusionEvent("moduleName4", "flowName4", "lifeIdentifier4", "event".getBytes(), "errorUri5");
+        exclusionEvent = new ExclusionEventImpl("moduleName4", "flowName4", "lifeIdentifier4", "event".getBytes(), "errorUri5");
         exclusionEventDao.save(exclusionEvent);
        
         ArrayList<String> moduleNames = new ArrayList<String>();

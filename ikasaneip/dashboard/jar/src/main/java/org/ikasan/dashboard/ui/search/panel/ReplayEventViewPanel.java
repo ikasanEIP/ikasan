@@ -132,11 +132,13 @@ public class ReplayEventViewPanel extends Panel
 		errorOccurrenceDetailsPanel.setSizeFull();
 		errorOccurrenceDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(2, 7);
+		GridLayout layout = new GridLayout(4, 7);
 		layout.setSizeFull();
 		layout.setSpacing(true);
-		layout.setColumnExpandRatio(0, 0.2f);
-		layout.setColumnExpandRatio(1, 0.8f);
+		layout.setColumnExpandRatio(0, 0.1f);
+		layout.setColumnExpandRatio(1, 0.4f);
+		layout.setColumnExpandRatio(2, 0.1f);
+		layout.setColumnExpandRatio(3, 0.4f);
 		
 		Label wiretapDetailsLabel = new Label("Replay Event Details");
 		wiretapDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -196,6 +198,23 @@ public class ReplayEventViewPanel extends Panel
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
+
+		Label commentLabel = new Label("Comment:");
+		commentLabel.setSizeUndefined();
+
+		layout.addComponent(commentLabel, 2, 1);
+		layout.setComponentAlignment(commentLabel, Alignment.MIDDLE_RIGHT);
+
+		TextArea commentTextArea = new TextArea();
+		commentTextArea.setWidth("80%");
+		commentTextArea.setRows(6);
+		commentTextArea.setRequired(true);
+		commentTextArea.setRequiredError("A comment is required in order to submit.");
+		commentTextArea.setValidationVisible(false);
+
+		layout.addComponent(commentTextArea, 3, 1, 3, 5);
+		layout.setComponentAlignment(commentLabel, Alignment.MIDDLE_RIGHT);
+
 		
 		final Button replayButton = new Button("Replay");
 
@@ -209,13 +228,24 @@ public class ReplayEventViewPanel extends Panel
 		{
 			public void buttonClick(ClickEvent event)
 			{
+				try
+				{
+					commentTextArea.setValidationVisible(false);
+					commentTextArea.validate();
+				}
+				catch (Exception e)
+				{
+					commentTextArea.setValidationVisible(true);
+					return;
+				}
+
 				replayButton.setVisible(false);
 
 				try
 				{
 					Module module = topologyService.getModuleByName(replayEvent.getModuleName());
 					replayService.replay(module.getServer().getUrl(), replayEvent, authentication.getName(),
-							(String)authentication.getCredentials(), authentication.getName(),"");
+							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue());
 				}
 				catch (RuntimeException e)
 				{
@@ -241,7 +271,7 @@ public class ReplayEventViewPanel extends Panel
 			replayButton.setVisible(false);
 		}
         
-        layout.addComponent(replayButton, 0, 6, 1, 6);
+        layout.addComponent(replayButton, 0, 6, 3, 6);
 		layout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
 		
 		GridLayout wrapperLayout = new GridLayout(2, 4);

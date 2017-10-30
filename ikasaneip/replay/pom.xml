@@ -1,317 +1,319 @@
-<!--
-# //
-# //
-# // $Id$
-# // $URL$
-# //
-# // ====================================================================
-# // Ikasan Enterprise Integration Platform
-# //
-# // Distributed under the Modified BSD License.
-# // Copyright notice: The copyright for this software and a full listing
-# // of individual contributors are as shown in the packaged copyright.txt
-# // file.
-# //
-# // All rights reserved.
-# //
-# // Redistribution and use in source and binary forms, with or without
-# // modification, are permitted provided that the following conditions are met:
-# //
-# //  - Redistributions of source code must retain the above copyright notice,
-# //    this list of conditions and the following disclaimer.
-# //
-# //  - Redistributions in binary form must reproduce the above copyright notice,
-# //    this list of conditions and the following disclaimer in the documentation
-# //    and/or other materials provided with the distribution.
-# //
-# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
-# //    be used to endorse or promote products derived from this software without
-# //    specific prior written permission.
-# //
-# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# // ====================================================================
-# //
-# // Author:  Ikasan Development Team
-# //
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
-
-
-    <artifactId>ikasan-replay</artifactId>
-    <packaging>jar</packaging>
-    <name>Ikasan Replay Service</name>
-    <description>The replay library for the Ikasan Enterprise Integration Platform</description>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-module</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-housekeeping</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-exclusion</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-flow</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-hospital</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-replay</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-serialiser</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
-        <dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.transaction</groupId>
-					<artifactId>jta</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
-
-        <!-- Test Dependencies -->
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-</project>
+<?xml version="1.0" encoding="UTF-8"?>
+<f:DerivFeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.fpml.org/2009/FpML-4-7"
+             xmlns:f="urn:derivfeed-xsd">
+    <f:BloombergFirmID>10</f:BloombergFirmID>
+    <f:Version>200</f:Version>
+    <f:HasTransactionData>true</f:HasTransactionData>
+    <f:SecurityIdentifierFlag>1</f:SecurityIdentifierFlag>
+    <f:SecurityIdentifier>SLEK6TEM3</f:SecurityIdentifier>
+    <f:SecurityCurrencyISOCode>JPY</f:SecurityCurrencyISOCode>
+    <f:SecurityProductKey>8</f:SecurityProductKey>
+    <f:BloombergIdentifier>SLEK6TEM3</f:BloombergIdentifier>
+    <f:Ticker>/FPSW</f:Ticker>
+    <f:MaturityExpirationDate>2021-10-31</f:MaturityExpirationDate>
+    <f:BuySellCoverShortFlag>B</f:BuySellCoverShortFlag>
+    <f:RecordType>202</f:RecordType>
+    <f:TradeDate>2017-10-30T05:07:34</f:TradeDate>
+    <f:AsOfTradeDate>2017-10-30T15:31:30</f:AsOfTradeDate>
+    <f:SettlementDate>2017-10-31</f:SettlementDate>
+    <f:TradeAmount>4000000000.0</f:TradeAmount>
+    <f:CustomerAccountCounterparty>LCHSWPMBA</f:CustomerAccountCounterparty>
+    <f:AccountCounterpartyShortName>LCHSWPMBA</f:AccountCounterpartyShortName>
+    <f:ProductSubFlag>9</f:ProductSubFlag>
+    <f:ShortNotes>
+        <f:ShortNote>
+            <f:Index>1</f:Index>
+            <f:Text>LCHSWPMBA</f:Text>
+        </f:ShortNote>
+        <f:ShortNote>
+            <f:Index>2</f:Index>
+            <f:Text>SLEK6TEM</f:Text>
+        </f:ShortNote>
+        <f:ShortNote>
+            <f:Index>3</f:Index>
+            <f:Text>YES</f:Text>
+        </f:ShortNote>
+        <f:ShortNote>
+            <f:Index>4</f:Index>
+            <f:Text>JPY</f:Text>
+        </f:ShortNote>
+    </f:ShortNotes>
+    <f:LongNotes>
+        <f:LongNote>
+            <f:Index>1</f:Index>
+            <f:Text>CP: CSFB INTSG</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>3</f:Index>
+            <f:Text>AV: 0.000: MARK UP: 0.000:</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>4</f:Index>
+            <f:Text>FREE/AP: A:SAFE CUSTODY: N:SGA:</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>5</f:Index>
+            <f:Text>U:1010000051SW10000000LCH0004141785133815597</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>6</f:Index>
+            <f:Text>MW: 87215452</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>7</f:Index>
+            <f:Text>TV: TRAD</f:Text>
+        </f:LongNote>
+        <f:LongNote>
+            <f:Index>8</f:Index>
+            <f:Text>LCH: LCH00041417851</f:Text>
+        </f:LongNote>
+    </f:LongNotes>
+    <f:TraderAccountName>JPYSWAP</f:TraderAccountName>
+    <f:LastLogin>TKONO13</f:LastLogin>
+    <f:SettlementCurrencyISOCode>JPY</f:SettlementCurrencyISOCode>
+    <f:SettlementCurrencyRate>1.0</f:SettlementCurrencyRate>
+    <f:CancelDueToCorrection>N</f:CancelDueToCorrection>
+    <f:InvertFlag>N</f:InvertFlag>
+    <f:RetailFeed>true</f:RetailFeed>
+    <f:WorkoutDate>2021-10-31</f:WorkoutDate>
+    <f:AutoExTradeFlag>N</f:AutoExTradeFlag>
+    <f:TraderToTraderTradeFlag>N</f:TraderToTraderTradeFlag>
+    <f:UniqueBloombergID>COSLEK6TEM</f:UniqueBloombergID>
+    <f:SystemDate>2017-10-30</f:SystemDate>
+    <f:ImpactFlag>true</f:ImpactFlag>
+    <f:TraderAccountNumber>495</f:TraderAccountNumber>
+    <f:TransactionType>PCT</f:TransactionType>
+    <f:AllocatedTicketUserId>16548005</f:AllocatedTicketUserId>
+    <f:TransactionNumber>4903863</f:TransactionNumber>
+    <f:TransactionNumberOfOriginTrans>4903550</f:TransactionNumberOfOriginTrans>
+    <f:QuoteTypeIndicator>1</f:QuoteTypeIndicator>
+    <f:SoftDollarFlag>N</f:SoftDollarFlag>
+    <f:MasterAccount>LCHSWPMBA</f:MasterAccount>
+    <f:MasterAccountName>LCHSWPMBA</f:MasterAccountName>
+    <f:MatchDate>2017-10-30T05:07:33</f:MatchDate>
+    <f:PaySideSettlementCalendar1>EN</f:PaySideSettlementCalendar1>
+    <f:PaySideSettlementCalendar2>JN</f:PaySideSettlementCalendar2>
+    <f:ReceiveSideSettlementCalendar1>EN</f:ReceiveSideSettlementCalendar1>
+    <f:ReceiveSideSettlementCalendar2>JN</f:ReceiveSideSettlementCalendar2>
+    <f:PaySideFixingCalendar1>EN</f:PaySideFixingCalendar1>
+    <f:PaySideCalculationCalendar1>EN</f:PaySideCalculationCalendar1>
+    <f:PaySideCalculationCalendar2>JN</f:PaySideCalculationCalendar2>
+    <f:ReceiveSideCalculationCalendar1>EN</f:ReceiveSideCalculationCalendar1>
+    <f:ReceiveSideCalculationCalendar2>JN</f:ReceiveSideCalculationCalendar2>
+    <f:Counterparty>LCHSWPMBA</f:Counterparty>
+    <f:PayResetFrequency>S</f:PayResetFrequency>
+    <f:PayCurrency>JPY</f:PayCurrency>
+    <f:ReceiveCurrency>JPY</f:ReceiveCurrency>
+    <f:PayNotional>4000000000</f:PayNotional>
+    <f:ReceiveNotional>4000000000</f:ReceiveNotional>
+    <f:FloatLagTerm>2</f:FloatLagTerm>
+    <f:PayReceiveFixed>RECEIVE</f:PayReceiveFixed>
+    <f:SwapType>Rec Fix/Pay Flt</f:SwapType>
+    <f:EffectiveDate>2017-10-31</f:EffectiveDate>
+    <f:DateRollConvention>3</f:DateRollConvention>
+    <f:PaySideDayCount>ACT/360</f:PaySideDayCount>
+    <f:ReceiveSideDayCount>ACT/365.FIXED</f:ReceiveSideDayCount>
+    <f:PaySideFrequency>S</f:PaySideFrequency>
+    <f:ReceiveSideFrequency>S</f:ReceiveSideFrequency>
+    <f:FirstCouponDate>2018-04-27</f:FirstCouponDate>
+    <f:PaySideDateRollingConvention>4</f:PaySideDateRollingConvention>
+    <f:ReceiveSideDateRollingConvention>4</f:ReceiveSideDateRollingConvention>
+    <f:PaySideBusinessDayAdjustment>3</f:PaySideBusinessDayAdjustment>
+    <f:ReceiveSideBusinessDayAdjustment>3</f:ReceiveSideBusinessDayAdjustment>
+    <f:PayLegFirstCouponDate>2018-04-27</f:PayLegFirstCouponDate>
+    <f:ReceiveLegFirstCouponDate>2018-04-27</f:ReceiveLegFirstCouponDate>
+    <f:LastResetDate>2017-10-27</f:LastResetDate>
+    <f:NextResetDate>2018-04-25</f:NextResetDate>
+    <f:PayStubReset>-0.0033</f:PayStubReset>
+    <f:NextCouponDate>2018-04-27</f:NextCouponDate>
+    <f:PayFloatingRateIndex>JY0006M Index</f:PayFloatingRateIndex>
+    <f:PayFinalAmount>4000000000.0</f:PayFinalAmount>
+    <f:ReceiveFinalAmount>4000000000.0</f:ReceiveFinalAmount>
+    <f:PaySideTicker>/FPSW</f:PaySideTicker>
+    <f:ReceiveSideTicker>/FPSW</f:ReceiveSideTicker>
+    <f:PaySideSeries>0002</f:PaySideSeries>
+    <f:ReceiveSideSeries>0001</f:ReceiveSideSeries>
+    <f:OriginalPayNotionalAmount>2147483647</f:OriginalPayNotionalAmount>
+    <f:OriginalReceiveNotionalAmount>2147483647</f:OriginalReceiveNotionalAmount>
+    <f:PaySideMaturityDate>2021-10-31</f:PaySideMaturityDate>
+    <f:ReceiveSideMaturityDate>2021-10-31</f:ReceiveSideMaturityDate>
+    <f:PaySideEffectiveDate>2017-10-31</f:PaySideEffectiveDate>
+    <f:ReceiveSideEffectiveDate>2017-10-31</f:ReceiveSideEffectiveDate>
+    <f:ValuationDate>2017-11-01</f:ValuationDate>
+    <f:SwapPrincipal>219417.0</f:SwapPrincipal>
+    <f:PayAccrued>333.0</f:PayAccrued>
+    <f:ReceiveAccrued>8630.0</f:ReceiveAccrued>
+    <f:NetAccrued>8963.0</f:NetAccrued>
+    <f:MarketValue>219417.0</f:MarketValue>
+    <f:TotalValue>228380.0</f:TotalValue>
+    <f:SprdDV01>1605302.0</f:SprdDV01>
+    <f:SwapPayCurveNumber>195</f:SwapPayCurveNumber>
+    <f:SwapPayCurveSide>Mid</f:SwapPayCurveSide>
+    <f:SwapReceiveCurveNumber>195</f:SwapReceiveCurveNumber>
+    <f:SwapReceiveCurveSide>Mid</f:SwapReceiveCurveSide>
+    <f:PayCoupon>-0.003</f:PayCoupon>
+    <f:ReceiveCoupon>0.07875</f:ReceiveCoupon>
+    <f:PayLatestIndex>-0.003</f:PayLatestIndex>
+    <f:RecalculateMktVal>N</f:RecalculateMktVal>
+    <f:PaySidePrivilegeType>2</f:PaySidePrivilegeType>
+    <f:ReceiveSidePrivilegeType>2</f:ReceiveSidePrivilegeType>
+    <f:CreatedBy>TAKEAKI KONO</f:CreatedBy>
+    <f:ReceiveSideCusip>SLEK6TEN</f:ReceiveSideCusip>
+    <f:PaySideCusip>SLEK6TEO</f:PaySideCusip>
+    <f:CalcBasisFixedLegReceiveSide>2</f:CalcBasisFixedLegReceiveSide>
+    <f:PayNextToLastPayment>2021-04-30</f:PayNextToLastPayment>
+    <f:ReceiveNextToLastPayment>2021-04-30</f:ReceiveNextToLastPayment>
+    <f:ConventionalBasisPointValue>1605303.0</f:ConventionalBasisPointValue>
+    <f:PayCMSPercent>1.0</f:PayCMSPercent>
+    <f:PayTenorMonth>6</f:PayTenorMonth>
+    <f:PaysideForecastCurveNumber>13</f:PaysideForecastCurveNumber>
+    <f:PayNumberOfDaysToAccrual>2</f:PayNumberOfDaysToAccrual>
+    <f:SwapCurveDate>2017-10-30</f:SwapCurveDate>
+    <f:PaySwapPremium>12365606.0</f:PaySwapPremium>
+    <f:ReceiveSwapPremium>12585023.0</f:ReceiveSwapPremium>
+    <f:SwapPremium>0.00549</f:SwapPremium>
+    <f:SwapParCoupon>0.07738</f:SwapParCoupon>
+    <f:SwapExchangeRate>1.0</f:SwapExchangeRate>
+    <f:OptionSettleCashDate>2017-11-01</f:OptionSettleCashDate>
+    <f:MaturityDaysFromSettle>1460</f:MaturityDaysFromSettle>
+    <f:FRAProjectedCashflow>12763976.0</f:FRAProjectedCashflow>
+    <f:FRADiscount>1.000196</f:FRADiscount>
+    <f:ReceiveSideBusinessCalendar>EN</f:ReceiveSideBusinessCalendar>
+    <f:PaySideBusinessCalendar>EN</f:PaySideBusinessCalendar>
+    <f:PayLegLeverageFactor>1.0</f:PayLegLeverageFactor>
+    <f:CashFlows>
+        <f:PaySide>
+            <f:Pmt>
+                <f:Date>2018-04-27</f:Date>
+                <f:Amt>59333.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2018-10-31</f:Date>
+                <f:Amt>-560496.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2019-04-30</f:Date>
+                <f:Amt>-968002.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2019-10-31</f:Date>
+                <f:Amt>-1328738.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2020-04-30</f:Date>
+                <f:Amt>-1673536.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2020-10-30</f:Date>
+                <f:Amt>-2109951.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2021-04-30</f:Date>
+                <f:Amt>-2601964.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2021-10-29</f:Date>
+                <f:Amt>-3181131.0</f:Amt>
+            </f:Pmt>
+        </f:PaySide>
+        <f:ReceiveSide>
+            <f:Pmt>
+                <f:Date>2018-04-27</f:Date>
+                <f:Amt>1536164.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2018-10-31</f:Date>
+                <f:Amt>1613835.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2019-04-30</f:Date>
+                <f:Amt>1562054.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2019-10-31</f:Date>
+                <f:Amt>1587945.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2020-04-30</f:Date>
+                <f:Amt>1570684.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2020-10-30</f:Date>
+                <f:Amt>1579315.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2021-04-30</f:Date>
+                <f:Amt>1570684.0</f:Amt>
+            </f:Pmt>
+            <f:Pmt>
+                <f:Date>2021-10-29</f:Date>
+                <f:Amt>1570684.0</f:Amt>
+            </f:Pmt>
+        </f:ReceiveSide>
+    </f:CashFlows>
+    <f:IsSNAC>N</f:IsSNAC>
+    <f:ClearingHouse>OTC</f:ClearingHouse>
+    <f:ReportingPartyIndicator>0</f:ReportingPartyIndicator>
+    <f:ParticipantStatus>N</f:ParticipantStatus>
+    <f:IsSecurityMAT>N</f:IsSecurityMAT>
+    <f:ClientIsUSPerson>N</f:ClientIsUSPerson>
+    <f:DealerIsUSPerson>N</f:DealerIsUSPerson>
+    <f:MandatoryToClear>N</f:MandatoryToClear>
+    <f:LevelOfSDRReporting>0</f:LevelOfSDRReporting>
+    <f:SwapTxType>ORIGINAL</f:SwapTxType>
+    <f:TradeUsiSource>0</f:TradeUsiSource>
+    <f:TaxonomyUsed>Interim</f:TaxonomyUsed>
+    <f:Compression>N</f:Compression>
+    <f:IntraGroup>N</f:IntraGroup>
+    <f:EMIRActionType>New</f:EMIRActionType>
+    <f:ReportToEMIR>N</f:ReportToEMIR>
+    <f:TradeIdSource>N</f:TradeIdSource>
+    <f:SecondHalfTdr2TdrTrade>N</f:SecondHalfTdr2TdrTrade>
+    <f:ReportToFCA>N</f:ReportToFCA>
+    <f:Meets1stBlockTrdRequirements>N</f:Meets1stBlockTrdRequirements>
+    <f:Meets2ndBlockTrdRequirements>N</f:Meets2ndBlockTrdRequirements>
+    <f:Meets3rdBlockTrdRequirements>N</f:Meets3rdBlockTrdRequirements>
+    <f:PayNotionalAmount>4000000000.0</f:PayNotionalAmount>
+    <f:ReceiveNotionalAmount>4000000000.0</f:ReceiveNotionalAmount>
+    <f:PlatformTradeExecution>-1</f:PlatformTradeExecution>
+    <f:BuySideSellSideFlag>SELL SIDE</f:BuySideSellSideFlag>
+    <f:BunchedOrder>N</f:BunchedOrder>
+    <f:CreditEventType>0</f:CreditEventType>
+    <f:ReportToSEF>N</f:ReportToSEF>
+    <f:StepInStepOutCounterPartyType>FIRM</f:StepInStepOutCounterPartyType>
+    <f:ExtendedFields>
+        <f:Field calcrt="SW740" name="REAL_PRIMARY_RO_ISIN"></f:Field>
+        <f:Field calcrt="SW741" name="REAL_RED_PAIR_CODE"></f:Field>
+        <f:Field calcrt="SW398" name="OWNER_DEAL_ID">SLEK6TEM</f:Field>
+        <f:Field calcrt="TX663" name="EXECUTION_VENUE_MIC_CODE"></f:Field>
+        <f:Field calcrt="TX664" name="REPORTING_LEI_CODE"></f:Field>
+        <f:Field calcrt="TX667" name="TRADE_UNIQUE_LIFECYCLE_ID">6481613284968235333</f:Field>
+        <f:Field calcrt="TX669" name="MIFID_II_RPT_PST_TRADE_INDICATOR"></f:Field>
+        <f:Field calcrt="TX666" name="EXECUTION_VENUE_TRANSACTION_ID"></f:Field>
+        <f:Field calcrt="TX674" name="MIFID_II_TRADING_CAPACITY"></f:Field>
+        <f:Field calcrt="TX671" name="MIFID_II_DECISION_MAKER_WIN_FIRM"></f:Field>
+        <f:Field calcrt="TX672" name="MIFID_II_EXECUTION_WITHIN_FIRM"></f:Field>
+        <f:Field calcrt="TX668" name="MIFID_II_RPT_WAIVER_IND_TRA"></f:Field>
+        <f:Field calcrt="TX670" name="MIFID_II_RPT_SHORT_SELLING_IND">SELL</f:Field>
+        <f:Field calcrt="TX665" name="TRADE_AS_OF_DATETIME_IN_UTC">10101-24:00:00.000000</f:Field>
+        <f:Field calcrt="TX692" name="EXECUTION_WITH_FIRM_ALGO_IND"></f:Field>
+        <f:Field calcrt="TX693" name="DECISION_MAKER_ALGO_IND"></f:Field>
+        <f:Field calcrt="TX694" name="MIFID_II_TRANSMISSION_ORDER_IND"></f:Field>
+        <f:Field calcrt="TX695" name="MKT_ORDER_TO_CLIENT_ORD_LINK_ID"></f:Field>
+        <f:Field calcrt="TX696" name="LAST_LIQUIDITY_INDICATOR"></f:Field>
+        <f:Field calcrt="TX697" name="CANCEL_PARTY_TO_TRADE"></f:Field>
+        <f:Field calcrt="TX698" name="BLOCK_MIFID_II_REPORTING"></f:Field>
+        <f:Field calcrt="TX520" name="COUNTERPARTY_LEI"></f:Field>
+        <f:Field calcrt="TX521" name="DEALER_LEI"></f:Field>
+        <f:Field calcrt="TX699" name="COUNTER_PARTY_LEI_COUNTRY_CODE"></f:Field>
+        <f:Field calcrt="TX700" name="DEALER_LEI_COUNTRY_CODE"></f:Field>
+        <f:Field calcrt="TX701" name="TOT_TRADES_IN_PACKAGE_TRANS"></f:Field>
+        <f:Field calcrt="TX702" name="PACKAGE_TRADE_LEG_IDENTIFIER"></f:Field>
+        <f:Field calcrt="TX704" name="CLIENT_ORDER_IND"></f:Field>
+        <f:Field calcrt="TX705" name="VOICE_TRADE_IND"></f:Field>
+        <f:Field calcrt="TX706" name="EXECUTION_SYSTEM_TYP"></f:Field>
+        <f:Field calcrt="TX707" name="PACKAGE_PX"></f:Field>
+        <f:Field calcrt="TX708" name="PACKAGE_TYP"></f:Field>
+        <f:Field calcrt="TX709" name="PACKAGE_CURNCY"></f:Field>
+    </f:ExtendedFields>
+</f:DerivFeed>

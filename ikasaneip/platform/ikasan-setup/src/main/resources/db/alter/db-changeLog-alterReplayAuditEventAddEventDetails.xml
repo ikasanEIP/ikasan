@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -43,38 +41,36 @@
 
  Author:  Ikasan Development Team
  
- Purpose: ExclusionEventAction table hibernate mapping file. * * *
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.ikasan.replay.model.HibernateReplayAudit"
-		table="ReplayAudit">
-		
-		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="native" />
-		</id>
-		
-		<property name="user"
-                  type="java.lang.String"
-                  column="ReplayUser"
-                  not-null="true" />
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-        <property name="replayReason"
-                  type="java.lang.String"
-                  column="Reason"
-                  not-null="true" />
-                  
-        <property name="targetServer"
-                  type="java.lang.String"
-                  column="TargetServer"
-                  not-null="true" />
-		          
-		<property name="timestamp" 
-				  column="Timestamp" 
-				  type="long" 
-				  not-null="true"/>
-		
-	</class>
-</hibernate-mapping>
+	<changeSet author="ikasan dev" id="alterReplayAuditEventEventDetails" context="postBaseline">
+
+		<preConditions onFail="MARK_RAN">
+			<not><columnExists tableName="ReplayAuditEvent" columnName="ModuleName"/></not>
+		</preConditions>
+
+		<addColumn tableName="ReplayAuditEvent">
+			<column name="ModuleName" type="VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<addColumn tableName="ReplayAuditEvent">
+			<column name="FlowName" type="VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<addColumn tableName="ReplayAuditEvent">
+			<column name="EventId" type="VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+	</changeSet>
+
+</databaseChangeLog>

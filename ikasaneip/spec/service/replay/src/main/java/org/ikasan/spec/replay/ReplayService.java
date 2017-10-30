@@ -48,7 +48,7 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public interface ReplayService<EVENT, AUDIT_EVENT>
+public interface ReplayService<EVENT, AUDIT_EVENT, REPLAY_RESPONSE>
 {
 	/**
 	 * Add a replay listener.
@@ -68,6 +68,7 @@ public interface ReplayService<EVENT, AUDIT_EVENT>
      */
     public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
 
+
     /**
      * Entry point for replay of an individual event.
      *
@@ -77,7 +78,7 @@ public interface ReplayService<EVENT, AUDIT_EVENT>
      * @param authPassword
      * @param user
      */
-    public void replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason);
+    public REPLAY_RESPONSE replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason);
     
     /**
      * Method to cancel the replay.
