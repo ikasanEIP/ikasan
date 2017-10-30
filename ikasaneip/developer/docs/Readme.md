@@ -249,6 +249,86 @@ mvn clean package assembly:assembly
 
 This will build and create a zip binary containing all the required deployments for your integration module.
 
+##### Common problem when generating artifact
+
+Occasionally you might see similar issue when generating an artifact
+``` 
+ mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=2.0.0-SNAPSHOT
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Stub Project (No POM) 1
+[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] >>> maven-archetype-plugin:2.4:generate (default-cli) > generate-sources @ standalone-pom >>>
+[INFO]
+[INFO] <<< maven-archetype-plugin:2.4:generate (default-cli) < generate-sources @ standalone-pom <<<
+[INFO]
+[INFO] --- maven-archetype-plugin:2.4:generate (default-cli) @ standalone-pom ---
+[INFO] Generating project in Interactive mode
+[WARNING] Archetype not found in any catalog. Falling back to central repository (http://repo.maven.apache.org/maven2).
+[WARNING] Use -DarchetypeRepository=<your repository> if archetype's repository is elsewhere.
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.0.0-SNAPSHOT/maven-metadata.xml
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.0.0-SNAPSHOT/ikasan-standalone-filesystem-im-maven-plugin-2.0.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.089 s
+[INFO] Finished at: 2017-10-30T11:09:39+00:00
+[INFO] Final Memory: 14M/309M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-archetype-plugin:2.4:generate (default-cli) on project standalone-pom: The desired archetype does not exist (org.ikasan:ikasan-standalone-filesystem-im-maven-plugin:2.0.0-SNAPSHOT) -> [Help 1]
+```
+
+This can be resolved by making sure you referring oss mvn repo in you mvn setting.xml file
+``` 
+<profile>
+            <id>securecentral</id>
+            <repositories>
+                <repository>
+                    <id>ikasaneip-snapshots</id>
+                    <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>ikasaneip-releases</id>
+                    <url>http://oss.sonatype.org/content/repositories/releases/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+        
+        <activeProfiles>
+           <activeProfile>securecentral</activeProfile>
+        </activeProfiles>
+```
+
 
 ## JBoss EAP Application Server
 
