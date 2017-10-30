@@ -40,6 +40,11 @@ Using Eclipse
 
 
 [Getting Started Guide](ikasaneip/developer/)
+---------------------
+
+[Component Quick Start](ikasaneip/component/Readme.md)
+
+
 
 | Samples overview |
 |-------------|
