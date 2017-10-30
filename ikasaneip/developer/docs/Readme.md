@@ -158,6 +158,58 @@ Default locale: en_GB, platform encoding: UTF-8
 OS name: "mac os x", version: "10.12.6", arch: "x86_64", family: "mac"
 ```
 
+### update mvn settings.xml 
+
+If you using Snapshot versions, please make sure you refer to oss repo in your .m2/settings.xml
+```xml  
+<profile>
+  <id>securecentral</id>
+  <repositories>
+      <repository>
+          <id>ikasaneip-snapshots</id>
+          <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+          <releases>
+              <enabled>false</enabled>
+          </releases>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <url>http://oss.sonatype.org/content/repositories/releases/</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+          <snapshots>
+              <enabled>false</enabled>
+          </snapshots>
+      </repository>
+      <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+      </repository>
+  </repositories>
+  <pluginRepositories>
+      <pluginRepository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+      </pluginRepository>
+  </pluginRepositories>
+</profile>
+        
+ <activeProfiles>
+    <activeProfile>securecentral</activeProfile>
+ </activeProfiles>
+```
+ 
+
 # Runtime Environment
 
 IkasanEIP runs as standalone JVM process or within a variety of Application Servers.
@@ -280,54 +332,7 @@ Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-fi
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-archetype-plugin:2.4:generate (default-cli) on project standalone-pom: The desired archetype does not exist (org.ikasan:ikasan-standalone-filesystem-im-maven-plugin:2.0.0-SNAPSHOT) -> [Help 1]
 ```
 
-This can be resolved by making sure you referring oss mvn repo in you mvn setting.xml file
-``` 
-<profile>
-            <id>securecentral</id>
-            <repositories>
-                <repository>
-                    <id>ikasaneip-snapshots</id>
-                    <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>ikasaneip-releases</id>
-                    <url>http://oss.sonatype.org/content/repositories/releases/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-        
-        <activeProfiles>
-           <activeProfile>securecentral</activeProfile>
-        </activeProfiles>
-```
+This can be resolved by making sure you referring oss mvn repo in you mvn setting.xml file. [Check instructions](#update-mvn-settings.xml) 
 
 
 ## JBoss EAP Application Server
