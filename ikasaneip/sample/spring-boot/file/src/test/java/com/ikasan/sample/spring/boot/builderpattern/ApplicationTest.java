@@ -62,7 +62,6 @@ import static org.junit.Assert.assertTrue;
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 public class ApplicationTest
 {
     public EmbeddedActiveMQBroker broker;

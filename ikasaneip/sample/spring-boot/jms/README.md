@@ -11,7 +11,7 @@ sample-spring-boot-jms provides example of integration module using JMS, in orde
 
 
 ## How to construct 'Jms Sample Flow' using builder pattern
-Check out the source code at [Application](src/main/java/org/ikasan/sample/spring/boot/builderpattern/Application.java)
+Check out the source code at [Application](src/main/java/com/ikasan/sample/spring/boot/builderpattern/Application.java)
 ```java
 public Module getModule(){
 
