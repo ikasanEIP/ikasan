@@ -48,42 +48,25 @@ import javax.jms.TextMessage;
 import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMessageDefaultImpl>
+public class JmsTextMessageConverter extends AbstractJmsMessageConverter<TextMessage,TextMessage> implements Converter<TextMessage, TextMessage>
 {   
-    public JmsTextMessageDefaultImpl convert(TextMessage message)
+    public TextMessage convert(TextMessage message)
     {
-    	JmsTextMessageDefaultImpl jmsTextMessageDefault = new JmsTextMessageDefaultImpl();
-    	
     	try
-    	{	    	
-	    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsTextMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    	//jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsTextMessageDefault.setJMSType(message.getJMSType());
-	    	    	
-	    	Enumeration<String> names  = message.getPropertyNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-
-                jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
-	    	}
-	    	
-	    	jmsTextMessageDefault.setText(message.getText());
-    	}
+    	{
+			TextMessage textMessage = super.populateMetaData(message);
+			textMessage.setText(message.getText());
+			return textMessage;
+		}
     	catch (JMSException e)
     	{
     		throw new RuntimeException(e);
     	}
     	
-    	return jmsTextMessageDefault;
     }
+
+	public TextMessage getTargetJmsMessage()
+	{
+		return new JmsTextMessageDefaultImpl();
+	}
 }

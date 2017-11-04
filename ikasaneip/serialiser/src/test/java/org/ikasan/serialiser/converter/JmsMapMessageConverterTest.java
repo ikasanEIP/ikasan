@@ -40,54 +40,78 @@
  */
 package org.ikasan.serialiser.converter;
 
-import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
+import org.apache.activemq.command.ActiveMQMapMessage;
 import org.junit.Test;
 
 import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import javax.jms.MapMessage;
 import javax.jms.Session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test JmsObjectMessageConverter
+ * Test JmsMapMessageConverter
  */
-public class JmsObjectMessageConverterTest {
+public class JmsMapMessageConverterTest {
 
     // Unit under test
-    private JmsObjectMessageConverter uut = new JmsObjectMessageConverter();
+    private JmsMapMessageConverter uut = new JmsMapMessageConverter();
 
+    String BOOLEAN = "boolean";
+    String BYTE = "byte";
+    String BYTES = "bytes";
+    String CHAR = "char";
+    String DOUBLE = "double";
+    String FLOAT = "float";
+    String INT = "int";
+    String LONG = "long";
+    String OBJECT = "object";
+    String SHORT = "short";
+    String STRING = "string";
 
     @Test
-    public void convert_when_objectMessage_has_object() throws JMSException {
+    public void convert_when_mapMessage_has_object() throws JMSException {
 
-        ObjectMessage message = new ActiveMQObjectMessage();
-        message.setObject(new SimplePojo());
+        MapMessage message = new ActiveMQMapMessage();
+        message.setBoolean(BOOLEAN,true);
+
+        byte b = 'b';
+        message.setByte(BYTE, b);
+
+        byte[] bytes = "test".getBytes();
+        message.setBytes(BYTES, bytes);
+
+        message.setChar(CHAR, 'c');
+        message.setDouble(DOUBLE, Double.valueOf(10));
+        message.setFloat(FLOAT, Float.valueOf(12));
+        message.setInt(INT, Integer.valueOf(14));
+        message.setLong(LONG, Long.valueOf(16));
+        message.setObject(OBJECT, new Double(100));
+        message.setShort(SHORT, Short.valueOf((short)18));
+        message.setString(STRING, "testString");
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
-        assertTrue(result.getObject() instanceof SimplePojo);
-
+        assertEquals(true, result.getBoolean(BOOLEAN));
+        assertEquals(b, result.getByte(BYTE));
+        assertEquals("test", new String(result.getBytes(BYTES)));
+        assertTrue('c' == result.getChar(CHAR));
+        assertTrue(Double.valueOf(10).doubleValue() == result.getDouble(DOUBLE));
+        assertTrue(Float.valueOf(12).floatValue() == result.getFloat(FLOAT));
+        assertTrue(Integer.valueOf(14).intValue() == result.getInt(INT));
+        assertTrue(Long.valueOf(16).longValue() == result.getLong(LONG));
+        assertEquals(new Double(100), result.getObject(OBJECT));
+        assertTrue(Short.valueOf((short)18).shortValue() == result.getShort(SHORT));
+        assertEquals("testString", result.getString(STRING));
     }
 
     @Test
-    public void convert_when_bytesMessage_has_headerProperties() throws JMSException {
+    public void convert_when_mapMessage_has_headerProperties() throws JMSException {
 
-        String BOOLEAN = "boolean";
-        String BYTE = "byte";
-        String DOUBLE = "double";
-        String FLOAT = "float";
-        String INT = "int";
-        String LONG = "long";
-        String OBJECT = "object";
-        String SHORT = "short";
-        String STRING = "string";
-
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setBooleanProperty(BOOLEAN, true);
         message.setByteProperty(BYTE, (byte)'b');
         message.setDoubleProperty(DOUBLE, Double.valueOf(10));
@@ -99,7 +123,7 @@ public class JmsObjectMessageConverterTest {
         message.setStringProperty(STRING, "testStringAgain");
 
         // test
-        ObjectMessage result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(true, result.getBooleanProperty(BOOLEAN));
@@ -114,14 +138,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSCorrelationID() throws JMSException {
+    public void convert_when_mapMessage_has_JMSCorrelationID() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, result.getJMSCorrelationID());
@@ -129,14 +153,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
+    public void convert_when_mapMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, new String(result.getJMSCorrelationIDAsBytes()));
@@ -144,14 +168,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSDeliveryModes() throws JMSException {
+    public void convert_when_mapMessage_has_JMSDeliveryModes() throws JMSException {
 
         int jmsDeliveryModes = Session.AUTO_ACKNOWLEDGE;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSDeliveryMode(jmsDeliveryModes);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsDeliveryModes, result.getJMSDeliveryMode());
@@ -159,14 +183,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_jmsExpiration() throws JMSException {
+    public void convert_when_mapMessage_has_jmsExpiration() throws JMSException {
 
         long jmsExpiration = 3600l;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSExpiration(jmsExpiration);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsExpiration, result.getJMSExpiration());
@@ -174,14 +198,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSmessageId() throws JMSException {
+    public void convert_when_mapMessage_has_JMSmessageId() throws JMSException {
 
         String jmsMessageId = "TestJMSMessageID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSMessageID(jmsMessageId);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         // TODO - find better workaround for the activeMQ ID: prefix
@@ -190,14 +214,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSPriority() throws JMSException {
+    public void convert_when_mapMessage_has_JMSPriority() throws JMSException {
 
         int jmsPriority = 1;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSPriority(jmsPriority);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsPriority, result.getJMSPriority());
@@ -205,14 +229,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSRedelivery() throws JMSException {
+    public void convert_when_mapMessage_has_JMSRedelivery() throws JMSException {
 
         boolean jmsRedelivered = true;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSRedelivered(jmsRedelivered);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsRedelivered, result.getJMSRedelivered());
@@ -220,14 +244,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_jmsTimestamp() throws JMSException {
+    public void convert_when_mapMessage_has_jmsTimestamp() throws JMSException {
 
         long jmsTimestamp = 3600l;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSTimestamp(jmsTimestamp);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsTimestamp, result.getJMSTimestamp());
@@ -235,14 +259,14 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSType() throws JMSException {
+    public void convert_when_mapMessage_has_JMSType() throws JMSException {
 
         String jmsType = "TestJMSType";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        MapMessage message = new ActiveMQMapMessage();
         message.setJMSType(jmsType);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        MapMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsType, result.getJMSType());
