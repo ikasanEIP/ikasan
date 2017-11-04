@@ -76,6 +76,45 @@ public class JmsTextMessageConverterTest {
     }
 
     @Test
+    public void convert_when_bytesMessage_has_headerProperties() throws JMSException {
+
+        String BOOLEAN = "boolean";
+        String BYTE = "byte";
+        String DOUBLE = "double";
+        String FLOAT = "float";
+        String INT = "int";
+        String LONG = "long";
+        String OBJECT = "object";
+        String SHORT = "short";
+        String STRING = "string";
+
+        TextMessage message = new ActiveMQTextMessage();
+        message.setBooleanProperty(BOOLEAN, true);
+        message.setByteProperty(BYTE, (byte)'b');
+        message.setDoubleProperty(DOUBLE, Double.valueOf(10));
+        message.setFloatProperty(FLOAT, new Float(12));
+        message.setIntProperty(INT, new Integer(14));
+        message.setLongProperty(LONG, new Long(16));
+        message.setObjectProperty(OBJECT, new String("test string"));
+        message.setShortProperty(SHORT, new Short( (short)18));
+        message.setStringProperty(STRING, "testStringAgain");
+
+        // test
+        TextMessage result = uut.convert(message);
+
+        //assert
+        assertEquals(true, result.getBooleanProperty(BOOLEAN));
+        assertEquals('b', result.getByteProperty(BYTE));
+        assertTrue(Double.valueOf(10).doubleValue() == result.getDoubleProperty(DOUBLE));
+        assertTrue(Float.valueOf(12).floatValue() == result.getFloatProperty(FLOAT));
+        assertTrue(Integer.valueOf(14).intValue() == result.getIntProperty(INT));
+        assertTrue(Long.valueOf(16).longValue() == result.getLongProperty(LONG));
+        assertEquals("test string", result.getObjectProperty(OBJECT));
+        assertTrue(Short.valueOf((short)18).shortValue() == result.getShortProperty(SHORT));
+        assertEquals("testStringAgain", result.getStringProperty(STRING));
+    }
+
+    @Test
     public void convert_when_TextMessage_has_JMSCorrelationID() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
