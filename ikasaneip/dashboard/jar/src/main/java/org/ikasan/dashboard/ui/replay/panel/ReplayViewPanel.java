@@ -75,6 +75,7 @@ import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
@@ -210,7 +211,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
-	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
 
 	private boolean initialised = false;
@@ -224,7 +225,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 						   SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
 						   TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
 						   PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService,
+			HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
 						   ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
 						   FlowConfigurationWindow flowConfigurationWindow)
 	{

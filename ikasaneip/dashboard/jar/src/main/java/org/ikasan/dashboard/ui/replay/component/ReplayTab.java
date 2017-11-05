@@ -58,6 +58,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
@@ -108,7 +109,7 @@ public class ReplayTab extends TopologyTab
 	private FilterTable replayEventsTable;
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
-	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse>  replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
 
 
@@ -130,7 +131,7 @@ public class ReplayTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
-					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService,
+					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
 					 ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
 					 PlatformConfigurationService platformConfigurationService)
 	{

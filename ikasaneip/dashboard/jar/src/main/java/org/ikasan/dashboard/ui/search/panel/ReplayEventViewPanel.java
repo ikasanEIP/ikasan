@@ -51,6 +51,9 @@ import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -87,7 +90,7 @@ public class ReplayEventViewPanel extends Panel
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ReplayEvent replayEvent;
-	private ReplayService replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	private PlatformConfigurationService platformConfigurationService;
 	private TopologyService topologyService;
 
@@ -98,7 +101,7 @@ public class ReplayEventViewPanel extends Panel
 	 * @param replayService
 	 * @param platformConfigurationService
 	 */
-	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService replayService,
+	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
 								PlatformConfigurationService platformConfigurationService,
 								TopologyService topologyService)
 	{
@@ -241,10 +244,11 @@ public class ReplayEventViewPanel extends Panel
 
 				replayButton.setVisible(false);
 
+				ReplayResponse replayResponse = null;
 				try
 				{
 					Module module = topologyService.getModuleByName(replayEvent.getModuleName());
-					replayService.replay(module.getServer().getUrl(), replayEvent, authentication.getName(),
+					replayResponse = replayService.replay(module.getServer().getUrl(), replayEvent, authentication.getName(),
 							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue());
 				}
 				catch (RuntimeException e)
@@ -254,7 +258,14 @@ public class ReplayEventViewPanel extends Panel
 					return;
 				}
 
-				Notification.show("Event replay complete.");
+				if(!replayResponse.isSuccess())
+				{
+					Notification.show("Failed to replay event: " + replayResponse.getResponseBody(), Notification.Type.ERROR_MESSAGE);
+				}
+				else
+				{
+					Notification.show("Event replay complete.");
+				}
 			}
 		});
 
@@ -279,7 +290,14 @@ public class ReplayEventViewPanel extends Panel
 		
 		final AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
-		editor.setValue(new String(this.replayEvent.getEventAsString()));
+		if(this.replayEvent.getEventAsString() != null)
+		{
+			editor.setValue(this.replayEvent.getEventAsString());
+		}
+		else if(this.replayEvent.getEvent() != null)
+		{
+			editor.setValue(new String(this.replayEvent.getEvent()));
+		}
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setWordWrap(true);

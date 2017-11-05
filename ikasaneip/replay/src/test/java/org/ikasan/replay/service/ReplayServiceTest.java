@@ -52,11 +52,8 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestListener;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.replay.model.*;
 import org.ikasan.spec.replay.*;
-import org.ikasan.replay.model.HibernateReplayAudit;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
-import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
@@ -98,7 +95,7 @@ public class ReplayServiceTest
 
 	@Resource(name = "replayDao") ReplayAuditDao<HibernateReplayAudit, HibernateReplayAuditEvent> replayAuditDao;
 
-	@Resource ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
+	@Resource ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	

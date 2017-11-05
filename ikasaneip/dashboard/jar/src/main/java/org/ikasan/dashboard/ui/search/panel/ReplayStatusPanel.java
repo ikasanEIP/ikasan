@@ -60,6 +60,7 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -95,7 +96,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
@@ -108,7 +109,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	private TopologyService topologyService;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
-                             ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService,
+                             ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
                              PlatformConfigurationService platformConfigurationService,
 							 TopologyService topologyService)
 	{
@@ -281,13 +282,15 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    				{
 	    					replayService.addReplayListener(ReplayStatusPanel.this);
 
+							BulkReplayResponse bulkReplayResponse = null;
+
 							if(replayEvents.size() > 0)
 							{
 								Module module = topologyService.getModuleByName(replayEvents.get(0).getModuleName());
 
 								String targetServer = module.getServer().getUrl();
 
-								replayService.replay(targetServer, replayEvents, authentication.getName(),
+								bulkReplayResponse = replayService.replay(targetServer, replayEvents, authentication.getName(),
 										(String) authentication.getCredentials(), authentication.getName(), comments.getValue());
 							}
 							else
@@ -306,11 +309,15 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		            		try 
 		            		{
 		            			bar.setVisible(false);
-		    					
-		            			if(!replayService.isCancelled())
-		            			{
-		            				Notification.show("Event replay complete.");
-		            			}
+
+								if(!bulkReplayResponse.isSuccess())
+								{
+									Notification.show("One or more events failed to replay. Please see messages for details.", Notification.Type.ERROR_MESSAGE);
+								}
+								else
+								{
+									Notification.show("Event replay complete.");
+								}
 		        				
 		            		} 
 		            		finally 

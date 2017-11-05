@@ -58,6 +58,7 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
@@ -110,7 +111,7 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	
-	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse>  replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
 	
 
 	private PopupDateField fromDate;
@@ -132,7 +133,7 @@ public class ReplayAuditTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayAuditTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService
-			, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService, PlatformConfigurationService platformConfigurationService)
+			, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService, PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;

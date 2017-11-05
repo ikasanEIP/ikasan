@@ -9,6 +9,7 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.UI;
 import org.ikasan.dashboard.ui.search.panel.ReplayStatusPanel;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -38,7 +39,7 @@ public class ReplayPopup extends UI
 	{
 		List<ReplayEvent> replayEvents = (List<ReplayEvent>)VaadinService.getCurrentRequest().getWrappedSession()
 				.getAttribute("replayEvents");
-		ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService = (ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse>)VaadinService.getCurrentRequest()
+		ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService = (ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>)VaadinService.getCurrentRequest()
 				.getWrappedSession().getAttribute("replayService");
 		PlatformConfigurationService platformConfigurationService = (PlatformConfigurationService)VaadinService.getCurrentRequest()
 				.getWrappedSession().getAttribute("platformConfigurationService");

@@ -57,6 +57,7 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -94,7 +95,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
@@ -106,7 +107,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	private IkasanAuthentication authentication;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
-			ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService,
+			ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
 			PlatformConfigurationService platformConfigurationService) 
 	{
 		super();
@@ -288,7 +289,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    				@Override
 	    				public void run() 
 	    				{	    					
-	    					replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(), 
+	    					BulkReplayResponse bulkReplayResponse = replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(),
 	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue());
 	    					
 	    					logger.info("Finished replaying events!");
@@ -300,7 +301,14 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		    					
 		            			if(!replayService.isCancelled())
 		            			{
-		            				Notification.show("Event replay complete.");
+		            				if(!bulkReplayResponse.isSuccess())
+									{
+										Notification.show("One or more events failed to replay. Please see messages for details.", Notification.Type.ERROR_MESSAGE);
+									}
+									else
+									{
+										Notification.show("Event replay complete.");
+									}
 		            			}
 		        				
 		            		} 

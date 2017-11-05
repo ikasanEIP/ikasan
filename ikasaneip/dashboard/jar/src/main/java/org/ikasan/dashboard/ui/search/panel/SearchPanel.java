@@ -31,6 +31,7 @@ import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
@@ -83,7 +84,7 @@ public class SearchPanel extends Panel implements View
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
     private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence> errorReportingService;
     private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
-    private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService;
+    private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
     private TopologyService topologyService;
     private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
     private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
@@ -94,7 +95,7 @@ public class SearchPanel extends Panel implements View
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
                        WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService, ErrorReportingService<ErrorOccurrence<byte[]>,
                        ErrorOccurrence> errorReportingService, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
-                       ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                       ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                        HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
                        ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
                        HospitalService<byte[]> hospitalService)

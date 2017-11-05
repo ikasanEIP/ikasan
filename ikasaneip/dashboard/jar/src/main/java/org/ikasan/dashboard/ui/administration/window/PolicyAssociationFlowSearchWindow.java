@@ -40,27 +40,21 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.ui.*;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import org.tepi.filtertable.FilterTable;
 
 /**
  * 
@@ -81,12 +75,14 @@ public class PolicyAssociationFlowSearchWindow extends Window
 	private Panel resultsPanel;
 	private ComboBox serverCombo;
 	private ComboBox moduleCombo;
-	private Table resultsTable;
+	private FilterTable resultsTable;
+	private IndexedContainer container;
 
 	/**
-	 * @param mappingConfigurationSearchPanel
-	 * @param mappingConfigurationSearchResultsPanel
-	 */
+	 * Constructor
+	 *
+	 * @param topologyService
+     */
 	public PolicyAssociationFlowSearchWindow(TopologyService topologyService)
 	{
 		super();
@@ -102,8 +98,7 @@ public class PolicyAssociationFlowSearchWindow extends Window
 	
 	/**
      * Helper method to initialise this object.
-     * 
-     * @param message
+     *
      */
     protected void init()
     {
@@ -182,8 +177,15 @@ public class PolicyAssociationFlowSearchWindow extends Window
             	
             	for(Flow flow: flows)
             	{
-            		resultsTable.addItem(new Object[]{flow.getModule().getServer().getName(), flow.getModule().getName(), flow.getName()}, flow);
-            	}
+            		if(flow != null && flow.getModule() != null && flow.getModule().getServer() != null)
+					{
+						Item item = container.addItem(flow);
+
+						item.getItemProperty("Server").setValue(flow.getModule().getServer().getName());
+						item.getItemProperty("Module").setValue(flow.getModule().getName());
+						item.getItemProperty("Flow").setValue(flow.getName());
+					}
+				}
             }
         });
     	
@@ -199,11 +201,11 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	this.resultsPanel.setSizeFull();
     	this.resultsPanel.setStyleName("dashboard");
     	
-    	this.resultsTable = new Table();
+    	this.resultsTable = new FilterTable();
+		this.resultsTable.setFilterBarVisible(true);
     	this.resultsTable.setSizeFull();
-    	this.resultsTable.addContainerProperty("Server", String.class,  null);
-    	this.resultsTable.addContainerProperty("Module", String.class,  null);
-    	this.resultsTable.addContainerProperty("Flow", String.class,  null);
+		this.container = this.buildContainer();
+		this.resultsTable.setContainerDataSource(this.container);
     	
     	this.resultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
     	{
@@ -222,6 +224,18 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	
     	this.resultsPanel.setContent(layout);
     }
+
+	protected IndexedContainer buildContainer()
+	{
+
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Server", String.class,  null);
+		cont.addContainerProperty("Module", String.class,  null);
+		cont.addContainerProperty("Flow", String.class,  null);
+
+		return cont;
+	}
     
     public void clear()
     {
