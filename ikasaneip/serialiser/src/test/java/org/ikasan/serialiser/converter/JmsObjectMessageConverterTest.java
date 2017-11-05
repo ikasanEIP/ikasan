@@ -67,7 +67,7 @@ public class JmsObjectMessageConverterTest {
         message.setObject(new SimplePojo());
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertTrue(result.getObject() instanceof SimplePojo);
@@ -121,7 +121,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, result.getJMSCorrelationID());
@@ -136,7 +136,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, new String(result.getJMSCorrelationIDAsBytes()));
@@ -151,7 +151,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSDeliveryMode(jmsDeliveryModes);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsDeliveryModes, result.getJMSDeliveryMode());
@@ -166,7 +166,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSExpiration(jmsExpiration);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsExpiration, result.getJMSExpiration());
@@ -181,7 +181,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSMessageID(jmsMessageId);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         // TODO - find better workaround for the activeMQ ID: prefix
@@ -197,7 +197,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSPriority(jmsPriority);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsPriority, result.getJMSPriority());
@@ -212,7 +212,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSRedelivered(jmsRedelivered);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsRedelivered, result.getJMSRedelivered());
@@ -227,7 +227,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSTimestamp(jmsTimestamp);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsTimestamp, result.getJMSTimestamp());
@@ -242,7 +242,7 @@ public class JmsObjectMessageConverterTest {
         message.setJMSType(jmsType);
 
         // test
-        JmsObjectMessageDefaultImpl result = uut.convert(message);
+        ObjectMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsType, result.getJMSType());

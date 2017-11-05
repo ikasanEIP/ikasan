@@ -68,7 +68,7 @@ public class JmsTextMessageConverterTest {
         message.setText(text);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(text,result.getText());
@@ -122,7 +122,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, result.getJMSCorrelationID());
@@ -137,7 +137,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSCorrelationID(jmsCorrelationID);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, new String(result.getJMSCorrelationIDAsBytes()));
@@ -152,7 +152,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSDeliveryMode(jmsDeliveryModes);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsDeliveryModes, result.getJMSDeliveryMode());
@@ -167,7 +167,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSExpiration(jmsExpiration);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsExpiration, result.getJMSExpiration());
@@ -182,7 +182,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSMessageID(jmsMessageId);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         // TODO - find better workaround for the activeMQ ID: prefix
@@ -198,7 +198,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSPriority(jmsPriority);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsPriority, result.getJMSPriority());
@@ -213,7 +213,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSRedelivered(jmsRedelivered);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsRedelivered, result.getJMSRedelivered());
@@ -228,7 +228,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSTimestamp(jmsTimestamp);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsTimestamp, result.getJMSTimestamp());
@@ -243,7 +243,7 @@ public class JmsTextMessageConverterTest {
         message.setJMSType(jmsType);
 
         // test
-        JmsTextMessageDefaultImpl result = uut.convert(message);
+        TextMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsType, result.getJMSType());
