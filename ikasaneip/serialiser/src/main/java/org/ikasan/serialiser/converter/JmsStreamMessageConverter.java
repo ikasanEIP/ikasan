@@ -40,33 +40,54 @@
  */
 package org.ikasan.serialiser.converter;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-
-import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
+import org.ikasan.serialiser.model.JmsStreamMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsTextMessageConverter extends AbstractJmsMessageConverter<TextMessage,TextMessage> implements Converter<TextMessage, TextMessage>
-{   
-    public TextMessage convert(TextMessage message)
+import javax.jms.JMSException;
+import javax.jms.MessageEOFException;
+import javax.jms.StreamMessage;
+
+/**
+ * Simple converter of a vendor specific StreamMessage to an Ikasan stream message for serialisation.
+ * @author Ikasan Development Team
+ */
+public class JmsStreamMessageConverter extends AbstractJmsMessageConverter<StreamMessage,StreamMessage> implements Converter<StreamMessage, StreamMessage>
+{
+
+    public StreamMessage convert(StreamMessage message)
     {
-    	try
-    	{
-			TextMessage textMessage = super.populateMetaData(message);
-			textMessage.setText(message.getText());
-			return textMessage;
-		}
-    	catch (JMSException e)
-    	{
-    		throw new RuntimeException(e);
-    	}
-    	
+        try {
+            StreamMessage streamMessage = super.populateMetaData(message);
+
+            try
+            {
+                Object object;
+                while ((object = message.readObject()) != null)
+                {
+                    streamMessage.writeObject(object);
+                }
+            }
+            catch (MessageEOFException e)
+            {
+                // we have simply hit the end of the msg bytes
+                return streamMessage;
+            }
+            finally
+            {
+                streamMessage.reset();
+            }
+
+            return streamMessage;
+        }
+        catch (JMSException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
-	public TextMessage getTargetJmsMessage()
-	{
-		return new JmsTextMessageDefaultImpl();
-	}
+    public StreamMessage getTargetJmsMessage()
+    {
+        return new JmsStreamMessageDefaultImpl();
+    }
 }

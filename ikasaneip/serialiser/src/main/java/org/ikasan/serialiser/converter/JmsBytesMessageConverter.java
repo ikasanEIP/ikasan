@@ -40,33 +40,55 @@
  */
 package org.ikasan.serialiser.converter;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-
-import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
+import org.ikasan.serialiser.model.JmsBytesMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsTextMessageConverter extends AbstractJmsMessageConverter<TextMessage,TextMessage> implements Converter<TextMessage, TextMessage>
-{   
-    public TextMessage convert(TextMessage message)
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.MessageEOFException;
+
+/**
+ * Simple converter of a vendor specific BytesMessage to an Ikasan bytes message for serialisation.
+ * @author Ikasan Development Team
+ */
+public class JmsBytesMessageConverter extends AbstractJmsMessageConverter<BytesMessage,BytesMessage> implements Converter<BytesMessage, BytesMessage>
+{
+    
+    public BytesMessage convert(BytesMessage message)
     {
-    	try
-    	{
-			TextMessage textMessage = super.populateMetaData(message);
-			textMessage.setText(message.getText());
-			return textMessage;
-		}
-    	catch (JMSException e)
-    	{
-    		throw new RuntimeException(e);
-    	}
-    	
+    	try {
+            BytesMessage bytesMessage = super.populateMetaData(message);
+
+            try
+            {
+                boolean moreData = true;
+                while(moreData)
+                {
+                    bytesMessage.writeByte( message.readByte() );
+                }
+            }
+            catch (MessageEOFException e)
+            {
+                // we have simply hit the end of the msg bytes
+                return bytesMessage;
+            }
+            finally
+            {
+                bytesMessage.reset();
+            }
+
+            return bytesMessage;
+        }
+        catch (JMSException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
-	public TextMessage getTargetJmsMessage()
-	{
-		return new JmsTextMessageDefaultImpl();
-	}
+    public BytesMessage getTargetJmsMessage()
+    {
+        return new JmsBytesMessageDefaultImpl();
+    }
+
 }
