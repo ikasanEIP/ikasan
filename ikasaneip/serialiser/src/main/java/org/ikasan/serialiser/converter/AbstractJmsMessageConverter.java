@@ -40,33 +40,46 @@
  */
 package org.ikasan.serialiser.converter;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
 import java.util.Enumeration;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+/**
+ * Abstract class for the common converter bits.
+ * @author Ikasan Development Team
+ */
+public abstract class AbstractJmsMessageConverter<S extends Message, T extends Message>
+{
+	/**
+	 * Populate the jms meta data from the source message to the target message.
+	 * @param source
+	 * @throws JMSException
+	 */
+	public T populateMetaData(S source) throws JMSException
+	{
+		T target = getTargetJmsMessage();
 
-import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
-import org.ikasan.spec.serialiser.Converter;
+		// copy standard JMS fields
+		target.setJMSCorrelationID(source.getJMSCorrelationID());
+		target.setJMSCorrelationIDAsBytes(source.getJMSCorrelationIDAsBytes());
+		target.setJMSDeliveryMode(source.getJMSDeliveryMode());
+		target.setJMSExpiration(source.getJMSExpiration());
+		target.setJMSMessageID(source.getJMSMessageID());
+		target.setJMSPriority(source.getJMSPriority());
+		target.setJMSRedelivered(source.getJMSRedelivered());
+		target.setJMSTimestamp(source.getJMSTimestamp());
+		target.setJMSType(source.getJMSType());
 
-public class JmsTextMessageConverter extends AbstractJmsMessageConverter<TextMessage,TextMessage> implements Converter<TextMessage, TextMessage>
-{   
-    public TextMessage convert(TextMessage message)
-    {
-    	try
-    	{
-			TextMessage textMessage = super.populateMetaData(message);
-			textMessage.setText(message.getText());
-			return textMessage;
+		// copy any other properties
+		Enumeration<String> names  = source.getPropertyNames();
+		while(names.hasMoreElements())
+		{
+			String name = names.nextElement();
+			target.setObjectProperty(name, source.getObjectProperty(name));
 		}
-    	catch (JMSException e)
-    	{
-    		throw new RuntimeException(e);
-    	}
-    	
+
+		return target;
     }
 
-	public TextMessage getTargetJmsMessage()
-	{
-		return new JmsTextMessageDefaultImpl();
-	}
+	public abstract T getTargetJmsMessage();
 }

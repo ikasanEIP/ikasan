@@ -40,10 +40,12 @@
  */
 package org.ikasan.serialiser.converter;
 
+import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
@@ -52,26 +54,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test JmsObjectMessageConverter
+ * Test JmsBytesMessageConverter
+ * @author Ikasan Development Team
  */
-public class JmsObjectMessageConverterTest {
+public class JmsBytesMessageConverterTest
+{
 
     // Unit under test
-    private JmsObjectMessageConverter uut = new JmsObjectMessageConverter();
+    private JmsBytesMessageConverter uut = new JmsBytesMessageConverter();
 
 
     @Test
-    public void convert_when_objectMessage_has_object() throws JMSException {
+    public void convert_when_bytesMessage_has_bytes() throws JMSException {
 
-        ObjectMessage message = new ActiveMQObjectMessage();
-        message.setObject(new SimplePojo());
+        BytesMessage message = new ActiveMQBytesMessage();
+        message.writeBytes("This is a test message.".getBytes());
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
-        assertTrue(result.getObject() instanceof SimplePojo);
-
+        assertTrue("expected " + result.getBodyLength(), result.getBodyLength() == 23);
+        byte[] byteResults = new byte[23];
+        assertTrue(23 == result.readBytes(byteResults));
+        assertTrue(new String(byteResults).equals("This is a test message."));
     }
 
     @Test
@@ -87,7 +94,7 @@ public class JmsObjectMessageConverterTest {
         String SHORT = "short";
         String STRING = "string";
 
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setBooleanProperty(BOOLEAN, true);
         message.setByteProperty(BYTE, (byte)'b');
         message.setDoubleProperty(DOUBLE, Double.valueOf(10));
@@ -97,9 +104,10 @@ public class JmsObjectMessageConverterTest {
         message.setObjectProperty(OBJECT, new String("test string"));
         message.setShortProperty(SHORT, new Short( (short)18));
         message.setStringProperty(STRING, "testStringAgain");
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(true, result.getBooleanProperty(BOOLEAN));
@@ -114,14 +122,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSCorrelationID() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSCorrelationID() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSCorrelationID(jmsCorrelationID);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, result.getJMSCorrelationID());
@@ -129,14 +138,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSCorrelationID(jmsCorrelationID);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsCorrelationID, new String(result.getJMSCorrelationIDAsBytes()));
@@ -144,14 +154,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSDeliveryModes() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSDeliveryModes() throws JMSException {
 
         int jmsDeliveryModes = Session.AUTO_ACKNOWLEDGE;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSDeliveryMode(jmsDeliveryModes);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsDeliveryModes, result.getJMSDeliveryMode());
@@ -159,14 +170,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_jmsExpiration() throws JMSException {
+    public void convert_when_bytesMessage_has_jmsExpiration() throws JMSException {
 
         long jmsExpiration = 3600l;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSExpiration(jmsExpiration);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsExpiration, result.getJMSExpiration());
@@ -174,30 +186,31 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSmessageId() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSmessageId() throws JMSException {
 
         String jmsMessageId = "TestJMSMessageID";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSMessageID(jmsMessageId);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         // TODO - find better workaround for the activeMQ ID: prefix
         assertEquals("ID:" + jmsMessageId, result.getJMSMessageID());
-
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSPriority() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSPriority() throws JMSException {
 
         int jmsPriority = 1;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSPriority(jmsPriority);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsPriority, result.getJMSPriority());
@@ -205,14 +218,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSRedelivery() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSRedelivery() throws JMSException {
 
         boolean jmsRedelivered = true;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSRedelivered(jmsRedelivered);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsRedelivered, result.getJMSRedelivered());
@@ -220,14 +234,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_jmsTimestamp() throws JMSException {
+    public void convert_when_bytesMessage_has_jmsTimestamp() throws JMSException {
 
         long jmsTimestamp = 3600l;
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSTimestamp(jmsTimestamp);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsTimestamp, result.getJMSTimestamp());
@@ -235,14 +250,15 @@ public class JmsObjectMessageConverterTest {
     }
 
     @Test
-    public void convert_when_objectMessage_has_JMSType() throws JMSException {
+    public void convert_when_bytesMessage_has_JMSType() throws JMSException {
 
         String jmsType = "TestJMSType";
-        ObjectMessage message = new ActiveMQObjectMessage();
+        BytesMessage message = new ActiveMQBytesMessage();
         message.setJMSType(jmsType);
+        message.reset();
 
         // test
-        ObjectMessage result = uut.convert(message);
+        BytesMessage result = uut.convert(message);
 
         //assert
         assertEquals(jmsType, result.getJMSType());
