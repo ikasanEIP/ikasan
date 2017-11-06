@@ -15,6 +15,24 @@ It is the intention of the Ikasan Enterprise Integration Platform
 to address this domain as commoditised configurable solutions rather 
 than another development framework.
 
+
+[Getting Started Guide](ikasaneip/developer/)
+---------------------
+
+[Component Quick Start](ikasaneip/component/Readme.md)
+---------------------
+
+
+| Samples overview |
+|-------------|
+|  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
+|  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
+|  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
+|  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
+|  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
+---------------------
+
+
 Contributor Best Practices
 --------------------------
 1. Ensure logging output from performing ```mvn clean install``` is kept to an absolute minimum, 
@@ -39,18 +57,3 @@ Using Eclipse
 8. Wait (m2e takes awhile on initial import)
 
 
-[Getting Started Guide](ikasaneip/developer/)
----------------------
-
-[Component Quick Start](ikasaneip/component/Readme.md)
-
-
-
-| Samples overview |
-|-------------|
-|  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
-|  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
-|  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
-|  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
-|  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
----------------------
