@@ -10,7 +10,7 @@ Ikasan frameworks helps users solve integration problems by building application
 * An Integration Module is a high level logical construct
 * Provides a logical grouping of business operations as a single integration point
 * Provide either a source, target, or bi-directional business flow
-* ![Integration Modules](../developer/docs/quickstart-images/ikasan-anatomy.png) 
+![Integration Modules](../developer/docs/quickstart-images/ikasan-anatomy.png) 
 
 ###  Flows
 
@@ -18,7 +18,7 @@ Ikasan frameworks helps users solve integration problems by building application
  * Flows are cohesive operations on a business artifact as a synchronous operation
  * Multiple flows can be chained to isolate concerns
  * Standard event container allows any data type to be transported
- * ![Flows](../developer/docs/quickstart-images/ikasan-anatomy-flows.png) 
+ ![Flows](../developer/docs/quickstart-images/ikasan-anatomy-flows.png) 
 
 ###  Components
 
@@ -28,7 +28,7 @@ Ikasan frameworks helps users solve integration problems by building application
  * Consumer Component is a POJO with injected tech API for application integration to source events
  * Core services automatically bound to each flow
  * Service APIs support management of the flow, runtime status, resubmission, and replay
- * ![Detail view](../developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
+ ![Detail view](../developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
  
 ## Consumers
 
@@ -176,6 +176,7 @@ public class ModuleConfig {
             .setPubSubDomain(true)
             .setDurable(true)
             .setAutoContentConversion(true)
+            .setSessionTransacted(true)
             .setConfiguredResourceId("jmsConsumer")
             .build();
     return jmsConsumer;
@@ -203,8 +204,74 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 | logMatchedFilenames | boolean | Write any matching filenames found to the log files as additional information. |
 | ignoreFileRenameWhilstScanning | boolean | Ignore cases where the file has been renamed between scanning and retrieval. |
 
-##### Sample Usage
 
+##### Sample Usage - Spring XML
+
+```xml
+<!-- fileConsumer is a bean definition of component -->
+<bean id="fileConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler"/>
+        <property name="messageProvider" ref="fileMessageProvider"/>
+        <property name="jobDetail">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory"/>
+                <property name="targetMethod" value="createJobDetail"/>
+                <property name="arguments">
+                    <list>
+                        <ref bean="fileConsumer"/>
+                        <value type="java.lang.Class">
+                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
+                        </value>
+                        <value>fileConsumer</value>
+                        <value>localfile</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuration" ref="fileConsumerConfiguration"/>
+        <property name="configuredResourceId" value="fileConsumer"/>
+    </bean>
+
+    <bean id="fileConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
+        <property name="cronExpression" value="0 0/1 * * * ?"/>
+        <property name="filenames" value="*.txt"/>
+     </bean>
+    
+<bean id="fileMessageProvider" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
+</bean>
+
+<!-- fileConsumerFlowElement is a bean definition of flow elements which uses fileConsumer as a component -->
+<bean id="fileConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+    <property name="name" value="FILE Consumer"/>
+    <property name="component"  ref="fileConsumer"/>
+    <property name="transition" ref="converterFlowElement"/>
+</bean>
+
+```
+
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Consumer getFileConsumer()
+  {
+      return builderFactory.getComponentBuilder().fileConsumer()
+              .setCronExpression("0 0/1 * * * ?")
+              .setScheduledJobGroupName(scheduledGroupName)
+              .setScheduledJobName(scheduledName)
+              .setFilenames(sourceFilenames)
+              .setLogMatchedFilenames(true)
+              .setConfiguredResourceId(fileConsumerConfiguredResourceId)
+              .build();
+  }
+}
+
+```
 #### MongoDB Client Consumer
 
 This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by Mongo Message provider.
@@ -304,7 +371,46 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 | ftpsKeyStoreFilePath | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
 | ftpsKeyStoreFilePassword | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
 
-#### File System Consumer
+
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Consumer getFileConsumer()
+  {
+      return builderFactory.getComponentBuilder().componentBuilder.sftpConsumer()
+        .setCronExpression(sftpConsumerCronExpression)
+        .setClientID(sftpConsumerClientID)
+        .setUsername(sftpConsumerUsername)
+        .setPassword(sftpConsumerPassword)
+        .setRemoteHost(sftpConsumerRemoteHost)
+        .setRemotePort(sftpConsumerRemotePort)
+        .setSourceDirectory(sftpConsumerSourceDirectory)
+        .setFilenamePattern(sftpConsumerFilenamePattern)
+        .setKnownHostsFilename(sftpConsumerKnownHosts)
+        .setChronological(true)
+        .setAgeOfFiles(30)
+        .setMinAge(60l)
+        .setFilterDuplicates(true)
+        .setFilterOnLastModifiedDate(true)
+        .setRenameOnSuccess(false)
+        .setRenameOnSuccessExtension(".tmp")
+        .setDestructive(false)
+        .setChunking(false)
+        .setConfiguredResourceId("configuredResourceId")
+        .setScheduledJobGroupName("SftpToLogFlow")
+        .setScheduledJobName("SftpConsumer")
+        .build();
+      
+  }
+}
+
+```
 
 #### Event Generating Consumer
 
@@ -443,13 +549,11 @@ The JMS producer is based on Spring template and is used to connect to any Vendo
 <!-- jmsSampleProducer is a bean definition of component -->
 <bean id="jmsSampleProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
     <property name="configuration">
-        <bean class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageConsumerConfiguration">
+        <bean class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
             <property name="destinationJndiName" value="java:jboss/exported/jms/topic/test.file"/>
             <property name="connectionFactoryName" value="java:/JmsXA"/>
-            <property name="durableSubscriptionName" value="jmsSampleConsumer"/>
             <property name="pubSubDomain" value="true"/>
-            <property name="durable" value="true"/>
-            <property name="autoContentConversion" value="true"/>
+            <property name="deliveryPersistent" value="true"/>
             <property name="sessionTransacted" value="true"/>
         </bean>
     </property>
@@ -479,6 +583,9 @@ public class ModuleConfig {
     Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
        .setConnectionFactoryName("java:/JmsXA")
        .setDestinationJndiName("java:jboss/exported/jms/topic/test.target")
+       .setDeliveryPersistent(true)
+       .setPubSubDomain(true)
+       .setSessionTransacted(true)
        .setConfiguredResourceId("jmsProducer")
        .build();
     return jmsConsumer;
