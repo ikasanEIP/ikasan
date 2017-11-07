@@ -1,7 +1,34 @@
 
 # Component Quick Start
 
-TODO: Add picture Module/flow/component view
+## Overview 
+
+Ikasan frameworks helps users solve integration problems by building applications constructed of modules/flows/components. Here is how they relate to each other:
+
+###  Integration Module
+
+* An Integration Module is a high level logical construct
+* Provides a logical grouping of business operations as a single integration point
+* Provide either a source, target, or bi-directional business flow
+* ![Integration Modules](../developer/docs/quickstart-images/ikasan-anatomy.png) 
+
+###  Flows
+
+ * Integration modules comprise of one or more related flows
+ * Flows are cohesive operations on a business artifact as a synchronous operation
+ * Multiple flows can be chained to isolate concerns
+ * Standard event container allows any data type to be transported
+ * ![Flows](../developer/docs/quickstart-images/ikasan-anatomy-flows.png) 
+
+###  Components
+
+ * Flows comprise of flow components which have implementation injected as POJOs
+ * Components are individual operations acting on events within a flow
+ * There are different types of components see the full list below
+ * Consumer Component is a POJO with injected tech API for application integration to source events
+ * Core services automatically bound to each flow
+ * Service APIs support management of the flow, runtime status, resubmission, and replay
+ * ![Detail view](../developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
  
 ## Consumers
 
@@ -10,6 +37,7 @@ Starting component of the flow for which only one consumer may exist in any give
 ### Purpose
 
 Consumers provide the &quot;glue&quot; between the entry into the flow and the underlying technology generating he event.
+In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java)
 
 ### Pattern
 
@@ -63,6 +91,7 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
 
 ##### Sample Usage
 
+
 #### SpringTemplate JMS Consumer
 
 The JMS consumer is Event Driven Consumer, used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM. 
@@ -92,7 +121,68 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
 | cacheLevel | integer  | Caching level of the underlying message listener container. <ul><li>CACHE\_NONE = 0</li><li>CACHE\_CONNECTION = 1</li><li>CACHE\_SESSION = 2</li><li>CACHE\_CONSUMER = 3</li><li>CACHE\_AUTO = 4</li></ui>  |
 | sessionAcknowledgeMode | integer | |
 
-##### Sample Usage
+##### Sample Usage - Spring XML
+
+```xml
+<!-- jmsSampleConsumer is a bean definition of component -->
+<bean id="jmsSampleConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+    <property name="messageProvider" ref="jmsToSftpConsumerListener"/>
+    <property name="configuration">
+        <bean class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+            <property name="destinationJndiName" value="java:jboss/exported/jms/topic/test.source"/>
+            <property name="connectionFactoryName" value="java:/JmsXA"/>
+            <property name="durableSubscriptionName" value="jmsSampleConsumer"/>
+            <property name="pubSubDomain" value="true"/>
+            <property name="durable" value="true"/>
+            <property name="autoContentConversion" value="true"/>
+            <property name="sessionTransacted" value="true"/>
+        </bean>
+    </property>
+    <property name="configuredResourceId" value="jmsSampleConsumer"/>
+</bean>
+
+<bean id="jmsToSftpConsumerListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+    <property name="messageListener" ref="jmsSampleConsumer" />
+    <property name="exceptionListener" ref="jmsSampleConsumer" />
+    <property name="errorHandler" ref="jmsSampleConsumer" />
+    <property name="transactionManager" ref="transactionManager" />
+</bean>
+
+<!-- jmsSampleConsumerFlowElement is a bean definition of flow elements which uses jmsSampleConsumer as a component -->
+<bean id="jmsSampleConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+    <property name="name" value="JMS Consumer"/>
+    <property name="component"  ref="jmsSampleConsumer"/>
+    <property name="transition" ref="converterFlowElement"/>
+</bean>
+
+```
+
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Consumer getJmsConsumer(){
+
+
+    Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
+            .setConnectionFactoryName("java:/JmsXA")
+            .setDestinationJndiName("java:jboss/exported/jms/topic/test.source")
+            .setDurableSubscriptionName("jmsSampleConsumer")
+            .setPubSubDomain(true)
+            .setDurable(true)
+            .setAutoContentConversion(true)
+            .setConfiguredResourceId("jmsConsumer")
+            .build();
+    return jmsConsumer;
+  }
+}
+
+```
 
 #### Local File Consumer
 
@@ -132,8 +222,7 @@ NOTE: All options specified below will override any associated options in the dr
 | username | String | Principal for simple authentication |
 | password | Masked String | Password credential for simple authentication. |
 | databaseName | String | Name of the MongoDB database. |
-| collectionNames | Map<String,String> | Names of the MongoDB collections.
-This is represented as a key-name followed by the value of the actual collection name.  |
+| collectionNames | Map<String,String> | Names of the MongoDB collections. sThis is represented as a key-name followed by the value of the actual collection name.  |
 | readPreference | ReadPreference | Replicate set members to which any query may be sent. |
 | writeConcern | WriteConcern | Sets acknowledgement of write operations. |
 | localThreshold | Integer | Local threshold |
@@ -164,7 +253,6 @@ This is represented as a key-name followed by the value of the actual collection
 
 This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by (S)FTP Message provider. The (S)FTP Message provider is under pined with persistent store which allow us to store meta information about the files we are processing.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
-
 
 ##### Configuration Options
 
@@ -216,7 +304,6 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 | ftpsKeyStoreFilePath | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
 | ftpsKeyStoreFilePassword | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
 
-
 #### File System Consumer
 
 #### Event Generating Consumer
@@ -238,18 +325,21 @@ Utility consumer for the generation of ad-hoc events for demonstration or test o
 ## Translators
 
 ### Purpose
+
 Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
+In order to create your own translator you need to implement [Translator Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Translator.java)
 
 ### Pattern
 
 ### Types
 
-#### TODO
-
 ## Converters
 
 ### Purpose
+
+The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
 Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
+In order to create your own converter you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
 
 ### Pattern
 
@@ -259,6 +349,10 @@ Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/p
 
 ### Purpose
 
+The main responsibility of a broker is enrich the contents of the existing message with additional data very often coming from synchronously calls to other systems. Very often broker would be utilising REST calls or DB calls.
+In order to create your own broker you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java)
+
+
 ### Pattern
 
 ### Types
@@ -266,7 +360,21 @@ Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/p
 ## Splitters
 
 ### Purpose
-Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
+
+Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
+Read more about EIP [Sequencer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
+In order to create your own splitter you need to implement [Splitter Interface](../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java)
+
+### Pattern
+
+### Types
+
+## Filters
+
+### Purpose
+
+Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
+In order to create your own filter you need to implement [Filter Interface](../spec/component/src/main/java/org/ikasan/spec/component/filter/Filter.java)
 
 ### Pattern
 
@@ -275,8 +383,10 @@ Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/p
 ## Routers
 
 ### Purpose
-Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageRouter.html)
 
+
+Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageRouter.html)
+In order to create your own router you need to implement  [SingleRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/SingleRecipientRouter.java) or [MultiRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/MultiRecipientRouter.java)
 
 ### Pattern
 
@@ -284,13 +394,11 @@ Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.co
  
 ## Producers
 
-Ending component of the flow, the only component in the flow which have no transition.
-
 ### Purpose
 
-
+Ending component of the flow, the only component in the flow which have no transition.
 Read more about EIP [Message Endpoint](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageEndpoint.html)
-
+In order to create your own broker you need to implement [Producer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Producer.java)
 
 ### Pattern
 
@@ -329,7 +437,56 @@ The JMS producer is based on Spring template and is used to connect to any Vendo
 | sessionAcknowledgeModeName | String | Optional |
 | timeToLive | long | Optional the time-to-live of the message when sending. |
 
-##### Sample Usage
+##### Sample Usage - Spring XML
+
+```xml
+<!-- jmsSampleProducer is a bean definition of component -->
+<bean id="jmsSampleProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+    <property name="configuration">
+        <bean class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageConsumerConfiguration">
+            <property name="destinationJndiName" value="java:jboss/exported/jms/topic/test.file"/>
+            <property name="connectionFactoryName" value="java:/JmsXA"/>
+            <property name="durableSubscriptionName" value="jmsSampleConsumer"/>
+            <property name="pubSubDomain" value="true"/>
+            <property name="durable" value="true"/>
+            <property name="autoContentConversion" value="true"/>
+            <property name="sessionTransacted" value="true"/>
+        </bean>
+    </property>
+    <property name="configuredResourceId" value="jmsSampleProducer"/>
+</bean>
+
+<!-- jmsSampleProducerFlowElement is a bean definition of flow elements which uses jmsSampleProducer as a component -->
+<bean id="jmsSampleProducerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+    <property name="name" value="JMS Producer"/>
+    <property name="component"  ref="jmsSampleProducer"/>
+</bean>
+
+```
+
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Consumer getJmsProducer(){
+
+
+    Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
+       .setConnectionFactoryName("java:/JmsXA")
+       .setDestinationJndiName("java:jboss/exported/jms/topic/test.target")
+       .setConfiguredResourceId("jmsProducer")
+       .build();
+    return jmsConsumer;
+  }
+}
+
+```
+
 
 #### (S)FTP Producer
 
@@ -349,7 +506,7 @@ This producer allows delivery of a file to remote (S)FTP server. The producer is
 | connectionTimeout | integer | Default(60000) expressed in milliseconds. Internal (S)FTP connector connection timeout value. |
 | outputDirectory | String | Remote directory where to deliver the file |
 | renameExtension | String | Default(‘tmp’) file delivery to remote location takes place in two stages, first a file is delivered with suffix equal to renameExtension, further file is renamed with suffix being removed.|
-| tempFileName | String ||
+| tempFileName | String | |
 | overwrite | boolean | Default(false) Flag indicating whether the remote file can be overwritten on remote server.| 
 | unzip | boolean | Default(false) Flag indicating whether the file should be unzipped on remote server as post delivery task. This makes an assumption that delivered stream is zipped.| 
 | checksumDelivered | boolean | Default(false) Flag indicating whether producer should generate and deliver a checksum md5 hash file to remote server.| 
