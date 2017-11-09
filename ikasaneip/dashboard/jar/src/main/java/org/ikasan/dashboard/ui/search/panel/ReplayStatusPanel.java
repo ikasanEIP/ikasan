@@ -288,7 +288,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 							{
 								Module module = topologyService.getModuleByName(replayEvents.get(0).getModuleName());
 
-								String targetServer = module.getServer().getUrl();
+								String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
 
 								bulkReplayResponse = replayService.replay(targetServer, replayEvents, authentication.getName(),
 										(String) authentication.getCredentials(), authentication.getName(), comments.getValue());

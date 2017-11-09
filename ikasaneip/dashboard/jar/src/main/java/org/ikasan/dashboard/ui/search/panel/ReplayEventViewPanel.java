@@ -248,7 +248,9 @@ public class ReplayEventViewPanel extends Panel
 				try
 				{
 					Module module = topologyService.getModuleByName(replayEvent.getModuleName());
-					replayResponse = replayService.replay(module.getServer().getUrl(), replayEvent, authentication.getName(),
+					String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
+
+					replayResponse = replayService.replay(targetServer, replayEvent, authentication.getName(),
 							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue());
 				}
 				catch (RuntimeException e)
