@@ -45,44 +45,27 @@ import org.ikasan.spec.serialiser.Converter;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
-import java.util.Enumeration;
 
-public class JmsObjectMessageConverter implements Converter<ObjectMessage, JmsObjectMessageDefaultImpl>
+public class JmsObjectMessageConverter extends AbstractJmsMessageConverter<ObjectMessage,ObjectMessage> implements Converter<ObjectMessage, ObjectMessage>
 {   
-    public JmsObjectMessageDefaultImpl convert(ObjectMessage message)
+    public ObjectMessage convert(ObjectMessage message)
     {
-		JmsObjectMessageDefaultImpl jmsObjectMessageDefault = new JmsObjectMessageDefaultImpl();
-    	
-    	try
-    	{	    	
-	    	jmsObjectMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsObjectMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsObjectMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsObjectMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsObjectMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsObjectMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsObjectMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsObjectMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    	//jmsObjectMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsObjectMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsObjectMessageDefault.setJMSType(message.getJMSType());
-	    	    	
-	    	Enumeration<String> names  = message.getPropertyNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
 
-                jmsObjectMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
-	    	}
-	    	
-	    	jmsObjectMessageDefault.setObject(message.getObject());
+    	try
+    	{
+			ObjectMessage objectMessage = super.populateMetaData(message);
+			objectMessage.setObject(message.getObject());
+			return objectMessage;
     	}
     	catch (JMSException e)
     	{
     		throw new RuntimeException(e);
     	}
     	
-    	return jmsObjectMessageDefault;
     }
+
+	public ObjectMessage getTargetJmsMessage()
+	{
+		return new JmsObjectMessageDefaultImpl();
+	}
 }
