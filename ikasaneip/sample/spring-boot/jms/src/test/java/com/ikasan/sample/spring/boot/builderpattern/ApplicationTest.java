@@ -159,10 +159,10 @@ public class ApplicationTest
         startFlow();
 
         // Verify the expectations
-        MessageVerifierConsumer consumer =  ikasanApplication.getBean(MessageVerifierConsumer.class);
+        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
 
         // Set expectation
-        assertThat(consumer.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
+        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
 
         //verify wiretap
         PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
