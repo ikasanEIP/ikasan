@@ -41,21 +41,30 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 /**
- * Multi-Recipient Router Invoker Configuration
+ * Ikasan Invoker Configuration Factory for generating flow element invoker configurations.
  *
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterConfiguration
+public class InvokerConfigurationFactory
 {
-    /** default behaviour is to clone the event for each route invoked by the MRR */
-    boolean cloneEventPerRoute = true;
 
-    public boolean isCloneEventPerRoute() {
-        return cloneEventPerRoute;
+    /**
+     * Getter factory method for creating and returning an instance of a MRR invoker configuration.
+     * @return MultiRecipientRouterInvokerConfiguration
+     */
+    public static MultiRecipientRouterInvokerConfiguration multiRecipientRouterInvokerConfiguration()
+    {
+        return new MultiRecipientRouterInvokerConfiguration();
     }
 
-    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
-        this.cloneEventPerRoute = cloneEventPerRoute;
+
+    /**
+     * Getter factory method for creating and returning an instance of a MRR invoker configuration.
+     * @return MultiRecipientRouterInvokerConfiguration
+     */
+    public static FilterInvokerConfiguration filterInvokerConfiguration()
+    {
+        return new FilterInvokerConfiguration();
     }
 }
 

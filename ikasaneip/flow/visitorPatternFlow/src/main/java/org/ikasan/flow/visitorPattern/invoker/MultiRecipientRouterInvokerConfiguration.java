@@ -38,41 +38,34 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.flow.visitorPattern.invoker;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+/**
+ * Multi-Recipient Router Invoker Configuration
+ *
+ * @author Ikasan Development Team
+ */
+public class MultiRecipientRouterInvokerConfiguration
+{
+    /** default behaviour is to clone the event for each route invoked by the MRR */
+    boolean cloneEventPerRoute = true;
 
-@Configuration
-@ImportResource( {
-        "classpath:builder-conf.xml",
-        "classpath:exception-conf.xml",
-        "classpath:transaction-conf.xml",
-        "classpath:ikasan-transaction-conf.xml",
-        "classpath:ikasan-transaction-pointcut-resubmission.xml",
-        "classpath:serialiser-service-conf.xml",
-        "classpath:scheduler-service-conf.xml",
-        "classpath:error-reporting-service-conf.xml",
-        "classpath:recoveryManager-service-conf.xml",
-        "classpath:monitor-service-conf.xml",
-        "classpath:module-service-conf.xml",
-        "classpath:filter-service-conf.xml",
-        "classpath:configuration-service-conf.xml",
-        "classpath:systemevent-service-conf.xml",
-        "classpath:replay-service-conf.xml",
-        "classpath:wiretap-service-conf.xml",
-        "classpath:hospital-conf.xml",
-        "classpath:exclusion-service-conf.xml",
-        "classpath:ikasan-module-bootstrap-conf.xml",
-        "classpath:topology-conf.xml",
-        "classpath:topology-tx-conf.xml",
-        "classpath:datasource-conf.xml",
-        "classpath:security-service-boot-conf.xml",
-        "classpath:springapp-servlet-boot.xml",
-} )
+    /**
+     * Is the event to be cloned for each route out of the multi-recipient router
+     * @return
+     */
+    public boolean isCloneEventPerRoute() {
+        return cloneEventPerRoute;
+    }
 
-@ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","org.ikasan.*"})
-public class BaseConfigurationLoader {
-
+    /**
+     * Set whether or not the event should be cloned for each route out of the multi-recipient router.
+     * Default is true, clone the event so we send the same event structure/content down each route.
+     * If false the mutated event will be operated on by each route as it is mutated by the previous route.
+     * @param cloneEventPerRoute
+     */
+    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
+        this.cloneEventPerRoute = cloneEventPerRoute;
+    }
 }
+
