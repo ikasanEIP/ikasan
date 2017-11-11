@@ -372,10 +372,14 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 }
             }
 
+            // configure the invokers
+            configure(this.flowConfiguration.getFlowElementInvokerConfiguredResources());
+
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
 
             final List<FlowElement<?>> flowElements = this.flowConfiguration.getFlowElements();
+
             // configure the flow elements
             configureFlowElements(flowElements);
             
@@ -425,7 +429,28 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
     }
-    
+
+    /**
+     * Configure the given list of configured resources
+     * @param configuredResourcesFlowElementInvokers
+     */
+    private void configure(Map<String,ConfiguredResource> configuredResourcesFlowElementInvokers)
+    {
+        for(Map.Entry<String,ConfiguredResource> entry : configuredResourcesFlowElementInvokers.entrySet())
+        {
+            ConfiguredResource configuredResource = entry.getValue();
+
+            // set the default configured resource id if none previously set.
+            // Ensure we are explicit that this is the invoker, not the POJO we are configuring
+            if(configuredResource.getConfiguredResourceId() == null)
+            {
+                configuredResource.setConfiguredResourceId(this.moduleName + this.name + entry.getKey() + "Invoker");
+            }
+
+            this.flowConfiguration.configure(configuredResource);
+        }
+    }
+
     /**
      * Configure the given list of configured flowElements
      * @param flowElements

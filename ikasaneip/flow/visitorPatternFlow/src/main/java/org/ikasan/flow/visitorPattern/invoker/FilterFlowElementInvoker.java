@@ -40,9 +40,13 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.hibernate.internal.FilterConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of the FlowElementInvoker for a filter
@@ -50,8 +54,17 @@ import org.ikasan.spec.flow.*;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class FilterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Filter>
+public class FilterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Filter>, ConfiguredResource<FilterInvokerConfiguration>
 {
+    /** Logger for this class */
+    private static Logger logger = LoggerFactory.getLogger(FilterFlowElementInvoker.class);
+
+    // unique id for this invoker configuration
+    String configuredResourceId;
+
+    // configuration instance
+    FilterInvokerConfiguration configuration = new FilterInvokerConfiguration();
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)
     {
@@ -66,15 +79,24 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
         {
             notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
 
-            if (filter.filter(flowEvent.getPayload()) == null)
+            if(this.configuration.isApplyFilter())
             {
-                endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
-                if (flowInvocationContext.getFinalAction() == null
-                        || flowInvocationContext.getFinalAction() != FinalAction.PUBLISH)
+                if (filter.filter(flowEvent.getPayload()) == null)
                 {
-                    flowInvocationContext.setFinalAction(FinalAction.FILTER);
+                    if(this.configuration.isLogFiltered())
+                    {
+                        logger.info("Filtered FlowEvent Identifier[" + flowEvent.getIdentifier()
+                                + "] + timestamp[" + flowEvent.getTimestamp()
+                                + "] + payload[" + ((flowEvent.getPayload() != null) ? flowEvent.getPayload().toString() : "null") + "]");
+                    }
+
+                    endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
+                    if (flowInvocationContext.getFinalAction() == null
+                            || flowInvocationContext.getFinalAction() != FinalAction.PUBLISH) {
+                        flowInvocationContext.setFinalAction(FinalAction.FILTER);
+                    }
+                    return null;
                 }
-                return null;
             }
         }
         finally
@@ -96,5 +118,28 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
         return flowElement;
     }
 
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public FilterInvokerConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(FilterInvokerConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
 }
 
