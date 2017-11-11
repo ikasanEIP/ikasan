@@ -49,7 +49,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 /**
  * Default implementation of {@link MessageFilter} that delegates to a
  * {@link FilterRule} to evaluate the incoming message.
- * 
+ *
  * @author Ikasan Development Team
  *
  */
