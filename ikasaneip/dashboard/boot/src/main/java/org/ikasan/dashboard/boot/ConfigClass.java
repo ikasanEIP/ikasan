@@ -38,6 +38,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:solr-harvesting-context.xml",
         "classpath:search-context.xml",
         "classpath:datasource-conf.xml",
+        "classpath:control-context.xml",
         /**
 
          /WEB-INF/discovery-context.xml,
