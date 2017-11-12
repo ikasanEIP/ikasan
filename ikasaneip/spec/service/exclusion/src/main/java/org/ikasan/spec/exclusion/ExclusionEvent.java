@@ -49,172 +49,103 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
-public class ExclusionEvent implements HarvestEvent
+public interface ExclusionEvent
 {
-    /** surrogate id assigned from ORM */
-    long id;
-
-    /** module name */
-    String moduleName;
-
-    /** flowName */
-    String flowName;
-
-    /** identifier for this event */
-    String identifier;
-
-    /** original form of the event being excluded */
-    byte[] event;
-
-    /** timestamp indicating when this event was created */
-    long timestamp;
-
-    /** error uri reported as part of this excluded event */
-    String errorUri;
-
-    /** flag to indicate if the record has been harvested */
-    boolean harvested;
 
     /**
-     * Constructor
+     *
+     * @return
+     */
+    public long getId();
+
+    /**
+     *
+     * @param id
+     */
+    public void setId(long id);
+
+    /**
+     *
+     * @return
+     */
+    public String getModuleName();
+
+    /**
+     *
      * @param moduleName
+     */
+    public void setModuleName(String moduleName);
+
+    /**
+     *
+     * @return
+     */
+    public String getFlowName();
+
+    /**
+     *
      * @param flowName
+     */
+    public void setFlowName(String flowName);
+
+    /**
+     *
+     * @return
+     */
+    public String getIdentifier();
+
+    /**
+     *
      * @param identifier
+     */
+    public void setIdentifier(String identifier);
+
+    /**
+     *
+     * @return
+     */
+    public byte[] getEvent();
+
+    /**
+     *
      * @param event
+     */
+    public void setEvent(byte[] event);
+
+    /**
+     *
+     * @return
+     */
+    public long getTimestamp();
+
+    /**
+     *
+     * @param timestamp
+     */
+    public void setTimestamp(long timestamp);
+
+    /**
+     *
+     * @return
+     */
+    public String getErrorUri();
+
+    /**
+     *
      * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
-    {
-        this.moduleName = moduleName;
-        if(moduleName == null)
-        {
-            throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
-
-        this.flowName = flowName;
-        if(flowName == null)
-        {
-            throw new IllegalArgumentException("flowName cannot be 'null'");
-        }
-        this.identifier = identifier;
-        if(identifier == null)
-        {
-            throw new IllegalArgumentException("identifier cannot be 'null'");
-        }
-        this.event = event;
-        if(event == null)
-        {
-            throw new IllegalArgumentException("event cannot be 'null'");
-        }
-        this.errorUri = errorUri;
-        long now = System.currentTimeMillis();
-        this.timestamp = now;
-    }
+    public void setErrorUri(String errorUri);
 
     /**
-     * Constructor required by the ORM
+     *
+     * @return
      */
-    protected ExclusionEvent(){}
+    public boolean isHarvested();
 
-    public long getId() {
-        return id;
-    }
+    /**
+     * 
+     * @param harvested
+     */
+    public void setHarvested(boolean harvested);
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    protected void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    public String getFlowName() {
-        return flowName;
-    }
-
-    protected void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    protected void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public byte[] getEvent() {
-        return event;
-    }
-
-    protected void setEvent(byte[] event) {
-        this.event = event;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    protected void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getErrorUri() {
-        return errorUri;
-    }
-
-    protected void setErrorUri(String errorUri) {
-        this.errorUri = errorUri;
-    }
-
-    public boolean isHarvested()
-    {
-        return harvested;
-    }
-
-    public void setHarvested(boolean harvested)
-    {
-        this.harvested = harvested;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExclusionEvent that = (ExclusionEvent) o;
-
-        if (id != that.id) return false;
-        if (!flowName.equals(that.flowName)) return false;
-        if (!identifier.equals(that.identifier)) return false;
-        if (!moduleName.equals(that.moduleName)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = moduleName.hashCode();
-        result = 31 * result + flowName.hashCode();
-        result = 31 * result + identifier.hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ExclusionEvent{" +
-                "id='" + id + '\'' +
-                ", moduleName='" + moduleName + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", identifier='" + identifier + '\'' +
-                ", event=" + Arrays.toString(event) +
-                ", timestamp=" + timestamp +
-                ", errorUri='" + errorUri + '\'' +
-                '}';
-    }
 }

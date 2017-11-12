@@ -49,8 +49,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayAuditDao;
@@ -65,7 +65,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao,ReplayAuditDao<ReplayAudit,ReplayAuditEvent>
+public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao,ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent>
 {
 	public static final String MODULE_NAME = "moduleName";
 	public static final String FLOW_NAME = "flowame";
@@ -76,17 +76,16 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String EVENT_IDS = "eventIds";
 	public static final String NOW = "now";
 	
-	public static final String REPLAY_AUDIT_QUERY = "select DISTINCT ra from ReplayAudit ra, ReplayAuditEvent rae, HibernateReplayEvent re "
+	public static final String REPLAY_AUDIT_QUERY = "select DISTINCT ra from HibernateReplayAudit ra, HibernateReplayAuditEvent rae "
 			+ "where "
-			+ "ra.id = rae.id.replayAuditId "
-			+ "and rae.id.replayEventId = re.id ";
+			+ "ra.id = rae.id.replayAuditId";
 	
-	public static final String MODULE_NAME_PREDICATE =  " and re.moduleName IN :" + MODULE_NAME;
-	public static final String FLOW_NAME_PREDICATE =  " and re.flowName IN :" + FLOW_NAME;
+	public static final String MODULE_NAME_PREDICATE =  " and rae.moduleName IN :" + MODULE_NAME;
+	public static final String FLOW_NAME_PREDICATE =  " and rae.flowName IN :" + FLOW_NAME;
 	public static final String USER_PREDICATE =  " and ra.user = :" + USER;
 	public static final String START_DATE_PREDICATE =  " and ra.timestamp > :" + START_DATE;
 	public static final String END_DATE_PREDICATE =  " and ra.timestamp < :" + END_DATE;
-	public static final String EVENT_ID_PREDICATE =  " and re.eventId = :" + EVENT_ID;
+	public static final String EVENT_ID_PREDICATE =  " and rae.eventId = :" + EVENT_ID;
 	public static final String ORDER_BY =  " order by ra.timestamp desc";
 
 	public static final String REPLAY_EVENTS_TO_DELETE_QUERY = "select id from HibernateReplayEvent re " +
@@ -95,13 +94,13 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String REPLAY_EVENTS_DELETE_QUERY = "delete HibernateReplayEvent re " +
 			" where re.id in(:" + EVENT_IDS + ")";
 
-	public static final String REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY = "select distinct rae.id.replayAuditId from ReplayAuditEvent rae " +
+	public static final String REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY = "select distinct rae.id.replayAuditId from HibernateReplayAuditEvent rae " +
 			" where rae.id.replayEventId in (:" + EVENT_IDS + ")";
 
-	public static final String REPLAY_AUDIT_DELETE_QUERY = "delete ReplayAudit re " +
-			" where re.id not in(select distinct rae.id.replayAuditId from ReplayAuditEvent rae)";
+	public static final String REPLAY_AUDIT_DELETE_QUERY = "delete HibernateReplayAudit re " +
+			" where re.id not in(select distinct rae.id.replayAuditId from HibernateReplayAuditEvent rae)";
 
-	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete ReplayAuditEvent re " +
+	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete HibernateReplayAuditEvent re " +
 			" where re.id.replayEventId in(:" + EVENT_IDS + ")";
 	
 	/* (non-Javadoc)
@@ -109,10 +108,10 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ReplayAudit> getReplayAudits(final List<String> moduleNames, final List<String> flowNames,
-			final String eventId, final String user, final Date startDate, final Date endDate) 
+	public List<HibernateReplayAudit> getReplayAudits(final List<String> moduleNames, final List<String> flowNames,
+													  final String eventId, final String user, final Date startDate, final Date endDate)
 	{
-		return (List<ReplayAudit>)this.getHibernateTemplate().execute(new HibernateCallback()
+		return (List<HibernateReplayAudit>)this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
@@ -183,7 +182,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     		    }
 
 
-                return (List<ReplayAudit>)query.list();
+                return (List<HibernateReplayAudit>)query.list();
             }
         });
 	}
@@ -294,7 +293,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
          * @see org.ikasan.spec.replay.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAudit)
          */
 	@Override
-	public void saveOrUpdateAudit(ReplayAudit replayAudit)
+	public void saveOrUpdateAudit(HibernateReplayAudit replayAudit)
 	{
 		this.getHibernateTemplate().saveOrUpdate(replayAudit);
 	}
@@ -303,7 +302,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 * @see org.ikasan.spec.replay.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAuditEvent)
 	 */
 	@Override
-	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent) 
+	public void saveOrUpdate(HibernateReplayAuditEvent replayAuditEvent)
 	{
 		this.getHibernateTemplate().saveOrUpdate(replayAuditEvent);
 	}
@@ -312,27 +311,27 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 * @see org.ikasan.spec.replay.ReplayDao#getReplayAuditById(java.lang.Long)
 	 */
 	@Override
-	public ReplayAudit getReplayAuditById(Long id) 
+	public HibernateReplayAudit getReplayAuditById(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayAudit.class);
 		
 		criteria.add(Restrictions.eq("id", id));
 		
-		return (ReplayAudit)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+		return (HibernateReplayAudit)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayDao#getReplayAuditEventsByAuditId(java.lang.Long)
 	 */
 	@Override
-	public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) 
+	public List<HibernateReplayAuditEvent> getReplayAuditEventsByAuditId(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAuditEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayAuditEvent.class);
 
 		criteria.add(Restrictions.eq("id.replayAuditId", id));
 		
 		
-		return (List<ReplayAuditEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+		return (List<HibernateReplayAuditEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
 	/* (non-Javadoc)
@@ -345,7 +344,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(ReplayAuditEvent.class);
+                Criteria criteria = session.createCriteria(HibernateReplayAuditEvent.class);
                 criteria.add(Restrictions.eq("id.replayAuditId", id));
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);

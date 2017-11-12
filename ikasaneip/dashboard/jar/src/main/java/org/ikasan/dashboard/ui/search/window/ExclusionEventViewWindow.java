@@ -38,41 +38,55 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.replay.window;
+package org.ikasan.dashboard.ui.search.window;
 
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
-import org.ikasan.replay.model.HibernateReplayAudit;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayManagementService;
-
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.search.panel.ExclusionEventViewPanel;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayAuditViewWindow extends Window
+public class ExclusionEventViewWindow extends Window
 {
-	private Logger logger = Logger.getLogger(ReplayAuditViewWindow.class);
+	private static Logger logger = Logger.getLogger(ExclusionEventViewWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private HibernateReplayAudit replayAudit;
-	
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
-	
+	private TextField roleName;
+	private TextField roleDescription;
+	private ExclusionEvent exclusionEvent;
+	private ErrorOccurrence errorOccurrence;
+	private ExclusionEventAction action;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private TopologyService topologyService;
+	private ErrorReportingManagementService errorReportingManagementService;
+	private HospitalService<byte[]> hospitalService;
 
-	/**
-	 * @param policy
-	 */
-	public ReplayAuditViewWindow(HibernateReplayAudit replayAudit, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService)
+
+	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
+                                    HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+                                    ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
-		this.replayAudit = replayAudit;
-		this.replayManagementService = replayManagementService;
+		this.exclusionEvent = exclusionEvent;
+		this.errorOccurrence = errorOccurrence;
+		this.action = action;
+		this.hospitalManagementService = hospitalManagementService;
+		this.topologyService = topologyService;
+		this.errorReportingManagementService = errorReportingManagementService;
+		this.hospitalService = hospitalService;
 		
 		this.init();
 	}
@@ -85,8 +99,9 @@ public class ReplayAuditViewWindow extends Window
 		this.setHeight("90%");
 		this.setWidth("90%");
 		
-		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(this.replayAudit, replayManagementService);		
-		
+		ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, action, hospitalManagementService
+				, topologyService, errorReportingManagementService, hospitalService);
+			
 		this.setContent(panel);
 	}
 

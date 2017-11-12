@@ -38,17 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.replay.panel;
+package org.ikasan.dashboard.ui.search.panel;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
@@ -65,20 +68,18 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.VaadinService;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 
@@ -102,13 +103,15 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	private ProgressBar bar = new ProgressBar(0.0f);
 	
 	private TextArea comments;
-	private ComboBox targetServerComboBox;
 	
 	private IkasanAuthentication authentication;
+
+	private TopologyService topologyService;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
-			ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-			PlatformConfigurationService platformConfigurationService) 
+                             ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+                             PlatformConfigurationService platformConfigurationService,
+							 TopologyService topologyService)
 	{
 		super();
 		
@@ -127,6 +130,11 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		if(this.platformConfigurationService == null)
 		{
 			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
+		this.topologyService = topologyService;
+		if(this.topologyService == null)
+		{
+			throw new IllegalArgumentException("topologyService cannot be null!");
 		}
 		
 		init();
@@ -208,21 +216,6 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		moduleCount.setWidth("80%");
 		formLayout.addComponent(moduleCount, 1, 1);
 		
-		
-		Label targetServerLabel = new Label("Target server:");
-		targetServerLabel.setSizeUndefined();
-		
-		formLayout.addComponent(targetServerLabel, 0, 2);
-		formLayout.setComponentAlignment(targetServerLabel, Alignment.MIDDLE_RIGHT);
-		
-		this.initialiseTargetServerCombo();
-		
-		this.targetServerComboBox.setWidth("80%");
-		this.targetServerComboBox.setRequired(true);
-		this.targetServerComboBox.setRequiredError("A target server is required!");
-		targetServerComboBox.setValidationVisible(false);
-		formLayout.addComponent(this.targetServerComboBox, 1, 2);
-		
 		Label commentLabel = new Label("Comment:");
 		commentLabel.setSizeUndefined();
 		
@@ -268,12 +261,10 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
             	try 
             	{
             		comments.validate();
-            		targetServerComboBox.validate();
                 } 
                 catch (Exception e) 
                 {
-                	comments.setValidationVisible(true);       
-                	targetServerComboBox.setValidationVisible(true);
+                	comments.setValidationVisible(true);
                 	comments.markAsDirty();
                     return;
                 }
@@ -288,9 +279,29 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    			{
 	    				@Override
 	    				public void run() 
-	    				{	    					
-	    					BulkReplayResponse bulkReplayResponse = replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(),
-	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue());
+	    				{
+	    					replayService.addReplayListener(ReplayStatusPanel.this);
+
+							BulkReplayResponse bulkReplayResponse = null;
+
+							if(replayEvents.size() > 0)
+							{
+								Module module = topologyService.getModuleByName(replayEvents.get(0).getModuleName());
+
+								String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
+
+								bulkReplayResponse = replayService.replay(targetServer, replayEvents, authentication.getName(),
+										(String) authentication.getCredentials(), authentication.getName(), comments.getValue());
+							}
+							else
+							{
+								bar.setVisible(false);
+								Notification.show("No events to replay.");
+								return;
+							}
+
+
+							cancelButton.setVisible(false);
 	    					
 	    					logger.info("Finished replaying events!");
 	    					
@@ -298,18 +309,15 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		            		try 
 		            		{
 		            			bar.setVisible(false);
-		    					
-		            			if(!replayService.isCancelled())
-		            			{
-		            				if(!bulkReplayResponse.isSuccess())
-									{
-										Notification.show("One or more events failed to replay. Please see messages for details.", Notification.Type.ERROR_MESSAGE);
-									}
-									else
-									{
-										Notification.show("Event replay complete.");
-									}
-		            			}
+
+								if(!bulkReplayResponse.isSuccess())
+								{
+									Notification.show("One or more events failed to replay. Please see messages for details.", Notification.Type.ERROR_MESSAGE);
+								}
+								else
+								{
+									Notification.show("Event replay complete.");
+								}
 		        				
 		            		} 
 		            		finally 
@@ -464,23 +472,6 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		else
 		{
 			return new ArrayList<String>();
-		}
-	}
-	
-	private void initialiseTargetServerCombo()
-	{
-		if(this.targetServerComboBox == null)
-		{
-			this.targetServerComboBox = new ComboBox();
-		}
-		
-		this.targetServerComboBox.removeAllItems();
-		
-		List<String> targetServers = this.getValidTargetServers();
-		
-		for(String targetServer: targetServers)
-		{
-			this.targetServerComboBox.addItem(targetServer);
 		}
 	}
 	

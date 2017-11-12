@@ -283,10 +283,12 @@
 
 	<bean id="solrReplayManagementService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
 		<constructor-arg ref="solrReplayDao" />
+		<constructor-arg ref="replayDao" />
 	</bean>
 
 	<bean id="solrReplayService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
 		<constructor-arg ref="solrReplayDao" />
+		<constructor-arg ref="replayDao" />
 	</bean>
 
 	<bean id="solrReplayDao" class="org.ikasan.replay.dao.SolrReplayDao">

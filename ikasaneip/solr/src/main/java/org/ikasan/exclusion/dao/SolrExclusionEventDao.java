@@ -1,10 +1,14 @@
 package org.ikasan.exclusion.dao;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.ikasan.exclusion.model.SolrExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.ikasan.wiretap.model.SolrWiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +109,35 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
     @Override
     public ExclusionEvent find(String errorUri)
     {
-        throw new UnsupportedOperationException();
+        String queryString = "id:\"" + errorUri + "\" AND type:" + EXCLUSION;
+
+
+        logger.info("queryString: " + queryString);
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+
+        List<SolrExclusionEventImpl> beans = null;
+
+        try
+        {
+            QueryResponse rsp = this.solrClient.query( query );
+
+            beans = rsp.getBeans(SolrExclusionEventImpl.class);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error resolving exclusion by id [" + errorUri + "] from ikasan solr index!", e);
+        }
+
+        if(beans.size() > 0)
+        {
+            return beans.get(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override

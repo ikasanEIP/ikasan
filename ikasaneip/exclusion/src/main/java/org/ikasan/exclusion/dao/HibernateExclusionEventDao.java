@@ -48,6 +48,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.springframework.dao.support.DataAccessUtils;
@@ -65,8 +66,8 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
         implements ExclusionEventDao<String, ExclusionEvent>
 {
     /** batch delete statement */
-    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
-    private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEvent s where s.errorUri = :errorUri";
+    private static final String DELETE_QUERY = "delete ExclusionEventImpl s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
+    private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEventImpl s where s.errorUri = :errorUri";
 
 
     @Override
@@ -96,7 +97,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     @Override
     public ExclusionEvent find(String moduleName, String flowName, String identifier)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
         criteria.add(Restrictions.eq("moduleName", moduleName));
         criteria.add(Restrictions.eq("flowName", flowName));
         criteria.add(Restrictions.eq("identifier", identifier));
@@ -116,7 +117,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	@Override
 	public List<ExclusionEvent> findAll()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
 		criteria.addOrder(Order.desc("timestamp"));		
 		
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
@@ -149,7 +150,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 			List<String> flowName, Date startDate, Date endDate,
 			String identifier, int size)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
 		
 		if(moduleName != null && moduleName.size() > 0)
 		{
@@ -202,7 +203,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             public Object doInHibernate(Session session) throws HibernateException
             {
 
-                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
 
                 if(moduleName != null && moduleName.size() > 0)
                 {
@@ -248,7 +249,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	@Override
 	public ExclusionEvent find(String errorUri)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
         criteria.add(Restrictions.eq("errorUri", errorUri));
 
         return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
@@ -260,7 +261,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
                 criteria.add(Restrictions.eq("harvested", false));
                 criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("timestamp"));

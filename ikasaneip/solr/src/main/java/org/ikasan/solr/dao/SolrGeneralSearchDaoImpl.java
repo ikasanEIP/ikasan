@@ -52,7 +52,7 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
 
         if(queryFilter != null && !queryFilter.isEmpty())
         {
-            query.setFilterQueries(queryFilter);
+            query.setFilterQueries(queryBuffer.toString() + " AND " + queryFilter);
         }
 
         try
