@@ -54,7 +54,7 @@
         <property name="flowElementInvokerConfiguration" ref="mrRouterFlowElementConfiguration" />
     </bean>
 
-    <bean id="mrRouterFlowElementConfiguration" class="org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration">
+    <bean id="mrRouterFlowElementConfiguration" class="org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfiguration">
         <property name="cloneEventPerRoute" value="true"/>
     </bean>
 
