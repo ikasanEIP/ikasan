@@ -1,4 +1,4 @@
-package com.ikasan.sample.spring.boot.builderpattern;
+package org.ikasan.testharness.flow.jms;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.jms.config.JmsListenerEndpoint;
@@ -19,7 +19,7 @@ public class MessageListenerVerifier implements MessageListener
     private String destinationName;
 
     public MessageListenerVerifier(final String brokerUrl, final String destinationName,
-            final JmsListenerEndpointRegistry registry)
+                                   final JmsListenerEndpointRegistry registry)
     {
         this.destinationName = destinationName;
         SimpleJmsListenerContainerFactory factory = new SimpleJmsListenerContainerFactory();

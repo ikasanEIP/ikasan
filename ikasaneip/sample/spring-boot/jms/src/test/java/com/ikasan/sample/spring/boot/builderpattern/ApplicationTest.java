@@ -54,15 +54,13 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import java.util.*;
@@ -150,7 +148,6 @@ public class ApplicationTest
         broker.stop();
     }
 
-    @DirtiesContext
     @Test
     public void test_successful_message_processing() throws Exception
     {
@@ -171,7 +168,6 @@ public class ApplicationTest
 
     }
 
-    @DirtiesContext
     @Test
     public void test_exclusion() throws Exception
     {
@@ -205,7 +201,6 @@ public class ApplicationTest
 
     }
 
-    @DirtiesContext
     @Test
     public void test_flow_in_recovery() throws Exception
     {
@@ -243,7 +238,6 @@ public class ApplicationTest
 
     }
 
-    @DirtiesContext
     @Test
     public void test_flow_stopped_in_error() throws Exception
     {
@@ -283,7 +277,7 @@ public class ApplicationTest
         // start flow
         flowUUT.start();
 
-        pause(10000);
+        pause(5000);
         assertEquals("running",flowUUT.getState());
         flowUUT.stop();
         pause(2000);

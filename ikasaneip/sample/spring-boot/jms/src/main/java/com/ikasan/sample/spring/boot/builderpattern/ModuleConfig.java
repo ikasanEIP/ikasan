@@ -22,9 +22,7 @@ import javax.jms.ConnectionFactory;
 
         "classpath:monitor-service-conf.xml",
         "classpath:monitor-conf.xml",
-        "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:logger-conf.xml",
-        "classpath:exception-conf.xml",
+        "classpath:ikasan-transaction-pointcut-jms.xml"
 } )
 public class ModuleConfig {
 
@@ -45,17 +43,19 @@ public class ModuleConfig {
 
         FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
 
-        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
         Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
-                .setConnectionFactory(connectionFactory)
+                .setConnectionFactory(consumerConnectionFactory)
                 .setDestinationJndiName("source")
                 .setAutoContentConversion(true)
                 .setConfiguredResourceId("jmsConsumer")
                 .build();
 
 
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+
         Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
-                .setConnectionFactory(connectionFactory)
+                .setConnectionFactory(producerConnectionFactory)
                 .setDestinationJndiName("target")
                 .setConfiguredResourceId("jmsProducer")
                 .build();

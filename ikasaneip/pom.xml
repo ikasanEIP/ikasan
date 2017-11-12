@@ -2195,6 +2195,11 @@
                 <artifactId>activemq-all</artifactId>
                 <version>${version.activemq}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.activemq.tooling</groupId>
