@@ -38,137 +38,64 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.replay.model;
+package org.ikasan.dashboard.ui.search.window;
 
+import com.vaadin.ui.Window;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.search.panel.ReplayEventViewPanel;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayAuditEvent
+public class ReplayEventViewWindow extends Window
 {
-	private ReplayAuditEventKey id;
-	private ReplayAudit replayAudit;
-	private ReplayEvent replayEvent;
-	private boolean success;
-	private String resultMessage;
-	private long timestamp;
-   
-    
-    @SuppressWarnings("unused")
-	private ReplayAuditEvent()
-    {
-    }
+	private Logger logger = Logger.getLogger(ReplayEventViewWindow.class);
 
-    
-    /**
-     * Constructor
-     * @param replayAudit
-     * @param replayEvent
-     */
-	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp)
+	private static final long serialVersionUID = -3347325521531925322L;
+	
+	private ReplayEvent replayEvent;
+	private ReplayService replayService;
+	private PlatformConfigurationService platformConfigurationService;
+	private TopologyService topologyService;
+
+	/**
+	 * Constructor
+	 *  
+	 * @param replayEvent
+	 * @param replayService
+	 * @param platformConfigurationService
+	 */
+	public ReplayEventViewWindow(ReplayEvent replayEvent, ReplayService replayService,
+                                 PlatformConfigurationService platformConfigurationService,
+								 TopologyService topologyService)
 	{
 		super();
-		this.replayAudit = replayAudit;
-		if(this.replayAudit == null)
-		{
-			throw new IllegalArgumentException("ReplayAudit cannot be null!!");
-		}
 		this.replayEvent = replayEvent;
-		if(this.replayEvent == null)
-		{
-			throw new IllegalArgumentException("ReplayEvent cannot be null!!");
-		}
+		this.replayService = replayService;
+		this.platformConfigurationService = platformConfigurationService;
+		this.topologyService = topologyService;
 		
-		this.id = new ReplayAuditEventKey(replayAudit.getId(), replayEvent.getId());
-		this.resultMessage = result;
-		this.success = success;
-		this.timestamp = timestamp;
+		this.init();
 	}
 
 
-	/**
-	 * @return the id
-	 */
-	public ReplayAuditEventKey getId() 
+	public void init()
 	{
-		return id;
+		this.setModal(true);
+		this.setResizable(false);
+		this.setHeight("90%");
+		this.setWidth("90%");
+		
+		ReplayEventViewPanel panel = new ReplayEventViewPanel(this.replayEvent, replayService,
+				platformConfigurationService, topologyService);
+		
+		this.setContent(panel);
 	}
 
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(ReplayAuditEventKey id) 
-	{
-		this.id = id;
-	}
-
-
-	/**
-	 * @return the replayAudit
-	 */
-	public ReplayAudit getReplayAudit()
-	{
-		return replayAudit;
-	}
-
-
-	/**
-	 * @param replayAudit the replayAudit to set
-	 */
-	public void setReplayAudit(ReplayAudit replayAudit)
-	{
-		this.replayAudit = replayAudit;
-	}
-	
-
-	/**
-	 * @return the success
-	 */
-	public boolean isSuccess() {
-		return success;
-	}
-
-
-	/**
-	 * @param success the success to set
-	 */
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-
-
-	/**
-	 * @return the resultMessage
-	 */
-	public String getResultMessage() {
-		return resultMessage;
-	}
-
-
-	/**
-	 * @param resultMessage the resultMessage to set
-	 */
-	public void setResultMessage(String resultMessage) {
-		this.resultMessage = resultMessage;
-	}
-	
-	/**
-	 * @return the timestamp
-	 */
-	public long getTimestamp() {
-		return timestamp;
-	}
-
-
-	/**
-	 * @param timestamp the timestamp to set
-	 */
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-	
 }

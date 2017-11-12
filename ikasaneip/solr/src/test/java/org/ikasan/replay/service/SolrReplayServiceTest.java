@@ -48,7 +48,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_constructor_dao_null_exception()
     {
-        new SolrReplayServiceImpl(null);
+        new SolrReplayServiceImpl(null, null);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -58,7 +58,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        new SolrReplayServiceImpl(dao).getReplayAuditById(1l);
+        new SolrReplayServiceImpl(dao, dao).getReplayAuditById(1l);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -68,7 +68,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        new SolrReplayServiceImpl(dao).getReplayAuditEventsByAuditId(1l);
+        new SolrReplayServiceImpl(dao, dao).getReplayAuditEventsByAuditId(1l);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -78,7 +78,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        new SolrReplayServiceImpl(dao).getNumberReplayAuditEventsByAuditId(1l);
+        new SolrReplayServiceImpl(dao, dao).getNumberReplayAuditEventsByAuditId(1l);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -88,7 +88,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        new SolrReplayServiceImpl(dao).getReplayAudits(null, null, null, null, null, null);
+        new SolrReplayServiceImpl(dao, dao).getReplayAudits(null, null, null, null, null, null);
     }
 
 
@@ -124,7 +124,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                 , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -167,7 +167,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(null, null
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -213,7 +213,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
             ArrayList moduleNames = new ArrayList<>();
             moduleNames.add("moduleName");
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(moduleNames, new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -259,7 +259,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
             ArrayList flowNames = new ArrayList<>();
             flowNames.add("flowName");
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), flowNames
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -315,7 +315,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
             ArrayList flowNames = new ArrayList<>();
             flowNames.add("flowName");
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), flowNames
                     , null,"data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -378,7 +378,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             assertEquals(1, replayEventList.size());
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), flowNames
                     , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -422,7 +422,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -466,7 +466,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             ReplayEvent replayEvent1 = solrReplayService.getReplayEventById(1l);
 
@@ -509,7 +509,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             ReplayEvent replayEvent1 = solrReplayService.getReplayEventById(2l);
 
@@ -552,7 +552,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -604,7 +604,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             dao.housekeep(100);
 
-            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
             replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
@@ -641,7 +641,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         replayEvent.setExpiry(0);
         replayEvent.setId(1l);
 
-        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
         solrReplayService.save(replayEvent);
     }
@@ -663,7 +663,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
         solrReplayService.getReplayEventById(1l);
     }
@@ -685,7 +685,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao);
+        SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
         solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                 , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));

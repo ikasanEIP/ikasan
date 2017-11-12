@@ -48,9 +48,8 @@ import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.tepi.filtertable.FilterTable;
@@ -71,7 +70,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ReplayAuditViewPanel extends Panel
 {
-	private ReplayAudit replayAudit;
+	private HibernateReplayAudit replayAudit;
 	
 	private IndexedContainer tableContainer;
 	
@@ -79,9 +78,9 @@ public class ReplayAuditViewPanel extends Panel
 	
 	private TextArea comments;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	
-	public ReplayAuditViewPanel(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService)
+	public ReplayAuditViewPanel(HibernateReplayAudit replayAudit, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService)
 	{
 		super();
 		
@@ -234,9 +233,9 @@ public class ReplayAuditViewPanel extends Panel
 		    }
 		});
 		
-		List<ReplayAuditEvent> auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId());
+		List<HibernateReplayAuditEvent> auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId());
 		
-		for(final ReplayAuditEvent replayAuditEvent: auditEvents)
+		for(final HibernateReplayAuditEvent replayAuditEvent: auditEvents)
     	{
     		Date date = new Date(replayAuditEvent.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
@@ -255,9 +254,9 @@ public class ReplayAuditViewPanel extends Panel
 
     	    // todo sort out handle to replay event
 			ReplayEvent replayEvent = this.replayManagementService.getReplayEventById(replayAuditEvent.getId().getReplayEventId());
-    	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
-			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
-			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getEventId());
+    	    item.getItemProperty("Module Name").setValue(replayAuditEvent.getModuleName());
+			item.getItemProperty("Flow Name").setValue(replayAuditEvent.getFlowName());
+			item.getItemProperty("Event Id / Payload Id").setValue(replayAuditEvent.getEventId());
 			item.getItemProperty("Message").setValue(replayAuditEvent.getResultMessage());
 			item.getItemProperty("Timestamp").setValue(timestamp);
 			

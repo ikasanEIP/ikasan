@@ -6,6 +6,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -18,26 +19,30 @@ import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.search.window.ErrorOccurrenceViewWindow;
-import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
+import org.ikasan.dashboard.ui.search.window.ExclusionEventViewWindow;
+import org.ikasan.dashboard.ui.search.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
@@ -52,6 +57,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
+import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -67,7 +73,7 @@ public class SearchPanel extends Panel implements View
     /** Logger for this class */
     private static Logger logger = Logger.getLogger(HousekeepingPanel.class);
 
-    private FilterTable housekeepingTable;
+    private FilterTable searchResultsTable;
     private IndexedContainer container = null;
     private SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService = null;
     private Label resultsLabel = new Label();
@@ -77,8 +83,8 @@ public class SearchPanel extends Panel implements View
     private PopupDateField toDate;
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
     private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence> errorReportingService;
-    private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
-    private ReplayService<ReplayEvent, ReplayAudit> replayService;
+    private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
+    private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
     private TopologyService topologyService;
     private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
     private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
@@ -88,8 +94,8 @@ public class SearchPanel extends Panel implements View
 
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
                        WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService, ErrorReportingService<ErrorOccurrence<byte[]>,
-            ErrorOccurrence> errorReportingService, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService,
-                       ReplayService<ReplayEvent, ReplayAudit> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                       ErrorOccurrence> errorReportingService, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
+                       ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                        HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
                        ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
                        HospitalService<byte[]> hospitalService)
@@ -111,24 +117,24 @@ public class SearchPanel extends Panel implements View
     protected void init()
     {
         container = buildContainer();
-        this.housekeepingTable = new FilterTable();
-        this.housekeepingTable.setFilterBarVisible(true);
-        this.housekeepingTable.setSizeFull();
-        this.housekeepingTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-        this.housekeepingTable.addStyleName(ValoTheme.TABLE_SMALL);
-        this.housekeepingTable.addStyleName("ikasan");
-        this.housekeepingTable.setContainerDataSource(container);
-        this.housekeepingTable.addStyleName("wordwrap-table");
+        this.searchResultsTable = new FilterTable();
+        this.searchResultsTable.setFilterBarVisible(true);
+        this.searchResultsTable.setSizeFull();
+        this.searchResultsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+        this.searchResultsTable.addStyleName(ValoTheme.TABLE_SMALL);
+        this.searchResultsTable.addStyleName("ikasan");
+        this.searchResultsTable.setContainerDataSource(container);
+        this.searchResultsTable.addStyleName("wordwrap-table");
 
-        this.housekeepingTable.setColumnExpandRatio("", .05f);
-        this.housekeepingTable.setColumnExpandRatio("Module Name", .32f);
-        this.housekeepingTable.setColumnExpandRatio("Component Name", .32f);
-        this.housekeepingTable.setColumnExpandRatio("Flow Name", .32f);
-        this.housekeepingTable.setColumnExpandRatio("Event Id / Error URI", .45f);
-        this.housekeepingTable.setColumnExpandRatio("Details", .70f);
-        this.housekeepingTable.setColumnExpandRatio("Time Stamp", .1f);
+        this.searchResultsTable.setColumnExpandRatio("", .05f);
+        this.searchResultsTable.setColumnExpandRatio("Module Name", .32f);
+        this.searchResultsTable.setColumnExpandRatio("Component Name", .32f);
+        this.searchResultsTable.setColumnExpandRatio("Flow Name", .32f);
+        this.searchResultsTable.setColumnExpandRatio("Event Id / Error URI", .45f);
+        this.searchResultsTable.setColumnExpandRatio("Details", .70f);
+        this.searchResultsTable.setColumnExpandRatio("Time Stamp", .1f);
 
-        this.housekeepingTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
+        this.searchResultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
         {
             @Override
             public void itemClick(ItemClickEvent itemClickEvent)
@@ -153,11 +159,11 @@ public class SearchPanel extends Panel implements View
                     }
                     else if(ikasanSolrDocument.getType().equals("replay"))
                     {
-                        List<ReplayEvent> replayEvents = replayManagementService.getReplayEvents(new ArrayList<>(), new ArrayList<>(), ikasanSolrDocument.getEventId(), null, null, null);
-                        ReplayEventViewWindow errorOccurrenceViewWindow = new ReplayEventViewWindow(replayEvents.get(0), replayService,
-                                platformConfigurationService);
+                        ReplayEvent replayEvent = replayManagementService.getReplayEventById(new Long(ikasanSolrDocument.getId()));
+                        ReplayEventViewWindow replayViewWindow = new ReplayEventViewWindow(replayEvent, replayService,
+                                platformConfigurationService, topologyService);
 
-                        UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+                        UI.getCurrent().addWindow(replayViewWindow);
                     }
                     else if(ikasanSolrDocument.getType().equals("exclusion"))
                     {
@@ -231,10 +237,89 @@ public class SearchPanel extends Panel implements View
             }
         });
 
-        GridLayout buttons = new GridLayout(1, 1);
+        final Button selectAllButton = new Button();
+        selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+        selectAllButton.setImmediate(true);
+        selectAllButton.setDescription("Select / deselect all records below.");
+
+        selectAllButton.addClickListener(new Button.ClickListener()
+        {
+            public void buttonClick(Button.ClickEvent event)
+            {
+                Collection<IkasanSolrDocument> items = (Collection<IkasanSolrDocument>)container.getItemIds();
+
+                Resource r = selectAllButton.getIcon();
+
+                if(r.equals(VaadinIcons.CHECK_SQUARE_O))
+                {
+                    selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
+
+                    for(IkasanSolrDocument eo: items)
+                    {
+                        Item item = container.getItem(eo);
+
+                        CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
+
+                        cb.setValue(true);
+                    }
+                }
+                else
+                {
+                    selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+
+                    for(IkasanSolrDocument eo: items)
+                    {
+                        Item item = container.getItem(eo);
+
+                        CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
+
+                        cb.setValue(false);
+                    }
+                }
+            }
+        });
+
+        final Button bulkReplayButton = new Button();
+        bulkReplayButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        bulkReplayButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        bulkReplayButton.setIcon(VaadinIcons.RECYCLE);
+        bulkReplayButton.setImmediate(true);
+        bulkReplayButton.setDescription("Bulk replay selected events.");
+
+//        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
+//        popupOpener.setFeatures("height=80%,width=80%,resizable,left=100,top=100");
+//        popupOpener.extend(bulkReplayButton);
+
+        bulkReplayButton.addClickListener(new Button.ClickListener()
+        {
+            public void buttonClick(Button.ClickEvent event)
+            {
+//                // todo add replay events
+//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", getReplayEvents());
+//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+
+                ReplayStatusPanel panel = new ReplayStatusPanel(getReplayEvents(), replayService, platformConfigurationService, topologyService);
+
+                Window window = new Window("Replay Events");
+                window.setHeight("80%");
+                window.setWidth("80%");
+                window.setModal(true);
+
+                window.setContent(panel);
+
+                UI.getCurrent().addWindow(window);
+            }
+        });
+
+        GridLayout buttons = new GridLayout(2, 1);
         buttons.setWidth("25px");
 
-        buttons.addComponent(jiraButton);
+        buttons.addComponent(selectAllButton);
+        buttons.addComponent(bulkReplayButton);
 
         layout.addComponent(buttons, 1, 3);
         layout.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
@@ -247,9 +332,11 @@ public class SearchPanel extends Panel implements View
         {
             public void buttonClick(Button.ClickEvent event)
             {
+                selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
                 search(searchField.getValue());
             }
         });
+
 
         layout.addComponent(searchButton, 0, 2, 1, 2);
         layout.setComponentAlignment(searchButton, Alignment.MIDDLE_CENTER);
@@ -264,12 +351,58 @@ public class SearchPanel extends Panel implements View
 
         HorizontalLayout tableLayout = new HorizontalLayout();
         tableLayout.setSizeFull();
-        tableLayout.addComponent(this.housekeepingTable);
+        tableLayout.addComponent(this.searchResultsTable);
 
         verticalSplitPanel.setSecondComponent(tableLayout);
 
         this.setSizeFull();
         this.setContent(verticalSplitPanel);
+    }
+
+    /**
+     * Helper method to resubmit all selected excluded events.
+     */
+    protected List<ReplayEvent> getReplayEvents()
+    {
+        Collection<IkasanSolrDocument> items = (Collection<IkasanSolrDocument>)container.getItemIds();
+
+        final List<ReplayEvent> myItems = new ArrayList<ReplayEvent>();
+
+        for(IkasanSolrDocument ikasanSolrDocument: items)
+        {
+            Item item = container.getItem(ikasanSolrDocument);
+
+            CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
+
+            if(cb.getValue() == true)
+            {
+                myItems.add(replayManagementService.getReplayEventById(new Long(ikasanSolrDocument.getId())));
+            }
+        }
+
+        // We need to sort so that we can resubmit the oldest events first!
+        Comparator<ReplayEvent> comparator = new Comparator<ReplayEvent>()
+        {
+            public int compare(ReplayEvent c1, ReplayEvent c2)
+            {
+                if (c2.getTimestamp() < c1.getTimestamp())
+                {
+                    return 1;
+                }
+                else if (c1.getTimestamp() < c2.getTimestamp())
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        };
+
+        Collections.sort(myItems, comparator);
+
+        return myItems;
     }
 
     protected IndexedContainer buildContainer()
@@ -283,6 +416,7 @@ public class SearchPanel extends Panel implements View
         cont.addContainerProperty("Event Id / Error URI", String.class,  null);
         cont.addContainerProperty("Details", String.class,  null);
         cont.addContainerProperty("Timestamp", String.class,  null);
+        cont.addContainerProperty("Select", CheckBox.class,  null);
 
         return cont;
     }
@@ -336,14 +470,35 @@ public class SearchPanel extends Panel implements View
             moduleNames.add("no module name");
         }
 
+        ArrayList<String> types = new ArrayList<>();
+
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE))
+        {
+            types.add(SolrReplayDao.REPLAY);
+        }
+
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_WRITE)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_ADMIN)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+            types.add(SolrExclusionEventDao.EXCLUSION);
+            types.add(SolrWiretapDao.WIRETAP);
+            types.add(SolrErrorReportingServiceDao.ERROR);
+        }
+
+        if(types.isEmpty())
+        {
+            types.add("DUMMY");
+        }
+
         
         IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchString,
                 this.fromDate.getValue().getTime(), this.toDate.getValue().getTime(),
-                platformConfigurationService.getSearchResultSetSize());
+                platformConfigurationService.getSearchResultSetSize(), types);
 
         if(results == null || results.getResultList().size() == 0)
         {
-            Notification.show("The ikasan search returned no results!", Notification.Type.ERROR_MESSAGE);
+            Notification.show("The Ikasan search returned no results!", Notification.Type.ERROR_MESSAGE);
 
             layout.removeComponent(this.resultsLabel);
             resultsLabel = new Label("Number of records returned: 0 of 0");
@@ -425,6 +580,15 @@ public class SearchPanel extends Panel implements View
 
 
             item.getItemProperty("").setValue(icon);
+
+            if(doc.getType().equals("replay"))
+            {
+                CheckBox cb = new CheckBox();
+                cb.setImmediate(true);
+                cb.setDescription("Select in order to bulk replay.");
+
+                item.getItemProperty("Select").setValue(cb);
+            }
         }
     }
 

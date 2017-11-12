@@ -1,14 +1,4 @@
-package org.ikasan.dashboard.ui;
-
-import java.util.List;
-
-import org.ikasan.dashboard.ui.replay.panel.ReplayStatusPanel;
-import org.ikasan.replay.model.BulkReplayResponse;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
-import org.ikasan.replay.model.ReplayResponse;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayService;
+package org.ikasan.dashboard.ui.search.popup;
 
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
@@ -18,6 +8,16 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.UI;
+import org.ikasan.dashboard.ui.search.panel.ReplayStatusPanel;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.topology.service.TopologyService;
+
+import java.util.List;
 
 /**
  * 
@@ -43,8 +43,11 @@ public class ReplayPopup extends UI
 				.getWrappedSession().getAttribute("replayService");
 		PlatformConfigurationService platformConfigurationService = (PlatformConfigurationService)VaadinService.getCurrentRequest()
 				.getWrappedSession().getAttribute("platformConfigurationService");
+		TopologyService topologyService = (TopologyService) VaadinService.getCurrentRequest()
+				.getWrappedSession().getAttribute("topologyService");
 		
-		ReplayStatusPanel panel = new ReplayStatusPanel(replayEvents, replayService, platformConfigurationService);
+		ReplayStatusPanel panel = new ReplayStatusPanel(replayEvents, replayService, platformConfigurationService,
+				topologyService);
 		
 		this.setContent(panel);
 	}

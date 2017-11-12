@@ -75,8 +75,10 @@ import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -208,9 +210,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
-	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
 
 	private boolean initialised = false;
 	
@@ -220,11 +222,11 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	
 	public ReplayViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-                           SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
-                           TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
-                           PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			               ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-						   ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService,
+						   SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
+						   TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
+						   PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
+			HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+						   ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
 						   FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;

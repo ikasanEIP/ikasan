@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -40,55 +40,69 @@
  */
 package org.ikasan.spec.replay;
 
-import java.util.List;
-
-
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT, AUDIT_EVENT, REPLAY_RESPONSE, BULK_REPLAY_RESPONSE>
+public interface ReplayAuditEvent<KEY>
 {
 	/**
-	 * Add a replay listener.
-	 * 
-	 * @param listener
+	 * @return the id
 	 */
-	public void addReplayListener(ReplayListener<AUDIT_EVENT> listener);
-
-    /**
-     * Entry point for replay of a list of events.
-     * 
-     * @param targetServer
-     * @param events
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public BULK_REPLAY_RESPONSE replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
+	public KEY getId();
 
 
-    /**
-     * Entry point for replay of an individual event.
-     *
-     * @param targetServer
-     * @param event
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public REPLAY_RESPONSE replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason);
-    
-    /**
-     * Method to cancel the replay.
-     */
-    public void cancel();
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(KEY id);
 
-    /**
-     * Has the replay been cancelled?
-     * 
-     * @return
-     */
-    public boolean isCancelled();
+
+	/**
+	 * @return the replayAudit
+	 */
+	public ReplayAudit getReplayAudit();
+
+
+	/**
+	 * @param replayAudit the replayAudit to set
+	 */
+	public void setReplayAudit(ReplayAudit replayAudit);
+	
+
+	/**
+	 * @return the success
+	 */
+	public boolean isSuccess();
+
+
+	/**
+	 * @param success the success to set
+	 */
+	public void setSuccess(boolean success);
+
+
+	/**
+	 * @return the resultMessage
+	 */
+	public String getResultMessage();
+
+
+	/**
+	 * @param resultMessage the resultMessage to set
+	 */
+	public void setResultMessage(String resultMessage);
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp();
+
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp);
+	
 }

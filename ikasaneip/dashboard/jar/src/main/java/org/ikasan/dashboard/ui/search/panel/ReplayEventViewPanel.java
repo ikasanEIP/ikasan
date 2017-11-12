@@ -38,7 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.replay.panel;
+package org.ikasan.dashboard.ui.search.panel;
+
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.ValoTheme;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ReplayPopup;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
+import org.vaadin.aceeditor.AceEditor;
+import org.vaadin.aceeditor.AceMode;
+import org.vaadin.aceeditor.AceTheme;
+import org.vaadin.teemu.VaadinIcons;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,37 +72,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.ReplayPopup;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayService;
-import org.vaadin.aceeditor.AceEditor;
-import org.vaadin.aceeditor.AceMode;
-import org.vaadin.aceeditor.AceTheme;
-import org.vaadin.teemu.VaadinIcons;
-
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 
@@ -94,8 +90,9 @@ public class ReplayEventViewPanel extends Panel
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ReplayEvent replayEvent;
-	private ReplayService replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	private PlatformConfigurationService platformConfigurationService;
+	private TopologyService topologyService;
 
 	/**
 	 * Constructor
@@ -104,13 +101,15 @@ public class ReplayEventViewPanel extends Panel
 	 * @param replayService
 	 * @param platformConfigurationService
 	 */
-	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService replayService,
-								PlatformConfigurationService platformConfigurationService)
+	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+								PlatformConfigurationService platformConfigurationService,
+								TopologyService topologyService)
 	{
 		super();
 		this.replayEvent = replayEvent;
 		this.replayService = replayService;
 		this.platformConfigurationService = platformConfigurationService;
+		this.topologyService = topologyService;
 		
 		this.init();
 	}
@@ -136,11 +135,13 @@ public class ReplayEventViewPanel extends Panel
 		errorOccurrenceDetailsPanel.setSizeFull();
 		errorOccurrenceDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(2, 7);
+		GridLayout layout = new GridLayout(4, 7);
 		layout.setSizeFull();
 		layout.setSpacing(true);
-		layout.setColumnExpandRatio(0, 0.2f);
-		layout.setColumnExpandRatio(1, 0.8f);
+		layout.setColumnExpandRatio(0, 0.1f);
+		layout.setColumnExpandRatio(1, 0.4f);
+		layout.setColumnExpandRatio(2, 0.1f);
+		layout.setColumnExpandRatio(3, 0.4f);
 		
 		Label wiretapDetailsLabel = new Label("Replay Event Details");
 		wiretapDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -200,28 +201,75 @@ public class ReplayEventViewPanel extends Panel
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
+
+		Label commentLabel = new Label("Comment:");
+		commentLabel.setSizeUndefined();
+
+		layout.addComponent(commentLabel, 2, 1);
+		layout.setComponentAlignment(commentLabel, Alignment.MIDDLE_RIGHT);
+
+		TextArea commentTextArea = new TextArea();
+		commentTextArea.setWidth("80%");
+		commentTextArea.setRows(6);
+		commentTextArea.setRequired(true);
+		commentTextArea.setRequiredError("A comment is required in order to submit.");
+		commentTextArea.setValidationVisible(false);
+
+		layout.addComponent(commentTextArea, 3, 1, 3, 5);
+		layout.setComponentAlignment(commentLabel, Alignment.MIDDLE_RIGHT);
+
 		
 		final Button replayButton = new Button("Replay");
-		
-		BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
-		popupOpener.setFeatures("height=600,width=900,resizable");
-        popupOpener.extend(replayButton);
-        
-        replayButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	 ArrayList<ReplayEvent> replayEvents = new ArrayList<ReplayEvent>();
-            	 replayEvents.add(replayEvent);
-            	
-            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", replayEvents);
-         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
-         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
-            }
-        });
 
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 				.getAttribute(DashboardSessionValueConstants.USER);
+
+		final ArrayList<ReplayEvent> replayEvents = new ArrayList<>();
+		replayEvents.add(replayEvent);
+
+		replayButton.addClickListener(new Button.ClickListener()
+		{
+			public void buttonClick(ClickEvent event)
+			{
+				try
+				{
+					commentTextArea.setValidationVisible(false);
+					commentTextArea.validate();
+				}
+				catch (Exception e)
+				{
+					commentTextArea.setValidationVisible(true);
+					return;
+				}
+
+				replayButton.setVisible(false);
+
+				ReplayResponse replayResponse = null;
+				try
+				{
+					Module module = topologyService.getModuleByName(replayEvent.getModuleName());
+					String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
+
+					replayResponse = replayService.replay(targetServer, replayEvent, authentication.getName(),
+							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue());
+				}
+				catch (RuntimeException e)
+				{
+					Notification.show("An error occurred replaying event: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
+
+					return;
+				}
+
+				if(!replayResponse.isSuccess())
+				{
+					Notification.show("Failed to replay event: " + replayResponse.getResponseBody(), Notification.Type.ERROR_MESSAGE);
+				}
+				else
+				{
+					Notification.show("Event replay complete.");
+				}
+			}
+		});
 
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
@@ -236,7 +284,7 @@ public class ReplayEventViewPanel extends Panel
 			replayButton.setVisible(false);
 		}
         
-        layout.addComponent(replayButton, 0, 6, 1, 6);
+        layout.addComponent(replayButton, 0, 6, 3, 6);
 		layout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
 		
 		GridLayout wrapperLayout = new GridLayout(2, 4);
@@ -244,7 +292,6 @@ public class ReplayEventViewPanel extends Panel
 		
 		final AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
-
 		if(this.replayEvent.getEventAsString() != null)
 		{
 			editor.setValue(this.replayEvent.getEventAsString());

@@ -41,6 +41,7 @@
 package org.ikasan.replay.model;
 
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -50,7 +51,7 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayEvent implements org.ikasan.spec.replay.ReplayEvent, HarvestEvent
+public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 {
 	private Long id;
 
