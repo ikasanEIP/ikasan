@@ -78,7 +78,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private MultiRecipientRouter router = mockery.mock(MultiRecipientRouter.class, "router");
     private ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "replicationFactory");
     private Map payload = mockery.mock(Map.class, "payload");
-    private MultiRecipientRouterConfiguration invokerConfiguration = mockery.mock(MultiRecipientRouterConfiguration.class, "invokerConfiguration");
+    private MultiRecipientRouterInvokerConfiguration invokerConfiguration = mockery.mock(MultiRecipientRouterInvokerConfiguration.class, "invokerConfiguration");
 
     // this is to test the InvocationAware aspect
     interface MultiRecipientRouteInvocationAware extends MultiRecipientRouter, InvocationAware {}
