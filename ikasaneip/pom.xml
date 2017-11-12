@@ -879,7 +879,6 @@
                 <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
-                <module>filter</module>
                 <module>rest</module>
                 <module>rest-boot</module>
                 <module>test</module>
@@ -925,7 +924,6 @@
                 <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
-                <module>filter</module>
                 <module>rest</module>
                 <module>test</module>
                 <module>monitor</module>
