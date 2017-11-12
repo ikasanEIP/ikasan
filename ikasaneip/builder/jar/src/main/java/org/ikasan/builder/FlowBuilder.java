@@ -690,8 +690,17 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
-        public PrimaryRouteBuilder filter(String name, Filter filter) {
+        public PrimaryRouteBuilder filter(String name, Filter filter)
+        {
             this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
+            return this;
+        }
+
+        public PrimaryRouteBuilder filter(String name, Filter filter, FilterInvokerConfiguration filterInvokerConfiguration)
+        {
+            FilterFlowElementInvoker filterFlowElementInvoker = new  FilterFlowElementInvoker();
+            filterFlowElementInvoker.setConfiguration(filterInvokerConfiguration);
+            this.route.addFlowElement(new FlowElementImpl(name, filter, filterFlowElementInvoker));
             return this;
         }
 
@@ -711,7 +720,12 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
-            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterConfiguration())));
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
+            return new PrimaryEvaluationImpl(route);
+        }
+
+        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration)));
             return new PrimaryEvaluationImpl(route);
         }
 

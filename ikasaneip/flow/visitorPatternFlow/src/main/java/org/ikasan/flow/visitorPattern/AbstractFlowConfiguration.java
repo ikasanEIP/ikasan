@@ -41,7 +41,9 @@
 package org.ikasan.flow.visitorPattern;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -70,7 +72,11 @@ public abstract class AbstractFlowConfiguration
     /** managed services within the flow */
     protected List<ManagedService> managedServices = new ArrayList<ManagedService>();
 
-    /** configured resources within the flow */
+    /** configured resources within the Ikasan framework space */
+    protected Map<String,ConfiguredResource> flowElementInvokerConfiguredResources =
+            new HashMap<String,ConfiguredResource>();
+
+    /** configured resources within the flow as depicted by the developer */
     protected List<FlowElement<ConfiguredResource>> configuredReourceFlowElements =
         new ArrayList<FlowElement<ConfiguredResource>>();
 
@@ -126,6 +132,11 @@ public abstract class AbstractFlowConfiguration
                 this.managedServices.add( (ManagedService)flowElement.getFlowElementInvoker() );
             }
 
+            if(flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
+            {
+                this.flowElementInvokerConfiguredResources.put(flowElement.getComponentName(), (ConfiguredResource)flowElement.getFlowElementInvoker());
+            }
+
             Object flowComponent = flowElement.getFlowComponent();
             if(flowComponent instanceof ManagedResource)
             {
@@ -149,6 +160,11 @@ public abstract class AbstractFlowConfiguration
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements()
     {
         return this.configuredReourceFlowElements;
+    }
+
+    public Map<String,ConfiguredResource> getFlowElementInvokerConfiguredResources()
+    {
+        return this.flowElementInvokerConfiguredResources;
     }
 
     public List<ManagedService> getManagedServices()
