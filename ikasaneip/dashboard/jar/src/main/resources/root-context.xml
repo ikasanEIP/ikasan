@@ -115,6 +115,10 @@
                    <constructor-arg ref="authenticationMethodPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="moduleControlView"/>
+                    <constructor-arg ref="moduleControlPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementView"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
