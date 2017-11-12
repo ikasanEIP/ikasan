@@ -57,6 +57,7 @@
         <module>router</module>
         <module>splitter</module>
         <module>endpoint</module>
+        <module>filter</module>
         <module>validator</module>
     </modules>
 

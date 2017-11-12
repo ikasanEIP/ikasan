@@ -45,7 +45,7 @@ package org.ikasan.filter.configuration;
  * Default FilterConfiguration bean common to all filters.
  *
  * @author Ikasan Development Team
- *
+ * @Deprecated - use the FilterInvoker configuration to set these filter attributes
  */
 public class FilterConfiguration
 {
