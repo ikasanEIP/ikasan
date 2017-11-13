@@ -5,13 +5,20 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.util.filter.SimpleStringFilter;
+import com.vaadin.event.Action;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.control.design.ModuleControlDesign;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
+import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
@@ -26,6 +33,8 @@ import java.util.Map;
  */
 public class ModuleControlLayout extends ModuleControlDesign
 {
+    private Logger logger = Logger.getLogger(ModuleControlLayout.class);
+
     private TopologyService topologyService;
 
     private SimpleStringFilter filter = null;
@@ -34,6 +43,8 @@ public class ModuleControlLayout extends ModuleControlDesign
     private IndexedContainer container;
 
     private FilterTable moduleTable;
+
+    private TopologyTreeActionHelper topologyTreeActionHelper;
 
     public ModuleControlLayout(TopologyService topologyService)
     {
@@ -54,6 +65,21 @@ public class ModuleControlLayout extends ModuleControlDesign
         this.moduleTable.setSizeFull();
         this.moduleTable.setContainerDataSource(container);
 
+        this.moduleTable.addActionHandler(new Action.Handler()
+        {
+            @Override
+            public Action[] getActions(Object o, Object o1)
+            {
+                return topologyTreeActionHelper.getFlowActions("running", true);
+            }
+
+            @Override
+            public void handleAction(Action action, Object o, Object o1)
+            {
+                logger.info("Handle action: " + action);
+            }
+        });
+
         super.splitPanel.setSecondComponent(this.moduleTable);
 
         this.setSizeFull();
@@ -73,6 +99,12 @@ public class ModuleControlLayout extends ModuleControlDesign
 
     public void loadTable()
     {
+        final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(DashboardSessionValueConstants.USER);
+
+        this.topologyTreeActionHelper = new TopologyTreeActionHelper(authentication);
+
+
         container.removeAllItems();
         
         List<Module> modules = this.topologyService.getAllModules();
