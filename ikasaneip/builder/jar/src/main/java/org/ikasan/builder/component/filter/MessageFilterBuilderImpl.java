@@ -41,7 +41,6 @@
 package org.ikasan.builder.component.filter;
 
 import org.ikasan.filter.DefaultMessageFilter;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
@@ -59,7 +58,7 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
 
     String configuredResourceId;
 
-    FilterConfiguration filterConfiguration = new FilterConfiguration();
+    Object filterPojoConfiguration;
 
     FilterEntryConverter filterEntryConverter;
 
@@ -86,7 +85,7 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
 
         FilterRule duplicateFilterRule = new IsDuplicateFilterRule(this.duplicateFilterService, this.filterEntryConverter);
         DefaultMessageFilter filter = new DefaultMessageFilter(duplicateFilterRule);
-        filter.setConfiguration(this.filterConfiguration);
+        filter.setConfiguration(this.filterPojoConfiguration);
         filter.setConfiguredResourceId(this.configuredResourceId);
         return filter;
     }
@@ -98,7 +97,7 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
             throw new IllegalArgumentException("filterEntryConverter is a required property for the defailtMessageFilter and cannot be 'null'");
         }
 
-        if(this.filterConfiguration != null && this.configuredResourceId == null)
+        if(this.filterPojoConfiguration != null && this.configuredResourceId == null)
         {
             throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
         }
@@ -112,23 +111,9 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
     }
 
     @Override
-    public MessageFilterBuilder setConfiguration(FilterConfiguration filterConfiguration)
+    public MessageFilterBuilder setConfiguration(Object filterPojoConfiguration)
     {
-        this.filterConfiguration = filterConfiguration;
-        return this;
-    }
-
-    @Override
-    public MessageFilterBuilder setApplyFilter(boolean applyFilter)
-    {
-        this.filterConfiguration.setApplyFilter(applyFilter);
-        return this;
-    }
-
-    @Override
-    public MessageFilterBuilder setLogFilter(boolean logFilter)
-    {
-        this.filterConfiguration.setLogFiltered(logFilter);
+        this.filterPojoConfiguration = filterPojoConfiguration;
         return this;
     }
 
