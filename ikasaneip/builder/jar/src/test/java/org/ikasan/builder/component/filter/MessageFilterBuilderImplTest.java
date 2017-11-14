@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder.component.filter;
 
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.spec.component.filter.Filter;
@@ -97,11 +96,7 @@ public class MessageFilterBuilderImplTest {
                 .setFilterEntryConverter(filterEntryConverter).build();
 
         assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
-
-        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>) filter).getConfiguration();
-        assertTrue("isLogFiltered should be 'false'", configuration.isLogFiltered() == false);
-        assertTrue("isApplyFilter should be 'true'", configuration.isApplyFilter() == true);
+        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource) filter).getConfiguredResourceId()));
 
         mockery.assertIsSatisfied();
     }
@@ -112,70 +107,15 @@ public class MessageFilterBuilderImplTest {
     @Test
     public void messageFilterBuilder_with_configuration_instance_override() {
 
-        FilterConfiguration filterConfiguration = new FilterConfiguration();
-        filterConfiguration.setApplyFilter(false);
-        filterConfiguration.setLogFiltered(true);
-
         Filter filter = new MessageFilterBuilderImpl(duplicateFilterService)
                 .setConfiguredResourceId("configuredResourceId")
-                .setConfiguration(filterConfiguration)
+                .setConfiguration(new String("rule not configurable so this will be logged as ignored"))
                 .setFilterEntryConverter(filterEntryConverter).build();
 
         assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
-
-        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>) filter).getConfiguration();
-        assertTrue("isLogFiltered should be 'true'", configuration.isLogFiltered() == true);
-        assertTrue("isApplyFilter should be 'false'", configuration.isApplyFilter() == false);
+        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<Object>) filter).getConfiguredResourceId()));
 
         mockery.assertIsSatisfied();
     }
 
-    /**
-     * Test successful builder creation.
-     */
-    @Test
-    public void messageFilterBuilder_with_configuration_instance_override_attribute_logFilter() {
-
-        FilterConfiguration filterConfiguration = new FilterConfiguration();
-
-        Filter filter = new MessageFilterBuilderImpl(duplicateFilterService)
-                .setConfiguredResourceId("configuredResourceId")
-                .setConfiguration(filterConfiguration)
-                .setLogFilter(true)
-                .setFilterEntryConverter(filterEntryConverter).build();
-
-        assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
-
-        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>) filter).getConfiguration();
-        assertTrue("isLogFiltered should be 'true'", configuration.isLogFiltered() == true);
-        assertTrue("isApplyFilter should be 'true'", configuration.isApplyFilter() == true);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test successful builder creation.
-     */
-    @Test
-    public void messageFilterBuilder_with_configuration_instance_override_attribute_applyFilter() {
-
-        FilterConfiguration filterConfiguration = new FilterConfiguration();
-
-        Filter filter = new MessageFilterBuilderImpl(duplicateFilterService)
-                .setConfiguredResourceId("configuredResourceId")
-                .setConfiguration(filterConfiguration)
-                .setApplyFilter(false)
-                .setFilterEntryConverter(filterEntryConverter).build();
-
-        assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
-
-        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>) filter).getConfiguration();
-        assertTrue("isLogFiltered should be 'false'", configuration.isLogFiltered() == false);
-        assertTrue("isApplyFilter should be 'false'", configuration.isApplyFilter() == false);
-
-        mockery.assertIsSatisfied();
-    }
 }

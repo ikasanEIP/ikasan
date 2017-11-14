@@ -40,9 +40,7 @@
  */
 package org.ikasan.builder.component.filter;
 
-
 import org.ikasan.builder.component.Builder;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.spec.component.filter.Filter;
 
@@ -55,11 +53,7 @@ public interface MessageFilterBuilder extends Builder<Filter>
 {
      MessageFilterBuilder setConfiguredResourceId(String configuredResourceId);
 
-     MessageFilterBuilder setConfiguration(FilterConfiguration filterConfiguration);
-
-     MessageFilterBuilder setApplyFilter(boolean applyFilter);
-
-     MessageFilterBuilder setLogFilter(boolean logFilter);
+     MessageFilterBuilder setConfiguration(Object filterConfiguration);
 
      MessageFilterBuilder setFilterEntryConverter(FilterEntryConverter filterEntryConverter);
 }
