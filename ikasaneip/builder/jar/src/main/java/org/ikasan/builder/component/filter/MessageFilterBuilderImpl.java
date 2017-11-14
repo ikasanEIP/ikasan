@@ -85,7 +85,13 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
 
         FilterRule duplicateFilterRule = new IsDuplicateFilterRule(this.duplicateFilterService, this.filterEntryConverter);
         DefaultMessageFilter filter = new DefaultMessageFilter(duplicateFilterRule);
-        filter.setConfiguration(this.filterPojoConfiguration);
+
+        // only set the configuration if specified
+        if(this.filterPojoConfiguration != null)
+        {
+            filter.setConfiguration(this.filterPojoConfiguration);
+        }
+
         filter.setConfiguredResourceId(this.configuredResourceId);
         return filter;
     }
