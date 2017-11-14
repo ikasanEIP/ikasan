@@ -40,10 +40,10 @@
  */
 package org.ikasan.filter;
 
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.filter.FilterRule;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -69,11 +69,8 @@ public class DefaultMessageFilterTest
     /** A mocked {@link FilterRule} */
     private final FilterRule<String> filterRule = this.mockery.mock(FilterRule.class, "filterRule");
 
-    /** A mocked {@link FilterConfiguration} */
-    private final FilterConfiguration filterConfiguration = this.mockery.mock(FilterConfiguration.class, "FilterConfiguration");
-
     /** The {@link MessageFilter} implementation to test*/
-    private Filter<String> filterToTest = new DefaultMessageFilter<String>(this.filterRule);
+    private Filter<String> filterToTest = new DefaultMessageFilter(this.filterRule);
 
     /**
      * Test case: if filtering rule returns false (message was not accepted), filter
@@ -86,14 +83,9 @@ public class DefaultMessageFilterTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(filterConfiguration).isApplyFilter();
-                will(returnValue(true));
                 one(filterRule).accept(messageToFilter);will(returnValue(false));
-                one(filterConfiguration).isLogFiltered();will(returnValue(true));
             }
         });
-
-        ((ConfiguredResource<FilterConfiguration>)this.filterToTest).setConfiguration(filterConfiguration);
 
         String filteredMessage = this.filterToTest.filter(messageToFilter);
         Assert.assertNull(filteredMessage);
@@ -111,41 +103,52 @@ public class DefaultMessageFilterTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(filterConfiguration).isApplyFilter();
-                will(returnValue(true));
                 one(filterRule).accept(messageToFilter);will(returnValue(true));
             }
         });
-
-        ((ConfiguredResource<FilterConfiguration>)this.filterToTest).setConfiguration(filterConfiguration);
 
         String filteredMessage = this.filterToTest.filter(messageToFilter);
         Assert.assertNotNull(filteredMessage);
         this.mockery.assertIsSatisfied();
     }
 
-
     /**
-     * Test case: if filter configuration tells the filter to not apply then filter
-     * must return the message.
+     * Test case: with configured filter rule
+     *
      * @throws FilterException
      */
-    @Test public void filter_do_not_apply() throws FilterException
+    @Test public void filter_pass_message_with_configured_filter_rule_bad_configuration() throws FilterException
     {
         final String messageToFilter = "somemessage";
-        this.mockery.checking(new Expectations()
-        {
-            {
-                one(filterConfiguration).isApplyFilter();
-                will(returnValue(false));
-            }
-        });
 
-        ((ConfiguredResource<FilterConfiguration>)this.filterToTest).setConfiguration(filterConfiguration);
+        SimpleFilterRule simpleFilterRule = new SimpleFilterRule();
+        Filter<String> filter = new DefaultMessageFilter(simpleFilterRule);
 
-        String filteredMessage = this.filterToTest.filter(messageToFilter);
+        ((ConfiguredResource)filter).setConfiguredResourceId("myConfId");
+        ((ConfiguredResource)filter).setConfiguration(new String("my configuration"));
+
+        String filteredMessage = filter.filter(messageToFilter);
         Assert.assertNotNull(filteredMessage);
-        this.mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * Test case: with configured filter rule
+     *
+     * @throws FilterException
+     */
+    @Test public void filter_pass_message_with_configured_filter_rule_good_configuration() throws FilterException
+    {
+        final String messageToFilter = "somemessage";
+
+        SimpleFilterRule simpleFilterRule = new SimpleFilterRule();
+        Filter<String> filter = new DefaultMessageFilter(simpleFilterRule);
+
+        ((ConfiguredResource)filter).setConfiguredResourceId("myConfId");
+        ((ConfiguredResource)filter).setConfiguration(new Integer(1));
+
+        String filteredMessage = filter.filter(messageToFilter);
+        Assert.assertNotNull(filteredMessage);
     }
 
     /**
@@ -159,15 +162,38 @@ public class DefaultMessageFilterTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(filterConfiguration).isApplyFilter();
-                will(returnValue(true));
                 one(filterRule).accept(messageToFilter);will(throwException(new FilterException("test exception")));
             }
         });
 
-        ((ConfiguredResource<FilterConfiguration>)this.filterToTest).setConfiguration(filterConfiguration);
-
         this.filterToTest.filter(messageToFilter);
         this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Simple filter rule with a configuration of Integer purely for testing.
+     *
+     * @author Ikasan Development Team
+     */
+    class SimpleFilterRule implements FilterRule, Configured<Integer>
+    {
+        Integer configuration;
+
+        @Override
+        public boolean accept(Object message) throws FilterException
+        {
+            return true;
+        }
+
+        @Override
+        public Integer getConfiguration() {
+            return configuration;
+        }
+
+        @Override
+        public void setConfiguration(Integer configuration)
+        {
+            this.configuration = configuration;
+        }
     }
 }
