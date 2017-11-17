@@ -128,55 +128,6 @@ public class MyApplication
 
     }
 
-    public Flow getSampleFlow(ModuleBuilder moduleBuilder)
-    {
-        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow Name");
-        return flowBuilder.withDescription("Jms flow description")
-                .consumer("consumer", new MyConsumer())
-                .producer("producer", new MyProducer()).build();
-    }
-
-    private class MyConsumer implements Consumer,ResubmissionService
-    {
-
-        private boolean isRunning;
-        @Override
-        public void setListener(Object o) {
-
-        }
-
-        @Override
-        public void setEventFactory(Object o) {
-
-        }
-
-        @Override
-        public Object getEventFactory() {
-            return null;
-        }
-
-        @Override
-        public void start()
-        {
-            this.isRunning = true;
-        }
-
-        @Override
-        public boolean isRunning() {
-            return isRunning;
-        }
-
-        @Override
-        public void stop() {
-            this.isRunning = false;
-        }
-
-        @Override
-        public void submit(Object o) {
-
-        }
-    }
-
     private class MyProducer implements Producer
     {
 
