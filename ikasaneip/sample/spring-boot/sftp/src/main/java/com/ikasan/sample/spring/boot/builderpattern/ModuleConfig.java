@@ -21,8 +21,6 @@ import javax.annotation.Resource;
         "classpath:monitor-service-conf.xml",
         "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
-        "classpath:logger-conf.xml",
-        "classpath:exception-conf.xml",
         "classpath:sftp-to-log-component-conf.xml",
         "classpath:filetransfer-service-conf.xml"
 

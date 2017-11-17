@@ -19,7 +19,7 @@ public class Application
     public void executeIM(String[] args)
     {
         // get an ikasanApplication instance
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class,args);
 
     }
 
