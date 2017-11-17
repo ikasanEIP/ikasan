@@ -43,13 +43,12 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.IkasanApplication;
-import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.junit.*;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.util.SocketUtils;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -89,7 +88,6 @@ public class MyApplicationTest
      * Test simple invocation.
      */
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
@@ -112,7 +110,6 @@ public class MyApplicationTest
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_jmsFlow_start_and_stop_flow() throws Exception
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
@@ -127,7 +124,7 @@ public class MyApplicationTest
         System.out.println("Check is module healthy.");
 
         // Prepare test data
-        JmsTemplate jmsTemplate = (JmsTemplate) ikasanApplication.getBean(JmsTemplate.class);
+        JmsTemplate jmsTemplate = ikasanApplication.getBean(JmsTemplate.class);
 
         String message  = "Hello world!";
         System.out.println("Sending a JMS message.["+message+"]");
@@ -141,11 +138,10 @@ public class MyApplicationTest
         assertEquals("stopped",jmsFlow.getState());
 
         // Verify the expectations
-        MessageVerifierConsumer consumer = (MessageVerifierConsumer) ikasanApplication.getBean(MessageVerifierConsumer.class);
+        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
 
         // Set expectation
-        assertThat(consumer.getCaptureResults(), hasItem(message));
-
+        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(message));
 
     }
     /**
