@@ -382,7 +382,6 @@
         <version.org.objenesis>1.2</version.org.objenesis>
         <version.uk.com.robust-it.cloning>1.9.0</version.uk.com.robust-it.cloning>
         <version.org.mockito>1.8.5</version.org.mockito>
-        <version.commons-beanutils>1.9.1</version.commons-beanutils>
         <version.joda-time>2.3</version.joda-time>
         <version.javax.mail>1.4.3</version.javax.mail>
         <version.xmlunit>1.5</version.xmlunit>
@@ -1409,11 +1408,6 @@
                 <version>${version.org.hibernate-validator}</version>
             </dependency>
 
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${version.commons-beanutils}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
