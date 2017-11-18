@@ -40,9 +40,9 @@
  */
 package org.ikasan.filter;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filter.configuration.EntityAgeFilterConfiguration;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.EntityAgeFilterEntryConverter;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.service.EntityAgeFilterService;
@@ -97,13 +97,7 @@ public class EntityAgeFilter<T> implements Filter<T>, ConfiguredResource<EntityA
      */
     public T filter(T message)
     {
-        if(!this.filterConfiguration.isApplyFilter())
-        {
-            return message;
-        }
-
         FilterEntry entry = this.converter.convert((String)message);
-
         if(this.entityAgeFilterService.isOlderEntity(entry))
         {
             return null;
