@@ -62,8 +62,6 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -195,7 +193,6 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful delete of a dao through the configurationManagement contract implementation.
      */
     @Test
-    @Ignore
     public void test_configurationManagement_delete_configuration()
     {
         Configuration<List<ConfigurationParameter>> configuration =

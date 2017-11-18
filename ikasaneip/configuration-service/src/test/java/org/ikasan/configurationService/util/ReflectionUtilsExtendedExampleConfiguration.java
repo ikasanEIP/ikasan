@@ -38,23 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.filter;
-
-import org.ikasan.builder.component.Builder;
-import org.ikasan.filter.duplicate.model.FilterEntryConverter;
-import org.ikasan.spec.component.filter.Filter;
+package org.ikasan.configurationService.util;
 
 /**
- * Contract for a default message filter builder.
+ * Configuration test class specifically for ReflectionUtils testing.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface MessageFilterBuilder extends Builder<Filter>
+class ReflectionUtilsExtendedExampleConfiguration extends ReflectionUtilsExampleConfiguration
 {
-     MessageFilterBuilder setConfiguredResourceId(String configuredResourceId);
+    String stry;
+    private Integer inty;
+    protected Long longy;
 
-     MessageFilterBuilder setConfiguration(Object filterConfiguration);
+    public String getStry() {
+        return stry;
+    }
 
-     MessageFilterBuilder setFilterEntryConverter(FilterEntryConverter filterEntryConverter);
+    public void setStry(String stry) {
+        this.stry = stry;
+    }
+
+    public Integer getInty() {
+        return inty;
+    }
+
+    public void setInty(Integer inty) {
+        this.inty = inty;
+    }
+
+    public Long getLongy() {
+        return longy;
+    }
+
+    public void setLongy(Long longy) {
+        this.longy = longy;
+    }
 }
-

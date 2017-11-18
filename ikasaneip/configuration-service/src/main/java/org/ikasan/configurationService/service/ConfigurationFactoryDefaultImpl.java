@@ -40,8 +40,8 @@
  */
 package org.ikasan.configurationService.service;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.ikasan.configurationService.model.*;
+import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.spec.configuration.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +100,13 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<ConfigurationParameter>());
 
         try {
-            Map<String, Object> properties = PropertyUtils.describe(runtimeConfiguration);
+            Map<String, Object> properties = ReflectionUtils.getProperties(runtimeConfiguration);
             // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
             // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
             TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
 
-            for (Map.Entry<String, Object> entry : orderedProperties.entrySet()) {
+            for (Map.Entry<String, Object> entry : orderedProperties.entrySet())
+            {
 
                 String name = entry.getKey();
                 Object value = entry.getValue();
@@ -113,7 +114,7 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
                 // TODO - is there a cleaner way of ignoring the class property ?
                 if (!"class".equals(name)) {
                     if (value == null) {
-                        Class<?> cls = PropertyUtils.getPropertyType(runtimeConfiguration, name);
+                        Class<?> cls = ReflectionUtils.getPropertyType(runtimeConfiguration, name);
 
                         if (cls.isAssignableFrom(String.class)) {
                             if (isMasked(runtimeConfiguration, name)) {
@@ -157,7 +158,7 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
                     }
                 }
             }
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
             throw new ConfigurationException(e);
         }
 
