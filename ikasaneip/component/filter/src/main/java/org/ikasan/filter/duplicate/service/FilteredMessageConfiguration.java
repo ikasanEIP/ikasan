@@ -41,15 +41,13 @@
 
 package org.ikasan.filter.duplicate.service;
 
-import org.ikasan.filter.configuration.FilterConfiguration;
-
 /**
  * Default FilteredMessageConfiguration specific to duplicate file message filtering.
  *
  * @author Ikasan Development Team
  *
  */
-public class FilteredMessageConfiguration extends FilterConfiguration
+public class FilteredMessageConfiguration
 {
     /** default housekeep batch size of 100 */
     private int housekeepingBatchSize = 100;

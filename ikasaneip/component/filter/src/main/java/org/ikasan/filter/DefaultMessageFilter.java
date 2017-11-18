@@ -40,20 +40,20 @@
  */
 package org.ikasan.filter;
 
+import org.ikasan.spec.configuration.Configured;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
 import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
- * Default implementation of {@link MessageFilter} that delegates to a
+ * Default implementation that delegates to a
  * {@link FilterRule} to evaluate the incoming message.
  *
  * @author Ikasan Development Team
  *
  */
-public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<FilterConfiguration>
+public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Object>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(DefaultMessageFilter.class);
@@ -63,9 +63,6 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Fi
 
     /** unique identifier for this configured resource */
     private String configuredResourceId;
-
-    /** The {@link FilterConfiguration} generic configuration for a filter */
-    private FilterConfiguration filterConfiguration = new FilterConfiguration();
 
     /**
      * Constructor
@@ -86,23 +83,12 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Fi
      */
     public T filter(T message)
     {
-        if ( !this.filterConfiguration.isApplyFilter() )
-        {
-            return message;
-        }
-
         if (this.filterRule.accept(message))
         {
             return message;
         }
-        else
-        {
-            if(this.filterConfiguration.isLogFiltered())
-            {
-                logger.info("Filtered [" + ((message != null) ? message.toString() : "null") + "]");
-            }
-            return null;
-        }
+
+        return null;
     }
 
     @Override
@@ -118,21 +104,37 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Fi
     }
 
     @Override
-    public FilterConfiguration getConfiguration()
+    public Object getConfiguration()
     {
-        return this.filterConfiguration;
+        if(this.filterRule instanceof Configured)
+        {
+            return ((Configured)this.filterRule).getConfiguration();
+        }
+
+        return null;
     }
 
     @Override
-    public void setConfiguration(FilterConfiguration filterConfiguration)
+    public void setConfiguration(Object configuration)
     {
-        if(filterConfiguration == null)
+        if(this.filterRule instanceof Configured)
         {
-            this.filterConfiguration = new FilterConfiguration();
+            try
+            {
+                ((Configured)this.filterRule).setConfiguration(configuration);
+            }
+            catch(ClassCastException e)
+            {
+                logger.error("Tried to set an invalid configuration class of ["
+                        + configuration.getClass().getName()
+                        + "] on filter rule ["
+                        + this.filterRule.getClass().getName()
+                        + "]. Ignoring configuration -> [" + configuration.toString() + "]");
+            }
         }
         else
         {
-            this.filterConfiguration = filterConfiguration;
+            logger.warn("Provided configuration of [" + (configuration != null ? configuration.toString():null) + "] on a filter rule which is not configurable. Ignoring configuration!");
         }
     }
 }
