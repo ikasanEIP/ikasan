@@ -24,40 +24,31 @@ import org.ikasan.dashboard.ui.search.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.search.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.ModuleErrorCount;
-import org.ikasan.error.reporting.model.Note;
+import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
+import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.replay.dao.SolrReplayDao;
-import org.ikasan.replay.model.BulkReplayResponse;
-import org.ikasan.replay.model.HibernateReplayAudit;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
-import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
-import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
+import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -81,24 +72,27 @@ public class SearchPanel extends Panel implements View
     private PlatformConfigurationService platformConfigurationService;
     private PopupDateField fromDate;
     private PopupDateField toDate;
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
-    private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence> errorReportingService;
-    private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
-    private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
+    private SolrWiretapServiceImpl wiretapService;
+    private SolrErrorReportingManagementServiceImpl errorReportingService;
+    private SolrReplayServiceImpl replayManagementService;
+    private ReplayService replayService;
     private TopologyService topologyService;
-    private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
+    private SolrExclusionServiceImpl exclusionManagementService;
     private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
-    private ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
+    private ErrorReportingManagementService errorReportingManagementService;
     private HospitalService<byte[]> hospitalService;
-    private ExclusionManagementService<ExclusionEvent, String> solrExclusionManagementService;
+    private String solrUsername;
+    private String solrPassword;
+    private List<Module> modules;
+    private List<Flow> flows;
+    private Button bulkReplayButton;
+    private Button selectAllButton;
 
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
-                       WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService, ErrorReportingService<ErrorOccurrence<byte[]>,
-                       ErrorOccurrence> errorReportingService, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
-                       ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService, TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                       SolrWiretapServiceImpl wiretapService,SolrErrorReportingManagementServiceImpl errorReportingService, SolrReplayServiceImpl replayManagementService,
+                       ReplayService replayService, TopologyService topologyService, SolrExclusionServiceImpl exclusionManagementService,
                        HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
-                       ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService,
-                       HospitalService<byte[]> hospitalService)
+                       ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
     {
         this.solrSearchService = solrSearchService;
         this.platformConfigurationService = platformConfigurationService;
@@ -160,7 +154,7 @@ public class SearchPanel extends Panel implements View
                     else if(ikasanSolrDocument.getType().equals("replay"))
                     {
                         ReplayEvent replayEvent = replayManagementService.getReplayEventById(new Long(ikasanSolrDocument.getId()));
-                        ReplayEventViewWindow replayViewWindow = new ReplayEventViewWindow(replayEvent, replayService,
+                        ReplayEventViewWindow replayViewWindow = new ReplayEventViewWindow(replayEvent, (ReplayService) replayService,
                                 platformConfigurationService, topologyService);
 
                         UI.getCurrent().addWindow(replayViewWindow);
@@ -171,7 +165,7 @@ public class SearchPanel extends Panel implements View
                         ErrorOccurrence errorOccurrence = errorReportingService.find(ikasanSolrDocument.getId());
                         ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
                         ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
-                                , action, hospitalManagementService, topologyService, errorReportingManagementService, hospitalService);
+                                , action, hospitalManagementService, topologyService, (ErrorReportingManagementService) errorReportingManagementService, hospitalService);
 
                         UI.getCurrent().addWindow(exclusionEventViewWindow);
                     }
@@ -237,7 +231,7 @@ public class SearchPanel extends Panel implements View
             }
         });
 
-        final Button selectAllButton = new Button();
+        selectAllButton = new Button();
         selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
@@ -281,28 +275,18 @@ public class SearchPanel extends Panel implements View
             }
         });
 
-        final Button bulkReplayButton = new Button();
+        bulkReplayButton = new Button();
         bulkReplayButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         bulkReplayButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         bulkReplayButton.setIcon(VaadinIcons.RECYCLE);
         bulkReplayButton.setImmediate(true);
         bulkReplayButton.setDescription("Bulk replay selected events.");
 
-//        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
-//        popupOpener.setFeatures("height=80%,width=80%,resizable,left=100,top=100");
-//        popupOpener.extend(bulkReplayButton);
-
         bulkReplayButton.addClickListener(new Button.ClickListener()
         {
             public void buttonClick(Button.ClickEvent event)
             {
-//                // todo add replay events
-//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", getReplayEvents());
-//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
-//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
-//                VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
-
-                ReplayStatusPanel panel = new ReplayStatusPanel(getReplayEvents(), replayService, platformConfigurationService, topologyService);
+                ReplayStatusPanel panel = new ReplayStatusPanel(getReplayEvents(), (ReplayService) replayService, platformConfigurationService, topologyService);
 
                 Window window = new Window("Replay Events");
                 window.setHeight("80%");
@@ -320,6 +304,7 @@ public class SearchPanel extends Panel implements View
 
         buttons.addComponent(selectAllButton);
         buttons.addComponent(bulkReplayButton);
+
 
         layout.addComponent(buttons, 1, 3);
         layout.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
@@ -425,6 +410,20 @@ public class SearchPanel extends Panel implements View
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent)
     {
+        IkasanAuthentication ikasanAuthentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(DashboardSessionValueConstants.USER);
+
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+            this.selectAllButton.setVisible(true);
+            this.bulkReplayButton.setVisible(true);
+        }
+        else
+        {
+            this.selectAllButton.setVisible(false);
+            this.bulkReplayButton.setVisible(false);
+        }
     }
 
     private void search(String searchString)
@@ -438,7 +437,10 @@ public class SearchPanel extends Panel implements View
 
         HashSet<String> moduleNames = new HashSet<>();
 
-        List<Module> modules = topologyService.getAllModules();
+        if(this.modules == null)
+        {
+            this.modules = topologyService.getAllModules();
+        }
 
         for(Module module: modules)
         {
@@ -450,7 +452,10 @@ public class SearchPanel extends Panel implements View
 
         List<Long> flowIds = ikasanAuthentication.getLinkedFlowIds();
 
-        List<Flow> flows = topologyService.getAllFlows();
+        if(this.flows == null)
+        {
+            this.flows = topologyService.getAllFlows();
+        }
 
         HashSet<String> flowNames = new HashSet<>();
 
@@ -472,7 +477,8 @@ public class SearchPanel extends Panel implements View
 
         ArrayList<String> types = new ArrayList<>();
 
-        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE))
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
             types.add(SolrReplayDao.REPLAY);
         }
@@ -491,7 +497,27 @@ public class SearchPanel extends Panel implements View
             types.add("DUMMY");
         }
 
-        
+        if(this.solrUsername == null || this.solrUsername.isEmpty())
+        {
+            this.solrUsername = this.platformConfigurationService.getSolrUsername();
+        }
+
+        if(this.solrPassword == null || this.solrPassword.isEmpty())
+        {
+            this.solrPassword = this.platformConfigurationService.getSolrPassword();
+        }
+
+        this.solrSearchService.setSolrUsername(this.solrUsername);
+        this.solrSearchService.setSolrPassword(this.solrPassword);
+        this.wiretapService.setSolrUsername(this.solrUsername);
+        this.wiretapService.setSolrPassword(this.solrPassword);
+        this.errorReportingService.setSolrUsername(this.solrUsername);
+        this.errorReportingService.setSolrPassword(this.solrPassword);
+        this.replayManagementService.setSolrUsername(this.solrUsername);
+        this.replayManagementService.setSolrPassword(this.solrPassword);
+        this.exclusionManagementService.setSolrUsername(this.solrUsername);
+        this.exclusionManagementService.setSolrPassword(this.solrPassword);
+
         IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchString,
                 this.fromDate.getValue().getTime(), this.toDate.getValue().getTime(),
                 platformConfigurationService.getSearchResultSetSize(), types);

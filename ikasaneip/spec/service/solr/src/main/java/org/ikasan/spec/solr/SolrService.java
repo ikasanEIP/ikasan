@@ -12,4 +12,19 @@ public interface SolrService<ENTITY>
      */
     public void save(ENTITY save);
 
+    /**
+     * Set the solr username
+     *
+     * @param solrUsername
+     */
+    public void setSolrUsername(String solrUsername);
+
+
+    /**
+     * Set the solr password
+     *
+     * @param solrPassword
+     */
+    public void setSolrPassword(String solrPassword);
+
 }
