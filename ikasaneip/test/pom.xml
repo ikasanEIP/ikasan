@@ -92,6 +92,7 @@
 
 	<dependencies>
 
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-flow</artifactId>
@@ -110,7 +111,19 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-flow-visitorPattern</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-jms-spring</artifactId>
 			<scope>provided</scope>
@@ -134,6 +147,24 @@
 			<scope>provided</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <!--<version>${version.org.apache.sshd}</version>-->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
@@ -163,8 +194,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 		</dependency>
-
-
 
 	</dependencies>
 
