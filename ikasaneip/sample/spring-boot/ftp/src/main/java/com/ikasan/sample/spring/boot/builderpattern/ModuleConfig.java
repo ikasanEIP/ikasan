@@ -103,7 +103,7 @@ public class ModuleConfig {
 
     public Flow getFtpToLogFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
-        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("ftpToLogFlow");
+        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("Ftp To Log Flow");
 
         Flow ftpToLogFlow = ftpToLogFlowBuilder
                 .withDescription("Ftp to Log")
@@ -138,7 +138,7 @@ public class ModuleConfig {
 
     public Flow getTimeGeneratorToFtpFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
-        FlowBuilder timeGeneratorToFtpFlowBuilder = moduleBuilder.getFlowBuilder("timeGeneratorToFtpFlow");
+        FlowBuilder timeGeneratorToFtpFlowBuilder = moduleBuilder.getFlowBuilder("TimeGenerator To Ftp Flow");
         Flow timeGeneratorToFtpFlow = timeGeneratorToFtpFlowBuilder
                 .withDescription("Generates random string and send it to ftp as file")
                 .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)

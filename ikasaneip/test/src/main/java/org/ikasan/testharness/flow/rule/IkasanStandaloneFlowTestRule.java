@@ -130,6 +130,9 @@ public class IkasanStandaloneFlowTestRule implements TestRule
 
         Module module = ikasanApplication.getModules().get(0);
         this.flow = (Flow) module.getFlow(flowUnderTest);
+        if(flow == null) {
+            throw new RuntimeException("Flow ["+flowUnderTest+"] not found in application context.");
+        }
         this.flowExpectations = new OrderedExpectation();
         testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
 
