@@ -110,7 +110,7 @@ public class ErrorOccurrenceDeepLinkPanel extends UI
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
+	 * @see com.vaadin.ui.UI#initCloud(com.vaadin.server.VaadinRequest)
 	 */
 	@Override
 	protected void init(VaadinRequest request)

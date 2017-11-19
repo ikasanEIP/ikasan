@@ -36,26 +36,26 @@ public class WebContextInitializer implements ServletContextInitializer
      * <servlet>
      <servlet-name>Ikasan Dashboard</servlet-name>
      <servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
-     <init-param>
+     <initCloud-param>
      <param-name>UIProvider</param-name>
      <param-value>org.ikasan.dashboard.ui.DashboardUIProvider</param-value>
-     </init-param>
-     <init-param>
+     </initCloud-param>
+     <initCloud-param>
      <param-name>systemMessagesBeanName</param-name>
      <param-value>DEFAULT</param-value>
-     </init-param>
-     <init-param>
+     </initCloud-param>
+     <initCloud-param>
      <param-name>widgetset</param-name>
      <param-value>org.ikasan.dashboard.ui.AppWidgetSet</param-value>
-     </init-param>
-     <init-param>
+     </initCloud-param>
+     <initCloud-param>
      <param-name>closeIdleSessions</param-name>
      <param-value>true</param-value>
-     </init-param>
-     <init-param>
+     </initCloud-param>
+     <initCloud-param>
      <param-name>legacyPropertyToString</param-name>
      <param-value>true</param-value>
-     </init-param>
+     </initCloud-param>
      <async-supported>true</async-supported>
      </servlet>
      * @param servletContext
