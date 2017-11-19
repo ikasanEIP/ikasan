@@ -1,9 +1,14 @@
 package org.ikasan.replay.model;
 
 
-public class ReplayAudit 
+import org.ikasan.spec.replay.ReplayAudit;
+
+public class HibernateReplayAudit implements ReplayAudit
 {
 	private Long id;
+	private String moduleName;
+	private String flowName;
+	private String eventId;
 	private String user;
 	private String replayReason;
 	private String targetServer;
@@ -13,7 +18,7 @@ public class ReplayAudit
 	 * Default constructor for Hibernate
 	 */
 	@SuppressWarnings("unused")
-	private ReplayAudit()
+	private HibernateReplayAudit()
 	{
 		
 	}
@@ -24,10 +29,8 @@ public class ReplayAudit
 	 * @param user
 	 * @param replayReason
 	 * @param targetServer
-	 * @param moduleName
-	 * @param flowName
 	 */
-	public ReplayAudit(String user, String replayReason, String targetServer) 
+	public HibernateReplayAudit(String user, String replayReason, String targetServer)
 	{
 		super();
 		this.user = user;
@@ -48,11 +51,11 @@ public class ReplayAudit
 	 * @param id the id to set
 	 */
 	@SuppressWarnings("unused")
-	private void setId(Long id) 
+	public void setId(Long id)
 	{
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the user
 	 */
@@ -148,7 +151,7 @@ public class ReplayAudit
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ReplayAudit other = (ReplayAudit) obj;
+		HibernateReplayAudit other = (HibernateReplayAudit) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

@@ -237,7 +237,12 @@ public class SolrErrorOccurrence implements ErrorOccurrence<byte[]>, HarvestEven
 
     public byte[] getEvent()
     {
-        throw new UnsupportedOperationException();
+        if(this.eventAsString != null)
+        {
+            return this.eventAsString.getBytes();
+        }
+
+        return "".getBytes();
     }
 
 	public void setEvent(byte[] event)

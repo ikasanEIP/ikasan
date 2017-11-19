@@ -46,7 +46,6 @@ import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -354,14 +353,10 @@ public class ComponentBuilderTest {
         });
 
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
-        Filter filter = componentBuilder.messageFilter().setFilterEntryConverter(filterEntryConverter)
-                .setApplyFilter(true).setLogFilter(true).setConfiguredResourceId("configuredResourceId").build();
+        Filter filter = componentBuilder.messageFilter().setFilterEntryConverter(filterEntryConverter).setConfiguredResourceId("configuredResourceId").build();
         assertTrue("instance should be a Filter", filter instanceof Filter);
 
-        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>)filter).getConfiguration();
-        assertTrue("configuredResourceId should be 'configuredResourceId'",  "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
-        assertTrue("applyFilter should be true",  configuration.isApplyFilter());
-        assertTrue("logFiltered should be true",  configuration.isLogFiltered());
+        assertTrue("configuredResourceId should be 'configuredResourceId'",  "configuredResourceId".equals(((ConfiguredResource) filter).getConfiguredResourceId()));
     }
 
 }

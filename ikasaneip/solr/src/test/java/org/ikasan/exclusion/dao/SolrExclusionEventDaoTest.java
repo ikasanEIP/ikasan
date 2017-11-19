@@ -11,6 +11,7 @@ import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
+import org.ikasan.exclusion.model.SolrExclusionEventImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.jmock.Expectations;
@@ -72,7 +73,7 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
 
-            ExclusionEvent event = new ExclusionEvent("moduleName", "flowName", "componentName",
+            ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                 "event".getBytes(), "uri");
 
 
@@ -122,7 +123,7 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
 
-            ExclusionEvent event = new ExclusionEvent("moduleName", "flowName", "componentName",
+            ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                     "event".getBytes(), "uri");
 
 
@@ -162,7 +163,7 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
         dao.setSolrClient(server);
         dao.setDaysToKeep(0);
 
-        ExclusionEvent event = new ExclusionEvent("moduleName", "flowName", "componentName",
+        ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                 "event".getBytes(), "uri");
 
 
@@ -223,15 +224,46 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
         dao.rowCount(null, null, null, null, null);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     @DirtiesContext
-    public void test_find_uri_exception() throws Exception
+    public void test_find_uri_success() throws Exception
     {
-        SolrExclusionEventDao dao = new SolrExclusionEventDao();
-        dao.setSolrClient(server);
-        dao.setDaysToKeep(0);
+        Path path = createTempDir();
 
-        dao.find(null);
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+                .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "newcore"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("newcore");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            HashMap<String, Object> fields = new HashMap<>();
+            fields.put("id", new Integer(1));
+
+            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
+            server.request(schemaRequest);
+
+
+            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
+                    "event".getBytes(), "uri");
+
+
+            dao.save(event);
+
+            Assert.assertNotNull(dao.find("uri"));
+
+            server.close();
+
+        }
     }
 
     @Test(expected = UnsupportedOperationException.class)

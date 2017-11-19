@@ -244,7 +244,15 @@ public class ReplayEventViewPanel extends Panel
 		
 		final AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
-		editor.setValue(new String(this.replayEvent.getEventAsString()));
+
+		if(this.replayEvent.getEventAsString() != null)
+		{
+			editor.setValue(this.replayEvent.getEventAsString());
+		}
+		else if(this.replayEvent.getEvent() != null)
+		{
+			editor.setValue(new String(this.replayEvent.getEvent()));
+		}
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setWordWrap(true);

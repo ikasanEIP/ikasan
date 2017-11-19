@@ -185,29 +185,6 @@ public class ErrorOccurrenceViewPanel extends Panel
 		lidTf.setWidth("80%");
 		layout.addComponent(lidTf, 3, 2);
 		
-		label = new Label("Action:");
-		label.setSizeUndefined();		
-		layout.addComponent(label, 2, 3);
-		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
-	    
-		TextField aTf = new TextField();
-		aTf.setValue((this.errorOccurrence.getAction() == null ) ? "" : this.errorOccurrence.getAction());
-		aTf.setReadOnly(true);
-		aTf.setWidth("80%");
-		layout.addComponent(aTf, 3, 3);
-		
-		label = new Label("Error Url:");
-		label.setSizeUndefined();		
-		layout.addComponent(label, 0, 5);
-		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
-		
-		TextField ecrTf = new TextField();
-		ecrTf.setValue(buildErrorUrl());
-		ecrTf.setReadOnly(true);
-		ecrTf.setWidth("95%");
-		ecrTf.setNullRepresentation("");
-		layout.addComponent(ecrTf, 1, 5, 3, 5);
-		
 		label = new Label("Exception Class:");
 		label.setSizeUndefined();		
 		layout.addComponent(label, 0, 6);

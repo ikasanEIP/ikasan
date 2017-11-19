@@ -49,7 +49,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.ikasan.replay.model.ReplayAudit"
+	<class name="org.ikasan.replay.model.HibernateReplayAudit"
 		table="ReplayAudit">
 		
 		<id name="id" type="java.lang.Long" column="Id">

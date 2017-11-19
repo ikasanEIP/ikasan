@@ -1,8 +1,8 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
- *
- * =============================================================================
+ * 
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,59 +36,73 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-
-package org.ikasan.filter.duplicate.service;
-
-import org.ikasan.filter.configuration.FilterConfiguration;
+package org.ikasan.spec.replay;
 
 /**
- * Default FilteredMessageConfiguration specific to duplicate file message filtering.
- *
+ * 
  * @author Ikasan Development Team
  *
  */
-public class FilteredMessageConfiguration extends FilterConfiguration
+public interface ReplayAuditEvent<KEY>
 {
-    /** default housekeep batch size of 100 */
-    private int housekeepingBatchSize = 100;
+	/**
+	 * @return the id
+	 */
+	public KEY getId();
 
-    /** batched housekeeping - default true */
-    private boolean batchHousekeepDelete = true;
 
-    /** default transaction size of 1000 */
-    private int transactionBatchSize = 1000;
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(KEY id);
 
-    public int getHousekeepingBatchSize() {
-        return housekeepingBatchSize;
-    }
 
-    public void setHousekeepingBatchSize(int housekeepingBatchSize) {
-        this.housekeepingBatchSize = housekeepingBatchSize;
-    }
+	/**
+	 * @return the replayAudit
+	 */
+	public ReplayAudit getReplayAudit();
 
-    public boolean isBatchHousekeepDelete() {
-        return batchHousekeepDelete;
-    }
 
-    public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
-        this.batchHousekeepDelete = batchHousekeepDelete;
-    }
+	/**
+	 * @param replayAudit the replayAudit to set
+	 */
+	public void setReplayAudit(ReplayAudit replayAudit);
+	
 
-    /**
-     * @return the transactionBatchSize
-     */
-    public int getTransactionBatchSize()
-    {
-        return transactionBatchSize;
-    }
+	/**
+	 * @return the success
+	 */
+	public boolean isSuccess();
 
-    /**
-     * @param transactionBatchSize the transactionBatchSize to set
-     */
-    public void setTransactionBatchSize(int transactionBatchSize)
-    {
-        this.transactionBatchSize = transactionBatchSize;
-    }
+
+	/**
+	 * @param success the success to set
+	 */
+	public void setSuccess(boolean success);
+
+
+	/**
+	 * @return the resultMessage
+	 */
+	public String getResultMessage();
+
+
+	/**
+	 * @param resultMessage the resultMessage to set
+	 */
+	public void setResultMessage(String resultMessage);
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp();
+
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp);
+	
 }

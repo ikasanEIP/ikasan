@@ -39,45 +39,54 @@
  * =============================================================================
  */
 
-package org.ikasan.filter.configuration;
+package org.ikasan.filter.duplicate.service;
 
 /**
- * Default FilterConfiguration bean common to all filters.
+ * Default FilteredMessageConfiguration specific to duplicate file message filtering.
  *
  * @author Ikasan Development Team
  *
  */
-public class FilterConfiguration
+public class FilteredMessageConfiguration
 {
-    /** allow filter to be turned on or off - default on */
-    private boolean applyFilter = true;
+    /** default housekeep batch size of 100 */
+    private int housekeepingBatchSize = 100;
 
-    /** log filtered events */
-    private boolean logFiltered = false;
+    /** batched housekeeping - default true */
+    private boolean batchHousekeepDelete = true;
 
-    /**
-     * Getter for determining if filter should be applied
-     * @return
-     */
-    public boolean isApplyFilter()
-    {
-        return this.applyFilter;
+    /** default transaction size of 1000 */
+    private int transactionBatchSize = 1000;
+
+    public int getHousekeepingBatchSize() {
+        return housekeepingBatchSize;
+    }
+
+    public void setHousekeepingBatchSize(int housekeepingBatchSize) {
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
+
+    public boolean isBatchHousekeepDelete() {
+        return batchHousekeepDelete;
+    }
+
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
+        this.batchHousekeepDelete = batchHousekeepDelete;
     }
 
     /**
-     * Setter for determining if the filter should be applied
-     * @param applyFilter
+     * @return the transactionBatchSize
      */
-    public void setApplyFilter(boolean applyFilter)
+    public int getTransactionBatchSize()
     {
-        this.applyFilter = applyFilter;
+        return transactionBatchSize;
     }
 
-    public boolean isLogFiltered() {
-        return logFiltered;
-    }
-
-    public void setLogFiltered(boolean logFiltered) {
-        this.logFiltered = logFiltered;
+    /**
+     * @param transactionBatchSize the transactionBatchSize to set
+     */
+    public void setTransactionBatchSize(int transactionBatchSize)
+    {
+        this.transactionBatchSize = transactionBatchSize;
     }
 }

@@ -47,8 +47,8 @@ import java.util.List;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.replay.ReplayAuditDao;
 import org.ikasan.spec.replay.ReplayDao;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
@@ -59,13 +59,13 @@ import org.ikasan.spec.replay.ReplayManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit
-		, ReplayAuditEvent>, HousekeepService, HarvestService<ReplayEvent>
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, HibernateReplayAudit
+		, HibernateReplayAuditEvent>, HousekeepService, HarvestService<ReplayEvent>
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;
 
-	private ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao;
+	private ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent> replayAuditDao;
 	
 	private Integer housekeepingBatchSize = 200;
 
@@ -76,7 +76,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 * 
 	 * @param replayDao
 	 */
-	public ReplayManagementServiceImpl(ReplayDao replayDao, ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao)
+	public ReplayManagementServiceImpl(ReplayDao replayDao, ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent> replayAuditDao)
 	{
 		super();
 		this.replayDao = replayDao;
@@ -102,8 +102,8 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAudits(java.lang.String, java.sql.Date, java.sql.Date)
 	 */
 	@Override
-	public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
-			String eventId, String user, Date startDate, Date endDate) 
+	public List<HibernateReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
+													  String eventId, String user, Date startDate, Date endDate)
 	{
 		return this.replayAuditDao.getReplayAudits(moduleNames, flowNames, eventId, user, startDate, endDate);
 	}
@@ -112,7 +112,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAuditById(java.lang.Long)
 	 */
 	@Override
-	public ReplayAudit getReplayAuditById(Long id) 
+	public HibernateReplayAudit getReplayAuditById(Long id)
 	{
 		return this.replayAuditDao.getReplayAuditById(id);
 	}
@@ -121,7 +121,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAuditEventsByAuditId(java.lang.Long)
 	 */
 	@Override
-	public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) 
+	public List<HibernateReplayAuditEvent> getReplayAuditEventsByAuditId(Long id)
 	{
 		return this.replayAuditDao.getReplayAuditEventsByAuditId(id);
 	}
