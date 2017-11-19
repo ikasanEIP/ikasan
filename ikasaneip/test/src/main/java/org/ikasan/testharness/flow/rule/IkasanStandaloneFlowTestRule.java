@@ -218,7 +218,7 @@ public class IkasanStandaloneFlowTestRule implements TestRule
         }
         addExpectation(new ConsumerComponent(name));
         // detect a ScheduledConsumer
-        if (flow.getFlowElement(name).getFlowComponent() instanceof ScheduledConsumer)
+        if (getComponent(name) instanceof ScheduledConsumer)
         {
             this.scheduledConsumerName = name;
         }
@@ -401,8 +401,7 @@ public class IkasanStandaloneFlowTestRule implements TestRule
      */
     public void fireScheduledConsumer()
     {
-        FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
-        ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
+        ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
         try
         {
             consumer.triggerSchedulerNow();
@@ -422,8 +421,7 @@ public class IkasanStandaloneFlowTestRule implements TestRule
      */
     public void fireScheduledConsumerSynchronously(JobExecutionContext jobExecutionContext)
     {
-        FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
-        ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
+        ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
         consumer.execute(jobExecutionContext);
     }
 
@@ -439,8 +437,8 @@ public class IkasanStandaloneFlowTestRule implements TestRule
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
         if (this.scheduledConsumerName != null)
         {
-            FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
-            ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) flowElement.getFlowComponent()).getConfiguration();
+            Object component = getComponent(scheduledConsumerName);
+            ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) component).getConfiguration();
             configuration.setCronExpression("0/5 * * * * ? 2099"); // set to never run
             configuration.setEager(false); // do not callback on the provider once complete
         }

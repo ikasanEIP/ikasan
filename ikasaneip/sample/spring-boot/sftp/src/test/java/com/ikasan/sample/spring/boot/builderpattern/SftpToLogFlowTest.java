@@ -85,9 +85,10 @@ public class SftpToLogFlowTest
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
+        flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(7000L);
+        flowTestRule.sleep(5000L);
 
     }
 
