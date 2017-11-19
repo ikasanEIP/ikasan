@@ -76,7 +76,7 @@ public class TimeGeneratorToSftpFlowTest
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-
+        flowTestRule.sleep(1000L);
         flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(5000L);
