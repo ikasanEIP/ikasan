@@ -99,7 +99,7 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 		this.moduleName = moduleName;
 		this.flowName = flowName;
 		this.timestamp = new Date().getTime();
-		this.expiry = new Date().getTime() + (timeToLiveDays * 60 * 60 * 24 * 1000);
+		this.expiry = new Date().getTime() + new Long(timeToLiveDays * 60l * 60l * 24l * 1000l);
 	}
 
 	/**
