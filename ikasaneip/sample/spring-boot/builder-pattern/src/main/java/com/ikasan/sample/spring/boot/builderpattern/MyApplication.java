@@ -94,7 +94,7 @@ public class MyApplication
 
     public Flow getScheduledFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
-        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow Name");
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow");
         return flowBuilder.withDescription("scheduled flow description")
                 .consumer("consumer", componentBuilder.scheduledConsumer().setCronExpression("0/5 * * * * ?").setConfiguredResourceId("configuredResourceId")
                         .setScheduledJobGroupName("scheduledJobGroupName").setScheduledJobName("scheduledJobName").build())
@@ -102,7 +102,7 @@ public class MyApplication
     }
 
     public Flow getJmsFlow(ModuleBuilder moduleBuilder,ComponentBuilder componentBuilder) {
-        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow Name");
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow");
 
         return flowBuilder.withDescription("Jms flow description")
                 .consumer("consumer", componentBuilder.jmsConsumer().setConfiguredResourceId("configuredResourceId")

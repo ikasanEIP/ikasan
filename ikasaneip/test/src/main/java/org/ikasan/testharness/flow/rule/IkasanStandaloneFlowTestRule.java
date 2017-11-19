@@ -46,7 +46,6 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.ikasan.testharness.flow.FlowTestHarness;
@@ -138,6 +137,20 @@ public class IkasanStandaloneFlowTestRule implements TestRule
 
     }
 
+
+    public IkasanStandaloneFlowTestRule(String flowUnderTest,IkasanApplication ikasanApplication)
+    {
+        this.ikasanApplication = ikasanApplication;
+        Module module = this.ikasanApplication.getModules().get(0);
+        this.flow = (Flow) module.getFlow(flowUnderTest);
+        if(flow == null) {
+            throw new RuntimeException("Flow ["+flowUnderTest+"] not found in application context.");
+        }
+        this.flowExpectations = new OrderedExpectation();
+        testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
+
+    }
+
     /**
      * Applies the basic flow test rules:
      * 1. Stop the flow and assert it is stopped; or stoppedInError if withErrorEndState() was called when building
@@ -171,6 +184,13 @@ public class IkasanStandaloneFlowTestRule implements TestRule
         };
     }
 
+    public void assertFlowComponentExecution(){
+        if (flow != null && flowTestHarness != null)
+        {
+            flowTestHarness.assertIsSatisfied();
+
+        }
+    }
     private void addExpectation(AbstractComponent component)
     {
         if (openBlock)
