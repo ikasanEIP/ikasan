@@ -194,7 +194,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
      */
     public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
-        long expiry = System.currentTimeMillis() + (timeToLive * 60000);
+        long expiry = System.currentTimeMillis() + (timeToLive * 60000l);
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
         this.wiretapDao.save(wiretapEvent);
         if (logger.isDebugEnabled())
