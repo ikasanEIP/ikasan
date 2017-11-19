@@ -64,7 +64,7 @@ public class ReflectionUtilsTest
 		Assert.isNull(runtimeConfiguration.getLongy(), "Long should be null");
 		Assert.isNull(runtimeConfiguration.getStry(), "String should be null");
 
-		Map<String,Object> properties = ReflectionUtils.getProperties(persistedConfiguration);
+		Map<String,Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(persistedConfiguration);
 		for(Map.Entry<String,Object> entry:properties.entrySet())
 		{
 			ReflectionUtils.setProperty(runtimeConfiguration, entry.getKey(), entry.getValue());

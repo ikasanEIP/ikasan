@@ -40,6 +40,9 @@
  */
 package org.ikasan.configurationService.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,6 +55,7 @@ import java.util.*;
  */
 public class ReflectionUtils
 {
+	private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
 	/**
 	 * Return a setter method instance for the given class for the specified field.
@@ -121,6 +125,34 @@ public class ReflectionUtils
 
 	/**
 	 * Get all field names and values for the given target object.
+	 * Any failures to access fields or methods are logged, but not thrown.
+	 *
+	 * @param target
+	 * @return
+	 */
+	public static Map<String,Object> getPropertiesIgnoringExceptions(Object target)
+	{
+		Map<String,Object> properties = new HashMap<String,Object>();
+		Class cls = target.getClass();
+
+		for(Map.Entry<String,Field> entry:getDeclaredFields(cls).entrySet())
+		{
+			try
+			{
+				Method method = getGetterMethod(cls, entry.getValue());
+				properties.put(entry.getValue().getName(), method.invoke(target, null));
+			}
+			catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
+			{
+				logger.error("Failed accessing method for field [" + entry.getKey() + "]", e);
+			}
+		}
+
+		return properties;
+	}
+
+	/**
+	 * Get all field names and values for the given target object.
 	 *
 	 * @param target
 	 * @return
@@ -129,7 +161,7 @@ public class ReflectionUtils
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public static Map<String,Object> getProperties(Object target)
+	private static Map<String,Object> getProperties(Object target)
 			throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
 	{
 		Map<String,Object> properties = new HashMap<String,Object>();
@@ -185,7 +217,15 @@ public class ReflectionUtils
 			}
 			catch(NoSuchMethodException e)
 			{
-				method = cls.getMethod("get" + partialMethodName, null);
+				try
+				{
+					method = cls.getMethod("get" + partialMethodName, null);
+				}
+				catch(NoSuchMethodException e1)
+				{
+					// final option is to just try the field name as the method
+					method = cls.getMethod(field.getName(), null);
+				}
 			}
 		}
 		else
