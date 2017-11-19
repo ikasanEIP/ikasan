@@ -18,14 +18,21 @@ public class MessageListenerVerifier implements MessageListener
 {
     private String destinationName;
 
+    TestJmsListenerEndpoint endpoint;
+
     public MessageListenerVerifier(final String brokerUrl, final String destinationName,
-                                   final JmsListenerEndpointRegistry registry)
+        final JmsListenerEndpointRegistry registry)
     {
         this.destinationName = destinationName;
         SimpleJmsListenerContainerFactory factory = new SimpleJmsListenerContainerFactory();
         factory.setConnectionFactory(new ActiveMQConnectionFactory(brokerUrl));
-        JmsListenerEndpoint endpoint = new TestJmsListenerEndpoint(destinationName, this);
+        endpoint = new TestJmsListenerEndpoint(destinationName, this);
         registry.registerListenerContainer(endpoint, factory);
+    }
+
+    public void start()
+    {
+        this.endpoint.startMessageListener();
     }
 
     List<String> captureResults = new ArrayList<>();
@@ -62,7 +69,9 @@ public class MessageListenerVerifier implements MessageListener
 
         private MessageListener messageListener;
 
-        public TestJmsListenerEndpoint(String destinationName, MessageListener messageListener)
+        MessageListenerContainer listenerContainer;
+
+        TestJmsListenerEndpoint(String destinationName, MessageListener messageListener)
         {
             this.destinationName = destinationName;
             this.messageListener = messageListener;
@@ -77,6 +86,13 @@ public class MessageListenerVerifier implements MessageListener
         {
             listenerContainer.setupMessageListener(messageListener);
             ((SimpleMessageListenerContainer) listenerContainer).setDestinationName(destinationName);
+            ((SimpleMessageListenerContainer) listenerContainer).setAutoStartup(false);
+            this.listenerContainer = listenerContainer;
+        }
+
+        void startMessageListener()
+        {
+            this.listenerContainer.start();
         }
     }
 }

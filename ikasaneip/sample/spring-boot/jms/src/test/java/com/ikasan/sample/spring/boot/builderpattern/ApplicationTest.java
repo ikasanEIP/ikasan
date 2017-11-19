@@ -152,11 +152,13 @@ public class ApplicationTest
     public void test_successful_message_processing() throws Exception
     {
 
+        // Get MessageListenerVerifier and start it
+        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
+        messageListenerVerifierTarget.start();
+
         // Perform Test
         startFlow();
 
-        // Verify the expectations
-        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
 
         // Set expectation
         assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(SAMPLE_MESSAGE));

@@ -130,15 +130,16 @@ public class MyApplicationTest
         System.out.println("Sending a JMS message.["+message+"]");
         jmsTemplate.convertAndSend("source",message );
 
+        // Get verifier from spring context and start listening to outbound destination
+        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
+        messageListenerVerifierTarget.start();
+
         jmsFlow.start();
         pause(5000);
         assertEquals("running",jmsFlow.getState());
         jmsFlow.stop();
         pause(2000);
         assertEquals("stopped",jmsFlow.getState());
-
-        // Verify the expectations
-        MessageListenerVerifier messageListenerVerifierTarget =  ikasanApplication.getBean("messageListenerVerifierTarget",MessageListenerVerifier.class);
 
         // Set expectation
         assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(message));

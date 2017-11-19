@@ -111,6 +111,13 @@ public class ApplicationTest
             modules.size() == 1);
         Module<Flow> module = modules.get(0);
         Flow flow = module.getFlow("sourceFileFlow");
+
+        // Get MessageListenerVerifier and start the listner
+        MessageListenerVerifier messageListenerVerifierTarget = ikasanApplication
+            .getBean("messageListenerVerifierTarget", MessageListenerVerifier.class);
+        messageListenerVerifierTarget.start();
+
+
         // start flow
         flow.start();
         // give flow time
@@ -118,9 +125,6 @@ public class ApplicationTest
         assertEquals("running", flow.getState());
         flow.stop();
         assertEquals("stopped", flow.getState());
-        // Verify the expectations
-        MessageListenerVerifier messageListenerVerifierTarget = ikasanApplication
-            .getBean("messageListenerVerifierTarget", MessageListenerVerifier.class);
         // Set expectation
         assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(FILE_CONSUMER_FILE_NAME));
     }
