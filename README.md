@@ -23,7 +23,7 @@ than another development framework.
 * It is commonly agreed that “spaghetti integration” is bad
 * Bleed out of APIs, data syntax and business semantics
 * Ripple effect of change is massive
-![Problem Domain](ikasaneip/developer/docs/quickstart-images/problem-domain.png) 
+* ![Problem Domain](ikasaneip/developer/docs/quickstart-images/problem-domain.png) 
 
 
 # Solution
@@ -32,7 +32,7 @@ than another development framework.
   * Provision of an Event/Service backbone
   * Single point of integration for EIS business flow
   * Ripple effect of change is localised (assuming best practice)
-  ![Problem Domain](ikasaneip/developer/docs/quickstart-images/ei-standard-approach.png) 
+  * ![Problem Domain](ikasaneip/developer/docs/quickstart-images/ei-standard-approach.png) 
 * Ikasan adopts the standard EAI approach and helps users solve integration problems by building applications constructed of modules/flows/components
 
 #  Integration Module
