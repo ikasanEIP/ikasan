@@ -51,16 +51,28 @@ import java.util.Date;
  * Get the payload content from the incoming message.
  * Created by Ikasan Development Team
  */
-public class FilePayloadGeneratorConverter implements Converter<JobExecutionContext,Payload>
+public class FilePayloadGeneratorConverter implements Converter<JobExecutionContext, Payload>
 {
+    private String generatedFileName;
 
-    @Override
-    public Payload convert(JobExecutionContext data)
+    @Override public Payload convert(JobExecutionContext data)
     {
-        String message = data.getJobDetail().getKey().getGroup()+data.getJobDetail().getKey().getName()+data.getFireTime();
-        Payload payload =  new DefaultPayload("test"+new Date().getTime()+".txt"
-                ,message.getBytes());
-        payload.setAttribute("fileName","test"+new Date().getTime()+".txt");
+        String message =
+            data.getJobDetail().getKey().getGroup() + data.getJobDetail().getKey().getName() + data.getFireTime();
+        Payload payload = new DefaultPayload("test" + new Date().getTime() + ".txt", message.getBytes());
+        if (generatedFileName != null)
+        {
+            payload.setAttribute("fileName", generatedFileName);
+        }
+        else
+        {
+            payload.setAttribute("fileName", "test" + new Date().getTime() + ".txt");
+        }
         return payload;
+    }
+
+    public void setGeneratedFileName(String generatedFileName)
+    {
+        this.generatedFileName = generatedFileName;
     }
 }

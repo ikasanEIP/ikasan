@@ -178,7 +178,7 @@ public class ModuleConfig {
      */
     public Flow getTimeGeneratorToSftpFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
-        FlowBuilder timeGeneratorToSftpFlowBuilder = moduleBuilder.getFlowBuilder("timeGeneratorToSftpFlow");
+        FlowBuilder timeGeneratorToSftpFlowBuilder = moduleBuilder.getFlowBuilder("TimeGenerator To Sftp Flow");
         Flow timeGeneratorToSftpFlow = timeGeneratorToSftpFlowBuilder
                 .withDescription("Generates random string and send it to sftp as file")
                 .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)

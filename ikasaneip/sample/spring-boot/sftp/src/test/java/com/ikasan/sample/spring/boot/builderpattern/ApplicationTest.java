@@ -38,189 +38,117 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import com.ikasan.sample.converter.FilePayloadGeneratorConverter;
 import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.endpoint.sftp.producer.SftpProducer;
+import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.ikasan.testharness.flow.sftp.SftpRule;
+import org.junit.*;
+import org.springframework.aop.framework.Advised;
 import org.springframework.util.SocketUtils;
 
-import java.io.ByteArrayInputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ApplicationTest {
-
+public class ApplicationTest
+{
     private SshServer sshd;
 
     private IkasanApplication ikasanApplication;
-    private Application Application;
 
-    @Before
-    public void beforeTestSetup() throws Exception {
-        sshd = SshServer.setUpDefaultServer();
-        sshd.setPort(22999);
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("target/hostkey.ser"));
-        sshd.setPasswordAuthenticator(new PasswordAuthenticator() {
+    @Rule public SftpRule sftp = new SftpRule("test", "test", null, 22999);
 
-            @Override
-            public boolean authenticate(String s, String s1, ServerSession serverSession) {
-                return true;
-            }
-
-
-        });
-        CommandFactory myCommandFactory = new CommandFactory() {
-            public Command createCommand(String command) {
-                System.out.println("Command: " + command);
-                return null;
-            }
-        };
-        sshd.setCommandFactory(new ScpCommandFactory(myCommandFactory));
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>();
-        namedFactoryList.add(new SftpSubsystem.Factory());
-        sshd.setSubsystemFactories(namedFactoryList);
-        sshd.start();
-
-        putFile();
-
-        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
-
-        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class,args);
-
-
+    @Before public void beforeTestSetup() throws Exception
+    {
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class, args);
     }
 
-    public void putFile() throws Exception {
-        // Make sure to delete all files created by sftp
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txtb"));
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
-
-        JSch jsch = new JSch();
-
-        Hashtable config = new Hashtable();
-        config.put("StrictHostKeyChecking", "no");
-        JSch.setConfig(config);
-
-        Session session = jsch.getSession("test", "localhost", 22999);
-        session.setPassword("test");
-
-        session.connect();
-
-        Channel channel = session.openChannel("sftp");
-        channel.connect();
-
-        ChannelSftp sftpChannel = (ChannelSftp) channel;
-
-        final String testFileContents = "some file contents";
-
-        String uploadedFileName = "test.txtb";
-        sftpChannel.put(new ByteArrayInputStream(testFileContents.getBytes()), uploadedFileName);
-
-        if (sftpChannel.isConnected()) {
-            sftpChannel.exit();
-        }
-
-        if (session.isConnected()) {
-            session.disconnect();
-        }
-
-    }
-
-    @After
-    public void teardown() throws Exception {
-
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txtb"));
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
-        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
-
+    @After public void teardown() throws Exception
+    {
         ikasanApplication.close();
-
-        sshd.stop();
-
     }
 
     /**
      * The SFTP test does not work on windows
      */
-    @Test
-    public void test_sftpConsumer_flow() throws Exception {
-
-        // / you cannot lookup flow directly from context as only Module is injected through @Bean
-
+    @Test public void test_sftpConsumer_flow() throws Exception
+    {
+        // Upload data to fake SFTP
+        sftp.putFile("testDownload.txt", "Sample File content");
+        // you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = (Module) ikasanApplication.getBean(Module.class);
         Flow flow = (Flow) module.getFlow("Sftp To Log Flow");
 
+        // Update Sftp Consumer config
+        ScheduledConsumer scheduledConsumer = (ScheduledConsumer) ((Advised) flow.getFlowElement("Sftp Consumer")
+            .getFlowComponent()).getTargetSource().getTarget();
+        SftpConsumerConfiguration configuration = (SftpConsumerConfiguration) scheduledConsumer.getConfiguration();
+        configuration.setSourceDirectory(sftp.getBaseDir());
+
         // start flow
         flow.start();
-        pause(15000);
+        pause(7000);
         assertEquals("running", flow.getState());
-
         flow.stop();
-        pause(2000);
         assertEquals("stopped", flow.getState());
-
     }
-
 
     /**
      * The SFTP test does not work on windows
      */
-    @Test
-    public void test_sftpProducer_flow() throws Exception {
-
-
+    @Test public void test_sftpProducer_flow() throws Exception
+    {
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = (Module) ikasanApplication.getBean(Module.class);
-        Flow flow = (Flow) module.getFlow("timeGeneratorToSftpFlow");
+        Flow flow = (Flow) module.getFlow("TimeGenerator To Sftp Flow");
+
+        // Update Sftp Consumer config
+        SftpProducer sftpProducer = (SftpProducer) (flow.getFlowElement("Sftp Producer")
+        .getFlowComponent());
+        SftpProducerConfiguration configuration = (SftpProducerConfiguration) sftpProducer.getConfiguration();
+        configuration.setOutputDirectory(sftp.getBaseDir());
+        configuration.setOverwrite(true);
+
+        FilePayloadGeneratorConverter filePayloadGeneratorConverter = (FilePayloadGeneratorConverter) (flow.getFlowElement("Random String Generator")
+            .getFlowComponent());
+        filePayloadGeneratorConverter.setGeneratedFileName("generatedSftpProducertest.out");
+
 
         // start flow
         flow.start();
-        pause(15000);
+        pause(7000);
         assertEquals("running", flow.getState());
-
         flow.stop();
-        pause(2000);
         assertEquals("stopped", flow.getState());
 
+        assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
     }
+
     /**
      * Sleep for value in millis
      *
      * @param value
      */
-    private void pause(long value) {
-        try {
+    private void pause(long value)
+    {
+        try
+        {
             Thread.sleep(value);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             throw new RuntimeException(e);
         }
     }
