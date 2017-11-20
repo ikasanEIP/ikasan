@@ -34,4 +34,19 @@ public interface SolrSearchService<RESULTS>
      * @return
      */
     public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
+
+    /**
+     * Set the solr username
+     *
+     * @param solrUsername
+     */
+    public void setSolrUsername(String solrUsername);
+
+
+    /**
+     * Set the solr password
+     *
+     * @param solrPassword
+     */
+    public void setSolrPassword(String solrPassword);
 }
