@@ -120,7 +120,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
          paramPanel.setWidth("100%");
 
-         GridLayout paramLayout = new GridLayout(2, 4);
+         GridLayout paramLayout = new GridLayout(2, 7);
          paramLayout.setSpacing(true);
          paramLayout.setSizeFull();
          paramLayout.setMargin(true);
@@ -179,6 +179,53 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.addComponent(daysToKeepTextField, 1, 2);
          paramLayout.setComponentAlignment(daysToKeepTextField, Alignment.MIDDLE_LEFT);
 
+         label = new Label("Solr Username");
+         label.addStyleName(ValoTheme.LABEL_LARGE);
+         label.addStyleName(ValoTheme.LABEL_BOLD);
+         label.setSizeUndefined();
+         paramLayout.addComponent(label, 0, 3);
+         paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+
+         TextField solrUsername = new TextField();
+         solrUsername.setValue(this.platformConfigurationService.getSolrUsername());
+         solrUsername.setWidth(250, Unit.PIXELS);
+
+         paramLayout.addComponent(solrUsername, 1, 3);
+         paramLayout.setComponentAlignment(solrUsername, Alignment.MIDDLE_LEFT);
+
+         label = new Label("Solr Password");
+         label.addStyleName(ValoTheme.LABEL_LARGE);
+         label.addStyleName(ValoTheme.LABEL_BOLD);
+         label.setSizeUndefined();
+         paramLayout.addComponent(label, 0, 4);
+         paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+
+         PasswordField solrPassword = new PasswordField();
+         solrPassword.setValue(this.platformConfigurationService.getSolrPassword());
+         solrPassword.setWidth(250, Unit.PIXELS);
+
+         paramLayout.addComponent(solrPassword, 1, 4);
+         paramLayout.setComponentAlignment(solrPassword, Alignment.MIDDLE_LEFT);
+
+         OptionGroup optionGroup = new OptionGroup("Solr Operating Mode");
+         optionGroup.addItem("Cloud");
+         optionGroup.addItem("Standalone");
+         optionGroup.setItemCaption("Cloud", "Cloud");
+         optionGroup.setItemCaption("Standalone", "Standalone");
+
+         String operatingMode = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_OPERATING_MODE);
+
+         if(operatingMode == null || operatingMode.equals("Standalone"))
+         {
+             optionGroup.setValue("Standalone");
+         }
+         else
+         {
+             optionGroup.setValue("Cloud");
+         }
+
+         paramLayout.addComponent(optionGroup, 1, 5);
+
          Button saveButton = new Button("Save");
          saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
@@ -202,6 +249,10 @@ package org.ikasan.dashboard.ui.administration.panel;
                          (ConfigurationConstants.SOLR_URLS, solrUrlsTextField.getValue());
                  platformConfigurationService.saveConfigurationValue
                          (ConfigurationConstants.SOLR_DAYS_TO_KEEP, daysToKeepTextField.getValue());
+                 platformConfigurationService.saveConfigurationValue
+                         (ConfigurationConstants.SOLR_OPERATING_MODE, (String)optionGroup.toString());
+                 platformConfigurationService.saveSolrUsername(solrUsername.getValue());
+                 platformConfigurationService.saveSolrPassword(solrPassword.getValue());
 
                  if(!solrStarted)
                  {
@@ -224,7 +275,7 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
          });
 
-         paramLayout.addComponent(saveButton, 0, 3, 1, 3);
+         paramLayout.addComponent(saveButton, 0, 6, 1, 6);
          paramLayout.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);
 
          paramPanel.setContent(paramLayout);
