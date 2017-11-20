@@ -41,8 +41,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
-import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
