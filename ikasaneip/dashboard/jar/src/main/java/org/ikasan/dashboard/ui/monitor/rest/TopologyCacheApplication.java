@@ -50,10 +50,12 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Module application implementing the REST contract
  */
+@Component
 @Path("/topologyCache")
 public class TopologyCacheApplication
 {
@@ -75,7 +77,7 @@ public class TopologyCacheApplication
     public Response updateCache(@PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, String state)
     {
-        logger.debug("Updating topology state cache: ModuleName: " 
+        logger.info("Updating topology state cache: ModuleName: "
         		+ moduleName + ", FlowName: " + flowName + ", State: " + state);
         
         String key = moduleName + "-" + flowName;

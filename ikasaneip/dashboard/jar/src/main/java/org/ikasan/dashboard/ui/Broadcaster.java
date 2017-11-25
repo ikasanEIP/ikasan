@@ -47,10 +47,7 @@ import java.util.concurrent.Executors;
 
 public class Broadcaster implements Serializable 
 {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -6315712258026245193L;
 
 	static ExecutorService executorService = Executors

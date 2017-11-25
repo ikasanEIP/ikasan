@@ -40,18 +40,6 @@
  */
 package org.ikasan.dashboard.ui.framework.cache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -60,6 +48,13 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * 
@@ -74,7 +69,7 @@ public class TopologyStateCache
 	private ConcurrentHashMap<String, String> stateMap;
 	
 	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
 	protected PlatformConfigurationService platformConfigurationService;
 	
 	
@@ -100,14 +95,13 @@ public class TopologyStateCache
 		
 		stateMap = new ConcurrentHashMap<String, String>();	
 		
-		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+		executor.scheduleAtFixedRate(new TopologyCacheRefreshTask(), 0, 30, TimeUnit.SECONDS);
 	}
 
 	public String getState(String key)
 	{
 		return this.stateMap.get(key);
 	}
-
 
 
 	private class TopologyCacheRefreshTask implements Runnable
@@ -128,9 +122,9 @@ public class TopologyStateCache
 	{
 		stateMap = new ConcurrentHashMap<String, String>();
 				
-		logger.debug("Synchronising topology state cache.");
+		logger.info("Synchronising topology state cache.");
 		
-		List<Server> servers = new ArrayList<Server>();
+		List<Server> servers;
 		try
 		{
 			servers = topologyService.getAllServers();
@@ -145,26 +139,48 @@ public class TopologyStateCache
 		String username = this.platformConfigurationService.getWebServiceUsername();
 		String password = this.platformConfigurationService.getWebServicePassword();
 		
-		logger.debug("Number of servers to synch: " + servers.size());
+		logger.info("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
-			logger.debug("Synchronising server: " + server.getName());
+			logger.info("Synchronising server: " + server.getName());
 			for(Module module: server.getModules())
 			{
-				logger.debug("Synchronising module: " + module.getName());
+				logger.info("Synchronising module: " + module.getName());
+				GetFlowStatesRunnable getFlowStatesRunnable = new GetFlowStatesRunnable(module, username, password);
 				
-				HashMap<String, String> results = getFlowStates(module, username, password);
-				
-				for(String key: results.keySet())
-				{
-					stateMap.put(key, results.get(key));
-				}
+				executorService.execute(getFlowStatesRunnable);
 			}
 		}
-		
+
+		logger.info("Broadcasting cache state.");
 		Broadcaster.broadcast(stateMap);
 		
-		logger.debug("Finished synchronising topology state cache.");
+		logger.info("Finished synchronising topology state cache.");
+	}
+
+	private class GetFlowStatesRunnable implements Runnable
+	{
+		private Module module;
+		private String username;
+		private String password;
+
+		public GetFlowStatesRunnable(Module module, String username, String password)
+		{
+			this.module = module;
+			this.username = username;
+			this.password = password;
+		}
+
+		@Override
+		public void run()
+		{
+			HashMap<String, String> results = getFlowStates(module, username, password);
+
+			for(String key: results.keySet())
+			{
+				stateMap.put(key, results.get(key));
+			}
+		}
 	}
 	
 	public void update(String key, String value)
@@ -195,12 +211,12 @@ public class TopologyStateCache
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
-	    	logger.debug("Calling URL: " + url);
+	    	logger.info("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
 	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
 	    	
-	    	logger.debug("results: " + results);
+	    	logger.info("Results: " + results);
 		}
 		catch(Exception e)
 		{

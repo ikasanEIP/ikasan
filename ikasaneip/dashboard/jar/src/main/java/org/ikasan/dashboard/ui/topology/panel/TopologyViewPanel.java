@@ -226,7 +226,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TopologyTreeActionHelper topologyTreeActionHelper;
 
 
-
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 							 WiretapService wiretapService, WiretapService solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                              HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
@@ -1428,7 +1427,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	VaadinSession.getCurrent().getLockInstance().lock();
         		try
         		{
-        			flowStates = event.getFlowStateMap();
+					ConcurrentHashMap<String, String> states = event.getFlowStateMap();
+
+					for(String flowKey: states.keySet())
+					{
+						flowStates.put(flowKey, states.get(flowKey));
+					}
+
         			moduleTree.markAsDirty();
         		}
         		finally
@@ -1440,6 +1445,5 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             }
         });
 	}
-
 }
 

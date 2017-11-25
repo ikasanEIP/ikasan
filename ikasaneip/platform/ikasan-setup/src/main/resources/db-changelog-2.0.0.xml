@@ -14,7 +14,7 @@
 	<include file="db/alter/db-changeLog-alterReplayEventAddEventAsString.xml" relativeToChangelogFile="true" />
 
 	<!-- 2.0.x cardinality creation -->
-	<include file="db/cardinality/db-changeLog-modifyReplayAuditEventFk.xmll" relativeToChangelogFile="true" />
+	<include file="db/cardinality/db-changeLog-modifyReplayAuditEventFk.xml" relativeToChangelogFile="true" />
 
 	<!-- 2.0.x data creation -->
 	<include file="db/data/db-changelog-policies-harvesting.xml" relativeToChangelogFile="true" />

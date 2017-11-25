@@ -487,9 +487,6 @@
                         <testSource>1.8</testSource>
                         <testTarget>1.8</testTarget>
                     </configuration>
-                    <compilerArgs>
-                        <arg>-Dtest.solr.allowed.securerandom=NativePRNG</arg>
-                    </compilerArgs>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

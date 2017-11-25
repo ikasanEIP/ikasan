@@ -5,6 +5,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Panel;
 import org.ikasan.dashboard.ui.control.component.ModuleControlLayout;
+import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.topology.service.TopologyService;
 
 /**
@@ -16,10 +17,22 @@ public class ModuleControlPanel extends Panel implements View
 
     private TopologyService topologyService;
 
-    public ModuleControlPanel(TopologyService topologyService)
+    private TopologyStateCache topologyCache;
+
+    public ModuleControlPanel(TopologyService topologyService, TopologyStateCache topologyCache)
     {
         super();
         this.topologyService = topologyService;
+        if(this.topologyService == null)
+        {
+            throw new IllegalArgumentException("topology service cannot be null!");
+        }
+        this.topologyCache = topologyCache;
+        if(this.topologyCache == null)
+        {
+            throw new IllegalArgumentException("topologyCache service cannot be null!");
+        }
+
         init();
     }
 
@@ -27,7 +40,7 @@ public class ModuleControlPanel extends Panel implements View
     {
         this.setSizeFull();
 
-        this.moduleControlLayout = new ModuleControlLayout(this.topologyService);
+        this.moduleControlLayout = new ModuleControlLayout(this.topologyService, this.topologyCache);
 
         this.setContent(this.moduleControlLayout);
     }

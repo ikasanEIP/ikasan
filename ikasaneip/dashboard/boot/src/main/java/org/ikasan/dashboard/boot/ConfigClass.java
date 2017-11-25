@@ -51,7 +51,12 @@ import org.springframework.context.annotation.ImportResource;
          */
 } )
 
-@ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","org.ikasan.dashboard.ui.*"})
+@ComponentScan({
+    "org.ikasan.web.*",
+        "org.ikasan.rest.*",
+        "org.ikasan.dashboard.ui.*",
+        "org.ikasan.dashboard.boot.*"
+})
 public class ConfigClass {
     @Bean("narayanaProperties")
     public NarayanaProperties getNarayanaProperties(){
