@@ -40,10 +40,7 @@
  */
 package org.ikasan.dashboard.configurationManagement.rest;
 
-import com.vaadin.ui.Notification;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.configurationService.util.*;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -52,31 +49,24 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.SAXException;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXParseException;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.util.List;
 
 /**
  * Module application implementing the REST contract
  */
+@Component
 @Path("/configuration")
 public class ConfigurationApplication
 {
@@ -281,7 +271,7 @@ public class ConfigurationApplication
 
         Flow flow = this.getFlow(moduleName, flowName);
 
-        Component returnComponent = this.getComponent(moduleName, flowName, componentIdentifier);
+        org.ikasan.topology.model.Component returnComponent = this.getComponent(moduleName, flowName, componentIdentifier);
 
         if(returnComponent != null)
         {
@@ -333,7 +323,7 @@ public class ConfigurationApplication
                     .entity("An error has occurred trying to update a component configuration. The configuration document failed schema validation: " + documentValidationError).build();
         }
 
-        Component component = this.getComponent(moduleName, flowName, componentIdentifier);
+        org.ikasan.topology.model.Component component = this.getComponent(moduleName, flowName, componentIdentifier);
 
         if(component == null)
         {
@@ -390,16 +380,16 @@ public class ConfigurationApplication
     }
 
 
-    private Component getComponent(String moduleName, String flowName, String componentIdentifier)
+    private org.ikasan.topology.model.Component getComponent(String moduleName, String flowName, String componentIdentifier)
     {
         Flow flow = this.getFlow(moduleName, flowName);
 
-        Component returnComponent = null;
+        org.ikasan.topology.model.Component returnComponent = null;
 
         // Try to get the component using the configured resource id.
         if(flow != null)
         {
-            for(Component component: flow.getComponents())
+            for(org.ikasan.topology.model.Component component: flow.getComponents())
             {
                 if(component.getConfigurationId() != null && component.getConfigurationId().equals(componentIdentifier))
                 {
@@ -412,7 +402,7 @@ public class ConfigurationApplication
         // If the component is not found using the configured resource id, then try with the component name.
         if(flow != null && returnComponent == null)
         {
-            for(Component component: flow.getComponents())
+            for(org.ikasan.topology.model.Component component: flow.getComponents())
             {
                 if(component.getName() != null && component.getName().equals(componentIdentifier))
                 {

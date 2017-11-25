@@ -8900,6 +8900,106 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
+.dashboard .v-table-row-green {
+	background-color: #ccffe6;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-green {
+	background-color: #ccffe6;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-content-green {
+	background-color: #ccffe6;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-odd-green {
+	background-color: #ccffe6;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-red {
+	background-color: #ffb3b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-red {
+	background-color: #ffb3b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-content-red {
+	background-color: #ffb3b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-odd-red {
+	background-color: #ffb3b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-blue {
+	background-color: #b3b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-blue {
+	background-color: #b3b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-content-blue {
+	background-color: #b3b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-odd-blue {
+	background-color: #b3b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-orange {
+	background-color: #ffd1b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-orange {
+	background-color: #ffd1b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-content-orange {
+	background-color: #ffd1b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-odd-orange {
+	background-color: #ffd1b3;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-purple {
+	background-color: #e0b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-purple {
+	background-color: #e0b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-cell-content-purple {
+	background-color: #e0b3ff;
+	cursor: pointer;
+}
+
+.dashboard .v-table-row-odd-purple {
+	background-color: #e0b3ff;
+	cursor: pointer;
+}
+
 .v-table-row:hover, .v-table-row-odd:hover {
     background: #99CCFF;
 }

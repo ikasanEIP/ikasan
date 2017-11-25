@@ -14,6 +14,7 @@
 
     <bean id="moduleControlPanel" class="org.ikasan.dashboard.ui.control.panel.ModuleControlPanel" scope="session">
         <constructor-arg ref="topologyService"/>
+        <constructor-arg ref="topologyStateCache"/>
     </bean>
 
 </beans>
