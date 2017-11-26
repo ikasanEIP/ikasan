@@ -53,209 +53,200 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
-
 import com.ikasan.topology.exception.DiscoveryException;
 
 /**
- * 
  * @author Ikasan Development Team
- *
  */
 public interface TopologyService
 {
-	/**
-	 * Get all servers
-	 * 
-	 * @return
-	 */
-	public List<Server> getAllServers();
+    /**
+     * Get all servers
+     *
+     * @return
+     */
+    List<Server> getAllServers();
 
-	/**
-	 * Save a server. Will create a new record or update an existing.
-	 * @param server
-	 */
-	public void save(Server server);
+    /**
+     * Save a server. Will create a new record or update an existing.
+     *
+     * @param server
+     */
+    void save(Server server);
 
-	/**
-	 * Get all modules
-	 * 
-	 * @return
-	 */
-	public List<Module> getAllModules();
+    /**
+     * Get all modules
+     *
+     * @return
+     */
+    List<Module> getAllModules();
 
-	/**
-	 * Save a module. Will create a new record or update an existing.
-	 * 
-	 * @param module
-	 */
-	public void save(Module module);
+    /**
+     * Save a module. Will create a new record or update an existing.
+     *
+     * @param module
+     */
+    void save(Module module);
 
-	/**
-	 * Get all flows.
-	 * 
-	 * @return
-	 */
-	public List<Flow> getAllFlows();
+    /**
+     * Get all flows.
+     *
+     * @return
+     */
+    List<Flow> getAllFlows();
 
-	/**
-	 * Save a flow. Will create a new record or update an existing.
-	 * 
-	 * @param flow
-	 */
-	public void save(Flow flow);
+    /**
+     * Save a flow. Will create a new record or update an existing.
+     *
+     * @param flow
+     */
+    void save(Flow flow);
 
-	/**
-	 * Get all BusinessStreams
-	 * 
-	 * @return
-	 */
-	public List<BusinessStream> getAllBusinessStreams();
-	
-	/**
-	 * Save a BusinessStream. Will create a new record or update an existing.
-	 * 
-	 * @param businessStream
-	 */
-	public void saveBusinessStream(BusinessStream businessStream);
+    /**
+     * Save a component. Will create a new record or update an existing.
+     *
+     * @param component
+     */
+    void save(Component component);
 
-	/**
-	 * Get all BusinessStreams associated with a given user.
-	 * @param userId
-	 * @return
-	 */
-	public List<BusinessStream> getBusinessStreamsByUserId(Long userId);
-	
-	/**
-	 * Get all flows by server id and module id.
-	 * 
-	 * @return
-	 */
-	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId);
+    /**
+     * Get all BusinessStreams
+     *
+     * @return
+     */
+    List<BusinessStream> getAllBusinessStreams();
 
-	/**
-	 * Delete a business stream flow
-	 * 
-	 * @param businessStreamFlow
-	 */
-	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
+    /**
+     * Save a BusinessStream. Will create a new record or update an existing.
+     *
+     * @param businessStream
+     */
+    void saveBusinessStream(BusinessStream businessStream);
 
-	/**
-	 * Method to get a Module by its name. 
-	 * @param name
-	 * @return
-	 */
-	public Module getModuleByName(String name);
-	
-	/**
-	 * Get all BusinessStreams by a list of ids.
-	 * 
-	 * @param ids
-	 * @return
-	 */
-	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
-	
-	/**
-	 * Delete a business stream 
-	 * 
-	 * @param businessStream
-	 */
-	public void deleteBusinessStream(BusinessStream businessStream);
+    /**
+     * Get all BusinessStreams associated with a given user.
+     *
+     * @param userId
+     * @return
+     */
+    List<BusinessStream> getBusinessStreamsByUserId(Long userId);
 
-	/**
-	 * Method to discovery and populate Ikasan topology
-	 */
-	public void discover(IkasanAuthentication authentication) throws DiscoveryException;
+    /**
+     * Get all flows by server id and module id.
+     *
+     * @return
+     */
+    List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId);
 
-	/**
-	 * 
-	 * @param name
-	 * @param description
-	 * @param flows
-	 */
-	public Filter createFilter(String name, String description, String createdBy, Set<Component> components);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Filter> getAllFilters();
-	
-	/**
-	 * 
-	 * @param filter
-	 */
-	public void saveFilter(Filter filter);
-	
-	/**
-	 * 
-	 * @param filter
-	 */
-	public void deleteFilter(Filter filter);
-	
-	/**
-	 * 
-	 * @param roleFilter
-	 */
-	public void saveRoleFilter(RoleFilter roleFilter);
-	
-	/**
-	 * 
-	 * @param roleId
-	 * @return
-	 */
-	public List<RoleFilter> getRoleFilters(List<Long> roleIds);
-	
-	/**
-	 * 
-	 * @param roleId
-	 * @return
-	 */
-	public RoleFilter getRoleFilterByFilterId(Long filterId);
-	
-	
-	/**
-	 * 
-	 * @param roleFilter
-	 */
-	public void deleteRoleFilter(RoleFilter roleFilter);
-	
-	/**
-	 * 
-	 * @param filterId
-	 */
-	public void deleteFilterComponents(Long filterId);
-	
-	
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public Filter getFilterByName(String name);
-	
-	/**
-	 * 
-	 * @param notification
-	 */
-	public void save(Notification notification);
-	
-	/**
-	 * 
-	 * @param notification
-	 */
-	public void delete(Notification notification);
-	
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public Notification getNotificationByName(String name);
-	
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public List<Notification> getAllNotifications();
+    /**
+     * Delete a business stream flow
+     *
+     * @param businessStreamFlow
+     */
+    void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
+
+    /**
+     * Method to get a Module by its name.
+     *
+     * @param name
+     * @return
+     */
+    Module getModuleByName(String name);
+
+    /**
+     * Get all BusinessStreams by a list of ids.
+     *
+     * @param ids
+     * @return
+     */
+    List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
+
+    /**
+     * Delete a business stream
+     *
+     * @param businessStream
+     */
+    void deleteBusinessStream(BusinessStream businessStream);
+
+    /**
+     * Method to discovery and populate Ikasan topology
+     */
+    void discover(IkasanAuthentication authentication) throws DiscoveryException;
+
+    /**
+     * @param name
+     * @param description
+     * @param flows
+     */
+    Filter createFilter(String name, String description, String createdBy, Set<Component> components);
+
+    /**
+     * @return
+     */
+    List<Filter> getAllFilters();
+
+    /**
+     * @param filter
+     */
+    void saveFilter(Filter filter);
+
+    /**
+     * @param filter
+     */
+    void deleteFilter(Filter filter);
+
+    /**
+     * @param roleFilter
+     */
+    void saveRoleFilter(RoleFilter roleFilter);
+
+    /**
+     * @param roleId
+     * @return
+     */
+    List<RoleFilter> getRoleFilters(List<Long> roleIds);
+
+    /**
+     * @param roleId
+     * @return
+     */
+    RoleFilter getRoleFilterByFilterId(Long filterId);
+
+    /**
+     * @param roleFilter
+     */
+    void deleteRoleFilter(RoleFilter roleFilter);
+
+    /**
+     * @param filterId
+     */
+    void deleteFilterComponents(Long filterId);
+
+    /**
+     * @param name
+     * @return
+     */
+    Filter getFilterByName(String name);
+
+    /**
+     * @param notification
+     */
+    void save(Notification notification);
+
+    /**
+     * @param notification
+     */
+    void delete(Notification notification);
+
+    /**
+     * @param name
+     * @return
+     */
+    Notification getNotificationByName(String name);
+
+    /**
+     * @param name
+     * @return
+     */
+    List<Notification> getAllNotifications();
 }

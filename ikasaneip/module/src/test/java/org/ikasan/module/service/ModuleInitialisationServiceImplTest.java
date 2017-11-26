@@ -40,9 +40,21 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.*;
+import org.ikasan.spec.module.Module;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.topology.model.*;
 import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -53,6 +65,7 @@ import org.junit.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -60,7 +73,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Test cases for ModuleServiceImpl
+ * Test cases for ModuleInitialisationServiceImpl
  *
  * @author Ikasan Development Team
  */
@@ -77,6 +90,10 @@ public class ModuleInitialisationServiceImplTest {
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
     SecurityService securityService = mockery.mock(SecurityService.class);
     TopologyService topologyService = mockery.mock(TopologyService.class);
+    FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class);
+    RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class);
+    SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class);
+    ExclusionService exclusionService = mockery.mock(ExclusionService.class);
     ApplicationContext platformContext = mockery.mock(ApplicationContext.class);
 
     Module module = mockery.mock(Module.class);
@@ -137,5 +154,234 @@ public class ModuleInitialisationServiceImplTest {
         mockery.assertIsSatisfied();
     }
 
+
+    @Test
+    public void initialiseModuleMetaDataWhenNoHostAndModuleDoesNotExistInDB() throws Exception {
+
+        // Setup test data
+        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
+        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
+
+        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
+        Producer producer = mockery.mock(Producer.class,"mockProducer");
+
+        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
+
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
+        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
+
+        Environment environment = mockery.mock(Environment.class);
+        List<Server> servers = Arrays.asList();
+
+        mockery.checking(new Expectations() {{
+
+            // getServer() start
+            atLeast(2).of(platformContext).getEnvironment();
+            will(returnValue(environment));
+
+            oneOf(environment).getProperty("server.address");
+            will(returnValue(null));
+
+            oneOf(environment).getProperty("service.name");
+            will(returnValue(null));
+
+            atLeast(1).of(platformContext).getApplicationName();
+            will(returnValue("/sampleModule"));
+
+
+            // getServer() end
+
+            //getModule from DB
+            oneOf(topologyService).getModuleByName(MODULE_NAME);
+            will(returnValue(null));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
+
+            // discovery
+            exactly(1).of(flowConfiguration).getFlowElements();
+            will(returnValue(flowElements));
+
+            exactly(1).of(consumerElement).getComponentName();
+            will(returnValue("consumer"));
+
+            exactly(2).of(consumerElement).getDescription();
+            will(returnValue("consumer description"));
+
+            exactly(1).of(consumerElement).getFlowComponent();
+            will(returnValue(consumer));
+
+            exactly(1).of(producerElement).getComponentName();
+            will(returnValue("producer"));
+
+            exactly(2).of(producerElement).getDescription();
+            will(returnValue("producer description"));
+
+            exactly(1).of(producerElement).getFlowComponent();
+            will(returnValue(producer));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
+
+
+        }});
+
+        uut.initialiseModuleMetaData(module);
+        mockery.assertIsSatisfied();
+    }
+
+
+    @Test
+    public void initialiseModuleMetaDataWhenNoHostAndModuleExistInDB() throws Exception {
+
+        // Setup test data
+        Module module = new SimpleModule(MODULE_NAME);
+        Environment environment = mockery.mock(Environment.class);
+        List<Server> servers = Arrays.asList();
+        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
+
+        mockery.checking(new Expectations() {{
+
+            // getServer() start
+            atLeast(2).of(platformContext).getEnvironment();
+            will(returnValue(environment));
+
+            oneOf(environment).getProperty("server.address");
+            will(returnValue(null));
+
+            oneOf(environment).getProperty("service.name");
+            will(returnValue(null));
+
+            // getServer() end
+
+            //getModule from DB
+            oneOf(topologyService).getModuleByName(MODULE_NAME);
+            will(returnValue(moduleDb));
+
+
+        }});
+
+        uut.initialiseModuleMetaData(module);
+        mockery.assertIsSatisfied();
+    }
+
+
+    @Test
+    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleDoesNotExistInDB() throws Exception {
+
+        // Setup test data
+        // Setup test data
+        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
+        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
+
+        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
+        Producer producer = mockery.mock(Producer.class,"mockProducer");
+
+        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
+
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
+        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
+
+        Environment environment = mockery.mock(Environment.class);
+        List<Server> servers = Arrays.asList();
+
+        mockery.checking(new Expectations() {{
+
+            // getServer() start
+            atLeast(2).of(platformContext).getEnvironment();
+            will(returnValue(environment));
+
+            oneOf(environment).getProperty("server.address");
+            will(returnValue("myServerName"));
+
+            oneOf(environment).getProperty("server.port");
+            will(returnValue(8080));
+
+            atLeast(2).of(platformContext).getApplicationName();
+            will(returnValue("/sampleModule"));
+
+            oneOf(topologyService).getAllServers();
+            will(returnValue(servers));
+
+            oneOf(topologyService).save(with(any(Server.class)));
+
+            //getModule from DB
+            oneOf(topologyService).getModuleByName(MODULE_NAME);
+            will(returnValue(null));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
+
+            // discovery
+            exactly(1).of(flowConfiguration).getFlowElements();
+            will(returnValue(flowElements));
+
+            exactly(1).of(consumerElement).getComponentName();
+            will(returnValue("consumer"));
+
+            exactly(2).of(consumerElement).getDescription();
+            will(returnValue("consumer description"));
+
+            exactly(1).of(consumerElement).getFlowComponent();
+            will(returnValue(consumer));
+
+            exactly(1).of(producerElement).getComponentName();
+            will(returnValue("producer"));
+
+            exactly(2).of(producerElement).getDescription();
+            will(returnValue("producer description"));
+
+            exactly(1).of(producerElement).getFlowComponent();
+            will(returnValue(producer));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
+
+
+        }});
+
+        uut.initialiseModuleMetaData(module);
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDB() throws Exception {
+
+        // Setup test data
+        Module module = new SimpleModule(MODULE_NAME);
+        Environment environment = mockery.mock(Environment.class);
+        List<Server> servers = Arrays.asList();
+        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
+
+        mockery.checking(new Expectations() {{
+
+            // getServer() start
+            atLeast(2).of(platformContext).getEnvironment();
+            will(returnValue(environment));
+
+            oneOf(environment).getProperty("server.address");
+            will(returnValue("myServerName"));
+
+            oneOf(environment).getProperty("server.port");
+            will(returnValue(8080));
+
+            atLeast(1).of(platformContext).getApplicationName();
+            will(returnValue("/sampleModule"));
+
+            oneOf(topologyService).getAllServers();
+            will(returnValue(servers));
+
+            oneOf(topologyService).save(with(any(Server.class)));
+
+            // getServer() end
+
+            //getModule from DB
+            oneOf(topologyService).getModuleByName(MODULE_NAME);
+            will(returnValue(moduleDb));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
+
+
+        }});
+
+        uut.initialiseModuleMetaData(module);
+        mockery.assertIsSatisfied();
+    }
 
 }

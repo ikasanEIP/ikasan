@@ -120,7 +120,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Server)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Server)
 	 */
 	@Override
 	public void save(Server server)
@@ -138,7 +138,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Module)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Module)
 	 */
 	@Override
 	public void save(Module module)
@@ -156,7 +156,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Flow)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Flow)
 	 */
 	@Override
 	public void save(Flow flow)
@@ -173,8 +173,18 @@ public class TopologyServiceImpl implements TopologyService
 		return this.topologyDao.getAllBusinessStreams();
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveBusinessStream(org.ikasan.topology.window.BusinessStream)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Component)
+	 */
+	@Override
+	public void save(Component component)
+	{
+		this.topologyDao.save(component);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#saveBusinessStream(org.ikasan.topology.model.BusinessStream)
 	 */
 	@Override
 	public void saveBusinessStream(BusinessStream businessStream)
@@ -201,7 +211,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStreamFlow(org.ikasan.topology.window.BusinessStreamFlow)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStreamFlow(org.ikasan.topology.model.BusinessStreamFlow)
 	 */
 	@Override
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
@@ -538,7 +548,7 @@ public class TopologyServiceImpl implements TopologyService
 
 	}
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.window.BusinessStream)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.model.BusinessStream)
 	 */
 	@Override
 	public void deleteBusinessStream(BusinessStream businessStream)
@@ -585,7 +595,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveFilter(org.ikasan.topology.window.Filter)
+	 * @see org.ikasan.topology.service.TopologyService#saveFilter(org.ikasan.topology.model.Filter)
 	 */
 	@Override
 	public void saveFilter(Filter filter)
@@ -595,7 +605,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteFilter(org.ikasan.topology.window.Filter)
+	 * @see org.ikasan.topology.service.TopologyService#deleteFilter(org.ikasan.topology.model.Filter)
 	 */
 	@Override
 	public void deleteFilter(Filter filter)
@@ -604,7 +614,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveRoleFilter(org.ikasan.topology.window.RoleFilter)
+	 * @see org.ikasan.topology.service.TopologyService#saveRoleFilter(org.ikasan.topology.model.RoleFilter)
 	 */
 	@Override
 	public void saveRoleFilter(RoleFilter roleFilter)
@@ -622,7 +632,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteRoleFilter(org.ikasan.topology.window.RoleFilter)
+	 * @see org.ikasan.topology.service.TopologyService#deleteRoleFilter(org.ikasan.topology.model.RoleFilter)
 	 */
 	@Override
 	public void deleteRoleFilter(RoleFilter roleFilter)
@@ -658,7 +668,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Notification)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Notification)
 	 */
 	@Override
 	public void save(Notification notification)
@@ -667,7 +677,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#delete(org.ikasan.topology.window.Notification)
+	 * @see org.ikasan.topology.service.TopologyService#delete(org.ikasan.topology.model.Notification)
 	 */
 	@Override
 	public void delete(Notification notification)
