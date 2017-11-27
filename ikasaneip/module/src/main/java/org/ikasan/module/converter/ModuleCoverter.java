@@ -18,6 +18,13 @@ import java.util.Set;
  */
 public class ModuleCoverter implements Converter<Module<Flow>, org.ikasan.topology.model.Module>
 {
+    /**
+     * Converts runtime module view to DTO type module view.
+     *
+     * @param moduleRuntime runtime module representation
+     * @return topology DTO module representation
+     * @throws TransformationException could be thrown
+     */
     @Override
     public org.ikasan.topology.model.Module convert(Module<Flow> moduleRuntime) throws TransformationException
     {

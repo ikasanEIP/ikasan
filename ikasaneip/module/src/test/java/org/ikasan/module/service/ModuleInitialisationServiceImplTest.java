@@ -188,9 +188,6 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(1).of(platformContext).getApplicationName();
             will(returnValue("/sampleModule"));
 
-
-            // getServer() end
-
             //getModule from DB
             oneOf(topologyService).getModuleByName(MODULE_NAME);
             will(returnValue(null));
@@ -233,9 +230,18 @@ public class ModuleInitialisationServiceImplTest {
     public void initialiseModuleMetaDataWhenNoHostAndModuleExistInDB() throws Exception {
 
         // Setup test data
-        Module module = new SimpleModule(MODULE_NAME);
+        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
+        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
+
+        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
+        Producer producer = mockery.mock(Producer.class,"mockProducer");
+
+        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
+
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
+        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
+
         Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
         org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
 
         mockery.checking(new Expectations() {{
@@ -250,11 +256,33 @@ public class ModuleInitialisationServiceImplTest {
             oneOf(environment).getProperty("service.name");
             will(returnValue(null));
 
-            // getServer() end
-
             //getModule from DB
             oneOf(topologyService).getModuleByName(MODULE_NAME);
             will(returnValue(moduleDb));
+
+            // discovery
+            exactly(1).of(flowConfiguration).getFlowElements();
+            will(returnValue(flowElements));
+
+            exactly(1).of(consumerElement).getComponentName();
+            will(returnValue("consumer"));
+
+            exactly(2).of(consumerElement).getDescription();
+            will(returnValue("consumer description"));
+
+            exactly(1).of(consumerElement).getFlowComponent();
+            will(returnValue(consumer));
+
+            exactly(1).of(producerElement).getComponentName();
+            will(returnValue("producer"));
+
+            exactly(2).of(producerElement).getDescription();
+            will(returnValue("producer description"));
+
+            exactly(1).of(producerElement).getFlowComponent();
+            will(returnValue(producer));
+
+            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
 
 
         }});
@@ -267,7 +295,6 @@ public class ModuleInitialisationServiceImplTest {
     @Test
     public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleDoesNotExistInDB() throws Exception {
 
-        // Setup test data
         // Setup test data
         FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
         FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
@@ -307,7 +334,7 @@ public class ModuleInitialisationServiceImplTest {
             oneOf(topologyService).getModuleByName(MODULE_NAME);
             will(returnValue(null));
 
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
+            exactly(1).of(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
 
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
@@ -331,7 +358,8 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowComponent();
             will(returnValue(producer));
 
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
+            exactly(1).of(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
+
 
 
         }});
@@ -344,7 +372,17 @@ public class ModuleInitialisationServiceImplTest {
     public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDB() throws Exception {
 
         // Setup test data
-        Module module = new SimpleModule(MODULE_NAME);
+        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
+        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
+
+        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
+        Producer producer = mockery.mock(Producer.class,"mockProducer");
+
+        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
+
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
+        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
+
         Environment environment = mockery.mock(Environment.class);
         List<Server> servers = Arrays.asList();
         org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
@@ -369,11 +407,33 @@ public class ModuleInitialisationServiceImplTest {
 
             oneOf(topologyService).save(with(any(Server.class)));
 
-            // getServer() end
-
             //getModule from DB
             oneOf(topologyService).getModuleByName(MODULE_NAME);
             will(returnValue(moduleDb));
+
+            // discovery
+            exactly(1).of(flowConfiguration).getFlowElements();
+            will(returnValue(flowElements));
+
+            exactly(1).of(consumerElement).getComponentName();
+            will(returnValue("consumer"));
+
+            exactly(2).of(consumerElement).getDescription();
+            will(returnValue("consumer description"));
+
+            exactly(1).of(consumerElement).getFlowComponent();
+            will(returnValue(consumer));
+
+            exactly(1).of(producerElement).getComponentName();
+            will(returnValue("producer"));
+
+            exactly(2).of(producerElement).getDescription();
+            will(returnValue("producer description"));
+
+            exactly(1).of(producerElement).getFlowComponent();
+            will(returnValue(producer));
+
+            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
 
             oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
 

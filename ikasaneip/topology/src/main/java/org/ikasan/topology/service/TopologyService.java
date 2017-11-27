@@ -162,6 +162,16 @@ public interface TopologyService
     List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
 
     /**
+     * Performs module discovery aka updates given module topology view with new latest flows and its components.
+     *
+     * @param server server wher given module resides
+     * @param module module to be updated
+     * @param flows list of flows dto containing high level information about flow
+     * @throws DiscoveryException exce
+     */
+    void discover(Server server, Module module, List<Flow> flows) throws DiscoveryException;
+
+    /**
      * Delete a business stream
      *
      * @param businessStream

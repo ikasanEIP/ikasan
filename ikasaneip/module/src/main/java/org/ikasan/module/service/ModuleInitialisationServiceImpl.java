@@ -41,9 +41,6 @@
 package org.ikasan.module.service;
 
 import org.ikasan.module.converter.ModuleCoverter;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.topology.model.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -71,7 +68,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+
 
 /**
  * Module Initialisation Service default implementation
@@ -417,30 +419,30 @@ public class ModuleInitialisationServiceImpl
     protected void initialiseModuleMetaData(Module module)
     {
         Optional<Server> existingServer = getServer();
-        org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
-        if (moduleDB == null)
+        org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
+        if (existingModule == null)
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
-            moduleDB = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+            existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
                     module.getDescription(), module.getVersion(), null, null);
             if (existingServer.isPresent())
             {
-                moduleDB.setServer(existingServer.get());
+                existingModule.setServer(existingServer.get());
             }
-            this.topologyService.save(moduleDB);
+            this.topologyService.save(existingModule);
 
-            createMetadata(module,moduleDB);
+            createMetadata(module,existingModule);
         }
         else
         {
+            updateMetadata(module,existingModule);
             if (existingServer.isPresent())
             {
                 logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl()
                         + "].");
-                moduleDB.setServer(existingServer.get());
-                this.topologyService.save(moduleDB);
+                existingModule.setServer(existingServer.get());
+                this.topologyService.save(existingModule);
             }
-            updateMetadata(module,moduleDB);
 
         }
     }
@@ -476,26 +478,14 @@ public class ModuleInitialisationServiceImpl
      * existing meta-data and new meta-data need to be reconciled.
      *
      * @param moduleRuntime module runtime instance
-     * @param moduleDB topology view of the module
+     * @param existingModule topology view of the module
      */
-    private void updateMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module moduleDB)
+    private void updateMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module existingModule)
     {
         try
         {
             org.ikasan.topology.model.Module moduleNew = moduleConverter.convert(moduleRuntime);
-
-            moduleDB.getFlows().forEach(topologyFlowExisting ->
-            {
-
-            });
-
-            moduleNew.getFlows().forEach(topologyFlow ->
-            {
-                topologyFlow.setModule(moduleDB);
-                topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
-                topologyService.save(topologyFlow);
-                logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
-            });
+            topologyService.discover(existingModule.getServer(), existingModule, new ArrayList(moduleNew.getFlows()));
         }
         catch (Exception e)
         {
