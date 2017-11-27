@@ -306,10 +306,10 @@ public class SolrHarvestingJob implements Job
         @Override
         public void run()
         {
+            solrService.save(events);
+            
             for(HarvestEvent event: events)
             {
-                solrService.save(event);
-
                 event.setHarvested(true);
 
                 harvestService.saveHarvestedRecord(event);

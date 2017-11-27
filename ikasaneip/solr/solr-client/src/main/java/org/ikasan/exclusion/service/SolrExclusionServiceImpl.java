@@ -35,6 +35,14 @@ public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrSer
     }
 
     @Override
+    public void save(List<ExclusionEvent> save)
+    {
+        this.exclusionEventDao.setSolrUsername(this.solrUsername);
+        this.exclusionEventDao.setSolrPassword(this.solrPassword);
+        this.exclusionEventDao.save(save);
+    }
+
+    @Override
     public ExclusionEvent find(String moduleName, String flowName, String s)
     {
         this.exclusionEventDao.setSolrUsername(this.solrUsername);

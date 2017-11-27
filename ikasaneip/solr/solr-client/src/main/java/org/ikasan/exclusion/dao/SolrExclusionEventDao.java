@@ -66,6 +66,45 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
         }
     }
 
+
+    public void save(List<ExclusionEvent> exclusionEvents)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            for(ExclusionEvent exclusionEvent: exclusionEvents)
+            {
+                SolrInputDocument document = new SolrInputDocument();
+                document.addField(ID, "" + exclusionEvent.getErrorUri());
+                document.addField(TYPE, EXCLUSION);
+                document.addField(MODULE_NAME, exclusionEvent.getModuleName());
+                document.addField(FLOW_NAME, exclusionEvent.getFlowName());
+                document.addField(EVENT, exclusionEvent.getIdentifier());
+                document.addField(PAYLOAD_CONTENT, new String(exclusionEvent.getEvent()));
+                document.addField(CREATED_DATE_TIME, exclusionEvent.getTimestamp());
+                document.setField(EXPIRY, expiry);
+
+                req.add(document);
+
+                logger.debug("Adding document: " + document);
+            }
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+            logger.debug("Response: " + rsp.toString());
+
+            req.commit(solrClient, "ikasan");
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
+        }
+    }
+
     @Override
     public void delete(String moduleName, String flowName, String s)
     {

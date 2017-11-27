@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -61,6 +62,13 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
         wiretapDao.save(wiretapEvent);
     }
 
+    @Override
+    public void save(List<WiretapEvent> save)
+    {
+        wiretapDao.setSolrUsername(this.solrUsername);
+        wiretapDao.setSolrPassword(this.solrPassword);
+        wiretapDao.save(save);
+    }
 
     @Override
     public boolean housekeepablesExist()
