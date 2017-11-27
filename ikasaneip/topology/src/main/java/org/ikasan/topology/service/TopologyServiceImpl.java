@@ -48,6 +48,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -248,7 +249,7 @@ public class TopologyServiceImpl implements TopologyService
     	// Firstly sort out the server module relationships
 		for(Server server: servers)
 		{
-			List<Module> modules = this.topologyDao.getAllModules();	
+			List<Module> modules = this.topologyDao.getAllModules();
 			
 			Set<Module> moduleSet = new HashSet<Module>();
 			
@@ -300,8 +301,7 @@ public class TopologyServiceImpl implements TopologyService
 			
 			for(Module module: modules)
 			{	
-				List<String> discoveredFlowNames = new ArrayList<String>();
-				
+
 				String url = server.getUrl() + ":" + server.getPort() 
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
@@ -327,77 +327,10 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    logger.info("Successfully discovered flows using URL: " + url
 		    			+ ". Server =  " + server);
-			    
-			    Set<Flow> flowSet = new HashSet<Flow>();
-			    
-			    for(Flow flow: flowResponse.getBody())
-			    { 
-			    	List<String> discoveredComponentNames = new ArrayList<String>();
-			    	
-		    		try
-					{
 
-						discoveredFlowNames.add(flow.getName());
-						
-						for(Component component: flow.getComponents())
-						{
-							discoveredComponentNames.add(component.getName());
-						}
-					} 
-					catch (Exception e)
-					{
-						throw new DiscoveryException(e);
-					}
-					
-					Set<Component> components = flow.getComponents();
-					
-					Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
-						(server.getId(), module.getId(), flow.getName());
-					
-					logger.debug("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
-							+ " flow name = " + flow.getName());
-					logger.debug("Loaded dbFlow: " + dbFlow);
-					
-					if(dbFlow != null)
-					{
-						dbFlow.setOrder(flow.getOrder());
-						dbFlow.setConfigurable(flow.isConfigurable());
-						dbFlow.setConfigurationId(flow.getConfigurationId());
-						flow = dbFlow;
-					}
-					
-					flow.setModule(module);
-					
-					flowSet.add(flow);
-					
-					logger.debug("Saving flow: " + flow);
-					this.topologyDao.save(flow);
-					
-					Set<Component> componentSet = new HashSet<Component>();
-					
-					for(Component component: components)
-					{
-						component = getComponent(flow.getComponents(), component);
-						component.setFlow(flow);
-						
-						logger.debug("Saving component: " + component.getName());
+				discover(server, module, flowResponse.getBody());
+			    
 
-						this.topologyDao.save(component);
-						
-						componentSet.add(component);
-					}	
-					
-					flow.setComponents(componentSet);
-					
-					this.topologyDao.save(flow);
-					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
-			    }
-			    
-			    module.setFlows(flowSet);
-			    
-			    this.topologyDao.save(module);
-			    
-			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
 			}
 		}
 
@@ -405,6 +338,86 @@ public class TopologyServiceImpl implements TopologyService
 		this.cleanUpFlows();
 		this.cleanUpModules();
 	}
+
+	@Override
+	public void discover(Server server, Module module, List<Flow> flows) throws DiscoveryException
+	{
+		logger.info("Discovery - updating module ["+module.getName()+"] flows information.");
+
+		Set<Flow> flowSet = discoverFlows(server, module, flows);
+
+		module.setFlows(flowSet);
+
+		this.topologyDao.save(module);
+		logger.info("Discovery - updated module ["+module.getName()+"] flows information.");
+
+		List<String> discoveredFlowNames = discoveredFlowNames(flows);
+
+		this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
+	}
+
+	protected Set<Flow> discoverFlows(Server server, Module module, List<Flow> flowList)
+	{
+		Set<Flow> flowSet = new HashSet<>();
+
+		for(Flow flow: flowList)
+        {
+            List<String> discoveredComponentNames = discoveredComponentNames(flow);
+
+            Set<Component> components = flow.getComponents();
+
+            Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
+                (server.getId(), module.getId(), flow.getName());
+
+            logger.debug("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
+                    + " flow name = " + flow.getName());
+            logger.debug("Loaded dbFlow: " + dbFlow);
+
+            if(dbFlow != null)
+            {
+                dbFlow.setOrder(flow.getOrder());
+                dbFlow.setConfigurable(flow.isConfigurable());
+                dbFlow.setConfigurationId(flow.getConfigurationId());
+                flow = dbFlow;
+            }
+
+            flow.setModule(module);
+
+            flowSet.add(flow);
+
+            logger.debug("Saving flow: " + flow);
+            this.topologyDao.save(flow);
+
+            Set<Component> componentSet = new HashSet<Component>();
+
+            for(Component component: components)
+            {
+                component = getComponent(flow.getComponents(), component);
+                component.setFlow(flow);
+
+                logger.debug("Saving component: " + component.getName());
+
+                this.topologyDao.save(component);
+
+                componentSet.add(component);
+            }
+
+            flow.setComponents(componentSet);
+
+            this.topologyDao.save(flow);
+            this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
+        }
+		return flowSet;
+	}
+
+	private List<String> discoveredFlowNames(List<Flow> flows){
+		return flows.stream().map(flow -> flow.getName()).collect(Collectors.toList());
+	}
+
+	private List<String> discoveredComponentNames(Flow flow){
+		return flow.getComponents().stream().map(component -> component.getName()).collect(Collectors.toList());
+	}
+
 
 	protected void cleanUpModules()
 	{
@@ -452,6 +465,8 @@ public class TopologyServiceImpl implements TopologyService
 	
 	protected void cleanUpFlows(Module module, Long serverId, Long moduleId, List<String> discoveredFlowNames)
 	{
+		logger.info("Discovery - cleaning up old flow references from ["+module.getName()+"].");
+
 		List<Flow> dbFlows = this.topologyDao.getFlowsByServerIdAndModuleId(serverId, moduleId);
 				
 		for(Flow flow: dbFlows)
@@ -483,6 +498,8 @@ public class TopologyServiceImpl implements TopologyService
 				this.topologyDao.delete(flow);
 			}
 		}
+		logger.info("Discovery - old flow references cleaned up ["+module.getName()+"].");
+
 	}
 	
 	protected void cleanUpComponents(Long serverId, Long moduleId, String flowName, List<String> discoveredComponentNames)
