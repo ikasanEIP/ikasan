@@ -344,19 +344,22 @@ public class TopologyServiceImpl implements TopologyService
 	{
 		logger.info("Discovery - updating module ["+module.getName()+"] flows information.");
 
-		Set<Flow> flowSet = discoverFlows(server, module, flows);
+		Long serverId = server != null ? server.getId(): null;
+
+		Set<Flow> flowSet = discoverFlows(serverId, module, flows);
 
 		module.setFlows(flowSet);
 
 		this.topologyDao.save(module);
+
 		logger.info("Discovery - updated module ["+module.getName()+"] flows information.");
 
 		List<String> discoveredFlowNames = discoveredFlowNames(flows);
 
-		this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
+		this.cleanUpFlows(module, serverId, module.getId(), discoveredFlowNames);
 	}
 
-	protected Set<Flow> discoverFlows(Server server, Module module, List<Flow> flowList)
+	protected Set<Flow> discoverFlows(Long serverId, Module module, List<Flow> flowList)
 	{
 		Set<Flow> flowSet = new HashSet<>();
 
@@ -365,12 +368,11 @@ public class TopologyServiceImpl implements TopologyService
             List<String> discoveredComponentNames = discoveredComponentNames(flow);
 
             Set<Component> components = flow.getComponents();
-
-            Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
-                (server.getId(), module.getId(), flow.getName());
-
-            logger.debug("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
+            logger.debug("Loading dbFlow using: serverId= " + serverId + " moduleId = " + module.getId()
                     + " flow name = " + flow.getName());
+
+            Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname(serverId, module.getId(), flow.getName());
+
             logger.debug("Loaded dbFlow: " + dbFlow);
 
             if(dbFlow != null)
@@ -405,7 +407,7 @@ public class TopologyServiceImpl implements TopologyService
             flow.setComponents(componentSet);
 
             this.topologyDao.save(flow);
-            this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
+            this.cleanUpComponents(serverId, module.getId(), flow.getName(), discoveredComponentNames);
         }
 		return flowSet;
 	}
@@ -461,56 +463,39 @@ public class TopologyServiceImpl implements TopologyService
 			}
 		}
 	}
-	
-	
+
 	protected void cleanUpFlows(Module module, Long serverId, Long moduleId, List<String> discoveredFlowNames)
 	{
-		logger.info("Discovery - cleaning up old flow references from ["+module.getName()+"].");
-
+		logger.info("Discovery - cleaning up old flow references from [" + module.getName() + "].");
 		List<Flow> dbFlows = this.topologyDao.getFlowsByServerIdAndModuleId(serverId, moduleId);
-				
-		for(Flow flow: dbFlows)
+		dbFlows.stream().filter(flow -> !discoveredFlowNames.contains(flow.getName()))
+				.forEach(flow ->
 		{
-			if(!discoveredFlowNames.contains(flow.getName()))
+			Set<Component> copyComponents = new HashSet<Component>();
+			for (Component component : flow.getComponents())
 			{
-				Set<Component> copyComponents =  new HashSet<Component>();
-		
-				for(Component component: flow.getComponents())
-				{
-					copyComponents.add(component);
-				}
-				
-				for(Component component: copyComponents)
-				{	
-					flow.getComponents().remove(component);
-			
-					component.setFlow(null);
-					this.topologyDao.delete(component);
-				}
-				
-				module.getFlows().remove(flow);
-				flow.getModule().getFlows().remove(flow);
-				flow.setModule(null);
-				
-				// we need to delete any references to the flow before deleting it. 
-				this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
-				
-				this.topologyDao.delete(flow);
+				copyComponents.add(component);
 			}
-		}
-		logger.info("Discovery - old flow references cleaned up ["+module.getName()+"].");
-
+			for (Component component : copyComponents)
+			{
+				flow.getComponents().remove(component);
+				component.setFlow(null);
+				this.topologyDao.delete(component);
+			}
+			module.getFlows().remove(flow);
+			flow.getModule().getFlows().remove(flow);
+			flow.setModule(null);
+			// we need to delete any references to the flow before deleting it.
+			this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
+			this.topologyDao.delete(flow);
+		});
+		logger.info("Discovery - old flow references cleaned up [" + module.getName() + "].");
 	}
 	
 	protected void cleanUpComponents(Long serverId, Long moduleId, String flowName, List<String> discoveredComponentNames)
 	{
-		logger.debug("Getting components to delete:" + serverId + " " + moduleId + " " + flowName );
-		
-		for (String s : discoveredComponentNames)
-		{
-			logger.debug(s);
-		}
-		
+		logger.debug("Getting components to delete:" + serverId + " " + moduleId + " " + flowName +" discoveredComponent["+discoveredComponentNames+"]" );
+
 		List<Component> components = this.topologyDao.getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn
 				(serverId, moduleId, flowName, discoveredComponentNames);
 				
