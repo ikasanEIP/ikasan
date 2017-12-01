@@ -510,7 +510,8 @@ public class ModuleInitialisationServiceImpl
             String serverName = "http://" + host + ":" + port + "/" + context;
             String serverUrl = "http://" + host;
             logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
-            Server server = new Server(host, serverName, serverUrl, port);
+            String name =  host + ":" + port;
+            Server server = new Server(name, serverName, serverUrl, port);
             List<Server> servers = this.topologyService.getAllServers();
             // find existing server by comparing url and port
             existingServer = servers.stream()

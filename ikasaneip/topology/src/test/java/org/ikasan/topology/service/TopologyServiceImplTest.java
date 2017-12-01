@@ -124,7 +124,6 @@ public class TopologyServiceImplTest
 
 		}});
 
-
 		//do test
 		uut.discover(null,module, Arrays.asList(flow));
 
@@ -140,19 +139,19 @@ public class TopologyServiceImplTest
 		Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
 		module.setId(1l);
 
-		Flow flow = new Flow("Flow Test", "I am Test flow", module);
-
 		Component component = new Component();
 		component.setName("testComponentName1");
 		component.setDescription("description1");
 		component.setOrder(0);
 		component.setConfigurable(false);
+
+		Flow flow = new Flow("Flow Test", "I am Test flow", null);
 		component.setFlow(flow);
 		flow.addComponent(component);
 
-
-		Flow oldFlow = new Flow("Flow Test", "I am old Test flow", null);
+		Flow oldFlow = new Flow("Flow Test", "I am old Test flow", module);
 		oldFlow.setId(2l);
+		module.addFlow(oldFlow);
 
 		Component oldComponent = new Component();
 		oldComponent.setId(3l);
@@ -215,6 +214,7 @@ public class TopologyServiceImplTest
 
 		Flow oldFlow = new Flow("Old Test Flow", "I am old Test flow", module);
 		oldFlow.setId(2l);
+		module.addFlow(oldFlow);
 
 		Component oldComponent = new Component();
 		oldComponent.setId(3l);
