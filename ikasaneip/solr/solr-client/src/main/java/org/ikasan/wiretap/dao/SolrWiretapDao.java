@@ -78,6 +78,46 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         }
     }
 
+    public void save(List<WiretapEvent> wiretapEvents)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            for(WiretapEvent wiretapEvent: wiretapEvents)
+            {
+                SolrInputDocument document = new SolrInputDocument();
+                document.addField(ID, "" + wiretapEvent.getIdentifier());
+                document.addField(TYPE, "wiretap");
+                document.addField(MODULE_NAME, wiretapEvent.getModuleName());
+                document.addField(FLOW_NAME, wiretapEvent.getFlowName());
+                document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
+                document.addField(EVENT, wiretapEvent.getEventId());
+                document.addField(PAYLOAD_CONTENT, wiretapEvent.getEvent());
+                document.addField(CREATED_DATE_TIME, wiretapEvent.getTimestamp());
+                document.setField(EXPIRY, expiry);
+
+                req.add(document);
+
+                logger.debug("Adding document: " + document);
+            }
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            logger.debug("Solr Response: " + rsp.toString());
+
+            req.commit(solrClient, SolrConstants.CORE);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write a wiretap to Solr", e);
+        }
+    }
+
     @Override
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, String moduleFlow
             , String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)

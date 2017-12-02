@@ -1,5 +1,7 @@
 package org.ikasan.spec.solr;
 
+import java.util.List;
+
 /**
  * Created by stewmi on 06/08/2017.
  */
@@ -11,6 +13,13 @@ public interface SolrService<ENTITY>
      * @param save
      */
     public void save(ENTITY save);
+
+    /**
+     * Method to save the solr entity.
+     *
+     * @param save
+     */
+    public void save(List<ENTITY> save);
 
     /**
      * Set the solr username
