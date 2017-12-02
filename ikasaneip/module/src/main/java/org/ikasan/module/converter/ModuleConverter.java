@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public class ModuleCoverter implements Converter<Module<Flow>, org.ikasan.topology.model.Module>
+public class ModuleConverter implements Converter<Module<Flow>, org.ikasan.topology.model.Module>
 {
     /**
      * Converts runtime module view to DTO type module view.

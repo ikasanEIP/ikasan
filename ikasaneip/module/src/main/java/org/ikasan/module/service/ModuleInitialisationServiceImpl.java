@@ -40,7 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.module.converter.ModuleCoverter;
+import org.ikasan.module.converter.ModuleConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -118,7 +118,7 @@ public class ModuleInitialisationServiceImpl
      */
     private TopologyService topologyService;
 
-    private ModuleCoverter moduleConverter = new ModuleCoverter();
+    private ModuleConverter moduleConverter = new ModuleConverter();
 
     /**
      * Container for Spring application contexts loaded internally by this class

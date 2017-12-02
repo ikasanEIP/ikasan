@@ -40,37 +40,22 @@
  */
 package org.ikasan.module.converter;
 
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
-import org.ikasan.module.service.ModuleInitialisationServiceImpl;
-import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleActivator;
-import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
 import org.junit.Test;
-import org.quartz.Scheduler;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.Environment;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -103,7 +88,7 @@ public class ModuleConverterTest
     /**
      * Class under test
      */
-    ModuleCoverter uut = new ModuleCoverter();
+    ModuleConverter uut = new ModuleConverter();
 
 
     @Test

@@ -40,7 +40,7 @@
  */
 package org.ikasan.rest.module;
 
-import org.ikasan.module.converter.ModuleCoverter;
+import org.ikasan.module.converter.ModuleConverter;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -56,9 +56,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Ikasan Development Team
@@ -71,7 +69,7 @@ public class DiscoveryApplication {
     @Autowired
     private ModuleContainer moduleContainer;
 
-    private ModuleCoverter converter;
+    private ModuleConverter converter;
     /**
      * Method to get the flows associated with a module.
      *
