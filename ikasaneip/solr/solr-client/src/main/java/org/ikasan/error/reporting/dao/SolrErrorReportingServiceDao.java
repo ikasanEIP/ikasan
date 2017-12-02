@@ -159,6 +159,53 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
         }
     }
 
+    public void save(List<ErrorOccurrence> errorOccurrences)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            for(ErrorOccurrence errorOccurrence: errorOccurrences)
+            {
+                SolrInputDocument document = new SolrInputDocument();
+                document.addField(ID, "error" + errorOccurrence.getUri());
+                document.addField(ERROR_URI, errorOccurrence.getUri());
+                document.addField(TYPE, ERROR);
+                document.addField(MODULE_NAME, errorOccurrence.getModuleName());
+                document.addField(FLOW_NAME, errorOccurrence.getFlowName());
+                document.addField(COMPONENT_NAME, errorOccurrence.getFlowElementName());
+                document.addField(EVENT, errorOccurrence.getEventLifeIdentifier());
+                document.addField(RELATED_EVENT, errorOccurrence.getEventRelatedIdentifier());
+                document.addField(PAYLOAD_CONTENT, errorOccurrence.getEventAsString());
+                document.addField(CREATED_DATE_TIME, errorOccurrence.getTimestamp());
+                document.addField(ERROR_DETAIL, errorOccurrence.getErrorDetail());
+                document.addField(ERROR_MESSAGE, errorOccurrence.getErrorMessage());
+                document.addField(EXCEPTION_CLASS, errorOccurrence.getExceptionClass());
+                document.setField(EXPIRY, expiry);
+
+                req.add(document);
+
+                logger.debug("Adding document: " + document);
+            }
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            logger.debug("Solr Response: " + rsp.toString());
+
+            req.commit(solrClient, SolrConstants.CORE);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write an error occurrence to Solr", e);
+        }
+    }
+
+
+
     @Override
     public void deleteExpired()
     {

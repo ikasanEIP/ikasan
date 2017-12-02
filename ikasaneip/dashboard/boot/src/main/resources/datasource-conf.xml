@@ -19,6 +19,8 @@
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
+        <property name="initialSize" value="${datasource.min.pool.size}" />
+        <property name="maxActive" value="${datasource.max.pool.size}" />
     </bean>
 
 
@@ -27,6 +29,8 @@
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
+        <property name="initialSize" value="${datasource.min.pool.size}" />
+        <property name="maxActive" value="${datasource.max.pool.size}" />
     </bean>
 
 </beans>

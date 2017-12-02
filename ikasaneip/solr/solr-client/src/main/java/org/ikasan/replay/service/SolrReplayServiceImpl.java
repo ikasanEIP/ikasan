@@ -38,6 +38,14 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
         this.replayDao.saveOrUpdate(save);
     }
 
+    @Override
+    public void save(List<ReplayEvent> save)
+    {
+        this.replayDao.setSolrUsername(this.solrUsername);
+        this.replayDao.setSolrPassword(this.solrPassword);
+        this.replayDao.saveOrUpdate(save);
+    }
+
     /**
      * (non-Javadoc)
      * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(List, List, String, String, Date, Date)
