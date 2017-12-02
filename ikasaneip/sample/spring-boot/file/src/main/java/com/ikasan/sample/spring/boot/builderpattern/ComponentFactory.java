@@ -132,8 +132,7 @@ public class ComponentFactory
 
        return builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
-                .setDestinationJndiName("jms.topic.test")
-                .setDurableSubscriptionName("testDurableSubscription")
+                .setDestinationJndiName("private.file.queue")
                 .setDurable(true)
                 .setAutoContentConversion(true)
                 .setAutoSplitBatch(true)
@@ -154,7 +153,7 @@ public class ComponentFactory
 
         return builderFactory.getComponentBuilder().jmsProducer()
                 .setConfiguredResourceId(jmsProducerConfiguredResourceId)
-                .setDestinationJndiName("jms.topic.test")
+                .setDestinationJndiName("private.file.queue")
                 .setConnectionFactory(connectionFactory)
                 .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
                 .setSessionTransacted(true)
