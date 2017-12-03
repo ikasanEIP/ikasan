@@ -89,7 +89,6 @@ public class HibernateTopologyDaoTest
 	/**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
-     * @throws SecurityDaoException 
      */
     @Before public void setup()
     {

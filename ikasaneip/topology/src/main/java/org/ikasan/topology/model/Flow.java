@@ -42,6 +42,7 @@ package org.ikasan.topology.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -152,7 +153,21 @@ public class Flow
 		this.components = components;
 	}
 
-    /**
+	/**
+	 * @param components the components to set
+	 */
+	public void addComponent(Component component)
+	{
+		if(this.components==null)
+		{
+			this.components = new LinkedHashSet<>();
+		}
+		components.add(component);
+
+	}
+
+
+	/**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()

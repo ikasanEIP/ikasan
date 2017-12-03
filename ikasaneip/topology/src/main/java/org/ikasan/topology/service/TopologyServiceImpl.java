@@ -48,6 +48,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -120,7 +121,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Server)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Server)
 	 */
 	@Override
 	public void save(Server server)
@@ -138,7 +139,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Module)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Module)
 	 */
 	@Override
 	public void save(Module module)
@@ -156,7 +157,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Flow)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Flow)
 	 */
 	@Override
 	public void save(Flow flow)
@@ -173,8 +174,18 @@ public class TopologyServiceImpl implements TopologyService
 		return this.topologyDao.getAllBusinessStreams();
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveBusinessStream(org.ikasan.topology.window.BusinessStream)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Component)
+	 */
+	@Override
+	public void save(Component component)
+	{
+		this.topologyDao.save(component);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#saveBusinessStream(org.ikasan.topology.model.BusinessStream)
 	 */
 	@Override
 	public void saveBusinessStream(BusinessStream businessStream)
@@ -201,7 +212,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStreamFlow(org.ikasan.topology.window.BusinessStreamFlow)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStreamFlow(org.ikasan.topology.model.BusinessStreamFlow)
 	 */
 	@Override
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
@@ -238,7 +249,7 @@ public class TopologyServiceImpl implements TopologyService
     	// Firstly sort out the server module relationships
 		for(Server server: servers)
 		{
-			List<Module> modules = this.topologyDao.getAllModules();	
+			List<Module> modules = this.topologyDao.getAllModules();
 			
 			Set<Module> moduleSet = new HashSet<Module>();
 			
@@ -290,8 +301,7 @@ public class TopologyServiceImpl implements TopologyService
 			
 			for(Module module: modules)
 			{	
-				List<String> discoveredFlowNames = new ArrayList<String>();
-				
+
 				String url = server.getUrl() + ":" + server.getPort() 
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
@@ -317,77 +327,10 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    logger.info("Successfully discovered flows using URL: " + url
 		    			+ ". Server =  " + server);
-			    
-			    Set<Flow> flowSet = new HashSet<Flow>();
-			    
-			    for(Flow flow: flowResponse.getBody())
-			    { 
-			    	List<String> discoveredComponentNames = new ArrayList<String>();
-			    	
-		    		try
-					{
 
-						discoveredFlowNames.add(flow.getName());
-						
-						for(Component component: flow.getComponents())
-						{
-							discoveredComponentNames.add(component.getName());
-						}
-					} 
-					catch (Exception e)
-					{
-						throw new DiscoveryException(e);
-					}
-					
-					Set<Component> components = flow.getComponents();
-					
-					Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
-						(server.getId(), module.getId(), flow.getName());
-					
-					logger.debug("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
-							+ " flow name = " + flow.getName());
-					logger.debug("Loaded dbFlow: " + dbFlow);
-					
-					if(dbFlow != null)
-					{
-						dbFlow.setOrder(flow.getOrder());
-						dbFlow.setConfigurable(flow.isConfigurable());
-						dbFlow.setConfigurationId(flow.getConfigurationId());
-						flow = dbFlow;
-					}
-					
-					flow.setModule(module);
-					
-					flowSet.add(flow);
-					
-					logger.debug("Saving flow: " + flow);
-					this.topologyDao.save(flow);
-					
-					Set<Component> componentSet = new HashSet<Component>();
-					
-					for(Component component: components)
-					{
-						component = getComponent(flow.getComponents(), component);
-						component.setFlow(flow);
-						
-						logger.debug("Saving component: " + component.getName());
+				discover(server, module, flowResponse.getBody());
+			    
 
-						this.topologyDao.save(component);
-						
-						componentSet.add(component);
-					}	
-					
-					flow.setComponents(componentSet);
-					
-					this.topologyDao.save(flow);
-					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
-			    }
-			    
-			    module.setFlows(flowSet);
-			    
-			    this.topologyDao.save(module);
-			    
-			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
 			}
 		}
 
@@ -395,6 +338,89 @@ public class TopologyServiceImpl implements TopologyService
 		this.cleanUpFlows();
 		this.cleanUpModules();
 	}
+
+	@Override
+	public void discover(Server server, Module module, List<Flow> flows) throws DiscoveryException
+	{
+		logger.info("Discovery - updating module ["+module.getName()+"] flows information.");
+
+		Long serverId = server != null ? server.getId(): null;
+
+		Set<Flow> flowSet = discoverFlows(serverId, module, flows);
+
+		module.addFlows(flowSet);
+		//module.setFlows(flowSet);
+
+		this.topologyDao.save(module);
+
+		logger.info("Discovery - updated module ["+module.getName()+"] flows information.");
+
+		List<String> discoveredFlowNames = discoveredFlowNames(flows);
+
+		this.cleanUpFlows(module, serverId, module.getId(), discoveredFlowNames);
+	}
+
+	protected Set<Flow> discoverFlows(Long serverId, Module module, List<Flow> flowList)
+	{
+		Set<Flow> flowSet = new HashSet<>();
+
+		for(Flow flow: flowList)
+        {
+            List<String> discoveredComponentNames = discoveredComponentNames(flow);
+
+            Set<Component> components = flow.getComponents();
+            logger.debug("Loading dbFlow using: serverId= " + serverId + " moduleId = " + module.getId()
+                    + " flow name = " + flow.getName());
+
+            Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname(serverId, module.getId(), flow.getName());
+
+            logger.debug("Loaded dbFlow: " + dbFlow);
+
+            if(dbFlow != null)
+            {
+                dbFlow.setOrder(flow.getOrder());
+                dbFlow.setConfigurable(flow.isConfigurable());
+                dbFlow.setConfigurationId(flow.getConfigurationId());
+                flow = dbFlow;
+            }
+
+            flow.setModule(module);
+
+            flowSet.add(flow);
+
+            logger.debug("Saving flow: " + flow);
+            this.topologyDao.save(flow);
+
+            Set<Component> componentSet = new HashSet<Component>();
+
+            for(Component component: components)
+            {
+                component = getComponent(flow.getComponents(), component);
+                component.setFlow(flow);
+
+                logger.debug("Saving component: " + component.getName());
+
+                this.topologyDao.save(component);
+
+                componentSet.add(component);
+            }
+
+            flow.setComponents(componentSet);
+
+            this.topologyDao.save(flow);
+            this.cleanUpComponents(serverId, module.getId(), flow.getName(), discoveredComponentNames);
+        }
+		return flowSet;
+	}
+
+	private List<String> discoveredFlowNames(List<Flow> flows){
+		return flows.stream().map(flow -> flow.getName()).collect(Collectors.toList());
+	}
+
+	private List<String> discoveredComponentNames(Flow flow){
+		return flow.getComponents().stream().map(component -> component.getName()).collect(Collectors.toList());
+	}
+
 
 	protected void cleanUpModules()
 	{
@@ -438,52 +464,39 @@ public class TopologyServiceImpl implements TopologyService
 			}
 		}
 	}
-	
-	
+
 	protected void cleanUpFlows(Module module, Long serverId, Long moduleId, List<String> discoveredFlowNames)
 	{
+		logger.info("Discovery - cleaning up old flow references from [" + module.getName() + "].");
 		List<Flow> dbFlows = this.topologyDao.getFlowsByServerIdAndModuleId(serverId, moduleId);
-				
-		for(Flow flow: dbFlows)
+		dbFlows.stream().filter(flow -> !discoveredFlowNames.contains(flow.getName()))
+				.forEach(flow ->
 		{
-			if(!discoveredFlowNames.contains(flow.getName()))
+			Set<Component> copyComponents = new HashSet<Component>();
+			for (Component component : flow.getComponents())
 			{
-				Set<Component> copyComponents =  new HashSet<Component>();
-		
-				for(Component component: flow.getComponents())
-				{
-					copyComponents.add(component);
-				}
-				
-				for(Component component: copyComponents)
-				{	
-					flow.getComponents().remove(component);
-			
-					component.setFlow(null);
-					this.topologyDao.delete(component);
-				}
-				
-				module.getFlows().remove(flow);
-				flow.getModule().getFlows().remove(flow);
-				flow.setModule(null);
-				
-				// we need to delete any references to the flow before deleting it. 
-				this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
-				
-				this.topologyDao.delete(flow);
+				copyComponents.add(component);
 			}
-		}
+			for (Component component : copyComponents)
+			{
+				flow.getComponents().remove(component);
+				component.setFlow(null);
+				this.topologyDao.delete(component);
+			}
+			module.getFlows().remove(flow);
+			flow.getModule().getFlows().remove(flow);
+			flow.setModule(null);
+			// we need to delete any references to the flow before deleting it.
+			this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
+			this.topologyDao.delete(flow);
+		});
+		logger.info("Discovery - old flow references cleaned up [" + module.getName() + "].");
 	}
 	
 	protected void cleanUpComponents(Long serverId, Long moduleId, String flowName, List<String> discoveredComponentNames)
 	{
-		logger.debug("Getting components to delete:" + serverId + " " + moduleId + " " + flowName );
-		
-		for (String s : discoveredComponentNames)
-		{
-			logger.debug(s);
-		}
-		
+		logger.debug("Getting components to delete:" + serverId + " " + moduleId + " " + flowName +" discoveredComponent["+discoveredComponentNames+"]" );
+
 		List<Component> components = this.topologyDao.getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn
 				(serverId, moduleId, flowName, discoveredComponentNames);
 				
@@ -538,7 +551,7 @@ public class TopologyServiceImpl implements TopologyService
 
 	}
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.window.BusinessStream)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.model.BusinessStream)
 	 */
 	@Override
 	public void deleteBusinessStream(BusinessStream businessStream)
@@ -585,7 +598,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveFilter(org.ikasan.topology.window.Filter)
+	 * @see org.ikasan.topology.service.TopologyService#saveFilter(org.ikasan.topology.model.Filter)
 	 */
 	@Override
 	public void saveFilter(Filter filter)
@@ -595,7 +608,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteFilter(org.ikasan.topology.window.Filter)
+	 * @see org.ikasan.topology.service.TopologyService#deleteFilter(org.ikasan.topology.model.Filter)
 	 */
 	@Override
 	public void deleteFilter(Filter filter)
@@ -604,7 +617,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#saveRoleFilter(org.ikasan.topology.window.RoleFilter)
+	 * @see org.ikasan.topology.service.TopologyService#saveRoleFilter(org.ikasan.topology.model.RoleFilter)
 	 */
 	@Override
 	public void saveRoleFilter(RoleFilter roleFilter)
@@ -622,7 +635,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#deleteRoleFilter(org.ikasan.topology.window.RoleFilter)
+	 * @see org.ikasan.topology.service.TopologyService#deleteRoleFilter(org.ikasan.topology.model.RoleFilter)
 	 */
 	@Override
 	public void deleteRoleFilter(RoleFilter roleFilter)
@@ -658,7 +671,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.window.Notification)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Notification)
 	 */
 	@Override
 	public void save(Notification notification)
@@ -667,7 +680,7 @@ public class TopologyServiceImpl implements TopologyService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.service.TopologyService#delete(org.ikasan.topology.window.Notification)
+	 * @see org.ikasan.topology.service.TopologyService#delete(org.ikasan.topology.model.Notification)
 	 */
 	@Override
 	public void delete(Notification notification)
