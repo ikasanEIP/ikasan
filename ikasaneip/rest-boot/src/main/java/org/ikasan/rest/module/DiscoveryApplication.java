@@ -40,6 +40,7 @@
  */
 package org.ikasan.rest.module;
 
+import org.ikasan.module.converter.ModuleConverter;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -55,9 +56,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Ikasan Development Team
@@ -70,6 +69,7 @@ public class DiscoveryApplication {
     @Autowired
     private ModuleContainer moduleContainer;
 
+    private ModuleConverter converter;
     /**
      * Method to get the flows associated with a module.
      *
@@ -87,54 +87,8 @@ public class DiscoveryApplication {
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
 
-        org.ikasan.topology.model.Module topologyModule = new org.ikasan.topology.model.Module(moduleName, moduleName, module.getDescription(),
-                "", null, "");
+        return new ArrayList<>(converter.convert(module).getFlows());
 
-        int flowOrder = 0;
-        for (Flow flow : module.getFlows()) {
-
-            org.ikasan.topology.model.Flow topologyFlow = new org.ikasan.topology.model.Flow(flow.getName(), "description", topologyModule);
-            topologyFlow.setOrder(flowOrder++);
-
-            if (flow instanceof ConfiguredResource) {
-                topologyFlow.setConfigurationId(((ConfiguredResource) flow).getConfiguredResourceId());
-                topologyFlow.setConfigurable(true);
-            } else {
-                topologyFlow.setConfigurable(false);
-            }
-
-            flows.add(topologyFlow);
-
-            Set<org.ikasan.topology.model.Component> components
-                    = new HashSet<org.ikasan.topology.model.Component>();
-
-            int order = 0;
-
-            for (FlowElement<?> flowElement : flow.getFlowElements()) {
-
-                org.ikasan.topology.model.Component component = new org.ikasan.topology.model.Component();
-                component.setName(flowElement.getComponentName());
-                if (flowElement.getDescription() != null) {
-                    component.setDescription(flowElement.getDescription());
-                } else {
-                    component.setDescription("No description.");
-                }
-
-                if (flowElement.getFlowComponent() instanceof ConfiguredResource) {
-                    component.setConfigurationId(((ConfiguredResource) flowElement.getFlowComponent()).getConfiguredResourceId());
-                    component.setConfigurable(true);
-                } else {
-                    component.setConfigurable(false);
-                }
-
-                component.setOrder(order++);
-                components.add(component);
-            }
-
-            topologyFlow.setComponents(components);
-        }
-
-        return flows;
     }
 
     /**
@@ -155,6 +109,12 @@ public class DiscoveryApplication {
                 = new ArrayList<org.ikasan.topology.model.Component>();
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        converter.convert(module).getFlows().stream()
+                .filter(flow -> flow.getName().equals(flowName))
+                .findFirst();
+
+
 
         Flow flow = module.getFlow(flowName);
 
