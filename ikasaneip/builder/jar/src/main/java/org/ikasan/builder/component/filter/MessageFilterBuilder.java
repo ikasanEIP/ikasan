@@ -55,6 +55,25 @@ public interface MessageFilterBuilder extends Builder<Filter>
 
      MessageFilterBuilder setConfiguration(Object filterConfiguration);
 
+     /**
+      * Set the filter entry converter for creating a filter entry instance based
+      * on the incoming message being potentially filtered.
+      * @param filterEntryConverter
+      * @return
+      */
      MessageFilterBuilder setFilterEntryConverter(FilterEntryConverter filterEntryConverter);
+
+     /**
+      * Set filter entry time to live in days
+      * @param filterTimeToLive
+      * @return
+      */
+     MessageFilterBuilder setFilterEntryTimeToLive(int filterTimeToLive);
+
+     /**
+      * Set default filter entry converter based on hashing the complete object.
+      * @return
+      */
+     MessageFilterBuilder setObjectHashingFilterEntryConverter();
 }
 
