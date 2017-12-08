@@ -42,7 +42,10 @@ package org.ikasan.builder.component.filter;
 
 import org.ikasan.filter.DefaultMessageFilter;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
+import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
+import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
+import org.ikasan.filter.duplicate.model.FilterEntryConverterException;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
@@ -61,6 +64,12 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
     Object filterPojoConfiguration;
 
     FilterEntryConverter filterEntryConverter;
+
+    // default time to live 30 days
+    int filterTimeToLive = 30;
+
+    // default object hashing filter entry converter
+    FilterEntryConverter objectHashingFilterEntryConverter = new ObjectHashingFilterEntryConverter();
 
     /**
      * Constructor
@@ -128,6 +137,43 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
     {
         this.filterEntryConverter = filterEntryConverter;
         return this;
+    }
+
+    @Override
+    /**
+     * Filter entry time to live in days
+     * @param timeToLive
+     */
+    public MessageFilterBuilder setFilterEntryTimeToLive(int filterTimeToLive)
+    {
+        this.filterTimeToLive = filterTimeToLive;
+        return this;
+    }
+
+    @Override
+    /**
+     * Use the default object hashing filter entry converter.
+     */
+    public MessageFilterBuilder setObjectHashingFilterEntryConverter()
+    {
+        this.filterEntryConverter = objectHashingFilterEntryConverter;
+        return this;
+    }
+
+    /**
+     * Default implementation of a filter entry converter.
+     * It is recommended this be overridden, but is here to provide a convenience.
+     *
+     * @param <T>
+     */
+    class ObjectHashingFilterEntryConverter<T> implements FilterEntryConverter<T>
+    {
+        @Override
+        public FilterEntry convert(T message) throws FilterEntryConverterException
+        {
+            Integer criteria = Integer.valueOf(message.hashCode());
+            return new DefaultFilterEntry(criteria, configuredResourceId, filterTimeToLive);
+        }
     }
 }
 
