@@ -61,12 +61,12 @@ than another development framework.
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
 
 
+[Component Quick Start](ikasaneip/component/Readme.md)
+======
+
 [Getting Started Guide](ikasaneip/developer/)
 ======
 
-
-[Component Quick Start](ikasaneip/component/Readme.md)
-======
 
 | Samples overview |
 |-------------|
