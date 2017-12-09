@@ -61,15 +61,15 @@ than another development framework.
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
 
 
-[Getting Started Guide](ikasaneip/developer/)
-======
-
-
 [Component Quick Start](ikasaneip/component/Readme.md)
-======
+==========
+
+[Getting Started Guide](ikasaneip/developer/)
+==========
+
 
 | Samples overview |
-|-------------|
+|------------------|
 |  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
 |  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
 |  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
