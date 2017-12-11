@@ -232,7 +232,7 @@ public class ModuleInitialisationServiceImpl
                 logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
                 loadModuleFromContext(platformContext);
             }
-            else if (e.getMessage().contains("File Not Found"))
+            else if (e.getMessage().contains("IOException parsing XML document from class path resource ["))
             {
                 throw new RuntimeException(e);
             }
@@ -418,32 +418,37 @@ public class ModuleInitialisationServiceImpl
      */
     protected void initialiseModuleMetaData(Module module)
     {
-        Optional<Server> existingServer = getServer();
-        org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
-        if (existingModule == null)
+        try
         {
-            logger.info("module does not exist [" + module.getName() + "], creating...");
-            existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+            Optional<Server> existingServer = getServer();
+            org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
+            if (existingModule == null)
+            {
+                logger.info("module does not exist [" + module.getName() + "], creating...");
+                existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
                     module.getDescription(), module.getVersion(), null, null);
-            if (existingServer.isPresent())
-            {
-                existingModule.setServer(existingServer.get());
-            }
-            this.topologyService.save(existingModule);
-
-            createMetadata(module,existingModule);
-        }
-        else
-        {
-            updateMetadata(module,existingModule);
-            if (existingServer.isPresent())
-            {
-                logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl()
-                        + "].");
-                existingModule.setServer(existingServer.get());
+                if (existingServer.isPresent())
+                {
+                    existingModule.setServer(existingServer.get());
+                }
                 this.topologyService.save(existingModule);
+                createMetadata(module, existingModule);
             }
-
+            else
+            {
+                updateMetadata(module, existingModule);
+                if (existingServer.isPresent())
+                {
+                    logger.info(
+                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
+                    existingModule.setServer(existingServer.get());
+                    this.topologyService.save(existingModule);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
         }
     }
 
