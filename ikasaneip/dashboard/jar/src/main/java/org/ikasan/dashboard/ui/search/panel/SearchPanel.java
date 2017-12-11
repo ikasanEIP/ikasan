@@ -256,7 +256,10 @@ public class SearchPanel extends Panel implements View
 
                         CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
 
-                        cb.setValue(true);
+                        if(cb != null)
+                        {
+                            cb.setValue(true);
+                        }
                     }
                 }
                 else
@@ -269,7 +272,10 @@ public class SearchPanel extends Panel implements View
 
                         CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
 
-                        cb.setValue(false);
+                        if(cb != null)
+                        {
+                            cb.setValue(false);
+                        }
                     }
                 }
             }
@@ -345,7 +351,7 @@ public class SearchPanel extends Panel implements View
     }
 
     /**
-     * Helper method to resubmit all selected excluded events.
+     * Helper method to resubmit all selected replay events.
      */
     protected List<ReplayEvent> getReplayEvents()
     {
@@ -355,13 +361,16 @@ public class SearchPanel extends Panel implements View
 
         for(IkasanSolrDocument ikasanSolrDocument: items)
         {
-            Item item = container.getItem(ikasanSolrDocument);
-
-            CheckBox cb = (CheckBox)item.getItemProperty("Select").getValue();
-
-            if(cb.getValue() == true)
+            if(ikasanSolrDocument.getType().equals("replay"))
             {
-                myItems.add(replayManagementService.getReplayEventById(new Long(ikasanSolrDocument.getId())));
+                Item item = container.getItem(ikasanSolrDocument);
+
+                CheckBox cb = (CheckBox) item.getItemProperty("Select").getValue();
+
+                if (cb.getValue() == true)
+                {
+                    myItems.add(replayManagementService.getReplayEventById(new Long(ikasanSolrDocument.getId())));
+                }
             }
         }
 
