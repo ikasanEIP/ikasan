@@ -47,222 +47,231 @@
 
 <div class="middle">
 
-<h2>FlowElement :: <c:out value="${flowElement.componentName}" /></h2>
+	<h2>FlowElement :: <c:out value="${flowElement.componentName}" /></h2>
 
-<span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
+	<span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
 
 
-<h3>Details</h3>
-<table id="flowElementDetails" class="keyValueTable">
-	<tr>
-		<th>
-			Name
-		</th>
-		<td>
-          <c:out value="${flowElement.componentName}" />
-          <c:url var="configurationLink" value="/componentConfiguration.htm">
-            <c:param name="moduleName" value="${moduleName}"/>
-            <c:param name="flowName" value="${flowName}"/>
-            <c:param name="flowElementName" value="${flowElement.componentName}"/>
-          </c:url>
-          <a href="<c:out value="${configurationLink}" escapeXml="true" />">
-            <c:out value=" (configure)" />
-          </a>
-		</td>
-	</tr>
-	
-	<tr>
-		<th>
-			Component Type
-		</th>
-		<td>
-			<c:out value="${flowElement.flowComponent.getClass().simpleName}" />
-		</td>
-	</tr>
+	<h3>Component</h3>
+	<table id="flowElementDetails" class="keyValueTable">
+		<tr>
+			<th>
+				Name
+			</th>
+			<td>
+				<c:out value="${flowElement.componentName}" />
+				<c:url var="configurationLink" value="/componentConfiguration.htm">
+					<c:param name="moduleName" value="${moduleName}"/>
+					<c:param name="flowName" value="${flowName}"/>
+					<c:param name="flowElementName" value="${flowElement.componentName}"/>
+				</c:url>
+				<a href="<c:out value="${configurationLink}" escapeXml="true" />">
+					<c:out value=" (configure)" />
+				</a>
+			</td>
+		</tr>
 
-</table>
+		<tr>
+			<th>
+				Implementation
+			</th>
+			<td>
+				<c:out value="${flowElement.flowComponent.getClass().getName()}" />
+			</td>
+		</tr>
 
-<h3>Transitions</h3>
-<table id="flowElementTransitions" class="listTable">
-	<thead>
+		<tr>
+			<th>
+				Invoker Type
+			</th>
+			<td>
+				<c:out value="${flowElement.flowElementInvoker.getInvokerType()}" />
+				<c:url var="configurationLink" value="/invokerConfiguration.htm">
+					<c:param name="moduleName" value="${moduleName}"/>
+					<c:param name="flowName" value="${flowName}"/>
+					<c:param name="flowElementName" value="${flowElement.componentName}"/>
+				</c:url>
+				<a href="<c:out value="${configurationLink}" escapeXml="true" />">
+					<c:out value=" (configure)" />
+				</a>
+			</td>
+		</tr>
+	</table>
+
+	<h3>Transitions</h3>
+	<table id="flowElementTransitions" class="listTable">
+		<thead>
 		<tr>
 			<th>Name</th>
 			<th>Flow Element</th>
 		</tr>
-	</thead>
+		</thead>
 
-	<tbody>
+		<tbody>
 		<c:if test="${empty flowElement.transitions}">
 			<tr>
 				<td colspan="2">
 					There are no transitions defined for this flow element
-				</td>			
-			</tr>		
+				</td>
+			</tr>
 		</c:if>
-		
+
 		<c:forEach items="${flowElement.transitions}" var="transitionEntry">
-		  <c:url var="transitionLink" value="viewFlowElement.htm">
-            <c:param name="moduleName" value="${moduleName}"/>
-            <c:param name="flowName" value="${flowName}"/>
-            <c:param name="flowElementName" value="${transitionEntry.value.componentName}"/>
-          </c:url>
-			
+			<c:url var="transitionLink" value="viewFlowElement.htm">
+				<c:param name="moduleName" value="${moduleName}"/>
+				<c:param name="flowName" value="${flowName}"/>
+				<c:param name="flowElementName" value="${transitionEntry.value.componentName}"/>
+			</c:url>
+
 			<tr>
 				<td>
 					<c:out value="${transitionEntry.key}" />
-				</td>			
+				</td>
 				<td>
-                    <a href="<c:out value="${transitionLink}" escapeXml="true" />">
+					<a href="<c:out value="${transitionLink}" escapeXml="true" />">
 						<c:out value="${transitionEntry.value.componentName}" />
 					</a>
-					
+
 				</td>
 			</tr>
 		</c:forEach>
-		
-
-	</tbody>
-</table>
 
 
+		</tbody>
+	</table>
 
-
-
-
-
-
-<h3>Before Element Triggers</h3>
-<table id="beforeFlowElementTriggers" class="listTable">
-	<thead>
+	<h3>Before Element Triggers</h3>
+	<table id="beforeFlowElementTriggers" class="listTable">
+		<thead>
 		<tr>
 			<th>Job</th>
 			<th>Parameters</th>
 			<th>Action</th>
 		</tr>
-	</thead>
+		</thead>
 
-	<tbody>
+		<tbody>
 		<c:if test="${empty beforeElementTriggers}">
 			<tr>
 				<td colspan="2">
 					There are no triggers defined before this flow element
 				</td>
-				<td>&nbsp;</td>		
-			</tr>		
+				<td>&nbsp;</td>
+			</tr>
 		</c:if>
-		
+
 		<c:forEach items="${beforeElementTriggers}" var="trigger">
 			<tr>
 				<td>
 					<c:out value="${trigger.jobName}" />
-				</td>			
+				</td>
 				<td>
 					<c:out value="${trigger.params}" />
 				</td>
 				<td>
 					<c:if test="${trigger.id!=null}">
-					   <c:url var="deleteTriggerLink" value="deleteTrigger.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flowName}"/>
-                        <c:param name="flowElementName" value="${flowElementName}"/>
-                        <c:param name="triggerId" value="${trigger.id}"/>
-                       </c:url>
-                        <a href="<c:out value="${deleteTriggerLink}" escapeXml="true" />">
+						<c:url var="deleteTriggerLink" value="deleteTrigger.htm">
+							<c:param name="moduleName" value="${moduleName}"/>
+							<c:param name="flowName" value="${flowName}"/>
+							<c:param name="flowElementName" value="${flowElementName}"/>
+							<c:param name="triggerId" value="${trigger.id}"/>
+						</c:url>
+						<a href="<c:out value="${deleteTriggerLink}" escapeXml="true" />">
 							Delete
 						</a>
 					</c:if>
 				</td>
 			</tr>
 		</c:forEach>
-		
+
 		<tr>
-				<td colspan="2">
-					&nbsp;
-				</td>			
-				<td>
-				    <c:url var="createTriggerLink" value="/trigger.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flowName}"/>
-                        <c:param name="flowElementName" value="${flowElementName}"/>
-                        <c:param name="relationship" value="before"/>
-                     </c:url>
-                    <a href="<c:out value="${createTriggerLink}" escapeXml="true" />">
-                        Create
-                    </a>
-				</td>
-			</tr>
+			<td colspan="2">
+				&nbsp;
+			</td>
+			<td>
+				<c:url var="createTriggerLink" value="/trigger.htm">
+					<c:param name="moduleName" value="${moduleName}"/>
+					<c:param name="flowName" value="${flowName}"/>
+					<c:param name="flowElementName" value="${flowElementName}"/>
+					<c:param name="relationship" value="before"/>
+				</c:url>
+				<a href="<c:out value="${createTriggerLink}" escapeXml="true" />">
+					Create
+				</a>
+			</td>
+		</tr>
 
-	</tbody>
-
-
-</table>
+		</tbody>
 
 
-<h3>After Element Triggers</h3>
-<table id="afterFlowElementTriggers" class="listTable">
-	<thead>
+	</table>
+
+
+	<h3>After Element Triggers</h3>
+	<table id="afterFlowElementTriggers" class="listTable">
+		<thead>
 		<tr>
 			<th>Job</th>
 			<th>Parameters</th>
 			<th>Action</th>
 		</tr>
-	</thead>
+		</thead>
 
-	<tbody>
+		<tbody>
 		<c:if test="${empty afterElementTriggers}">
 			<tr>
 				<td colspan="2">
 					There are no triggers defined after this flow element
 				</td>
-				<td>&nbsp;</td>		
-			</tr>		
+				<td>&nbsp;</td>
+			</tr>
 		</c:if>
-		
+
 		<c:forEach items="${afterElementTriggers}" var="trigger">
 			<tr>
 				<td>
 					<c:out value="${trigger.jobName}" />
-				</td>			
+				</td>
 				<td>
 					<c:out value="${trigger.params}" />
 				</td>
 				<td>
 					<c:if test="${trigger.id!=null}">
-                       <c:url var="deleteTriggerLink" value="deleteTrigger.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flowName}"/>
-                        <c:param name="flowElementName" value="${flowElementName}"/>
-                        <c:param name="triggerId" value="${trigger.id}"/>
-                       </c:url>
-                        <a href="<c:out value="${deleteTriggerLink}" escapeXml="true" />">
+						<c:url var="deleteTriggerLink" value="deleteTrigger.htm">
+							<c:param name="moduleName" value="${moduleName}"/>
+							<c:param name="flowName" value="${flowName}"/>
+							<c:param name="flowElementName" value="${flowElementName}"/>
+							<c:param name="triggerId" value="${trigger.id}"/>
+						</c:url>
+						<a href="<c:out value="${deleteTriggerLink}" escapeXml="true" />">
 							Delete
 						</a>
 					</c:if>
 				</td>
 			</tr>
 		</c:forEach>
-		
+
 		<tr>
-				<td colspan="2">
-					&nbsp;
-				</td>			
-                <td>
-                    <c:url var="createTriggerLink" value="/trigger.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flowName}"/>
-                        <c:param name="flowElementName" value="${flowElementName}"/>
-                        <c:param name="relationship" value="after"/>
-                     </c:url>
-                    <a href="<c:out value="${createTriggerLink}" escapeXml="true" />">
-                        Create
-                    </a>
-                </td>
-			</tr>
+			<td colspan="2">
+				&nbsp;
+			</td>
+			<td>
+				<c:url var="createTriggerLink" value="/trigger.htm">
+					<c:param name="moduleName" value="${moduleName}"/>
+					<c:param name="flowName" value="${flowName}"/>
+					<c:param name="flowElementName" value="${flowElementName}"/>
+					<c:param name="relationship" value="after"/>
+				</c:url>
+				<a href="<c:out value="${createTriggerLink}" escapeXml="true" />">
+					Create
+				</a>
+			</td>
+		</tr>
 
-	</tbody>
+		</tbody>
 
 
-</table>
+	</table>
 
 
 
