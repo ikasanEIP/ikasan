@@ -52,7 +52,8 @@ import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -69,6 +70,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
@@ -381,6 +383,16 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
+     * Setter for recoveryManager service
+     * @param recoveryManager
+     */
+    public FlowBuilder withRecoveryManager(RecoveryManager recoveryManager)
+    {
+        this.recoveryManager = recoveryManager;
+        return this;
+    }
+
+    /**
      * @param replayRecordService the replayRecordService to set
      */
     public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService)
@@ -581,12 +593,22 @@ public class FlowBuilder implements ApplicationContextAware
 
         if (recoveryManager == null)
         {
-            recoveryManager = this.recoveryManagerFactory.getInstance()
-                    .getRecoveryManager(
-                            name,
-                            moduleName,
-                            ((FlowElement<Consumer>) headFlowElement).getFlowComponent(),
-                            exclusionService, errorReportingService);
+            recoveryManager = this.recoveryManagerFactory.getRecoveryManager(name, moduleName);
+        }
+
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(((FlowElement<Consumer>) headFlowElement).getFlowComponent());
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
         }
 
         if(exceptionResolver != null)
