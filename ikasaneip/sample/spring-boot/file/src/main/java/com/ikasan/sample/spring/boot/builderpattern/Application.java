@@ -42,7 +42,6 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
 import org.ikasan.flow.visitorPattern.invoker.FilterInvokerConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorInvokerConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -79,7 +78,7 @@ public class Application
                 .withDescription("Sample file to JMS flow")
                 .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
-                .filter("myFiler", componentFactory.getFilter(), "myFilterPoJo", new FilterInvokerConfiguration())
+                .filter("myFiler", componentFactory.getFilter(), "myFilterInvokerConfig", new FilterInvokerConfiguration())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
