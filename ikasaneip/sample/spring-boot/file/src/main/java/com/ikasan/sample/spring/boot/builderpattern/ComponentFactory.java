@@ -44,8 +44,8 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.spec.component.transformation.Translator;
-
+import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
