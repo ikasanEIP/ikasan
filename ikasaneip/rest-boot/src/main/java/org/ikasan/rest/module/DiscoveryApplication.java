@@ -69,7 +69,7 @@ public class DiscoveryApplication {
     @Autowired
     private ModuleContainer moduleContainer;
 
-    private ModuleConverter converter;
+    private ModuleConverter converter = new ModuleConverter();
     /**
      * Method to get the flows associated with a module.
      *
@@ -82,8 +82,6 @@ public class DiscoveryApplication {
             produces = {"application/json"})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public List<org.ikasan.topology.model.Flow> getFlows(@PathVariable("moduleName") String moduleName) {
-
-        List<org.ikasan.topology.model.Flow> flows = new ArrayList<org.ikasan.topology.model.Flow>();
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
 
@@ -109,12 +107,6 @@ public class DiscoveryApplication {
                 = new ArrayList<org.ikasan.topology.model.Component>();
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
-
-        converter.convert(module).getFlows().stream()
-                .filter(flow -> flow.getName().equals(flowName))
-                .findFirst();
-
-
 
         Flow flow = module.getFlow(flowName);
 
