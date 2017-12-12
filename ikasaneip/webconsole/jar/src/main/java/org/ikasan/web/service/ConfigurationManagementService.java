@@ -117,22 +117,7 @@ public class ConfigurationManagementService
      */
     public boolean isConfiguredResource(String moduleName, String flowName, String flowElementName)
     {
-        FlowElement flowElement = getFlowElement(moduleName, flowName, flowElementName);
-        return ( flowElement.getFlowComponent() instanceof ConfiguredResource );
-    }
-
-    /**
-     * Is this moduleName/flowName/flowElementInvoker referencing an invoker that
-     * is marked as a ConfiguredResource.
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @return boolean
-     */
-    public boolean isInvokerConfiguredResource(String moduleName, String flowName, String flowElementName)
-    {
-        FlowElement flowElement = getFlowElement(moduleName, flowName, flowElementName);
-        return ( flowElement.getFlowElementInvoker() instanceof ConfiguredResource );
+        return ( getFlowComponent(moduleName, flowName, flowElementName) instanceof ConfiguredResource );
     }
 
     /**
@@ -148,32 +133,7 @@ public class ConfigurationManagementService
     {
         try
         {
-            ConfiguredResource configuredResource = getComponentConfiguredResource(moduleName, flowName, flowElementName);
-            return this.configurationManagement.getConfiguration(configuredResource);
-        }
-        catch(RuntimeException e)
-        {
-            context.getMessageContext().addMessage(new MessageBuilder().error().source("findConfiguration").defaultText(
-                    e.getMessage()).build());
-        }
-        
-        return null;
-    }
-
-    /**
-     * Find the configuration instance for this moduleName/flowName/flowElementName.
-     * Report any issues back via the RequestContext.
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @param context
-     * @return Configuration
-     */
-    public Configuration findInvokerConfiguration(String moduleName, String flowName, String flowElementName, RequestContext context)
-    {
-        try
-        {
-            ConfiguredResource configuredResource = getInvokerConfiguredResource(moduleName, flowName, flowElementName);
+            ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
             return this.configurationManagement.getConfiguration(configuredResource);
         }
         catch(RuntimeException e)
@@ -198,7 +158,7 @@ public class ConfigurationManagementService
     {
         try
         {
-            ConfiguredResource configuredResource = getComponentConfiguredResource(moduleName, flowName, flowElementName);
+            ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
             return configurationManagement.createConfiguration(configuredResource);
         }
         catch(RuntimeException e)
@@ -207,31 +167,6 @@ public class ConfigurationManagementService
                     e.getMessage()).build());
         }
         
-        return null;
-    }
-
-    /**
-     * Find the invoker configuration instance for this moduleName/flowName/flowElementName.
-     * Report any issues back via the RequestContext.
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @param context
-     * @return Configuration
-     */
-    public Configuration createInvokerConfiguration(String moduleName, String flowName, String flowElementName, RequestContext context)
-    {
-        try
-        {
-            ConfiguredResource configuredResource = getInvokerConfiguredResource(moduleName, flowName, flowElementName);
-            return this.configurationManagement.createConfiguration(configuredResource);
-        }
-        catch(RuntimeException e)
-        {
-            context.getMessageContext().addMessage(new MessageBuilder().error().source("createConfiguration").defaultText(
-                    e.getMessage()).build());
-        }
-
         return null;
     }
 
@@ -282,37 +217,16 @@ public class ConfigurationManagementService
      * @param flowElementName
      * @return ConfiguredResource
      */
-    private ConfiguredResource getComponentConfiguredResource(String moduleName, String flowName, String flowElementName)
+    private ConfiguredResource getConfiguredResource(String moduleName, String flowName, String flowElementName)
     {
-        FlowElement flowElement = getFlowElement(moduleName, flowName, flowElementName);
-        if(flowElement.getFlowComponent() instanceof ConfiguredResource)
+        Object flowComponent = getFlowComponent(moduleName, flowName, flowElementName);
+        if(flowComponent instanceof ConfiguredResource)
         {
-            return (ConfiguredResource)flowElement.getFlowComponent();
+            return (ConfiguredResource)flowComponent;
         }
         else
         {
             throw new UnsupportedOperationException("Component must be of type 'ConfiguredResource' to support component configuration");
-        }
-    }
-
-    /**
-     * Utility method for locating and returning the ConfiguredResource instance based on the given
-     * moduleName/flowName/flowElementInvoker.
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @return ConfiguredResource
-     */
-    private ConfiguredResource getInvokerConfiguredResource(String moduleName, String flowName, String flowElementName)
-    {
-        FlowElement flowElement = getFlowElement(moduleName, flowName, flowElementName);
-        if(flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
-        {
-            return (ConfiguredResource)flowElement.getFlowElementInvoker();
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Invoker must be of type 'ConfiguredResource' to support configuration");
         }
     }
 
@@ -322,9 +236,9 @@ public class ConfigurationManagementService
      * @param moduleName
      * @param flowName
      * @param flowElementName
-     * @return FlowElement
+     * @return FlowComponent
      */
-    private FlowElement getFlowElement(String moduleName, String flowName, String flowElementName)
+    private Object getFlowComponent(String moduleName, String flowName, String flowElementName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
@@ -335,6 +249,6 @@ public class ConfigurationManagementService
                     + moduleName + "] flow [" + flowName + "] flowElementName [" + flowElementName + "]");
         }
 
-        return flowElement;
+        return flowElement.getFlowComponent();
     }
 }
