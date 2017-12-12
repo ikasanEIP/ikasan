@@ -52,7 +52,7 @@
 	<span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
 
 
-	<h3>Component</h3>
+<h3>Details</h3>
 	<table id="flowElementDetails" class="keyValueTable">
 		<tr>
 			<th>
@@ -73,29 +73,13 @@
 
 		<tr>
 			<th>
-				Implementation
+			Component Type
 			</th>
 			<td>
-				<c:out value="${flowElement.flowComponent.getClass().getName()}" />
+			<c:out value="${flowElement.flowComponent.getClass().simpleName}" />
 			</td>
 		</tr>
 
-		<tr>
-			<th>
-				Invoker Type
-			</th>
-			<td>
-				<c:out value="${flowElement.flowElementInvoker.getInvokerType()}" />
-				<c:url var="configurationLink" value="/invokerConfiguration.htm">
-					<c:param name="moduleName" value="${moduleName}"/>
-					<c:param name="flowName" value="${flowName}"/>
-					<c:param name="flowElementName" value="${flowElement.componentName}"/>
-				</c:url>
-				<a href="<c:out value="${configurationLink}" escapeXml="true" />">
-					<c:out value=" (configure)" />
-				</a>
-			</td>
-		</tr>
 	</table>
 
 	<h3>Transitions</h3>
@@ -139,6 +123,13 @@
 
 		</tbody>
 	</table>
+
+
+
+
+
+
+
 
 	<h3>Before Element Triggers</h3>
 	<table id="beforeFlowElementTriggers" class="listTable">
