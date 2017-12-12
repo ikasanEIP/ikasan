@@ -49,7 +49,7 @@
   xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="recoveryManagerFactory" class="org.ikasan.recovery.RecoveryManagerFactory">
+    <bean id="defaultScheduledRecoveryManagerFactory" class="org.ikasan.recovery.ScheduledRecoveryManagerFactory">
         <constructor-arg ref="scheduler" />
         <constructor-arg ref="scheduledJobFactory" />
     </bean>

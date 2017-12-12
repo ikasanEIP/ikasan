@@ -38,16 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.recovery;
+package org.ikasan.spec.recovery;
 
-import org.ikasan.scheduler.CachingScheduledJobFactory;
-import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.quartz.Scheduler;
 
 /**
  * Recovery Manager Factory provides recovery manager instances 
@@ -56,54 +49,14 @@ import org.quartz.Scheduler;
  * 
  * @author Ikasan Development Team
  */
-public class RecoveryManagerFactory
+public interface RecoveryManagerFactory
 {
-    /** Quartz Scheduler */
-    private Scheduler scheduler;
-    
-    /** Ikasan extended Quartz job factory */
-    private ScheduledJobFactory scheduledJobFactory;
-    
-    /**
-     * Default implementation of a RecoveryManagerFactory instance.
-     * @return RecoveryManagerFactory
-     */
-    public static RecoveryManagerFactory getInstance()
-    {
-    	return new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler(), CachingScheduledJobFactory.getInstance());
-    }
-    
-    /**
-     * Constructor
-     * @param scheduler
-     * @param scheduledJobFactory
-     */
-    public RecoveryManagerFactory(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory)
-    {
-        this.scheduler = scheduler;
-        if(scheduler == null)
-        {
-            throw new IllegalArgumentException("scheduler cannot be 'null'");
-        }
-
-        this.scheduledJobFactory = scheduledJobFactory;
-        if(scheduledJobFactory == null)
-        {
-            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
-        }
-    }
-
     /**
      * Create a new recovery manager instance based on the incoming parameters.
      * 
      * @param flowName
      * @param moduleName
-     * @param consumer
      * @return RecoveryManager
      */
-    public RecoveryManager getRecoveryManager(String flowName, String moduleName, Consumer consumer, ExclusionService exclusionService, ErrorReportingService errorReportingService)
-    {
-        return new ScheduledRecoveryManager(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService, errorReportingService);
-    }
-    
+    public RecoveryManager getRecoveryManager(String flowName, String moduleName);
 }

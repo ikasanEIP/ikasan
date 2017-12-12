@@ -106,7 +106,7 @@ public class ConfigurationManagementService
             throw new IllegalArgumentException("moduleService cannot be 'null'");
         }
     }
-   
+
     /**
      * Is this moduleName/flowName/flowElementName referencing a component that
      * is marked as a ConfiguredResource.
@@ -119,7 +119,7 @@ public class ConfigurationManagementService
     {
         return ( getFlowComponent(moduleName, flowName, flowElementName) instanceof ConfiguredResource );
     }
-    
+
     /**
      * Find the configuration instance for this moduleName/flowName/flowElementName.
      * Report any issues back via the RequestContext.
@@ -141,7 +141,7 @@ public class ConfigurationManagementService
             context.getMessageContext().addMessage(new MessageBuilder().error().source("findConfiguration").defaultText(
                     e.getMessage()).build());
         }
-        
+
         return null;
     }
 
@@ -208,7 +208,7 @@ public class ConfigurationManagementService
     {
         return SecurityContextHolder.getContext().getAuthentication();
     }
-    
+
     /**
      * Utility method for locating and returning the ConfiguredResource instance based on the given
      * moduleName/flowName/flowElementName.
@@ -229,7 +229,7 @@ public class ConfigurationManagementService
             throw new UnsupportedOperationException("Component must be of type 'ConfiguredResource' to support component configuration");
         }
     }
-    
+
     /**
      * Utility method for locating and returning the FlowComponent for the given
      * moduleName/flowName/flowElementName.
