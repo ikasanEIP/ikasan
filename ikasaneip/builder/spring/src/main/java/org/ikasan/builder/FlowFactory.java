@@ -49,7 +49,8 @@ import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.history.listener.MessageHistoryContextListener;
-import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -341,7 +342,22 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         if(recoveryManager == null)
         {
-            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName,  consumer.getFlowComponent(), exclusionService, errorReportingService);
+            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName);
+        }
+
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(consumer.getFlowComponent());
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
         }
 
         if(exceptionResolver != null)

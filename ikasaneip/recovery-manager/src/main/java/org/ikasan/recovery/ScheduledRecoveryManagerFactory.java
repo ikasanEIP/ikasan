@@ -38,62 +38,69 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.recovery;
 
-
-import java.util.List;
+import org.ikasan.scheduler.CachingScheduledJobFactory;
+import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.scheduler.SchedulerFactory;
+import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.quartz.Scheduler;
 
 /**
- * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>FlowEvent</code>
+ * Recovery Manager Factory provides recovery manager instances 
+ * currently only based on a the Ikasan Quartz scheduler for scheduled recovery 
+ * management.
  * 
  * @author Ikasan Development Team
  */
-public interface FlowElementInvoker<COMPONENT>
+public class ScheduledRecoveryManagerFactory implements RecoveryManagerFactory
 {
-    /** types of flow element invoker */
-    public static String CONSUMER = "Consumer";
-    public static String PRODUCER = "Producer";
-    public static String TRANSLATOR = "Translator";
-    public static String CONVERTER = "Converter";
-    public static String FILTER = "Filter";
-    public static String SEQUENCER = "Sequencer";
-    public static String SINGLE_RECIPIENT_ROUTER = "SingleRecipientRouter";
-    public static String MULTI_RECIPIENT_ROUTER = "MultiRecipientRouter";
-    public static String SPLITTER = "Splitter";
-    public static String BROKER = "Broker";
+    /** Quartz Scheduler */
+    private Scheduler scheduler;
+
+    /** Ikasan extended Quartz job factory */
+    private ScheduledJobFactory scheduledJobFactory;
 
     /**
-     * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
-     *
-     * @param flowEventListener
-     * @param moduleName
+     * Default implementation of a RecoveryManagerFactory instance.
+     * @return RecoveryManagerFactory
+     */
+    public static ScheduledRecoveryManagerFactory getInstance()
+    {
+    	return new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler(), CachingScheduledJobFactory.getInstance());
+    }
+
+    /**
+     * Constructor
+     * @param scheduler
+     * @param scheduledJobFactory
+     */
+    public ScheduledRecoveryManagerFactory(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory)
+    {
+        this.scheduler = scheduler;
+        if(scheduler == null)
+        {
+            throw new IllegalArgumentException("scheduler cannot be 'null'");
+        }
+
+        this.scheduledJobFactory = scheduledJobFactory;
+        if(scheduledJobFactory == null)
+        {
+            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
+        }
+    }
+
+    /**
+     * Create a new recovery manager instance based on the incoming parameters.
+     * 
      * @param flowName
-     * @param flowInvocationContext
-     * @param flowEvent argument for the <code>FlowElement</code>'s component
-     * @param flowElement for invocation
-     * @return FlowElement for subsequent execution
+     * @param moduleName
+     * @return RecoveryManager
      */
-    FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
-            FlowEvent flowEvent, FlowElement<COMPONENT> flowElement);
-
-    /**
-     * Override the calls to the context invocation
-     */
-    void setIgnoreContextInvocation(boolean ignoreContextInvocation);
-
-    /**
-     * Set the flow invocation context listeners
-     *
-     * @param flowInvocationContextListeners
-     */
-    void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
-
-    /**
-     * Set invoke context listeners flag.
-     *
-     * @param invokeContextListeners
-     */
-    void setInvokeContextListeners(boolean invokeContextListeners);
-
-
+    public RecoveryManager getRecoveryManager(String flowName, String moduleName)
+    {
+        return new ScheduledRecoveryManager(scheduler, scheduledJobFactory, flowName, moduleName);
+    }
+    
 }

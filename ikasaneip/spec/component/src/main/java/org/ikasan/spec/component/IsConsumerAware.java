@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -38,62 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.spec.component;
 
 
-import java.util.List;
+import org.ikasan.spec.component.endpoint.Consumer;
 
 /**
- * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>FlowEvent</code>
+ * Consumer aware contract.
  * 
- * @author Ikasan Development Team
+ * @author Ikasan Development Teams
  */
-public interface FlowElementInvoker<COMPONENT>
+public interface IsConsumerAware
 {
-    /** types of flow element invoker */
-    public static String CONSUMER = "Consumer";
-    public static String PRODUCER = "Producer";
-    public static String TRANSLATOR = "Translator";
-    public static String CONVERTER = "Converter";
-    public static String FILTER = "Filter";
-    public static String SEQUENCER = "Sequencer";
-    public static String SINGLE_RECIPIENT_ROUTER = "SingleRecipientRouter";
-    public static String MULTI_RECIPIENT_ROUTER = "MultiRecipientRouter";
-    public static String SPLITTER = "Splitter";
-    public static String BROKER = "Broker";
-
     /**
-     * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
-     *
-     * @param flowEventListener
-     * @param moduleName
-     * @param flowName
-     * @param flowInvocationContext
-     * @param flowEvent argument for the <code>FlowElement</code>'s component
-     * @param flowElement for invocation
-     * @return FlowElement for subsequent execution
+     * Setter for consumer on consumer aware implementations of this interface.
+     * @param consumer
      */
-    FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
-            FlowEvent flowEvent, FlowElement<COMPONENT> flowElement);
-
-    /**
-     * Override the calls to the context invocation
-     */
-    void setIgnoreContextInvocation(boolean ignoreContextInvocation);
-
-    /**
-     * Set the flow invocation context listeners
-     *
-     * @param flowInvocationContextListeners
-     */
-    void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
-
-    /**
-     * Set invoke context listeners flag.
-     *
-     * @param invokeContextListeners
-     */
-    void setInvokeContextListeners(boolean invokeContextListeners);
-
-
+    public void setConsumer(Consumer consumer);
 }
