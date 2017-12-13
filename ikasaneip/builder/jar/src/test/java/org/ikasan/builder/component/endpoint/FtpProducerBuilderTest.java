@@ -150,10 +150,6 @@ public class FtpProducerBuilderTest
     public void ftpProducer_build_when_configurationId_not_provided() {
 
         FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl(null, null, null, null);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("configuredResourceId is a required property for the ftpProducer and cannot be 'null'"));
-
         ftpProducerBuilder.setOutputDirectory("test").build();
     }
 

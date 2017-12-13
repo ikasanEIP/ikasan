@@ -350,18 +350,7 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         JmsTemplateProducer jmsProducer = getJmsTempalteProducer(this.ikasanJmsTemplate);
         jmsProducer.setConfiguration(configuration);
         jmsProducer.setConfiguredResourceId(configuredResourceId);
-
-        validateBuilderConfiguration(jmsProducer);
-
         return jmsProducer;
-    }
-
-    protected void validateBuilderConfiguration(JmsTemplateProducer jmsTemplateProducer)
-    {
-        if(jmsTemplateProducer.getConfiguration() != null && jmsTemplateProducer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the jmsProducer and cannot be 'null'");
-        }
     }
 
     /**

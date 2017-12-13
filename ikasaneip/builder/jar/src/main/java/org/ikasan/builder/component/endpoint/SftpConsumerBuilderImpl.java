@@ -41,7 +41,6 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -486,11 +485,6 @@ public class SftpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl implem
 
     protected void validateBuilderConfiguration()
     {
-        if(this.scheduledConsumer.getConfiguration() != null && this.scheduledConsumer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
-        }
-
         if(this.scheduledJobName == null)
         {
             throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");

@@ -52,6 +52,7 @@ import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -101,7 +102,7 @@ public class FlowBuilder implements ApplicationContextAware
     String moduleName;
 
     /** name of the flow being instantiated */
-    String name;
+    String flowName;
 
     /** optional module description */
     String description;
@@ -176,7 +177,7 @@ public class FlowBuilder implements ApplicationContextAware
      */
     public FlowBuilder(String name, String moduleName)
     {
-        this.name = name;
+        this.flowName = name;
         if(name == null)
         {
             throw new IllegalArgumentException("flow name cannot be 'null'");
@@ -205,7 +206,7 @@ public class FlowBuilder implements ApplicationContextAware
      */
     public FlowBuilder withName(String name)
     {
-        this.name = name;
+        this.flowName = name;
         return this;
     }
 
@@ -456,6 +457,33 @@ public class FlowBuilder implements ApplicationContextAware
         while (count > 0)
         {
             FlowElement flowElement = flowElements.get(--count);
+
+            // if the invoker is a configured resource
+            // set the configuredResourceId if not already set
+            if(flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
+            {
+                ConfiguredResource configuredResource = ((ConfiguredResource)flowElement.getFlowElementInvoker());
+                Object configuration = configuredResource.getConfiguration();
+                if(configuredResource.getConfiguredResourceId() == null)
+                {
+                    configuredResource.setConfiguredResourceId(moduleName + flowName + flowElement.getComponentName()
+                            + configuration.getClass().getName() + "_Invoker");
+                }
+            }
+
+            // if the POJO is a configured resource
+            // set the configuredResourceId if not already set
+            if(flowElement.getFlowComponent() instanceof ConfiguredResource)
+            {
+                ConfiguredResource configuredResource = ((ConfiguredResource)flowElement.getFlowComponent());
+                Object configuration = configuredResource.getConfiguration();
+                if(configuredResource.getConfiguredResourceId() == null && configuration != null)
+                {
+                    configuredResource.setConfiguredResourceId(moduleName + "_" + flowName + "_" + flowElement.getComponentName() + "_"
+                            + configuration.getClass().getName() + "_Component");
+                }
+            }
+
             if (flowElement.getFlowComponent() instanceof Consumer)
             {
                 Consumer consumer = (Consumer) flowElement.getFlowComponent();
@@ -577,7 +605,7 @@ public class FlowBuilder implements ApplicationContextAware
                 throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
             }
 
-            exclusionService = exclusionServiceFactory.getExclusionService(moduleName, name);
+            exclusionService = exclusionServiceFactory.getExclusionService(moduleName, flowName);
         }
 
         if (errorReportingService == null)
@@ -588,12 +616,12 @@ public class FlowBuilder implements ApplicationContextAware
         if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
         {
             ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
-            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
+            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(flowName);
         }
 
         if (recoveryManager == null)
         {
-            recoveryManager = this.recoveryManagerFactory.getRecoveryManager(name, moduleName);
+            recoveryManager = this.recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
         }
 
         if(recoveryManager instanceof IsConsumerAware)
@@ -624,7 +652,7 @@ public class FlowBuilder implements ApplicationContextAware
             exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService, replayRecordService);
         }
 
-        if(name == null)
+        if(flowName == null)
         {
             throw new IllegalArgumentException("flow name cannot be 'null'");
         }
@@ -634,7 +662,7 @@ public class FlowBuilder implements ApplicationContextAware
             throw new IllegalArgumentException("module name cannot be 'null'");
         }
 
-        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        Flow flow = new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setFlowListener(flowEventListener);
 
         // pass handle to the error reporting service if flow needs to be aware of this
@@ -657,7 +685,7 @@ public class FlowBuilder implements ApplicationContextAware
 
             if(monitor.getFlowName() == null)
             {
-                monitor.setFlowName(name);
+                monitor.setFlowName(flowName);
             }
 
             ((MonitorSubject)flow).setMonitor(monitor);
@@ -665,7 +693,7 @@ public class FlowBuilder implements ApplicationContextAware
 
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
-        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+        logger.info("Instantiated flow - name[" + flowName + "] module[" + moduleName
                 + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
                 + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
                 + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
@@ -706,9 +734,25 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder translator(String name, Translator translator, TranslatorInvokerConfiguration translatorInvokerConfiguration)
+        {
+            TranslatorFlowElementInvoker translatorFlowElementInvoker = new TranslatorFlowElementInvoker();
+            translatorFlowElementInvoker.setConfiguration(translatorInvokerConfiguration);
+            this.route.addFlowElement(new FlowElementImpl(name, translator, translatorFlowElementInvoker));
+            return this;
+        }
+
         public PrimaryRouteBuilder splitter(String name, Splitter splitter)
         {
             this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
+            return this;
+        }
+
+        public PrimaryRouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
+        {
+            SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker();
+            splitterFlowElementInvoker.setConfiguration(splitterInvokerConfiguration);
+            this.route.addFlowElement(new FlowElementImpl(name, splitter, splitterFlowElementInvoker));
             return this;
         }
 
@@ -718,11 +762,10 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
-        public PrimaryRouteBuilder filter(String name, Filter filter, String invokerConfiguredResourceId, FilterInvokerConfiguration filterInvokerConfiguration)
+        public PrimaryRouteBuilder filter(String name, Filter filter, FilterInvokerConfiguration filterInvokerConfiguration)
         {
             FilterFlowElementInvoker filterFlowElementInvoker = new  FilterFlowElementInvoker();
             filterFlowElementInvoker.setConfiguration(filterInvokerConfiguration);
-            filterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
             this.route.addFlowElement(new FlowElementImpl(name, filter, filterFlowElementInvoker));
             return this;
         }
@@ -747,10 +790,9 @@ public class FlowBuilder implements ApplicationContextAware
             return new PrimaryEvaluationImpl(route);
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, String invokerConfiguredResourceId, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
+        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
             MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker =
                     new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
-            multiRecipientRouterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
             this.route.addFlowElement( new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker) );
             return new PrimaryEvaluationImpl(route);
         }

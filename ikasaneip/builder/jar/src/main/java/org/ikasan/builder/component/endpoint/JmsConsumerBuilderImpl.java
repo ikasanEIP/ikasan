@@ -404,11 +404,8 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      * @return
      */
 
-    public JmsContainerConsumer build() {
-
-
-        validateBuilderConfiguration();
-
+    public JmsContainerConsumer build()
+    {
         MessageListener aopProxiedMessageListener = null;
         if (aopProxyProvider != null) {
              aopProxiedMessageListener = aopProxyProvider.applyPointcut(this.componentName, jmsConsumer);
@@ -451,14 +448,6 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
 
         return this.jmsConsumer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(this.jmsConsumer.getConfiguration() != null && this.jmsConsumer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the jmsConsumer and cannot be 'null'");
-        }
     }
 
     @Override

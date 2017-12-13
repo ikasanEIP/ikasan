@@ -73,13 +73,11 @@ public class Application
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
 
-        FilterInvokerConfiguration filterInvokerConfiguration = new FilterInvokerConfiguration();
-
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
                 .withDescription("Sample file to JMS flow")
                 .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
-                .filter("myFiler", componentFactory.getFilter(), "myFilterPoJo", new FilterInvokerConfiguration())
+                .filter("myFiler", componentFactory.getFilter(), new FilterInvokerConfiguration())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 

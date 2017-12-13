@@ -56,7 +56,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class FileProducerBuilderTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_fileproducerbuilder_build_invalid_properties() {
 
         new FileProducerBuilderImpl().build();
