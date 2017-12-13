@@ -43,7 +43,7 @@ package org.ikasan.flow.configuration;
 public class FlowPersistentConfiguration 
 {
 	private Boolean isRecording = false;	
-	private Integer recordedEventTimeToLiveDays = 30;
+	private Integer recordedEventTimeToLive = 30;
 	private Boolean invokeContextListeners = false;
 
 	/**
@@ -70,7 +70,7 @@ public class FlowPersistentConfiguration
 	 */
 	public void setRecordedEventTimeToLive(Integer timeToLive) 
 	{
-		this.recordedEventTimeToLiveDays = timeToLive;
+		this.recordedEventTimeToLive = timeToLive;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class FlowPersistentConfiguration
 	 */
 	public Integer getRecordedEventTimeToLive() 
 	{
-		return this.recordedEventTimeToLiveDays;
+		return this.recordedEventTimeToLive;
 	}
 
 	/**
