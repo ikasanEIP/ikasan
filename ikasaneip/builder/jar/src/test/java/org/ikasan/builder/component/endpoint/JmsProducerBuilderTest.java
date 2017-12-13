@@ -53,6 +53,7 @@ import org.springframework.jms.core.IkasanJmsTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
+import javax.transaction.TransactionManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -76,6 +77,7 @@ public class JmsProducerBuilderTest {
     final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
     final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
     final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
+    final TransactionManager transactionManager = mockery.mock(TransactionManager.class, "mockTransactionManager");
 
     @Test
     public void test_jmsproducerbuilder_build() {
@@ -85,7 +87,7 @@ public class JmsProducerBuilderTest {
             oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
         }});
 
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate);
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate, transactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -155,7 +157,7 @@ public class JmsProducerBuilderTest {
     @Test
     public void test_jmsproducerbuilder_build_verify_properties()
     {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -210,7 +212,7 @@ public class JmsProducerBuilderTest {
     @Test
     public void test_jmsproducerbuilder_build_with_cf()
     {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
