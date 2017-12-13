@@ -41,12 +41,14 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.component.endpoint.jms.producer.PostProcessor;
+import org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.springframework.jms.core.IkasanJmsTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
+import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +65,11 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     IkasanJmsTemplate ikasanJmsTemplate;
 
     /**
+     * Local Transaction manager
+     */
+    TransactionManager arjunaTransactionManager;
+
+    /**
      * configuration consumer
      */
     SpringMessageProducerConfiguration configuration = new SpringMessageProducerConfiguration();
@@ -75,13 +82,14 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     /**
      * Constructor
      */
-    public JmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate)
+    public JmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, TransactionManager arjunaTransactionManager)
     {
         this.ikasanJmsTemplate = ikasanJmsTemplate;
         if (ikasanJmsTemplate == null)
         {
             throw new IllegalArgumentException("ikasanJmsTemplate cannot be 'null'");
         }
+        this.arjunaTransactionManager = arjunaTransactionManager;
 
     }
 
@@ -353,6 +361,10 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
 
         validateBuilderConfiguration(jmsProducer);
 
+        if(jmsProducer instanceof ArjunaJmsTemplateProducer)
+        {
+            ((ArjunaJmsTemplateProducer) jmsProducer).setLocalTransactionManager(arjunaTransactionManager);
+        }
         return jmsProducer;
     }
 
@@ -371,7 +383,7 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
      */
     protected JmsTemplateProducer getJmsTempalteProducer(IkasanJmsTemplate ikasanJmsTemplate)
     {
-        return new JmsTemplateProducer(ikasanJmsTemplate);
+        return new ArjunaJmsTemplateProducer(ikasanJmsTemplate);
     }
 }
 

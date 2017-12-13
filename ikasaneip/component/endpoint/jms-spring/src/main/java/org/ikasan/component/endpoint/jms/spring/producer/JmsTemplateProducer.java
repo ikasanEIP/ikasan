@@ -58,7 +58,7 @@ public class JmsTemplateProducer<T>
         implements Producer<T>, ConfiguredResource<SpringMessageProducerConfiguration>, ManagedResource
 {
     /** instantiated jms template */
-    private IkasanJmsTemplate jmsTemplate;
+    protected IkasanJmsTemplate jmsTemplate;
 
     /** configured resource Id handle */
     private String configuredResourceId;

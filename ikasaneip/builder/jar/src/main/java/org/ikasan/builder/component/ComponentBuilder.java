@@ -200,7 +200,7 @@ public class ComponentBuilder
      * @return jmsProducerBuilder
      */
     public JmsProducerBuilder jmsProducer() {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),this.applicationContext.getBean(TransactionManager.class));
         return jmsProducerBuilder;
     }
 
