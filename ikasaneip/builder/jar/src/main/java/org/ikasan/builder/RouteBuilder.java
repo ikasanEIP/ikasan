@@ -83,9 +83,25 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder translator(String name, Translator translator, TranslatorInvokerConfiguration translatorInvokerConfiguration)
+	{
+		TranslatorFlowElementInvoker translatorFlowElementInvoker = new TranslatorFlowElementInvoker();
+		translatorFlowElementInvoker.setConfiguration(translatorInvokerConfiguration);
+		this.route.addFlowElement(new FlowElementImpl(name, translator, translatorFlowElementInvoker));
+		return this;
+	}
+
 	public RouteBuilder splitter(String name, Splitter splitter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
+		return this;
+	}
+
+	public RouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
+	{
+		SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker();
+		splitterFlowElementInvoker.setConfiguration(splitterInvokerConfiguration);
+		this.route.addFlowElement(new FlowElementImpl(name, splitter, splitterFlowElementInvoker));
 		return this;
 	}
 
@@ -95,11 +111,10 @@ public class RouteBuilder
 		return this;
 	}
 
-	public RouteBuilder filter(String name, Filter filter, String invokerConfiguredResourceId, FilterInvokerConfiguration filterInvokerConfiguration)
+	public RouteBuilder filter(String name, Filter filter, FilterInvokerConfiguration filterInvokerConfiguration)
 	{
 		FilterFlowElementInvoker filterFlowElementInvoker = new  FilterFlowElementInvoker();
 		filterFlowElementInvoker.setConfiguration(filterInvokerConfiguration);
-		filterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
 		this.route.addFlowElement(new FlowElementImpl(name, filter, filterFlowElementInvoker));
 		return this;
 	}
@@ -128,10 +143,9 @@ public class RouteBuilder
 		return new EvaluationImpl(route);
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, String invokerConfiguredResourceId, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
 	{
 		MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
-		multiRecipientRouterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
 		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker));
 		return new EvaluationImpl(route);
 	}

@@ -137,5 +137,10 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
         return null;
     }
 
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.BROKER;
+    }
 }
 

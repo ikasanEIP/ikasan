@@ -55,6 +55,12 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
     Boolean requiresFullEventForInvocation;
 
     @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.PRODUCER;
+    }
+
+    @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

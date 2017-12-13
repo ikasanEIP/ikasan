@@ -150,9 +150,6 @@ public class SftpProducerBuilderTest
 
         SftpProducerBuilder sftpProducerBuilder = new SftpProducerBuilderImpl(null, null, null, null);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("configuredResourceId is a required property for the sftpProducer and cannot be 'null'"));
-
         sftpProducerBuilder.setOutputDirectory("test").build();
     }
 

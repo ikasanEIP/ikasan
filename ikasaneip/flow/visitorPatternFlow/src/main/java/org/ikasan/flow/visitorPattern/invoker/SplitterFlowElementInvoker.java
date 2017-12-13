@@ -43,6 +43,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.splitting.SplitterException;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 
 import java.util.List;
@@ -53,10 +54,22 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>
+public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>, ConfiguredResource<SplitterInvokerConfiguration>
 {
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
+
+    /** configured resource identifier */
+    private String configuredResourceId;
+
+    /** configuration */
+    private SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
+
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.SPLITTER;
+    }
 
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
@@ -117,16 +130,9 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
                     + "Splitters must return at least one payload.");
         }
 
-        for (Object payload : payloads)
+        if(this.configuration.isSendSplitsAsSinglePayload())
         {
-            if(payload instanceof FlowEvent)
-            {
-                flowEvent = (FlowEvent)payload;
-            }
-            else
-            {
-                flowEvent.setPayload(payload);
-            }
+            flowEvent.setPayload(payloads);
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextFlowElement;
@@ -136,8 +142,47 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
                 nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
             }
         }
+        else
+        {
+            for (Object payload : payloads) {
+                if (payload instanceof FlowEvent) {
+                    flowEvent = (FlowEvent) payload;
+                } else {
+                    flowEvent.setPayload(payload);
+                }
+                notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
+                FlowElement nextFlowElementInRoute = nextFlowElement;
+                while (nextFlowElementInRoute != null) {
+                    notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                }
+            }
+        }
         return null;
     }
 
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public SplitterInvokerConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(SplitterInvokerConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
 }

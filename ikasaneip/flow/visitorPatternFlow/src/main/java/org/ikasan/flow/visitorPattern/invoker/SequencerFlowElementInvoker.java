@@ -54,6 +54,13 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Sequencer>
 {
+
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.SEQUENCER;
+    }
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
     {
