@@ -38,38 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.jms.spring.listener;
+package org.ikasan.component.endpoint.jms.spring.producer;
 
 import org.jboss.narayana.jta.jms.ConnectionFactoryProxy;
 import org.jboss.narayana.jta.jms.TransactionHelperImpl;
-import org.springframework.jms.listener.IkasanMessageListenerContainer;
-import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
-import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.configuration.Configured;
+import org.springframework.jms.core.IkasanJmsTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.XAConnectionFactory;
 import javax.transaction.TransactionManager;
 
 /**
- * Extend IkasanMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
+ * Extend JmsTemplateProducer to ensure standard defaults are set on the producer being instantiated.
  * And uses Arjuna transaction Manager to ensure JMS enlisting to XA transaction by usage of ConnectionFactoryProxy
  * provided by Arjuna.
  *
  * @author Ikasan Development Team
  */
-public class ArjunaIkasanMessageListenerContainer extends IkasanMessageListenerContainer
-        implements MessageProvider, Configured<SpringMessageConsumerConfiguration>, IsExclusionServiceAware
+public class ArjunaJmsTemplateProducer extends JmsTemplateProducer
 {
     private TransactionManager localTransactionManager;
 
     /**
-     * Constructor with preferred defaults.
+     * Constructor
+     *
+     * @param jmsTemplate
      */
-    public ArjunaIkasanMessageListenerContainer()
+    public ArjunaJmsTemplateProducer(IkasanJmsTemplate jmsTemplate)
     {
-        super();
+        super(jmsTemplate);
     }
 
     /**
@@ -80,14 +77,15 @@ public class ArjunaIkasanMessageListenerContainer extends IkasanMessageListenerC
         super.establishConnectionFactory();
 
         // proxy an XA CF, but only if its not already been proxied
-        if(getConnectionFactory() instanceof XAConnectionFactory && !(getConnectionFactory() instanceof ConnectionFactoryProxy) )
+        if(jmsTemplate.getConnectionFactory() instanceof XAConnectionFactory
+            && !(jmsTemplate.getConnectionFactory() instanceof ConnectionFactoryProxy) )
         {
             ConnectionFactory connectionFactoryProxy = new ConnectionFactoryProxy(
-                    (XAConnectionFactory) getConnectionFactory(),
-                    new TransactionHelperImpl(localTransactionManager)
+                (XAConnectionFactory) jmsTemplate.getConnectionFactory(),
+                new TransactionHelperImpl(localTransactionManager)
             );
 
-            setConnectionFactory(connectionFactoryProxy);
+            jmsTemplate.setConnectionFactory(connectionFactoryProxy);
         }
     }
 
@@ -101,4 +99,3 @@ public class ArjunaIkasanMessageListenerContainer extends IkasanMessageListenerC
         this.localTransactionManager = localTransactionManager;
     }
 }
-
