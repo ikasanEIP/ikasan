@@ -54,7 +54,7 @@ import javax.transaction.TransactionManager;
 
 /**
  * Extend IkasanMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
- * And uses Arjun transaction Manager to ensuer JMS enroling to XA transaction by usage of ConnectionFactoryProxy
+ * And uses Arjuna transaction Manager to ensure JMS enlisting to XA transaction by usage of ConnectionFactoryProxy
  * provided by Arjuna.
  *
  * @author Ikasan Development Team
