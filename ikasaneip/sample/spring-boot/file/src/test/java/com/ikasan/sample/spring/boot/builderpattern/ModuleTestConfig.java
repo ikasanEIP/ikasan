@@ -28,7 +28,7 @@ public class ModuleTestConfig
     MessageListenerVerifier messageListenerVerifierTarget()
     {
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "private.file.queue", registry);
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
         return messageListenerVerifier;
     }
 }

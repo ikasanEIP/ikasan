@@ -106,7 +106,7 @@ public class ConfigurationManagementService
             throw new IllegalArgumentException("moduleService cannot be 'null'");
         }
     }
-
+   
     /**
      * Is this moduleName/flowName/flowElementName referencing a component that
      * is marked as a ConfiguredResource.
@@ -134,7 +134,7 @@ public class ConfigurationManagementService
         FlowElement flowElement = getFlowElement(moduleName, flowName, flowElementName);
         return ( flowElement.getFlowElementInvoker() instanceof ConfiguredResource );
     }
-
+    
     /**
      * Find the configuration instance for this moduleName/flowName/flowElementName.
      * Report any issues back via the RequestContext.

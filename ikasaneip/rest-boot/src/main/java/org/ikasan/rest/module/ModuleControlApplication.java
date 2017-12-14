@@ -108,7 +108,7 @@ public class ModuleControlApplication {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
-            value = "/flowState/{moduleName}")
+            value = "/flowStates/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public Map<String, String> getFlowStates(@PathVariable("moduleName") String moduleName) {
 

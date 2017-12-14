@@ -205,7 +205,7 @@ public class ModuleInitialisationServiceImpl
                 String[] resourcesArray = new String[loaderResource.size()];
                 loaderResource.toArray(resourcesArray);
                 AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray,
-                        platformContext);
+                    platformContext);
                 innerContexts.add(applicationContext);
                 for (String beanName : applicationContext.getBeanDefinitionNames())
                 {
@@ -214,7 +214,7 @@ public class ModuleInitialisationServiceImpl
                         if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
                         {
                             logger.info("Loader Spring context contains bean name [" + beanName + "] of type ["
-                                    + applicationContext.getBean(beanName).getClass().getName() + "]");
+                                + applicationContext.getBean(beanName).getClass().getName() + "]");
                         }
                     }
                     catch (RuntimeException e)
@@ -232,9 +232,18 @@ public class ModuleInitialisationServiceImpl
                 logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
                 loadModuleFromContext(platformContext);
             }
-            else if (e.getMessage().contains("File Not Found"))
+            else if (e.getMessage().contains("IOException parsing XML document from class path resource ["))
             {
-                throw new RuntimeException(e);
+                throw new MissingConfigFileException("Failed loading one of config files. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name ") && e.getMessage()
+                .contains("Could not resolve placeholder"))
+            {
+                throw new MissingPropertiesException("Unable to resolve properties. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name. "))
+            {
+                throw new MissingBeanConfigurationException("Unable to configure bean. See exception details.", e);
             }
         }
     }
@@ -258,7 +267,15 @@ public class ModuleInitialisationServiceImpl
         }
         catch (NoSuchBeanDefinitionException e)
         {
-            // nothing of issue here, move on
+            if (e.getMessage().startsWith("Invalid bean definition with name ") && e.getMessage()
+                .contains("Could not resolve placeholder"))
+            {
+                throw new MissingPropertiesException("Unable to resolve properties. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name. "))
+            {
+                throw new MissingBeanConfigurationException("Unable to configure bean. See exception details.", e);
+            }
         }
         // load all modules in this context
         // TODO - should multiple modules share the same application context ?
@@ -418,32 +435,37 @@ public class ModuleInitialisationServiceImpl
      */
     protected void initialiseModuleMetaData(Module module)
     {
-        Optional<Server> existingServer = getServer();
-        org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
-        if (existingModule == null)
+        try
         {
-            logger.info("module does not exist [" + module.getName() + "], creating...");
-            existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+            Optional<Server> existingServer = getServer();
+            org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
+            if (existingModule == null)
+            {
+                logger.info("module does not exist [" + module.getName() + "], creating...");
+                existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
                     module.getDescription(), module.getVersion(), null, null);
-            if (existingServer.isPresent())
-            {
-                existingModule.setServer(existingServer.get());
-            }
-            this.topologyService.save(existingModule);
-
-            createMetadata(module,existingModule);
-        }
-        else
-        {
-            updateMetadata(module,existingModule);
-            if (existingServer.isPresent())
-            {
-                logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl()
-                        + "].");
-                existingModule.setServer(existingServer.get());
+                if (existingServer.isPresent())
+                {
+                    existingModule.setServer(existingServer.get());
+                }
                 this.topologyService.save(existingModule);
+                createMetadata(module, existingModule);
             }
-
+            else
+            {
+                updateMetadata(module, existingModule);
+                if (existingServer.isPresent())
+                {
+                    logger.info(
+                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
+                    existingModule.setServer(existingServer.get());
+                    this.topologyService.save(existingModule);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
         }
     }
 

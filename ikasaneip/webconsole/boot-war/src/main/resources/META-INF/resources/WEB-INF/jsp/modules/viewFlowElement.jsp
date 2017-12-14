@@ -47,9 +47,9 @@
 
 <div class="middle">
 
-	<h2>FlowElement :: <c:out value="${flowElement.componentName}" /></h2>
+<h2>FlowElement :: <c:out value="${flowElement.componentName}" /></h2>
 
-	<span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
+<span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
 
 
 	<h3>Component</h3>
