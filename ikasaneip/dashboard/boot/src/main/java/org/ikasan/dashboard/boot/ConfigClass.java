@@ -38,6 +38,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:solr-harvesting-context.xml",
         "classpath:search-context.xml",
         "classpath:datasource-conf.xml",
+        "classpath:control-context.xml",
         /**
 
          /WEB-INF/discovery-context.xml,
@@ -50,7 +51,12 @@ import org.springframework.context.annotation.ImportResource;
          */
 } )
 
-@ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","org.ikasan.dashboard.ui.*"})
+@ComponentScan({
+    "org.ikasan.web.*",
+        "org.ikasan.rest.*",
+        "org.ikasan.dashboard.ui.*",
+        "org.ikasan.dashboard.boot.*"
+})
 public class ConfigClass {
     @Bean("narayanaProperties")
     public NarayanaProperties getNarayanaProperties(){
