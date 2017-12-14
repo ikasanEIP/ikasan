@@ -77,7 +77,7 @@ public class Application
                 .withDescription("Sample file to JMS flow")
                 .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
-                .filter("myFiler", componentFactory.getFilter(), new FilterInvokerConfiguration())
+                .filter("myFilter", componentFactory.getFilter(), new FilterInvokerConfiguration())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
