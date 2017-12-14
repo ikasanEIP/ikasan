@@ -314,7 +314,8 @@ public class ComponentBuilderTest {
         mockery.checking(new Expectations()
         {
             {
-
+                oneOf(applicationContext).getBean(TransactionManager.class);
+                will(returnValue(transactionManager));
 
             }
         });
