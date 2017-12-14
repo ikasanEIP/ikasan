@@ -42,8 +42,8 @@ package org.ikasan.dashboard.ui.replay.window;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 
@@ -60,15 +60,15 @@ public class ReplayAuditViewWindow extends Window
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ReplayAudit replayAudit;
+	private HibernateReplayAudit replayAudit;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	
 
 	/**
 	 * @param policy
 	 */
-	public ReplayAuditViewWindow(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService)
+	public ReplayAuditViewWindow(HibernateReplayAudit replayAudit, ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService)
 	{
 		super();
 		this.replayAudit = replayAudit;

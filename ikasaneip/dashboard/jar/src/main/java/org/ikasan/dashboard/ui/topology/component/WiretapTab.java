@@ -64,6 +64,7 @@ import org.ikasan.dashboard.ui.topology.component.container.WiretapEventBeanQuer
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
@@ -72,6 +73,7 @@ import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.teemu.VaadinIcons;
@@ -116,7 +118,7 @@ public class WiretapTab extends TopologyTab
 	private FilterTable wiretapTable;
 	
 	private WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> wiretapService;
-	private WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> solrWiretapService;
+	private SolrWiretapServiceImpl solrWiretapService;
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -140,8 +142,11 @@ public class WiretapTab extends TopologyTab
 			BeanQueryFactory<WiretapEventBeanQuery>(WiretapEventBeanQuery.class);
 	
 	private PlatformConfigurationService platformConfigurationService;
+
+	private String solrUsername;
+	private String solrPassword;
 	
-	public WiretapTab(WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> wiretapService, WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> solrWiretapService
+	public WiretapTab(WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> wiretapService, SolrWiretapServiceImpl solrWiretapService
 					  ,ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
 	{
 		this.wiretapService = wiretapService;
@@ -279,6 +284,20 @@ public class WiretapTab extends TopologyTab
 				if(solrEnabled != null && solrEnabled.equals("true") &&
 						WiretapTab.this.useDbCheckbox.getValue() == false)
 				{
+					if( WiretapTab.this.solrUsername == null ||  WiretapTab.this.solrUsername.isEmpty())
+					{
+						WiretapTab.this.solrUsername =  WiretapTab.this.platformConfigurationService.getSolrUsername();
+					}
+
+					if(WiretapTab.this.solrPassword == null ||  WiretapTab.this.solrPassword.isEmpty())
+					{
+						WiretapTab.this.solrPassword =  WiretapTab.this.platformConfigurationService.getSolrPassword();
+					}
+
+					WiretapTab.this.solrWiretapService
+							.setSolrUsername(WiretapTab.this.solrUsername);
+					WiretapTab.this.solrWiretapService
+							.setSolrPassword(WiretapTab.this.solrPassword);
 					logger.info("Performing wiretap search via Solr Index.");
 					events = WiretapTab.this.solrWiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
 							, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());

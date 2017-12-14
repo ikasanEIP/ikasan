@@ -50,6 +50,18 @@ import java.util.List;
  */
 public interface FlowElementInvoker<COMPONENT>
 {
+    /** types of flow element invoker */
+    public static String CONSUMER = "Consumer";
+    public static String PRODUCER = "Producer";
+    public static String TRANSLATOR = "Translator";
+    public static String CONVERTER = "Converter";
+    public static String FILTER = "Filter";
+    public static String SEQUENCER = "Sequencer";
+    public static String SINGLE_RECIPIENT_ROUTER = "SingleRecipientRouter";
+    public static String MULTI_RECIPIENT_ROUTER = "MultiRecipientRouter";
+    public static String SPLITTER = "Splitter";
+    public static String BROKER = "Broker";
+
     /**
      * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
      *
@@ -82,4 +94,6 @@ public interface FlowElementInvoker<COMPONENT>
      * @param invokeContextListeners
      */
     void setInvokeContextListeners(boolean invokeContextListeners);
+
+
 }

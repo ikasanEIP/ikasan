@@ -122,7 +122,7 @@ public class TopologyStateCache
 	{
 		stateMap = new ConcurrentHashMap<String, String>();
 				
-		logger.info("Synchronising topology state cache.");
+		logger.debug("Synchronising topology state cache.");
 		
 		List<Server> servers;
 		try
@@ -139,23 +139,23 @@ public class TopologyStateCache
 		String username = this.platformConfigurationService.getWebServiceUsername();
 		String password = this.platformConfigurationService.getWebServicePassword();
 		
-		logger.info("Number of servers to synch: " + servers.size());
+		logger.debug("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
-			logger.info("Synchronising server: " + server.getName());
+			logger.debug("Synchronising server: " + server.getName());
 			for(Module module: server.getModules())
 			{
-				logger.info("Synchronising module: " + module.getName());
+				logger.debug("Synchronising module: " + module.getName());
 				GetFlowStatesRunnable getFlowStatesRunnable = new GetFlowStatesRunnable(module, username, password);
 				
 				executorService.execute(getFlowStatesRunnable);
 			}
 		}
 
-		logger.info("Broadcasting cache state.");
+		logger.debug("Broadcasting cache state.");
 		Broadcaster.broadcast(stateMap);
 		
-		logger.info("Finished synchronising topology state cache.");
+		logger.debug("Finished synchronising topology state cache.");
 	}
 
 	private class GetFlowStatesRunnable implements Runnable
@@ -211,12 +211,12 @@ public class TopologyStateCache
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
-	    	logger.info("Calling URL: " + url);
+	    	logger.debug("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
 	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
 	    	
-	    	logger.info("Results: " + results);
+	    	logger.debug("Results: " + results);
 		}
 		catch(Exception e)
 		{

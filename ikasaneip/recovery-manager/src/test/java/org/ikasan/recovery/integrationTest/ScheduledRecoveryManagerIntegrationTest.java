@@ -40,6 +40,11 @@
  */
 package org.ikasan.recovery.integrationTest;
 
+import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
+import org.ikasan.spec.flow.FlowElement;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
@@ -50,7 +55,7 @@ import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
-import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -134,7 +139,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         this.scheduler = SchedulerFactory.getInstance().getScheduler();
         this.scheduledJobFactory = CachingScheduledJobFactory.getInstance();
         this.consumer = new StubbedConsumer();
-        this.recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
+        this.recoveryManagerFactory = new ScheduledRecoveryManagerFactory(scheduler, scheduledJobFactory);
         this.exclusionService = new StubbedExclusionService();
         this.errorReportingService = new StubbedErrorReportingService();
 
@@ -144,10 +149,11 @@ public class ScheduledRecoveryManagerIntegrationTest
      * Test initial state of recovery manager after instantiation.
      */
     @Test
-    @Ignore
     public void test_recoveryManager_state_after_creation()
     {
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
+
         Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
         Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
     }
@@ -160,7 +166,8 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Ignore
     public void test_recoveryManager_default_stop_when_no_resolver()
     {
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
 
         // start the consumer and pass exception to recoveryManager
         consumer.start();
@@ -202,7 +209,8 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(resolver);
 
         //
@@ -255,7 +263,8 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(resolver);
 
         //
@@ -300,7 +309,8 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(resolver);
 
         //
@@ -400,7 +410,8 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(resolver);
 
         //
@@ -516,7 +527,9 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService, errorReportingService);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
+
         recoveryManager.setResolver(resolver);
 
         //
@@ -697,6 +710,29 @@ public class ScheduledRecoveryManagerIntegrationTest
 			// TODO Auto-generated method stub
 			return null;
 		}
+    }
+
+    /**
+     * Call isAware setters on the RM to populate as required.
+     *
+     * @param recoveryManager
+     */
+    private void setIsAware(RecoveryManager recoveryManager)
+    {
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(consumer);
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+        }
     }
 
     /**

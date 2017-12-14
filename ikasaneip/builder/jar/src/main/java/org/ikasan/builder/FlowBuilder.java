@@ -52,7 +52,8 @@ import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -69,6 +70,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
@@ -87,7 +89,7 @@ import java.util.*;
 
 /**
  * A simple Flow builder.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class FlowBuilder implements ApplicationContextAware
@@ -96,15 +98,15 @@ public class FlowBuilder implements ApplicationContextAware
     private static Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
     /** name of the flow module owner */
-	String moduleName;
+    String moduleName;
 
-	/** name of the flow being instantiated */
-	String name;
+    /** name of the flow being instantiated */
+    String name;
 
-	/** optional module description */
-	String description;
+    /** optional module description */
+    String description;
 
-	/** flow event listener */
+    /** flow event listener */
     @Autowired
     FlowEventListener flowEventListener;
 
@@ -119,7 +121,7 @@ public class FlowBuilder implements ApplicationContextAware
     @Autowired
     ExceptionResolver exceptionResolver;
 
-	/** configuration service */
+    /** configuration service */
     @Autowired
     ConfigurationService configurationService;
 
@@ -142,15 +144,15 @@ public class FlowBuilder implements ApplicationContextAware
     Monitor monitor;
 
     /** default event factory */
-	EventFactory eventFactory = new FlowEventFactory();
+    EventFactory eventFactory = new FlowEventFactory();
 
     /** head flow element of the exclusion flow */
     FlowElement<?> exclusionFlowHeadElement;
-    
+
     /** handle to the re-submission service */
     //@Autowired
     ResubmissionService resubmissionService;
-    
+
     /** the serialiser factory */
     @Autowired
     SerialiserFactory serialiserFactory;
@@ -158,7 +160,7 @@ public class FlowBuilder implements ApplicationContextAware
     /** the replayRecordService **/
     ReplayRecordService replayRecordService;
 
-	/** List of FlowInvocationListener */
+    /** List of FlowInvocationListener */
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     ApplicationContext context;
@@ -168,12 +170,12 @@ public class FlowBuilder implements ApplicationContextAware
     AopProxyProvider aopProxyProvider;
 
     /**
-	 * Constructor
-	 *
-	 * @param name
-	 */
-	public FlowBuilder(String name, String moduleName)
-	{
+     * Constructor
+     *
+     * @param name
+     */
+    public FlowBuilder(String name, String moduleName)
+    {
         this.name = name;
         if(name == null)
         {
@@ -207,17 +209,17 @@ public class FlowBuilder implements ApplicationContextAware
         return this;
     }
 
-	/**
-	 * Add a module name
-	 *
-	 * @param moduleName
-	 * @return
-	 */
-	public FlowBuilder withModuleName(String moduleName)
-	{
-		this.moduleName = moduleName;
-		return this;
-	}
+    /**
+     * Add a module name
+     *
+     * @param moduleName
+     * @return
+     */
+    public FlowBuilder withModuleName(String moduleName)
+    {
+        this.moduleName = moduleName;
+        return this;
+    }
 
     /**
      * Add a flow description
@@ -232,40 +234,40 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-	 * Add a flow description
-	 * 
-	 * @param flowEventListener
-	 * @return
-	 */
-	public FlowBuilder withFlowListener(FlowEventListener flowEventListener)
-	{
-		this.flowEventListener = flowEventListener;
-		return this;
-	}
+     * Add a flow description
+     *
+     * @param flowEventListener
+     * @return
+     */
+    public FlowBuilder withFlowListener(FlowEventListener flowEventListener)
+    {
+        this.flowEventListener = flowEventListener;
+        return this;
+    }
 
-	/**
-	 * Allow override of default configuration service
-	 * 
-	 * @param configurationService
-	 * @return
-	 */
-	public FlowBuilder withConfigurationService(ConfigurationService configurationService)
-	{
-		this.configurationService = configurationService;
-		return this;
-	}
+    /**
+     * Allow override of default configuration service
+     *
+     * @param configurationService
+     * @return
+     */
+    public FlowBuilder withConfigurationService(ConfigurationService configurationService)
+    {
+        this.configurationService = configurationService;
+        return this;
+    }
 
-	/**
-	 * Override the default recovery manager
-	 * 
-	 * @param recoveryManagerFactory
-	 * @return
-	 */
-	public FlowBuilder withRecoveryManagerFactory(RecoveryManagerFactory recoveryManagerFactory)
-	{
-		this.recoveryManagerFactory = recoveryManagerFactory;
-		return this;
-	}
+    /**
+     * Override the default recovery manager
+     *
+     * @param recoveryManagerFactory
+     * @return
+     */
+    public FlowBuilder withRecoveryManagerFactory(RecoveryManagerFactory recoveryManagerFactory)
+    {
+        this.recoveryManagerFactory = recoveryManagerFactory;
+        return this;
+    }
 
     /**
      * Set the error reporting service factory
@@ -324,15 +326,15 @@ public class FlowBuilder implements ApplicationContextAware
         this.exclusionFlowHeadElement = exclusionFlowHeadElement;
         return this;
     }
-    
+
     /**
-	 * @param serialiserFactory the ikasanSerialiserFactory to set
-	 */
-	public FlowBuilder withSerialiserFactory(SerialiserFactory serialiserFactory)
-	{
-		this.serialiserFactory = serialiserFactory;
-		return this;
-	}
+     * @param serialiserFactory the ikasanSerialiserFactory to set
+     */
+    public FlowBuilder withSerialiserFactory(SerialiserFactory serialiserFactory)
+    {
+        this.serialiserFactory = serialiserFactory;
+        return this;
+    }
 
     /**
      * Add in a FlowInvocationContextListener
@@ -369,7 +371,7 @@ public class FlowBuilder implements ApplicationContextAware
         this.monitor = monitor;
         return this;
     }
-    
+
     /**
      * Setter for re-submission service
      * @param resubmissionService
@@ -381,15 +383,25 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-	 * @param replayRecordService the replayRecordService to set
-	 */
-	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService)
-	{
-		this.replayRecordService = replayRecordService;
-		return this;
-	}
+     * Setter for recoveryManager service
+     * @param recoveryManager
+     */
+    public FlowBuilder withRecoveryManager(RecoveryManager recoveryManager)
+    {
+        this.recoveryManager = recoveryManager;
+        return this;
+    }
 
-	/**
+    /**
+     * @param replayRecordService the replayRecordService to set
+     */
+    public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService)
+    {
+        this.replayRecordService = replayRecordService;
+        return this;
+    }
+
+    /**
      * Setter for exception resolver to be registered with the recovery manager.
      * @param exceptionResolver
      */
@@ -400,29 +412,29 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-	 * Override the default event factory
-	 * 
-	 * @param eventFactory
-	 * @return
-	 */
-	public FlowBuilder withEventFactory(EventFactory eventFactory)
-	{
-		this.eventFactory = eventFactory;
-		return this;
-	}
+     * Override the default event factory
+     *
+     * @param eventFactory
+     * @return
+     */
+    public FlowBuilder withEventFactory(EventFactory eventFactory)
+    {
+        this.eventFactory = eventFactory;
+        return this;
+    }
 
     protected EventFactory getEventFactory()
     {
         return this.eventFactory;
     }
 
-	/**
-	 * Add a consumer
-	 * 
-	 * @param name
-	 * @param consumer
-	 * @return
-	 */
+    /**
+     * Add a consumer
+     *
+     * @param name
+     * @param consumer
+     * @return
+     */
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
@@ -581,12 +593,22 @@ public class FlowBuilder implements ApplicationContextAware
 
         if (recoveryManager == null)
         {
-            recoveryManager = this.recoveryManagerFactory.getInstance()
-                    .getRecoveryManager(
-                            name,
-                            moduleName,
-                            ((FlowElement<Consumer>) headFlowElement).getFlowComponent(),
-                            exclusionService, errorReportingService);
+            recoveryManager = this.recoveryManagerFactory.getRecoveryManager(name, moduleName);
+        }
+
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(((FlowElement<Consumer>) headFlowElement).getFlowComponent());
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
         }
 
         if(exceptionResolver != null)
@@ -690,8 +712,18 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
-        public PrimaryRouteBuilder filter(String name, Filter filter) {
+        public PrimaryRouteBuilder filter(String name, Filter filter)
+        {
             this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
+            return this;
+        }
+
+        public PrimaryRouteBuilder filter(String name, Filter filter, String invokerConfiguredResourceId, FilterInvokerConfiguration filterInvokerConfiguration)
+        {
+            FilterFlowElementInvoker filterFlowElementInvoker = new  FilterFlowElementInvoker();
+            filterFlowElementInvoker.setConfiguration(filterInvokerConfiguration);
+            filterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
+            this.route.addFlowElement(new FlowElementImpl(name, filter, filterFlowElementInvoker));
             return this;
         }
 
@@ -705,13 +737,21 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
-       public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter) {
+        public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter) {
             this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
             return new PrimaryEvaluationImpl(route);
         }
 
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
-            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterConfiguration())));
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
+            return new PrimaryEvaluationImpl(route);
+        }
+
+        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, String invokerConfiguredResourceId, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
+            MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker =
+                    new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
+            multiRecipientRouterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
+            this.route.addFlowElement( new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker) );
             return new PrimaryEvaluationImpl(route);
         }
 

@@ -58,9 +58,12 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayAudit;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
@@ -106,9 +109,9 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	
-	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
 	
 
 	private PopupDateField fromDate;
@@ -129,8 +132,8 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-                          PlatformConfigurationService platformConfigurationService)
+	public ReplayAuditTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService
+			, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService, PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
@@ -180,7 +183,7 @@ public class ReplayAuditTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		    		ReplayAudit replayAudit = (ReplayAudit)itemClickEvent.getItemId();		    				    		
+		    		HibernateReplayAudit replayAudit = (HibernateReplayAudit)itemClickEvent.getItemId();
 		    		
 		    		ReplayAuditViewWindow replayAuditViewWindow = new ReplayAuditViewWindow(replayAudit, replayManagementService);
 			    
@@ -222,7 +225,7 @@ public class ReplayAuditTab extends TopologyTab
                 	}
             	}
 
-            	List<ReplayAudit> replayAudits = replayManagementService
+            	List<HibernateReplayAudit> replayAudits = replayManagementService
             			.getReplayAudits(moduleNames, flowNames, eventId.getValue(), user.getValue(), fromDate.getValue(), toDate.getValue());
             	
             	if(replayAudits == null || replayAudits.size() == 0)

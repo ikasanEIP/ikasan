@@ -19,12 +19,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by stewmi on 20/11/2017.
  */
-public class ModuleControlRunnable implements Runnable
+public class ModuleControlRunnable implements Runnable, Callable<String>
 {
     private Logger logger = Logger.getLogger(ModuleControlRunnable.class);
 
@@ -47,12 +48,18 @@ public class ModuleControlRunnable implements Runnable
     }
 
     @Override
+    public String call() throws Exception
+    {
+        return actionFlow();
+    }
+
+    @Override
     public void run()
     {
         actionFlow();
     }
 
-    protected boolean actionFlow()
+    protected String actionFlow()
     {
         HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
 
@@ -88,10 +95,6 @@ public class ModuleControlRunnable implements Runnable
         {
             response.bufferEntity();
 
-            String responseMessage = response.readEntity(String.class);
-
-            Notification.show(responseMessage, Notification.Type.ERROR_MESSAGE);
-
             String state = this.getFlowState(flow, authentication.getName(), (String)authentication.getCredentials());
 
             String key = flow.getModule().getName() + "-" + flow.getName();
@@ -100,10 +103,10 @@ public class ModuleControlRunnable implements Runnable
 
             updateTable(state);
 
-            return false;
+            return String.format("Action[<b>%s</b>] Flow[<b>%s</b>] Status[<font color=\"red\">ERROR</font>]", action, flow.getModule().getName() + "-" + flow.getName());
         }
 
-        return true;
+        return String.format("Action[<b>%s</b>] Flow[<b>%s</b>] Status[<font color=\"green\">SUCCESS</font>]", action, flow.getModule().getName() + "-" + flow.getName());
     }
 
     protected String getFlowState(Flow flow, String username, String password)
@@ -146,25 +149,8 @@ public class ModuleControlRunnable implements Runnable
 
     public void updateTable(String state)
     {
-//        UI.getCurrent().access(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                VaadinSession.getCurrent().getLockInstance().lock();
-//                try
-//                {
-                    item.getItemProperty("Status").setValue(state);
+        item.getItemProperty("Status").setValue(state);
 
-                    moduleTable.markAsDirty();
-//                }
-//                finally
-//                {
-//                    VaadinSession.getCurrent().getLockInstance().unlock();
-//                }
-//
-//                UI.getCurrent().push();
-//            }
-//        });
+        moduleTable.markAsDirty();
     }
 }

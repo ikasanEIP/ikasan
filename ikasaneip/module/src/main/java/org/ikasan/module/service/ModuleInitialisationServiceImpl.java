@@ -40,7 +40,9 @@
  */
 package org.ikasan.module.service;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.module.converter.ModuleConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -68,28 +70,37 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+
 
 /**
  * Module Initialisation Service default implementation
  *
  * @author Ikasan Development Team
  */
-public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
-        InitializingBean,
-        DisposableBean
+public class ModuleInitialisationServiceImpl
+        implements ModuleInitialisationService, ApplicationContextAware, InitializingBean, DisposableBean
 {
-    /** logger instance */
+    /**
+     * logger instance
+     */
     private static final Logger logger = LoggerFactory.getLogger(ModuleInitialisationServiceImpl.class);
 
-    /** Runtime container for holding modules */
+    /**
+     * Runtime container for holding modules
+     */
     private ModuleContainer moduleContainer;
 
-    /** module activation mechanism */
+    /**
+     * module activation mechanism
+     */
     private ModuleActivator moduleActivator;
 
-    /** loader configuration */
+    /**
+     * loader configuration
+     */
     private String loaderConfiguration;
 
     /**
@@ -97,45 +108,51 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private ApplicationContext platformContext;
 
-    /** SecurityService provides access to users and authorities */
+    /**
+     * SecurityService provides access to users and authorities
+     */
     private SecurityService securityService;
 
-    /** TopologyService provides access to module metadata tables */
+    /**
+     * TopologyService provides access to module metadata tables
+     */
     private TopologyService topologyService;
 
-    /** Container for Spring application contexts loaded internally by this class */
+    private ModuleConverter moduleConverter = new ModuleConverter();
+
+    /**
+     * Container for Spring application contexts loaded internally by this class
+     */
     private List<AbstractApplicationContext> innerContexts;
 
     /**
      * Constructor
+     *
      * @param moduleContainer
      * @param moduleActivator
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-                                           SecurityService securityService, TopologyService topologyService)
+            SecurityService securityService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
-        if(moduleContainer == null)
+        if (moduleContainer == null)
         {
             throw new IllegalArgumentException("moduleContainer cannot be 'null'");
         }
-
         this.moduleActivator = moduleActivator;
-        if(moduleActivator == null)
+        if (moduleActivator == null)
         {
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
         }
-
         this.securityService = securityService;
-        if(securityService == null)
+        if (securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be 'null'");
         }
-
         this.topologyService = topologyService;
-        if(topologyService == null)
+        if (topologyService == null)
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
@@ -158,19 +175,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         this.loaderConfiguration = loaderConfiguration;
     }
 
-
     public void register(Module module)
     {
-//        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader((BeanDefinitionRegistry)platformContext);
-//        reader.loadBeanDefinitions(new FileSystemResource(xmlConfigFileLocation));
-//
-//        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) this.platformContext;
-//        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(Module.class);
-//        builder.addPropertyValue("flows", module.getFlows());
-//        builder.addPropertyValue("description", module.getDescription());
-//        builder.addPropertyValue("name", module.getName());
-//        registry.registerBeanDefinition(module.getName(), builder.getBeanDefinition());
-
         initialise(module);
     }
 
@@ -180,7 +186,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         {
             initialise(module);
         }
-
     }
 
     /*
@@ -188,63 +193,90 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      *
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    @SuppressWarnings("unchecked")
-    public void afterPropertiesSet() throws Exception
+    @SuppressWarnings("unchecked") public void afterPropertiesSet() throws Exception
     {
-        try {
+        try
+        {
             // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
             ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
             Map<String, List> loaderResources = loaderContext.getBeansOfType(List.class);
-
-            for (List<String> loaderResource : loaderResources.values()) {
+            for (List<String> loaderResource : loaderResources.values())
+            {
                 String[] resourcesArray = new String[loaderResource.size()];
                 loaderResource.toArray(resourcesArray);
-
-                AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+                AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray,
+                    platformContext);
                 innerContexts.add(applicationContext);
-
-                for (String beanName : applicationContext.getBeanDefinitionNames()) {
-                    try {
-
-                        if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract()) {
-                            logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                for (String beanName : applicationContext.getBeanDefinitionNames())
+                {
+                    try
+                    {
+                        if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
+                        {
+                            logger.info("Loader Spring context contains bean name [" + beanName + "] of type ["
+                                + applicationContext.getBean(beanName).getClass().getName() + "]");
                         }
-                    } catch (RuntimeException e) {
+                    }
+                    catch (RuntimeException e)
+                    {
                         logger.warn("Failed to access " + beanName, e);
                     }
                 }
-
                 loadModuleFromContext(applicationContext);
-
             }
-
-        } catch (BeanDefinitionStoreException e){
-            if(e.getMessage().contains("IOException parsing XML document from class path resource [loader-conf.xml]"))
+        }
+        catch (BeanDefinitionStoreException e)
+        {
+            if (e.getMessage().contains("IOException parsing XML document from class path resource [loader-conf.xml]"))
             {
                 logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
                 loadModuleFromContext(platformContext);
             }
+            else if (e.getMessage().contains("IOException parsing XML document from class path resource ["))
+            {
+                throw new MissingConfigFileException("Failed loading one of config files. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name ") && e.getMessage()
+                .contains("Could not resolve placeholder"))
+            {
+                throw new MissingPropertiesException("Unable to resolve properties. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name. "))
+            {
+                throw new MissingBeanConfigurationException("Unable to configure bean. See exception details.", e);
+            }
         }
-
     }
 
-
-    private void loadModuleFromContext(ApplicationContext context){
-
+    private void loadModuleFromContext(ApplicationContext context)
+    {
         // check for moduleActivator overrides and use the first one found
-        try {
+        try
+        {
             Map<String, ModuleActivator> activators = context.getBeansOfType(ModuleActivator.class);
-            if (activators != null && activators.size() > 0) {
-                for (ModuleActivator activator : activators.values()) {
+            if (activators != null && activators.size() > 0)
+            {
+                for (ModuleActivator activator : activators.values())
+                {
                     this.moduleActivator = activator;
-                    logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
+                    logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName()
+                            + "]");
                     break;  // just use the first one we find
                 }
             }
-        } catch (NoSuchBeanDefinitionException e) {
-            // nothing of issue here, move on
         }
-
+        catch (NoSuchBeanDefinitionException e)
+        {
+            if (e.getMessage().startsWith("Invalid bean definition with name ") && e.getMessage()
+                .contains("Could not resolve placeholder"))
+            {
+                throw new MissingPropertiesException("Unable to resolve properties. See exception details.", e);
+            }
+            else if (e.getMessage().startsWith("Invalid bean definition with name. "))
+            {
+                throw new MissingBeanConfigurationException("Unable to configure bean. See exception details.", e);
+            }
+        }
         // load all modules in this context
         // TODO - should multiple modules share the same application context ?
         Map<String, Module> moduleBeans = context.getBeansOfType(Module.class);
@@ -252,7 +284,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         {
             initialise(moduleBeans);
         }
-
     }
 
     private void initialise(Map<String, Module> moduleBeans)
@@ -261,22 +292,23 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         {
             initialise(module);
         }
-
     }
 
     private void initialise(Module module)
     {
-        try {
+        try
+        {
             this.initialiseModuleSecurity(module);
             // intialise config into db
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
-        } catch (RuntimeException re){
+        }
+        catch (RuntimeException re)
+        {
             logger.error("There was a problem initialising module", re);
         }
     }
-
 
     /**
      * Callback from the container to gracefully stop flows and modules, and stop the inner loaded contexts
@@ -285,17 +317,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         // shutdown all modules cleanly
         List<String> modulesToRemove = new ArrayList<>();
-        for(Module<Flow> module:this.moduleContainer.getModules())
+        for (Module<Flow> module : this.moduleContainer.getModules())
         {
             this.moduleActivator.deactivate(module);
             modulesToRemove.add(module.getName());
         }
         // remove all modules from container
-        for (String moduleToRemove:modulesToRemove)
+        for (String moduleToRemove : modulesToRemove)
         {
             moduleContainer.remove(moduleToRemove);
         }
-
         // TODO - find a more generic way of managing this for platform resources
         shutdownSchedulers(platformContext);
         shutdownMonitors(platformContext);
@@ -312,10 +343,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
     private void shutdownSchedulers(ApplicationContext context)
     {
-        Map<String,Scheduler> schedulers = context.getBeansOfType(Scheduler.class);
-        if(schedulers != null)
+        Map<String, Scheduler> schedulers = context.getBeansOfType(Scheduler.class);
+        if (schedulers != null)
         {
-            for(Map.Entry<String, Scheduler> entry : schedulers.entrySet())
+            for (Map.Entry<String, Scheduler> entry : schedulers.entrySet())
             {
                 logger.info("Shutting down Quartz scheduler with bean name: " + entry.getKey());
                 try
@@ -328,7 +359,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 }
             }
         }
-
         // We calling close on scheduler factory in order to force creation of new scheduler
         // when spring context is being reloaded
         SchedulerFactory.close();
@@ -355,147 +385,201 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     private void initialiseModuleSecurity(Module module)
     {
         List<Policy> readBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-
-        if (readBlueConsolePolicies==null || readBlueConsolePolicies.isEmpty())
+        if (readBlueConsolePolicies == null || readBlueConsolePolicies.isEmpty())
         {
             Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
-
             logger.info("Creating ReadBlueConsole policy...");
             this.securityService.savePolicy(readBlueConsole);
         }
-
         List<Policy> writeBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-
-        if (writeBlueConsolePolicies==null && writeBlueConsolePolicies.isEmpty() )
+        if (writeBlueConsolePolicies == null && writeBlueConsolePolicies.isEmpty())
         {
             Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
-
             logger.info("Creating WriteBlueConsole policy...");
             this.securityService.savePolicy(writeBlueConsole);
         }
-
         List<Role> existingUserRoles = this.securityService.getRoleByNameLike("User");
-
-        if (existingUserRoles==null || existingUserRoles.isEmpty())
+        if (existingUserRoles == null || existingUserRoles.isEmpty())
         {
             Role userRole = new Role("User", "Users who have a read only view on the system.");
-
             logger.info("Creating standard User role...");
             this.securityService.saveRole(userRole);
         }
-
         List<Role> existingAdminRoles = this.securityService.getRoleByNameLike("ADMIN");
-
-        if (existingAdminRoles==null || existingAdminRoles.isEmpty())
+        if (existingAdminRoles == null || existingAdminRoles.isEmpty())
         {
             Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
-
             logger.info("Creating standard Admin role...");
             this.securityService.saveRole(adminRole);
         }
-
         List<IkasanPrincipal> existingAdminPrinciples = this.securityService.getPrincipalByNameLike("admin");
-
-        if (existingAdminPrinciples==null && existingAdminPrinciples.isEmpty())
+        if (existingAdminPrinciples == null && existingAdminPrinciples.isEmpty())
         {
-            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
-
+            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin", "user", "The administrator user principle.");
             logger.info("Creating standard admin principle...");
             this.securityService.savePrincipal(adminPrinciple);
         }
         List<IkasanPrincipal> existingUserPrinciples = this.securityService.getPrincipalByNameLike("user");
-
-        if (existingUserPrinciples==null || existingUserPrinciples.isEmpty())
+        if (existingUserPrinciples == null || existingUserPrinciples.isEmpty())
         {
-            IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
-
+            IkasanPrincipal userPrinciple = new IkasanPrincipal("user", "user", "The user principle.");
             logger.info("Creating standard user principle...");
             this.securityService.savePrincipal(userPrinciple);
         }
-
     }
 
     /**
-     * Creates the Module metadata in IkasanModule DB table for the module if they do not already exist
+     * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
      *
      * @param module - The module
      */
-    private void initialiseModuleMetaData(Module module)
+    protected void initialiseModuleMetaData(Module module)
+    {
+        try
+        {
+            Optional<Server> existingServer = getServer();
+            org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
+            if (existingModule == null)
+            {
+                logger.info("module does not exist [" + module.getName() + "], creating...");
+                existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+                    module.getDescription(), module.getVersion(), null, null);
+                if (existingServer.isPresent())
+                {
+                    existingModule.setServer(existingServer.get());
+                }
+                this.topologyService.save(existingModule);
+                createMetadata(module, existingModule);
+            }
+            else
+            {
+                updateMetadata(module, existingModule);
+                if (existingServer.isPresent())
+                {
+                    logger.info(
+                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
+                    existingModule.setServer(existingServer.get());
+                    this.topologyService.save(existingModule);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
+        }
+    }
+
+    /**
+     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
+     * meta-data about the module was never stored before.
+     *
+     * @param moduleRuntime module runtime instance
+     * @param moduleDB topology view of the module
+     */
+    private void createMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module moduleDB)
+    {
+        try
+        {
+            org.ikasan.topology.model.Module module = moduleConverter.convert(moduleRuntime);
+            module.getFlows().forEach(topologyFlow ->
+            {
+                topologyFlow.setModule(moduleDB);
+                topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
+                topologyService.save(topologyFlow);
+                logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
+            });
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
+        }
+    }
+
+    /**
+     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
+     * existing meta-data and new meta-data need to be reconciled.
+     *
+     * @param moduleRuntime module runtime instance
+     * @param existingModule topology view of the module
+     */
+    private void updateMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module existingModule)
+    {
+        try
+        {
+            org.ikasan.topology.model.Module moduleNew = moduleConverter.convert(moduleRuntime);
+            topologyService.discover(existingModule.getServer(), existingModule, new ArrayList(moduleNew.getFlows()));
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
+        }
+    }
+
+    /**
+     * Gets server from the runtime platform information
+     *
+     * @return existing server or Optional.empty()
+     */
+    private Optional<Server> getServer()
     {
         String host = getHost();
-        Server existingServer = null;
-        if(host != null)
+        Optional<Server> existingServer = null;
+        if (host != null)
         {
             Integer port = getPort();
             String pid = getPid();
-            String context = getContext(module);
-            String serverName = "http://" + host + ":" + port+"/"+context;
+            String context = platformContext.getApplicationName();
+            String serverName = "http://" + host + ":" + port + "/" + context;
             String serverUrl = "http://" + host;
             logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
-            Server server = new Server(host, serverName, serverUrl, port);
+            String name =  host + ":" + port;
+            Server server = new Server(name, serverName, serverUrl, port);
             List<Server> servers = this.topologyService.getAllServers();
-            boolean foundMatchingServer = false;
-            for (Server s : servers)
-            {
-                if (s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
-                {
-                    foundMatchingServer = true;
-                    existingServer = s;
-                }
-            }
-            if (!foundMatchingServer)
+            // find existing server by comparing url and port
+            existingServer = servers.stream()
+                    .filter(s -> s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
+                    .findFirst();
+            if (!existingServer.isPresent())
             {
                 logger.info("Server instance  [" + server + "], creating...");
                 this.topologyService.save(server);
-                existingServer = server;
+                return Optional.ofNullable(server);
             }
-        }
-        org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
-
-        if (moduleDB == null)
-        {
-            logger.info("module does not exist [" + module.getName() + "], creating...");
-            moduleDB = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
-                    module.getDescription(), module.getVersion(), null, null);
-            if(existingServer!=null)
-            {
-                moduleDB.setServer(existingServer);
-            }
-            this.topologyService.save(moduleDB);
-        }
-        else if(existingServer != null)
-        {
-            logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.getUrl() + "].");
-            moduleDB.setServer(existingServer);
-            this.topologyService.save(moduleDB);
+            return existingServer;
         }
 
-
+        return Optional.empty();
     }
 
-    private Integer getPort() {
+    private Integer getPort()
+    {
         try
         {
             String port = platformContext.getEnvironment().getProperty("server.port");
-            if(port!=null)
+            if (port != null)
             {
                 return Integer.valueOf(port);
             }
             Object portObject;
             try
             {
-                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
-            }catch (InstanceNotFoundException e){
-                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"), "port");
+                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(
+                        new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
             }
-
-            if(portObject!=null)
+            catch (InstanceNotFoundException e)
+            {
+                portObject = ManagementFactory.getPlatformMBeanServer()
+                        .getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"),
+                                "port");
+            }
+            if (portObject != null)
             {
                 return (Integer) portObject;
             }
             return 8080;
         }
-        catch (Throwable ex) {
+        catch (Throwable ex)
+        {
             return 8080;
         }
     }
@@ -536,17 +620,12 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
     }
 
-    private String getContext(Module module)
+    private static String getPid()
     {
         try
         {
-            String context = platformContext.getEnvironment().getProperty("server.contextPath");
-
-            if (context != null)
-            {
-                return context;
-            }
-            return module.getName();
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            return jvmName.split("@")[0];
         }
         catch (Throwable ex)
         {
@@ -554,13 +633,5 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
     }
 
-    private static  String getPid() {
-        try {
-            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-            return jvmName.split("@")[0];
-        }
-        catch (Throwable ex) {
-            return null;
-        }
-    }
+
 }

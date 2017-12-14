@@ -13,7 +13,7 @@ sample-builder-pattern provides example of integration module using builder patt
   * producer
 
 ## How to construct a flow using builder pattern
-Check out the source code at [MyApplication](src/main/java/org/ikasan/sample/spring/boot/builderpattern/MyApplication.java) 
+Check out the source code at [MyApplication](src/main/java/com/ikasan/sample/spring/boot/builderpattern/MyApplication.java) 
 ```java
  
  public Flow getJmsFlow(ModuleBuilder moduleBuilder,ComponentBuilder componentBuilder) {

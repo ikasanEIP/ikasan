@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.configuration;
 
+import java.util.List;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -97,4 +99,32 @@ public interface PlatformConfigurationService
 	 * @return
 	 */
 	public Integer getSearchResultSetSize();
+
+	/**
+	 * Save the solr username
+	 *
+	 * @param username
+     */
+	public void saveSolrUsername(String username);
+
+	/**
+	 * Save the solr password
+	 *
+	 * @param password
+     */
+	public void saveSolrPassword(String password);
+
+	/**
+	 * Get the solr username
+	 *
+	 * @return
+     */
+	public String getSolrUsername();
+
+	/**
+	 * Get the solr password
+	 *
+	 * @return
+     */
+	public String getSolrPassword();
 }

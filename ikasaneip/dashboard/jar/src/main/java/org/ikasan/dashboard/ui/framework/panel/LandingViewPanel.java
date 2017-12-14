@@ -156,7 +156,7 @@ public class LandingViewPanel extends Panel implements View
 			throw new IllegalArgumentException("hospitalManagementService cannot be null!");
 		}
         
-//        init();
+//        initCloud();
     }
 
     protected void init()

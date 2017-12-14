@@ -58,8 +58,10 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAudit;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -106,9 +108,9 @@ public class ReplayTab extends TopologyTab
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
-	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
-	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
+	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
 
 
 	private PopupDateField fromDate;
@@ -128,8 +130,9 @@ public class ReplayTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-					 ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService,
+	public ReplayTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
+					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+					 ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
 					 PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;

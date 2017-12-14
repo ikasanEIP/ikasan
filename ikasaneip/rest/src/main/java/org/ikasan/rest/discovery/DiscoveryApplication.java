@@ -55,6 +55,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import org.ikasan.module.converter.ModuleConverter;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -77,10 +78,9 @@ public class DiscoveryApplication extends IkasanRestApplication
 	@Autowired
 	private ModuleContainer moduleContainer;
 
-	/**
-	 * @param hospitalService
-	 */
-	public DiscoveryApplication() 
+    private ModuleConverter converter = new ModuleConverter();
+
+    public DiscoveryApplication()
 	{
 		super();
 	}
@@ -103,71 +103,12 @@ public class DiscoveryApplication extends IkasanRestApplication
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
 		}
-		
-		List<org.ikasan.topology.model.Flow> flows = new ArrayList<org.ikasan.topology.model.Flow>();
-		
-		Module<Flow> module = moduleContainer.getModule(moduleName);
-		
-		org.ikasan.topology.model.Module topologyModule = new org.ikasan.topology.model.Module(moduleName, moduleName, module.getDescription(), 
-				"", null, "");
-		
-		int flowOrder = 0;
-		for(Flow flow: module.getFlows())
-		{
-			
-			org.ikasan.topology.model.Flow topologyFlow = new org.ikasan.topology.model.Flow(flow.getName(), "description", topologyModule);
-			topologyFlow.setOrder(flowOrder++);
-			
-			if(flow instanceof ConfiguredResource)
-			{
-				topologyFlow.setConfigurationId(((ConfiguredResource)flow).getConfiguredResourceId());
-				topologyFlow.setConfigurable(true);
-			}
-			else
-			{
-				topologyFlow.setConfigurable(false);
-			}
-			
-			flows.add(topologyFlow);
-			
-			Set<org.ikasan.topology.model.Component> components 
-				= new HashSet<org.ikasan.topology.model.Component>();
-			
-			int order = 0;
-			
-			for(FlowElement<?> flowElement: flow.getFlowElements())
-			{
-				
-				org.ikasan.topology.model.Component component = new org.ikasan.topology.model.Component();
-				component.setName(flowElement.getComponentName());
-				if(flowElement.getDescription() != null)
-				{
-					component.setDescription(flowElement.getDescription());
-				}
-				else
-				{
-					component.setDescription("No description.");
-				}
-				
-				if(flowElement.getFlowComponent() instanceof ConfiguredResource)
-				{
-					component.setConfigurationId(((ConfiguredResource)flowElement.getFlowComponent()).getConfiguredResourceId());
-					component.setConfigurable(true);
-				}
-				else
-				{
-					component.setConfigurable(false);
-				}
 
-				component.setOrder(order++);
-				components.add(component);
-			}
-			
-			topologyFlow.setComponents(components);
-		}
-		
-		return flows;	
-	}
+		Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        return new ArrayList<>(converter.convert(module).getFlows());
+
+    }
 
 	/**
 	 * Method to get the flows associated with a module.

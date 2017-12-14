@@ -42,9 +42,12 @@ package org.ikasan.dashboard.ui.administration.window;
 
 import java.util.List;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel;
 import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -65,6 +68,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
+import org.tepi.filtertable.FilterTable;
 
 /**
  * 
@@ -84,12 +88,14 @@ public class PolicyAssociationModuleSearchWindow extends Window
 	private Panel searchPanel;
 	private Panel resultsPanel;
 	private ComboBox serverCombo;
-	private Table resultsTable;
+	private FilterTable resultsTable;
+	private IndexedContainer container;
 
 	/**
-	 * @param mappingConfigurationSearchPanel
-	 * @param mappingConfigurationSearchResultsPanel
-	 */
+	 * Constructor
+	 *
+	 * @param topologyService
+     */
 	public PolicyAssociationModuleSearchWindow(TopologyService topologyService)
 	{
 		super();
@@ -105,8 +111,6 @@ public class PolicyAssociationModuleSearchWindow extends Window
 	
 	/**
      * Helper method to initialise this object.
-     * 
-     * @param message
      */
     protected void init()
     {
@@ -179,7 +183,17 @@ public class PolicyAssociationModuleSearchWindow extends Window
             	
             	for(Module module: modules)
             	{
-            		resultsTable.addItem(new Object[]{module.getServer().getName(), module.getName(), module.getDescription()}, module);
+            		if(module != null && module.getServer() != null)
+					{
+						if(server == null || module.getServer().getName().equals(server.getName()))
+						{
+							Item item = container.addItem(module);
+
+							item.getItemProperty("Server").setValue(module.getServer().getName());
+							item.getItemProperty("Module").setValue(module.getName());
+							item.getItemProperty("Description").setValue(module.getDescription());
+						}
+					}
             	}
             }
         });
@@ -196,11 +210,11 @@ public class PolicyAssociationModuleSearchWindow extends Window
     	this.resultsPanel.setSizeFull();
     	this.resultsPanel.setStyleName("dashboard");
     	
-    	this.resultsTable = new Table();
+    	this.resultsTable = new FilterTable();
     	this.resultsTable.setSizeFull();
-    	this.resultsTable.addContainerProperty("Server", String.class,  null);
-    	this.resultsTable.addContainerProperty("Module", String.class,  null);
-    	this.resultsTable.addContainerProperty("Flow", String.class,  null);
+		this.container = buildContainer();
+		this.resultsTable.setContainerDataSource(container);
+		this.resultsTable.setFilterBarVisible(true);
     	
     	this.resultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
     	{
@@ -219,6 +233,18 @@ public class PolicyAssociationModuleSearchWindow extends Window
     	
     	this.resultsPanel.setContent(layout);
     }
+
+	protected IndexedContainer buildContainer()
+	{
+
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Server", String.class,  null);
+		cont.addContainerProperty("Module", String.class,  null);
+		cont.addContainerProperty("Description", String.class,  null);
+
+		return cont;
+	}
     
     public void clear()
     {

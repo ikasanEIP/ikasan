@@ -40,7 +40,11 @@
  */
 package org.ikasan.recovery;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
+import org.ikasan.spec.component.IsConsumerAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -72,7 +76,8 @@ import static org.quartz.TriggerKey.triggerKey;
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
-public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionResolver, FlowInvocationContext, ID>, Job
+public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionResolver, FlowInvocationContext, ID>, Job,
+        IsExclusionServiceAware, IsErrorReportingServiceAware, IsConsumerAware
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ScheduledRecoveryManager.class);
@@ -142,10 +147,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param scheduledJobFactory a ScheduledJobFactory
      * @param flowName the name of the flow to which this manager is attached
      * @param moduleName the module name
-     * @param consumer the consumer for the given flow
      */
-    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName,
-                                    Consumer<?,?> consumer, ExclusionService exclusionService, ErrorReportingService errorReportingService)
+    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -169,28 +172,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         if(moduleName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be null");
-        }
-
-        this.consumer = consumer;
-        if(consumer == null)
-        {
-            throw new IllegalArgumentException("consumer cannot be null");
-        }
-
-        this.exclusionService = exclusionService;
-        if(exclusionService == null)
-        {
-            throw new IllegalArgumentException("exclusionService cannot be null");
-        }
-
-        this.errorReportingService = errorReportingService;
-        if(errorReportingService == null)
-        {
-            throw new IllegalArgumentException("errorReportingService cannot be null");
-        }
-        if (consumer instanceof MultiThreadedCapable)
-        {
-            isConsumerMultiThreaded = true;
         }
     }
 
@@ -745,5 +726,27 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     public <L> void setManagedResources(L managedResources)
     {
         this.managedResources = (java.util.List) managedResources;
+    }
+
+    @Override
+    public void setExclusionService(ExclusionService exclusionService)
+    {
+        this.exclusionService = exclusionService;
+    }
+
+    @Override
+    public void setErrorReportingService(ErrorReportingService errorReportingService)
+    {
+        this.errorReportingService = errorReportingService;
+    }
+
+    @Override
+    public void setConsumer(Consumer consumer)
+    {
+        this.consumer = consumer;
+        if (consumer instanceof MultiThreadedCapable)
+        {
+            isConsumerMultiThreaded = true;
+        }
     }
 }

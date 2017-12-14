@@ -40,9 +40,7 @@
  */
 package org.ikasan.builder.component.filter;
 
-
 import org.ikasan.builder.component.Builder;
-import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.spec.component.filter.Filter;
 
@@ -55,12 +53,27 @@ public interface MessageFilterBuilder extends Builder<Filter>
 {
      MessageFilterBuilder setConfiguredResourceId(String configuredResourceId);
 
-     MessageFilterBuilder setConfiguration(FilterConfiguration filterConfiguration);
+     MessageFilterBuilder setConfiguration(Object filterConfiguration);
 
-     MessageFilterBuilder setApplyFilter(boolean applyFilter);
-
-     MessageFilterBuilder setLogFilter(boolean logFilter);
-
+     /**
+      * Set the filter entry converter for creating a filter entry instance based
+      * on the incoming message being potentially filtered.
+      * @param filterEntryConverter
+      * @return
+      */
      MessageFilterBuilder setFilterEntryConverter(FilterEntryConverter filterEntryConverter);
+
+     /**
+      * Set filter entry time to live in days
+      * @param filterTimeToLive
+      * @return
+      */
+     MessageFilterBuilder setFilterEntryTimeToLive(int filterTimeToLive);
+
+     /**
+      * Set default filter entry converter based on hashing the complete object.
+      * @return
+      */
+     MessageFilterBuilder setObjectHashingFilterEntryConverter();
 }
 

@@ -57,6 +57,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:recoveryManager-service-conf.xml",
         "classpath:monitor-service-conf.xml",
         "classpath:module-service-conf.xml",
+        "classpath:filter-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
         "classpath:replay-service-conf.xml",

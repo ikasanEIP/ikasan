@@ -17,7 +17,7 @@
                         <bean class="org.ikasan.exceptionResolver.matcher.ThrowableCauseMatcher">
                             <constructor-arg>
                                 <bean class="org.hamcrest.core.IsInstanceOf">
-                                    <constructor-arg value="org.ikasan.sample.spring.boot.builderpattern.SampleGeneratedException"/>
+                                    <constructor-arg value="com.ikasan.sample.spring.boot.builderpattern.SampleGeneratedException"/>
                                 </bean>
                             </constructor-arg>
                             <constructor-arg value="false"/>

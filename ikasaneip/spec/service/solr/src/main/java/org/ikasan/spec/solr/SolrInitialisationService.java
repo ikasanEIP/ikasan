@@ -51,10 +51,18 @@ import java.util.List;
 public interface SolrInitialisationService
 {
     /**
-     * Initialise any solr related services.
+     * Initialise any solr cloud related services.
      *
      * @param solrCloudUrls
      * @param daysToKeep
      */
-    public void init(List<String> solrCloudUrls, int daysToKeep);
+    public void initCloud(List<String> solrCloudUrls, int daysToKeep);
+
+    /**
+     * Initialise any solr standalone related services.
+     *
+     * @param solrCloudUrl
+     * @param daysToKeep
+     */
+    public void initStandalone(String solrCloudUrl, int daysToKeep);
 }

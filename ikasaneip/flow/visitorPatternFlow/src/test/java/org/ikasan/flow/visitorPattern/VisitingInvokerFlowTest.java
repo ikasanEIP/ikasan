@@ -68,9 +68,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This test class supports the <code>VisitingInvokerFlow</code> class.
@@ -123,6 +121,9 @@ public class VisitingInvokerFlowTest
     private final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
             = mockery.mock(List.class, "mockFlowElementConfiguredResources");
 
+    private final Map<String,ConfiguredResource> configuredResourceFlowInvokers
+            = mockery.mock(Map.class, "mockConfiguredResourceFlowInvokers");
+
     /** Mock list of configured resource flow elements */
     private final List<FlowElement<?>> flowElements
             = mockery.mock(List.class, "mockFlowElements");
@@ -130,6 +131,9 @@ public class VisitingInvokerFlowTest
     /** Mock configured resource flow elements */
     private final FlowElement<ConfiguredResource> configuredResourceFlowElement
             = mockery.mock(FlowElement.class, "mockFlowElementConfiguredResource");
+
+    private final FlowElementInvoker configuredResourceFlowElementInvoker
+            = mockery.mock(FlowElementInvoker.class, "mockFlowElementInvokerCR");
 
     /** Mock list of dynamic configured resource flow elements */
     private final List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredResourceFlowElements
@@ -310,6 +314,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -332,6 +338,10 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
@@ -495,6 +505,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -523,6 +535,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResourceFlowElements));
                 oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -738,6 +755,8 @@ public class VisitingInvokerFlowTest
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -752,6 +771,10 @@ public class VisitingInvokerFlowTest
                 // get consumer flow element
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
@@ -842,6 +865,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -878,6 +903,11 @@ public class VisitingInvokerFlowTest
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+
 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
@@ -1082,6 +1112,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -1109,6 +1141,10 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
@@ -1276,6 +1312,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -1347,6 +1385,10 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the exclusion flow element managed resources
                 oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
@@ -2917,6 +2959,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2939,6 +2983,10 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
@@ -3085,6 +3133,8 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -3108,7 +3158,6 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
-
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
@@ -3125,6 +3174,10 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 oneOf(flowConfiguration).configure(flow);
+
+                // flow invoker configuration
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));

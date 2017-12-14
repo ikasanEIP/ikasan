@@ -105,6 +105,7 @@ import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
+import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.ikasan.wiretap.service.TriggerManagementService;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -181,7 +182,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ComboBox treeViewBusinessStreamCombo;
 
 	private WiretapService wiretapService;
-	private WiretapService solrWiretapService;
+	private SolrWiretapServiceImpl solrWiretapService;
 
 	private PopupDateField systemEventFromDate;
 	private PopupDateField systemEventToDate;
@@ -227,7 +228,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-							 WiretapService wiretapService, WiretapService solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+							 WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                              HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
                              ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
                              StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,

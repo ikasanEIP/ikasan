@@ -71,7 +71,16 @@ public class SolrInitialiser
             {
                 try
                 {
-                    solrInitialisationService.init(solrUrlsList, daysToLive);
+                    String operatingMode = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_OPERATING_MODE);
+
+                    if(operatingMode == null || operatingMode.equals("Standalone"))
+                    {
+                        solrInitialisationService.initStandalone(solrUrls, daysToLive);
+                    }
+                    else
+                    {
+                        solrInitialisationService.initCloud(solrUrlsList, daysToLive);
+                    }
                 }
                 catch (Exception e)
                 {
