@@ -431,17 +431,4 @@ public class FtpConsumerBuilderTest
 
     }
 
-    @Test
-    public void ftpConsumer_build_when_configurationId_not_provided() {
-
-        ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'"));
-
-        ftpConsumerBuilder.setCronExpression("121212").build();
-    }
-
 }

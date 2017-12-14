@@ -58,9 +58,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
     /** handle to any internal converter for this consumer */
     Converter converter;
-    
-    
-    	
+
     /**
      * Constructor
      */
@@ -69,7 +67,13 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 		super();
 	}
 
-	@Override
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.CONSUMER;
+    }
+
+    @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

@@ -95,5 +95,10 @@ public interface FlowElementInvoker<COMPONENT>
      */
     void setInvokeContextListeners(boolean invokeContextListeners);
 
+    /**
+     * Get the invoker type being implemented.
+     * @return
+     */
+    public String getInvokerType();
 
 }

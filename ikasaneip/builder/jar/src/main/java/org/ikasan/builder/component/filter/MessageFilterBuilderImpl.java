@@ -109,12 +109,7 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
     {
         if(this.filterEntryConverter == null)
         {
-            throw new IllegalArgumentException("filterEntryConverter is a required property for the defailtMessageFilter and cannot be 'null'");
-        }
-
-        if(this.filterPojoConfiguration != null && this.configuredResourceId == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
+            throw new IllegalArgumentException("filterEntryConverter is a required property for the defaultMessageFilter and cannot be 'null'");
         }
     }
 

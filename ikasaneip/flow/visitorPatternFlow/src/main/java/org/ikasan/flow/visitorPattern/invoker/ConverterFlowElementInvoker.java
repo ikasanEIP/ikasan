@@ -56,6 +56,12 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
     Boolean requiresFullEventForInvocation;
 
     @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.CONVERTER;
+    }
+
+    @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

@@ -282,8 +282,6 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
      */
     public FtpProducer build()
     {
-        validateBuilderConfiguration();
-
         FtpProducer ftpProducer = new FtpProducer(transactionManager, baseFileTransferDao, fileChunkDao,
                 transactionalResourceCommandDAO);
         ftpProducer.setConfiguration(this.configuration);
@@ -298,15 +296,6 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
             ftpProducer.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         }
         return ftpProducer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(configuration != null && this.configuredResourceId == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the ftpProducer and cannot be 'null'");
-        }
-
     }
 
 }

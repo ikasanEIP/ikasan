@@ -104,6 +104,7 @@
 	<webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
         <webflow:flow-location path="/WEB-INF/triggers/trigger.xml" />
 		<webflow:flow-location path="/WEB-INF/configuration/componentConfiguration.xml" />
+		<webflow:flow-location path="/WEB-INF/configuration/invokerConfiguration.xml" />
 	</webflow:flow-registry>
 
     <webflow:flow-builder-services id="flowBuilderServices" conversion-service="iconversionService" />
