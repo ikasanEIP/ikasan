@@ -41,6 +41,7 @@
 package org.ikasan.topology.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -177,14 +178,40 @@ public class Module
 		return flows;
 	}
 
-
-
 	/**
 	 * @param flows the flows to set
 	 */
 	public void setFlows(Set<Flow> flows)
 	{
 		this.flows = flows;
+	}
+
+	/**
+	 * Adds set of flows to existing set.
+	 *
+	 * @param flows the flows to be added
+	 */
+	public void addFlows(Set<Flow> flows)
+	{
+		if (this.flows == null)
+		{
+			this.flows = new HashSet<>();
+		}
+		this.flows.addAll(flows);
+	}
+
+	/**
+	 * Adds a flow to existing set.
+	 *
+	 * @param flow the flow to be added
+	 */
+	public void addFlow(Flow flow)
+	{
+		if (this.flows == null)
+		{
+			this.flows = new HashSet<>();
+		}
+		this.flows.add(flow);
 	}
 
 

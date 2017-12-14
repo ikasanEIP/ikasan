@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.service;
 
+import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
@@ -196,7 +197,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
      */
     protected ExclusionEvent newExclusionEvent(String identifier, byte[] eventBytes, String errorUri)
     {
-        return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri);
+        return new ExclusionEventImpl(moduleName, flowName, identifier, eventBytes, errorUri);
 
     }
 

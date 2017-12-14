@@ -163,6 +163,9 @@ public class SolrHarvestingJob implements Job
 
         ExecutorService executor = Executors.newFixedThreadPool(this.threadCount);
 
+        this.solrService.setSolrUsername(this.platformConfigurationService.getSolrUsername());
+        this.solrService.setSolrPassword(this.platformConfigurationService.getSolrPassword());
+
         try
         {
             if (harvestService.harvestableRecordsExist())
@@ -303,10 +306,10 @@ public class SolrHarvestingJob implements Job
         @Override
         public void run()
         {
+            solrService.save(events);
+            
             for(HarvestEvent event: events)
             {
-                solrService.save(event);
-
                 event.setHarvested(true);
 
                 harvestService.saveHarvestedRecord(event);

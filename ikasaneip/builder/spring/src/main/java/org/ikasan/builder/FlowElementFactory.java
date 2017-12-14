@@ -285,17 +285,17 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         {
             if(flowElementInvokerConfiguration == null)
             {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                flowElementInvokerConfiguration = new MultiRecipientRouterInvokerConfiguration();
             }
             else
             {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterInvokerConfiguration) )
                 {
                     throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
                 }
             }
 
-            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterInvokerConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof SingleRecipientRouter)
         {

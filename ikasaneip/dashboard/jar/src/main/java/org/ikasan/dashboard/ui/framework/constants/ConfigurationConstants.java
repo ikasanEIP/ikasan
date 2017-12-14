@@ -8,6 +8,7 @@ public class ConfigurationConstants
     public static final String SOLR_ENABLED = "solrEnabled";
     public static final String SOLR_URLS = "solrUrls";
     public static final String SOLR_DAYS_TO_KEEP = "solrDaysToKeep";
+    public static final String SOLR_OPERATING_MODE = "solrOperatingMode";
     public static final String DASHBOARD_BASE_URL = "dashboardBaseUrl";
     public static final String WEBSERVICE_USERNAME = "webServiceUserAccount";
     public static final String WEBSERVICE_PASSWORD = "webServiceUserPassword";

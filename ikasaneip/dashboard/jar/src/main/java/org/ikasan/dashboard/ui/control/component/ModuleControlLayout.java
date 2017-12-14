@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
@@ -15,8 +16,10 @@ import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.control.util.FlowActions;
 import org.ikasan.dashboard.ui.control.util.FlowStates;
 import org.ikasan.dashboard.ui.control.design.ModuleControlDesign;
+import org.ikasan.dashboard.ui.control.util.ModuleControlActionHelper;
 import org.ikasan.dashboard.ui.control.util.ModuleControlRunnable;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
@@ -27,11 +30,10 @@ import org.ikasan.topology.service.TopologyService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by stewmi on 09/11/2017.
@@ -46,7 +48,7 @@ public class ModuleControlLayout extends ModuleControlDesign
 
     private FilterTable moduleTable;
 
-    private TopologyTreeActionHelper topologyTreeActionHelper;
+    private ModuleControlActionHelper moduleControlActionHelper;
 
     private ConcurrentHashMap<String, String> flowStates = new ConcurrentHashMap<String, String>();
 
@@ -55,6 +57,11 @@ public class ModuleControlLayout extends ModuleControlDesign
     private  ExecutorService executorService = Executors.newFixedThreadPool(20);
 
     private Button selectAllButton;
+    private Button startButton;
+    private Button stopButton;
+    private Button pauseButton;
+
+    private IkasanAuthentication authentication;
 
     public ModuleControlLayout(TopologyService topologyService, TopologyStateCache topologyCache)
     {
@@ -129,7 +136,7 @@ public class ModuleControlLayout extends ModuleControlDesign
         HorizontalLayout buttonsLayout = new HorizontalLayout();
         buttonsLayout.setWidth("100px");
 
-        Button startButton = new Button();
+        startButton = new Button();
         startButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         startButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         startButton.setIcon(VaadinIcons.PLAY);
@@ -147,7 +154,7 @@ public class ModuleControlLayout extends ModuleControlDesign
 
         buttonsLayout.addComponent(startButton);
 
-        Button pauseButton = new Button();
+        pauseButton = new Button();
         pauseButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         pauseButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         pauseButton.setIcon(VaadinIcons.PAUSE);
@@ -165,7 +172,7 @@ public class ModuleControlLayout extends ModuleControlDesign
 
         buttonsLayout.addComponent(pauseButton);
 
-        Button stopButton = new Button();
+        stopButton = new Button();
         stopButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         stopButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         stopButton.setIcon(VaadinIcons.STOP);
@@ -199,15 +206,54 @@ public class ModuleControlLayout extends ModuleControlDesign
         this.moduleTable.addActionHandler(new Action.Handler()
         {
             @Override
-            public Action[] getActions(Object o, Object o1)
+            public Action[] getActions(Object itemId, Object propertyId)
             {
-                return topologyTreeActionHelper.getFlowActions("running", true);
+                Flow flow = (Flow)itemId;
+
+                String state = null;
+
+                if(flow != null)
+                {
+                    String key = flow.getModule().getName() + "-" + flow.getName();
+
+                    state = flowStates.get(key);
+                }
+
+                return moduleControlActionHelper.getFlowActions(state, true);
             }
 
             @Override
-            public void handleAction(Action action, Object o, Object o1)
+            public void handleAction(Action action, Object o, Object flow)
             {
-                logger.info("Handle action: " + action);
+
+                Item item = container.getItem(flow);
+
+                ArrayList<Callable<String>> callables = new ArrayList<>();
+
+                ModuleControlRunnable moduleControlRunnable = new ModuleControlRunnable(authentication, (Flow)flow, item, flowStates
+                    , action.getCaption(), moduleTable);
+
+                callables.add(moduleControlRunnable);
+
+                try
+                {
+                    List<Future<String>> futures = executorService.invokeAll(callables);
+
+                    StringBuffer result = new StringBuffer();
+
+                    for(Future<String> future: futures)
+                    {
+                        result.append(future.get()).append("</br>");
+                    }
+
+                    Notification notification = new Notification("Flow Control Notification", result.toString(), Notification.Type.TRAY_NOTIFICATION, true);
+
+                    notification.show(Page.getCurrent());
+                }
+                catch (Exception e)
+                {
+                    Notification.show("An error occurred performing flow actions: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -222,7 +268,7 @@ public class ModuleControlLayout extends ModuleControlDesign
 
                 String state = flowStates.get(key);
 
-                logger.info("propertyId: " + propertyId);
+                logger.debug("propertyId: " + propertyId);
 
                 if(state != null && propertyId != null && ((String)propertyId).equals("Status"))
                 {
@@ -273,11 +319,26 @@ public class ModuleControlLayout extends ModuleControlDesign
 
     public void loadTable()
     {
-        final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+        authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(DashboardSessionValueConstants.USER);
 
-        this.topologyTreeActionHelper = new TopologyTreeActionHelper(authentication);
+        if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+            || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+            this.startButton.setVisible(true);
+            this.stopButton.setVisible(true);
+            this.pauseButton.setVisible(true);
+            this.selectAllButton.setVisible(true);
+        }
+        else
+        {
+            this.startButton.setVisible(false);
+            this.stopButton.setVisible(false);
+            this.pauseButton.setVisible(false);
+            this.selectAllButton.setVisible(false);
+        }
 
+        this.moduleControlActionHelper = new ModuleControlActionHelper(authentication);
 
         container.removeAllItems();
         selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
@@ -314,6 +375,8 @@ public class ModuleControlLayout extends ModuleControlDesign
         final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(DashboardSessionValueConstants.USER);
 
+        ArrayList<Callable<String>> callables = new ArrayList<>();
+
         for(Flow flow: (List<Flow>)container.getItemIds())
         {
             Item item = container.getItem(flow);
@@ -324,15 +387,35 @@ public class ModuleControlLayout extends ModuleControlDesign
             {
                 ModuleControlRunnable moduleControlRunnable = new ModuleControlRunnable(authentication, flow, item, flowStates, action, this.moduleTable);
 
-                executorService.execute(moduleControlRunnable);
+                callables.add(moduleControlRunnable);
             }
+        }
+
+        try
+        {
+            List<Future<String>> futures = this.executorService.invokeAll(callables);
+
+            StringBuffer result = new StringBuffer();
+
+            for(Future<String> future: futures)
+            {
+                result.append(future.get()).append("</br>");
+            }
+
+            Notification notification = new Notification("Flow Control Notification", result.toString(), Notification.Type.TRAY_NOTIFICATION, true);
+
+            notification.show(Page.getCurrent());
+        }
+        catch (Exception e)
+        {
+            Notification.show("An error occurred performing flow actions: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
 
     @Subscribe
     public void receiveFlowStateEvent(final FlowStateEvent event)
     {
-        logger.info("Received broadcast!" + event);
+        logger.debug("Received broadcast!" + event);
         UI.getCurrent().access(new Runnable()
         {
             @Override
@@ -346,7 +429,7 @@ public class ModuleControlLayout extends ModuleControlDesign
 
                     for(String flowKey: states.keySet())
                     {
-                        logger.info("Updating state! Flow[" + flowKey + "] State [" + states.get(flowKey) + "]");
+                        logger.debug("Updating state! Flow[" + flowKey + "] State [" + states.get(flowKey) + "]");
                         flowStates.put(flowKey, states.get(flowKey));
                     }
 

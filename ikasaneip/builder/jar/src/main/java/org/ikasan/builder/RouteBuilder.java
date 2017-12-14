@@ -95,6 +95,15 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder filter(String name, Filter filter, String invokerConfiguredResourceId, FilterInvokerConfiguration filterInvokerConfiguration)
+	{
+		FilterFlowElementInvoker filterFlowElementInvoker = new  FilterFlowElementInvoker();
+		filterFlowElementInvoker.setConfiguration(filterInvokerConfiguration);
+		filterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
+		this.route.addFlowElement(new FlowElementImpl(name, filter, filterFlowElementInvoker));
+		return this;
+	}
+
 	public Sequence<Route> sequencer(String name, Sequencer sequencer)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
@@ -115,7 +124,15 @@ public class RouteBuilder
 
 	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter)
 	{
-		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterConfiguration())));
+		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
+		return new EvaluationImpl(route);
+	}
+
+	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, String invokerConfiguredResourceId, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+	{
+		MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
+		multiRecipientRouterFlowElementInvoker.setConfiguredResourceId(invokerConfiguredResourceId);
+		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker));
 		return new EvaluationImpl(route);
 	}
 

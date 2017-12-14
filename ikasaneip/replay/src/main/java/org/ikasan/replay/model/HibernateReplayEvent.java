@@ -41,6 +41,7 @@
 package org.ikasan.replay.model;
 
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -50,7 +51,7 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayEvent implements org.ikasan.spec.replay.ReplayEvent, HarvestEvent
+public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 {
 	private Long id;
 
@@ -98,7 +99,7 @@ public class HibernateReplayEvent implements org.ikasan.spec.replay.ReplayEvent,
 		this.moduleName = moduleName;
 		this.flowName = flowName;
 		this.timestamp = new Date().getTime();
-		this.expiry = new Date().getTime() + (timeToLiveDays * 60 * 60 * 24 * 1000);
+		this.expiry = new Date().getTime() + new Long(timeToLiveDays * 60l * 60l * 24l * 1000l);
 	}
 
 	/**

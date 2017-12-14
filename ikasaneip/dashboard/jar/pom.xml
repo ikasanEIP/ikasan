@@ -243,7 +243,7 @@
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-solr</artifactId>
+			<artifactId>ikasan-solr-client</artifactId>
 		</dependency>
 
 		<dependency>

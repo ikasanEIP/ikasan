@@ -57,7 +57,9 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
-import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.BulkReplayResponse;
+import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -83,7 +85,7 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAuditEvent>
+public class ReplayStatusPanel extends Panel implements ReplayListener<HibernateReplayAuditEvent>
 {
 	private Logger logger = Logger.getLogger(ReplayStatusPanel.class);
 	
@@ -93,7 +95,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
@@ -105,7 +107,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 	private IkasanAuthentication authentication;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
-			ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
+			ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
 			PlatformConfigurationService platformConfigurationService) 
 	{
 		super();
@@ -287,7 +289,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 	    				@Override
 	    				public void run() 
 	    				{	    					
-	    					replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(), 
+	    					BulkReplayResponse bulkReplayResponse = replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(),
 	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue());
 	    					
 	    					logger.info("Finished replaying events!");
@@ -299,7 +301,14 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		    					
 		            			if(!replayService.isCancelled())
 		            			{
-		            				Notification.show("Event replay complete.");
+		            				if(!bulkReplayResponse.isSuccess())
+									{
+										Notification.show("One or more events failed to replay. Please see messages for details.", Notification.Type.ERROR_MESSAGE);
+									}
+									else
+									{
+										Notification.show("Event replay complete.");
+									}
 		            			}
 		        				
 		            		} 
@@ -479,7 +488,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 	 * @see org.ikasan.spec.replay.ReplayListener#onReplay(java.lang.Object)
 	 */
 	@Override
-	public void onReplay(final ReplayAuditEvent auditEvent) 
+	public void onReplay(final HibernateReplayAuditEvent auditEvent)
 	{
 		UI.getCurrent().access(new Runnable() 
 		{

@@ -58,6 +58,11 @@ public class PlatformConfiguration
 	@Masked
 	private String webServiceUserPassword;
 
+	private String solrUserAccount;
+
+	@Masked
+	private String solrUserPassword;
+
 	/**
 	 * @return the configurationMap
 	 */
@@ -104,5 +109,25 @@ public class PlatformConfiguration
 	public void setWebServiceUserPassword(String webServiceUserPassword)
 	{
 		this.webServiceUserPassword = webServiceUserPassword;
+	}
+
+	public String getSolrUserAccount()
+	{
+		return solrUserAccount;
+	}
+
+	public void setSolrUserAccount(String solrUserAccount)
+	{
+		this.solrUserAccount = solrUserAccount;
+	}
+
+	public String getSolrUserPassword()
+	{
+		return solrUserPassword;
+	}
+
+	public void setSolrUserPassword(String solrUserPassword)
+	{
+		this.solrUserPassword = solrUserPassword;
 	}
 }

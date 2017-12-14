@@ -42,6 +42,7 @@ package org.ikasan.topology.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -152,7 +153,21 @@ public class Flow
 		this.components = components;
 	}
 
-    /**
+	/**
+	 * @param components the components to set
+	 */
+	public void addComponent(Component component)
+	{
+		if(this.components==null)
+		{
+			this.components = new LinkedHashSet<>();
+		}
+		components.add(component);
+
+	}
+
+
+	/**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()
@@ -264,29 +279,26 @@ public class Flow
 		this.configurationId = configurationId;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Flow other = (Flow) obj;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-	
-	@Override
+    @Override public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Flow flow = (Flow) o;
+        if (id != null ? !id.equals(flow.id) : flow.id != null)
+            return false;
+        return name != null ? name.equals(flow.name) : flow.name == null;
+    }
+
+    @Override public int hashCode()
+    {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		String returnString = "Flow [id=" + id + ", name=" + name + ", description="
 				+ description + ", state=" + state;
