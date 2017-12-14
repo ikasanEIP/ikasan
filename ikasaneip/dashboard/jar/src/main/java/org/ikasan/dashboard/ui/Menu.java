@@ -184,6 +184,22 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(topologyMenuItem);
         this.menuComponents.put(topologyMenuItem, SecurityConstants.TOPOLOGY_VIEW_PERMISSIONS);
 
+        final Button moduleControlMenuItem = new Button("Module Control", new ClickListener()
+        {
+            @Override
+            public void buttonClick(final ClickEvent event)
+            {
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("moduleControlView");
+            }
+        });
+
+        moduleControlMenuItem.setHtmlContentAllowed(true);
+        moduleControlMenuItem.setPrimaryStyleName("valo-menu-item");
+        moduleControlMenuItem.setIcon(VaadinIcons.CONNECT_O);
+        menuItemsLayout.addComponent(moduleControlMenuItem);
+        this.menuComponents.put(moduleControlMenuItem, SecurityConstants.TOPOLOGY_VIEW_PERMISSIONS);
+
         String solrEnabled = null;
 
         try

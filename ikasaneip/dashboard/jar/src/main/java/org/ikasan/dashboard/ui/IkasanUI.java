@@ -297,7 +297,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             @Override
             public void run() 
             {
-            	logger.debug("Broadcasting new FlowStateEvent");
+            	logger.info("Broadcasting new FlowStateEvent");
             	eventBus.post(new FlowStateEvent((ConcurrentHashMap<String, String>)message));
             }
         });	
