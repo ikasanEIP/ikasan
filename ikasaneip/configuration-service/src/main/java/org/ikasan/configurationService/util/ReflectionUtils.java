@@ -124,7 +124,7 @@ public class ReflectionUtils
 	}
 
 	/**
-	 * Get all field names and values for the given target object.
+	 * Get all non-static field names and values for the given target object.
 	 * Any failures to access fields or methods are logged, but not thrown.
 	 *
 	 * @param target
@@ -139,38 +139,16 @@ public class ReflectionUtils
 		{
 			try
 			{
-				Method method = getGetterMethod(cls, entry.getValue());
-				properties.put(entry.getValue().getName(), method.invoke(target, null));
+				if( !(java.lang.reflect.Modifier.isStatic(entry.getValue().getModifiers())) )
+				{
+					Method method = getGetterMethod(cls, entry.getValue());
+					properties.put(entry.getValue().getName(), method.invoke(target, null));
+				}
 			}
 			catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
 			{
-				logger.error("Failed accessing method for field [" + entry.getKey() + "]", e);
+				logger.warn("Unable to access method for field [" + entry.getKey() + "]. Only this field will not be set", e);
 			}
-		}
-
-		return properties;
-	}
-
-	/**
-	 * Get all field names and values for the given target object.
-	 *
-	 * @param target
-	 * @return
-	 * @throws NoSuchFieldException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	private static Map<String,Object> getProperties(Object target)
-			throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
-	{
-		Map<String,Object> properties = new HashMap<String,Object>();
-		Class cls = target.getClass();
-
-		for(Map.Entry<String,Field> entry:getDeclaredFields(cls).entrySet())
-		{
-			Method method = getGetterMethod(cls, entry.getValue());
-			properties.put(entry.getValue().getName(), method.invoke(target, null));
 		}
 
 		return properties;
