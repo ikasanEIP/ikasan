@@ -60,10 +60,16 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
     private static Logger logger = LoggerFactory.getLogger(FilterFlowElementInvoker.class);
 
     // unique id for this invoker configuration
-    String configuredResourceId;
+    private String configuredResourceId;
 
     // configuration instance
-    FilterInvokerConfiguration configuration = new FilterInvokerConfiguration();
+    private FilterInvokerConfiguration configuration = new FilterInvokerConfiguration();
+
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.FILTER;
+    }
 
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)

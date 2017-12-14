@@ -359,21 +359,11 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         jmsProducer.setConfiguration(configuration);
         jmsProducer.setConfiguredResourceId(configuredResourceId);
 
-        validateBuilderConfiguration(jmsProducer);
-
         if(jmsProducer instanceof ArjunaJmsTemplateProducer)
         {
             ((ArjunaJmsTemplateProducer) jmsProducer).setLocalTransactionManager(arjunaTransactionManager);
         }
         return jmsProducer;
-    }
-
-    protected void validateBuilderConfiguration(JmsTemplateProducer jmsTemplateProducer)
-    {
-        if(jmsTemplateProducer.getConfiguration() != null && jmsTemplateProducer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the jmsProducer and cannot be 'null'");
-        }
     }
 
     /**

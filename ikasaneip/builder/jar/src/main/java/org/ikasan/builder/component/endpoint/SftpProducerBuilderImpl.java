@@ -281,8 +281,6 @@ public class SftpProducerBuilderImpl implements SftpProducerBuilder
      */
     public SftpProducer build()
     {
-        validateBuilderConfiguration();
-
         SftpProducer sftpProducer = new SftpProducer(transactionManager, baseFileTransferDao, fileChunkDao,
                 transactionalResourceCommandDAO);
         sftpProducer.setConfiguration(this.configuration);
@@ -297,15 +295,6 @@ public class SftpProducerBuilderImpl implements SftpProducerBuilder
             sftpProducer.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         }
         return sftpProducer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(configuration != null && this.configuredResourceId == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the sftpProducer and cannot be 'null'");
-        }
-
     }
 
 }

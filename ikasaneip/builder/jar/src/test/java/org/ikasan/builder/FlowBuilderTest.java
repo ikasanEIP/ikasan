@@ -591,7 +591,7 @@ public class FlowBuilderTest
 
         MultiRecipientRouterInvokerConfiguration invokerConfiguration = InvokerConfigurationFactory.multiRecipientRouterInvokerConfiguration();
         invokerConfiguration.setCloneEventPerRoute(false);
-        Route route2 = builderFactory.getRouteBuilder().multiRecipientRouter("nestedMRR", multiRecipientRouter, "myInvokerConfId", invokerConfiguration)
+        Route route2 = builderFactory.getRouteBuilder().multiRecipientRouter("nestedMRR", multiRecipientRouter, invokerConfiguration)
                 .when("nestedRoute1", nestedRoute1)
                 .when("nestedRoute2", nestedRoute2)
                 .otherwise(nestedRoute3).build();

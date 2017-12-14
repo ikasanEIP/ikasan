@@ -98,6 +98,12 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     }
 
     @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.MULTI_RECIPIENT_ROUTER;
+    }
+
+    @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

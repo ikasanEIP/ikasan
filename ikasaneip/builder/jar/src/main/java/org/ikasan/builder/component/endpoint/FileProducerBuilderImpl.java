@@ -120,16 +120,7 @@ public class FileProducerBuilderImpl implements FileProducerBuilder
     @Override
     public Producer build()
     {
-        validateBuilderConfiguration();
         return fileProducer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(this.fileProducer.getConfiguration() != null && this.fileProducer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the fileProducer and cannot be 'null'");
-        }
     }
 
 }

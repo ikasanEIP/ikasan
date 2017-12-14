@@ -418,17 +418,4 @@ public class SftpConsumerBuilderTest
 
     }
 
-    @Test
-    public void sftpConsumer_build_when_configurationId_not_provided() {
-
-        ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'"));
-
-        sftpConsumerBuilder.setCronExpression("121212").build();
-    }
-
 }

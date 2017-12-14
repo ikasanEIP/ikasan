@@ -253,17 +253,4 @@ public class ScheduledConsumerBuilderTest {
 
     }
 
-    @Test
-    public void scheduledConsumer_build_when_configurationId_not_provided() {
-
-        ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'"));
-
-        scheduledConsumerBuilder.setCronExpression("121212").build();
-    }
-
 }

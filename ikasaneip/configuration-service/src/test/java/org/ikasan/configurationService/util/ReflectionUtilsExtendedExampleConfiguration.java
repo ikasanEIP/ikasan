@@ -47,6 +47,7 @@ package org.ikasan.configurationService.util;
  */
 class ReflectionUtilsExtendedExampleConfiguration extends ReflectionUtilsExampleConfiguration
 {
+    private static String privateString = "value";
     String stry;
     private Integer inty;
     protected Long longy;
@@ -74,4 +75,6 @@ class ReflectionUtilsExtendedExampleConfiguration extends ReflectionUtilsExample
     public void setLongy(Long longy) {
         this.longy = longy;
     }
+
+
 }

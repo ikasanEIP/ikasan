@@ -444,7 +444,7 @@ public class FileConsumerBuilderTest {
 
         mockery.assertIsSatisfied();    }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void scheduledConsumer_build_when_configurationId_not_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
@@ -498,7 +498,7 @@ public class FileConsumerBuilderTest {
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
+        assertNull("configuredResourceId should be 'null'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId());
         assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
         assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
         assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
