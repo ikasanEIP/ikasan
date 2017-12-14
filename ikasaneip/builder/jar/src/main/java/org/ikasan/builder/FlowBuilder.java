@@ -466,8 +466,13 @@ public class FlowBuilder implements ApplicationContextAware
                 Object configuration = configuredResource.getConfiguration();
                 if(configuredResource.getConfiguredResourceId() == null)
                 {
-                    configuredResource.setConfiguredResourceId(moduleName + flowName + flowElement.getComponentName()
-                            + configuration.getClass().getName() + "_Invoker");
+                    String id = moduleName + "_" + flowName + "_"+ flowElement.getComponentName()
+                            + "_" + configuration.getClass().getName() + "_Invoker";
+                    if(id.length() > 255)
+                    {
+                        id = id.substring(0,255);
+                    }
+                    configuredResource.setConfiguredResourceId(id);
                 }
             }
 
@@ -479,8 +484,13 @@ public class FlowBuilder implements ApplicationContextAware
                 Object configuration = configuredResource.getConfiguration();
                 if(configuredResource.getConfiguredResourceId() == null && configuration != null)
                 {
-                    configuredResource.setConfiguredResourceId(moduleName + "_" + flowName + "_" + flowElement.getComponentName() + "_"
-                            + configuration.getClass().getName() + "_Component");
+                    String id = moduleName + "_" + flowName + "_"+ flowElement.getComponentName()
+                            + "_" + configuration.getClass().getName() + "_Component";
+                    if(id.length() > 255)
+                    {
+                        id = id.substring(0,255);
+                    }
+                    configuredResource.setConfiguredResourceId(id);
                 }
             }
 
