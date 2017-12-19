@@ -55,7 +55,7 @@ public class ScheduledConsumerConfiguration
     private boolean ignoreMisfire = true;
 
     /** Determines whether consumer will be eagerly executing after successful run */
-    private boolean isEager = false;
+    private boolean eager = false;
 
     /** a valid optional timezone to set on the scheduled job
      *  a default of blank or null will use the JVM's timezone */
@@ -72,11 +72,11 @@ public class ScheduledConsumerConfiguration
     }
 
     public boolean isEager() {
-        return isEager;
+        return eager;
     }
 
-    public void setEager(boolean isEager) {
-        this.isEager = isEager;
+    public void setEager(boolean eager) {
+        this.eager = eager;
     }
 
     public void setIgnoreMisfire(boolean ignoreMisfire)
