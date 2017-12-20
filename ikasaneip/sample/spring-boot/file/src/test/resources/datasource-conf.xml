@@ -35,4 +35,8 @@
         </property>
     </bean>
 
+    <jdbc:initialize-database data-source="ikasanDatasource">
+        <jdbc:script location="classpath:overwriteDBCreation.sql" />
+    </jdbc:initialize-database>
+
 </beans>
