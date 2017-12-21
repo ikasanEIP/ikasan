@@ -42,10 +42,15 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducer;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
@@ -111,6 +116,11 @@ public class ApplicationTest
             modules.size() == 1);
         Module<Flow> module = modules.get(0);
         Flow flow = module.getFlow("sourceFileFlow");
+
+        ConfigurationManagement configurationManagement = ikasanApplication.getBean(ConfigurationManagement.class);
+        ConfiguredResource configuredResource = ((ConfiguredResource)flow.getFlowElement("File Consumer").getFlowComponent());
+        Object configuration = configurationManagement.createConfiguration(configuredResource);
+        configurationManagement.saveConfiguration(configuration);
 
         // Get MessageListenerVerifier and start the listner
         MessageListenerVerifier messageListenerVerifierTarget = ikasanApplication
