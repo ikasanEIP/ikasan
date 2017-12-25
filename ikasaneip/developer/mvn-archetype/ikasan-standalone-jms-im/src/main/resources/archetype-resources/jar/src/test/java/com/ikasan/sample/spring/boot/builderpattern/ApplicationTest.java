@@ -111,7 +111,7 @@ public class ApplicationTest
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = ikasanApplication.getBean(Module.class);
-        flowUUT = (Flow) module.getFlow("Jms Sample Flow");
+        flowUUT = (Flow) module.getFlow("${sourceFlowName}");
 
         // get hold of errorReportingService
         ErrorReportingServiceFactory errorReportingServiceFactory = ikasanApplication

@@ -74,3 +74,87 @@ mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasa
 (Accept defaults or update as required)
 
 Then build it normally using mvn clean package assembly:assembly
+
+
+ikasan-standalone-filesystem-im-maven-plugin
+---------------------------------------------
+Creates a standard Ikasan standalone module using local file system components.
+
+```
+mvn archetype:generate \
+    -DarchetypeGroupId=org.ikasan \   
+    -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin \
+    -DarchetypeVersion=<Ikasan Version> \  
+    -DgroupId=<Maven Group Id> \ 
+    -DartifactId=<Module Name> \  
+    -Dversion=<Module Version>  \   
+    -DsourceFlowName=<Source Flow Name> \     
+    -DtargetFlowName=<Target Flow Name> \
+```
+    
+Where,
+ Ikasan Version       - the version of the Ikasan platform being used. i.e. 2.0.0-rc2
+ Maven Group Id       - maven group coordinates you want this build pom to have
+ Module Name          - artifact is you want this build to have
+ Module Version       - artifact version you want this build to have
+ Source Flow Name     - name given to source flow
+ Target Flow Name     - name given to target flow
+
+
+Example Usage,
+
+For example,
+```
+mvn archetype:generate \   
+     -DarchetypeGroupId=org.ikasan \ 
+     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin \
+     -DarchetypeVersion=2.0.0-SNAPSHOT \
+     -DgroupId=com.sample \
+     -DartifactId=fileSystem-im \     
+     -Dversion=1.0.0-SNAPSHOT \
+     -DsourceFlowName=fileSystemToJMSFlow \
+     -DtargetFlowName=jmsToFileSystemFlow 
+```
+(Accept defaults or update as required)
+
+Then build it normally using mvn clean package 
+
+
+ikasan-standalone-jms-im-maven-plugin
+---------------------------------------------
+Creates a standard Ikasan standalone module using JMS endpoints.
+
+```
+mvn archetype:generate \
+    -DarchetypeGroupId=org.ikasan \   
+    -DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin \
+    -DarchetypeVersion=<Ikasan Version> \  
+    -DgroupId=<Maven Group Id> \ 
+    -DartifactId=<Module Name> \  
+    -Dversion=<Module Version>  \   
+    -DsourceFlowName=<Source Flow Name>
+```
+    
+Where,
+ Ikasan Version       - the version of the Ikasan platform being used. i.e. 2.0.0-rc2
+ Maven Group Id       - maven group coordinates you want this build pom to have
+ Module Name          - artifact is you want this build to have
+ Module Version       - artifact version you want this build to have
+ Source Flow Name     - name given to source flow
+
+Example Usage,
+
+For example,
+```
+mvn archetype:generate \   
+     -DarchetypeGroupId=org.ikasan \ 
+     -DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin \
+     -DarchetypeVersion=2.0.0-SNAPSHOT \
+     -DgroupId=com.sample \
+     -DartifactId=jms-im \     
+     -Dversion=1.0.0-SNAPSHOT \
+     -DsourceFlowName="Sample JMS Flow"
+```
+(Accept defaults or update as required)
+
+Then build it normally using mvn clean package assembly:assembly
