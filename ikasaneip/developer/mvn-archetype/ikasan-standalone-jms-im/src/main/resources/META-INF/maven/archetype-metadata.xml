@@ -37,31 +37,49 @@
  ====================================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+                      name="ikasan-standalone-filesystem-im-maven-plugin" partial="true">
 
-    <modelVersion>4.0.0</modelVersion>
+    <requiredProperties>
+        <requiredProperty key="sourceFlowName">
+            <defaultValue>Jms Sample Flow</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-developer</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>ikasan-mvn-archetype</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
+    <fileSets>
+        <fileSet filtered="true" packaged="false">
+            <directory>docs</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>jar</directory>
+        </fileSet>
+    </fileSets>
 
     <modules>
-        <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6-filesystem-im</module>
-        <module>ikasan-jboss-6-jms-im</module>
-        <module>ikasan-jboss-6-db-im</module>
-        <module>ikasan-jboss-6-sftp-im</module>
-        <module>jboss-6-module-activemq</module>
-        <module>ikasan-jboss-6-activemq-im</module>
-        <module>ikasan-rt-conf-jboss-6</module>
-        <module>ikasan-standalone-filesystem-im</module>
-        <module>ikasan-standalone-jms-im</module>
+        <module name="${artifactId}" id="${artifactId}" dir="jar">
+            <fileSets>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/test/resources</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
     </modules>
 
-</project>
+</archetype-descriptor>
