@@ -45,7 +45,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.notification.NotificationConfiguredResource;
 import org.ikasan.dashboard.notification.NotificationContentProducer;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
@@ -63,7 +64,7 @@ import org.ikasan.topology.model.Notification;
  */
 public class CategorisedErrorPeriodicNotificationContentProducer extends NotificationConfiguredResource implements NotificationContentProducer
 {	
-	private static Logger logger = Logger.getLogger(CategorisedErrorPeriodicNotificationContentProducer.class);
+	private static Logger logger = LoggerFactory.getLogger(CategorisedErrorPeriodicNotificationContentProducer.class);
 	
 	private ErrorCategorisationService errorCategorisationService;
 	private PlatformConfigurationService platfromConfigurationService;

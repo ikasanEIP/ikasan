@@ -4,7 +4,8 @@ import com.vaadin.data.Item;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ModuleControlRunnable implements Runnable, Callable<String>
 {
-    private Logger logger = Logger.getLogger(ModuleControlRunnable.class);
+    private Logger logger = LoggerFactory.getLogger(ModuleControlRunnable.class);
 
     private IkasanAuthentication authentication;
     private Flow flow;

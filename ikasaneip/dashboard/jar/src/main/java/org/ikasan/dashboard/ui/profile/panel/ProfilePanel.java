@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.profile.panel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -56,7 +57,7 @@ public class ProfilePanel extends Panel implements View
 {
     private static final long serialVersionUID = 6005593259860222561L;
 
-    private Logger logger = Logger.getLogger(ProfilePanel.class);
+    private Logger logger = LoggerFactory.getLogger(ProfilePanel.class);
 
     /**
      * Constructor

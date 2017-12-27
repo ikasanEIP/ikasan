@@ -49,7 +49,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -63,7 +64,7 @@ import org.xml.sax.SAXException;
 public class XmlFormatter 
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(XmlFormatter.class);
+    private static Logger logger = LoggerFactory.getLogger(XmlFormatter.class);
 
     public static String format(String unformattedXml)
     {

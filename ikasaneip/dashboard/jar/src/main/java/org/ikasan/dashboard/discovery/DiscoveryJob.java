@@ -1,7 +1,8 @@
 package org.ikasan.dashboard.discovery;
 
 import com.ikasan.topology.exception.DiscoveryException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.service.TopologyService;
@@ -17,7 +18,7 @@ import org.quartz.JobExecutionException;
 public class DiscoveryJob implements Job
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(DiscoveryJob.class);
+    private static Logger logger = LoggerFactory.getLogger(DiscoveryJob.class);
 
 
     private String jobName;

@@ -46,7 +46,8 @@ import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -82,7 +83,7 @@ import java.util.concurrent.Executors;
  */
 public class ReplayEventViewPanel extends Panel
 {
-	private Logger logger = Logger.getLogger(ReplayEventViewPanel.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayEventViewPanel.class);
 	
 	/**
 	 * 

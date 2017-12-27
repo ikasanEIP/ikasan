@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.data;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
@@ -65,7 +66,7 @@ import com.vaadin.ui.Notification;
 public class NewContextFieldGroup extends FieldGroup
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(NewContextFieldGroup.class);
+    private static Logger logger = LoggerFactory.getLogger(NewContextFieldGroup.class);
 
     private static final long serialVersionUID = -5167608612810176052L;
 

@@ -50,7 +50,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
@@ -103,7 +104,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 {
 	private static final long serialVersionUID = -3174124965136021440L;
 
-	private Logger logger = Logger.getLogger(MonitorPanel.class);
+	private Logger logger = LoggerFactory.getLogger(MonitorPanel.class);
 	
 	private final Action START = new Action("Start");
     private final Action STOP = new Action("Stop");

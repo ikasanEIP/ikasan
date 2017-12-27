@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.action;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 
@@ -50,7 +51,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurati
  */
 public class RemoveAllItemsAction implements Action
 {
-    private Logger logger = Logger.getLogger(RemoveAllItemsAction.class);
+    private Logger logger = LoggerFactory.getLogger(RemoveAllItemsAction.class);
 
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
 

@@ -42,7 +42,8 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;
@@ -80,7 +81,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorCategorisationWindow extends Window
 {
-	private Logger logger = Logger.getLogger(ErrorCategorisationWindow.class);
+	private Logger logger = LoggerFactory.getLogger(ErrorCategorisationWindow.class);
 	
 	private Server server;
 	private Module module;

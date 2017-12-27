@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ActionedExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
@@ -107,7 +108,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ActionedExclusionTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ActionedExclusionTab.class);
+	private Logger logger = LoggerFactory.getLogger(ActionedExclusionTab.class);
 	
 	private FilterTable actionedExclusionsTable;
 	

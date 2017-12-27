@@ -50,7 +50,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
 import org.ikasan.dashboard.ui.administration.window.UserWindow;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -97,7 +98,7 @@ public class UserManagementPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(UserManagementPanel.class);
+	private Logger logger = LoggerFactory.getLogger(UserManagementPanel.class);
 
 	private UserService userService;
 	private SecurityService securityService;

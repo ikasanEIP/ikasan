@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.component;
 import java.util.*;
 
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -76,7 +77,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     private static final long serialVersionUID = -3565819620819253906L;
 
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(MappingConfigurationConfigurationValuesTable.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingConfigurationConfigurationValuesTable.class);
     
     private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;
