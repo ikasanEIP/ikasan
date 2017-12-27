@@ -16,7 +16,6 @@ public class Application
         // Embedded broker is started as part of sample
         new EmbeddedActiveMQBroker().start();
 
-
         IkasanApplicationFactory.getIkasanApplication(Application.class,args);
 
         System.out.println("Context ready");
