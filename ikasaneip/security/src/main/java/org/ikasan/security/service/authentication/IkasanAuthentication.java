@@ -123,7 +123,8 @@ public class IkasanAuthentication implements Authentication
     @Override
     public Object getDetails()
     {
-    	throw new UnsupportedOperationException();
+    	return null;
+        //throw new UnsupportedOperationException();
     }
 
 	/* (non-Javadoc)

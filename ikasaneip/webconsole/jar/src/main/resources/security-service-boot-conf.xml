@@ -93,8 +93,6 @@
 
 		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
 
-
-
 		<access-denied-handler error-page="/accessDenied.jsp" />
 		<intercept-url pattern="/login.jsp" access="permitAll"/>
 		<intercept-url pattern="/css/style.css" access="permitAll"/>
@@ -126,11 +124,11 @@
 
 	</http>
 
-
 	<authentication-manager id="auth-manager">
 		<authentication-provider user-service-ref="userDetailsService">
 			<password-encoder ref="sha1PasswordEncoder" />
 		</authentication-provider>
+        <authentication-provider ref="ikasanAuthenticationProvider" />
 	</authentication-manager>
 
 
@@ -310,7 +308,13 @@
 		<beans:property name="sessionFactory" ref="securitySessionFactory" />
 	</beans:bean>
 
-	<beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
+
+    <beans:bean id="ikasanAuthenticationProvider" class="org.ikasan.security.service.authentication.CustomAuthenticationProvider">
+        <beans:constructor-arg name="authenticationService" ref="authenticationService" />
+    </beans:bean>
+
+
+    <beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao" />
 		<beans:constructor-arg ref="securityService" />
 		<beans:constructor-arg ref="sha1PasswordEncoder" />
