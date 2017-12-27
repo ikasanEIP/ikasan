@@ -43,7 +43,7 @@ If all went well you will see following
 Context ready
 ```
 
-You can now access the basic web interface http://localhost:8080/sample-spring-boot-sftp-jms/ 
+You can now access the basic web interface http://localhost:8080/sample-boot-sftp-jms/ 
 
 
 ## How to navigate the web console
