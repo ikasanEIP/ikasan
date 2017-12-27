@@ -102,7 +102,7 @@ public class ApplicationTest
         ftp.putFile("testDownload.txt", "Sample File content");
         // you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = ikasanApplication.getBean(Module.class);
-        Flow flow = (Flow) module.getFlow("Ftp To Jms Flow");
+        Flow flow = (Flow) module.getFlow("${sourceFlowName}");
 
         // Update Ftp Consumer config
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer) ((Advised) flow.getFlowElement("Ftp Consumer")
@@ -136,7 +136,7 @@ public class ApplicationTest
     {
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = (Module) ikasanApplication.getBean(Module.class);
-        Flow flow = (Flow) module.getFlow("Jms To Ftp Flow");
+        Flow flow = (Flow) module.getFlow("${targetFlowName}");
 
         // Update Ftp Consumer config
         FtpProducer ftpProducer = (FtpProducer) (flow.getFlowElement("Ftp Producer")
