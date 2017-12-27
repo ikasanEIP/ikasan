@@ -62,6 +62,7 @@
         <module>ikasan-rt-conf-jboss-6</module>
         <module>ikasan-standalone-filesystem-im</module>
         <module>ikasan-standalone-jms-im</module>
+        <module>ikasan-standalone-sftp-jms-im</module>
     </modules>
 
 </project>

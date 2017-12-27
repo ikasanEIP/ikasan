@@ -158,3 +158,47 @@ mvn archetype:generate \
 (Accept defaults or update as required)
 
 Then build it normally using mvn clean package assembly:assembly
+
+
+
+ikasan-standalone-sftp-jms-im-maven-plugin
+---------------------------------------------
+Creates a standard Ikasan standalone module using SFTP and JMS components.
+
+```
+mvn archetype:generate \
+    -DarchetypeGroupId=org.ikasan \   
+    -DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin \
+    -DarchetypeVersion=<Ikasan Version> \  
+    -DgroupId=<Maven Group Id> \ 
+    -DartifactId=<Module Name> \  
+    -Dversion=<Module Version>  \   
+    -DsourceFlowName=<Source Flow Name> \
+    -DtargetFlowName=<Target Flow Name>
+```
+    
+Where,
+ Ikasan Version       - the version of the Ikasan platform being used. i.e. 2.0.0-rc2
+ Maven Group Id       - maven group coordinates you want this build pom to have
+ Module Name          - artifact is you want this build to have
+ Module Version       - artifact version you want this build to have
+ Source Flow Name     - name given to source flow
+ Target Flow Name     - name given to target flow
+
+Example Usage,
+
+For example,
+```
+mvn archetype:generate \   
+     -DarchetypeGroupId=org.ikasan \ 
+     -DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin \
+     -DarchetypeVersion=2.0.0-SNAPSHOT \
+     -DgroupId=com.sample \
+     -DartifactId=sftp-jms-im \     
+     -Dversion=1.0.0-SNAPSHOT \
+     -DsourceFlowName="Sample SFTP to JMS Flow" \
+     -DtargetFlowName="Sample JMS To SFTP Flow" 
+```
+(Accept defaults or update as required)
+
+Then build it normally using mvn clean package assembly:assembly
