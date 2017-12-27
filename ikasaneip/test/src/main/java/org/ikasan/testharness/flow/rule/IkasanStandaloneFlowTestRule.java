@@ -61,6 +61,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.util.SocketUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -123,8 +124,7 @@ public class IkasanStandaloneFlowTestRule implements TestRule
 
     public IkasanStandaloneFlowTestRule(String flowUnderTest,Class<?> applicationClass)
     {
-        String[] args = {
-        };
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(applicationClass,args);
 
         Module module = ikasanApplication.getModules().get(0);
@@ -137,6 +137,19 @@ public class IkasanStandaloneFlowTestRule implements TestRule
 
     }
 
+    public IkasanStandaloneFlowTestRule(String flowUnderTest,Class<?> applicationClass,String args[])
+    {
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(applicationClass,args);
+
+        Module module = ikasanApplication.getModules().get(0);
+        this.flow = (Flow) module.getFlow(flowUnderTest);
+        if(flow == null) {
+            throw new RuntimeException("Flow ["+flowUnderTest+"] not found in application context.");
+        }
+        this.flowExpectations = new OrderedExpectation();
+        testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
+
+    }
 
     public IkasanStandaloneFlowTestRule(String flowUnderTest,IkasanApplication ikasanApplication)
     {
