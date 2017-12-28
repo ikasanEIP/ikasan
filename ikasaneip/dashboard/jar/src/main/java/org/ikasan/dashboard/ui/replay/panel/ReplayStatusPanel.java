@@ -49,7 +49,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -87,7 +88,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ReplayStatusPanel extends Panel implements ReplayListener<HibernateReplayAuditEvent>
 {
-	private Logger logger = Logger.getLogger(ReplayStatusPanel.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayStatusPanel.class);
 	
 	private List<ReplayEvent> replayEvents;
 	

@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.replay.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
@@ -56,7 +57,7 @@ import com.vaadin.ui.Window;
  */
 public class ReplayAuditViewWindow extends Window
 {
-	private Logger logger = Logger.getLogger(ReplayAuditViewWindow.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayAuditViewWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	

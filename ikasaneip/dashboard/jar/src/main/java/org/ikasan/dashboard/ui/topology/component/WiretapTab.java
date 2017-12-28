@@ -53,7 +53,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -113,7 +114,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class WiretapTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(WiretapTab.class);
+	private Logger logger = LoggerFactory.getLogger(WiretapTab.class);
 	
 	private FilterTable wiretapTable;
 	

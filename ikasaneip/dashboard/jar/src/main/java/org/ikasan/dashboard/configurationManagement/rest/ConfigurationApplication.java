@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.configurationManagement.rest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.util.*;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -70,7 +71,7 @@ import java.util.List;
 @Path("/configuration")
 public class ConfigurationApplication
 {
-	private static Logger logger = Logger.getLogger(ConfigurationApplication.class);
+	private static Logger logger = LoggerFactory.getLogger(ConfigurationApplication.class);
 
 	@Autowired
 	private TopologyService topologyService;

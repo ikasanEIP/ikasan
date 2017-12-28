@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.replay.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.replay.panel.ReplayEventViewPanel;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -55,7 +56,7 @@ import com.vaadin.ui.Window;
  */
 public class ReplayEventViewWindow extends Window
 {
-	private Logger logger = Logger.getLogger(ReplayEventViewWindow.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayEventViewWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	

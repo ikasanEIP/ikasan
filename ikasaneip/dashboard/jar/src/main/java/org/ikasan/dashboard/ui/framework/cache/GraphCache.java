@@ -46,7 +46,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 
@@ -71,7 +72,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
  */
 public class GraphCache
 {
-	private Logger logger = Logger.getLogger(GraphCache.class);
+	private Logger logger = LoggerFactory.getLogger(GraphCache.class);
 	
 	private ErrorReportingService errorReportingService;
 	private HashMap<ErrorOccurrenceKey, Integer> errorOccurrencesMap;

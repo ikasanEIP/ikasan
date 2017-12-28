@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.administration.panel;
 import java.util.List;
 
 import com.vaadin.server.VaadinService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.notification.NotifierService;
 import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
 import org.ikasan.dashboard.ui.administration.window.NotificationWindow;
@@ -85,7 +86,7 @@ public class NotificationsConfigurationPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(NotificationsConfigurationPanel.class);
+	private Logger logger = LoggerFactory.getLogger(NotificationsConfigurationPanel.class);
 	
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	

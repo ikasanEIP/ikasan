@@ -47,7 +47,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.dashboard.chart.DashboardChart;
 import org.ikasan.dashboard.ui.framework.component.EventExclusionsTable;
 import org.ikasan.dashboard.ui.framework.component.FlowStateTable;
@@ -103,7 +104,7 @@ public class LandingViewPanel extends Panel implements View
 {
     private static final long serialVersionUID = 6005593259860222561L;
 
-    private Logger logger = Logger.getLogger(LandingViewPanel.class);
+    private Logger logger = LoggerFactory.getLogger(LandingViewPanel.class);
 
     private CssLayout dashboardPanels;
     private EventExclusionsTable eventExclusionsTable;

@@ -56,7 +56,8 @@ import javax.ws.rs.core.Response;
 
 import com.vaadin.server.*;
 import com.vaadin.shared.Position;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.ExcludedEventPopup;
@@ -117,7 +118,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ExclusionsTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ExclusionsTab.class);
+	private Logger logger = LoggerFactory.getLogger(ExclusionsTab.class);
 
 	private FilterTable exclusionsTable;
 

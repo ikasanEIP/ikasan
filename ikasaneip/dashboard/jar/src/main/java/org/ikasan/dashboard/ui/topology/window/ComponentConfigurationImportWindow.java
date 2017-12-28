@@ -44,7 +44,8 @@ package org.ikasan.dashboard.ui.topology.window;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Upload.*;
  import com.vaadin.ui.themes.ValoTheme;
- import org.apache.log4j.Logger;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  import org.ikasan.configurationService.util.ComponentConfigurationImportHelper;
  import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
  import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -65,7 +66,7 @@ package org.ikasan.dashboard.ui.topology.window;
  {
      private static final long serialVersionUID = 4798260539109852939L;
 
-     private Logger logger = Logger.getLogger(ComponentConfigurationImportWindow.class);
+     private Logger logger = LoggerFactory.getLogger(ComponentConfigurationImportWindow.class);
 
      private Configuration configuration;
 

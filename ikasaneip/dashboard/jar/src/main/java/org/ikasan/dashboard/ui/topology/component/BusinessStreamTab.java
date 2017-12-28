@@ -46,7 +46,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.graph.IkasanNetworkDiagram;
@@ -102,7 +103,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class BusinessStreamTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(BusinessStreamTab.class);
+	private Logger logger = LoggerFactory.getLogger(BusinessStreamTab.class);
 	
 	private Table businessStreamTable;
 

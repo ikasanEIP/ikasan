@@ -54,7 +54,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import com.vaadin.navigator.Navigator;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -104,7 +105,7 @@ public class MappingConfigurationImportWindow extends Window
 {
     private static final long serialVersionUID = 4798260539109852939L;
 
-    private Logger logger = Logger.getLogger(MappingConfigurationImportWindow.class);
+    private Logger logger = LoggerFactory.getLogger(MappingConfigurationImportWindow.class);
 
     private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;

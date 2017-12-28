@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.framework.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -56,7 +57,7 @@ import org.xml.sax.SAXParseException;
  */
 public class SchemaValidationErrorHandler implements ErrorHandler
 {
-    private static Logger logger = Logger.getLogger(MappingConfigurationValuesImportWindow.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingConfigurationValuesImportWindow.class);
 
     private boolean inError = false;
 

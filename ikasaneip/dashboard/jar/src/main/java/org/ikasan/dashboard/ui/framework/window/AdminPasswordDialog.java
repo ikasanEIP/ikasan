@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.security.service.AuthenticationService;
@@ -73,7 +74,7 @@ public class AdminPasswordDialog extends Window
     private static final long serialVersionUID = 2394313614920487219L;
     
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(AdminPasswordDialog.class);
+    private static Logger logger = LoggerFactory.getLogger(AdminPasswordDialog.class);
     
     private String password;
 

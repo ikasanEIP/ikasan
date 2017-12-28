@@ -8,7 +8,8 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
@@ -32,7 +33,7 @@ import java.util.*;
 public class HarvestingPanel extends Panel implements View
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(HarvestingPanel.class);
+    private static Logger logger = LoggerFactory.getLogger(HarvestingPanel.class);
 
     /**
      * Scheduler

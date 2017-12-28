@@ -1,7 +1,8 @@
 package org.ikasan.dashboard.ui.control.util;
 
 import com.vaadin.event.Action;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 
@@ -10,7 +11,7 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
  */
 public class ModuleControlActionHelper
 {
-    private Logger logger = Logger.getLogger(ModuleControlActionHelper.class);
+    private Logger logger = LoggerFactory.getLogger(ModuleControlActionHelper.class);
 
     /** running state string constant */
     private static String RUNNING = "running";

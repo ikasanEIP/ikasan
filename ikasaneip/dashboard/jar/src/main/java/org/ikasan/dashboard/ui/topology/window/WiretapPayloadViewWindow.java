@@ -47,7 +47,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.topology.panel.WiretapPayloadViewPanel;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -78,7 +79,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class WiretapPayloadViewWindow extends Window
 {
-	private Logger logger = Logger.getLogger(WiretapPayloadViewWindow.class);
+	private Logger logger = LoggerFactory.getLogger(WiretapPayloadViewWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	

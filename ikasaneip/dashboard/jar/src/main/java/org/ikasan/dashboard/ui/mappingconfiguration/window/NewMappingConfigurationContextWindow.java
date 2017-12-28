@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewContextFieldGroup;
@@ -75,7 +76,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NewMappingConfigurationContextWindow extends Window implements View
 {
-	private Logger logger = Logger.getLogger(NewMappingConfigurationContextWindow.class);
+	private Logger logger = LoggerFactory.getLogger(NewMappingConfigurationContextWindow.class);
 	
 	private static final long serialVersionUID = 715001890931201998L;
 

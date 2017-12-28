@@ -53,7 +53,8 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Notification.Type;
  import com.vaadin.ui.themes.ValoTheme;
- import org.apache.log4j.Logger;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  import org.ikasan.configurationService.model.*;
  import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -77,7 +78,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  {
      private static final long serialVersionUID = 6005593259860222561L;
 
-     private Logger logger = Logger.getLogger(ControlConfigurationPanel.class);
+     private Logger logger = LoggerFactory.getLogger(ControlConfigurationPanel.class);
 
      private PlatformConfigurationService platformConfigurationService;
 
