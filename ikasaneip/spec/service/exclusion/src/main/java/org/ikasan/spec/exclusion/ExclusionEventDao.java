@@ -134,4 +134,11 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * Delete all e
      */
     public void deleteAllExpired();
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<EVENT> events);
 }

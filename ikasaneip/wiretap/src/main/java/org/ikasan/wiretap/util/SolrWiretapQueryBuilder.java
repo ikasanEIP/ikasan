@@ -23,7 +23,7 @@ public class SolrWiretapQueryBuilder extends SolrQueryBuilder
     public static final String PAYLOAD_CONTENT = "PayloadContent:";
 
     /**
-     * Method to build solr wiretap queries.
+     * Method to build solr persistence queries.
      * 
      * @param moduleNames
      * @param flowNames

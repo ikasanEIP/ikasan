@@ -1,4 +1,5 @@
-/*
+<!--
+ /*
  * $Id$
  * $URL$
  *
@@ -38,43 +39,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.model;
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapSerialiser;
+    <!-- =================================================================== -->
+    <!-- H2 provides an in-memory database                                   -->
+    <!-- =================================================================== -->
+    
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.ikasan.persistence.hibernate.IkasanSybaseASE157Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="false"/>
+        <entry key="hibernate.flushMode" value="commit"/>
+    </util:map>
 
-/**
- * Contract for WiretapEventFactory concrete implementations.
- *
- * @author Ikasan Development Team
- *
- */
-public interface WiretapEventFactory
-{
-    /**
-     * Instantiate a new WiretapEvent.
-     * @param moduleName
-     * @param flowName
-     * @param componentName
-     * @param event
-     * @param expiry
-     * @return
-     */
-    public WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
-                                 final FlowEvent<String,Object> event, final long expiry);
-
-    /**
-     * Override the default serialiaser.
-     * @param serialiser
-     */
-    public void setSerialiser(WiretapSerialiser<Object,String> serialiser);
-
-    /**
-     * Set a custom persistence serialiser specific to a component name.
-     * @param componentName
-     * @param serialiser
-     */
-    public void setSerialiser(String componentName, WiretapSerialiser<Object,String> serialiser);
-
-}
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.sybase.jdbc4.jdbc.SybDriver" />
+        <property name="url" value="jdbc:sybase:Tds:svc-esbdb01n:50100/Ikasan01" />
+        <property name="username" value="ikasan01n" />
+        <property name="password" value="A1ler0n" />
+    </bean>
+    
+  
+</beans>

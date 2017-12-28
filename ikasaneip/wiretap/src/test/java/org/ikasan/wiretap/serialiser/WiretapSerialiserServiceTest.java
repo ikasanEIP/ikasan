@@ -69,7 +69,7 @@ public class WiretapSerialiserServiceTest
         this.serialisers = new ConcurrentHashMap();
         serialisers.put(Integer.class, IntegerSerialiser.getInstance());
         
-        // create a wiretap serialiser service instance passing the supported serialisers
+        // create a persistence serialiser service instance passing the supported serialisers
         this.serialiserService = new WiretapSerialiserService(serialisers);
     }
     
@@ -117,7 +117,7 @@ public class WiretapSerialiserServiceTest
     }
     
     /**
-     * Simple example serialiser implementation of the wiretap serialiser contract.
+     * Simple example serialiser implementation of the persistence serialiser contract.
      * This serialises an Integer object to a byte[] for wiretapping.
      * @author Ikasan Development Team
      *

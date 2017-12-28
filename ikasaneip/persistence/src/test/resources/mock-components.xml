@@ -1,4 +1,6 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /*
  * $Id$
  * $URL$
  *
@@ -38,43 +40,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.model;
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapSerialiser;
+    <!-- mockery interfaces -->
+    <bean id="mockery" class="org.jmock.Mockery" >
+        <property name="imposteriser" >
+            <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+                <property name="staticField" value="org.jmock.lib.legacy.ClassImposteriser.INSTANCE"/>
+            </bean>
+        </property>
+    </bean>
 
-/**
- * Contract for WiretapEventFactory concrete implementations.
- *
- * @author Ikasan Development Team
- *
- */
-public interface WiretapEventFactory
-{
-    /**
-     * Instantiate a new WiretapEvent.
-     * @param moduleName
-     * @param flowName
-     * @param componentName
-     * @param event
-     * @param expiry
-     * @return
-     */
-    public WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
-                                 final FlowEvent<String,Object> event, final long expiry);
-
-    /**
-     * Override the default serialiaser.
-     * @param serialiser
-     */
-    public void setSerialiser(WiretapSerialiser<Object,String> serialiser);
-
-    /**
-     * Set a custom persistence serialiser specific to a component name.
-     * @param componentName
-     * @param serialiser
-     */
-    public void setSerialiser(String componentName, WiretapSerialiser<Object,String> serialiser);
-
-}
+</beans>

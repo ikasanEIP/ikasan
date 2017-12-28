@@ -104,4 +104,11 @@ public interface ReplayDao
 	 * @return
 	 */
 	public ReplayEvent getReplayEventById(Long id);
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<ReplayEvent> events);
 }
