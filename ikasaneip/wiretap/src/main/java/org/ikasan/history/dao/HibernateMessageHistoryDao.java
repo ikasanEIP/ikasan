@@ -43,14 +43,17 @@ package org.ikasan.history.dao;
 import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.history.model.CustomMetric;
+import org.ikasan.history.model.FlowInvocationMetricImpl;
 import org.ikasan.history.model.MetricEvent;
 import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.springframework.orm.hibernate4.HibernateCallback;
@@ -66,7 +69,9 @@ import java.util.*;
  */
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
-	/** Use batch housekeeping mode? */
+    public static final String EVENT_IDS = "eventIds";
+
+    /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = true;
 
     /** Batch size used when in batching housekeep */
@@ -74,6 +79,9 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
     /** Batch size used when in a single transaction */
     private Integer transactionBatchSize = 2000;
+
+    public static final String UPDATE_HARVESTED_QUERY = "update FlowInvocationMetricImpl w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 
 
     @Override
@@ -454,6 +462,34 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             getHibernateTemplate().delete(flowInvocationMetric);
         }
+    }
+
+    @Override
+    public void updateAsHarvested(List<FlowInvocationMetric> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                List<Long> flowInvocationMetricIds = new ArrayList<Long>();
+
+                for(FlowInvocationMetric event: events)
+                {
+                    flowInvocationMetricIds.add(((FlowInvocationMetricImpl)event).getId());
+                }
+
+                List<List<Long>> partitionedIds = Lists.partition(flowInvocationMetricIds, 300);
+
+                for(List<Long> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
+            }
+        });
     }
 
     /**

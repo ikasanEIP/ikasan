@@ -103,6 +103,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-persistence</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>provided</scope>
@@ -214,6 +219,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>sybase</groupId>
+            <artifactId>jconn4</artifactId>
+            <version>7.07_build_26846</version>
         </dependency>
 
 

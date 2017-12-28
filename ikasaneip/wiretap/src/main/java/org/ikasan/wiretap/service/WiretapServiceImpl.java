@@ -72,7 +72,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(WiretapServiceImpl.class);
 
-    /** Optional service configuration for the wiretap service */
+    /** Optional service configuration for the persistence service */
     private WiretapServiceConfiguration wiretapServiceConfiguration;
 
     /**
@@ -190,7 +190,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
      * @param componentName - The component this FlowEvent is currently in
      * @param moduleName - The module this FlowEvent is currently in
      * @param flowName - The Flow this FlowEvent is currently in
-     * @param timeToLive - Time to live for the wiretap
+     * @param timeToLive - Time to live for the persistence
      */
     public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
@@ -249,16 +249,16 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.spec.wiretap.WiretapService#housekeep()
+     * @see org.ikasan.spec.persistence.WiretapService#housekeep()
      */
 	@Override
     public void housekeep()
     {
-    	logger.info("wiretap housekeep called");
+    	logger.info("persistence housekeep called");
     	long startTime = System.currentTimeMillis();
         wiretapDao.deleteAllExpired();
         long endTime = System.currentTimeMillis();
-        logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
+        logger.info("persistence housekeep completed in ["+(endTime-startTime)+" ms]");
     }
 
     @Override
@@ -285,4 +285,9 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         this.save(harvestedRecord);
     }
 
+    @Override
+    public void updateAsHarvested(List<WiretapEvent> events)
+    {
+        this.wiretapDao.updateAsHarvested(events);
+    }
 }

@@ -52,6 +52,7 @@ import org.hibernate.criterion.*;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.HibernateReplayEvent;
+import com.google.common.collect.Lists;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayAuditDao;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -102,6 +103,9 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 
 	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete HibernateReplayAuditEvent re " +
 			" where re.id.replayEventId in(:" + EVENT_IDS + ")";
+
+    public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 	
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
@@ -368,7 +372,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 			@SuppressWarnings("unchecked")
 			public Object doInHibernate(Session session) throws HibernateException
 			{
-
 				Query query = session.createQuery(REPLAY_EVENTS_TO_DELETE_QUERY);
 				query.setLong(NOW, System.currentTimeMillis());
 				query.setMaxResults(numToHousekeep);
@@ -377,21 +380,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 
 				List<Long> replayAuditEventIds = new ArrayList<Long>();
 
-//				public static final String REPLAY_EVENTS_TO_DELETE_QUERY = "select id from ReplayEvent re " +
-//						" where re.expiry < :" + NOW;
-//
-//				public static final String REPLAY_EVENTS_DELETE_QUERY = "delete ReplayEvent re " +
-//						" where re.id in(:" + EVENT_IDS + ")";
-//
-//				public static final String REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY = "select rae.id.replayAuditId from ReplayAuditEvent rae " +
-//						" where rae.id.replayEventId in (:" + EVENT_IDS + ")";
-//
-//				public static final String REPLAY_AUDIT_DELETE_QUERY = "delete ReplayAudit re " +
-//						" where re.id in(:" + EVENT_IDS + ")";
-//
-//				public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete ReplayAuditEvent re " +
-//						" where re.id.replayEventId in(:" + EVENT_IDS + ")";
-//
 				if(replayEventIds.size() > 0)
 				{
 
@@ -443,4 +431,34 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 			}
 		});
 	}
+
+    @Override
+    public void updateAsHarvested(List<ReplayEvent> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                List<Long> exclusionEventIds = new ArrayList<Long>();
+
+                for(ReplayEvent event: events)
+                {
+                    exclusionEventIds.add(event.getId());
+                }
+
+                List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);
+
+                for(List<Long> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
+            }
+        });
+    }
+
+
 }

@@ -274,4 +274,10 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
     {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void updateAsHarvested(List<ReplayEvent> events)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

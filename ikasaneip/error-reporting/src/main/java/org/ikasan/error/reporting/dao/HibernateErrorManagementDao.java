@@ -40,6 +40,7 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -57,6 +58,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +85,9 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             " where n.id in(:" + EVENT_IDS + ")";
 
     public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+
+    public static final String UPDATE_HARVESTED_QUERY = "update ErrorOccurrenceImpl w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 
     /* (non-Javadoc)
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
@@ -391,4 +396,32 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 			}
 		});
 	}
+
+    public void updateAsHarvested(List<ErrorOccurrence> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                List<String> wiretapEventIds = new ArrayList<String>();
+
+                for(ErrorOccurrence event: events)
+                {
+                    wiretapEventIds.add(event.getUri());
+                }
+
+                List<List<String>> partitionedIds = Lists.partition(wiretapEventIds, 300);
+
+                for(List<String> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
+            }
+        });
+    }
 }

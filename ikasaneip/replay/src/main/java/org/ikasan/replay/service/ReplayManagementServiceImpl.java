@@ -190,4 +190,9 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 		this.replayDao.saveOrUpdate(harvestedRecord);
 	}
 
+    @Override
+    public void updateAsHarvested(List<ReplayEvent> events)
+    {
+        this.replayDao.updateAsHarvested(events);
+    }
 }
