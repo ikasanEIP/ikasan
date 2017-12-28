@@ -33,7 +33,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     /**
      * We need to give this hibernate it's context.
      */
-    public static final String WIRETAP = "persistence";
+    public static final String WIRETAP = "wiretap";
 
     private boolean isBatchDelete = false;
     private Integer transactionBatchSize;
@@ -48,7 +48,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "" + wiretapEvent.getIdentifier());
-        document.addField(TYPE, "persistence");
+        document.addField(TYPE, WIRETAP);
         document.addField(MODULE_NAME, wiretapEvent.getModuleName());
         document.addField(FLOW_NAME, wiretapEvent.getFlowName());
         document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
@@ -90,7 +90,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
             {
                 SolrInputDocument document = new SolrInputDocument();
                 document.addField(ID, "" + wiretapEvent.getIdentifier());
-                document.addField(TYPE, "persistence");
+                document.addField(TYPE, WIRETAP);
                 document.addField(MODULE_NAME, wiretapEvent.getModuleName());
                 document.addField(FLOW_NAME, wiretapEvent.getFlowName());
                 document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
