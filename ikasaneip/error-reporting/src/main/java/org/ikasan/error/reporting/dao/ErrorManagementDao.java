@@ -171,4 +171,13 @@ public interface ErrorManagementDao
 	 * @return
      */
 	public List<ErrorOccurrence> getHarvestableRecords(final int harvestingBatchSize);
+
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<ErrorOccurrence> events);
+
 }

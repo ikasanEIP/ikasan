@@ -41,10 +41,12 @@
 package org.ikasan.exclusion.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.ikasan.exclusion.model.ExclusionEventImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.junit.Assert;
@@ -131,6 +133,27 @@ public class HibernateExclusionEventDaoTest
         
         Assert.assertEquals("Should be found size == 0", 0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2", 100).size());
 
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success()
+    {
+        List<ExclusionEvent> exclusionEvents = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+            exclusionEventDao.save(exclusionEvent);
+
+            exclusionEvents.add(exclusionEvent);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.exclusionEventDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.exclusionEventDao.updateAsHarvested(exclusionEvents);
+
+        Assert.assertEquals("Harvestable records == 0", this.exclusionEventDao.getHarvestableRecords(5000).size(), 0);
     }
 
 }

@@ -188,5 +188,27 @@ public class HibernateErrorManagementDaoTest
     	
     	Assert.assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
     }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success()
+    {
+        List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+
+            this.errorReportingServiceDao.save(eo);
+
+            errorOccurrences.add(eo);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.errorManagementDao.updateAsHarvested(errorOccurrences);
+
+        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
+    }
     
 }

@@ -204,11 +204,11 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
         }
     }
 
-
-
     @Override
     public void deleteExpired()
     {
         super.removeExpired(ERROR);
     }
+
+
 }

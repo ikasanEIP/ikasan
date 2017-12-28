@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.dao;
 
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -55,6 +56,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,9 +67,14 @@ import java.util.List;
 public class HibernateExclusionEventDao extends HibernateDaoSupport
         implements ExclusionEventDao<String, ExclusionEvent>
 {
+    public static final String EVENT_IDS = "eventIds";
+
     /** batch delete statement */
     private static final String DELETE_QUERY = "delete ExclusionEventImpl s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
     private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEventImpl s where s.errorUri = :errorUri";
+
+    public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 
 
     @Override
@@ -279,4 +286,32 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void updateAsHarvested(List<ExclusionEvent> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                List<Long> exclusionEventIds = new ArrayList<Long>();
+
+                for(ExclusionEvent event: events)
+                {
+                    exclusionEventIds.add(event.getId());
+                }
+
+                List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);
+
+                for(List<Long> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
+            }
+        });
+    }
 }

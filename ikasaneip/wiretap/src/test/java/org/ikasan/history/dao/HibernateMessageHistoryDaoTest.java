@@ -40,10 +40,7 @@
  */
 package org.ikasan.history.dao;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -170,6 +167,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void bulkDeleteTest()
     {
+        List<FlowInvocationMetric> flowInvocationMetrics = new ArrayList<>();
     	for(int i=0; i<1000; i++)
     	{
             Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
@@ -200,11 +198,14 @@ public class HibernateMessageHistoryDaoTest
             FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
                     System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
-            flowInvocationMetric.setHarvested(true);
+            flowInvocationMetric.setHarvested(false);
 
+            this.messageHistoryDao.save(flowInvocationMetric);
 
-	        messageHistoryDao.save(flowInvocationMetric);
+            flowInvocationMetrics.add(flowInvocationMetric);
     	}
+
+    	this.messageHistoryDao.updateAsHarvested(flowInvocationMetrics);
 
         List<FlowInvocationMetric> events =  messageHistoryDao.getHarvestedRecords(50);
 
