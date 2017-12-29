@@ -3,7 +3,7 @@ package org.ikasan.spec.solr;
 import java.util.List;
 
 /**
- * Created by stewmi on 06/08/2017.
+ * Created by Ikasan Development Team on 06/08/2017.
  */
 public interface SolrService<ENTITY>
 {

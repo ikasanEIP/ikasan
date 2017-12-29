@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.ext.Provider;
 
 /**
- * Created by stewmi on 20/11/2017.
+ * Created by Ikasan Development Team on 20/11/2017.
  */
 @Configuration
 @ApplicationPath("/rest")
