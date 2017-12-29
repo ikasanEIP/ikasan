@@ -66,7 +66,14 @@
         <property name="password" value="sa" />
     </bean>
 
-    <!--bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+    <!--util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.ikasan.persistence.hibernate.IkasanSybaseASE157Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="false"/>
+        <entry key="hibernate.flushMode" value="commit"/>
+    </util:map>
+
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.sybase.jdbc4.jdbc.SybDriver" />
         <property name="url" value="jdbc:sybase:Tds:svc-esbdb01n:50100/Ikasan01" />

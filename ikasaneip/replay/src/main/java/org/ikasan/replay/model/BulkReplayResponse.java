@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 05/11/2017.
+ * Created by Ikasan Development Team on 05/11/2017.
  */
 public class BulkReplayResponse
 {

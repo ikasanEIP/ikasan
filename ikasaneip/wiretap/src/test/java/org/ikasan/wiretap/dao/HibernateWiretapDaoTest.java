@@ -44,6 +44,9 @@ import javax.annotation.Resource;
 
 import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -68,89 +71,45 @@ public class HibernateWiretapDaoTest
 	/** Object being tested */
 	@Resource private WiretapDao wiretapDao;
 
-//	/**
-//	 * Before each test case, inject a mock {@link HibernateTemplate} to hibernate implementation
-//	 * being tested
-//	 */
-//	@Before
-//	public void setup()
-//	{
-//
-//		for(int i=0; i< 10000; i++)
-//		{
-//			WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
-//					"eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
-//
-//			this.wiretapDao.save(event);
-//		}
-//
-//	}
+	/**
+	 * Before each test case, inject a mock {@link HibernateTemplate} to hibernate implementation
+	 * being tested
+	 */
+	@Before
+	public void setup()
+	{
+
+		for(int i=0; i< 10000; i++)
+		{
+			WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+					"eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
+
+			this.wiretapDao.save(event);
+		}
+
+	}
 
 	@Test
 	@DirtiesContext
 	public void test_get_harvestableRecords()
 	{
-		System.out.println("Getting harvestable records");
-
-        long startTime = System.currentTimeMillis();
 	    List<WiretapEvent> events = wiretapDao.getHarvestableRecords(50);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
 
-//		Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
 
 		wiretapDao.updateAsHarvested(events);
 
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
-		events = wiretapDao.getHarvestableRecords(1000);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
-        events = wiretapDao.getHarvestableRecords(1000);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
+		events = wiretapDao.getHarvestableRecords(10000);
 
         wiretapDao.updateAsHarvested(events);
 
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 9950);
 
-//		Assert.assertEquals("Wiretap events should equal!", events.size(), 9950);
-        System.out.println("Finished getting harvestable records");
+        events = wiretapDao.getHarvestableRecords(1000);
+
+        wiretapDao.updateAsHarvested(events);
+
+        Assert.assertEquals("Wiretap events should equal!", events.size(), 0);
 	}
 
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_sybase()
-//	{
-//		wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
-//	}
-//
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_mssql()
-//	{
-//		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
-//	}
-//
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_mysql()
-//	{
-//		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
-//	}
-//
-//	@After
-//	public void process()
-//	{
-//		wiretapDao.setBatchHousekeepDelete(true);
-//		wiretapDao.setHousekeepingBatchSize(100);
-//		wiretapDao.setTransactionBatchSize(2000);
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//	}
 }

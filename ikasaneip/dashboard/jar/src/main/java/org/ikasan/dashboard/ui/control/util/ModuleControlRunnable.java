@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by stewmi on 20/11/2017.
+ * Created by Ikasan Development Team on 20/11/2017.
  */
 public class ModuleControlRunnable implements Runnable, Callable<String>
 {
