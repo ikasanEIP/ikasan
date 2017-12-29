@@ -5,7 +5,7 @@ import org.hibernate.dialect.pagination.LimitHandler;
 import org.hibernate.engine.spi.RowSelection;
 
 /**
- * Created by stewmi on 27/12/2017.
+ * Created by Ikasan Development Team on 27/12/2017.
  */
 public class IkasanSybaseASE157Dialect extends SybaseASE157Dialect
 {

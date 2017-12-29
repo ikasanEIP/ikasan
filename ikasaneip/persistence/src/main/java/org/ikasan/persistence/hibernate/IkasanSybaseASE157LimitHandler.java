@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Created by stewmi on 27/12/2017.
+ * Created by Ikasan Development Team on 27/12/2017.
  */
 public class IkasanSybaseASE157LimitHandler extends AbstractLimitHandler
 {
@@ -22,7 +22,18 @@ public class IkasanSybaseASE157LimitHandler extends AbstractLimitHandler
         String select = sql.substring(0, sql.indexOf("select") + "select".length());
         String statement = sql.substring(sql.indexOf("select") + "select".length(), sql.length());
 
-        return select + " top " + selection.getMaxRows() + statement;
+        if(selection.getFirstRow() != null && selection.getMaxRows() != null)
+        {
+            return select + " top " + (selection.getFirstRow() + selection.getMaxRows()) + statement;
+        }
+        else if(selection.getMaxRows() != null)
+        {
+            return select + " top " +  selection.getMaxRows() + statement;
+        }
+        else
+        {
+            return sql;
+        }
     }
 
     @Override

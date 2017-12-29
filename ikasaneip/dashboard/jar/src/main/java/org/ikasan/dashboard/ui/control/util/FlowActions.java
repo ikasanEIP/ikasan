@@ -3,7 +3,7 @@ package org.ikasan.dashboard.ui.control.util;
 import com.vaadin.event.Action;
 
 /**
- * Created by stewmi on 20/11/2017.
+ * Created by Ikasan Development Team on 20/11/2017.
  */
 public class FlowActions
 {
