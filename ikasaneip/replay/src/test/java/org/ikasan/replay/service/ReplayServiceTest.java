@@ -130,8 +130,8 @@ public class ReplayServiceTest
 		wireMockRule.addMockServiceRequestListener(new RequestListener() {
 			@Override
 			public void requestReceived(Request request, Response response) {
-				System.out.print(request);
-				System.out.print(response);
+			//	System.out.print(request);
+			//	System.out.print(response);
 			}
 		});
 	}
