@@ -178,5 +178,12 @@ public interface WiretapDao
      *
      * @param housekeepQuery
      */
-    void setHousekeepQuery(String housekeepQuery);
+    public void setHousekeepQuery(String housekeepQuery);
+
+    /**
+     * Update records as harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<WiretapEvent> events);
 }

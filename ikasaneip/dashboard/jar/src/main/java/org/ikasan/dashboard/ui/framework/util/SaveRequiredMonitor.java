@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.action.NavigateToAction;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -54,7 +55,7 @@ import com.vaadin.ui.UI;
  */
 public class SaveRequiredMonitor
 {
-    private Logger logger = Logger.getLogger(MappingConfigurationPanel.class);
+    private Logger logger = LoggerFactory.getLogger(MappingConfigurationPanel.class);
     
     private boolean isSaveRequired = false;
     private FunctionalGroup functionalGroup;

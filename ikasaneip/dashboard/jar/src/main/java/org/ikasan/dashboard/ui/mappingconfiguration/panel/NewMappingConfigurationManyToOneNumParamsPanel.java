@@ -4,7 +4,8 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.validator.IntegerStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.LongStringValidator;
 import org.ikasan.mapping.model.MappingConfiguration;
@@ -15,7 +16,7 @@ import org.ikasan.mapping.model.MappingConfiguration;
  */
 public class NewMappingConfigurationManyToOneNumParamsPanel extends Panel
 {
-    private Logger logger = Logger.getLogger(NewMappingConfigurationManyToOneNumParamsPanel.class);
+    private Logger logger = LoggerFactory.getLogger(NewMappingConfigurationManyToOneNumParamsPanel.class);
 
     private TextField numberOfSourceParametersTextField;
     private Label numSourceParamsLabel;

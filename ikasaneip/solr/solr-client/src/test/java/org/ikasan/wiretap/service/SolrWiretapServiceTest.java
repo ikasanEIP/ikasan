@@ -8,15 +8,10 @@ import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
-import org.ikasan.spec.module.StartupControl;
-import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.model.SolrWiretapEvent;
@@ -32,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.

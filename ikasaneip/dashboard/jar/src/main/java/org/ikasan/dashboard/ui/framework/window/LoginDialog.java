@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.CommitHandler;
@@ -76,7 +77,7 @@ public class LoginDialog extends Window
     private static final long serialVersionUID = 2394313614920487219L;
     
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(LoginDialog.class);
+    private static Logger logger = LoggerFactory.getLogger(LoginDialog.class);
 
     /**
      * Constructor

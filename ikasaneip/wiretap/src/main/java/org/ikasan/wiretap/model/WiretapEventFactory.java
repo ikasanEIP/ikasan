@@ -71,7 +71,7 @@ public interface WiretapEventFactory
     public void setSerialiser(WiretapSerialiser<Object,String> serialiser);
 
     /**
-     * Set a custom wiretap serialiser specific to a component name.
+     * Set a custom persistence serialiser specific to a component name.
      * @param componentName
      * @param serialiser
      */

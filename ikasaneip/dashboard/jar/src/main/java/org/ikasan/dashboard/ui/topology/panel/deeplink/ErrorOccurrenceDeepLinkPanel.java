@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.topology.panel.deeplink;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -74,7 +75,7 @@ import com.vaadin.ui.Window.CloseEvent;
 @PreserveOnRefresh
 public class ErrorOccurrenceDeepLinkPanel extends UI
 {
-	private Logger logger = Logger.getLogger(ErrorOccurrenceDeepLinkPanel.class);
+	private Logger logger = LoggerFactory.getLogger(ErrorOccurrenceDeepLinkPanel.class);
 	
 	private NavigationPanel navigationPanel;
 	private AuthenticationService authenticationService;

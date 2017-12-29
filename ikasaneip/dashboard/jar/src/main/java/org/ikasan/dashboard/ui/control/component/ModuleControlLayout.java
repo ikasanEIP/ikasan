@@ -11,7 +11,8 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.control.util.FlowActions;
 import org.ikasan.dashboard.ui.control.util.FlowStates;
@@ -36,11 +37,11 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * Created by stewmi on 09/11/2017.
+ * Created by Ikasan Development Team on 09/11/2017.
  */
 public class ModuleControlLayout extends ModuleControlDesign
 {
-    private Logger logger = Logger.getLogger(ModuleControlLayout.class);
+    private Logger logger = LoggerFactory.getLogger(ModuleControlLayout.class);
 
     private TopologyService topologyService;
 

@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.dashboard.panel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.Broadcaster;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.event.AlertEvent;
@@ -75,7 +76,7 @@ public class DashboardPanel extends Panel implements View//, Broadcaster.Broadca
 {
     private static final long serialVersionUID = 6005593259860222561L;
 
-    private Logger logger = Logger.getLogger(DashboardPanel.class);
+    private Logger logger = LoggerFactory.getLogger(DashboardPanel.class);
     private final Table table = new Table();
     private final Table healthTable = new Table();
     private IndexedContainer container = new IndexedContainer();

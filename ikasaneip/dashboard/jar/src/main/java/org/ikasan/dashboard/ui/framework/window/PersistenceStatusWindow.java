@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -57,7 +58,7 @@ public class PersistenceStatusWindow extends Window
 {
 	private static final long serialVersionUID = -3265893258014286092L;
 	
-	private Logger logger = Logger.getLogger(PersistenceStatusWindow.class);
+	private Logger logger = LoggerFactory.getLogger(PersistenceStatusWindow.class);
 	
 
 	/**

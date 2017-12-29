@@ -45,7 +45,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -59,7 +60,7 @@ import org.ikasan.topology.service.TopologyService;
  */
 public class NotifierServiceImpl implements NotifierService
 {
-	private static Logger logger = Logger.getLogger(NotifierServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(NotifierServiceImpl.class);
 	
 	private static ScheduledExecutorService executor;
 	private int notificationIntervalMinutes = 5;

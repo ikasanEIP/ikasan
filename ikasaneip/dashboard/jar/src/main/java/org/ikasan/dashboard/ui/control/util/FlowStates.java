@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.ui.control.util;
 
 /**
- * Created by stewmi on 19/11/2017.
+ * Created by Ikasan Development Team on 19/11/2017.
  */
 public class FlowStates
 {

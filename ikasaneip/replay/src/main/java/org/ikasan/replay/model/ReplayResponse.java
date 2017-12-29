@@ -1,7 +1,7 @@
 package org.ikasan.replay.model;
 
 /**
- * Created by stewmi on 30/10/2017.
+ * Created by Ikasan Development Team on 30/10/2017.
  */
 public class ReplayResponse
 {

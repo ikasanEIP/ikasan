@@ -44,7 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.topology.model.Flow;
@@ -65,7 +66,7 @@ import com.vaadin.ui.UI;
  */
 public class FlowStateTable extends DashboardTable
 {
-	private Logger logger = Logger.getLogger(FlowStateTable.class);
+	private Logger logger = LoggerFactory.getLogger(FlowStateTable.class);
 	
 	/** running state string constant */
     private static String RUNNING = "running";

@@ -209,4 +209,9 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
         super.removeExpired(EXCLUSION);
     }
 
+    @Override
+    public void updateAsHarvested(List<ExclusionEvent> exclusionEvents)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

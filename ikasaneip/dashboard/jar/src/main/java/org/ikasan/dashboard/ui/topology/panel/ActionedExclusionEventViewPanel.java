@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.topology.panel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -74,7 +75,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ActionedExclusionEventViewPanel extends Panel
 {
-	private static Logger logger = Logger.getLogger(ActionedExclusionEventViewPanel.class);
+	private static Logger logger = LoggerFactory.getLogger(ActionedExclusionEventViewPanel.class);
 	
 	/**
 	 * 

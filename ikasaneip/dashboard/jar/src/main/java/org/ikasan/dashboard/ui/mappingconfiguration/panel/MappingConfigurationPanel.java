@@ -49,7 +49,8 @@ import java.io.StringWriter;
 import java.util.*;
 
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
@@ -105,7 +106,7 @@ public class MappingConfigurationPanel extends Panel implements View
 {
     private static final long serialVersionUID = 5269092088876470789L;
 
-    private Logger logger = Logger.getLogger(MappingConfigurationPanel.class);
+    private Logger logger = LoggerFactory.getLogger(MappingConfigurationPanel.class);
     protected GridLayout layout;
     protected MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     protected MappingConfiguration mappingConfiguration;

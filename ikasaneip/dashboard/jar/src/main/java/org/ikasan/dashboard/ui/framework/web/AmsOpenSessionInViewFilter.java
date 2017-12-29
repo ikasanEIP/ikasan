@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.web;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
 
 /**
@@ -50,6 +51,6 @@ import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
  */
 public class AmsOpenSessionInViewFilter extends OpenSessionInViewFilter 
 {
-    private Logger logger = Logger.getLogger(AmsOpenSessionInViewFilter.class);
+    private Logger logger = LoggerFactory.getLogger(AmsOpenSessionInViewFilter.class);
 
 }

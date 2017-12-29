@@ -1,7 +1,8 @@
 package org.ikasan.dashboard.solr;
 
 import com.google.common.base.Splitter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class SolrInitialiser
 {
-    private Logger logger = Logger.getLogger(SolrInitialiser.class);
+    private Logger logger = LoggerFactory.getLogger(SolrInitialiser.class);
 
     private List<SolrInitialisationService> solrInitialisationServices;
     private PlatformConfigurationService platformConfigurationService;

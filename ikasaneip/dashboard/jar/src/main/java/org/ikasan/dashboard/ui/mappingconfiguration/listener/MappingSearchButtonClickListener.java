@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
@@ -83,7 +84,7 @@ public class MappingSearchButtonClickListener implements ClickListener
     private static final long serialVersionUID = -9077141163243070560L;
 
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(MappingSearchButtonClickListener.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingSearchButtonClickListener.class);
 
     private ClientComboBox clientComboBox;
     private TypeComboBox typeComboBox;
