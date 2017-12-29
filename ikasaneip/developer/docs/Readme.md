@@ -230,12 +230,72 @@ Running Ikasan Integration Module (IM) on single JVM does not require any any pr
 |  [spring-boot-file](../../sample/spring-boot/file/README.md) |
 |  [spring-boot-jms](../../sample/spring-boot/jms/README.md) |
 |  [spring-boot-ftp](../../sample/spring-boot/ftp/README.md) |
+|  [spring-boot-ftp-jms](../../sample/spring-boot/ftp-jms/README.md) |
 |  [spring-boot-sftp](../../sample/spring-boot/sftp/README.md) |
-
+|  [spring-boot-sftp-jms](../../sample/spring-boot/sftp-jms/README.md) |
 
 ### Creating an Integration Module from Sample Artefact
 
 The basic constituents of an Ikasan Integration Module (IM) are the same. Due to this we have created some out of the box IM archetypes based on common technical integration problems.
+
+#### JMS to JMS Archetype
+
+This archetype creates a working integration module containing one flow,
+
+- **JMS to JMS Flow** – JMS (ActiveMQ Text Message) events are consumed and published to different JMS (ActiveMQ Text Message)
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+
+```
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-jms-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.0.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.0.0-SNAPSHOT    
+    \-DgroupId=com.sample     
+    \-DartifactId=jms-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName="JMS to JMS Flow" 
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
+
+```
+cd jms-im
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
+
 
 #### Local File System to JMS / JMS to Local File System Archetype
 
@@ -258,14 +318,11 @@ mvn archetype:generate
     -DtargetFlowName=<Target Flow Name>
 ```
 
-
 where the standard Maven archetype coordinates are,
 
-- **archetypeGroupId** – is always org.ikasan for Ikasan based archetypes
-- **archetypeArtifactId** – details the archetype type to invoke
-- **archetypeVersion** – details the version of the Ikasan archetype type to invoke
-
-where the following parameters provide the configuration for the parent pom for your new Integration Module,
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-filesystem-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke  **2.0.0 and above**
 
 where the following parameters provide the configuration for the Integration Module pom being created,
 
@@ -285,18 +342,143 @@ mvn archetype:generate
     \-DarchetypeVersion=2.0.0-SNAPSHOT    
     \-DgroupId=com.ikasan     
     \-DartifactId=myIntegrationModule     
-    \-Dversion=1.0.0-SNAPSHOT     \
-    \-DsourceFlowName=fileSystemToJMSFlow     \
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName=fileSystemToJMSFlow     
     \-DtargetFlowName=jmsToFileSystemFlow
 ```
 
 (Accept defaults or update as required)
 
-This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean, package assembly.
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
 
 ```
 cd myIntegrationModule
-mvn clean package assembly:assembly 
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
+
+#### FTP to JMS / JMS to FTP Archetype
+
+This archetype creates a working integration module containing two flows,
+
+- **FTP to JMS Flow** – Remote FTP files are consumed and published as JMS (ActiveMQ Map Message) events
+- **JMS to FTP Flow** – JMS (ActiveMQ Map Message) events are consumed and published to a remote FTP files
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-ftp-jms-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+    -DtargetFlowName=<Target Flow Name>
+```
+
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-ftp-jms-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.0.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+- **targetFlowName** – target flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-ftp-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.0.0-SNAPSHOT    
+    \-DgroupId=com.sample     
+    \-DartifactId=ftp-jms-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName="FTP to JMS Flow" 
+    \-DtargetFlowName="JMS To FTP Flow"
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
+
+```
+cd ftp-jms-im
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
+
+
+#### SFTP to JMS / JMS to SFTP Archetype
+
+This archetype creates a working integration module containing two flows,
+
+- **SFTP to JMS Flow** – Remote SFTP files are consumed and published as JMS (ActiveMQ Map Message) events
+- **JMS to SFTP Flow** – JMS (ActiveMQ Map Message) events are consumed and published to a remote SFTP files
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+    -DtargetFlowName=<Target Flow Name>
+```
+
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-sftp-jms-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.0.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+- **targetFlowName** – target flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.0.0-SNAPSHOT    
+    \-DgroupId=com.sample     
+    \-DartifactId=sftp-jms-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName="SFTP to JMS Flow" 
+    \-DtargetFlowName="JMS To SFTP Flow"
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
+
+```
+cd sftp-jms-im
+mvn clean package 
 ```
 
 This will build and create a zip binary containing all the required deployments for your integration module.

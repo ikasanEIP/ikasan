@@ -89,8 +89,6 @@ public class ApplicationTest
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    Set<String> empty = new HashSet<>();
-
     private Flow flowUUT;
 
     @Before public void setup()

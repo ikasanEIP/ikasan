@@ -7,10 +7,7 @@ import org.springframework.jms.config.SimpleJmsListenerContainerFactory;
 import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +32,9 @@ public class MessageListenerVerifier implements MessageListener
         this.endpoint.startMessageListener();
     }
 
-    List<String> captureResults = new ArrayList<>();
+    List<Object> captureResults = new ArrayList<>();
 
-    public List<String> getCaptureResults()
+    public List<Object> getCaptureResults()
     {
         return captureResults;
     }
@@ -56,6 +53,12 @@ public class MessageListenerVerifier implements MessageListener
             {
                 throw new RuntimeException(ex);
             }
+        }
+        if (message instanceof MapMessage)
+        {
+                System.out.println("Message has been consumed from [" + destinationName + "]: " + message.toString());
+                captureResults.add(message);
+
         }
         else
         {

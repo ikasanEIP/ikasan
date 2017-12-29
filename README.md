@@ -60,13 +60,12 @@ than another development framework.
  * Service APIs support management of the flow, runtime status, resubmission, and replay
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
 
-
-[Getting Started Guide](ikasaneip/developer/)
-======
-
-
 [Component Quick Start](ikasaneip/component/Readme.md)
 ======
+
+[Getting Started Guide](ikasaneip/developer/docs/Readme.md)
+======
+
 
 | Samples overview |
 |-------------|
@@ -74,7 +73,9 @@ than another development framework.
 |  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
 |  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
 |  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
+|  [spring-boot-ftp-jms](ikasaneip/sample/spring-boot/ftp-jms/README.md) |
 |  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
+|  [spring-boot-sftp-jms](ikasaneip/sample/spring-boot/sftp-jms/README.md) |
 ---------------------
 
 
