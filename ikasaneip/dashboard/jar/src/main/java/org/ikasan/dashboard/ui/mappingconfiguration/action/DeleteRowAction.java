@@ -44,7 +44,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
@@ -66,7 +67,7 @@ import com.vaadin.ui.Notification;
 public class DeleteRowAction implements Action
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(DeleteRowAction.class);
+    private static Logger logger = LoggerFactory.getLogger(DeleteRowAction.class);
 
     private List<SourceConfigurationValue> sourceConfigurationValues;
     private MappingConfiguration mappingConfiguration;

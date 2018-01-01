@@ -47,7 +47,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
@@ -73,7 +74,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public abstract class AbstractConfigurationWindow extends Window
 {
-	private Logger logger = Logger.getLogger(TopologyViewPanel.class);
+	private Logger logger = LoggerFactory.getLogger(TopologyViewPanel.class);
 	
 	@SuppressWarnings("rawtypes")
 	protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;

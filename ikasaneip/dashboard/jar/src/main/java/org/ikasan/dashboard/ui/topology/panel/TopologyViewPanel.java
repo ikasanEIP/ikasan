@@ -58,7 +58,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
@@ -141,7 +142,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	private  final long serialVersionUID = -6213301218439409056L;
 
-	private Logger logger = Logger.getLogger(TopologyViewPanel.class);
+	private Logger logger = LoggerFactory.getLogger(TopologyViewPanel.class);
 
 	/** running state string constant */
     private static String RUNNING = "running";

@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -59,7 +60,7 @@ import com.vaadin.ui.Window;
  */
 public class ActionedExclusionEventViewWindow extends Window
 {
-	private static Logger logger = Logger.getLogger(ActionedExclusionEventViewWindow.class);
+	private static Logger logger = LoggerFactory.getLogger(ActionedExclusionEventViewWindow.class);
 	
 	/**
 	 * 

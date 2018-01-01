@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.module.StartupControl;
@@ -76,7 +77,7 @@ public class StartupControlConfigurationWindow extends Window
 {
 	private static final long serialVersionUID = 8900720508474545668L;
 
-	private Logger logger = Logger.getLogger(StartupControlConfigurationWindow.class);
+	private Logger logger = LoggerFactory.getLogger(StartupControlConfigurationWindow.class);
 	
 	private StartupControlService startupControlService;
 	

@@ -44,7 +44,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -77,7 +78,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public abstract class TopologyTab extends VerticalLayout
 {
-	private Logger logger = Logger.getLogger(TopologyTab.class);
+	private Logger logger = LoggerFactory.getLogger(TopologyTab.class);
 	
 	protected Table modules = new Table("Modules");
 	protected Table flows = new Table("Flows");

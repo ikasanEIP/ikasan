@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
@@ -63,7 +64,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
 {
     private static final long serialVersionUID = -1709533640763729567L;
     
-    private static Logger logger = Logger.getLogger(MappingSearchResultTableItemClickListener.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingSearchResultTableItemClickListener.class);
 
     private MappingManagementService mappingConfigurationService;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;

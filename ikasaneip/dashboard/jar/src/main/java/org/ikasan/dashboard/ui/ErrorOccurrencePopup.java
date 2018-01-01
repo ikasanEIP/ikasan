@@ -44,7 +44,8 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -59,7 +60,7 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 @Theme("dashboard")
 public class ErrorOccurrencePopup extends UI
 {
-	private Logger logger = Logger.getLogger(ErrorOccurrencePopup.class);
+	private Logger logger = LoggerFactory.getLogger(ErrorOccurrencePopup.class);
 	
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#initCloud(com.vaadin.server.VaadinRequest)

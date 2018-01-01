@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.action;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable;
@@ -63,7 +64,7 @@ import com.vaadin.ui.Notification;
 public class DeleteMappingConfigurationAction implements Action
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(DeleteRowAction.class);
+    private static Logger logger = LoggerFactory.getLogger(DeleteRowAction.class);
     
     private Long mappingConfigurationId;
     private MappingConfigurationSearchResultsTable searchResultsTable;

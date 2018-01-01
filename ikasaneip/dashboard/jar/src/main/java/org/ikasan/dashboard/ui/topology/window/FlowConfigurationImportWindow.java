@@ -2,7 +2,8 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.util.FlowConfigurationImportHelper;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -25,7 +26,7 @@ import java.io.OutputStream;
  */
 public class FlowConfigurationImportWindow extends Window
 {
-    private Logger logger = Logger.getLogger(FlowConfigurationImportWindow.class);
+    private Logger logger = LoggerFactory.getLogger(FlowConfigurationImportWindow.class);
 
     private FlowConfigurationImportWindow.FileUploader receiver = new FlowConfigurationImportWindow.FileUploader();
     private HorizontalLayout progressLayout = new HorizontalLayout();

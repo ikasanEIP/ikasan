@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.framework.panel;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.dashboard.ui.framework.window.AdminPasswordDialog;
@@ -88,7 +89,7 @@ public class PersistanceSetupPanel extends Panel implements View
     private static final String UPGRADE = "UPGRADE";
     private static final String FILE_TRANSFER = "FILE_TRANSFER";
     
-    private Logger logger = Logger.getLogger(PersistanceSetupPanel.class);
+    private Logger logger = LoggerFactory.getLogger(PersistanceSetupPanel.class);
     private PersistenceService persistenceService;
     private ComboBox persistanceStoreTypeCombo = new ComboBox("Select action");
     private UserService userService;

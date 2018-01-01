@@ -45,7 +45,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
@@ -79,7 +80,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorOccurrenceCloseWindow extends Window
 {
-	private static Logger logger = Logger.getLogger(ErrorOccurrenceCloseWindow.class);
+	private static Logger logger = LoggerFactory.getLogger(ErrorOccurrenceCloseWindow.class);
 	
 	public static final String CLOSE = "close";
 	public static final String CANCEL = "cancel";

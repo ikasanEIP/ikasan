@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.housekeeping;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.quartz.DisallowConcurrentExecution;
@@ -15,7 +16,7 @@ import org.quartz.JobExecutionException;
 public class HousekeepingJob implements Job
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(HousekeepingJob.class);
+    private static Logger logger = LoggerFactory.getLogger(HousekeepingJob.class);
 
     public static final String HOUSE_KEEPING_BATCH_SIZE = "-houseKeepingBatchSize";
     public static final String TRANSACTION_BATCH_SIZE = "-transactionBatchSize";

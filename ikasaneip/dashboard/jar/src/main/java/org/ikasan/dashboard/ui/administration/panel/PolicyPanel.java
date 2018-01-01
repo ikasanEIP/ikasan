@@ -47,7 +47,8 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.*;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.themes.ValoTheme;
- import org.apache.log4j.Logger;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  import org.ikasan.dashboard.ui.administration.window.PolicySelectWindow;
  import org.ikasan.dashboard.ui.administration.window.RoleSelectWindow;
  import org.ikasan.dashboard.ui.administration.window.UserSelectWindow;
@@ -75,7 +76,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  {
      private static final long serialVersionUID = 6005593259860222561L;
 
-     private Logger logger = Logger.getLogger(PolicyPanel.class);
+     private Logger logger = LoggerFactory.getLogger(PolicyPanel.class);
 
      private TextField nameField = new TextField();
      private TextArea descriptionField;

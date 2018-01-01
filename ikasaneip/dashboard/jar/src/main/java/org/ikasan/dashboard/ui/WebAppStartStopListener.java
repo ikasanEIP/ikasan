@@ -45,7 +45,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.google.common.base.Splitter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.discovery.DiscoverySchedulerService;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
@@ -70,7 +71,7 @@ import java.util.List;
  */
 public class WebAppStartStopListener implements ServletContextListener
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+	private Logger logger = LoggerFactory.getLogger(WebAppStartStopListener.class);
 
     public WebAppStartStopListener()
     {

@@ -4,7 +4,8 @@ import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.util.ModuleConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 {
-    private Logger logger = Logger.getLogger(ModuleComponentsConfigurationUploadDownloadWindow.class);
+    private Logger logger = LoggerFactory.getLogger(ModuleComponentsConfigurationUploadDownloadWindow.class);
 
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
     private GridLayout layout;

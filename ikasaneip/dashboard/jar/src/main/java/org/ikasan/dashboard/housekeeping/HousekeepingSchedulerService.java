@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.housekeeping;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.*;
 
@@ -16,7 +17,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class HousekeepingSchedulerService
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(HousekeepingSchedulerService.class);
+    private static Logger logger = LoggerFactory.getLogger(HousekeepingSchedulerService.class);
 
     /**
      * Scheduler

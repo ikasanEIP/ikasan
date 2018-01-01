@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.framework.cache;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.Broadcaster;
@@ -63,7 +64,7 @@ import java.util.concurrent.*;
  */
 public class TopologyStateCache
 {
-	private Logger logger = Logger.getLogger(TopologyStateCache.class);
+	private Logger logger = LoggerFactory.getLogger(TopologyStateCache.class);
 	
 	private TopologyService topologyService;
 	private ConcurrentHashMap<String, String> stateMap;

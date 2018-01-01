@@ -41,7 +41,8 @@
 package org.ikasan.dashboard.ui.administration.window;
 
 import com.vaadin.ui.Window;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.panel.RoleSelectPanel;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
@@ -55,7 +56,7 @@ import org.ikasan.systemevent.service.SystemEventService;
  */
 public class RoleSelectWindow extends Window
 {
-	private Logger logger = Logger.getLogger(RoleSelectWindow.class);
+	private Logger logger = LoggerFactory.getLogger(RoleSelectWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 
