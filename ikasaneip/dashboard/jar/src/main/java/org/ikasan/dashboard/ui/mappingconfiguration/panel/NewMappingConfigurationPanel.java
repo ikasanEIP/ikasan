@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.Editable;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
@@ -89,7 +90,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
 {
     private static final long serialVersionUID = -9199358319962572807L;
 
-    private Logger logger = Logger.getLogger(NewMappingConfigurationPanel.class);
+    private Logger logger = LoggerFactory.getLogger(NewMappingConfigurationPanel.class);
 
 
     /**

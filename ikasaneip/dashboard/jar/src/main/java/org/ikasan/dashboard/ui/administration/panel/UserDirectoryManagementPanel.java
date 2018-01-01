@@ -45,7 +45,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
@@ -93,7 +94,7 @@ public class UserDirectoryManagementPanel extends Panel
 	private static final String USER_FILTER = "(objectclass=user)";
 	private static final String GROUP_FILTER = "(objectclass=group)";
 	
-    private Logger logger = Logger.getLogger(UserDirectoryManagementPanel.class);
+    private Logger logger = LoggerFactory.getLogger(UserDirectoryManagementPanel.class);
 
     private HashMap<String, AuthenticationMethodDropdownValue> authenticationMethodDropdownValuesMap 
     	= new HashMap<String, AuthenticationMethodDropdownValue>();

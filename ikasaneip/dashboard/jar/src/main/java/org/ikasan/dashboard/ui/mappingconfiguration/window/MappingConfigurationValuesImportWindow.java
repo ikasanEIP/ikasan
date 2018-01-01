@@ -51,7 +51,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
@@ -94,7 +95,7 @@ public class MappingConfigurationValuesImportWindow extends Window
 {
     private static final long serialVersionUID = 4798260539109852939L;
 
-    private Logger logger = Logger.getLogger(MappingConfigurationValuesImportWindow.class);
+    private Logger logger = LoggerFactory.getLogger(MappingConfigurationValuesImportWindow.class);
 
     private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;

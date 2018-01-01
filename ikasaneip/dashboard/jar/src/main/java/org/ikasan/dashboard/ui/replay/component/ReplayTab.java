@@ -48,7 +48,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
@@ -104,7 +105,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ReplayTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ReplayTab.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayTab.class);
 	
 	private FilterTable replayEventsTable;
 	

@@ -51,7 +51,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -95,7 +96,7 @@ public class WiretapConfigurationWindow extends Window
 {
 	private static final long serialVersionUID = 5681865414123002596L;
 
-	private Logger logger = Logger.getLogger(WiretapConfigurationWindow.class);
+	private Logger logger = LoggerFactory.getLogger(WiretapConfigurationWindow.class);
 	
 	private Component component;
 	private TriggerManagementService triggerManagementService;

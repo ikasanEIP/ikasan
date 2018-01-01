@@ -21,7 +21,6 @@
 	
 	<dependencies>
 
-
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-dashboard-jar</artifactId>
@@ -53,11 +52,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
@@ -73,10 +67,10 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 			<version>${version.org.springboot}</version>
 			<exclusions>
-				<exclusion>
-					<artifactId>spring-boot-starter-logging</artifactId>
-					<groupId>org.springframework.boot</groupId>
-				</exclusion>
+				<!--<exclusion>-->
+					<!--<artifactId>spring-boot-starter-logging</artifactId>-->
+					<!--<groupId>org.springframework.boot</groupId>-->
+				<!--</exclusion>-->
 			</exclusions>
 		</dependency>
 

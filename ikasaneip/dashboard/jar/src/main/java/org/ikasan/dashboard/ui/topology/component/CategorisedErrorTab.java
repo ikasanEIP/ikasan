@@ -46,7 +46,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -115,7 +116,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class CategorisedErrorTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(CategorisedErrorTab.class);
+	private Logger logger = LoggerFactory.getLogger(CategorisedErrorTab.class);
 	
 	private FilterTable categorizedErrorOccurenceTable;
 	
