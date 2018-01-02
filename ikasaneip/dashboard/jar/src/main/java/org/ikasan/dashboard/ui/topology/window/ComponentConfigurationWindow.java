@@ -56,7 +56,8 @@ import javax.ws.rs.core.Response;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
@@ -97,7 +98,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 {
-	private Logger logger = Logger.getLogger(ComponentConfigurationWindow.class);
+	private Logger logger = LoggerFactory.getLogger(ComponentConfigurationWindow.class);
 
 	private ComponentConfigurationExportHelper exportHelper = null;
 	private PlatformConfigurationService platformConfigurationService = null;

@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.administration.window;
 import java.util.List;
 
 import com.vaadin.server.VaadinService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.dashboard.notification.NotificationConfiguredResource;
 import org.ikasan.dashboard.notification.NotificationContentProducerConfiguration;
@@ -83,7 +84,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NotificationWindow extends Window
 {
-	private Logger logger = Logger.getLogger(NotificationWindow.class);
+	private Logger logger = LoggerFactory.getLogger(NotificationWindow.class);
 	
 	private static final long serialVersionUID = -3347325521531925322L;
 	

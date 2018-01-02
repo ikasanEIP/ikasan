@@ -57,7 +57,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.notification.NotificationContentProducer;
 import org.ikasan.dashboard.notification.Notifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
@@ -70,7 +71,7 @@ import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 public class EmailNotifier implements Notifier
 {
 	/** logger instance */
-    private static Logger logger = Logger.getLogger(EmailNotifier.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailNotifier.class);
     
 	private EmailNotifierConfiguration configuration;
 	

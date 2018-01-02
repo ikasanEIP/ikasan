@@ -354,7 +354,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
                 {
                     rowCount = rowCountList.get(0);
                 }
-                logger.info(rowCount + ", SystemEvent housekeepables exist");
+                logger.debug(rowCount + ", SystemEvent housekeepables exist");
                 return new Boolean(rowCount > 0);
             }
         });

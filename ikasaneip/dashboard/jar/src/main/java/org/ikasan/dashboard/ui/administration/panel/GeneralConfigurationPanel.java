@@ -48,7 +48,8 @@ import java.util.Map;
 
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
@@ -82,7 +83,7 @@ public class GeneralConfigurationPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(GeneralConfigurationPanel.class);
+	private Logger logger = LoggerFactory.getLogger(GeneralConfigurationPanel.class);
 	
 	private PlatformConfigurationService platformConfigurationService;
 	

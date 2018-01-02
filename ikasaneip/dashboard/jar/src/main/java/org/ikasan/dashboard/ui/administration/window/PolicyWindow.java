@@ -41,7 +41,8 @@
 package org.ikasan.dashboard.ui.administration.window;
 
 import com.vaadin.ui.Window;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.panel.PolicyPanel;
 import org.ikasan.dashboard.ui.administration.panel.RolePanel;
 import org.ikasan.security.model.Policy;
@@ -57,7 +58,7 @@ import org.ikasan.systemevent.service.SystemEventService;
  */
 public class PolicyWindow extends Window
 {
-	private Logger logger = Logger.getLogger(PolicyWindow.class);
+	private Logger logger = LoggerFactory.getLogger(PolicyWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 

@@ -52,7 +52,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayAuditViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -105,7 +106,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ReplayAuditTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ReplayAuditTab.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayAuditTab.class);
 	
 	private FilterTable replayEventsTable;
 	

@@ -43,7 +43,8 @@ package org.ikasan.dashboard.ui.monitor.panel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.cache.GraphCache;
 import org.ikasan.dashboard.ui.framework.panel.LandingViewPanel;
 import org.ikasan.dashboard.ui.monitor.component.MonitorPanel;
@@ -69,7 +70,7 @@ public class MonitorViewPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-    private Logger logger = Logger.getLogger(LandingViewPanel.class);
+    private Logger logger = LoggerFactory.getLogger(LandingViewPanel.class);
 
     private CssLayout dashboardPanels;
     private GraphCache graphCache;

@@ -47,7 +47,8 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.window.*;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -75,7 +76,7 @@ public class PolicyManagementPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(PolicyManagementPanel.class);
+	private Logger logger = LoggerFactory.getLogger(PolicyManagementPanel.class);
 
 	private UserService userService;
 	private SecurityService securityService;

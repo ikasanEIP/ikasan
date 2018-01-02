@@ -42,7 +42,8 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -60,7 +61,7 @@ import org.ikasan.topology.service.TopologyService;
  */
 public class ExclusionEventViewWindow extends Window
 {
-	private static Logger logger = Logger.getLogger(ExclusionEventViewWindow.class);
+	private static Logger logger = LoggerFactory.getLogger(ExclusionEventViewWindow.class);
 
 	private static final long serialVersionUID = -3347325521531925322L;
 	

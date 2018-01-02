@@ -1,7 +1,8 @@
 package org.ikasan.dashboard.harvesting;
 
 import com.google.common.collect.Lists;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.harvest.HarvestService;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class SolrHarvestingJob implements Job
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrHarvestingJob.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrHarvestingJob.class);
 
     public static final String HARVEST_BATCH_SIZE = "-harvestBatchSize";
     public static final String THREAD_COUNT = "-threadCount";

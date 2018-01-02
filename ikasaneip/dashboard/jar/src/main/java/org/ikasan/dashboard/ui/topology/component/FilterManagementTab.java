@@ -46,7 +46,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -109,7 +110,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class FilterManagementTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(FilterManagementTab.class);
+	private Logger logger = LoggerFactory.getLogger(FilterManagementTab.class);
 	
 	private FilterTable filterTable;
 	

@@ -42,7 +42,8 @@ package org.ikasan.dashboard.ui.framework.data;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.model.User;
@@ -67,7 +68,7 @@ public class LoginFieldGroup extends FieldGroup
     private static final long serialVersionUID = 4872295004933189641L;
 
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(LoginFieldGroup.class);
+    private static Logger logger = LoggerFactory.getLogger(LoginFieldGroup.class);
     
 
     public static final String USERNAME = "username";

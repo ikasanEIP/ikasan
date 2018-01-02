@@ -41,7 +41,8 @@
 package org.ikasan.dashboard.configurationManagement.rest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -75,7 +76,7 @@ import java.security.Principal;
 @Priority(Priorities.AUTHORIZATION)
 public class SecurityFilter implements ContainerRequestFilter {
  
-	private static Logger logger = Logger.getLogger(SecurityFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 	
     @Context
     UriInfo uriInfo;

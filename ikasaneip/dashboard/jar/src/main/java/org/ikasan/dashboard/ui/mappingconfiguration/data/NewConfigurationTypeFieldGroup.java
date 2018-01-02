@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.data;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
@@ -61,7 +62,7 @@ import com.vaadin.ui.Field;
 public class NewConfigurationTypeFieldGroup extends FieldGroup
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(NewConfigurationTypeFieldGroup.class);
+    private static Logger logger = LoggerFactory.getLogger(NewConfigurationTypeFieldGroup.class);
 
     private static final long serialVersionUID = -6584144145939855353L;
 

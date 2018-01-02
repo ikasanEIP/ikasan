@@ -45,7 +45,8 @@ package org.ikasan.dashboard.ui.framework.panel;
  import com.vaadin.ui.*;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Button.ClickListener;
- import org.apache.log4j.Logger;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  import org.ikasan.dashboard.ui.Menu;
  import org.ikasan.dashboard.ui.framework.action.LogoutAction;
  import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
@@ -82,7 +83,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	private static final long serialVersionUID = 5649279357596506519L;
 
 	/** Logger instance */
-	private static Logger logger = Logger.getLogger(NavigationPanel.class);
+	private static Logger logger = LoggerFactory.getLogger(NavigationPanel.class);
 
 	private AuthenticationService authenticationService;
 	private VisibilityGroup visibilityGroup;

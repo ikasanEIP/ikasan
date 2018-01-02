@@ -42,7 +42,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.PolicyLinkMappingConfigurationSearchResultsTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
@@ -66,7 +67,7 @@ public class PolicyLinkMappingSearchButtonClickListener implements ClickListener
     private static final long serialVersionUID = -9077141163243070560L;
 
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(PolicyLinkMappingSearchButtonClickListener.class);
+    private static Logger logger = LoggerFactory.getLogger(PolicyLinkMappingSearchButtonClickListener.class);
 
     private ClientComboBox clientComboBox;
     private TypeComboBox typeComboBox;

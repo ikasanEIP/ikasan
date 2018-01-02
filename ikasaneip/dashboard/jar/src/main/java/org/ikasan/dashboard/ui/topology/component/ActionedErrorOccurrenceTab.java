@@ -46,7 +46,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ActionedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -95,7 +96,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ActionedErrorOccurrenceTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ActionedErrorOccurrenceTab.class);
+	private Logger logger = LoggerFactory.getLogger(ActionedErrorOccurrenceTab.class);
 	
 	private FilterTable errorOccurenceTable;
 	
