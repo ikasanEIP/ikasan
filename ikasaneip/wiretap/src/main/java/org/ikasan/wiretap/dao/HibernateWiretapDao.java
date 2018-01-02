@@ -482,9 +482,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("timestamp"));
 
-                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+                List<WiretapEvent> wiretaps = criteria.list();
 
-                return flowInvocationMetrics;
+                return wiretaps;
             }
         });
     }
