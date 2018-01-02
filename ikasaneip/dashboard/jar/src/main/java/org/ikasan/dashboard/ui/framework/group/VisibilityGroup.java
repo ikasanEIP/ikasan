@@ -44,7 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -59,7 +60,7 @@ import com.vaadin.ui.Table;
  */
 public class VisibilityGroup
 {
-    private static Logger logger = Logger.getLogger(VisibilityGroup.class);
+    private static Logger logger = LoggerFactory.getLogger(VisibilityGroup.class);
 
     private HashMap<Component, List<String>> components = new HashMap<Component, List<String>>();
     private ArrayList<Table> refreshableTables = new ArrayList<Table>();

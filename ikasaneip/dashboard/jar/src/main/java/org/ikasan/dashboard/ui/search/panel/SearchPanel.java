@@ -12,7 +12,8 @@ import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
@@ -62,7 +63,7 @@ import java.util.Calendar;
 public class SearchPanel extends Panel implements View
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(HousekeepingPanel.class);
+    private static Logger logger = LoggerFactory.getLogger(HousekeepingPanel.class);
 
     private FilterTable searchResultsTable;
     private IndexedContainer container = null;

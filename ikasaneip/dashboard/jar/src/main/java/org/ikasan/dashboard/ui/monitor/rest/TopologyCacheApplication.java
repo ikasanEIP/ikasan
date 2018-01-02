@@ -47,7 +47,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,7 +60,7 @@ import org.springframework.stereotype.Component;
 @Path("/topologyCache")
 public class TopologyCacheApplication
 {
-	private static Logger logger = Logger.getLogger(TopologyCacheApplication.class);
+	private static Logger logger = LoggerFactory.getLogger(TopologyCacheApplication.class);
     
 	@Autowired
 	private TopologyStateCache topologyStateCache;

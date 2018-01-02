@@ -53,7 +53,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.mapping.model.*;
 import org.w3c.dom.*;
@@ -67,7 +68,7 @@ import org.xml.sax.SAXParseException;
  */
 public class MappingConfigurationDocumentHelper
 {
-    private Logger logger = Logger.getLogger(MappingConfigurationDocumentHelper.class);
+    private Logger logger = LoggerFactory.getLogger(MappingConfigurationDocumentHelper.class);
 
     private List<MappingConfigurationValue> mappingConfigurationValues;
 

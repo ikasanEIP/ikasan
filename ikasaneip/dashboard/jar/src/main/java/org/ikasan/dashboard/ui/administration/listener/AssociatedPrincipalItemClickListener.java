@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.administration.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.panel.GroupManagementPanel;
 import org.ikasan.dashboard.ui.framework.panel.ViewContext;
 
@@ -56,7 +57,7 @@ public class AssociatedPrincipalItemClickListener implements ItemClickListener
 {
     private static final long serialVersionUID = -1709533640763729567L;
     
-    private static Logger logger = Logger.getLogger(AssociatedPrincipalItemClickListener.class);
+    private static Logger logger = LoggerFactory.getLogger(AssociatedPrincipalItemClickListener.class);
 
     private GroupManagementPanel principalManagementPanel;
     private ViewContext viewContext;

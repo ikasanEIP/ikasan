@@ -45,7 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -75,7 +76,7 @@ import com.vaadin.ui.UI;
  */
 public class Menu extends CssLayout
 {
-    private Logger logger = Logger.getLogger(Menu.class);
+    private Logger logger = LoggerFactory.getLogger(Menu.class);
 
 	private CssLayout menuItemsLayout = new CssLayout();
 	private HashMap<Component, List<String>> menuComponents = new HashMap<Component, List<String>>();

@@ -45,7 +45,8 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.vaadin.server.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
@@ -87,7 +88,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @PreserveOnRefresh
 public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 {   
-	private Logger logger = Logger.getLogger(IkasanUI.class);
+	private Logger logger = LoggerFactory.getLogger(IkasanUI.class);
 	
     private HashMap<String, IkasanUINavigator> views;
     private VerticalLayout imagePanelLayout;

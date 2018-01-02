@@ -49,7 +49,8 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.server.VaadinService;
  import com.vaadin.ui.*;
  import com.vaadin.ui.themes.ValoTheme;
- import org.apache.log4j.Logger;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  import org.ikasan.dashboard.ui.administration.window.NewRoleWindow;
  import org.ikasan.dashboard.ui.administration.window.RoleWindow;
  import org.ikasan.dashboard.ui.administration.window.UserWindow;
@@ -79,7 +80,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  {
      private static final long serialVersionUID = 6005593259860222561L;
 
-     private Logger logger = Logger.getLogger(RoleManagementPanel.class);
+     private Logger logger = LoggerFactory.getLogger(RoleManagementPanel.class);
 
      private UserService userService;
      private SecurityService securityService;

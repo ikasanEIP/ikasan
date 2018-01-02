@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ru.xpoft.vaadin.SpringUIProvider;
 
@@ -53,7 +54,7 @@ import com.vaadin.server.VaadinRequest;
  */
 public class DashboardUIProvider extends SpringUIProvider
 {
-	private Logger logger = Logger.getLogger(DashboardUIProvider.class);
+	private Logger logger = LoggerFactory.getLogger(DashboardUIProvider.class);
 	
 	/* (non-Javadoc)
 	 * @see ru.xpoft.vaadin.SpringUIProvider#getUIBeanName(com.vaadin.server.VaadinRequest)

@@ -56,7 +56,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
@@ -150,7 +151,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     
 	private  final long serialVersionUID = -6213301218439409056L;
 	
-	private Logger logger = Logger.getLogger(ReplayViewPanel.class);
+	private Logger logger = LoggerFactory.getLogger(ReplayViewPanel.class);
 	
 	private final Action START = new Action("Start");
     private final Action STOP = new Action("Stop");

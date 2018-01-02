@@ -2,7 +2,8 @@ package org.ikasan.dashboard.ui.topology.util;
 
 import com.vaadin.event.Action;
 import com.vaadin.server.VaadinService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -13,7 +14,7 @@ import org.ikasan.topology.model.Component;
  */
 public class TopologyTreeActionHelper
 {
-    private Logger logger = Logger.getLogger(TopologyTreeActionHelper.class);
+    private Logger logger = LoggerFactory.getLogger(TopologyTreeActionHelper.class);
 
     /** running state string constant */
     private static String RUNNING = "running";

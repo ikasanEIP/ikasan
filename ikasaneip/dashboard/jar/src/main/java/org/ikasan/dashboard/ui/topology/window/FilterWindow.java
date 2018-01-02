@@ -44,7 +44,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -76,7 +77,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class FilterWindow extends Window
 {
-	private Logger logger = Logger.getLogger(FilterWindow.class);
+	private Logger logger = LoggerFactory.getLogger(FilterWindow.class);
 	
 	private static final long serialVersionUID = -3347325521531925322L;
 	

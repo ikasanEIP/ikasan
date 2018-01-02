@@ -44,7 +44,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.administration.panel.UserDirectoriesPanel;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.security.model.Policy;
@@ -81,7 +82,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NewPolicyWindow extends Window
 {
-	private Logger logger = Logger.getLogger(NewPolicyWindow.class);
+	private Logger logger = LoggerFactory.getLogger(NewPolicyWindow.class);
 	
 	private static final long serialVersionUID = -3347325521531925322L;
 	

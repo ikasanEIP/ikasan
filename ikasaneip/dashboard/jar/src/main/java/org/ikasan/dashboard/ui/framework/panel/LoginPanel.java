@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.framework.panel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.CommitHandler;
@@ -33,7 +34,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class LoginPanel extends Panel implements View
 {
 	/** Logger instance */
-    private static Logger logger = Logger.getLogger(LoginPanel.class);
+    private static Logger logger = LoggerFactory.getLogger(LoginPanel.class);
 
     /**
      * Constructor

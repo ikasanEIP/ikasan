@@ -45,7 +45,8 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
@@ -84,7 +85,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class UserDirectoriesPanel extends Panel implements View
 {
-	private Logger logger = Logger.getLogger(UserDirectoriesPanel.class);
+	private Logger logger = LoggerFactory.getLogger(UserDirectoriesPanel.class);
 	
 	private SecurityService securityService;
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
