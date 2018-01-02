@@ -1,7 +1,7 @@
 package org.ikasan.harvest;
 
 /**
- * Created by stewmi on 06/08/2017.
+ * Created by Ikasan Development Team on 06/08/2017.
  */
 public interface HarvestEvent
 {

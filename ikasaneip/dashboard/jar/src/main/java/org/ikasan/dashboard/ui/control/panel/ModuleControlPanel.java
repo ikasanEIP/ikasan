@@ -9,7 +9,7 @@ import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.topology.service.TopologyService;
 
 /**
- * Created by stewmi on 09/11/2017.
+ * Created by Ikasan Development Team on 09/11/2017.
  */
 public class ModuleControlPanel extends Panel implements View
 {

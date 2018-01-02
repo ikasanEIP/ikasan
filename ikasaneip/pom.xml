@@ -896,8 +896,9 @@
                 <module>developer</module>
                 <module>transaction</module>
                 <module>replay</module>
+				<module>persistence</module>
                 <module>dashboard</module>
-                <module>sample</module>
+                <module>sample</module> 
             </modules>
 
 
@@ -933,6 +934,7 @@
                 <module>builder</module>
                 <module>compatibility</module>
                 <module>replay</module>
+				<module>persistence</module>
             </modules>
         </profile>
 
@@ -1393,6 +1395,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-replay</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-persistence</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -158,6 +158,11 @@
             <artifactId>ikasan-hospital</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-persistence</artifactId>
+        </dependency>
+
         <!-- Hibernate ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>

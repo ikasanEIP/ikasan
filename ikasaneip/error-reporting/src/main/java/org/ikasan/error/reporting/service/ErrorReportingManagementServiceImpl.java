@@ -292,4 +292,9 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 		this.errorManagementDao.saveErrorOccurrence(harvestedRecord);
 	}
 
+    @Override
+    public void updateAsHarvested(List<ErrorOccurrence> events)
+    {
+        this.errorManagementDao.updateAsHarvested(events);
+    }
 }

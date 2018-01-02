@@ -6,7 +6,6 @@ import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.solr.SolrServiceBase;
-import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
@@ -196,13 +195,13 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
     @Override
     public void housekeep()
     {
-        logger.info("wiretap housekeep called");
+        logger.info("persistence housekeep called");
         long startTime = System.currentTimeMillis();
         wiretapDao.setSolrUsername(this.solrUsername);
         wiretapDao.setSolrPassword(this.solrPassword);
         wiretapDao.deleteAllExpired();
         long endTime = System.currentTimeMillis();
-        logger.info("wiretap housekeep completed in [" + (endTime - startTime) + " ms]");
+        logger.info("persistence housekeep completed in [" + (endTime - startTime) + " ms]");
     }
 
 
