@@ -1,7 +1,7 @@
 package org.ikasan.spec.solr;
 
 /**
- * Created by stewmi on 18/11/2017.
+ * Created by Ikasan Development Team on 18/11/2017.
  */
 public class SolrConstants
 {

@@ -308,13 +308,8 @@ public class SolrHarvestingJob implements Job
         public void run()
         {
             solrService.save(events);
-            
-            for(HarvestEvent event: events)
-            {
-                event.setHarvested(true);
 
-                harvestService.saveHarvestedRecord(event);
-            }
+            harvestService.updateAsHarvested(events);
         }
     }
 }

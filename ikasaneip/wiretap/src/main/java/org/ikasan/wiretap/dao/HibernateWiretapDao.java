@@ -40,11 +40,9 @@
  */
 package org.ikasan.wiretap.dao;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.ikasan.spec.wiretap.WiretapDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,10 +75,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public static final String EVENT_IDS = "eventIds";
     public static final String NOW = "now";
 
-    /** Query used for housekeeping expired wiretap events */
+    /** Query used for housekeeping expired persistence events */
     private static final String HOUSEKEEP_DELETE_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
 
-    /** Query for finding all wiretap events with the same payloadId */
+    /** Query for finding all persistence events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
 
@@ -89,6 +87,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
     public static final String WIRETAP_EVENTS_DELETE_QUERY = "delete WiretapFlowEvent w " +
             " where w.id in(:" + EVENT_IDS + ")";
+
+    public static final String UPDATE_HARVESTED_QUERY = "update WiretapFlowEvent w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 
 
     /** Use batch housekeeping mode? */
@@ -274,7 +275,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     }
 
     /* (non-Javadoc)
-	 * @see org.ikasan.spec.wiretap.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 * @see org.ikasan.spec.persistence.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -477,12 +478,41 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
                 criteria.add(Restrictions.eq("harvested", false));
+                criteria.setFirstResult(0);
                 criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("timestamp"));
 
-                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+                List<WiretapEvent> wiretaps = criteria.list();
 
-                return flowInvocationMetrics;
+                return wiretaps;
+            }
+        });
+    }
+
+    public void updateAsHarvested(List<WiretapEvent> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                List<Long> wiretapEventIds = new ArrayList<Long>();
+
+                for(WiretapEvent event: events)
+                {
+                    wiretapEventIds.add(event.getIdentifier());
+                }
+
+                List<List<Long>> partitionedIds = Lists.partition(wiretapEventIds, 300);
+
+                for(List<Long> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
             }
         });
     }

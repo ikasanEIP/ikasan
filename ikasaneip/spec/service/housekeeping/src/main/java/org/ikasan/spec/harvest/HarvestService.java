@@ -31,4 +31,11 @@ public interface HarvestService<RECORD>
      * @param harvestedRecord
      */
     public void saveHarvestedRecord(RECORD harvestedRecord);
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<RECORD> events);
 }

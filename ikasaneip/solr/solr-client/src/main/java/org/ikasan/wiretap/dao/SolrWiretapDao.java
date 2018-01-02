@@ -1,7 +1,6 @@
 package org.ikasan.wiretap.dao;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -17,7 +16,6 @@ import org.ikasan.wiretap.model.SolrWiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +31,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     private static Logger logger = LoggerFactory.getLogger(SolrWiretapDao.class);
 
     /**
-     * We need to give this dao it's context.
+     * We need to give this hibernate it's context.
      */
     public static final String WIRETAP = "wiretap";
 
@@ -50,7 +48,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "" + wiretapEvent.getIdentifier());
-        document.addField(TYPE, "wiretap");
+        document.addField(TYPE, WIRETAP);
         document.addField(MODULE_NAME, wiretapEvent.getModuleName());
         document.addField(FLOW_NAME, wiretapEvent.getFlowName());
         document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
@@ -74,7 +72,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         }
         catch (Exception e)
         {
-            throw new RuntimeException("An exception has occurred attempting to write a wiretap to Solr", e);
+            throw new RuntimeException("An exception has occurred attempting to write a persistence to Solr", e);
         }
     }
 
@@ -92,7 +90,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
             {
                 SolrInputDocument document = new SolrInputDocument();
                 document.addField(ID, "" + wiretapEvent.getIdentifier());
-                document.addField(TYPE, "wiretap");
+                document.addField(TYPE, WIRETAP);
                 document.addField(MODULE_NAME, wiretapEvent.getModuleName());
                 document.addField(FLOW_NAME, wiretapEvent.getFlowName());
                 document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
@@ -114,7 +112,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         }
         catch (Exception e)
         {
-            throw new RuntimeException("An exception has occurred attempting to write a wiretap to Solr", e);
+            throw new RuntimeException("An exception has occurred attempting to write a persistence to Solr", e);
         }
     }
 
@@ -167,7 +165,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         }
         catch (Exception e)
         {
-            throw new RuntimeException("An error has occurred preforming a wiretap search against solr: " + e.getMessage(), e);
+            throw new RuntimeException("An error has occurred preforming a persistence search against solr: " + e.getMessage(), e);
         }
 
         return results;
@@ -196,7 +194,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Error resolving wiretap by id [" + id + "] from ikasan solr index!", e);
+            throw new RuntimeException("Error resolving persistence by id [" + id + "] from ikasan solr index!", e);
         }
 
         if(beans.size() > 0)
@@ -265,6 +263,12 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 
     @Override
     public List<WiretapEvent> getHarvestableRecords(int housekeepingBatchSize)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void updateAsHarvested(List<WiretapEvent> events)
     {
         throw new UnsupportedOperationException();
     }

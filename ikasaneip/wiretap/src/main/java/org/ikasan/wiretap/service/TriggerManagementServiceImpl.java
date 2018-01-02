@@ -68,7 +68,7 @@ public class TriggerManagementServiceImpl implements TriggerManagementService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.wiretap.service.TriggerManagementService#findTriggers(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.ikasan.persistence.service.TriggerManagementService#findTriggers(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<Trigger> findTriggers(String moduleName, String flowname,

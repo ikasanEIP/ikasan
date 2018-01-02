@@ -165,5 +165,11 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	{
 		return false;
 	}
+
+    @Override
+    public void updateAsHarvested(List<ExclusionEvent> events)
+    {
+        this.exclusionEventDao.updateAsHarvested(events);
+    }
 }
  

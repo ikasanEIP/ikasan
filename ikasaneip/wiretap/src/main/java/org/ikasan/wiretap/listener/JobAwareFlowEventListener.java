@@ -132,7 +132,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     /**
      * Registers a List of static triggers
      * 
-     * Static Triggers are usually set through dao, and cannot be
+     * Static Triggers are usually set through hibernate, and cannot be
      * added to or deleted at runtime
      * 
      * @param staticTriggers - List of Triggers
@@ -148,7 +148,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     /**
      * Registers a static triggers
      * 
-     * Static Triggers are usually set through dao, and cannot be
+     * Static Triggers are usually set through hibernate, and cannot be
      * added to or deleted at runtime
      * 
      * @param trigger - The static Trigger to add
