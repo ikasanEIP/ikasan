@@ -45,6 +45,7 @@ import org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProduc
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.springframework.jms.core.IkasanJmsTemplate;
+import org.springframework.jms.support.converter.MessageConverter;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
@@ -346,7 +347,13 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         return this;
     }
 
-   /**
+    @Override
+    public JmsProducerBuilder setMessageConverter(MessageConverter messageConverter) {
+        this.ikasanJmsTemplate.setMessageConverter(messageConverter);
+        return this;
+    }
+
+    /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
      *
@@ -355,7 +362,7 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
 
     public JmsTemplateProducer build()
     {
-        JmsTemplateProducer jmsProducer = getJmsTempalteProducer(this.ikasanJmsTemplate);
+        JmsTemplateProducer jmsProducer = getJmsTemplateProducer(this.ikasanJmsTemplate);
         jmsProducer.setConfiguration(configuration);
         jmsProducer.setConfiguredResourceId(configuredResourceId);
 
@@ -371,7 +378,7 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
      * @param ikasanJmsTemplate
      * @return
      */
-    protected JmsTemplateProducer getJmsTempalteProducer(IkasanJmsTemplate ikasanJmsTemplate)
+    protected JmsTemplateProducer getJmsTemplateProducer(IkasanJmsTemplate ikasanJmsTemplate)
     {
         return new ArjunaJmsTemplateProducer(ikasanJmsTemplate);
     }
