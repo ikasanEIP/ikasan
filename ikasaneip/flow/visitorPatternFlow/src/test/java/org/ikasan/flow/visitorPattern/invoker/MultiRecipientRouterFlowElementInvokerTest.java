@@ -44,12 +44,14 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -537,5 +539,13 @@ public class MultiRecipientRouterFlowElementInvokerTest
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_invoker_is_configurable()
+    {
+        FlowElementInvoker invoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, new MultiRecipientRouterInvokerConfiguration());
+
+        Assert.assertTrue("invoker is configurable resource", invoker instanceof ConfiguredResource);
     }
 }

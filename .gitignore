@@ -32,3 +32,4 @@ ikasaneip/component/endpoint/filetransfer/sftp/hostkey.ser
 ikasaneip/dashboard/boot/src/main/resources/VAADIN/widgetsets/
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/AppWidgetset/deferredjs/
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/
+ikasaneip/ObjectStore/ShadowNoFileLockStore/defaultStore/Recovery/TransactionStatusManager/0_ffff0aa01bc2_f4d7_5a4da41f_0

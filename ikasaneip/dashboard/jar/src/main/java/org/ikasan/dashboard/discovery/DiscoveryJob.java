@@ -1,6 +1,6 @@
 package org.ikasan.dashboard.discovery;
 
-import com.ikasan.topology.exception.DiscoveryException;
+import org.ikasan.topology.exception.DiscoveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;

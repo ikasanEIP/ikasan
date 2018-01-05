@@ -53,7 +53,7 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
-import com.ikasan.topology.exception.DiscoveryException;
+import org.ikasan.topology.exception.DiscoveryException;
 
 /**
  * @author Ikasan Development Team

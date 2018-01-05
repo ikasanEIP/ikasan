@@ -90,10 +90,10 @@ public class DiscoveryApplication {
     }
 
     /**
-     * Method to get the flows associated with a module.
+     * Method to get the components associated with a flow.
      *
      * @param moduleName
-     * @return List of Flows
+     * @return List of Components
      */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
@@ -124,6 +124,14 @@ public class DiscoveryApplication {
                 component.setConfigurable(true);
             } else {
                 component.setConfigurable(false);
+            }
+
+            if(flowElement.getFlowElementInvoker() instanceof  ConfiguredResource) {
+                component.setInvokerConfigurationId(((ConfiguredResource)flowElement.getFlowElementInvoker()).getConfiguredResourceId());
+                component.setInvokerConfigurable(true);
+            }
+            else {
+                component.setInvokerConfigurable(false);
             }
 
             components.add(component);
