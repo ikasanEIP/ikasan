@@ -65,6 +65,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.SocketUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,7 +131,9 @@ public class FlowBuilderTest
     @Before
     public void setup()
     {
-        ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
         // expectations
         mockery.checking(new Expectations()
