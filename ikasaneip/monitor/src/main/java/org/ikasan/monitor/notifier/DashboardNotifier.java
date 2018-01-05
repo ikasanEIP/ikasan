@@ -40,18 +40,19 @@
  */
 package org.ikasan.monitor.notifier;
 
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.http.*;
+import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.monitor.Notifier;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.util.Arrays;
 
 /**
  * Ikasan default dashboard notifier implementation.
@@ -60,124 +61,140 @@ import org.ikasan.spec.monitor.Notifier;
  */
 public class DashboardNotifier implements Notifier<String>
 {
-    /** logger instance */
+    /**
+     * logger instance
+     */
     private static Logger logger = LoggerFactory.getLogger(DashboardNotifier.class);
-    
-    /** only interested in state changes */
+
+    /**
+     * only interested in state changes
+     */
     boolean notifyStateChangesOnly = true;
 
-    /** last update sent time */
-    long lastUpdateDateTime;
-
-    /** the base url of the dashboard */
+    /**
+     * the base url of the dashboard
+     */
     private String dashboardBaseUrl;
-    
-    /** the platform configuration service */
+
+    /**
+     * the platform configuration service
+     */
     protected PlatformConfigurationService platformConfigurationService;
 
-    @Override
-    public void invoke(String environment, String moduleName, String flowName, String state)
+    private RestTemplate restTemplate;
+
+    public DashboardNotifier()
     {
-    	notify(environment, moduleName, flowName, state);
+        restTemplate = new RestTemplate();
+        restTemplate
+            .setMessageConverters(Arrays.asList(new ByteArrayHttpMessageConverter(), new StringHttpMessageConverter()));
     }
 
-    @Override
-    public void setNotifyStateChangesOnly(boolean notifyStateChangesOnly)
+    @Override public void invoke(String environment, String moduleName, String flowName, String state)
+    {
+        notify(environment, moduleName, flowName, state);
+    }
+
+    @Override public void setNotifyStateChangesOnly(boolean notifyStateChangesOnly)
     {
         this.notifyStateChangesOnly = notifyStateChangesOnly;
     }
 
-    @Override
-    public boolean isNotifyStateChangesOnly()
+    @Override public boolean isNotifyStateChangesOnly()
     {
         return this.notifyStateChangesOnly;
     }
-    
-    /**
-	 * @return the dashboardBaseUrl
-	 */
-	public void setDashboardBaseUrl(String dashboardBaseUrl)
-	{
-		this.dashboardBaseUrl = dashboardBaseUrl;
-	}
 
-	
     /**
-     * 
+     * @return the dashboardBaseUrl
+     */
+    public void setDashboardBaseUrl(String dashboardBaseUrl)
+    {
+        this.dashboardBaseUrl = dashboardBaseUrl;
+    }
+
+    /**
      * @param platformConfigurationService
      */
-	public void setPlatformConfigurationService(
-			PlatformConfigurationService platformConfigurationService)
-	{
-		this.platformConfigurationService = platformConfigurationService;
-	}
-	
-	/**
-	 * @return the dashboardBaseUrl
-	 */
-	public String getDashboardBaseUrl()
-	{
-		return dashboardBaseUrl;
-	}
+    public void setPlatformConfigurationService(PlatformConfigurationService platformConfigurationService)
+    {
+        this.platformConfigurationService = platformConfigurationService;
+    }
 
-	/**
-	 * @return the platformConfigurationService
-	 */
-	public PlatformConfigurationService getPlatformConfigurationService()
-	{
-		return platformConfigurationService;
-	}
+    /**
+     * @return the dashboardBaseUrl
+     */
+    public String getDashboardBaseUrl()
+    {
+        return dashboardBaseUrl;
+    }
 
-	/**
+    /**
+     * @return the platformConfigurationService
+     */
+    public PlatformConfigurationService getPlatformConfigurationService()
+    {
+        return platformConfigurationService;
+    }
+
+    /**
      * Internal notify method
-     * 
+     *
      * @param environment
      * @param name
      * @param state
      */
     protected void notify(String environment, String moduleName, String flowName, String state)
     {
-    	String url = null;
-    	
-    	try
-		{
-    		logger.debug("this.platformConfigurationService: " + this.platformConfigurationService);	
-    		
-    		// We are trying to get the database configuration resource first
-    		if(this.platformConfigurationService != null)
-    		{	            
-	            url = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
-    		}
-    		
-    		logger.debug("url: " + url);	
-    		
-    		// If we do not have a database persisted configuration value we will try to get the one from the file system/
-    		if((url == null || url.length() == 0) && this.dashboardBaseUrl != null && this.dashboardBaseUrl.length() > 0)
-    		{
-    			url = this.dashboardBaseUrl;
-    		}
-    		
-    		// Otherwise we'll throw an exception! 
-    		if(url == null || url.length() == 0)
-    		{
-    			throw new RuntimeException("Cannot notify dashboard. The dashboard URL is null or empty string!");
-    		}
-    		
-			url = url + "/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
-			
-			logger.debug("Attempting to call URL: " + url);	
-		  	
-	    	ClientConfig clientConfig = new ClientConfig();
-	    	
-	    	Client client = ClientBuilder.newClient(clientConfig);
-	    	
-	    	WebTarget webTarget = client.target(url);
-		    
-	    	webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
-		}
-		catch(Exception e)
-		{			
-			throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
-		}
+        String url = null;
+        try
+        {
+            logger.debug("this.platformConfigurationService: " + this.platformConfigurationService);
+            // We are trying to get the database configuration resource first
+            if (this.platformConfigurationService != null)
+            {
+                url = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
+            }
+            logger.debug("url: " + url);
+            // If we do not have a database persisted configuration value we will try to get the one from the file system/
+            if ((url == null || url.length() == 0) && this.dashboardBaseUrl != null
+                && this.dashboardBaseUrl.length() > 0)
+            {
+                url = this.dashboardBaseUrl;
+            }
+            // Otherwise we'll throw an exception!
+            if (url == null || url.length() == 0)
+            {
+                throw new RuntimeException("Cannot notify dashboard. The dashboard URL is null or empty string!");
+            }
+            url = url + "/rest/topologyCache/updateCache/"
+                + moduleName.replace(" ", "%20")
+                + "/"
+                +  flowName.replace(" ", "%20");
+            logger.debug("Attempting to call URL: " + url);
+            HttpEntity request = initRequest(state, moduleName, null, null);
+            restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+        }
+        catch (final HttpClientErrorException e)
+        {
+            throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
+        }
+    }
+
+    private HttpEntity initRequest(String body, String module, String user, String password)
+    {
+        HttpHeaders headers = new HttpHeaders();
+        if (user != null && password != null)
+        {
+            String credentials = user + ":" + password;
+            String encodedCridentials = new String(Base64.encodeBase64(credentials.getBytes()));
+            headers.set(HttpHeaders.AUTHORIZATION, "Basic " + encodedCridentials);
+        }
+        headers.set(HttpHeaders.USER_AGENT, module);
+        return new HttpEntity(body, headers);
     }
 }
