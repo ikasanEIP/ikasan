@@ -50,6 +50,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.springframework.jms.core.IkasanJmsTemplate;
+import org.springframework.jms.support.converter.MessageConverter;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
@@ -75,6 +76,7 @@ public class JmsProducerBuilderTest {
     };
 
     final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
+    final MessageConverter messageConverter = mockery.mock(MessageConverter.class, "mockMessageConverter");
     final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
     final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
     final TransactionManager transactionManager = mockery.mock(TransactionManager.class, "mockTransactionManager");
@@ -222,4 +224,16 @@ public class JmsProducerBuilderTest {
         assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
     }
 
+    @Test
+    public void test_jmsproducerbuilder_build_with_messageConverter()
+    {
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
+
+        Producer jmsProducer = jmsProducerBuilder
+            .setConfiguredResourceId("crid")
+            .setMessageConverter(messageConverter)
+            .build();
+
+        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+    }
 }
