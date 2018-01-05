@@ -12,7 +12,7 @@
 	<include file="db/alter/db-changeLog-alterExclusionEventAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterReplayEventAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterReplayEventAddEventAsString.xml" relativeToChangelogFile="true" />
-	<include file="db/alter/db-changeLog-alterReplayAuditEventAddEventDetails.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterComponentAddInvokerConfiguration.xml" relativeToChangelogFile="true" />
 
 	<!-- 2.0.x cardinality creation -->
 	<include file="db/cardinality/db-changeLog-modifyReplayAuditEventFk.xml" relativeToChangelogFile="true" />

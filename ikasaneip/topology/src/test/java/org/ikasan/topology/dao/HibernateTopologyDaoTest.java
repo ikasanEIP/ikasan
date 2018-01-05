@@ -471,4 +471,34 @@ public class HibernateTopologyDaoTest
 		Assert.assertTrue(found.getName().equals(notification.getName()));
 		
 	}
+
+	@Test
+    @DirtiesContext
+    public void test_save_with_invoker_config()
+    {
+        Server server = new Server("esb02", "This is the first esb server", "svc-esb02", 60000);
+        this.xaTopologyDao.save(server);
+
+        Module module = new Module("Module 1 with invoker config", "contextRoot", "I am module 1","version", server, "diagram");
+        this.xaTopologyDao.save(module);
+
+        Flow flow = new Flow("Flow 1", "I am flow 1", module);
+        this.xaTopologyDao.save(flow);
+
+        Component component = new Component();
+        component.setFlow(flow);
+        component.setName("name");
+        component.setDescription("description");
+        component.setOrder(0);
+        component.setConfigurable(false);
+        component.setInvokerConfigurable(true);
+        component.setInvokerConfigurationId("invokerConfigurationId");
+
+        this.xaTopologyDao.save(component);
+
+        List<Component> components = this.xaTopologyDao.getAllComponents();
+
+        Assert.assertEquals("Is configurable", components.get(1).isInvokerConfigurable(), true);
+        Assert.assertEquals("Is configurable", components.get(1).getInvokerConfigurationId(), "invokerConfigurationId");
+    }
 }

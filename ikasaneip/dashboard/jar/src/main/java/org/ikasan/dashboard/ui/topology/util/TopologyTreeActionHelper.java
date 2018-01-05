@@ -1,13 +1,12 @@
 package org.ikasan.dashboard.ui.topology.util;
 
 import com.vaadin.event.Action;
-import com.vaadin.server.VaadinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.topology.model.Component;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ikasan Development Team on 07/06/2017.
@@ -36,6 +35,7 @@ public class TopologyTreeActionHelper
     public static final Action STOP = new Action("Stop");
     public static final Action VIEW_DIAGRAM = new Action("View Diagram");
     public static final Action CONFIGURE = new Action("Configure");
+    public static final Action CONFIGURE_INVOKER = new Action("Configure Invoker");
     public static final Action CONFIGURE_METRICS = new Action("Configure Metrics");
     public static final Action PAUSE = new Action("Pause");
     public static final Action START_PAUSE = new Action("Start/Pause");
@@ -70,8 +70,11 @@ public class TopologyTreeActionHelper
 
     // Component Actions
     private final Action[] componentActionsConfigurableConfigureMetrics = new Action[] { CONFIGURE, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActionsConfigurableConfigureMetricsConfigureInvoker = new Action[] { CONFIGURE, CONFIGURE_INVOKER, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigurableConfigure = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActionsConfigurableConfigureConfigureInvoker = new Action[] { CONFIGURE, CONFIGURE_INVOKER, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigureMetrics = new Action[] { CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActionsConfigureMetricsConfigureInvoker = new Action[] { CONFIGURE_INVOKER, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActions = new Action[] { WIRETAP, CONFIGURE };
 
     //Miscellaneous Actions
@@ -183,21 +186,35 @@ public class TopologyTreeActionHelper
 
     }
 
-    public Action[] getComponentActions(boolean componentIsConfigurable, boolean flowIsConfigurable)
+    public Action[] getComponentActions(boolean componentIsConfigurable, boolean metricsAreConfigurable, boolean invokerIsConfigurable)
     {
+        ArrayList<Action> actions = new ArrayList<>();
+
         if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
                 || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
                 || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
-            if (componentIsConfigurable && flowIsConfigurable)
+            if (componentIsConfigurable && metricsAreConfigurable && invokerIsConfigurable)
+            {
+                return componentActionsConfigurableConfigureMetricsConfigureInvoker;
+            }
+            else if (componentIsConfigurable && metricsAreConfigurable)
             {
                 return componentActionsConfigurableConfigureMetrics;
             }
-            else if (componentIsConfigurable && !flowIsConfigurable)
+            else if (componentIsConfigurable && invokerIsConfigurable)
+            {
+                return componentActionsConfigurableConfigureConfigureInvoker;
+            }
+            else if (invokerIsConfigurable && metricsAreConfigurable)
+            {
+                return componentActionsConfigureMetricsConfigureInvoker;
+            }
+            else if (componentIsConfigurable && !metricsAreConfigurable)
             {
                 return componentActionsConfigurableConfigure;
             }
-            else if (!componentIsConfigurable && flowIsConfigurable)
+            else if (!componentIsConfigurable && metricsAreConfigurable)
             {
                 return componentActionsConfigureMetrics;
             }

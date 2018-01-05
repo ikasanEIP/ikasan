@@ -53,6 +53,8 @@ public class Component
     private String description = "";
     private Boolean configurable = false;
     private String configurationId;
+    private Boolean invokerConfigurable = false;
+    private String invokerConfigurationId;
     private Flow flow;
     private int order;
 
@@ -200,7 +202,27 @@ public class Component
 		this.configurationId = configurationId;
 	}
 
-	/**
+    public Boolean isInvokerConfigurable()
+    {
+        return invokerConfigurable;
+    }
+
+    public void setInvokerConfigurable(Boolean invokerConfigurable)
+    {
+        this.invokerConfigurable = invokerConfigurable;
+    }
+
+    public String getInvokerConfigurationId()
+    {
+        return invokerConfigurationId;
+    }
+
+    public void setInvokerConfigurationId(String invokerConfigurationId)
+    {
+        this.invokerConfigurationId = invokerConfigurationId;
+    }
+
+    /**
 	 * @return the order
 	 */
 	public int getOrder()

@@ -227,6 +227,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	private TopologyTreeActionHelper topologyTreeActionHelper;
 
+    private InvokerConfigurationWindow invokerConfigurationWindow;
+
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 							 WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
@@ -235,7 +237,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                              StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
                              PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
                              FlowElementConfigurationWindow flowElementConfigurationWindow, FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow,
-                             ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow, DiscoveryWindow discoveryWindow)
+                             ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow, DiscoveryWindow discoveryWindow,
+                             InvokerConfigurationWindow invokerConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -342,6 +345,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("discoveryWindow cannot be null!");
 		}
+        this.invokerConfigurationWindow = invokerConfigurationWindow;
+        if(this.invokerConfigurationWindow == null)
+        {
+            throw new IllegalArgumentException("invokerConfigurationWindow cannot be null!");
+        }
 
 		init();
 	}
@@ -1227,7 +1235,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		else if(target instanceof Component)
         {
 			return this.topologyTreeActionHelper.getComponentActions(((Component)target).isConfigurable()
-					, ((Component)target).getFlow().isConfigurable());
+					, ((Component)target).getFlow().isConfigurable(), ((Component)target).isInvokerConfigurable());
         }
 
 		return this.topologyTreeActionHelper.getActionsEmpty();
@@ -1247,11 +1255,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
         	}
-        	if(action.equals(TopologyTreeActionHelper.CONFIGURE_METRICS))
+        	else if(action.equals(TopologyTreeActionHelper.CONFIGURE_METRICS))
         	{
         		this.flowElementConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.flowElementConfigurationWindow);
         	}
+            else if(action.equals(TopologyTreeActionHelper.CONFIGURE_INVOKER))
+            {
+                this.invokerConfigurationWindow.populate(((Component)target));
+                UI.getCurrent().addWindow(this.invokerConfigurationWindow);
+            }
         	else if(action.equals(TopologyTreeActionHelper.WIRETAP))
         	{
         		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target

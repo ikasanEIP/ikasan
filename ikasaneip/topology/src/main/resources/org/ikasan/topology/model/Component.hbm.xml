@@ -81,6 +81,18 @@
                   column="ConfigurationId"
                   not-null="false" 
                   unique="false"/>
+
+        <property name="invokerConfigurable"
+                  type="java.lang.Boolean"
+                  column="IsInvokerConfigurable"
+                  not-null="true"
+                  unique="false"/>
+
+        <property name="invokerConfigurationId"
+                  type="java.lang.String"
+                  column="InvokerConfigurationId"
+                  not-null="false"
+                  unique="false"/>
                   
         <property name="order"
                   type="int"

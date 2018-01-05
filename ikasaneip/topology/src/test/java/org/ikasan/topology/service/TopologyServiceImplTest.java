@@ -40,24 +40,17 @@
  */
 package org.ikasan.topology.service;
 
-import com.ikasan.topology.exception.DiscoveryException;
+import org.ikasan.topology.exception.DiscoveryException;
 import org.ikasan.topology.dao.TopologyDao;
 import org.ikasan.topology.model.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate4.HibernateTemplate;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;

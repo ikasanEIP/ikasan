@@ -160,4 +160,45 @@ public class    ConfigurationApplication {
         return new ResponseEntity("Configuration created!", HttpStatus.OK);
 
     }
+
+    /**
+     * TODO: work out how to get annotation security working.
+     *
+     * @param moduleName
+     * @param flowName
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity createInvokerConfiguration(@PathVariable("moduleName") String moduleName,
+                                              @PathVariable("flowName") String flowName,
+                                              @PathVariable("componentName") String componentName) {
+
+        Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        Flow flow = module.getFlow(flowName);
+
+        FlowElement<?> flowElement = flow.getFlowElement(componentName);
+
+        Configuration configuration = null;
+
+        if (flowElement.getFlowElementInvoker() instanceof ConfiguredResource) {
+            ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowElementInvoker();
+
+            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+
+            if (configuration == null) {
+                configuration = this.configurationManagement.createConfiguration(configuredResource);
+                this.configurationManagement.saveConfiguration(configuration);
+            } else {
+                return new ResponseEntity("This configuration alread exists!", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity("Configuration created!", HttpStatus.OK);
+    }
 }

@@ -619,7 +619,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		else if(target instanceof Component)
 		{
 			return this.topologyTreeActionHelper.getComponentActions(((Component)target).isConfigurable()
-					, ((Component)target).getFlow().isConfigurable());
+					, ((Component)target).getFlow().isConfigurable(), ((Component)target).isInvokerConfigurable());
 		}
 
 		return this.topologyTreeActionHelper.getActionsEmpty();
