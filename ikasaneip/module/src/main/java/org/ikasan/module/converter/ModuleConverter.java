@@ -68,6 +68,14 @@ public class ModuleConverter implements Converter<Module<Flow>, org.ikasan.topol
                     component.setConfigurable(false);
                 }
 
+                if(flowElement.getFlowElementInvoker() instanceof  ConfiguredResource) {
+                    component.setInvokerConfigurationId(((ConfiguredResource)flowElement.getFlowElementInvoker()).getConfiguredResourceId());
+                    component.setInvokerConfigurable(true);
+                }
+                else {
+                    component.setInvokerConfigurable(false);
+                }
+
                 component.setOrder(order++);
                 components.add(component);
             }

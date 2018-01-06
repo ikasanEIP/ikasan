@@ -47,14 +47,14 @@ import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.module.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.*;
+import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -207,6 +207,9 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(consumerElement).getFlowComponent();
             will(returnValue(consumer));
 
+            exactly(1).of(consumerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
             exactly(1).of(producerElement).getComponentName();
             will(returnValue("producer"));
 
@@ -215,6 +218,9 @@ public class ModuleInitialisationServiceImplTest {
 
             exactly(1).of(producerElement).getFlowComponent();
             will(returnValue(producer));
+
+            exactly(1).of(producerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
 
@@ -273,6 +279,9 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(consumerElement).getFlowComponent();
             will(returnValue(consumer));
 
+            exactly(1).of(consumerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
             exactly(1).of(producerElement).getComponentName();
             will(returnValue("producer"));
 
@@ -281,6 +290,9 @@ public class ModuleInitialisationServiceImplTest {
 
             exactly(1).of(producerElement).getFlowComponent();
             will(returnValue(producer));
+
+            exactly(1).of(producerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
 
@@ -349,6 +361,9 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(consumerElement).getFlowComponent();
             will(returnValue(consumer));
 
+            exactly(1).of(consumerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
             exactly(1).of(producerElement).getComponentName();
             will(returnValue("producer"));
 
@@ -357,6 +372,9 @@ public class ModuleInitialisationServiceImplTest {
 
             exactly(1).of(producerElement).getFlowComponent();
             will(returnValue(producer));
+
+            exactly(1).of(producerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
 
             exactly(1).of(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
 
@@ -424,6 +442,9 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(consumerElement).getFlowComponent();
             will(returnValue(consumer));
 
+            exactly(1).of(consumerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
             exactly(1).of(producerElement).getComponentName();
             will(returnValue("producer"));
 
@@ -432,6 +453,9 @@ public class ModuleInitialisationServiceImplTest {
 
             exactly(1).of(producerElement).getFlowComponent();
             will(returnValue(producer));
+
+            exactly(1).of(producerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
 
@@ -444,4 +468,36 @@ public class ModuleInitialisationServiceImplTest {
         mockery.assertIsSatisfied();
     }
 
+    public class TestInvoker implements FlowElementInvoker
+    {
+        @Override
+        public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+        {
+            return null;
+        }
+
+        @Override
+        public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
+        {
+
+        }
+
+        @Override
+        public void setFlowInvocationContextListeners(List list)
+        {
+
+        }
+
+        @Override
+        public void setInvokeContextListeners(boolean invokeContextListeners)
+        {
+
+        }
+
+        @Override
+        public String getInvokerType()
+        {
+            return null;
+        }
+    }
 }
