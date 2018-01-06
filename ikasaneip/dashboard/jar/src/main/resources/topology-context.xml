@@ -51,6 +51,7 @@
         <constructor-arg ref="flowComponentsConfigurationUploadDownloadWindow"/>
         <constructor-arg ref="moduleComponentsConfigurationUploadDownloadWindow"/>
         <constructor-arg ref="discoveryWindow"/>
+        <constructor-arg ref="invokerConfigurationWindow"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
@@ -63,6 +64,12 @@
     
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="componentConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean>
+
+    <bean id="invokerConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.InvokerConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
         <constructor-arg ref="componentConfigurationExportHelper" />
         <constructor-arg ref="platformConfigurationService"/>

@@ -66,7 +66,7 @@ import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
-import com.ikasan.topology.exception.DiscoveryException;
+import org.ikasan.topology.exception.DiscoveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
