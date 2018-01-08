@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
+import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
@@ -124,22 +125,32 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         {
             try
             {
-                payload = this.activeFileTransferConnectionTemplate.getDiscoveredFile(sourceDirectory,
-                        this.configuration.getFilenamePattern(), this.configuration.getRenameOnSuccess().booleanValue(),
-                        this.configuration.getRenameOnSuccessExtension(),
-                        this.configuration.getMoveOnSuccess().booleanValue(),
-                        this.configuration.getMoveOnSuccessNewPath(), this.configuration.getChunking().booleanValue(),
-                        this.configuration.getChunkSize().intValue(), this.configuration.getChecksum().booleanValue(),
-                        this.configuration.getMinAge().longValue(), this.configuration.getDestructive().booleanValue(),
-                        this.configuration.getFilterDuplicates().booleanValue(),
-                        this.configuration.getFilterOnFilename().booleanValue(),
-                        this.configuration.getFilterOnLastModifiedDate().booleanValue(),
-                        this.configuration.getChronological().booleanValue(),
-                        this.configuration.getIsRecursive().booleanValue());
-
-                if (payload != null)
+                if (this.activeFileTransferConnectionTemplate != null)
                 {
-                    return payload;
+                    payload = this.activeFileTransferConnectionTemplate
+                        .getDiscoveredFile(sourceDirectory, this.configuration.getFilenamePattern(),
+                            this.configuration.getRenameOnSuccess().booleanValue(),
+                            this.configuration.getRenameOnSuccessExtension(),
+                            this.configuration.getMoveOnSuccess().booleanValue(),
+                            this.configuration.getMoveOnSuccessNewPath(),
+                            this.configuration.getChunking().booleanValue(),
+                            this.configuration.getChunkSize().intValue(),
+                            this.configuration.getChecksum().booleanValue(), this.configuration.getMinAge().longValue(),
+                            this.configuration.getDestructive().booleanValue(),
+                            this.configuration.getFilterDuplicates().booleanValue(),
+                            this.configuration.getFilterOnFilename().booleanValue(),
+                            this.configuration.getFilterOnLastModifiedDate().booleanValue(),
+                            this.configuration.getChronological().booleanValue(),
+                            this.configuration.getIsRecursive().booleanValue());
+                    if (payload != null)
+                    {
+                        return payload;
+                    }
+                }
+                else
+                {
+                    throw new SftpResourceNotStartedException(
+                        "SftpMessageProvider was not started correctly. activeFileTransferConnectionTemplate is null.");
                 }
             }
             catch (ResourceException e)

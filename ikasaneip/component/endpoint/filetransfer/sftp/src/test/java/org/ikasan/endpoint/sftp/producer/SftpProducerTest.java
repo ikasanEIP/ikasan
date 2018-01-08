@@ -48,6 +48,7 @@ import javax.resource.ResourceException;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -55,7 +56,9 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -76,6 +79,9 @@ public class SftpProducerTest
         }
     };
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
 
     /** Mock ftpConfiguration */
     private final SftpProducerConfiguration sftpConfiguration = this.mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
@@ -91,6 +97,18 @@ public class SftpProducerTest
 
     /** Object being tested */
     private SftpProducer uut = new SftpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
+
+    @Test
+    public void invoke_when_sftpTemplate_is_null() throws ResourceException {
+        // set up
+        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
+        final Payload payload = mockery.mock(Payload.class, "mockPayload");
+
+        thrown.expect(SftpResourceNotStartedException.class);
+
+        // execute
+        uut.invoke(payload);
+    }
 
     /**
      * Test successful invocation based on a single file.
@@ -160,7 +178,7 @@ public class SftpProducerTest
      * 
      * @throws EndpointException if error invoking endpoint
      */
-    @Test(expected=EndpointException.class)
+    @Test
     public void producer_fails_changes_to_alternate_connection_template() throws ResourceException
     {
         uut.setConfiguration(sftpConfiguration);
@@ -218,6 +236,8 @@ public class SftpProducerTest
             }
         });
 
+        thrown.expect(EndpointException.class);
+
         try
         {
             this.uut.invoke(payload);
@@ -236,7 +256,7 @@ public class SftpProducerTest
      * 
      * @throws EndpointException if error invoking endpoint
      */
-    @Test(expected=EndpointException.class)
+    @Test
     public void producer_fails_changes_to_original_connection_template() throws ResourceException
     {
         uut.setConfiguration(sftpConfiguration);
@@ -304,6 +324,8 @@ public class SftpProducerTest
 				will(throwException(exception));
             }
         });
+
+        thrown.expect(EndpointException.class);
 
         try
         {

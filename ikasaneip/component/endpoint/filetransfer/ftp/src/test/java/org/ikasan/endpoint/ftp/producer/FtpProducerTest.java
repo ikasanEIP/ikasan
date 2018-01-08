@@ -1,5 +1,42 @@
-/**
- * Copyright (c) 2017. Mizuho Securities Asia.
+/*
+ * $Id$
+ * $URL$
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ *
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
  */
 package org.ikasan.endpoint.ftp.producer;
 
@@ -11,22 +48,24 @@ import javax.resource.cci.ConnectionFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 public class FtpProducerTest {
 
-	private FtpProducer ftpProducer;
+	private FtpProducer uut;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
 	final private Mockery mockery = new Mockery() {
 		{
@@ -51,8 +90,8 @@ public class FtpProducerTest {
 
 	@Before
 	public void setup() {
-		ftpProducer = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
-		ftpProducer.setConfiguration(configuration);
+		uut = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
+		uut.setConfiguration(configuration);
 	}
 
 	@After
@@ -60,7 +99,20 @@ public class FtpProducerTest {
 		mockery.assertIsSatisfied();
 	}
 
-	/**
+
+    @Test
+    public void invoke_when_ftpTemplate_is_null() throws ResourceException {
+        // set up
+        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
+
+        thrown.expect(FtpResourceNotStartedException.class);
+
+        // execute
+        uut.invoke(payload);
+    }
+
+
+    /**
 	 * Test successful invocation based on a single file.
 	 * 
 	 * @throws EndpointException
@@ -69,7 +121,7 @@ public class FtpProducerTest {
 	@Test
 	public void producer_succeeds_when_receive_single_file() throws ResourceException {
 		// set up
-		ReflectionTestUtils.setField(ftpProducer, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 
 		final String content = "content";
 		final String fileName = "fileName";
@@ -116,7 +168,7 @@ public class FtpProducerTest {
 		});
 
 		// execute
-		ftpProducer.invoke(payload);
+		uut.invoke(payload);
 	}
 
 	/**
@@ -126,12 +178,12 @@ public class FtpProducerTest {
 	 * @throws EndpointException
 	 *             if error invoking endpoint
 	 */
-	@Test(expected = EndpointException.class)
+	@Test
 	public void producer_fails_changes_to_alternate_connection_template() throws ResourceException {
 		// set up
-		ReflectionTestUtils.setField(ftpProducer, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(ftpProducer, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(ftpProducer, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
 		final String fileName = "fileName";
@@ -182,13 +234,8 @@ public class FtpProducerTest {
 		});
 
 		// execute
-		try {
-			ftpProducer.invoke(payload);
-		} catch (EndpointException e) {
-			Assert.assertEquals(alternateFileTransferConnectionTemplate,
-					ReflectionTestUtils.getField(ftpProducer, "activeFileTransferConnectionTemplate"));
-			throw e;
-		}
+        thrown.expect(EndpointException.class);
+       	uut.invoke(payload);
 
 		Assert.fail("Unreachable code.");
 	}
@@ -200,12 +247,12 @@ public class FtpProducerTest {
 	 * @throws EndpointException
 	 *             if error invoking endpoint
 	 */
-	@Test(expected = EndpointException.class)
+	@Test
 	public void producer_fails_changes_to_original_connection_template() throws ResourceException {
 		// set up
-		ReflectionTestUtils.setField(ftpProducer, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(ftpProducer, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(ftpProducer, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
 		final String fileName = "fileName";
@@ -267,16 +314,18 @@ public class FtpProducerTest {
 		});
 
 		// execute
-		try {
-			ftpProducer.invoke(payload);
+        thrown.expect(EndpointException.class);
+
+        try {
+			uut.invoke(payload);
 		} catch (Exception e) {
 			Assert.assertEquals(alternateFileTransferConnectionTemplate,
-					ReflectionTestUtils.getField(ftpProducer, "activeFileTransferConnectionTemplate"));
+					ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
 			try {
-				ftpProducer.invoke(payload);
+				uut.invoke(payload);
 			} catch (Exception e2) {
 				Assert.assertEquals(activeFileTransferConnectionTemplate,
-						ReflectionTestUtils.getField(ftpProducer, "activeFileTransferConnectionTemplate"));
+						ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
 				throw e2;
 			}
 		}
