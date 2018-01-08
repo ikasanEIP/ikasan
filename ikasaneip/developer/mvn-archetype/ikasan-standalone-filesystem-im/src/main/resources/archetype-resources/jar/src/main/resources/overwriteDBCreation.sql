@@ -1,32 +1,32 @@
       INSERT INTO Users (Id, Username, Password, Enabled, FirstName, Surname,PreviousAccess )
-					VALUES (1,''admin'', ''d033e22ae348aeb5660fc2140aec35850c4da997'', 1 , ''Admin'', ''User'',10);
+					VALUES (1,'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User',10);
 
       INSERT INTO Users (Id, Username, Password, Enabled, FirstName, Surname,PreviousAccess )
-					VALUES (2,''api'', ''d033e22ae348aeb5660fc2140aec35850c4da997'', 1 , ''API'', ''API'',10);
+					VALUES (2,'api', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'API', 'API',10);
 
       MERGE INTO SecurityPrincipal (Name , PrincipalType, Description, CreatedDateTime ,UpdatedDateTime)
         KEY (Name)
-        VALUES ( ''admin'',''Admin user'', ''The administrator user'' ,''1970-01-01 00:00:00'',''1970-01-01 00:00:00'');
+        VALUES ( 'admin','Admin user', 'The administrator user' ,'1970-01-01 00:00:00','1970-01-01 00:00:00');
 
       MERGE INTO SecurityPrincipal (Name , PrincipalType, Description, CreatedDateTime ,UpdatedDateTime)
         KEY (Name)
-        VALUES ( ''user'',''user'', ''The user'' ,''1970-01-01 00:00:00'',''1970-01-01 00:00:00'');
+        VALUES ( 'user','user', 'The user' ,'1970-01-01 00:00:00','1970-01-01 00:00:00');
 
       MERGE INTO SecurityRole (Name ,  Description, CreatedDateTime ,UpdatedDateTime)
         KEY (Name)
-        VALUES ( ''ADMIN'', ''Users who may perform administration functions on the system'',''1970-01-01 00:00:00'',''1970-01-01 00:00:00'' );
+        VALUES ( 'ADMIN', 'Users who may perform administration functions on the system','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
       MERGE INTO SecurityPolicy (Name ,  Description, CreatedDateTime ,UpdatedDateTime )
         KEY (Name)
-        VALUES ( ''ALL'', ''Policy to do everything'',''1970-01-01 00:00:00'',''1970-01-01 00:00:00'' );
+        VALUES ( 'ALL', 'Policy to do everything','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
       MERGE INTO SecurityPolicy (Name ,  Description, CreatedDateTime ,UpdatedDateTime )
         KEY (Name)
-        VALUES ( ''ReadBlueConsole'', ''Policy to do view BlueConsole'',''1970-01-01 00:00:00'',''1970-01-01 00:00:00'' );
+        VALUES ( 'ReadBlueConsole', 'Policy to do view BlueConsole','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
       MERGE INTO SecurityPolicy (Name ,  Description, CreatedDateTime ,UpdatedDateTime )
         KEY (Name)
-        VALUES ( ''WriteBlueConsole'', ''Policy to do write BlueConsole'',''1970-01-01 00:00:00'',''1970-01-01 00:00:00'' );
+        VALUES ( 'WriteBlueConsole', 'Policy to do write BlueConsole','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
 
 			 INSERT
@@ -34,8 +34,8 @@
 			 (SELECT u.Id, s.Id
 			  FROM Users u, SecurityPrincipal s
 			  WHERE
-			  	   u.Username = ''admin''
-			  	   and s.Name = ''admin''
+			  	   u.Username = 'admin'
+			  	   and s.Name = 'admin'
 			  );
 
 			 INSERT
@@ -43,8 +43,8 @@
 			 (SELECT u.Id, s.Id
 			  FROM Users u, SecurityPrincipal s
 			  WHERE
-			  	   u.Username = ''admin''
-			  	   and s.Name = ''user''
+			  	   u.Username = 'admin'
+			  	   and s.Name = 'user'
 			  );
 
 			 INSERT INTO PrincipalRole ( PrincipalId, RoleId )
@@ -52,8 +52,8 @@
 			 FROM
 			 	SecurityPrincipal s, SecurityRole r
 			 WHERE
-			 	s.Name = ''admin''
-			 	and r.Name = ''ADMIN''
+			 	s.Name = 'admin'
+			 	and r.Name = 'ADMIN'
 			 );
 
 
@@ -62,8 +62,8 @@
 			 FROM
 			 	SecurityRole r , SecurityPolicy p
 			 WHERE
-			 	r.Name = ''ADMIN''
-			 	and p.Name = ''ALL''
+			 	r.Name = 'ADMIN'
+			 	and p.Name = 'ALL'
 			 );
 
 			INSERT INTO RolePolicy ( RoleId, PolicyId )
@@ -71,8 +71,8 @@
 			 FROM
 			 	SecurityRole r , SecurityPolicy p
 			 WHERE
-			 	r.Name = ''ADMIN''
-			 	and p.Name = ''ReadBlueConsole''
+			 	r.Name = 'ADMIN'
+			 	and p.Name = 'ReadBlueConsole'
 			 );
 
       INSERT INTO RolePolicy ( RoleId, PolicyId )
@@ -80,7 +80,7 @@
 			 FROM
 			 	SecurityRole r , SecurityPolicy p
 			 WHERE
-			 	r.Name = ''ADMIN''
-			 	and p.Name = ''WriteBlueConsole''
+			 	r.Name = 'ADMIN'
+			 	and p.Name = 'WriteBlueConsole'
 			 );
 
