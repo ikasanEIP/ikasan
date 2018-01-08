@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
+import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -134,25 +135,28 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
         {
             try
             {
-                payload = this.activeFileTransferConnectionTemplate
-                    .getDiscoveredFile(sourceDirectory, this.configuration.getFilenamePattern(),
-                         this.configuration.getRenameOnSuccess().booleanValue(),
-                         this.configuration.getRenameOnSuccessExtension(),
-                         this.configuration.getMoveOnSuccess().booleanValue(),
-                         this.configuration.getMoveOnSuccessNewPath(),
-                         this.configuration.getChunking().booleanValue(),
-                         this.configuration.getChunkSize().intValue(),
-                         this.configuration.getChecksum().booleanValue(),
-                         this.configuration.getMinAge().longValue(),
-                         this.configuration.getDestructive().booleanValue(),
-                         this.configuration.getFilterDuplicates().booleanValue(),
-                         this.configuration.getFilterOnFilename().booleanValue(),
-                         this.configuration.getFilterOnLastModifiedDate().booleanValue(),
-                         this.configuration.getChronological().booleanValue(),
-                         this.configuration.getIsRecursive().booleanValue());
-                if (payload != null)
+                if(this.activeFileTransferConnectionTemplate!=null)
                 {
-                    return payload;
+                    payload = this.activeFileTransferConnectionTemplate.getDiscoveredFile(sourceDirectory, this.configuration.getFilenamePattern(),
+                            this.configuration.getRenameOnSuccess().booleanValue(),
+                            this.configuration.getRenameOnSuccessExtension(),
+                            this.configuration.getMoveOnSuccess().booleanValue(),
+                            this.configuration.getMoveOnSuccessNewPath(), this.configuration.getChunking().booleanValue(),
+                            this.configuration.getChunkSize().intValue(), this.configuration.getChecksum().booleanValue(),
+                            this.configuration.getMinAge().longValue(), this.configuration.getDestructive().booleanValue(),
+                            this.configuration.getFilterDuplicates().booleanValue(),
+                            this.configuration.getFilterOnFilename().booleanValue(),
+                            this.configuration.getFilterOnLastModifiedDate().booleanValue(),
+                            this.configuration.getChronological().booleanValue(),
+                            this.configuration.getIsRecursive().booleanValue());
+                    if (payload != null)
+                    {
+                        return payload;
+                    }
+                }
+                else
+                {
+                    throw new FtpResourceNotStartedException("FtpMessageProvider was not started correctly. activeFileTransferConnectionTemplate is null.");
                 }
             }
             catch (ResourceException e)

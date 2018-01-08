@@ -44,19 +44,21 @@ package org.ikasan.endpoint.ftp.consumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
 import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 
 /**
  * Test class for {@link org.ikasan.endpoint.ftp.consumer.FtpMessageProvider}
@@ -75,6 +77,8 @@ public class FtpMessageProviderTest {
         }
     };
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private final FileBasedPasswordHelper fileBasedPasswordHelper = mockery.mock(FileBasedPasswordHelper.class, "mockFileBasedPasswordHelper");
 
@@ -105,6 +109,30 @@ public class FtpMessageProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public void failed_constructor_when_fileBasedPasswordHelper_is_null() {
         new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, null);
+    }
+
+    @Test
+    public void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+
+        ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,null);
+
+        thrown.expect(FtpResourceNotStartedException.class);
+
+        final String directory = "directory";
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).getSourceDirectoryURLFactory();
+                will(returnValue(null));
+                exactly(1).of(configuration).getSourceDirectory();
+                will(returnValue(directory));
+
+            }
+        });
+
+        uut.invoke(jobExecutionContext);
+
     }
 
     @Test

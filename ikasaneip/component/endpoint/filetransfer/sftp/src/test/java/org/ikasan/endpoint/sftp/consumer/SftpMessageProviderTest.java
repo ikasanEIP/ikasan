@@ -45,12 +45,15 @@ package org.ikasan.endpoint.sftp.consumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
@@ -75,6 +78,8 @@ public class SftpMessageProviderTest
         }
     };
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
@@ -94,6 +99,30 @@ public class SftpMessageProviderTest
     public void setup() {
         uut = new SftpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
         uut.setConfiguration(configuration);
+    }
+
+    @Test
+    public void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+
+        ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,null);
+
+        thrown.expect(SftpResourceNotStartedException.class);
+
+        final String directory = "directory";
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).getSourceDirectoryURLFactory();
+                will(returnValue(null));
+                exactly(1).of(configuration).getSourceDirectory();
+                will(returnValue(directory));
+
+            }
+        });
+
+        uut.invoke(jobExecutionContext);
+
     }
 
     @Test
