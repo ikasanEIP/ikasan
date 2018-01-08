@@ -78,7 +78,6 @@ public class Application
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
                 .withDescription("Sample file to JMS flow")
-                .withMonitor(componentFactory.getMonitor())
                 .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
@@ -86,7 +85,6 @@ public class Application
 
         Flow targetFlow = moduleBuilder.getFlowBuilder("targetFileFlow")
                 .withDescription("Sample JMS to file flow")
-                .withMonitor(componentFactory.getMonitor())
                 .consumer("JMS Consumer", componentFactory.getJmsConsumer())
                 .producer("File Producer", componentFactory.getFileProducer()).build();
 
