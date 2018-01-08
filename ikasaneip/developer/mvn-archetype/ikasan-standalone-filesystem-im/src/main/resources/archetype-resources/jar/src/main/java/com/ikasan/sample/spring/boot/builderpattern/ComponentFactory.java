@@ -202,30 +202,6 @@ public class ComponentFactory
         return new SourceFileConverter();
     }
 
-    Monitor getMonitor()
-    {
-        Monitor monitor = this.monitorFactory.getMonitor();
-        List<Notifier> notifiers = new ArrayList<Notifier>();
-        notifiers.add( getEmailNotifier() );
-        monitor.setNotifiers(notifiers);
-        return monitor;
-    }
-
-    Notifier getEmailNotifier()
-    {
-        Notifier notifier = this.notifierFactory.getEmailNotifier();
-        if(notifier instanceof ConfiguredResource)
-        {
-            EmailNotifierConfiguration configuration = ((ConfiguredResource<EmailNotifierConfiguration>)notifier).getConfiguration();
-            configuration.setMailFrom(this.mailFrom);
-            configuration.setMailHost(this.mailhost);
-            configuration.setToRecipients(this.torecipients);
-            configuration.setCcRecipients(this.ccrecipients);
-        }
-
-        return notifier;
-    }
-
     class SourceFileConverter implements Converter<List<File>,String>
     {
         @Override
