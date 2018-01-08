@@ -45,6 +45,7 @@ import java.io.ByteArrayInputStream;
 
 import javax.resource.ResourceException;
 
+import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -141,24 +142,29 @@ public class FtpProducer implements Producer<Payload>,
         this.configuredResourceId = configuredResourceId;
     }
 
-    public void invoke(Payload payload) throws EndpointException {
-
-            try {
-				activeFileTransferConnectionTemplate.deliverInputStream(
-						new ByteArrayInputStream(payload.getContent()),
-						payload.getAttribute(FilePayloadAttributeNames.FILE_NAME),
-						configuration.getOutputDirectory(),
-						configuration.getOverwrite(),
-						configuration.getRenameExtension(),
-						configuration.getChecksumDelivered(),
-						configuration.getUnzip(),
-						configuration.getCreateParentDirectory(),
-						configuration.getTempFileName());
-            } catch (ResourceException e) {
-                this.switchActiveConnection();
-                throw new EndpointException(e);
+    public void invoke(Payload payload) throws EndpointException
+    {
+        try
+        {
+            if (activeFileTransferConnectionTemplate != null)
+            {
+                activeFileTransferConnectionTemplate.deliverInputStream(new ByteArrayInputStream(payload.getContent()),
+                    payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), configuration.getOutputDirectory(),
+                    configuration.getOverwrite(), configuration.getRenameExtension(),
+                    configuration.getChecksumDelivered(), configuration.getUnzip(),
+                    configuration.getCreateParentDirectory(), configuration.getTempFileName());
             }
-
+            else
+            {
+                throw new FtpResourceNotStartedException(
+                    "FtpProducer was not started correctly. activeFileTransferConnectionTemplate is null.");
+            }
+        }
+        catch (ResourceException e)
+        {
+            this.switchActiveConnection();
+            throw new EndpointException(e);
+        }
     }
 
     /**
