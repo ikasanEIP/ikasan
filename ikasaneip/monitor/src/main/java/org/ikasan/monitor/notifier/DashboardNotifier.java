@@ -141,7 +141,8 @@ public class DashboardNotifier implements Notifier<String>
      * Internal notify method
      *
      * @param environment
-     * @param name
+     * @param moduleName
+     * @param flowName
      * @param state
      */
     protected void notify(String environment, String moduleName, String flowName, String state)
@@ -195,6 +196,7 @@ public class DashboardNotifier implements Notifier<String>
             headers.set(HttpHeaders.AUTHORIZATION, "Basic " + encodedCridentials);
         }
         headers.set(HttpHeaders.USER_AGENT, module);
+        headers.set(HttpHeaders.CONTENT_TYPE,"application/json");
         return new HttpEntity(body, headers);
     }
 }
