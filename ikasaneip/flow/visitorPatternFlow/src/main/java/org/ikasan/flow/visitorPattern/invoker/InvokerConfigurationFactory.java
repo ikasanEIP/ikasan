@@ -57,7 +57,6 @@ public class InvokerConfigurationFactory
         return new MultiRecipientRouterInvokerConfiguration();
     }
 
-
     /**
      * Getter factory method for creating and returning an instance of a MRR invoker configuration.
      * @return MultiRecipientRouterInvokerConfiguration
@@ -65,6 +64,25 @@ public class InvokerConfigurationFactory
     public static FilterInvokerConfiguration filterInvokerConfiguration()
     {
         return new FilterInvokerConfiguration();
+    }
+
+
+    /**
+     * Getter factory method for creating and returning an instance of a splitter invoker configuration.
+     * @return SplitterInvokerConfiguration
+     */
+    public static SplitterInvokerConfiguration splitterInvokerConfiguration()
+    {
+        return new SplitterInvokerConfiguration();
+    }
+
+    /**
+     * Getter factory method for creating and returning an instance of a splitter invoker configuration.
+     * @return TranslatorInvokerConfiguration
+     */
+    public static TranslatorInvokerConfiguration translatorInvokerConfiguration()
+    {
+        return new TranslatorInvokerConfiguration();
     }
 }
 
