@@ -100,8 +100,8 @@
     </bean>
 
     <bean id="solrWiretapHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
-        <constructor-arg value="solrWiretapHousekeepingJob" />
-        <constructor-arg ref="solrWiretapService" />
+        <constructor-arg value="solrHousekeepingJob" />
+        <constructor-arg ref="solrGeneralService" />
         <constructor-arg ref="platformConfigurationService" />
     </bean>
 

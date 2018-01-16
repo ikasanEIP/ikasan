@@ -16,10 +16,10 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneralSearchDao<IkasanSolrDocumentSearchResults>
+public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<IkasanSolrDocumentSearchResults>
 {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(SolrGeneralSearchDaoImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
 
     @Override
     public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize)

@@ -37,11 +37,11 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
-    SolrGeneralSearchDaoImpl dao;
+    SolrGeneralDaoImpl dao;
 
     @Test
     @DirtiesContext
-    public void test_delete_expired_records() throws Exception {
+    public void test_delete_expired_records_by_type() throws Exception {
         Path path = createTempDir();
 
         SolrResourceLoader loader = new SolrResourceLoader(path);
@@ -74,9 +74,56 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             assertEquals(3, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(3  , server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
             dao.removeExpired("type");
+
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_delete_expired_records() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "type");
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            assertEquals(3, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(3  , server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+            dao.removeExpired();
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
@@ -101,7 +148,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             }
         });
 
-        dao = new SolrGeneralSearchDaoImpl();
+        dao = new SolrGeneralDaoImpl();
         dao.setSolrClient(server);
 
         dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100);
@@ -142,7 +189,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
 
             assertEquals(3, dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
@@ -184,7 +231,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
 
             Set<String> moduleNames = new HashSet<String>();
