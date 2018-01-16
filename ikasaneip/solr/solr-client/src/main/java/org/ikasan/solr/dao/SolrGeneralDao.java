@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public interface SolrGeneralSearchDao<RESULTS>
+public interface SolrGeneralDao<RESULTS>
 {
     /**
      * Perform general search against ikasan solr index.
@@ -50,4 +50,9 @@ public interface SolrGeneralSearchDao<RESULTS>
      * @param solrPassword
      */
     public void setSolrPassword(String solrPassword);
+
+    /**
+     * Method to remove expired records from the solr index.
+     */
+    public void removeExpired();
 }

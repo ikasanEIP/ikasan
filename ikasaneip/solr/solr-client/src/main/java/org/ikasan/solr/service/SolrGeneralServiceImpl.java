@@ -1,7 +1,8 @@
 package org.ikasan.solr.service;
 
-import org.ikasan.solr.dao.SolrGeneralSearchDao;
+import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -11,16 +12,16 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 26/08/2017.
  */
-public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>
+public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>, HousekeepService
 {
-    private SolrGeneralSearchDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao;
+    private SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao;
 
     /**
      * Constructor
      *
      * @param solrGeneralSearchDao
      */
-    public SolrGeneralServiceImpl(SolrGeneralSearchDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao)
+    public SolrGeneralServiceImpl(SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao)
     {
         this.solrGeneralSearchDao = solrGeneralSearchDao;
         if(this.solrGeneralSearchDao == null)
@@ -46,5 +47,31 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearc
         this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
         this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralSearchDao.search(moduleNames, flowNames, searchString, startTime, endTime, resultSize, entityTypes);
+    }
+
+    @Override
+    public void housekeep()
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        this.solrGeneralSearchDao.removeExpired();
+    }
+
+    @Override
+    public boolean housekeepablesExist()
+    {
+        return true;
+    }
+
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        // not relevant for solr housekeeping
+    }
+
+    @Override
+    public void setTransactionBatchSize(Integer transactionBatchSize)
+    {
+        // not relevant for solr housekeeping
     }
 }
