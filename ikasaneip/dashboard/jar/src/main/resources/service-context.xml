@@ -181,7 +181,7 @@
 	</bean>
 
 	<bean id="solrGeneralSearchDao"
-		  class="org.ikasan.solr.dao.SolrGeneralSearchDaoImpl">
+		  class="org.ikasan.solr.dao.SolrGeneralDaoImpl">
 	</bean>
 
 	<bean id="wiretapEvent"

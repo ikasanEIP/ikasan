@@ -1,5 +1,8 @@
 package org.ikasan.dashboard.housekeeping;
 
+import org.ikasan.solr.service.SolrGeneralServiceImpl;
+import org.ikasan.spec.solr.SolrService;
+import org.ikasan.spec.solr.SolrServiceBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
@@ -155,6 +158,15 @@ public class HousekeepingJob implements Job
         {
             if (houseKeepService.housekeepablesExist())
             {
+                if(this.houseKeepService instanceof SolrGeneralServiceImpl)
+                {
+                    String username = this.platformConfigurationService.getSolrUsername();
+                    String password = this.platformConfigurationService.getSolrPassword();
+
+                    ((SolrGeneralServiceImpl)this.houseKeepService).setSolrUsername(username);
+                    ((SolrGeneralServiceImpl)this.houseKeepService).setSolrPassword(password);
+                }
+
                 this.houseKeepService.housekeep();
             }
         }
