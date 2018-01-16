@@ -354,14 +354,42 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
             req.deleteByQuery(query.toString());
 
-            UpdateResponse rsp = req.process(this.solrClient);
-            this.solrClient.commit();
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+            req.commit(solrClient, SolrConstants.CORE);
 
             logger.info("Deleted " + type + " solr records. Response [" + rsp + "]." );
         }
         catch (Exception e)
         {
             throw new RuntimeException("An error has occurred deleting " + type + ": " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Method to remove expired records from the solr index.
+     */
+    public void removeExpired()
+    {
+        long currentTime = System.currentTimeMillis();
+
+        StringBuffer query = new StringBuffer();
+        query.append(EXPIRY).append(COLON).append("{").append("*").append(TO).append(currentTime).append("}");
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req = req.deleteByQuery(query.toString());
+
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+            req.commit(solrClient, SolrConstants.CORE);
+
+            logger.info("Deleted solr records. Response [" + rsp + "]." );
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An error has occurred deleting solr records: " + e.getMessage(), e);
         }
     }
 

@@ -1,14 +1,12 @@
 package org.ikasan.solr.service;
 
 import org.apache.solr.SolrTestCaseJ4;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.replay.service.SolrReplayServiceImpl;
-import org.ikasan.solr.dao.SolrGeneralSearchDaoImpl;
+import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -23,7 +21,7 @@ import java.util.Set;
  */
 public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 {
-    SolrGeneralSearchDaoImpl dao;
+    SolrGeneralDaoImpl dao;
 
     @Test(expected = IllegalArgumentException.class)
     @DirtiesContext
@@ -66,7 +64,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
@@ -110,7 +108,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
@@ -158,7 +156,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            dao = new SolrGeneralSearchDaoImpl();
+            dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
 
             Set<String> moduleNames = new HashSet<String>();
