@@ -7,20 +7,20 @@ import org.springframework.jms.config.SimpleJmsListenerContainerFactory;
 import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 
-import javax.jms.*;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Allows for capturing of test messages on JMS endpoints
+ */
 public class MessageListenerVerifier implements MessageListener
 {
-    private String destinationName;
-
     TestJmsListenerEndpoint endpoint;
 
-    public MessageListenerVerifier(final String brokerUrl, final String destinationName,
-        final JmsListenerEndpointRegistry registry)
+    public MessageListenerVerifier(final String brokerUrl, final String destinationName, final JmsListenerEndpointRegistry registry)
     {
-        this.destinationName = destinationName;
         SimpleJmsListenerContainerFactory factory = new SimpleJmsListenerContainerFactory();
         factory.setConnectionFactory(new ActiveMQConnectionFactory(brokerUrl));
         endpoint = new TestJmsListenerEndpoint(destinationName, this);
@@ -32,38 +32,17 @@ public class MessageListenerVerifier implements MessageListener
         this.endpoint.startMessageListener();
     }
 
-    List<Object> captureResults = new ArrayList<>();
+    protected List<Object> captureResults = new ArrayList<>();
 
     public List<Object> getCaptureResults()
     {
         return captureResults;
     }
 
-    @Override public void onMessage(Message message)
+    @Override
+    public void onMessage(Message message)
     {
-        if (message instanceof TextMessage)
-        {
-            try
-            {
-                String msg = ((TextMessage) message).getText();
-                System.out.println("Message has been consumed from [" + destinationName + "]: " + msg);
-                captureResults.add(msg);
-            }
-            catch (JMSException ex)
-            {
-                throw new RuntimeException(ex);
-            }
-        }
-        if (message instanceof MapMessage)
-        {
-                System.out.println("Message has been consumed from [" + destinationName + "]: " + message.toString());
-                captureResults.add(message);
-
-        }
-        else
-        {
-            throw new IllegalArgumentException("Message Error");
-        }
+        captureResults.add(message);
     }
 
     class TestJmsListenerEndpoint implements JmsListenerEndpoint
@@ -80,12 +59,14 @@ public class MessageListenerVerifier implements MessageListener
             this.messageListener = messageListener;
         }
 
-        @Override public String getId()
+        @Override
+        public String getId()
         {
             return destinationName;
         }
 
-        @Override public void setupListenerContainer(MessageListenerContainer listenerContainer)
+        @Override
+        public void setupListenerContainer(MessageListenerContainer listenerContainer)
         {
             listenerContainer.setupMessageListener(messageListener);
             ((SimpleMessageListenerContainer) listenerContainer).setDestinationName(destinationName);
