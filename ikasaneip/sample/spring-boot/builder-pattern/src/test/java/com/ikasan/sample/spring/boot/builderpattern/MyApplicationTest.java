@@ -51,6 +51,8 @@ import org.junit.*;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.util.SocketUtils;
 
+import javax.jms.TextMessage;
+
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -142,7 +144,9 @@ public class MyApplicationTest
         assertEquals("stopped",jmsFlow.getState());
 
         // Set expectation
-        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(message));
+        assertEquals(1,messageListenerVerifierTarget.getCaptureResults().size());
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText()
+            , message);
 
     }
     /**
