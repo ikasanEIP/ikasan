@@ -159,7 +159,10 @@ public class ApplicationTest
 
 
         // Set expectation
-        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
+        assertEquals(1, messageListenerVerifierTarget.getCaptureResults().size());
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
+            SAMPLE_MESSAGE);
+
 
         //verify wiretap
         PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);

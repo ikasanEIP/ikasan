@@ -63,11 +63,10 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.util.SocketUtils;
 
+import javax.jms.TextMessage;
 import java.util.*;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
@@ -159,7 +158,9 @@ public class ApplicationTest
 
 
         // Set expectation
-        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
+        assertEquals(1, messageListenerVerifierTarget.getCaptureResults().size());
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
+            SAMPLE_MESSAGE);
 
         //verify wiretap
         PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
