@@ -42,14 +42,11 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducer;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -61,6 +58,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.util.SocketUtils;
 
+import javax.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -68,9 +66,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -136,7 +132,9 @@ public class ApplicationTest
         flow.stop();
         assertEquals("stopped", flow.getState());
         // Set expectation
-        assertThat(messageListenerVerifierTarget.getCaptureResults(), hasItem(FILE_CONSUMER_FILE_NAME));
+        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
+            FILE_CONSUMER_FILE_NAME);
     }
 
     @Test public void targetFileFlow_test_file_delivery() throws Exception
