@@ -211,6 +211,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Commons DBCP -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+
         <!-- Hibernate ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
