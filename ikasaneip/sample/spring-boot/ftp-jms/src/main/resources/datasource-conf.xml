@@ -66,6 +66,7 @@
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
     </bean>
 
 
@@ -74,6 +75,7 @@
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
         <property name="transactionManager">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetObject" ref="transactionManager" />
