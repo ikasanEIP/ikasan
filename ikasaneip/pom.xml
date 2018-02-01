@@ -378,7 +378,7 @@
         <version.org.hamcrest.hamcrest-core>1.3</version.org.hamcrest.hamcrest-core>
         <version.org.hamcrest.hamcrest-library>1.3</version.org.hamcrest.hamcrest-library>
         <version.org.jmock.jmock-legacy>2.5.1</version.org.jmock.jmock-legacy>
-        <version.cglib.cglib-nodep>2.2</version.cglib.cglib-nodep>
+        <version.cglib.cglib-nodep>3.2.6</version.cglib.cglib-nodep>
         <version.org.objenesis>1.2</version.org.objenesis>
         <version.uk.com.robust-it.cloning>1.9.0</version.uk.com.robust-it.cloning>
         <version.org.mockito>1.8.5</version.org.mockito>
@@ -386,7 +386,7 @@
         <version.javax.mail>1.4.3</version.javax.mail>
         <version.xmlunit>1.5</version.xmlunit>
         <version.net.sf.json-lib>2.4</version.net.sf.json-lib>
-        <version.xerces>2.8.0</version.xerces>
+        <version.xerces>2.11.0</version.xerces>
         <version.com.io7m.xom>1.2.10</version.com.io7m.xom>
         <version.commons-codec>1.4</version.commons-codec>
         <version.commons-collections>3.2.1</version.commons-collections>
@@ -416,13 +416,13 @@
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.org.jboss.narayana.jta>5.5.28.Final</version.org.jboss.narayana.jta>
         <version.commons.net>3.3</version.commons.net>
-        <version.com.thoughtworks.xstream>1.3.1</version.com.thoughtworks.xstream>
+        <version.com.thoughtworks.xstream>1.4.10</version.com.thoughtworks.xstream>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
         <version.org.jboss.logging.jboss-logging>3.1.0.CR2</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.logging.jboss-logging-annotations>1.2.0.Beta1</version.org.jboss.logging.jboss-logging-annotations>
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
         <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
-        <version.com.jcraft.jsch>0.1.53</version.com.jcraft.jsch>
+        <version.com.jcraft.jsch>0.1.54</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>0.14.0</version.org.apache.sshd>
 		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
@@ -434,7 +434,7 @@
 		<version.com.google.guava>23.0</version.com.google.guava>
 		<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
 		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
-        <version.org.apache.tomcat>8.5.20</version.org.apache.tomcat>
+        <version.org.apache.tomcat>8.5.27</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.solr>7.1.0</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
@@ -591,10 +591,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.6</version>
-                    <configuration>
-                        <argLine>-XX:-UseSplitVerifier</argLine>
-                    </configuration>
+                    <version>2.20.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -782,17 +779,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-linkcheck-plugin</artifactId>
-                <version>1.0.1</version>
+                <version>3.5.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7.1</version>
+                <version>2.20.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.7.1</version>
+                <version>2.20.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -802,16 +799,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.8</version>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>1.8</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.9</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -821,7 +818,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>3.0.4</version>
             </plugin>
         </plugins>
     </reporting>
@@ -1610,6 +1607,22 @@
                 <groupId>com.io7m.xom</groupId>
                 <artifactId>xom</artifactId>
                 <version>${version.com.io7m.xom}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xalan</groupId>
+                        <artifactId>xalan</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>${version.xalan.xalan}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>xml-apis</groupId>
