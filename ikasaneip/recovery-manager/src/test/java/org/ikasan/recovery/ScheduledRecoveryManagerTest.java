@@ -708,6 +708,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
                 
                 // cancelAll the recovery
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
         });
@@ -875,6 +877,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
                 
                 // cancelAll the recovery
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
         });

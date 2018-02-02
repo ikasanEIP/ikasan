@@ -40,25 +40,25 @@
  */
 package org.ikasan.recovery;
 
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.component.IsConsumerAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -626,13 +626,30 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      */
     private void cancelScheduledJob() throws SchedulerException
     {
-        boolean deletedRecoveryJob = this.scheduler.deleteJob(recoveryJobKey);
-        logger.info("Tried to remove recovery job " + recoveryJobKey + " with result :" + deletedRecoveryJob);
+        if (this.scheduler.checkExists(recoveryJobKey))
+        {
+            boolean deletedRecoveryJob = this.scheduler.deleteJob(recoveryJobKey);
+            if(deletedRecoveryJob)
+            {
+                logger.info("Successfully removed recovery job " + recoveryJobKey);
+            }
+            else
+            {
+                logger.info("Failed to remove recovery job " + recoveryJobKey);
+            }
+        }
 
         if(consumerRecoveryJobKey != null && this.scheduler.checkExists(consumerRecoveryJobKey))
         {
             boolean deletedConsumerRecoveryJob = this.scheduler.deleteJob(consumerRecoveryJobKey);
-            logger.info("Tried to remove consumer recovery job " + consumerRecoveryJobKey + " with result :" + deletedConsumerRecoveryJob);
+            if(deletedConsumerRecoveryJob)
+            {
+                logger.info("Successfully removed consumer recovery job " + consumerRecoveryJobKey);
+            }
+            else
+            {
+                logger.info("Failed to remove consumer recovery job " + consumerRecoveryJobKey);
+            }
         }
     }
 
@@ -725,7 +742,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     @SuppressWarnings("unchecked")
     public <L> void setManagedResources(L managedResources)
     {
-        this.managedResources = (java.util.List) managedResources;
+        this.managedResources = (List) managedResources;
     }
 
     @Override
