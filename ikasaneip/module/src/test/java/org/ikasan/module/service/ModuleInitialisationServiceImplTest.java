@@ -179,11 +179,12 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
+            oneOf(environment).getProperty("public.service.address");
+            will(returnValue(null));
+
             oneOf(environment).getProperty("server.address");
             will(returnValue(null));
 
-            oneOf(environment).getProperty("service.name");
-            will(returnValue(null));
 
             atLeast(1).of(platformContext).getApplicationName();
             will(returnValue("/sampleModule"));
@@ -256,10 +257,10 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("server.address");
+            oneOf(environment).getProperty("public.service.address");
             will(returnValue(null));
 
-            oneOf(environment).getProperty("service.name");
+            oneOf(environment).getProperty("server.address");
             will(returnValue(null));
 
             //getModule from DB
@@ -328,8 +329,14 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
+            oneOf(environment).getProperty("public.service.address");
+            will(returnValue(null));
+
             oneOf(environment).getProperty("server.address");
             will(returnValue("myServerName"));
+
+            oneOf(environment).getProperty("public.service.port");
+            will(returnValue(null));
 
             oneOf(environment).getProperty("server.port");
             will(returnValue(8080));
@@ -411,8 +418,14 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
+            oneOf(environment).getProperty("public.service.address");
+            will(returnValue(null));
+
             oneOf(environment).getProperty("server.address");
             will(returnValue("myServerName"));
+
+            oneOf(environment).getProperty("public.service.port");
+            will(returnValue(null));
 
             oneOf(environment).getProperty("server.port");
             will(returnValue(8080));
@@ -467,6 +480,89 @@ public class ModuleInitialisationServiceImplTest {
         uut.initialiseModuleMetaData(module);
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDBAndServerIsPublic() throws Exception {
+
+        // Setup test data
+        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
+        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
+
+        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
+        Producer producer = mockery.mock(Producer.class,"mockProducer");
+
+        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
+
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
+        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
+
+        Environment environment = mockery.mock(Environment.class);
+        List<Server> servers = Arrays.asList();
+        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
+
+        mockery.checking(new Expectations() {{
+
+            // getServer() start
+            atLeast(2).of(platformContext).getEnvironment();
+            will(returnValue(environment));
+
+            oneOf(environment).getProperty("public.service.address");
+            will(returnValue("myServerName"));
+
+            oneOf(environment).getProperty("public.service.port");
+            will(returnValue(80));
+
+            atLeast(1).of(platformContext).getApplicationName();
+            will(returnValue("/sampleModule"));
+
+            oneOf(topologyService).getAllServers();
+            will(returnValue(servers));
+
+            oneOf(topologyService).save(with(any(Server.class)));
+
+            //getModule from DB
+            oneOf(topologyService).getModuleByName(MODULE_NAME);
+            will(returnValue(moduleDb));
+
+            // discovery
+            exactly(1).of(flowConfiguration).getFlowElements();
+            will(returnValue(flowElements));
+
+            exactly(1).of(consumerElement).getComponentName();
+            will(returnValue("consumer"));
+
+            exactly(2).of(consumerElement).getDescription();
+            will(returnValue("consumer description"));
+
+            exactly(1).of(consumerElement).getFlowComponent();
+            will(returnValue(consumer));
+
+            exactly(1).of(consumerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
+            exactly(1).of(producerElement).getComponentName();
+            will(returnValue("producer"));
+
+            exactly(2).of(producerElement).getDescription();
+            will(returnValue("producer description"));
+
+            exactly(1).of(producerElement).getFlowComponent();
+            will(returnValue(producer));
+
+            exactly(1).of(producerElement).getFlowElementInvoker();
+            will(returnValue(new TestInvoker()));
+
+            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
+
+            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
+
+
+        }});
+
+        uut.initialiseModuleMetaData(module);
+        mockery.assertIsSatisfied();
+    }
+
 
     public class TestInvoker implements FlowElementInvoker
     {
