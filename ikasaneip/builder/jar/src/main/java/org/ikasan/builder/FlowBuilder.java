@@ -603,9 +603,9 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-        if(resubmissionService == null && headFlowElement instanceof ResubmissionService)
+        if(resubmissionService == null && headFlowElement.getFlowComponent() instanceof ResubmissionService)
         {
-            resubmissionService = (ResubmissionService)headFlowElement;
+            resubmissionService = (ResubmissionService)headFlowElement.getFlowComponent();
         }
 
         if (exclusionService == null)
