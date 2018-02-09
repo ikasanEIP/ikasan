@@ -41,7 +41,6 @@
 package org.ikasan.serialiser.converter;
 
 import org.apache.activemq.command.ActiveMQTextMessage;
-import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 import org.junit.Test;
 
 import javax.jms.JMSException;
@@ -65,6 +64,8 @@ public class JmsTextMessageConverterTest {
 
         String text="Text Text";
         TextMessage message = new ActiveMQTextMessage();
+        message.setObjectProperty("prop1", "hello");
+        message.setObjectProperty("prop2", null);
         message.setText(text);
 
         // test

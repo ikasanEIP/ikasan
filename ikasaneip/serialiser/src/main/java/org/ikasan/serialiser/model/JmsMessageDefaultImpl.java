@@ -40,9 +40,7 @@
  */
 package org.ikasan.serialiser.model;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -67,12 +65,12 @@ public class JmsMessageDefaultImpl implements Message
 	private String jmsType;
 	private long jmsExpiration;
 	private int jmsPriority;
-	private Properties properties;
+	private Map<String, Object> properties;
 	
 	public JmsMessageDefaultImpl()
     {
     	super();
-    	properties = new Properties();
+    	properties = new HashMap<String,Object>();
     }
 	
     @Override
@@ -276,7 +274,8 @@ public class JmsMessageDefaultImpl implements Message
     @Override
     public Enumeration getPropertyNames() throws JMSException 
     {
-        return this.properties.keys();
+        Vector<String> vector = new Vector(this.properties.keySet());
+        return vector.elements();
     }
 
     @Override
