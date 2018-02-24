@@ -32,6 +32,27 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 
 ##### Sample Usage
 
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public  Consumer getFileConsumer() {
+      return builderFactory.getComponentBuilder().scheduledConsumer()
+              .setCronExpression(cronExpression)
+              .setScheduledJobGroupName(scheduledGroupName)
+              .setScheduledJobName(scheduledName)
+              .setConfiguredResourceId(scheduledConsumerConfiguredResourceId)
+              .build();
+  }
+}
+
+```
+
+
 
 #### Generic JMS Consumer
 
@@ -112,11 +133,12 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
     <property name="configuredResourceId" value="jmsSampleConsumer"/>
 </bean>
 
-<bean id="jmsToSftpConsumerListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+<bean id="jmsToSftpConsumerListener" class="org.springframework.jms.listener.ArjunaIkasanMessageListenerContainer">
     <property name="messageListener" ref="jmsSampleConsumer" />
     <property name="exceptionListener" ref="jmsSampleConsumer" />
     <property name="errorHandler" ref="jmsSampleConsumer" />
     <property name="transactionManager" ref="transactionManager" />
+    <property name="localTransactionManager" ref="arjunaTransactionManager" />
 </bean>
 
 <!-- jmsSampleConsumerFlowElement is a bean definition of flow elements which uses jmsSampleConsumer as a component -->
@@ -399,6 +421,8 @@ Utility consumer for the generation of ad-hoc events for demonstration or test o
 
 ##### Sample Usage
 
+
+
 ## Translators
 
 ### Purpose
@@ -565,7 +589,6 @@ public class ModuleConfig {
 
 ```
 
-
 #### (S)FTP Producer
 
 This producer allows delivery of a file to remote (S)FTP server. The producer is under pined with persistent store which saves meta information about the deliver files.
@@ -599,11 +622,40 @@ This producer allows delivery of a file to remote (S)FTP server. The producer is
 | systemKey | String | Optional only available on FTP producer.  |
 
 
+##### Sample Usage - builder pattern
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Producer getSftpProducer(){
+
+
+    Producer sftpProducer = componentBuilder.sftpProducer()
+       .setClientID(sftpProducerClientID)
+       .setUsername(sftpProducerUsername)
+       .setPassword(sftpProducerPassword)
+       .setRemoteHost(sftpProducerRemoteHost)
+       .setRemotePort(sftpProducerRemotePort)
+       .setOutputDirectory(sftpConsumerOutputDirectory)
+       .setConfiguredResourceId("sftpProducerConfiguration")
+       .build();
+    return sftpProducer;
+  }
+}
+
+```
+
+
+
 # Document Info
 
 | Authors | Ikasan Development Team |
 | --- | --- |
 | Contributors | n/a |
-| Date | November 2017 |
+| Date | February 2018 |
 | Email | info@ikasan.org |
 | WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
