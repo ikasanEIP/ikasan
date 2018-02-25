@@ -1,11 +1,51 @@
+/*
+ * $Id$
+ * $URL$
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ *
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
+ */
 package org.ikasan.connector.ftp.net;
 
 import org.apache.commons.net.ftp.*;
 import org.apache.commons.net.io.Util;
 import org.apache.commons.net.util.TrustManagerUtils;
+import org.ikasan.connector.basefiletransfer.net.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.connector.basefiletransfer.net.*;
 
 import javax.net.ssl.X509TrustManager;
 import javax.resource.ResourceException;
@@ -16,8 +56,21 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.*;
 
-public class FileTransferProtocolSSLClient implements FileTransferProtocol
-{
+/**
+ * <p>
+ * This class provides the basic functionality of an FTP SSL client based on
+ * Apache's commons-net library. Some of the basic functionality is wrapped to
+ * provide <code>FileTransferProtocolClient</code> specific exceptions, or to
+ * provide the functionality required by a framework component.
+ * </p>
+ *
+ * TODO This has a good deal of similar code to SFTP client, might be able to
+ * get some common code out of that
+ *
+ * @author Ikasan Development Team
+ */
+public class FileTransferProtocolSSLClient implements FileTransferProtocol {
+
     /** Initialising the logger */
     private static Logger logger = LoggerFactory.getLogger(FileTransferProtocolSSLClient.class);
 
@@ -463,8 +516,6 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
     /**
      * Method used to log the configuration information used to initialise the
      * client.
-     *
-     * @param logLevel The log level at which to log the information
      */
     public void echoConfig()
     {
@@ -774,35 +825,38 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
             logger.debug("Start directory [" + startDir + "].");
             if(!this.ftpClient.changeWorkingDirectory(path))
             {
+                // is FILE
+                int fs = path.lastIndexOf('/');
+                String dir = null;// path.substring(0, fs);
+                //if (path.startsWith(System.getProperty("file.separator"))) //$NON-NLS-1$
+                if (path.startsWith("/")) //$NON-NLS-1$
+                {
+                    dir = path.substring(0, fs);
+                }
+                else
+                {
+                    // assume relative to whatever path we currently are
+                    dir = startDir + path.substring(0, fs);
+                }
+                String file = path.substring(fs+1);
+                if (!this.ftpClient.changeWorkingDirectory(dir))
+                {
                 throw new ClientException("Unable to change dir to: [" + path + "]");
             }
+                FTPFile[] ftpFiles = this.ftpClient.listFiles(file);
+                String currentDir = this.ftpClient.printWorkingDirectory();
+                list = convertFTPFiles(currentDir,ftpFiles);
+
+
+            } else {
+                // is Directory
             String currentDir = this.ftpClient.printWorkingDirectory();
             logger.debug("Listing directory [" + currentDir + "]");
             // Get a list the files, if it's empty, return null
             FTPFile[] ftpFiles = this.ftpClient.listFiles(".");
-            if(ftpFiles == null)
-            {
-                logger.debug("Directory was empty.");
-                return list;
-            }
             // initialise an array of ClientListEntries
-            list = new ArrayList<ClientListEntry>(ftpFiles.length);
-            // Create a complete list of all files and directories as bespoke
-            // entries
-            for (FTPFile ftpFile : ftpFiles)
-            {
-                // Apache net library can return null elements in list for
-                // unparsed items
-                if(ftpFile != null)
-                {
-                    URI fileUri = this.getURI(currentDir, ftpFile.getName());
-                    ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri);
-                    list.add(entry);
-                }
-                else
-                {
-                    logger.warn("One of the ftp file listings could not be parsed.");
-                }
+                list = convertFTPFiles(currentDir,ftpFiles);
+
             }
             // Return to the calling directory
             if(!this.ftpClient.changeWorkingDirectory(startDir))
@@ -826,6 +880,35 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
         return (filteredList != null) ? filteredList : list;
     }
 
+
+    private  List<ClientListEntry> convertFTPFiles(String currentDir , FTPFile[] ftpFiles) throws URISyntaxException
+    {
+        List<ClientListEntry> list = new ArrayList<ClientListEntry>(ftpFiles.length);
+
+        if (ftpFiles == null)
+        {
+            logger.debug("Directory was empty.");
+            return list;
+        }
+
+        for (FTPFile ftpFile : ftpFiles)
+        {
+            // Apache net library can return null elements in list for
+            // unparsed items
+            if (ftpFile != null)
+            {
+                URI fileUri = this.getURI(currentDir, ftpFile.getName());
+                ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri, currentDir);
+                list.add(entry);
+            }
+            else
+            {
+                logger.warn("One of the ftp file listings could not be parsed.");
+            }
+        }
+        return list;
+
+    }
     public void put(String name, byte[] content) throws ClientCommandPutException
     {
         InputStream ins = new ByteArrayInputStream(content);
@@ -947,11 +1030,13 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
      *            <code>FTPFile</code>
      * @return ClientListEntry
      */
-    private ClientListEntry convertFTPFileToClientListEntry(FTPFile ftpFile, URI fileUri)
+    private ClientListEntry convertFTPFileToClientListEntry(FTPFile ftpFile, URI fileUri,String currentDir)
     {
         ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setUri(fileUri);
         clientListEntry.setName(ftpFile.getName());
+        clientListEntry.setFullPath(currentDir +System.getProperty("file.separator")+ ftpFile.getName());
+
         clientListEntry.setClientId(null);
         // Can't distinguish between Last Accessed and Last Modified
         clientListEntry.setDtLastAccessed(ftpFile.getTimestamp().getTime());
