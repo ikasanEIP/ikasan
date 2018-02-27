@@ -326,7 +326,6 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
         spec.setSocketTimeout(ftpConsumerConfiguration.getSocketTimeout());
         spec.setSystemKey(ftpConsumerConfiguration.getSystemKey());
         spec.setUsername(ftpConsumerConfiguration.getUsername());
-        spec.setPassword(ftpConsumerConfiguration.getPassword());
         spec.setIsFTPS(ftpConsumerConfiguration.getIsFTPS());
         spec.setFtpsProtocol(ftpConsumerConfiguration.getFtpsProtocol());
         spec.setFtpsPort(ftpConsumerConfiguration.getFtpsPort());
