@@ -38,68 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.producer;
-
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Test;
+package org.ikasan.component.endpoint.util.consumer;
 
 /**
- * Test class for LogProducer.
- *
+ * Contract for any test message provider for use within the EventGeneratingConsumer.
+ * 
  * @author Ikasan Development Team
  */
-public class LogProducerTest
+public interface MessageProvider<MESSAGE>
 {
     /**
-     * Test logProducer
+     * get a message.
+     * @return MESSAGE
      */
-    @Test
-    public void test_logProducer_say_hello()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
-    }
-
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_pattern_no_textReplace()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setRegExpPattern("payload");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
-    }
-
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_no_pattern_but_textReplace()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setReplacementText("X");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
-    }
-
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_pattern_and_text_replacement()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setRegExpPattern("payload");
-        configuration.setReplacementText("X");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
-    }
+    public MESSAGE getMessage();
 }
