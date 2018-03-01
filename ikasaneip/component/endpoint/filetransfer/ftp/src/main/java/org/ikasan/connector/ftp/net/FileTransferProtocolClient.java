@@ -40,38 +40,15 @@
  */
 package org.ikasan.connector.ftp.net;
 
-import java.io.*;
-import java.net.BindException;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.resource.ResourceException;
-
 import org.apache.commons.net.ftp.*;
+import org.ikasan.connector.basefiletransfer.net.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferUtils;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandGetException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandMkdirException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPutException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPwdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
-import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
-import org.ikasan.connector.basefiletransfer.net.ClientException;
-import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
-import org.slf4j.event.Level;
+
+import javax.resource.ResourceException;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * <p>
@@ -478,8 +455,6 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
     /**
      * Method used to log the configuration information used to initialise the
      * client.
-     * 
-     * @param logLevel The log level at which to log the information
      */
     public void echoConfig()
     {
