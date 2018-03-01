@@ -40,8 +40,10 @@
  */
 package org.ikasan.component.endpoint.util.consumer;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.resubmission.ResubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,7 +55,7 @@ import java.util.concurrent.Future;
  * @author Ikasan Development Team
  */
 public class EventGeneratingConsumer extends AbstractConsumer
-    implements ConfiguredResource<EventGeneratingConsumerConfiguration>
+    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<String>
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
@@ -67,8 +69,15 @@ public class EventGeneratingConsumer extends AbstractConsumer
     /** configuredResourceId */
     private String configuredResourceId;
 
+    private MessageProvider<?> messageProvider = new DefaultMessageProvider();
+
     /** consumer configuration */
-    private EventGeneratingConsumerConfiguration consumerConfiguration;
+    private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
+
+    public void setTestPayloadProvider(MessageProvider messageProvider)
+    {
+        this.messageProvider = messageProvider;
+    }
 
     /**
      * Start the underlying event generator
@@ -134,7 +143,13 @@ public class EventGeneratingConsumer extends AbstractConsumer
     {
         this.configuredResourceId = configuredResourceId;
     }
-    
+
+    @Override
+    public void submit(String message)
+    {
+        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+    }
+
     /**
      * Simple event generator class implementation.
      */
@@ -143,12 +158,13 @@ public class EventGeneratingConsumer extends AbstractConsumer
         public void run()
         {
             int count = 0;
-            while(consumerConfiguration.getEventLimit() == 0 || consumerConfiguration.getEventLimit() > count)
+            while(consumerConfiguration.getMaxEventLimit() == 0 || consumerConfiguration.getMaxEventLimit() > count)
             {
                 try
                 {
                     count++;
-                    eventListener.invoke( flowEventFactory.newEvent(consumerConfiguration.getIdentifier(), consumerConfiguration.getPayload()) );
+                    Object message = messageProvider.getMessage();
+                    eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
                     if(consumerConfiguration.getEventGenerationInterval() > 0 && consumerConfiguration.getBatchsize() % count == 0)
                     {
                         try
@@ -157,7 +173,11 @@ public class EventGeneratingConsumer extends AbstractConsumer
                         }
                         catch(InterruptedException e)
                         {
-                            eventListener.invoke(e);
+                            if(isRunning())
+                            {
+                                eventListener.invoke(e);
+                            }
+                            break;
                         }
                     }
                 }
@@ -167,11 +187,23 @@ public class EventGeneratingConsumer extends AbstractConsumer
                 }
             }
 
-            if(consumerConfiguration.getEventLimit() <= count)
+            if(isRunning() && consumerConfiguration.getMaxEventLimit() <= count)
             {
-                logger.info("eventGenerator stopped after reaching configured eventLimit of [" + consumerConfiguration.getEventLimit() + "]");
+                logger.info("eventGenerator stopped after reaching configured eventLimit of [" + consumerConfiguration.getMaxEventLimit() + "]");
             }
         }
+    }
 
+    /**
+     * Default test payload provider based off of the consumer configuration instance.
+     */
+    public class DefaultMessageProvider implements MessageProvider<String>
+    {
+        long count;
+
+        @Override
+        public String getMessage() {
+            return "Message " + count++;
+        }
     }
 }

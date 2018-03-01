@@ -40,7 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -52,6 +51,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
@@ -82,21 +82,6 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     /** thread states */
     private static Boolean ACTIVE = true;
     private static Boolean INACTIVE = false;
-    
-    /** running state string constant */
-    private static String RUNNING = "running";
-    
-    /** stopped state string constant */
-    private static String STOPPED = "stopped";
-    
-    /** recovering state string constant */
-    private static String RECOVERING = "recovering";
-    
-    /** stoppedInError state string constant */
-    private static String STOPPED_IN_ERROR = "stoppedInError";
-    
-    /** paused state string constant */
-    private static String PAUSED = "paused";
     
     /** Name of this flow */
     private String name;
@@ -863,7 +848,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     }
 
     protected void invoke(String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
-                       FlowEvent flowEvent, FlowElement flowElement)
+                          FlowEvent flowEvent, FlowElement flowElement)
     {
         while (flowElement != null)
         {
@@ -1164,7 +1149,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
 	 */
 	@Override
-	public FlowPersistentConfiguration getConfiguration() 
+	public FlowPersistentConfiguration getConfiguration()
 	{
 		return this.flowPersistentConfiguration;
 	}

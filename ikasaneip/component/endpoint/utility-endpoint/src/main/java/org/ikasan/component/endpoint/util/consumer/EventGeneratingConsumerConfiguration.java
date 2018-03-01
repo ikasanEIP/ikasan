@@ -47,36 +47,14 @@ package org.ikasan.component.endpoint.util.consumer;
  */
 public class EventGeneratingConsumerConfiguration
 {
-    /** static identifier for the event */
-    String identifier = "123456";
-
-    /** event payload */
-    String payload = "test";
-
-    /** event generation interval in millis - default = 0, immediate continuous generation */
-    long eventGenerationInterval;
+    /** event generation interval in millis - default = 1000, 1 second interval between event generation */
+    long eventGenerationInterval = 1000;
 
     /** used in conjunction with eventGenerationInterval to determine number of events per interval */
     int batchsize;
 
-    /** allow a limit to be set on the total number of events published - default -1 unlimited */
-    int eventLimit;
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
+    /** allow a limit to be set on the total number of events published - default 0 unlimited */
+    int maxEventLimit;
 
     public long getEventGenerationInterval() {
         return eventGenerationInterval;
@@ -94,11 +72,11 @@ public class EventGeneratingConsumerConfiguration
         this.batchsize = batchsize;
     }
 
-    public int getEventLimit() {
-        return eventLimit;
+    public int getMaxEventLimit() {
+        return maxEventLimit;
     }
 
-    public void setEventLimit(int eventLimit) {
-        this.eventLimit = eventLimit;
+    public void setMaxEventLimit(int maxEventLimit) {
+        this.maxEventLimit = maxEventLimit;
     }
 }

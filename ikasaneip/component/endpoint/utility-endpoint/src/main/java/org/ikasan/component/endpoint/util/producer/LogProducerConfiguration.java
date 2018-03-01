@@ -40,66 +40,30 @@
  */
 package org.ikasan.component.endpoint.util.producer;
 
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Test;
-
 /**
- * Test class for LogProducer.
- *
+ * This configuration class for the LogProducer implementation.
+ * 
  * @author Ikasan Development Team
  */
-public class LogProducerTest
+public class LogProducerConfiguration
 {
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
+    public String replacementText;
+
+    public String regExpPattern;
+
+    public String getReplacementText() {
+        return replacementText;
     }
 
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_pattern_no_textReplace()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setRegExpPattern("payload");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
+    public void setReplacementText(String replacementText) {
+        this.replacementText = replacementText;
     }
 
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_no_pattern_but_textReplace()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setReplacementText("X");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
+    public String getRegExpPattern() {
+        return regExpPattern;
     }
 
-    /**
-     * Test logProducer
-     */
-    @Test
-    public void test_logProducer_say_hello_with_pattern_and_text_replacement()
-    {
-        Producer producer = new LogProducer<String>();
-        LogProducerConfiguration configuration = new LogProducerConfiguration();
-        configuration.setRegExpPattern("payload");
-        configuration.setReplacementText("X");
-        ((ConfiguredResource)producer).setConfiguration(configuration);
-        producer.invoke("payload1, payload2, payload34");
+    public void setRegExpPattern(String regExpPattern) {
+        this.regExpPattern = regExpPattern;
     }
 }

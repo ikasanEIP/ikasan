@@ -52,7 +52,22 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 public interface Flow
-{	
+{
+    /** running state string constant */
+    public static String RUNNING = "running";
+
+    /** stopped state string constant */
+    public static String STOPPED = "stopped";
+
+    /** recovering state string constant */
+    public static String RECOVERING = "recovering";
+
+    /** stoppedInError state string constant */
+    public static String STOPPED_IN_ERROR = "stoppedInError";
+
+    /** paused state string constant */
+    public static String PAUSED = "paused";
+
 	/**
      * Returns the name of this flow
      *

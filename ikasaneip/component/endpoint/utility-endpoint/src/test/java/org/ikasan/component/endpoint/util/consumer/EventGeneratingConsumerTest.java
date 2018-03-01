@@ -86,16 +86,11 @@ public class EventGeneratingConsumerTest
         {
             {
                 // event limit of 1
-                exactly(6).of(consumerConfiguration).getEventLimit();
+                exactly(4).of(consumerConfiguration).getMaxEventLimit();
                 will(returnValue(1));
 
                 // new flowEvent
-                one(consumerConfiguration).getIdentifier();
-                will(returnValue("identifier"));
-                one(consumerConfiguration).getPayload();
-                will(returnValue("payload"));
-
-                one(flowEventFactory).newEvent("identifier", "payload");
+                one(flowEventFactory).newEvent("Message 0", "Message 0");
                 will(returnValue(flowEvent));
 
                 one(eventListener).invoke(flowEvent);
@@ -128,16 +123,12 @@ public class EventGeneratingConsumerTest
         {
             {
                 // event limit of 1
-                exactly(8).of(consumerConfiguration).getEventLimit();
+                exactly(6).of(consumerConfiguration).getMaxEventLimit();
                 will(returnValue(2));
 
-                // new flowEvent
-                exactly(2).of(consumerConfiguration).getIdentifier();
-                will(returnValue("identifier"));
-                exactly(2).of(consumerConfiguration).getPayload();
-                will(returnValue("payload"));
-
-                exactly(2).of(flowEventFactory).newEvent("identifier", "payload");
+                exactly(1).of(flowEventFactory).newEvent("Message 0", "Message 0");
+                will(returnValue(flowEvent));
+                exactly(1).of(flowEventFactory).newEvent("Message 1", "Message 1");
                 will(returnValue(flowEvent));
 
                 exactly(2).of(eventListener).invoke(flowEvent);
