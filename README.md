@@ -63,6 +63,9 @@ than another development framework.
 [Component Quick Start](ikasaneip/component/Readme.md)
 ======
 
+[Dashboard Guide](ikasaneip/dashboard/Readme.md)
+======
+
 [Getting Started Guide](ikasaneip/developer/docs/Readme.md)
 ======
 
