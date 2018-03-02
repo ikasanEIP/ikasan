@@ -151,7 +151,6 @@ public class FlowBuilder implements ApplicationContextAware
     FlowElement<?> exclusionFlowHeadElement;
 
     /** handle to the re-submission service */
-    //@Autowired
     ResubmissionService resubmissionService;
 
     /** the serialiser factory */
@@ -159,6 +158,7 @@ public class FlowBuilder implements ApplicationContextAware
     SerialiserFactory serialiserFactory;
 
     /** the replayRecordService **/
+    @Autowired
     ReplayRecordService replayRecordService;
 
     /** List of FlowInvocationListener */
@@ -603,9 +603,20 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-        if(resubmissionService == null && headFlowElement instanceof ResubmissionService)
+        if(resubmissionService == null && headFlowElement.getFlowComponent() instanceof ResubmissionService)
         {
-            resubmissionService = (ResubmissionService)headFlowElement;
+            resubmissionService = (ResubmissionService)headFlowElement.getFlowComponent();
+        }
+
+        // replayRecordService
+        if(replayRecordService == null)
+        {
+            logger.info("Record/Replay is not supported for ModuleName[" + moduleName + "] Flowname[" + flowName + "]");
+        }
+
+        if(resubmissionService == null)
+        {
+            logger.info("Resubmission is not supported for ModuleName[" + moduleName + "] Flowname[" + flowName + "]");
         }
 
         if (exclusionService == null)
