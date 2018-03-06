@@ -1709,6 +1709,8 @@ Add some default Ikasan components
 
 Add custom component ie converter
 
+Add exception throwing
+
 Add ConfiguredResource
 
 Add ManagedResource
@@ -1736,6 +1738,6 @@ Batching?
 | Authors | Ikasan Development Team |
 | --- | --- |
 | Contributors | n/a |
-| Date | October 2015 |
+| Date | March 2018 |
 | Email | info@ikasan.org |
 | WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
