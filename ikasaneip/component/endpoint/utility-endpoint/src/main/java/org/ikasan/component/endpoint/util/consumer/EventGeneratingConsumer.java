@@ -41,6 +41,7 @@
 package org.ikasan.component.endpoint.util.consumer;
 
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +184,11 @@ public class EventGeneratingConsumer extends AbstractConsumer
                 }
                 catch(RuntimeException e)
                 {
-                    eventListener.invoke(e);
+                    // ignore control exceptions thrown by the Ikasan stack
+                    if( !(e instanceof ForceTransactionRollbackException) )
+                    {
+                        eventListener.invoke(e);
+                    }
                 }
             }
 
