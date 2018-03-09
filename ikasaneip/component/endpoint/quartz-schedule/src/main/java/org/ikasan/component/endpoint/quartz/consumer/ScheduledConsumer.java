@@ -373,10 +373,13 @@ public class ScheduledConsumer<T>
             scheduledDate = scheduler.scheduleJob(trigger);
         }
 
-        logger.info("Rescheduled consumer for flow ["
-                + jobkey.getName()
-                + "] module [" + jobkey.getGroup()
-                + "] for immediate callback [" + scheduledDate + "]");
+        if(logger.isDebugEnabled())
+        {
+            logger.debug("Rescheduled consumer for flow ["
+                    + jobkey.getName()
+                    + "] module [" + jobkey.getGroup()
+                    + "] for immediate callback [" + scheduledDate + "]");
+        }
     }
 
     public void setEventFactory(EventFactory flowEventFactory)

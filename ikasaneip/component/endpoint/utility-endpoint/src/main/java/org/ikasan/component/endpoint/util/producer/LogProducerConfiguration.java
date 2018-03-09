@@ -51,6 +51,8 @@ public class LogProducerConfiguration
 
     public String regExpPattern;
 
+    public long logEveryNth;
+
     public String getReplacementText() {
         return replacementText;
     }
@@ -65,5 +67,13 @@ public class LogProducerConfiguration
 
     public void setRegExpPattern(String regExpPattern) {
         this.regExpPattern = regExpPattern;
+    }
+
+    public long getLogEveryNth() {
+        return logEveryNth;
+    }
+
+    public void setLogEveryNth(long logEveryNth) {
+        this.logEveryNth = logEveryNth;
     }
 }

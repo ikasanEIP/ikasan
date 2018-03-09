@@ -238,7 +238,7 @@ public class FileConsumerBuilderTest {
     /**
      * Test successful builder creation.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test //(expected = IllegalArgumentException.class)
     public void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -250,13 +250,13 @@ public class FileConsumerBuilderTest {
         {
             {
                 // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("scheduledJobName"),with(emptyScheduleConsumer));
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("scheduledJobName"),
-                        with("scheduledGroupJobName"));
+                        with( any(String.class) ),
+                        with( any(String.class) ));
                 will(returnValue(jobDetail));
             }
         });
@@ -306,7 +306,7 @@ public class FileConsumerBuilderTest {
         mockery.assertIsSatisfied();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test //(expected = IllegalArgumentException.class)
     public void scheduledConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
@@ -319,13 +319,13 @@ public class FileConsumerBuilderTest {
         {
             {
                 // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("scheduledJobName"),with(emptyScheduleConsumer));
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("scheduledJobName"),
-                        with("scheduledGroupJobName"));
+                        with(any(String.class)),
+                        with("scheduledJobGroupName"));
                 will(returnValue(jobDetail));
             }
         });
@@ -375,7 +375,7 @@ public class FileConsumerBuilderTest {
 
         mockery.assertIsSatisfied();    }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test //(expected = IllegalArgumentException.class)
     public void scheduledConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
@@ -394,7 +394,7 @@ public class FileConsumerBuilderTest {
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
                         with("scheduledJobName"),
-                        with("scheduledGroupJobName"));
+                        with( any(String.class)));
                 will(returnValue(jobDetail));
             }
         });

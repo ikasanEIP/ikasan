@@ -55,6 +55,8 @@ public interface LogProducerBuilder extends Builder<Producer> {
 
     LogProducerBuilder setRegExpPattern(String regExpPattern);
 
+    LogProducerBuilder setLogEveryNth(long logEveryNth);
+
     LogProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
     LogProducerBuilder setConfiguration(LogProducerConfiguration logProducerConfiguration);

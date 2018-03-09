@@ -1540,8 +1540,13 @@ public class MyApplication
 {
     public static void main(String[] args)
     {
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
-        
+        MyApplication myApplication = new MyApplication();
+        myApplication.boot(args);   
+    }
+    
+    public void boot(String args)
+    {
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class, args);
     }
 }
 ```
@@ -1559,8 +1564,14 @@ public class MyApplication
 {
     public static void main(String[] args)
     {
+        MyApplication myApplication = new MyApplication();
+        myApplication.boot(args);   
+    }
+    
+    public void boot(String args)
+    {
         // Create instance of an ikasan application
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class, args);
         
         // Get an instance of a builder factory from the application which will
         // provide access to all required builders for the application
@@ -1621,22 +1632,24 @@ Ikasan application requires a persistence data source which can be facilitated b
 
 Properties configuration of the module via resources/application.properties
 ```
+# Logging levels across packages (optional)
 logging.level.com.arjuna=INFO
 logging.level.org.springframework=INFO
 
-spring.mvc.view.prefix=/WEB-INF/jsp/
-spring.mvc.view.suffix=.jsp
-
+# Blue console servlet settings (optional)
 server.error.whitelabel.enabled=false
 
-server.port=8080
-service.name=localhost
-server.contextPath=/sample-vanilla-im
+# Web Bindings
+server.port=8090
+server.address=localhost
+server.contextPath=/example-im
 
+# health probs and remote management (optional)
 management.security.enabled=false
 management.context-path=/manage
 endpoints.shutdown.enabled=true
 
+# persistence
 datasource.username=sa
 datasource.password=sa
 datasource.driver-class-name=org.h2.Driver

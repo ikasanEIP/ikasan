@@ -67,6 +67,20 @@ public class LogProducerTest
      * Test logProducer
      */
     @Test
+    public void test_logProducer_say_hello_every_2nd_invoke()
+    {
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        configuration.setLogEveryNth(2);
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("hi");
+        producer.invoke("hello");
+    }
+
+    /**
+     * Test logProducer
+     */
+    @Test
     public void test_logProducer_say_hello_with_pattern_no_textReplace()
     {
         Producer producer = new LogProducer<String>();
