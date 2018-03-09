@@ -50,6 +50,8 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Ikasan provided scheduled consumer default implementation.
@@ -59,6 +61,9 @@ import org.quartz.Job;
  */
 public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ScheduledConsumerBuilderImpl.class);
+
     /** default scheduled consumer instance */
     ScheduledConsumer scheduledConsumer;
 
@@ -264,12 +269,14 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
     {
         if(this.scheduledJobName == null)
         {
-            throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");
+            this.scheduledJobName = this.getConfiguration().hashCode() + "-" + System.currentTimeMillis();
+            logger.info("scheduledJobName not specified. Defaulted to '" + this.scheduledJobName + "'");
         }
 
         if(this.scheduledJobGroupName == null)
         {
-            throw new IllegalArgumentException("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'");
+            this.scheduledJobGroupName = this.getConfiguration().hashCode() + "-" + System.currentTimeMillis();
+            logger.info("scheduledJobGroupName not specified. Defaulted to '" + this.scheduledJobGroupName + "'");
         }
     }
 

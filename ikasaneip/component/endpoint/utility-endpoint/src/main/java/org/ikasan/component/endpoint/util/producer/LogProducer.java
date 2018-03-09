@@ -65,6 +65,8 @@ public class LogProducer<T> implements Producer<T>, ConfiguredResource<LogProduc
 
     private LogProducerConfiguration configuration = new LogProducerConfiguration();
 
+    private long loggedCount;
+    
     /**
      * regexp pattern to apply
      */
@@ -73,18 +75,26 @@ public class LogProducer<T> implements Producer<T>, ConfiguredResource<LogProduc
     @Override
     public void invoke(T payload) throws EndpointException
     {
-        if (logger.isInfoEnabled())
+        loggedCount++;
+
+        if(configuration.getLogEveryNth() == 0 || loggedCount % configuration.getLogEveryNth() == 0)
         {
-            if (pattern == null || configuration.getReplacementText() == null)
+            if (logger.isInfoEnabled())
             {
-                logger.info(payload.toString());
+                if (pattern == null || configuration.getReplacementText() == null)
+                {
+                    logger.info(payload.toString());
+                }
+                else
+                {
+                    Matcher matcher = pattern.matcher(configuration.getReplacementText());
+                    logger.info(matcher.replaceAll(payload.toString()));
+                }
             }
-            else
-            {
-                Matcher matcher = pattern.matcher(configuration.getReplacementText());
-                logger.info(matcher.replaceAll(payload.toString()));
-            }
+            
+            loggedCount = 0;
         }
+        
     }
 
     @Override

@@ -94,6 +94,13 @@ public class LogProducerBuilderImpl implements LogProducerBuilder
     }
 
     @Override
+    public LogProducerBuilder setLogEveryNth(long logEveryNth)
+    {
+        this.logProducer.getConfiguration().setLogEveryNth(logEveryNth);
+        return this;
+    }
+
+    @Override
     public LogProducerBuilder setConfiguration(LogProducerConfiguration logProducerConfiguration)
     {
         ((ConfiguredResource)this.logProducer).setConfiguration(logProducerConfiguration);

@@ -182,13 +182,13 @@ public class EventGeneratingConsumer extends AbstractConsumer
                         }
                     }
                 }
-                catch(RuntimeException e)
+                catch (ForceTransactionRollbackException thrownByRecoveryManager)
                 {
-                    // ignore control exceptions thrown by the Ikasan stack
-                    if( !(e instanceof ForceTransactionRollbackException) )
-                    {
-                        eventListener.invoke(e);
-                    }
+                    throw thrownByRecoveryManager;
+                }
+                catch (Throwable throwable)
+                {
+                    eventListener.invoke(throwable);
                 }
             }
 
