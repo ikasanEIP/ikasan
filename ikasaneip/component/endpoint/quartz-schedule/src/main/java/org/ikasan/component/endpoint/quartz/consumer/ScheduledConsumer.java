@@ -355,30 +355,40 @@ public class ScheduledConsumer<T>
      */
     public void triggerSchedulerNow() throws SchedulerException
     {
-        JobKey jobkey = jobDetail.getKey();
-        TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
-        Trigger trigger = newTrigger().
-                withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
-                startAt(new Date()).
-                withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
-                build();
+        try
+        {
+            JobKey jobkey = jobDetail.getKey();
+            TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
+            Trigger trigger = newTrigger().
+                    withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
+                    startAt(new Date()).
+                    withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
+                    build();
 
-        Date scheduledDate;
-        if(this.scheduler.checkExists(triggerKey))
-        {
-            scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
-        }
-        else
-        {
-            scheduledDate = scheduler.scheduleJob(trigger);
-        }
+            Date scheduledDate;
+            if(this.scheduler.checkExists(triggerKey))
+            {
+                scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
+            }
+            else
+            {
+                scheduledDate = scheduler.scheduleJob(trigger);
+            }
 
-        if(logger.isDebugEnabled())
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("Rescheduled consumer for flow ["
+                        + jobkey.getName()
+                        + "] module [" + jobkey.getGroup()
+                        + "] for immediate callback [" + scheduledDate + "]");
+            }
+        }
+        catch (SchedulerException e)
         {
-            logger.debug("Rescheduled consumer for flow ["
-                    + jobkey.getName()
-                    + "] module [" + jobkey.getGroup()
-                    + "] for immediate callback [" + scheduledDate + "]");
+            if(this.isRunning())
+            {
+                throw e;
+            }
         }
     }
 
