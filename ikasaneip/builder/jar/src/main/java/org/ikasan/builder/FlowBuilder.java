@@ -53,6 +53,7 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Broker;

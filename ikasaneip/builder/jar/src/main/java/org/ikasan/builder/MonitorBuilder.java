@@ -41,10 +41,12 @@
 package org.ikasan.builder;
 
 import org.ikasan.monitor.MonitorFactory;
+import org.ikasan.monitor.notifier.DashboardNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 
@@ -67,11 +69,18 @@ public class MonitorBuilder
     // allow override of default monitor
     Monitor monitor;
 
-    /**
+    // platform configuration service
+    PlatformConfigurationService platformConfigurationService;
+
+	/**
      * Constuctor
+     *
      * @param monitorFactory
+     * @param notifierFactory
+     * @param platformConfigurationService
      */
-    public MonitorBuilder(MonitorFactory monitorFactory, NotifierFactory notifierFactory)
+    public MonitorBuilder(MonitorFactory monitorFactory, NotifierFactory notifierFactory
+        , PlatformConfigurationService platformConfigurationService)
     {
         this.monitorFactory = monitorFactory;
         if(monitorFactory == null)
@@ -81,6 +90,12 @@ public class MonitorBuilder
 
         this.notifierFactory = notifierFactory;
         if(notifierFactory == null)
+        {
+            throw new IllegalArgumentException("notifierFactory cannot be 'null'");
+        }
+
+        this.platformConfigurationService = platformConfigurationService;
+        if(platformConfigurationService == null)
         {
             throw new IllegalArgumentException("notifierFactory cannot be 'null'");
         }
@@ -163,6 +178,7 @@ public class MonitorBuilder
         public NotifierBuilder withDashboardlNotifier()
         {
             Notifier notifier = notifierFactory.getDashboardNotifier();
+            ((DashboardNotifier)notifier).setPlatformConfigurationService(platformConfigurationService);
             return withNotifier(notifier);
         }
 
