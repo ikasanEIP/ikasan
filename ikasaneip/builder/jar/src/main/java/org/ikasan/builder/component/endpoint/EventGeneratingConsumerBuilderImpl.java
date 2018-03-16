@@ -40,11 +40,13 @@
  */
 package org.ikasan.builder.component.endpoint;
 
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
 import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumerConfiguration;
-import org.ikasan.component.endpoint.util.consumer.MessageProvider;
+import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.MessageListener;
 
 /**
  * Ikasan provided event generating consumer builder implementation.
@@ -53,18 +55,39 @@ import org.ikasan.spec.configuration.ConfiguredResource;
  */
 public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsumerBuilder
 {
+    // message generator tech
+    private MessageGenerator messageGenerator;
+
+    // aop point cut proxy
+    private AopProxyProvider aopProxyProvider;
+
+    // Consumer
     private EventGeneratingConsumer eventGeneratingConsumer;
 
     /**
      * Constructor
+     * @param messageGenerator
      * @param eventGeneratingConsumer
+     * @param aopProxyProvider
      */
-    public EventGeneratingConsumerBuilderImpl(EventGeneratingConsumer eventGeneratingConsumer)
+    public EventGeneratingConsumerBuilderImpl(MessageGenerator messageGenerator, EventGeneratingConsumer eventGeneratingConsumer, AopProxyProvider aopProxyProvider)
     {
+        this.messageGenerator = messageGenerator;
+        if(messageGenerator == null)
+        {
+            throw new IllegalArgumentException("messageGenerator cannot be 'null'");
+        }
+
         this.eventGeneratingConsumer = eventGeneratingConsumer;
         if(eventGeneratingConsumer == null)
         {
             throw new IllegalArgumentException("eventGeneratingConsumer cannot be 'null'");
+        }
+
+        this.aopProxyProvider = aopProxyProvider;
+        if(aopProxyProvider == null)
+        {
+            throw new IllegalArgumentException("aopProxyProvider cannot be 'null'");
         }
     }
 
@@ -74,12 +97,14 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
      */
     public Consumer build()
     {
+        MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventGeneratingConsumer", eventGeneratingConsumer);
+        messageGenerator.setMessageListener(messageListener);
         return eventGeneratingConsumer;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setMessageProvider(MessageProvider messageProvider) {
-        this.eventGeneratingConsumer.setTestPayloadProvider(messageProvider);
+    public EventGeneratingConsumerBuilder setMessageGenerator(MessageGenerator messageGenerator) {
+        this.messageGenerator = messageGenerator;
         return this;
     }
 
