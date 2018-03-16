@@ -40,8 +40,10 @@
  */
 package org.ikasan.component.endpoint.util.consumer;
 
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.MessageListener;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +58,7 @@ import java.util.concurrent.Future;
  * @author Ikasan Development Team
  */
 public class EventGeneratingConsumer extends AbstractConsumer
-    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<String>
+    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<String>, MessageListener<String>, ExceptionListener<Throwable>
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
@@ -70,14 +72,23 @@ public class EventGeneratingConsumer extends AbstractConsumer
     /** configuredResourceId */
     private String configuredResourceId;
 
-    private MessageProvider<?> messageProvider = new DefaultMessageProvider();
-
-    /** consumer configuration */
+    /** configuration */
     private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
 
-    public void setTestPayloadProvider(MessageProvider messageProvider)
+    /** provider of messages */
+    private MessageGenerator messageGenerator;
+
+    /**
+     * Constructor
+     * @param messageGenerator
+     */
+    public EventGeneratingConsumer(MessageGenerator messageGenerator)
     {
-        this.messageProvider = messageProvider;
+        this.messageGenerator = messageGenerator;
+        if(messageGenerator == null)
+        {
+            throw new IllegalArgumentException("messageGenerator cannot be 'null'");
+        }
     }
 
     /**
@@ -85,7 +96,12 @@ public class EventGeneratingConsumer extends AbstractConsumer
      */
     public void start()
     {
-        eventGeneratorThread = this.executorService.submit( new EventGenerator() );
+        if(messageGenerator instanceof Configured)
+        {
+            ((Configured)messageGenerator).setConfiguration(consumerConfiguration);
+        }
+
+        eventGeneratorThread = this.executorService.submit( messageGenerator );
     }
 
     /**
@@ -151,64 +167,15 @@ public class EventGeneratingConsumer extends AbstractConsumer
         eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
     }
 
-    /**
-     * Simple event generator class implementation.
-     */
-    public class EventGenerator implements Runnable
+    @Override
+    public void onMessage(String message)
     {
-        public void run()
-        {
-            int count = 0;
-            while(consumerConfiguration.getMaxEventLimit() == 0 || consumerConfiguration.getMaxEventLimit() > count)
-            {
-                try
-                {
-                    count++;
-                    Object message = messageProvider.getMessage();
-                    eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
-                    if(consumerConfiguration.getEventGenerationInterval() > 0 && consumerConfiguration.getBatchsize() % count == 0)
-                    {
-                        try
-                        {
-                            Thread.sleep(consumerConfiguration.getEventGenerationInterval());
-                        }
-                        catch(InterruptedException e)
-                        {
-                            if(isRunning())
-                            {
-                                eventListener.invoke(e);
-                            }
-                            break;
-                        }
-                    }
-                }
-                catch (ForceTransactionRollbackException thrownByRecoveryManager)
-                {
-                    throw thrownByRecoveryManager;
-                }
-                catch (Throwable throwable)
-                {
-                    eventListener.invoke(throwable);
-                }
-            }
-
-            if(isRunning() && consumerConfiguration.getMaxEventLimit() <= count)
-            {
-                logger.info("eventGenerator stopped after reaching configured eventLimit of [" + consumerConfiguration.getMaxEventLimit() + "]");
-            }
-        }
+        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
     }
 
-    /**
-     * Default test payload provider based off of the consumer configuration instance.
-     */
-    public class DefaultMessageProvider implements MessageProvider<String>
+    @Override
+    public void onException(Throwable throwable)
     {
-        long count;
-
-        @Override
-        public String getMessage() {
-            return "Message " + count++;
-        }
+        eventListener.invoke(throwable);
     }
 }

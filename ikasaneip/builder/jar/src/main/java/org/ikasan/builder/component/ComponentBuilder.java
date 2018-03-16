@@ -49,6 +49,8 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvi
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
+import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
+import org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -264,7 +266,9 @@ public class ComponentBuilder
      */
     public EventGeneratingConsumerBuilder eventGeneratingConsumer()
     {
-        return new EventGeneratingConsumerBuilderImpl( new EventGeneratingConsumer() );
+        MessageGenerator messageGenerator = new SimpleMessageGenerator();
+        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(messageGenerator);
+        return new EventGeneratingConsumerBuilderImpl( messageGenerator, eventGeneratingConsumer, this.applicationContext.getBean(AopProxyProvider.class) );
     }
 
 }

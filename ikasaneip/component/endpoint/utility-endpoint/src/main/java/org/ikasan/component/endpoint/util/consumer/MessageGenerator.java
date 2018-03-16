@@ -38,30 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
+package org.ikasan.component.endpoint.util.consumer;
 
-import org.ikasan.builder.component.Builder;
-import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumerConfiguration;
-import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
-import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.MessageListener;
 
 /**
- * Contract for a default event generating consumer builder.
+ * Contract for a message generator.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
+public interface MessageGenerator extends Runnable
 {
-    EventGeneratingConsumerBuilder setMessageGenerator(MessageGenerator messageGenerator);
-
-    EventGeneratingConsumerBuilder setEventGenerationInterval(long eventGenerationInterval);
-
-    EventGeneratingConsumerBuilder setBatchSize(int batchSize);
-
-    EventGeneratingConsumerBuilder setMaxEventLimit(int maxEventLimit);
-
-    EventGeneratingConsumerBuilder setConfiguredResourceId(String configuredResourceId);
-
-    EventGeneratingConsumerBuilder setConfiguration(EventGeneratingConsumerConfiguration eventGeneratingConsumerConfiguration);
+    /**
+     * Set the listener for the message generator.
+     * @param messageListener
+     */
+    public void setMessageListener(MessageListener messageListener);
 }
-

@@ -55,6 +55,8 @@ import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 import javax.jms.*;
+import javax.jms.ExceptionListener;
+import javax.jms.MessageListener;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
