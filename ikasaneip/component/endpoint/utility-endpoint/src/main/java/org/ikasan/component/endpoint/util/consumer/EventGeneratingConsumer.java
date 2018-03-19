@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -64,7 +63,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
     private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
 
     /** allow techEndpoint to execute in a separate thread */
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
 
     /** handle to the future thread */
     private Future eventGeneratorThread;
@@ -82,8 +81,14 @@ public class EventGeneratingConsumer extends AbstractConsumer
      * Constructor
      * @param messageGenerator
      */
-    public EventGeneratingConsumer(MessageGenerator messageGenerator)
+    public EventGeneratingConsumer(ExecutorService executorService, MessageGenerator messageGenerator)
     {
+        this.executorService = executorService;
+        if(executorService == null)
+        {
+            throw new IllegalArgumentException("executorService cannot be 'null'");
+        }
+
         this.messageGenerator = messageGenerator;
         if(messageGenerator == null)
         {
@@ -96,11 +101,6 @@ public class EventGeneratingConsumer extends AbstractConsumer
      */
     public void start()
     {
-        if(messageGenerator instanceof Configured)
-        {
-            ((Configured)messageGenerator).setConfiguration(consumerConfiguration);
-        }
-
         eventGeneratorThread = this.executorService.submit( messageGenerator );
     }
 
@@ -150,6 +150,10 @@ public class EventGeneratingConsumer extends AbstractConsumer
     public void setConfiguration(EventGeneratingConsumerConfiguration consumerConfiguration)
     {
         this.consumerConfiguration = consumerConfiguration;
+        if(messageGenerator instanceof Configured)
+        {
+            ((Configured)messageGenerator).setConfiguration(consumerConfiguration);
+        }
     }
 
     /**

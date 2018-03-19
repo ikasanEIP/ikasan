@@ -66,6 +66,7 @@ import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.transaction.TransactionManager;
+import java.util.concurrent.Executors;
 
 /**
  * A simple Component builder.
@@ -267,7 +268,7 @@ public class ComponentBuilder
     public EventGeneratingConsumerBuilder eventGeneratingConsumer()
     {
         MessageGenerator messageGenerator = new SimpleMessageGenerator();
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(messageGenerator);
+        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(Executors.newSingleThreadExecutor(), messageGenerator);
         return new EventGeneratingConsumerBuilderImpl( messageGenerator, eventGeneratingConsumer, this.applicationContext.getBean(AopProxyProvider.class) );
     }
 
