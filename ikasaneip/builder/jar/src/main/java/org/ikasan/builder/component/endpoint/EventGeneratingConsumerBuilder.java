@@ -56,7 +56,7 @@ public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
 
     EventGeneratingConsumerBuilder setEventGenerationInterval(long eventGenerationInterval);
 
-    EventGeneratingConsumerBuilder setBatchSize(int batchSize);
+    EventGeneratingConsumerBuilder setEventsPerInterval(int eventsPerInterval);
 
     EventGeneratingConsumerBuilder setMaxEventLimit(int maxEventLimit);
 

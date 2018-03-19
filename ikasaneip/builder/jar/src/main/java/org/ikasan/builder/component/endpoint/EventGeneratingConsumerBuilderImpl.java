@@ -115,8 +115,8 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setBatchSize(int batchSize) {
-        this.eventGeneratingConsumer.getConfiguration().setBatchsize(batchSize);
+    public EventGeneratingConsumerBuilder setEventsPerInterval(int eventsPerInterval) {
+        this.eventGeneratingConsumer.getConfiguration().setEventsPerInterval(eventsPerInterval);
         return this;
     }
 

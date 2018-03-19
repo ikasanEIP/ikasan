@@ -38,45 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
+package org.ikasan.spec.event;
 
 /**
- * This configuration class for the EventGeneratingConsumer implementation.
+ * Contract for a Message Listener.
  * 
  * @author Ikasan Development Team
  */
-public class EventGeneratingConsumerConfiguration
+public interface MessageListener<MESSAGE_EVENT>
 {
-    /** event generation interval in millis - default = 1000, 1 second interval between event generation */
-    long eventGenerationInterval = 1000;
+    /**
+     * Invoke the listener with a business event.
+     * @param event
+     */
+    public void onMessage(MESSAGE_EVENT event);
 
-    /** used in conjunction with eventGenerationInterval to determine number of events per interval */
-    int eventsPerInterval;
-
-    /** allow a limit to be set on the total number of events published - default 0 unlimited */
-    int maxEventLimit;
-
-    public long getEventGenerationInterval() {
-        return eventGenerationInterval;
-    }
-
-    public void setEventGenerationInterval(long eventGenerationInterval) {
-        this.eventGenerationInterval = eventGenerationInterval;
-    }
-
-    public int getEventsPerInterval() {
-        return eventsPerInterval;
-    }
-
-    public void setEventsPerInterval(int eventsPerInterval) {
-        this.eventsPerInterval = eventsPerInterval;
-    }
-
-    public int getMaxEventLimit() {
-        return maxEventLimit;
-    }
-
-    public void setMaxEventLimit(int maxEventLimit) {
-        this.maxEventLimit = maxEventLimit;
-    }
 }
