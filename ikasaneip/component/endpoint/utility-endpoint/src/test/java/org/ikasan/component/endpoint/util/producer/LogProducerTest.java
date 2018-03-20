@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.util.producer;
 
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Test;
 
 /**
@@ -50,20 +52,68 @@ import org.junit.Test;
 public class LogProducerTest
 {
     /**
-     * Test logProducer failed constructor
+     * Test logProducer
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_text()
+    @Test
+    public void test_logProducer_say_hello()
     {
-        new LogProducer<String>(null, null);
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("payload1, payload2, payload34");
     }
 
     /**
-     * Test logProducer failed constructor
+     * Test logProducer
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_placeholder()
+    @Test
+    public void test_logProducer_say_hello_every_2nd_invoke()
     {
-        new LogProducer<String>("String me up", null);
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        configuration.setLogEveryNth(2);
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("hi");
+        producer.invoke("hello");
+    }
+
+    /**
+     * Test logProducer
+     */
+    @Test
+    public void test_logProducer_say_hello_with_pattern_no_textReplace()
+    {
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        configuration.setRegExpPattern("payload");
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("payload1, payload2, payload34");
+    }
+
+    /**
+     * Test logProducer
+     */
+    @Test
+    public void test_logProducer_say_hello_with_no_pattern_but_textReplace()
+    {
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        configuration.setReplacementText("X");
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("payload1, payload2, payload34");
+    }
+
+    /**
+     * Test logProducer
+     */
+    @Test
+    public void test_logProducer_say_hello_with_pattern_and_text_replacement()
+    {
+        Producer producer = new LogProducer<String>();
+        LogProducerConfiguration configuration = new LogProducerConfiguration();
+        configuration.setRegExpPattern("payload");
+        configuration.setReplacementText("X");
+        ((ConfiguredResource)producer).setConfiguration(configuration);
+        producer.invoke("payload1, payload2, payload34");
     }
 }

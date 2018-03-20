@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,84 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
-
-import org.ikasan.exceptionResolver.action.*;
+package org.ikasan.component.endpoint.util.producer;
 
 /**
- * Helper for Exception Actions.
+ * This configuration class for the LogProducer implementation.
  * 
  * @author Ikasan Development Team
  */
-public class OnException
+public class LogProducerConfiguration
 {
-    /**
-     * Stop the flow in error
-     * @return
-     */
-    public static ExceptionAction stop()
-    {
-        return StopAction.instance();
+    public String replacementText;
+
+    public String regExpPattern;
+
+    public long logEveryNth;
+
+    public String getReplacementText() {
+        return replacementText;
     }
 
-    /**
-     * Ignore the exception and continue
-     * @return
-     */
-    public static ExceptionAction ignoreException()
-    {
-        return IgnoreAction.instance();
+    public void setReplacementText(String replacementText) {
+        this.replacementText = replacementText;
     }
 
-    /**
-     * Rollback any actions resulting from this inflight event and exclude it
-     * @return
-     */
-    public static ExceptionAction excludeEvent()
-    {
-        return ExcludeEventAction.instance();
+    public String getRegExpPattern() {
+        return regExpPattern;
     }
 
-    /**
-     * Continually retry with a delay period specified in millis
-     * @param delay period to wait between retries
-     * @return
-     */
-    public static ExceptionAction retryIndefinitely(long delay)
-    {
-        RetryAction retryAction = new RetryAction();
-        retryAction.setDelay(delay);
-        return retryAction;
+    public void setRegExpPattern(String regExpPattern) {
+        this.regExpPattern = regExpPattern;
     }
 
-    /**
-     * Continually retry with a default delay period of 5 seconds
-     * @return
-     */
-    public static ExceptionAction retryIndefinitely()
-    {
-        return new RetryAction();
+    public long getLogEveryNth() {
+        return logEveryNth;
     }
 
-    /**
-     * Retry up to a maximum number of attempts based on the specified delay between attempts.
-     * @param delay period to wait between retries
-     * @param maxRetries limit the number of continuous retries for the same exception
-     * @return
-     */
-    public static ExceptionAction retry(long delay, int maxRetries)
-    {
-        return new RetryAction(delay, maxRetries);
-    }
-
-    /**
-     * Retry based on a given cron expression up to a maximum number of attempts
-     * @param cronExpression
-     * @param maxRetries
-     * @return
-     */
-    public static ExceptionAction scheduledCronRetry(String cronExpression, int maxRetries)
-    {
-        return new ScheduledRetryAction(cronExpression, maxRetries);
+    public void setLogEveryNth(long logEveryNth) {
+        this.logEveryNth = logEveryNth;
     }
 }

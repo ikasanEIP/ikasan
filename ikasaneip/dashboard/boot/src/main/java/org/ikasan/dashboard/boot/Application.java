@@ -1,29 +1,23 @@
 package org.ikasan.dashboard.boot;
 
+import org.ikasan.dashboard.discovery.DiscoveryJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-
-import java.util.Arrays;
 
 
 @SpringBootApplication
 @EnableAutoConfiguration
 public class Application
 {
+    /** Logger for this class */
+    private static Logger logger = LoggerFactory.getLogger(DiscoveryJob.class);
+
     public static void main(String[] args) throws Exception
     {
-        ApplicationContext context = SpringApplication.run(Application.class, args);
-        System.out.println("Let's inspect the beans provided by Spring Boot:");
-        String[] beanNames = context.getBeanDefinitionNames();
-        Arrays.sort(beanNames);
-        for (String beanName : beanNames)
-        {
-            System.out.println(beanName);
-        }
+        SpringApplication.run(Application.class, args);
+        logger.info("Ikasan Dashboard successfully bootstrapped.");
     }
-
-
-
 }

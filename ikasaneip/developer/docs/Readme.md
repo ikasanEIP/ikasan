@@ -238,6 +238,63 @@ Running Ikasan Integration Module (IM) on single JVM does not require any any pr
 
 The basic constituents of an Ikasan Integration Module (IM) are the same. Due to this we have created some out of the box IM archetypes based on common technical integration problems.
 
+#### Vanilla Archetype
+
+This archetype creates an empty Ikasan shell as a starting point for your classes and configuration, free from specifics of any integration use cases. 
+This is a good starting point when first learning Ikasan.
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-vanilla-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+
+```
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-vanilla-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.0.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-vanilla-im-maven-plugin 
+    \-DarchetypeVersion=2.0.0-SNAPSHOT    
+    \-DgroupId=com.sample     
+    \-DartifactId=vanilla-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+```
+
+(Accept defaults or update as required)
+
+This will create a standard empty Ikasan application as a starting point. 
+Even without an Integration Module and associated flows we can still build and create a deployable image by going into the directory and run a maven clean package.
+
+```
+cd vanilla-im
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments.
+
+It is recommended this archetype be used when getting familiar with Ikasan as part of the "Hands On Developer Walk Through" section.
+
 #### JMS to JMS Archetype
 
 This archetype creates a working integration module containing one flow,
@@ -1388,12 +1445,312 @@ Use the JBoss Administration Console to deploy the EAR to the Application Server
 ear/target/myIntegrationModule-<version>-ear.ear 
 ```
 
+# Hands-On Developer Walk Through
+This section demonstrates the IkasanESB features by walking the developer through a hands-on Ikasan Application build from scratch to a fully working solution.
+
+_NOTE: This is an example to demonstrate the development and core features of Ikasan - it is not intended to produce a production ready solution._
+
+## Problem Definition
+TODO
+
+## Design
+TODO
+
+## Implementation
+### Pre-Requisites
+The following is required to work through this section to build an Ikasan Application from scratch.
+
+JDK 1.8.x
+Maven 3.3.x+
+Java IDE - although any Java IDE will suffice (even a text editor if you are feeling brave), we recommend IntelliJ. We will be using IntelliJ for the rest of this demonstation.
+
+### Create a Project
+In IntelliJ select `File/New/Project...`
+
+Select maven (blank archetype). Ensure you select JDK 1.8 as the SDK for this new project.
+![Login](quickstart-images/IntelliJ-new-project-screen1.png) 
+
+Specify your project Maven coordinates such as Groupid, ArtefactId, and Version.
+
+For instance, 
+GroupId --> `com.ikasan.example`
+ArtefactId --> `MyIntegrationModule`
+Version --> `1.0.0-SNAPSHOT`
+![Login](quickstart-images/IntelliJ-new-project-screen2.png) 
+
+Select the directory/woorkspace to create this project.
+![Login](quickstart-images/IntelliJ-new-project-screen3.png) 
+
+Thats it! Your project will be created and look something like this.
+![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
+
+We now have a blank Java project based on a Maven project structure.
+First we need to update the Maven pom.xml to set the application packaging to create a Jar.
+```
+<?xml version="1.0" encoding="UTF-8"?>
+      <project xmlns="http://maven.apache.org/POM/4.0.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+          <modelVersion>4.0.0</modelVersion>
+      
+          <groupId>com.ikasan.example</groupId>
+          <artifactId>MyIntegrationModule</artifactId>
+          <version>1.0.0-SNAPSHOT</version>
+          <packaging>jar</packaging>        <!-- Add packaging type to create a jar -->
+      
+      </project>
+```
+
+Now we add the first Ikasan Application dependency to the Maven pom.xml. Edit the pom.xml and add the following dependency.
+```
+<?xml version="1.0" encoding="UTF-8"?>
+   <project xmlns="http://maven.apache.org/POM/4.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+       <modelVersion>4.0.0</modelVersion>
+   
+       <groupId>com.ikasan.example</groupId>
+       <artifactId>MyIntegrationModule</artifactId>
+       <version>1.0.0-SNAPSHOT</version>
+       <packaging>jar</packaging>
+   
+       <!-- Add project dependencies -->
+       <dependencies>
+       
+           <!-- Add IkasanESB core library dependency -->
+           <dependency>
+               <groupId>org.ikasan</groupId>
+               <artifactId>ikasan-eip-standalone</artifactId>
+               <version>2.0.0-SNAPSHOT</version>
+           </dependency>
+           
+       </dependencies>
+   
+   </project>
+```
+
+Now create a class to instantiate the Ikasan Application.
+```
+package com.ikasan.example;
+
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
+
+public class MyApplication
+{
+    public static void main(String[] args)
+    {
+        MyApplication myApplication = new MyApplication();
+        myApplication.boot(args);   
+    }
+    
+    public void boot(String args)
+    {
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class, args);
+    }
+}
+```
+
+And the application
+```
+package com.ikasan.example;
+
+import org.ikasan.builder.*;
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+
+public class MyApplication
+{
+    public static void main(String[] args)
+    {
+        MyApplication myApplication = new MyApplication();
+        myApplication.boot(args);   
+    }
+    
+    public void boot(String args)
+    {
+        // Create instance of an ikasan application
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class, args);
+        
+        // Get an instance of a builder factory from the application which will
+        // provide access to all required builders for the application
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("MyModuleName");
+        
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+        
+        // create a flow from the module builder and add required orchestration components
+        Flow flow = moduleBuilder.getFlowBuilder("FirstFlow")
+                .consumer("consumerName", componentBuilder.eventGeneratingConsumer().build())
+                .producer("producerName", componentBuilder.logProducer().build())
+                .build();
+        
+        // Add the created flow to the module builder and create the module
+        Module module = moduleBuilder.addFlow(flow).build();
+        
+        // Pass the module to the Ikasan Application for execution
+        ikasanApplication.run(module);
+    }
+}
+```
+
+Ikasan application requires a persistence data source which can be facilitated by adding the dependency
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ikasan.example</groupId>
+    <artifactId>MyIntegrationModule</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-standalone</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- h2 based persistence -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+</project>
+```
+
+Properties configuration of the module via resources/application.properties
+```
+# Logging levels across packages (optional)
+logging.level.com.arjuna=INFO
+logging.level.org.springframework=INFO
+
+# Blue console servlet settings (optional)
+server.error.whitelabel.enabled=false
+
+# Web Bindings
+server.port=8090
+server.address=localhost
+server.contextPath=/example-im
+
+# health probs and remote management (optional)
+management.security.enabled=false
+management.context-path=/manage
+endpoints.shutdown.enabled=true
+
+# persistence
+datasource.username=sa
+datasource.password=sa
+datasource.driver-class-name=org.h2.Driver
+datasource.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
+datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+datasource.dialect=org.hibernate.dialect.H2Dialect
+datasource.show-sql=true
+datasource.hbm2ddl.auto=create
+datasource.validationQuery=select 1
+```
+
+To do this we will use the vanilla archetype.
+
+```
+mvn archetype:generate 
+    -DarchetypeGroupId=org.ikasan 
+    -DarchetypeArtifactId=ikasan-im-standalone-vanilla-maven-plugin 
+    -DarchetypeVersion=2.0.0 
+    -DgroupId=org.ikasan 
+    -DartifactId=myFirstModule 
+    -Dversion=1.0.0-SNAPSHOT 
+```
+(Accept defaults or update as required)
+
+All eing well the  end of the Maven archtype generation should display successfully as 
+```[INFO] ------------------------------------------------------------------------
+   [INFO] BUILD SUCCESS
+   [INFO] ------------------------------------------------------------------------
+   [INFO] Total time: 26.882 s
+   [INFO] Finished at: 2018-01-11T18:55:09+00:00
+   [INFO] Final Memory: 14M/135M
+   [INFO] ------------------------------------------------------------------------
+``` 
+
+and you have All being well you should see a directory called ```myFirstModule``` where Maven has created the basics required for an Ikasan Application.
+
+We can now navigate into the ```myFirstModule``` directory and build the application as follows,
+
+```cd myFirstModule
+mvn clean package```
+
+A successful build will finish with 
+```[INFO] ------------------------------------------------------------------------
+   [INFO] BUILD SUCCESS
+   [INFO] ------------------------------------------------------------------------
+   [INFO] Total time: 01:14 min
+   [INFO] Finished at: 2018-01-11T19:02:09+00:00
+   [INFO] Final Memory: 38M/104M
+   [INFO] ------------------------------------------------------------------------```
+   
+### Running the Ikasan Application
+Once built navigate to the ```jar``` directory and run as follows,
+
+```java -jar target/myFirstModule-1.0.0-SNAPSHOT.jar```
+
+### Accessing the Ikasan Application Management Console
+
+Open a browser and navigate to the URL ```http://localhost:8080/sample-vanilla-im```
+
+Login with the default credentials of username:admin password:admin
+
+### Developing Functionality
+Import the generated Ikasan Application into your favourite IDE - we receommend IntelliJ.
+
+Ensure your JDK version in your IDE is set to 1.8+ and that you are pointing to a Maven install of 3.3.0+
+
+Add builder for module, flow, and component
+
+Add some default Ikasan components
+
+Add custom component ie converter
+
+Add exception throwing
+
+Add ConfiguredResource
+
+Add ManagedResource
+
+Add an exception handler
+    - stopInError
+    - recover
+    - ignore
+    - exclude
+    
+Add a monitor
+
+Add a business rule
+
+Add more complex components
+    - broker
+    - sequencer
+    - SRR
+    - MRR
+    
+Batching?    
 
 # Document Info
 
 | Authors | Ikasan Development Team |
 | --- | --- |
 | Contributors | n/a |
-| Date | October 2015 |
+| Date | March 2018 |
 | Email | info@ikasan.org |
 | WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

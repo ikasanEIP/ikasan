@@ -42,11 +42,14 @@ package org.ikasan.component.endpoint.util.consumer;
 
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.MessageListener;
 import org.ikasan.spec.flow.FlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * Test class for EventGeneratingConsumer.
@@ -66,91 +69,77 @@ public class EventGeneratingConsumerTest
     private EventGeneratingConsumerConfiguration consumerConfiguration = mockery.mock(EventGeneratingConsumerConfiguration.class);
     private EventFactory flowEventFactory = mockery.mock(EventFactory.class);
     private EventListener eventListener = mockery.mock(EventListener.class);
+    private MessageGenerator messageGenerator = mockery.mock(MessageGenerator.class);
+    private ExecutorService executorService = mockery.mock(ExecutorService.class);
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class);
+
+    /**
+     * Test failed constructor
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructor_null_executorService()
+    {
+        new EventGeneratingConsumer(null, null);
+    }
+
+    /**
+     * Test failed constructor
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructor_null_messageListener()
+    {
+        new EventGeneratingConsumer(executorService, null);
+    }
 
     /**
      * Test eventGenerator with a limit of 1 event
      */
     @Test
-    public void test_eventGenerator_one_event()
+    public void test_eventGenerator_message_generator_callback()
     {
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer();
+        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(executorService, messageGenerator);
         eventGeneratingConsumer.setEventFactory(flowEventFactory);
         eventGeneratingConsumer.setListener(eventListener);
         eventGeneratingConsumer.setConfiguration(consumerConfiguration);
-
-        EventGeneratingConsumer.EventGenerator eventGenerator = eventGeneratingConsumer.new EventGenerator();
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // event limit of 1
-                exactly(6).of(consumerConfiguration).getEventLimit();
-                will(returnValue(1));
-
                 // new flowEvent
-                one(consumerConfiguration).getIdentifier();
-                will(returnValue("identifier"));
-                one(consumerConfiguration).getPayload();
-                will(returnValue("payload"));
-
-                one(flowEventFactory).newEvent("identifier", "payload");
+                one(flowEventFactory).newEvent("message", "message");
                 will(returnValue(flowEvent));
 
-                one(eventListener).invoke(flowEvent);
-                exactly(2).of(consumerConfiguration).getEventGenerationInterval();
-                will(returnValue(1L));
-                exactly(1).of(consumerConfiguration).getBatchsize();
-                will(returnValue(1));
+                // event limit of 1
+                exactly(1).of(eventListener).invoke(flowEvent);
             }
         });
 
-        eventGenerator.run();
+        eventGeneratingConsumer.onMessage("message");
         mockery.assertIsSatisfied();
     }
 
     /**
-     * Test eventGenerator with a limit of 1 event and interval of 5ms
+     * Test eventGenerator start
      */
     @Test
-    public void test_eventGenerator_one_event_batch_size_one()
+    public void test_eventGenerator_start()
     {
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer();
+        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(executorService, messageGenerator);
         eventGeneratingConsumer.setEventFactory(flowEventFactory);
         eventGeneratingConsumer.setListener(eventListener);
         eventGeneratingConsumer.setConfiguration(consumerConfiguration);
-
-        EventGeneratingConsumer.EventGenerator eventGenerator = eventGeneratingConsumer.new EventGenerator();
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // event limit of 1
-                exactly(8).of(consumerConfiguration).getEventLimit();
-                will(returnValue(2));
-
-                // new flowEvent
-                exactly(2).of(consumerConfiguration).getIdentifier();
-                will(returnValue("identifier"));
-                exactly(2).of(consumerConfiguration).getPayload();
-                will(returnValue("payload"));
-
-                exactly(2).of(flowEventFactory).newEvent("identifier", "payload");
-                will(returnValue(flowEvent));
-
-                exactly(2).of(eventListener).invoke(flowEvent);
-
-                exactly(3).of(consumerConfiguration).getEventGenerationInterval();
-                will(returnValue(1L));
-
-                exactly(2).of(consumerConfiguration).getBatchsize();
-                will(returnValue(1));
+                // start
+                one(executorService).submit(messageGenerator);
             }
         });
 
-        eventGenerator.run();
+        eventGeneratingConsumer.start();
         mockery.assertIsSatisfied();
     }
 }
