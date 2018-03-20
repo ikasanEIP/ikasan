@@ -150,7 +150,7 @@ public class DashboardNotifier implements Notifier<String>
         String url = null;
         try
         {
-            logger.debug("this.platformConfigurationService: " + this.platformConfigurationService);
+            logger.info("this.platformConfigurationService: " + this.platformConfigurationService);
             // We are trying to get the database configuration resource first
             if (this.platformConfigurationService != null)
             {
@@ -172,9 +172,13 @@ public class DashboardNotifier implements Notifier<String>
                 + moduleName.replace(" ", "%20")
                 + "/"
                 +  flowName.replace(" ", "%20");
-            logger.debug("Attempting to call URL: " + url);
+
+            logger.info(String.format("Notifiy Ikasan Dashboard of flow state change with call to URL[%s] and State[%s].", url, state));
             HttpEntity request = initRequest(state, moduleName, null, null);
-            restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+            ResponseEntity<String> respose = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+
+            logger.info(String.format("Notifiy Ikasan Dashboard response. HTTP Status Code[%s], HTTP Response Message[%s]"
+                , respose.getStatusCode().toString(), respose.getBody()));
         }
         catch (final HttpClientErrorException e)
         {
