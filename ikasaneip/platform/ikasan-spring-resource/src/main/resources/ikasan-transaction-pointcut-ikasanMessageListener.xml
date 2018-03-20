@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <!-- Generic eventListener pointcut to be used if transactional resources are in the flow, but the originating tech is none transactional -->
+    <aop:config>
+        <aop:pointcut id="eventListenerPointcut" expression="execution(* org.ikasan.spec.event.MessageListener.onMessage(..))" />
+        <aop:advisor id="eventListenerMessagePointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="eventListenerPointcut" />
+    </aop:config>
+
+</beans>

@@ -40,11 +40,15 @@
  */
 package org.ikasan.component.endpoint.util.consumer;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.MessageListener;
+import org.ikasan.spec.resubmission.ResubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -53,13 +57,13 @@ import java.util.concurrent.Future;
  * @author Ikasan Development Team
  */
 public class EventGeneratingConsumer extends AbstractConsumer
-    implements ConfiguredResource<EventGeneratingConsumerConfiguration>
+    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<String>, MessageListener<String>, ExceptionListener<Throwable>
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
 
     /** allow techEndpoint to execute in a separate thread */
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
 
     /** handle to the future thread */
     private Future eventGeneratorThread;
@@ -67,15 +71,37 @@ public class EventGeneratingConsumer extends AbstractConsumer
     /** configuredResourceId */
     private String configuredResourceId;
 
-    /** consumer configuration */
-    private EventGeneratingConsumerConfiguration consumerConfiguration;
+    /** configuration */
+    private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
+
+    /** provider of messages */
+    private MessageGenerator messageGenerator;
+
+    /**
+     * Constructor
+     * @param messageGenerator
+     */
+    public EventGeneratingConsumer(ExecutorService executorService, MessageGenerator messageGenerator)
+    {
+        this.executorService = executorService;
+        if(executorService == null)
+        {
+            throw new IllegalArgumentException("executorService cannot be 'null'");
+        }
+
+        this.messageGenerator = messageGenerator;
+        if(messageGenerator == null)
+        {
+            throw new IllegalArgumentException("messageGenerator cannot be 'null'");
+        }
+    }
 
     /**
      * Start the underlying event generator
      */
     public void start()
     {
-        eventGeneratorThread = this.executorService.submit( new EventGenerator() );
+        eventGeneratorThread = this.executorService.submit( messageGenerator );
     }
 
     /**
@@ -124,6 +150,10 @@ public class EventGeneratingConsumer extends AbstractConsumer
     public void setConfiguration(EventGeneratingConsumerConfiguration consumerConfiguration)
     {
         this.consumerConfiguration = consumerConfiguration;
+        if(messageGenerator instanceof Configured)
+        {
+            ((Configured)messageGenerator).setConfiguration(consumerConfiguration);
+        }
     }
 
     /**
@@ -134,44 +164,22 @@ public class EventGeneratingConsumer extends AbstractConsumer
     {
         this.configuredResourceId = configuredResourceId;
     }
-    
-    /**
-     * Simple event generator class implementation.
-     */
-    public class EventGenerator implements Runnable
+
+    @Override
+    public void submit(String message)
     {
-        public void run()
-        {
-            int count = 0;
-            while(consumerConfiguration.getEventLimit() == 0 || consumerConfiguration.getEventLimit() > count)
-            {
-                try
-                {
-                    count++;
-                    eventListener.invoke( flowEventFactory.newEvent(consumerConfiguration.getIdentifier(), consumerConfiguration.getPayload()) );
-                    if(consumerConfiguration.getEventGenerationInterval() > 0 && consumerConfiguration.getBatchsize() % count == 0)
-                    {
-                        try
-                        {
-                            Thread.sleep(consumerConfiguration.getEventGenerationInterval());
-                        }
-                        catch(InterruptedException e)
-                        {
-                            eventListener.invoke(e);
-                        }
-                    }
-                }
-                catch(RuntimeException e)
-                {
-                    eventListener.invoke(e);
-                }
-            }
+        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+    }
 
-            if(consumerConfiguration.getEventLimit() <= count)
-            {
-                logger.info("eventGenerator stopped after reaching configured eventLimit of [" + consumerConfiguration.getEventLimit() + "]");
-            }
-        }
+    @Override
+    public void onMessage(String message)
+    {
+        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+    }
 
+    @Override
+    public void onException(Throwable throwable)
+    {
+        eventListener.invoke(throwable);
     }
 }

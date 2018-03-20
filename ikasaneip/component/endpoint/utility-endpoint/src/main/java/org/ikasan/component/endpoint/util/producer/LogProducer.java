@@ -40,10 +40,11 @@
  */
 package org.ikasan.component.endpoint.util.producer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,65 +54,75 @@ import java.util.regex.Pattern;
  *
  * @author Ikasan Development Team
  */
-public class LogProducer<T> implements Producer<T>
+public class LogProducer<T> implements Producer<T>, ConfiguredResource<LogProducerConfiguration>
 {
     /**
      * logger instance
      */
     private static final Logger logger = LoggerFactory.getLogger(LogProducer.class);
 
-    /**
-     * text to accompany the payload logging
-     */
-    String text;
+    private String configuredResourceId;
 
+    private LogProducerConfiguration configuration = new LogProducerConfiguration();
+
+    private long loggedCount;
+    
     /**
      * regexp pattern to apply
      */
-    Pattern pattern;
-
-    /**
-     * Constructor
-     *
-     * @param text
-     * @param eventPlaceholder
-     */
-    public LogProducer(String text, String eventPlaceholder)
-    {
-        this.text = text;
-        if (text == null)
-        {
-            throw new IllegalArgumentException("text cannot be 'null'");
-        }
-        if (eventPlaceholder == null)
-        {
-            throw new IllegalArgumentException("eventPlaceholder cannot be 'null'");
-        }
-        this.pattern = Pattern.compile(eventPlaceholder);
-    }
-
-    /**
-     * Constructor
-     */
-    public LogProducer()
-    {
-        // nothing here
-    }
+    private Pattern pattern;
 
     @Override
     public void invoke(T payload) throws EndpointException
     {
-        if (logger.isInfoEnabled())
+        loggedCount++;
+
+        if(configuration.getLogEveryNth() == 0 || loggedCount % configuration.getLogEveryNth() == 0)
         {
-            if (pattern == null)
+            if (logger.isInfoEnabled())
             {
-                logger.info(payload.toString());
+                if (pattern == null || configuration.getReplacementText() == null)
+                {
+                    logger.info(payload.toString());
+                }
+                else
+                {
+                    Matcher matcher = pattern.matcher(configuration.getReplacementText());
+                    logger.info(matcher.replaceAll(payload.toString()));
+                }
             }
-            else
-            {
-                Matcher matcher = pattern.matcher(text);
-                logger.info(matcher.replaceAll(payload.toString()));
-            }
+            
+            loggedCount = 0;
+        }
+        
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId) {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public LogProducerConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(LogProducerConfiguration configuration)
+    {
+        this.configuration = configuration;
+        if(configuration.getRegExpPattern() == null)
+        {
+            this.pattern = null;
+        }
+        else
+        {
+            this.pattern = Pattern.compile(configuration.getRegExpPattern());
         }
     }
 }

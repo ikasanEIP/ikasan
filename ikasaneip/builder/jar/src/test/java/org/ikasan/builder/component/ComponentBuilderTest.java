@@ -41,17 +41,21 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.builder.component.endpoint.FileProducerBuilder;
+import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.MessageListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -59,6 +63,7 @@ import org.junit.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
 import javax.transaction.TransactionManager;
 
 import static org.junit.Assert.assertTrue;
@@ -94,6 +99,7 @@ public class ComponentBuilderTest {
     final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class, "mockBaseFileTransferDao");
     final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class, "mockFileChunkDao");
     final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class, "mockTransactionalResourceCommandDAO");
+    final MessageListener messageListener = mockery.mock(MessageListener.class, "mockMessageListener");
 
     @Test
     public void test_successful_scheduledConsumer() {
@@ -335,6 +341,52 @@ public class ComponentBuilderTest {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Splitter splitter = componentBuilder.listSplitter().build();
         assertTrue("instance should be a Splitter", splitter instanceof Splitter);
+    }
+
+    /**
+     * Test devNullProducer builder.
+     */
+    @Test
+    public void test_successful_devNullProducer()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Producer producer = componentBuilder.devNullProducer().build();
+        assertTrue("instance should be a Producer", producer instanceof Producer);
+    }
+
+    /**
+     * Test logProducer builder.
+     */
+    @Test
+    public void test_successful_logProducer()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Producer producer = componentBuilder.logProducer().build();
+        assertTrue("instance should be a Producer", producer instanceof Producer);
+    }
+
+    /**
+     * Test eventGeneratingConsumer builder.
+     */
+    @Test
+    public void test_successful_eventGeneratingConsumer()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(returnValue(aopProxyProvider));
+
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)), with(any(EventGeneratingConsumer.class)));
+                will(returnValue(messageListener));
+            }
+        });
+
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Consumer consumer = componentBuilder.eventGeneratingConsumer().build();
+        assertTrue("instance should be a Consumer", consumer instanceof Consumer);
+        mockery.assertIsSatisfied();
     }
 
     /**

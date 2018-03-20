@@ -63,6 +63,7 @@ public class ExceptionResolverBuilderImplTest
         exceptionResolverBuilder.addExceptionToAction(ExceptionTwo.class, OnException.stop());
         exceptionResolverBuilder.addExceptionToAction(ExceptionThree.class, OnException.excludeEvent());
         exceptionResolverBuilder.addExceptionToAction(ExceptionFour.class, OnException.retryIndefinitely());
+        exceptionResolverBuilder.addExceptionToAction(ExceptionFourDelayOverride.class, OnException.retryIndefinitely(1L));
         exceptionResolverBuilder.addExceptionToAction(ExceptionFive.class, OnException.retry(1,1));
         exceptionResolverBuilder.addExceptionToAction(ExceptionSix.class, OnException.scheduledCronRetry("0 * 14 * * ?", 1));
         ExceptionResolver exceptionResolver = exceptionResolverBuilder.build();
@@ -79,7 +80,13 @@ public class ExceptionResolverBuilderImplTest
         RetryAction actualRetryAction = exceptionResolver.resolve(null, new ExceptionFour());
         RetryAction expectedRetryAction = new RetryAction();
         Assert.assertTrue("ExceptionAction should be Retry with default delay", actualRetryAction.getDelay() == expectedRetryAction.getDelay());
-        Assert.assertTrue("ExceptionAction should be Retry with default maxRetries", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+        Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+
+        RetryAction actualRetryActionDelayOverride = exceptionResolver.resolve(null, new ExceptionFourDelayOverride());
+        RetryAction expectedRetryActionDelayOverride = new RetryAction();
+        expectedRetryActionDelayOverride.setDelay(1l);
+        Assert.assertTrue("ExceptionAction should be Retry with override delay", actualRetryActionDelayOverride.getDelay() == expectedRetryActionDelayOverride.getDelay());
+        Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryActionDelayOverride.getMaxRetries() == expectedRetryActionDelayOverride.getMaxRetries());
 
         actualRetryAction = exceptionResolver.resolve(null, new ExceptionFive());
         expectedRetryAction = new RetryAction(1, 1);
@@ -96,6 +103,7 @@ public class ExceptionResolverBuilderImplTest
     class ExceptionTwo extends Exception {}
     class ExceptionThree extends Exception {}
     class ExceptionFour extends Exception {}
+    class ExceptionFourDelayOverride extends Exception {}
     class ExceptionFive extends Exception {}
     class ExceptionSix extends Exception {}
 }

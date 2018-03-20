@@ -222,8 +222,21 @@ public class ScheduledConsumerBuilderTest {
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
                 scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(any(String.class)),
+                        with("testGroup"));
+                will(returnValue(jobDetail));
+            }
+        });
 
         scheduledConsumerBuilder
                 .setCronExpression("121212")
@@ -232,6 +245,7 @@ public class ScheduledConsumerBuilderTest {
                 .setScheduledJobName(null)
                 .build();
 
+        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -241,8 +255,21 @@ public class ScheduledConsumerBuilderTest {
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
                 scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("testJob"),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with("testJob"),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
 
         scheduledConsumerBuilder
                 .setCronExpression("121212")
@@ -251,6 +278,7 @@ public class ScheduledConsumerBuilderTest {
                 .setScheduledJobName("testJob")
                 .build();
 
+        mockery.assertIsSatisfied();
     }
 
 }
