@@ -2013,6 +2013,12 @@
                 <groupId>org.apache.directory.server</groupId>
                 <artifactId>apacheds-server-integ</artifactId>
                 <version>${version.org.apache.directory.server}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
