@@ -99,6 +99,10 @@ public class FlowBuilder implements ApplicationContextAware
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
+    // constants used to generate identifiers for configuration service if ids not provided
+    private static String INVOKER = "_I";
+    private static String COMPONENT = "_C";
+
     /** name of the flow module owner */
     String moduleName;
 
@@ -467,12 +471,7 @@ public class FlowBuilder implements ApplicationContextAware
                 Object configuration = configuredResource.getConfiguration();
                 if(configuredResource.getConfiguredResourceId() == null)
                 {
-                    String id = moduleName + "_" + flowName + "_"+ flowElement.getComponentName()
-                            + "_" + configuration.getClass().getName() + "_Invoker";
-                    if(id.length() > 255)
-                    {
-                        id = id.substring(0,255);
-                    }
+                    String id = generateIdentifier(moduleName, flowName, flowElement.getComponentName(), configuration.getClass().getName(), INVOKER);
                     configuredResource.setConfiguredResourceId(id);
                 }
             }
@@ -485,12 +484,7 @@ public class FlowBuilder implements ApplicationContextAware
                 Object configuration = configuredResource.getConfiguration();
                 if(configuredResource.getConfiguredResourceId() == null && configuration != null)
                 {
-                    String id = moduleName + "_" + flowName + "_"+ flowElement.getComponentName()
-                            + "_" + configuration.getClass().getName() + "_Component";
-                    if(id.length() > 255)
-                    {
-                        id = id.substring(0,255);
-                    }
+                    String id = generateIdentifier(moduleName, flowName, flowElement.getComponentName(), configuration.getClass().getName(), COMPONENT);
                     configuredResource.setConfiguredResourceId(id);
                 }
             }
@@ -554,6 +548,31 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         return nextFlowElement;
+    }
+
+    protected String generateIdentifier(String moduleName, String flowName, String componentName, String fqClassName, String type)
+    {
+        String id = moduleName + "_" + flowName + "_" + componentName + "_" + fqClassName.hashCode() + type;
+        if(id.length() > 255)
+        {
+            id = moduleName + "_" + flowName + "_" + componentName.hashCode() + "_" + fqClassName.hashCode() + type;
+            if(id.length() > 255)
+            {
+                id = moduleName + "_" + flowName.hashCode() + "_" + componentName.hashCode() + "_" + fqClassName.hashCode() + type;
+                if(id.length() > 255)
+                {
+                    id = moduleName.hashCode() + "_" + flowName.hashCode() + "_" + componentName.hashCode() + "_" + fqClassName.hashCode() + type;
+                }
+                if(id.length() > 255)
+                {
+                    id = id.substring(0,253) + type;
+                    logger.warn("Generated Identifier exceeds 255 characters for moduleName[" + moduleName + "] flowName[" + flowName
+                            + "] componentName[" + componentName + "] fq classname[" + fqClassName + "] type [" + type + "]. Truncated to 255 -> [" + id + "]");
+                }
+            }
+        }
+
+        return id;
     }
 
     protected FlowElement connectElements(Route route)
