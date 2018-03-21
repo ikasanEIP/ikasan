@@ -57,6 +57,7 @@
         <module>ikasan-eip-standalone</module>
         <module>ikasan-eip-test</module>
         <module>ikasan-setup</module>
+        <module>ikasan-standalone-persistence</module>
         <module>ikasan-h2-standalone-persistence</module>
     </modules>
 

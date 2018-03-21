@@ -26,8 +26,8 @@ import javax.annotation.Resource;
         "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:ftp-components-conf.xml",
-        "classpath:filetransfer-service-conf.xml"
-
+        "classpath:filetransfer-service-conf.xml",
+    "classpath:h2-datasource-conf.xml"
 
 } )
 public class ModuleConfig {
