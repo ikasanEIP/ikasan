@@ -14,6 +14,7 @@
 	<include file="db/alter/db-changeLog-alterReplayEventAddEventAsString.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterComponentAddInvokerConfiguration.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterReplayAuditEventAddEventDetails.xml" relativeToChangelogFile="true" />
+	<include file="db/modify/db-changeLog-modifySystemEventExtendSubjectLength.xml" relativeToChangelogFile="true" />
 
 
 	<!-- 2.0.x cardinality creation -->
