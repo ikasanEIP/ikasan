@@ -1,6 +1,4 @@
 /* 
- * $Id: SchedulerFactoryTest.java 3629 2011-04-18 10:00:52Z mitcje $
- * $URL: http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler/src/test/java/org/ikasan/scheduler/SchedulerFactoryTest.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -43,8 +41,8 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.exclusion.ExclusionEvent;
@@ -63,11 +61,12 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.util.SocketUtils;
 
-import java.util.*;
+import javax.jms.TextMessage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
