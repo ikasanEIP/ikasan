@@ -111,6 +111,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
     {
         if(this.isRunning())
         {
+            messageGenerator.stop();
             this.eventGeneratorThread.cancel(true);
         }
     }

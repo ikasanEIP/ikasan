@@ -41,6 +41,7 @@
 package org.ikasan.component.endpoint.util.consumer;
 
 import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.MessageListener;
 import org.slf4j.Logger;
@@ -62,13 +63,29 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
     /** message listener instance */
     private MessageListener messageListener;
 
+    /** exception listener instance */
+    private ExceptionListener exceptionListener;
+
+    /** control the thread execution */
+    private boolean running;
+
     public void run()
     {
+        setRunning(true);
+
         if(messageListener == null)
         {
             throw new IllegalStateException("messageListener cannot be 'null");
         }
 
+        while(isRunning())
+        {
+            execute();
+        }
+    }
+
+    public void execute()
+    {
         long count = 0;
         while(consumerConfiguration.getMaxEventLimit() == 0 || consumerConfiguration.getMaxEventLimit() > count)
         {
@@ -83,15 +100,26 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
             }
             catch (ForceTransactionRollbackException thrownByRecoveryManager)
             {
-                throw thrownByRecoveryManager;
+                logger.debug("ForceTransactionRollbackException", thrownByRecoveryManager);
+                //throw thrownByRecoveryManager;
             }
             catch (Throwable throwable)
             {
-                throw throwable;
+                if(this.exceptionListener == null)
+                {
+                    throw throwable;
+                }
+
+                this.exceptionListener.onException(throwable);
+            }
+
+            if( !isRunning() )
+            {
+                break;
             }
         }
 
-        logger.info("eventGenerator stopped after reaching configured eventLimit of [" + consumerConfiguration.getMaxEventLimit() + "]");
+        logger.info("eventGenerator stopped. EventLimit [" + consumerConfiguration.getMaxEventLimit() + "]");
     }
 
     private void sleep()
@@ -122,6 +150,28 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
     public void setMessageListener(MessageListener messageListener)
     {
         this.messageListener = messageListener;
+    }
+
+    @Override
+    public void setExceptionListener(ExceptionListener exceptionListener)
+    {
+        this.exceptionListener = exceptionListener;
+    }
+
+    @Override
+    public void stop()
+    {
+        setRunning(false);
+    }
+
+    protected void setRunning(boolean running)
+    {
+        this.running = running;
+    }
+
+    protected boolean isRunning()
+    {
+        return this.running;
     }
 }
 
