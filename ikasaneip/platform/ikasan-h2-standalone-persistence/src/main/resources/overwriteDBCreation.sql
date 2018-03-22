@@ -1,23 +1,25 @@
-      INSERT INTO Users (Id, Username, Password, Enabled, FirstName, Surname,PreviousAccess )
-					VALUES (1,'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User',10);
+      MERGE INTO Users ( Username, Password, Enabled, FirstName, Surname,PreviousAccess )
+			KEY (Username)
+					VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User',10);
 
-      INSERT INTO Users (Id, Username, Password, Enabled, FirstName, Surname,PreviousAccess )
-					VALUES (2,'api', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'API', 'API',10);
+      MERGE INTO Users ( Username, Password, Enabled, FirstName, Surname,PreviousAccess )
+			KEY (Username)
+							VALUES ('api', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'API', 'API',10);
 
       MERGE INTO SecurityPrincipal (Name , PrincipalType, Description, CreatedDateTime ,UpdatedDateTime)
-        KEY (Name)
+      KEY (Name)
         VALUES ( 'admin','Admin user', 'The administrator user' ,'1970-01-01 00:00:00','1970-01-01 00:00:00');
 
       MERGE INTO SecurityPrincipal (Name , PrincipalType, Description, CreatedDateTime ,UpdatedDateTime)
-        KEY (Name)
+      KEY (Name)
         VALUES ( 'user','user', 'The user' ,'1970-01-01 00:00:00','1970-01-01 00:00:00');
 
       MERGE INTO SecurityRole (Name ,  Description, CreatedDateTime ,UpdatedDateTime)
-        KEY (Name)
+      KEY (Name)
         VALUES ( 'ADMIN', 'Users who may perform administration functions on the system','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
       MERGE INTO SecurityPolicy (Name ,  Description, CreatedDateTime ,UpdatedDateTime )
-        KEY (Name)
+      KEY (Name)
         VALUES ( 'ALL', 'Policy to do everything','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
       MERGE INTO SecurityPolicy (Name ,  Description, CreatedDateTime ,UpdatedDateTime )
@@ -29,8 +31,8 @@
         VALUES ( 'WriteBlueConsole', 'Policy to do write BlueConsole','1970-01-01 00:00:00','1970-01-01 00:00:00' );
 
 
-			 INSERT
-			 INTO UserPrincipal ( UserId, PrincipalId )
+			MERGE INTO UserPrincipal ( UserId, PrincipalId )
+			 KEY (UserId,PrincipalId)
 			 (SELECT u.Id, s.Id
 			  FROM Users u, SecurityPrincipal s
 			  WHERE
@@ -38,8 +40,8 @@
 			  	   and s.Name = 'admin'
 			  );
 
-			 INSERT
-			 INTO UserPrincipal ( UserId, PrincipalId )
+			 MERGE INTO UserPrincipal ( UserId, PrincipalId )
+			 KEY (UserId,PrincipalId)
 			 (SELECT u.Id, s.Id
 			  FROM Users u, SecurityPrincipal s
 			  WHERE
@@ -47,7 +49,8 @@
 			  	   and s.Name = 'user'
 			  );
 
-			 INSERT INTO PrincipalRole ( PrincipalId, RoleId )
+			 MERGE  INTO PrincipalRole ( PrincipalId, RoleId )
+			  KEY (PrincipalId, RoleId)
 			 (SELECT s.Id, r.Id
 			 FROM
 			 	SecurityPrincipal s, SecurityRole r
@@ -57,7 +60,8 @@
 			 );
 
 
-			 INSERT INTO RolePolicy ( RoleId, PolicyId )
+			 MERGE INTO RolePolicy ( RoleId, PolicyId )
+			 KEY(RoleId, PolicyId)
 			 (SELECT r.Id, p.Id
 			 FROM
 			 	SecurityRole r , SecurityPolicy p
@@ -66,7 +70,8 @@
 			 	and p.Name = 'ALL'
 			 );
 
-			INSERT INTO RolePolicy ( RoleId, PolicyId )
+			MERGE INTO RolePolicy ( RoleId, PolicyId )
+			 KEY(RoleId, PolicyId)
 			 (SELECT r.Id, p.Id
 			 FROM
 			 	SecurityRole r , SecurityPolicy p
@@ -75,7 +80,8 @@
 			 	and p.Name = 'ReadBlueConsole'
 			 );
 
-      INSERT INTO RolePolicy ( RoleId, PolicyId )
+      MERGE INTO RolePolicy ( RoleId, PolicyId )
+			 KEY(RoleId, PolicyId)
 			 (SELECT r.Id, p.Id
 			 FROM
 			 	SecurityRole r , SecurityPolicy p

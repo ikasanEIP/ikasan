@@ -57,13 +57,9 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @Configuration
-/**
- * Add required resources for instance,
-
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-quartz.xml"
+    "classpath:h2-datasource-conf.xml"
 } )
-*/
 public class ComponentFactory
 {
     @Value("${sampleMatch}")

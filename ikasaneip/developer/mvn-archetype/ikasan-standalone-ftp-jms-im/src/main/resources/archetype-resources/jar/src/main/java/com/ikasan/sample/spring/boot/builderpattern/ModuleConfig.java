@@ -23,7 +23,8 @@ import javax.jms.ConnectionFactory;
         "classpath:monitor-service-conf.xml",
         "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
-        "classpath:filetransfer-service-conf.xml"
+        "classpath:filetransfer-service-conf.xml",
+        "classpath:h2-datasource-conf.xml"
 
 } )
 public class ModuleConfig {
