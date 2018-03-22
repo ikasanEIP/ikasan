@@ -46,6 +46,7 @@ import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumerConfig
 import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
 
 /**
@@ -99,6 +100,12 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
     {
         MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventGeneratingConsumer", eventGeneratingConsumer);
         messageGenerator.setMessageListener(messageListener);
+
+        if(messageListener instanceof ExceptionListener)
+        {
+            messageGenerator.setExceptionListener( (ExceptionListener)messageListener );
+        }
+
         return eventGeneratingConsumer;
     }
 

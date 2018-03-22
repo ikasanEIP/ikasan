@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.util.consumer;
 
+import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
 
 /**
@@ -54,4 +55,15 @@ public interface MessageGenerator extends Runnable
      * @param messageListener
      */
     public void setMessageListener(MessageListener messageListener);
+
+    /**
+     * Set the listener for any exceptions.
+     * @param exceptionListener
+     */
+    public void setExceptionListener(ExceptionListener exceptionListener);
+
+    /**
+     * Set the listener for any exceptions.
+     */
+    public void stop();
 }

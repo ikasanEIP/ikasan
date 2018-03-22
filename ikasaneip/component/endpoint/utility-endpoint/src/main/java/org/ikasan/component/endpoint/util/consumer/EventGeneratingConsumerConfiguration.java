@@ -51,7 +51,7 @@ public class EventGeneratingConsumerConfiguration
     long eventGenerationInterval = 1000;
 
     /** used in conjunction with eventGenerationInterval to determine number of events per interval */
-    int eventsPerInterval;
+    int eventsPerInterval = 1;
 
     /** allow a limit to be set on the total number of events published - default 0 unlimited */
     int maxEventLimit;
