@@ -49,6 +49,7 @@ import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,31 +62,32 @@ import org.junit.Test;
  */
 public class UnorderedExpectationTest
 {
-    Mockery mockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
 
     /** mocked capture */
-    final Capture<?> capture = mockery.mock(Capture.class, "capture");
-    final Capture<?> capture2 = mockery.mock(Capture.class, "capture2");
+    private final Capture<?> capture = mockery.mock(Capture.class, "capture");
+    private final Capture<?> capture2 = mockery.mock(Capture.class, "capture2");
 
     /** mocked flowElement */
-    final FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
-    final FlowElement flowElement2 = mockery.mock(FlowElement.class, "flowElement2");
+    private final FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
+    private final FlowElement flowElement2 = mockery.mock(FlowElement.class, "flowElement2");
 
     /** mocked comparatorService */
     @SuppressWarnings("unchecked")
-    final ComparatorService comparatorService = mockery.mock(ComparatorService.class, "ComparatorService");
+    private final ComparatorService comparatorService = mockery.mock(ComparatorService.class, "ComparatorService");
 
     /** mocked expectationComparator **/
     @SuppressWarnings("unchecked")
-    final ExpectationComparator expectationComparator = mockery.mock(ExpectationComparator.class, "expectationComparator");
+    private final ExpectationComparator expectationComparator = mockery.mock(ExpectationComparator.class, "expectationComparator");
 
     /** mocked expectation */
-    final Object expectation = mockery.mock(Object.class, "ExpectationObject");
+    private final Object expectation = mockery.mock(Object.class, "ExpectationObject");
 
     /**
      * Sanity test of a default UnorderedExpectation instance with a single

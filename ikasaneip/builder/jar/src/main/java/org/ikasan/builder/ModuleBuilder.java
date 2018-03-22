@@ -40,19 +40,21 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple Module builder.
  * 
  * @author Ikasan Development Team
  */
-public class ModuleBuilder 
+public class ModuleBuilder
 {
 	/** name of the module being instantiated */
 	String name;
@@ -61,17 +63,26 @@ public class ModuleBuilder
     String version;
 
     /** optional module description */
-	String description;
+	String description = "Unspecified";
 
 	/** flow builders for creating flows within this module */
 	List<Flow> flows = new ArrayList<Flow>();
-	
+
+	/** application context */
+	ApplicationContext context;
+
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	private ModuleBuilder(String name)
+	ModuleBuilder(ApplicationContext context, String name)
 	{
+		this.context = context;
+		if(context == null)
+		{
+			throw new IllegalArgumentException("context cannot be 'null'");
+		}
+
 		this.name = name;
 		if(name == null)
 		{
@@ -79,43 +90,19 @@ public class ModuleBuilder
 		}
 	}
 
-    /**
-     * Constructor
-     * @param name
-     * @param version
-     */
-    private ModuleBuilder(String name, String version)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("module name cannot be 'null'");
-        }
-
-        this.version = version;
-    }
-
-    /**
-	 * Static moduleBuilder creator
+	/**
+	 * Constructor
 	 * @param name
-	 * @return ModuleBuilder
 	 */
-	public static ModuleBuilder newModule(String name)
+	ModuleBuilder(String name)
 	{
-		return new ModuleBuilder(name);
+
+		this.name = name;
+		if(name == null)
+		{
+			throw new IllegalArgumentException("module name cannot be 'null'");
+		}
 	}
-
-    /**
-     * Static moduleBuilder creator
-     * @param name
-     * @param version
-     * @return ModuleBuilder
-     */
-    public static ModuleBuilder newModule(String name, String version)
-    {
-        return new ModuleBuilder(name, version);
-    }
-
     /**
 	 * Add description to the module
 	 * @param description
@@ -124,6 +111,17 @@ public class ModuleBuilder
 	public ModuleBuilder withDescription(String description)
 	{
 		this.description = description;
+		return this;
+	}
+
+	/**
+	 * Add description to the module
+	 * @param version
+	 * @return
+	 */
+	public ModuleBuilder withVersion(String version)
+	{
+		this.version = version;
 		return this;
 	}
 
@@ -145,5 +143,13 @@ public class ModuleBuilder
 		return module;
 	}
 
+	public FlowBuilder getFlowBuilder(String flowName)
+	{
+		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
+		FlowBuilder flowBuilder = new FlowBuilder(flowName, this.name);
+		beanFactory.autowireBean(flowBuilder);
+		flowBuilder.setApplicationContext(this.context);
+		return flowBuilder;
+	}
 }
 

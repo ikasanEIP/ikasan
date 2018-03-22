@@ -98,7 +98,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         	throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
         }
         
-        return parameterMap.getValue().get(paramName);
+        return parameterMap.getValue().get(paramName) == null ? "":parameterMap.getValue().get(paramName);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         	}
         }
         
-		return null;
+		return "";
 	}
 
 	/* (non-Javadoc)
@@ -173,12 +173,138 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         	}
         }
         
-        return null;
+        return "";
+	}
+
+	@Override
+	public void saveWebServiceUsername(String username)
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("webServiceUserAccount"))
+			{
+				parameter.setValue(username);
+			}
+		}
+
+		this.configurationManagement.saveConfiguration(configuration);
+	}
+
+	@Override
+	public void saveWebServicePassword(String password)
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("webServiceUserPassword"))
+			{
+				parameter.setValue(password);
+			}
+		}
+
+		this.configurationManagement.saveConfiguration(configuration);
+	}
+
+	@Override
+	public void saveSolrUsername(String username)
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("solrUserAccount"))
+			{
+				parameter.setValue(username);
+			}
+		}
+
+		this.configurationManagement.saveConfiguration(configuration);
+	}
+
+	@Override
+	public void saveSolrPassword(String password)
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("solrUserPassword"))
+			{
+				parameter.setValue(password);
+			}
+		}
+
+		this.configurationManagement.saveConfiguration(configuration);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getSearchResultSetSize()
+	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServiceUsername()
 	 */
+	@Override
+	public String getSolrUsername()
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("solrUserAccount"))
+			{
+				return (String)parameter.getValue();
+			}
+		}
+
+		return "";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServicePassword()
+	 */
+	@Override
+	public String getSolrPassword()
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter.getName().equals("solrUserPassword"))
+			{
+				return (String)parameter.getValue();
+			}
+		}
+
+		return "";
+	}
+
+	/* (non-Javadoc)
+         * @see org.ikasan.spec.configuration.PlatformConfigurationService#getSearchResultSetSize()
+         */
 	@Override
 	public Integer getSearchResultSetSize()
 	{

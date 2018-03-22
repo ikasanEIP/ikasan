@@ -40,8 +40,8 @@
  */
 package org.ikasan.replay.service;
 
-import org.ikasan.replay.dao.ReplayDao;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayDao;
+import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -63,7 +63,7 @@ public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<St
     /**
      * Constructor
      * 
-     * @param serialiser
+     * @param serialiserFactory
      * @param replayDao
      */
 	public ReplayRecordServiceImpl(SerialiserFactory serialiserFactory,
@@ -90,7 +90,16 @@ public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<St
 	public void record(FlowEvent<String,?> event, String moduleName, String flowName, int timeToLiveDays) 
 	{
         byte[] bytes = (byte[])this.serialiserFactory.getDefaultSerialiser().serialise(event.getPayload());
-        ReplayEvent replayEvent = new ReplayEvent(event.getIdentifier(), bytes, moduleName, flowName, timeToLiveDays);
+
+		String eventAsString = null;
+
+		if(event.getPayload() != null)
+		{
+			eventAsString = event.getPayload().toString();
+		}
+
+        HibernateReplayEvent replayEvent = new HibernateReplayEvent(event.getIdentifier(), bytes
+				, eventAsString, moduleName, flowName, timeToLiveDays);
         
         this.replayDao.saveOrUpdate(replayEvent);
 	}

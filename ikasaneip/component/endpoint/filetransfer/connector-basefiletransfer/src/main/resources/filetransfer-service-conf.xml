@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+
+    <bean id="transactionalResourceCommandDAO" class="org.ikasan.connector.base.command.HibernateTransactionalResourceCommandDAO">
+        <constructor-arg name="sessionFactory" ref="transactionalResourceCommandHibernateSessionFactory"/>
+    </bean>
+
+    <bean id="transactionalResourceCommandHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/connector/TransactionalResourceCommand.hbm.xml</value>
+                <value>org/ikasan/connector/XidImpl.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="fileChunkDao" class="org.ikasan.connector.util.chunking.model.dao.HibernateFileChunkDao">
+        <constructor-arg name="sf" ref="fileChunkDaoHibernateSessionFactory"/>
+    </bean>
+
+    <bean id="fileChunkDaoHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/connector/util/chunking/model/FileChunk.hbm.xml</value>
+                <value>org/ikasan/connector/util/chunking/model/FileChunkHeader.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="baseFileTransferDao" class="org.ikasan.connector.basefiletransfer.outbound.persistence.HibernateBaseFileTransferDaoImpl">
+        <constructor-arg name="sessionFactory" ref="baseFileTransferSessionFactory"/>
+    </bean>
+
+    <bean id="baseFileTransferSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/connector/basefiletransfer/persistence/FileFilter.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+</beans>

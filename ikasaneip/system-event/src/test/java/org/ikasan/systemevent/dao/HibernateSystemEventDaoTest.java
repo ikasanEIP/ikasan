@@ -92,7 +92,7 @@ public class HibernateSystemEventDaoTest
      */
     @Test 
     @DirtiesContext
-    @Ignore
+//    @Ignore
     public void test_success_no_results()
     {
     	systemEventDao.setBatchHousekeepDelete(true);

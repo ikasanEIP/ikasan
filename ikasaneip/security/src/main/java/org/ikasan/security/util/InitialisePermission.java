@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.User;
@@ -55,7 +55,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class InitialisePermission implements InitializingBean
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(InitialisePermission.class);
+    private static Logger logger = LoggerFactory.getLogger(InitialisePermission.class);
 
     /** standard user role text */
     private static String ROLE_USER = "ROLE_USER";
@@ -117,18 +117,6 @@ public class InitialisePermission implements InitializingBean
     }
 
     /**
-     * Create the authority if it doesn't already exist
-     * @param authority
-     */
-    protected void createAuthority(Authority authority)
-    {
-        if(!this.userService.getAuthorities().contains(authority))
-        {
-            this.userService.createAuthority(authority);
-        }
-    }
-
-    /**
      * Set root admin user
      * @param rootAdminUser
      */
@@ -152,8 +140,8 @@ public class InitialisePermission implements InitializingBean
         if(this.rootAdminUser != null)
         {
             StringBuilder logMsg = new StringBuilder();
-            createAuthority(USER_AUTHORITY);
-            createAuthority(ADMIN_AUTHORITY);
+          //  createAuthority(USER_AUTHORITY);
+          //  createAuthority(ADMIN_AUTHORITY);
 
             User _user = userDao.getUser(rootAdminUser.getUsername());
             if(_user == null)
@@ -167,39 +155,12 @@ public class InitialisePermission implements InitializingBean
             }
 
             // side step security to permission this user
-            _user.grantAuthority(USER_AUTHORITY);
-            _user.grantAuthority(ADMIN_AUTHORITY);
+           // _user.grantAuthority(USER_AUTHORITY);
+           // _user.grantAuthority(ADMIN_AUTHORITY);
             userDao.save(_user);
             logger.info(logMsg.toString() + " root admin user[" + rootAdminUser.getUsername() + "] and permissioned.");
         }
 
-        if(this.moduleAdminUser != null)
-        {
-            StringBuilder logMsg = new StringBuilder();
-            createAuthority(USER_AUTHORITY);
 
-            Authority userModuleAuthority = new Authority("USER_" + moduleName, moduleName + " user perms.");
-            createAuthority(userModuleAuthority);
-            Authority adminModuleAuthority = new Authority("ADMIN_" + moduleName, moduleName + " admin perms.");
-            createAuthority(adminModuleAuthority);
-
-            User _user = userDao.getUser(moduleAdminUser.getUsername());
-            if(_user == null)
-            {
-                _user = moduleAdminUser;
-                logMsg.append("Created ");
-            }
-            else
-            {
-                logMsg.append("Updated ");
-            }
-
-            // side step security to permission this user
-            _user.grantAuthority(USER_AUTHORITY);
-            _user.grantAuthority(userModuleAuthority);
-            _user.grantAuthority(adminModuleAuthority);
-            userDao.save(_user);
-            logger.info(logMsg.toString() + " module admin user[" + moduleAdminUser.getUsername() + "] and permissioned.");
-        }
     }
 }

@@ -40,21 +40,22 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -75,8 +76,8 @@ public class HibernateErrorManagementDaoTest
     @Resource
     ErrorManagementDao errorManagementDao;
     
-    @Resource 
-    ErrorReportingServiceDao errorReportingServiceDao;
+    @Resource
+	ErrorReportingServiceDao errorReportingServiceDao;
 
     Exception exception = new Exception("error message");
 
@@ -144,9 +145,9 @@ public class HibernateErrorManagementDaoTest
     @Test
     public void test_save_find_and_delete_error_occurrence()
     {
-    	ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
-    	ErrorOccurrence eo1 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
-    	ErrorOccurrence eo2 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo1 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo2 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     	
     	this.errorReportingServiceDao.save(eo);
     	this.errorReportingServiceDao.save(eo1);
@@ -175,9 +176,9 @@ public class HibernateErrorManagementDaoTest
     @Test
     public void test_count_error_occurrence_for_module()
     {
-    	ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
-    	ErrorOccurrence eo1 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
-    	ErrorOccurrence eo2 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo1 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrenceImpl eo2 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     	
     	this.errorReportingServiceDao.save(eo);
     	this.errorReportingServiceDao.save(eo1);
@@ -186,6 +187,28 @@ public class HibernateErrorManagementDaoTest
     	System.out.println(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)));
     	
     	Assert.assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success()
+    {
+        List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+
+            this.errorReportingServiceDao.save(eo);
+
+            errorOccurrences.add(eo);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.errorManagementDao.updateAsHarvested(errorOccurrences);
+
+        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
     }
     
 }

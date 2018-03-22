@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="flowConfiguration.xsd"/>
+
+  <xs:element name="moduleConfiguration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="flowConfigurations" maxOccurs="1" minOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="flowConfigurations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="flowConfiguration" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

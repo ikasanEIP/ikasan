@@ -40,11 +40,12 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.apache.log4j.Logger;
+import org.ikasan.exclusion.model.ExclusionEventImpl;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.exclusion.dao.BlackListDao;
-import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.exclusion.model.BlackListEvent;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -58,7 +59,7 @@ import org.ikasan.spec.serialiser.Serialiser;
 public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<String,?>, String>
 {
 	/** logger instance */
-    private static Logger logger = Logger.getLogger(ExclusionServiceDefaultImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ExclusionServiceDefaultImpl.class);
     
     /** module name */
     String moduleName;
@@ -196,7 +197,9 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
      */
     protected ExclusionEvent newExclusionEvent(String identifier, byte[] eventBytes, String errorUri)
     {
-        return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri);
+        return new ExclusionEventImpl(moduleName, flowName, identifier, eventBytes, errorUri);
 
     }
+
+
 }

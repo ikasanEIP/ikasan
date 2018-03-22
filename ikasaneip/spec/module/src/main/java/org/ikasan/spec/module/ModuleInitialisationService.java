@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.module;
 
+import java.util.List;
+
 /**
  * Marker interface identifying service responsible for <code>Module</code> Initialisation
  * 
@@ -48,5 +50,7 @@ package org.ikasan.spec.module;
  */
 public interface ModuleInitialisationService
 {
-    // This is a market interface
+    public void register(Module module);
+
+    public void register(List<Module> modules);
 }

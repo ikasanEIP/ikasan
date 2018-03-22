@@ -40,15 +40,14 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -62,6 +61,12 @@ public interface ErrorManagementDao
 	 * @param errorOccurrenceAction
 	 */
 	public void saveErrorOccurrenceAction(ErrorOccurrenceAction errorOccurrenceAction);
+
+	/**
+	 *
+	 * @param errorOccurrence
+     */
+	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence);
 	
 	/**
 	 * 
@@ -140,7 +145,7 @@ public interface ErrorManagementDao
 	 * @return
 	 */
     public List<ErrorOccurrence> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate);
+															Date startDate, Date endDate);
     /**
      * 
      * @return
@@ -148,7 +153,7 @@ public interface ErrorManagementDao
     public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions();
     
     /**
-     * 
+     *
      * @param moduleName
      * @return
      */
@@ -158,4 +163,21 @@ public interface ErrorManagementDao
 	 * House keep associated entities.
      */
 	public void housekeep(final Integer numToHousekeep);
+
+	/**
+	 * Get harvestable records
+	 *
+	 * @param harvestingBatchSize
+	 * @return
+     */
+	public List<ErrorOccurrence> getHarvestableRecords(final int harvestingBatchSize);
+
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<ErrorOccurrence> events);
+
 }

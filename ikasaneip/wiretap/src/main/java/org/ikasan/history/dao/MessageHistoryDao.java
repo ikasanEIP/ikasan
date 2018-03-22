@@ -181,4 +181,11 @@ public interface MessageHistoryDao
      */
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
 
+    /**
+     * Update entity as harvested.
+     *
+     * @param events
+     */
+    public void updateAsHarvested(List<FlowInvocationMetric> events);
+
 }

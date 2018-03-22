@@ -40,34 +40,39 @@
  */
 package org.ikasan.wiretap.service;
 
-import java.util.Date;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Default implementation of the <code>WiretapService</code>
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean, HousekeepService
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
+        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
 
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(WiretapServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(WiretapServiceImpl.class);
 
-    /** Optional service configuration for the wiretap service */
+    /** Optional service configuration for the persistence service */
     private WiretapServiceConfiguration wiretapServiceConfiguration;
 
     /**
@@ -141,6 +146,21 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
             payloadContent);
     }
 
+    @Override
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, Set<String> moduleFlow, Set<String> componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
+    {
+        if (pageNo < 0)
+        {
+            throw new IllegalArgumentException("pageNo must be >= 0");
+        }
+        if (pageSize < 1)
+        {
+            throw new IllegalArgumentException("pageSize must be > 0");
+        }
+        return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate,
+                payloadContent);
+    }
+
     /**
      * Get a wireTap event given its Id
      * 
@@ -170,11 +190,11 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
      * @param componentName - The component this FlowEvent is currently in
      * @param moduleName - The module this FlowEvent is currently in
      * @param flowName - The Flow this FlowEvent is currently in
-     * @param timeToLive - Time to live for the wiretap
+     * @param timeToLive - Time to live for the persistence
      */
     public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
-        long expiry = System.currentTimeMillis() + (timeToLive * 60000);
+        long expiry = System.currentTimeMillis() + (timeToLive * 60000l);
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
         this.wiretapDao.save(wiretapEvent);
         if (logger.isDebugEnabled())
@@ -229,15 +249,45 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.spec.wiretap.WiretapService#housekeep()
+     * @see org.ikasan.spec.persistence.WiretapService#housekeep()
      */
 	@Override
     public void housekeep()
     {
-    	logger.info("wiretap housekeep called");
+    	logger.info("persistence housekeep called");
     	long startTime = System.currentTimeMillis();
         wiretapDao.deleteAllExpired();
         long endTime = System.currentTimeMillis();
-        logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
+        logger.info("persistence housekeep completed in ["+(endTime-startTime)+" ms]");
+    }
+
+    @Override
+    public List<WiretapEvent> harvest(int transactionBatchSize)
+    {
+        return this.wiretapDao.getHarvestableRecords(transactionBatchSize);
+    }
+
+    @Override
+    public boolean harvestableRecordsExist()
+    {
+        return true;
+    }
+
+    @Override
+    public void save(WiretapEvent event)
+    {
+        this.wiretapDao.save(event);
+    }
+
+    @Override
+    public void saveHarvestedRecord(WiretapEvent harvestedRecord)
+    {
+        this.save(harvestedRecord);
+    }
+
+    @Override
+    public void updateAsHarvested(List<WiretapEvent> events)
+    {
+        this.wiretapDao.updateAsHarvested(events);
     }
 }

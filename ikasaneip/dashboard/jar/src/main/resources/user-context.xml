@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+	<bean id="userNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="user"/>
+        <constructor-arg>
+            <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="userPanel"/>
+                   <constructor-arg ref="userPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="userManagementViewComponentContainer"/>
+    </bean>
+    
+    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+    </bean>
+    
+    <bean id="userManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+		<constructor-arg value="false"/>
+    </bean>
+    
+    <bean id="associatedPrincipalItemClickListener" class="org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener" scope="session">
+		<constructor-arg ref="principalManagementPanel"/>
+    </bean>   
+    
+</beans>

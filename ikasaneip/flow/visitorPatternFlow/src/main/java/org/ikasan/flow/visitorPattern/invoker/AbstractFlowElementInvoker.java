@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.FlowElementInvocationFactory;
 import org.ikasan.spec.flow.*;
 
@@ -54,7 +54,7 @@ import java.util.List;
 public abstract class AbstractFlowElementInvoker
 {
     /** logger instance */
-    private static final Logger logger = Logger.getLogger(AbstractFlowElementInvoker.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractFlowElementInvoker.class);
 
     protected Boolean ignoreContextInvocation = false;
     protected List<FlowInvocationContextListener> flowInvocationContextListeners;

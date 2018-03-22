@@ -42,18 +42,16 @@ package org.ikasan.error.reporting.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.junit.Assert;
 
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -130,14 +128,14 @@ public class ErrorCategorisationDaoTest
     @Test
     public void test_save_and_find_categorised_error()
     {
-    	ErrorOccurrence errorOccurrence = new ErrorOccurrence
+    	ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl
     			("moduleName", "flowName", "flowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
     	errorOccurrence.setAction("Retry");
 
         errorReportingServiceDao.save(errorOccurrence);
         
-        errorOccurrence = new ErrorOccurrence
+        errorOccurrence = new ErrorOccurrenceImpl
     			("moduleName", "anotherFlowName", "anotherFlowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         errorOccurrence.setAction("Retry");

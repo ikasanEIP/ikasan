@@ -48,50 +48,33 @@ import javax.jms.MapMessage;
 import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
+public class JmsMapMessageConverter extends AbstractJmsMessageConverter<MapMessage,MapMessage> implements Converter<MapMessage, MapMessage>
 {
     
-    public JmsMapMessageDefaultImpl convert(MapMessage message)
+    public MapMessage convert(MapMessage message)
     {
-    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
-    	
     	try
     	{
-	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    //	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(message.getJMSType());
-	    	    	
-	    	Enumeration<String> names  = message.getPropertyNames();
-	    	
+			MapMessage mapMessage = super.populateMetaData(message);
+
+			Enumeration<String> names  = message.getMapNames();
 	    	while(names.hasMoreElements())
 	    	{
 	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+				mapMessage.setObject(name, message.getObject(name));
 	    	}
-	    	
-	    	names  = message.getMapNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
-	    	}
+
+			return mapMessage;
     	}
     	catch (JMSException e)
     	{
     		throw new RuntimeException(e);
     	}
     	
-    	return jmsMapMessageDefault;
     }
+
+	public MapMessage getTargetJmsMessage()
+	{
+		return new JmsMapMessageDefaultImpl();
+	}
 }

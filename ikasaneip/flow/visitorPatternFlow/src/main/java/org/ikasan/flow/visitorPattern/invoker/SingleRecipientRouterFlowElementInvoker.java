@@ -53,6 +53,12 @@ import org.ikasan.spec.flow.*;
 public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<SingleRecipientRouter>
 {
     @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.SINGLE_RECIPIENT_ROUTER;
+    }
+
+    @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<SingleRecipientRouter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

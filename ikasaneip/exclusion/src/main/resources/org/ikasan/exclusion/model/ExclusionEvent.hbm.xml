@@ -50,7 +50,7 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
+    <class name="org.ikasan.exclusion.model.ExclusionEventImpl" table="ExclusionEvent">
 
         <id name="id" type="long" column="Id">
             <generator class="native" />
@@ -85,6 +85,12 @@
                   type="java.lang.String"
                   column="ErrorUri"
                   not-null="false" />
+
+        <property name="harvested"
+                  type="boolean"
+                  column="Harvested"
+                  not-null="true" />
+
     </class>
 
 </hibernate-mapping>

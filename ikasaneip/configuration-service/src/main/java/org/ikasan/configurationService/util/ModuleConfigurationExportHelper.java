@@ -1,6 +1,6 @@
 package org.ikasan.configurationService.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -12,7 +12,7 @@ import org.ikasan.topology.model.Module;
  */
 public class ModuleConfigurationExportHelper extends ConfigurationHelper
 {
-    private Logger logger = Logger.getLogger(ModuleConfigurationExportHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleConfigurationExportHelper.class);
 
     private static final String XML_TAG = "<?xml version=\"1.0\"?>";
     private static final String NON_EMBEDED_START_TAG = "<moduleConfiguration xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +

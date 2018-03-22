@@ -40,32 +40,35 @@
  */
 package org.ikasan.security.model;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import java.util.Date;
 import java.util.Set;
 
-import org.springframework.security.core.GrantedAuthority;
-
 /**
  * @author Ikasan Development Team
- *
  */
 public class Policy implements GrantedAuthority, Comparable<Policy>
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3421453948503155354L;
+     *
+     */
+    private static final long serialVersionUID = -3421453948503155354L;
 
-	private Long id;
+    private Long id;
     private String name = "";
     private String description = "";
     private PolicyLink policyLink;
     private Set<Role> roles;
 
-    /** The data time stamp when an instance was first created */
+    /**
+     * The data time stamp when an instance was first created
+     */
     private Date createdDateTime;
 
-    /** The data time stamp when an instance was last updated */
+    /**
+     * The data time stamp when an instance was last updated
+     */
     private Date updatedDateTime;
 
     /**
@@ -73,6 +76,16 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
      */
     public Policy()
     {
+        long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+    }
+
+
+    public Policy(String name, String description)
+    {
+        this.description = description;
+        this.name = name;
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
@@ -159,142 +172,113 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
     }
 
     @Override
-	public String getAuthority() 
+    public String getAuthority()
     {
-		return this.name;
-	}
+        return this.name;
+    }
 
-	/**
-	 * @return the policyLink
-	 */
-	public PolicyLink getPolicyLink()
-	{
-		return policyLink;
-	}
+    /**
+     * @return the policyLink
+     */
+    public PolicyLink getPolicyLink()
+    {
+        return policyLink;
+    }
 
-	/**
-	 * @param policyLink the policyLink to set
-	 */
-	public void setPolicyLink(PolicyLink policyLink)
-	{
-		this.policyLink = policyLink;
-	}
+    /**
+     * @param policyLink the policyLink to set
+     */
+    public void setPolicyLink(PolicyLink policyLink)
+    {
+        this.policyLink = policyLink;
+    }
 
-	/**
-	 * @return the roles
-	 */
-	public Set<Role> getRoles()
-	{
-		return roles;
-	}
+    /**
+     * @return the roles
+     */
+    public Set<Role> getRoles()
+    {
+        return roles;
+    }
 
-	/**
-	 * @param roles the roles to set
-	 */
-	public void setRoles(Set<Role> roles)
-	{
-		this.roles = roles;
-	}
+    /**
+     * @param roles the roles to set
+     */
+    public void setRoles(Set<Role> roles)
+    {
+        this.roles = roles;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((policyLink == null) ? 0 : policyLink.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Policy other = (Policy) obj;
-		if (createdDateTime == null)
-		{
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (name == null)
-		{
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (policyLink == null)
-		{
-			if (other.policyLink != null)
-				return false;
-		} else if (!policyLink.equals(other.policyLink))
-			return false;
-		if (updatedDateTime == null)
-		{
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
-		return true;
-	}
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Policy other = (Policy) obj;
+        if (name == null)
+        {
+            if (other.name != null)
+            {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name))
+        {
+            return false;
+        }
+        return true;
+    }
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "Policy [id=" + id + ", name=" + name + ", description="
-				+ description + ", policyLink=" + policyLink + ", createdDateTime=" + createdDateTime
-				+ ", updatedDateTime=" + updatedDateTime + "]";
-	}
+         * @see java.lang.Object#toString()
+         */
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(Policy policy)
-	{
-		
-		if(policy.hashCode() == this.hashCode())
-		{
-			return 0;
-		}
-		else
-		{
-			return policy.hashCode() - this.hashCode();
-		}
-	}
-	
+    @Override
+    public String toString()
+    {
+        return "Policy [id=" + id + ", name=" + name + ", description="
+                + description + ", policyLink=" + policyLink + ", createdDateTime=" + createdDateTime
+                + ", updatedDateTime=" + updatedDateTime + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(Policy policy)
+    {
+
+        if (policy.hashCode() == this.hashCode())
+        {
+            return 0;
+        }
+        else
+        {
+            return policy.hashCode() - this.hashCode();
+        }
+    }
+
 }

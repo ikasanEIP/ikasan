@@ -40,7 +40,7 @@
  */
 package org.ikasan.monitor;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.management.ManagedService;
@@ -60,7 +60,7 @@ import java.util.concurrent.ExecutorService;
 public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<MonitorConfiguration>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(DefaultMonitorImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultMonitorImpl.class);
 
     // executor service for thread dispatching
     private final ExecutorService executorService;

@@ -46,8 +46,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
@@ -55,7 +55,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -80,10 +79,10 @@ public class ErrorReportingManagementServiceImplTest {
     ErrorManagementDao errorManagementDao;
 
     @Resource
-    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao;
 
     @Resource 
-    ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
+    ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
 
     List<String> uris;
 
@@ -92,7 +91,7 @@ public class ErrorReportingManagementServiceImplTest {
         uris = new ArrayList<String>();
 
         for (int i = 0; i < 1000; i++) {
-            ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail",
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail",
                     "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
 
             errorReportingServiceDao.save(eo);

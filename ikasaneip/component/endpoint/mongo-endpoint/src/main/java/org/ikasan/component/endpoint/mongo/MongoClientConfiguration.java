@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.mongo;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ import java.util.Map;
 public class MongoClientConfiguration
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(MongoClientConfiguration.class);
+    private static Logger logger = LoggerFactory.getLogger(MongoClientConfiguration.class);
 
     /** Mongo Driver Properties */
     protected List<String> connectionUrls = new ArrayList<String>();

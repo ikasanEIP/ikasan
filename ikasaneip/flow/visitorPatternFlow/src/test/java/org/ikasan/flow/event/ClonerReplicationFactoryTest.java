@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.event;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.event.EventFactory;

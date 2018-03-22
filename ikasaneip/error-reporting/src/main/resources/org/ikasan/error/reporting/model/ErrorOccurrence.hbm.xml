@@ -50,7 +50,7 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.error.reporting.model.ErrorOccurrence" table="ErrorOccurrence">
+    <class name="org.ikasan.error.reporting.model.ErrorOccurrenceImpl" table="ErrorOccurrence">
 
         <id name="uri" type="java.lang.String" column="Uri">
             <generator class="assigned" />
@@ -135,6 +135,11 @@
                   type="long"
                   column="UserActionTimestamp"
                   not-null="false" />
+
+        <property name="harvested"
+                  type="boolean"
+                  column="Harvested"
+                  not-null="true" />
                   
     </class>
 

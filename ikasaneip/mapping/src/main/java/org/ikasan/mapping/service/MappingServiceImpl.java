@@ -1,6 +1,6 @@
 package org.ikasan.mapping.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.ikasan.mapping.util.SetProducer;
@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 16/05/2017.
+ * Created by Ikasan Development Team on 16/05/2017.
  */
 public class MappingServiceImpl implements MappingService<MappingConfigurationServiceConfiguration>
 {
-    private Logger logger = Logger.getLogger(MappingServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingServiceImpl.class);
 
     protected final MappingConfigurationDao dao;
     protected MappingConfigurationServiceConfiguration configuration;

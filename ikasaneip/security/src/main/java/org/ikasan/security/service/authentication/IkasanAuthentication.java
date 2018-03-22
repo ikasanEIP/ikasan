@@ -41,10 +41,11 @@
 package org.ikasan.security.service.authentication;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.springframework.security.core.Authentication;
@@ -58,8 +59,14 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class IkasanAuthentication implements Authentication
 {
-	private Logger logger = Logger.getLogger(IkasanAuthentication.class);
-	 
+    private static Logger logger = LoggerFactory.getLogger(IkasanAuthentication.class);
+
+    public static final String MODULE = "Module";
+	public static final String MAPPING_CONFIGURATION = "Mapping Configuration";
+	public static final String FLOW = "Flow";
+	public static final String BUSINESS_STREAM = "Business Stream";
+
+
 	private boolean isAuthenticated;
 	private List<GrantedAuthority> authorities;
 	private Principal principal;
@@ -116,7 +123,8 @@ public class IkasanAuthentication implements Authentication
     @Override
     public Object getDetails()
     {
-    	throw new UnsupportedOperationException();
+    	return null;
+        //throw new UnsupportedOperationException();
     }
 
 	/* (non-Javadoc)
@@ -208,4 +216,70 @@ public class IkasanAuthentication implements Authentication
     	
     	return false;
     }
+
+	/**
+	 * Get linked module ids.
+	 *
+	 * @return
+     */
+    public List<Long> getLinkedModuleIds()
+	{
+		return this.getLinkedIds(MODULE);
+	}
+
+	/**
+	 * Get linked flow ids.
+	 *
+	 * @return
+     */
+	public List<Long> getLinkedFlowIds()
+	{
+		return this.getLinkedIds(FLOW);
+	}
+
+	/**
+	 * Get linked business stream ids.
+	 *
+	 * @return
+     */
+	public List<Long> getLinkedBusinessStreamIds()
+	{
+		return this.getLinkedIds(BUSINESS_STREAM);
+	}
+
+	/**
+	 * get linked mapping configuration ids.
+	 *
+	 * @return
+     */
+	public List<Long> getLinkedMappingConfigurationIds()
+	{
+		return this.getLinkedIds(MAPPING_CONFIGURATION);
+	}
+
+	/**
+	 * Helper method to get liked ids.
+	 *
+	 * @param type
+	 * @return
+     */
+	private List<Long> getLinkedIds(String type)
+	{
+		ArrayList<Long> id = new ArrayList<>();
+
+		for(GrantedAuthority grantedAuthority: this.getAuthorities())
+		{
+			PolicyLink policyLink = ((Policy)grantedAuthority).getPolicyLink();
+
+			if(policyLink != null)
+			{
+				if(policyLink.getPolicyLinkType().getName().equals(type))
+				{
+					id.add(policyLink.getTargetId());
+				}
+			}
+		}
+
+		return id;
+	}
 }

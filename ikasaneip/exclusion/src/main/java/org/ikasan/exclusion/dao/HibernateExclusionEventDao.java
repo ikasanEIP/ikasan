@@ -40,9 +40,7 @@
  */
 package org.ikasan.exclusion.dao;
 
-import java.util.Date;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -51,10 +49,16 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.exclusion.model.ExclusionEventImpl;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Hibernate implementation of the ExclusionEventDao.
@@ -63,9 +67,14 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateExclusionEventDao extends HibernateDaoSupport
         implements ExclusionEventDao<String, ExclusionEvent>
 {
+    public static final String EVENT_IDS = "eventIds";
+
     /** batch delete statement */
-    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
-    private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEvent s where s.errorUri = :errorUri";
+    private static final String DELETE_QUERY = "delete ExclusionEventImpl s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
+    private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEventImpl s where s.errorUri = :errorUri";
+
+    public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvested = 1 " +
+        " where w.id in(:" + EVENT_IDS + ")";
 
 
     @Override
@@ -95,7 +104,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     @Override
     public ExclusionEvent find(String moduleName, String flowName, String identifier)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
         criteria.add(Restrictions.eq("moduleName", moduleName));
         criteria.add(Restrictions.eq("flowName", flowName));
         criteria.add(Restrictions.eq("identifier", identifier));
@@ -110,19 +119,19 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#findAll()
 	 */
 	@Override
 	public List<ExclusionEvent> findAll()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
 		criteria.addOrder(Order.desc("timestamp"));		
 		
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#delete(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#delete(java.lang.String)
 	 */
 	@Override
 	public void delete(final String errorUri)
@@ -141,14 +150,14 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
 	 */
 	@Override
 	public List<ExclusionEvent> find(List<String> moduleName,
 			List<String> flowName, Date startDate, Date endDate,
 			String identifier, int size)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
 		
 		if(moduleName != null && moduleName.size() > 0)
 		{
@@ -201,7 +210,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             public Object doInHibernate(Session session) throws HibernateException
             {
 
-                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
 
                 if(moduleName != null && moduleName.size() > 0)
                 {
@@ -242,15 +251,67 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.lang.String)
 	 */
 	@Override
 	public ExclusionEvent find(String errorUri)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
         criteria.add(Restrictions.eq("errorUri", errorUri));
 
         return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
+    public List<ExclusionEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    {
+        return (List<ExclusionEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
+                criteria.add(Restrictions.eq("harvested", false));
+                criteria.setMaxResults(housekeepingBatchSize);
+                criteria.addOrder(Order.asc("timestamp"));
+
+                List<ExclusionEvent> exclusionEvents = criteria.list();
+
+                return exclusionEvents;
+            }
+        });
+    }
+
+    @Override
+    public void deleteAllExpired()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void updateAsHarvested(List<ExclusionEvent> events)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                List<Long> exclusionEventIds = new ArrayList<Long>();
+
+                for(ExclusionEvent event: events)
+                {
+                    exclusionEventIds.add(event.getId());
+                }
+
+                List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);
+
+                for(List<Long> eventIds: partitionedIds)
+                {
+                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameterList(EVENT_IDS, eventIds);
+                    query.executeUpdate();
+                }
+
+                return null;
+            }
+        });
+    }
 }

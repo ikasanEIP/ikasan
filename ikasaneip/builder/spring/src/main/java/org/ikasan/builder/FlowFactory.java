@@ -40,21 +40,17 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.history.listener.MessageHistoryContextListener;
-import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -62,6 +58,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.monitor.Monitor;
@@ -70,12 +67,17 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
@@ -85,7 +87,7 @@ import org.springframework.context.ApplicationContextAware;
 public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 {
  	/** logger */
-    private static Logger logger = Logger.getLogger(FlowFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowFactory.class);
 
     /** name of the flow's module owner */
     String moduleName;
@@ -340,7 +342,22 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         if(recoveryManager == null)
         {
-            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName,  consumer.getFlowComponent(), exclusionService, errorReportingService);
+            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName);
+        }
+
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(consumer.getFlowComponent());
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
         }
 
         if(exceptionResolver != null)

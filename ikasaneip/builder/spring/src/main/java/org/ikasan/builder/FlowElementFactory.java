@@ -40,7 +40,8 @@
  */
 package org.ikasan.builder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -49,7 +50,6 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
@@ -60,7 +60,7 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -73,7 +73,7 @@ import java.util.concurrent.Executors;
 public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<FlowElement<?>>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(FlowElementFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowElementFactory.class);
 
     /** name of the flow element being instantiated */
     String name;
@@ -82,14 +82,17 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     COMPONENT component;
 
     /** flow element multiple transitions */
-    Map<String,FlowElement<?>> transitions;
+    LinkedHashMap<String,FlowElement<?>> transitions;
     
     /** flow element single transition */
     FlowElement<?> transition;
-    
+
     /** identifier if the component supported ConfiguredResource */
     String configuredResourceId;
-    
+
+    /** description */
+    String description;
+
     /** The configuration */
     CONFIGURATION configuration;
 
@@ -145,7 +148,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
      * Setter for transitions.
      * @param transitions
      */
-    public void setTransitions(Map<String,FlowElement<?>> transitions)
+    public void setTransitions(LinkedHashMap<String,FlowElement<?>> transitions)
     {
         this.transitions = transitions;
     }
@@ -191,10 +194,14 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         this.ignoreContextInvocation = ignoreContextInvocation;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     /*
-     * (non-Javadoc)
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
+         * (non-Javadoc)
+         * @see org.springframework.beans.factory.FactoryBean#getObject()
+         */
     public FlowElement<?> getObject()
     {
         // configure component as required
@@ -274,37 +281,21 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         {
             flowElementInvoker = new BrokerFlowElementInvoker();
         }
-        else if(component instanceof Router)
-        {
-            if(flowElementInvokerConfiguration == null)
-            {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-            }
-            else
-            {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                {
-                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                }
-            }
-
-            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
-        }
         else if(component instanceof MultiRecipientRouter)
         {
             if(flowElementInvokerConfiguration == null)
             {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                flowElementInvokerConfiguration = new MultiRecipientRouterInvokerConfiguration();
             }
             else
             {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterInvokerConfiguration) )
                 {
                     throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
                 }
             }
 
-            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterInvokerConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof SingleRecipientRouter)
         {

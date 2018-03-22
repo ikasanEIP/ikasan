@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.rest.submit.ResubmissionApplication;
 import org.ikasan.spec.configuration.Configuration;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ConfigurationApplication extends IkasanRestApplication
 {
 
-private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
+private static Logger logger = LoggerFactory.getLogger(ResubmissionApplication.class);
 	
 	@Autowired
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
@@ -45,7 +45,7 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	}
 
 	/**
-	 * TODO: work out how to get annotation security working.
+	 * Create component configuration.
 	 * 
 	 * @param context
 	 * @param moduleName
@@ -157,7 +157,7 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	}
 	
 	/**
-	 * TODO: work out how to get annotation security working.
+	 * Create the configuration for a flow
 	 * 
 	 * @param context
 	 * @param moduleName
@@ -206,4 +206,58 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 		
 		return Response.ok("Configuration created!").build();
 	}
+
+    /**
+     * Create invoker configuration.
+	 *
+     * @param context
+	 * @param moduleName
+	 * @param flowName
+	 * @return
+     */
+    @GET
+    @Path("/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createInvokerConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
+                                        @PathParam("componentName") String componentName)
+    {
+        if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
+        {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+                .entity("You are not authorised to access this resource.").build());
+        }
+
+        Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        Flow flow = module.getFlow(flowName);
+
+        FlowElement<?> flowElement = flow.getFlowElement(componentName);
+
+        Configuration configuration = null;
+
+        if(flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
+        {
+            ConfiguredResource configuredResource = (ConfiguredResource)flowElement.getFlowElementInvoker();
+
+            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+
+            if(configuration == null)
+            {
+                configuration = this.configurationManagement.createConfiguration(configuredResource);
+                this.configurationManagement.saveConfiguration(configuration);
+            }
+            else
+            {
+                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
+                    .entity("This configuration alread exists!").build());
+            }
+        }
+        else
+        {
+            throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
+                .entity("This component is not configurable!").build());
+        }
+
+        return Response.ok("Configuration created!").build();
+    }
 }

@@ -90,6 +90,10 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+        <property name="harvested"
+                type="boolean"
+                column="Harvested"
+                not-null="true" />
 
   </class>
 

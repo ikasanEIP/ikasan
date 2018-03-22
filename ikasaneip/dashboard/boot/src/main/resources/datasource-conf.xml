@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+       ">
+
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="${datasource.dialect}"/>
+        <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
+    </util:map>
+
+    <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${datasource.driver-class-name}"/>
+        <property name="url" value="${datasource.url}" />
+        <property name="username" value="${datasource.username}" />
+        <property name="password" value="${datasource.password}" />
+        <property name="initialSize" value="${datasource.min.pool.size}" />
+        <property name="maxActive" value="${datasource.max.pool.size}" />
+    </bean>
+
+
+    <bean id="ikasanXADatasource" name="ikasan.xads" primary="true" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${datasource.driver-class-name}"/>
+        <property name="url" value="${datasource.url}" />
+        <property name="username" value="${datasource.username}" />
+        <property name="password" value="${datasource.password}" />
+        <property name="initialSize" value="${datasource.min.pool.size}" />
+        <property name="maxActive" value="${datasource.max.pool.size}" />
+    </bean>
+
+</beans>

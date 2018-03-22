@@ -41,6 +41,7 @@
 package org.ikasan.spec.flow;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -70,6 +71,7 @@ public interface FlowConfiguration
      */
     public List<ManagedService> getManagedServices();
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
+    public Map<String,ConfiguredResource> getFlowElementInvokerConfiguredResources();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
     public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();

@@ -43,13 +43,9 @@ package org.ikasan.configurationService.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.converters.IntegerConverter;
-import org.apache.commons.beanutils.converters.LongConverter;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
+import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationException;
 import org.ikasan.spec.configuration.ConfigurationFactory;
@@ -120,9 +116,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         {
             throw new IllegalArgumentException("dynamicConfigurationDao cannot be 'null'");
         }
-        // override some default converters to ensure null is default assignments
-        ConvertUtils.register(new IntegerConverter(null), Integer.class);
-        ConvertUtils.register(new LongConverter(null), Long.class);
     }
 
     /**
@@ -154,16 +147,12 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
             {
                 for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
                 {
-                    BeanUtils.setProperty(runtimeConfiguration, persistedConfigurationParameter.getName(),
-                        persistedConfigurationParameter.getValue());
+                    ReflectionUtils.setProperty( runtimeConfiguration, persistedConfigurationParameter.getName(),
+                            persistedConfigurationParameter.getValue() );
                 }
                 configuredResource.setConfiguration(runtimeConfiguration);
             }
-            catch (IllegalAccessException e)
-            {
-                throw new ConfigurationException(e);
-            }
-            catch (InvocationTargetException e)
+            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
             {
                 throw new ConfigurationException(e);
             }
@@ -224,21 +213,14 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
                 Object runtimeParameterValue;
                 try
                 {
-                    runtimeParameterValue = PropertyUtils.getProperty(runtimeConfiguration,
-                        persistedConfigurationParameter.getName());
+                    runtimeParameterValue = ReflectionUtils.getProperty( runtimeConfiguration,
+                            persistedConfigurationParameter.getName() );
                 }
-                catch (IllegalAccessException e)
+                catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
                 {
                     throw new ConfigurationException(e);
                 }
-                catch (InvocationTargetException e)
-                {
-                    throw new ConfigurationException(e);
-                }
-                catch (NoSuchMethodException e)
-                {
-                    throw new ConfigurationException(e);
-                }
+
                 if ((runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null)
                         || (runtimeParameterValue != null && !(runtimeParameterValue
                             .equals(persistedConfigurationParameter.getValue()))))

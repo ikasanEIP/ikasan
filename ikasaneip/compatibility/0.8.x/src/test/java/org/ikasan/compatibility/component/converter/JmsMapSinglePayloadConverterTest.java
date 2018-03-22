@@ -40,12 +40,12 @@
  */
 package org.ikasan.compatibility.component.converter;
 
-import junit.framework.Assert;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.jms.JMSException;
@@ -54,7 +54,7 @@ import javax.jms.MapMessage;
 /**
  * Functional unit test cases for
  * <code>JmsMapSinglePayloadConverter</code>.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class JmsMapSinglePayloadConverterTest
@@ -69,7 +69,9 @@ public class JmsMapSinglePayloadConverterTest
         }
     };
 
-    /** mocked mapMessage */
+    /**
+     * mocked mapMessage
+     */
     MapMessage mapMessage = mockery.mock(MapMessage.class);
 
     /**
@@ -89,7 +91,7 @@ public class JmsMapSinglePayloadConverterTest
             }
         });
 
-        Converter<MapMessage,byte[]> converter = new JmsMapSinglePayloadConverter();
+        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
         Assert.assertEquals("payload", new String(converter.convert(mapMessage)));
 
         mockery.assertIsSatisfied();
@@ -115,7 +117,7 @@ public class JmsMapSinglePayloadConverterTest
             }
         });
 
-        Converter<MapMessage,byte[]> converter = new JmsMapSinglePayloadConverter();
+        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
         converter.convert(mapMessage);
 
         mockery.assertIsSatisfied();
@@ -143,7 +145,7 @@ public class JmsMapSinglePayloadConverterTest
             }
         });
 
-        Converter<MapMessage,byte[]> converter = new JmsMapSinglePayloadConverter();
+        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
         converter.convert(mapMessage);
 
         mockery.assertIsSatisfied();
@@ -164,7 +166,7 @@ public class JmsMapSinglePayloadConverterTest
             }
         });
 
-        Converter<MapMessage,byte[]> converter = new JmsMapSinglePayloadConverter();
+        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
         converter.convert(mapMessage);
 
         mockery.assertIsSatisfied();

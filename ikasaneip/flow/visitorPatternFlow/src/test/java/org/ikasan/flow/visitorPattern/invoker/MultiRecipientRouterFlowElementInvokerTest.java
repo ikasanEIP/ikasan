@@ -44,12 +44,14 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -78,7 +80,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private MultiRecipientRouter router = mockery.mock(MultiRecipientRouter.class, "router");
     private ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "replicationFactory");
     private Map payload = mockery.mock(Map.class, "payload");
-    private MultiRecipientRouterConfiguration invokerConfiguration = mockery.mock(MultiRecipientRouterConfiguration.class, "invokerConfiguration");
+    private MultiRecipientRouterInvokerConfiguration invokerConfiguration = mockery.mock(MultiRecipientRouterInvokerConfiguration.class, "invokerConfiguration");
 
     // this is to test the InvocationAware aspect
     interface MultiRecipientRouteInvocationAware extends MultiRecipientRouter, InvocationAware {}
@@ -537,5 +539,13 @@ public class MultiRecipientRouterFlowElementInvokerTest
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_invoker_is_configurable()
+    {
+        FlowElementInvoker invoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, new MultiRecipientRouterInvokerConfiguration());
+
+        Assert.assertTrue("invoker is configurable resource", invoker instanceof ConfiguredResource);
     }
 }

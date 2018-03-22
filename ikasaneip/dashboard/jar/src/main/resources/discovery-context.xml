@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+
+	<bean id="discoveryWindow" class="org.ikasan.dashboard.ui.topology.window.DiscoveryWindow" scope="session">
+        <constructor-arg ref="discoverySchedulerService" />
+        <constructor-arg ref="systemEventService" />
+    </bean>
+
+    <bean id="discoverySchedulerService" class="org.ikasan.dashboard.discovery.DiscoverySchedulerService">
+        <constructor-arg ref="discoveryScheduler" />
+        <constructor-arg ref="discoveryScheduledJobFactory" />
+        <constructor-arg ref="discoveryJob" />
+    </bean>
+
+
+    <bean id="discoveryScheduler"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="discoverySchedulerFactory" />
+        <property name="targetMethod" value="getScheduler" />
+    </bean>
+
+    <bean id="discoverySchedulerFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.SchedulerFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
+    </bean>
+
+    <bean id="discoveryScheduledJobFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.CachingScheduledJobFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
+    </bean>
+
+
+    <bean id="discoveryJob" class="org.ikasan.dashboard.discovery.DiscoveryJob">
+        <constructor-arg value="discoveryJob" />
+        <constructor-arg ref="topologyService" />
+        <constructor-arg ref="systemEventService" />
+    </bean>
+
+
+</beans>

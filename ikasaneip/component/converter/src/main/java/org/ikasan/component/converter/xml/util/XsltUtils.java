@@ -50,7 +50,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -70,7 +70,7 @@ import org.w3c.dom.NodeList;
 public class XsltUtils
 {
     /** Logger instance */
-    private static final Logger logger = Logger.getLogger(XsltUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(XsltUtils.class);
 
     /**
      * Returns string by serializing the specified node set.

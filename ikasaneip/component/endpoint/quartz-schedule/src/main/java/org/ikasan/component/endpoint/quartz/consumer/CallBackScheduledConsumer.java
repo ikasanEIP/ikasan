@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.management.ManagedResource;
 import org.quartz.*;
@@ -56,7 +56,7 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     /**
      * logger
      */
-    private static Logger logger = Logger.getLogger(CallBackScheduledConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(CallBackScheduledConsumer.class);
 
     /**
      * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter

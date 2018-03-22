@@ -42,7 +42,10 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of the FlowElementInvoker for a translator
@@ -50,8 +53,23 @@ import org.ikasan.spec.flow.*;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>
+public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>, ConfiguredResource<TranslatorInvokerConfiguration>
 {
+    /** Logger for this class */
+    private static Logger logger = LoggerFactory.getLogger(TranslatorFlowElementInvoker.class);
+
+    /** configured resource identifer */
+    private String configuredResourceId;
+
+    /** configuration instance for this invoker */
+    TranslatorInvokerConfiguration configuration = new TranslatorInvokerConfiguration();
+
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.TRANSLATOR;
+    }
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
     {
@@ -66,7 +84,14 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
         {
             notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
 
-            translator.translate(flowEvent.getPayload());
+            if(this.configuration.isApplyTranslator())
+            {
+                translator.translate(flowEvent.getPayload());
+            }
+            else
+            {
+                logger.info("Translator " + moduleName + "." + flowName + "." + flowElement.getComponentName() + " not applied on event " + flowEvent.getIdentifier());
+            }
         }
         finally
         {
@@ -83,6 +108,26 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
                     + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
         }
         return flowElement;
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId) {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public TranslatorInvokerConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(TranslatorInvokerConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
 

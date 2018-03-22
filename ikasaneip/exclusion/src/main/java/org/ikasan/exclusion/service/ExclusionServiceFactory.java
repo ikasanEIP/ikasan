@@ -41,7 +41,7 @@
 package org.ikasan.exclusion.service;
 
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
-import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 

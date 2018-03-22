@@ -50,7 +50,8 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
 	<bean id="replayManagementService" class="org.ikasan.replay.service.ReplayManagementServiceImpl">
-		<constructor-arg ref="replayDao" />
+		<constructor-arg name="replayDao" ref="replayDao" />
+		<constructor-arg name="replayAuditDao" ref="replayDao" />
 	</bean>
 	
 	<bean id="replayService" class="org.ikasan.replay.service.ReplayServiceImpl">
@@ -65,6 +66,7 @@
 	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
 		<property name="sessionFactory" ref="replaySessionFactory" />
 	</bean>
+
 
 	<bean id="replaySessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

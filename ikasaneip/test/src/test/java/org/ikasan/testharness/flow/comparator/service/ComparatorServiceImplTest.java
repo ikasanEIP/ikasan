@@ -40,8 +40,6 @@
  */
 package org.ikasan.testharness.flow.comparator.service;
 
-import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.testharness.flow.expectation.model.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -68,8 +66,6 @@ public class ComparatorServiceImplTest
                 comparatorService.getComparator(TranslatorComponent.class) );
         Assert.assertNotNull("ConverterComponent comparator retrieval failed", 
             comparatorService.getComparator(ConverterComponent.class) );
-        Assert.assertNotNull("RouterComponent comparator retrieval failed", 
-                comparatorService.getComparator(RouterComponent.class) );
         Assert.assertNotNull("SingleRecipientRouterComponent comparator retrieval failed",
                 comparatorService.getComparator(SingleRecipientRouterComponent.class) );
         Assert.assertNotNull("MultiRecipientRouterComponent comparator retrieval failed",

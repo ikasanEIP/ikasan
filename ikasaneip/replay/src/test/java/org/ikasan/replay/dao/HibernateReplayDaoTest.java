@@ -42,14 +42,20 @@ package org.ikasan.replay.dao;
 
 import javax.annotation.Resource;
 
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayDao;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -71,7 +77,8 @@ public class HibernateReplayDaoTest
      */
 	@Resource Mockery mockery;
 	
-	@Resource ReplayDao replayDao;
+	@Resource
+    ReplayDao replayDao;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
@@ -79,9 +86,30 @@ public class HibernateReplayDaoTest
 	@DirtiesContext
 	public void testSaveReplayEvent_success()
 	{
-		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName", 30);
-		
+		HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
       
 		this.replayDao.saveOrUpdate(replayEvent);
 	}
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success()
+    {
+        List<ReplayEvent> replayEventList = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+
+            this.replayDao.saveOrUpdate(replayEvent);
+
+            replayEventList.add(replayEvent);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.replayDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.replayDao.updateAsHarvested(replayEventList);
+
+        Assert.assertEquals("Harvestable records == 0", this.replayDao.getHarvestableRecords(5000).size(), 0);
+    }
 }

@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -65,7 +65,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         ManagedResource, Configured<FileConsumerConfiguration>, EndpointListener<String,IOException>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(FileMessageProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(FileMessageProvider.class);
 
     /** path separator */
     private static final String FQN_PATH_SEPARATOR = "/";
@@ -136,7 +136,13 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         {
             if(this.fileConsumerConfiguration.isLogMatchedFilenames())
             {
-                logger.info("Matching file names: " + files);
+                for(File file:files)
+                {
+                    if(logger.isInfoEnabled())
+                    {
+                        logger.info("Matching filename for " + file.getAbsolutePath());
+                    }
+                }
             }
 
             return files;
@@ -144,7 +150,20 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
 
         if(this.fileConsumerConfiguration.isLogMatchedFilenames())
         {
-            logger.info("No matching file names");
+            for(String filename:this.fileConsumerConfiguration.getFilenames())
+            {
+                if(logger.isInfoEnabled())
+                {
+                    if(filename.startsWith("/"))
+                    {
+                        logger.info("No matching filename for " + filename);
+                    }
+                    else
+                    {
+                        logger.info("No matching filename for " + System.getProperty("user.dir") + "/" + filename);
+                    }
+                }
+            }
         }
 
         return null;
@@ -153,6 +172,11 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
     public void setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor)
     {
         this.messageProviderPostProcessor = messageProviderPostProcessor;
+    }
+
+    public MessageProviderPostProcessor getMessageProviderPostProcessor()
+    {
+        return this.messageProviderPostProcessor;
     }
 
     @Override

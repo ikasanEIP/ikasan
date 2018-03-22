@@ -40,9 +40,10 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
@@ -55,22 +56,25 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<MultiRecipientRouter>
+public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<MultiRecipientRouter>, ConfiguredResource<MultiRecipientRouterInvokerConfiguration>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(MultiRecipientRouterFlowElementInvoker.class);
+    private static Logger logger = LoggerFactory.getLogger(MultiRecipientRouterFlowElementInvoker.class);
 
     /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
 
+    /** configured resource identifier */
+    private String configuredResourceId;
+
     /** allow the MRR invoker to be configured */
-    private MultiRecipientRouterConfiguration configuration;
+    private MultiRecipientRouterInvokerConfiguration configuration;
 
     /**
      * Constructor
      * @param replicationFactory
      */
-    public MultiRecipientRouterFlowElementInvoker(ReplicationFactory<FlowEvent<?, ?>> replicationFactory, MultiRecipientRouterConfiguration configuration)
+    public MultiRecipientRouterFlowElementInvoker(ReplicationFactory<FlowEvent<?, ?>> replicationFactory, MultiRecipientRouterInvokerConfiguration configuration)
     {
         this.replicationFactory = replicationFactory;
         if(replicationFactory == null)
@@ -91,6 +95,12 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     public MultiRecipientRouterFlowElementInvoker()
     {
         // default constructor
+    }
+
+    @Override
+    public String getInvokerType()
+    {
+        return FlowElementInvoker.MULTI_RECIPIENT_ROUTER;
     }
 
     @Override
@@ -171,6 +181,30 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
             }
         }
         return null;
+    }
+
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public MultiRecipientRouterInvokerConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(MultiRecipientRouterInvokerConfiguration configuration)
+    {
+        this.configuration = configuration;
     }
 }
 

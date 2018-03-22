@@ -78,12 +78,11 @@
         <property name="chunking" value="false"/>
     </bean>
 
-    <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/sftp/SimpleSftpConnectionFactory"/>
-    </bean>
-
     <bean id="sftpMessageProvider" class="org.ikasan.endpoint.sftp.consumer.SftpMessageProvider">
-        <constructor-arg name="connectionFactory" ref="connectionFactory"/>
+        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
+        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <constructor-arg name="transactionManager" ref="transactionManager"/>
         <property name="configuration" ref="sftpConsumerConfiguration"/>
     </bean>
 

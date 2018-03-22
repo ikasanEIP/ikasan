@@ -4,16 +4,13 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-sample-ftp-parent</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <artifactId>ikasan-sample-jboss-ftp-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-ftp</artifactId>
+    <artifactId>ikasan-sample-jboss-ftp</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.2-SNAPSHOT</version>
-    <name>ikasan-sample-ftp Integration Module</name>
-    <description>Describe the purpose of this Integration Module</description>
 
     <dependencies>
         <!-- Ikasan EIP Engine -->
@@ -28,33 +25,17 @@
             <artifactId>ikasan-builder-spring</artifactId>
         </dependency>
 
-        <!-- Default component scheduler implementation behaviour -->
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-scheduler</artifactId>
+            <artifactId>ikasan-ftp-endpoint</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-quartz-endpoint</artifactId>
+            <artifactId>ikasan-jms-spring</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-ftp-endpoint</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-ftp-classes</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>geronimo-spec</groupId>
@@ -69,11 +50,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -112,20 +88,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jms</artifactId>
-            <version>3.9.3</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jdbc</artifactId>
-            <version>3.9.3</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <scope>test</scope>
@@ -146,14 +108,13 @@
         <dependency>
             <groupId>org.mockftpserver</groupId>
             <artifactId>MockFtpServer</artifactId>
-            <version>2.4</version>
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
-            <groupId>org.jboss.transaction</groupId>
-            <artifactId>jboss-jta</artifactId>
-            <version>4.2.3.SP7</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
 

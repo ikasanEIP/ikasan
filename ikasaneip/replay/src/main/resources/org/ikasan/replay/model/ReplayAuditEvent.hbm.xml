@@ -49,7 +49,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.ikasan.replay.model.ReplayAuditEvent"
+	<class name="org.ikasan.replay.model.HibernateReplayAuditEvent"
 		table="ReplayAuditEvent">
 		
 		<composite-id name="id" class="org.ikasan.replay.model.ReplayAuditEventKey">
@@ -57,16 +57,29 @@
 	        <key-property name="replayEventId" column="ReplayEventId"/>
     	</composite-id>
     	
-    	<many-to-one name="replayAudit" class="org.ikasan.replay.model.ReplayAudit"
+    	<many-to-one name="replayAudit" class="org.ikasan.replay.model.HibernateReplayAudit"
     		column="ReplayAuditId" not-null="true" insert="false" update="false" lazy="false"/>
-    	
-    	<many-to-one name="replayEvent" class="org.ikasan.replay.model.ReplayEvent"
-    		column="ReplayEventId" not-null="true" insert="false" update="false" lazy="false"/>
+
     	
     	<property name="success"
                   type="boolean"
                   column="Success"
                   not-null="true" />
+
+		<property name="moduleName"
+				  type="java.lang.String"
+				  column="ModuleName"
+				  not-null="true" />
+
+		<property name="flowName"
+				  type="java.lang.String"
+				  column="FlowName"
+				  not-null="true" />
+
+		<property name="eventId"
+				  type="java.lang.String"
+				  column="EventId"
+				  not-null="true" />
                   
     	<property name="resultMessage"
                   type="java.lang.String"

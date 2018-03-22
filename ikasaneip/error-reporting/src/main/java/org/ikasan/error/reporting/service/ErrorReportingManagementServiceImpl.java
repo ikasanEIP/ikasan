@@ -44,14 +44,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
@@ -59,38 +60,36 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>, HousekeepService
-{
-	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
-	
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
+		HousekeepService, HarvestService<ErrorOccurrence> {
+	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
+
 	public static final String CLOSE = "close";
 
 	private ErrorManagementDao errorManagementDao;
-	
+
 	private ErrorReportingServiceDao errorReportingServiceDao;
-	
+
 	private int batchSize = 100;
 
 	private int transactionBatchSize = 1000;
-	
-	
+
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param errorManagementDao
 	 */
 	public ErrorReportingManagementServiceImpl(ErrorManagementDao errorManagementDao,
-			ErrorReportingServiceDao errorReportingServiceDao)
+											   ErrorReportingServiceDao errorReportingServiceDao)
 	{
 		super();
 		this.errorManagementDao = errorManagementDao;
-		if(this.errorManagementDao == null)
-		{
+		if (this.errorManagementDao == null) {
 			throw new IllegalArgumentException("errorManagementDao cannot be null!");
 		}
 		this.errorReportingServiceDao = errorReportingServiceDao;
-		if(this.errorReportingServiceDao == null)
-		{
+		if (this.errorReportingServiceDao == null) {
 			throw new IllegalArgumentException("errorManagementDao cannot be null!");
 		}
 	}
@@ -99,22 +98,18 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#update(java.util.List, java.lang.String)
 	 */
 	@Override
-	public void update(List<String> uris, String noteString, String user)
-	{
+	public void update(List<String> uris, String noteString, String user) {
 		Note note = null;
-		
-		if(noteString != null && noteString.length() > 0)
-		{
+
+		if (noteString != null && noteString.length() > 0) {
 			note = new Note(noteString, user);
 			this.errorManagementDao.saveNote(note);
 		}
-		
-		for(String uri: uris)
-		{			
-			if(note != null)
-			{
+
+		for (String uri : uris) {
+			if (note != null) {
 				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
-				
+
 				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 			}
 		}
@@ -124,48 +119,38 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#close(java.util.List, java.lang.String)
 	 */
 	@Override
-	public void close(List<String> uris, String noteString, String user)
-	{
+	public void close(List<String> uris, String noteString, String user) {
 		Note note = null;
-		
-		if(noteString != null && noteString.length() > 0)
-		{
+
+		if (noteString != null && noteString.length() > 0) {
 			note = new Note(noteString, user);
 			this.errorManagementDao.saveNote(note);
 		}
-			
-		
-		for(String uri: uris)
-		{			
+
+
+		for (String uri : uris) {
 			ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
-			
+
 			this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 		}
-				
-		for(int i=0; i<uris.size();)
-		{
+
+		for (int i = 0; i < uris.size(); ) {
 			List<String> batchUris = new ArrayList<String>();
 			int endMarker = 0;
-			
-			if(i + batchSize < uris.size())
-			{
+
+			if (i + batchSize < uris.size()) {
 				endMarker = i + batchSize;
-			}
-			else
-			{
+			} else {
 				endMarker = uris.size();
 			}
-			
+
 			batchUris.addAll(uris.subList(i, endMarker));
-			
+
 			this.errorManagementDao.close(batchUris, user);
-			
-			if(i + batchSize < uris.size())
-			{
-				i= i + batchSize;
-			}
-			else
-			{
+
+			if (i + batchSize < uris.size()) {
+				i = i + batchSize;
+			} else {
 				i = uris.size();
 			}
 		}
@@ -176,28 +161,25 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 */
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName,
-			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate)
-	{
-		return this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate);
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate) {
+		return new ArrayList<>(this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#setTimeToLive(java.lang.Long)
 	 */
 	@Override
-	public void setTimeToLive(Long timeToLive)
-	{
+	public void setTimeToLive(Long timeToLive) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#deleteNote(java.lang.Object)
 	 */
 	@Override
-	public void deleteNote(Note note)
-	{
+	public void deleteNote(Note note) {
 		this.errorManagementDao.deleteNote(note);
 	}
 
@@ -205,8 +187,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#updateNote(java.lang.Object)
 	 */
 	@Override
-	public void updateNote(Note note)
-	{
+	public void updateNote(Note note) {
 		this.errorManagementDao.saveNote(note);
 	}
 
@@ -215,8 +196,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithNote()
 	 */
 	@Override
-	public List<String> getAllErrorUrisWithNote()
-	{
+	public List<String> getAllErrorUrisWithNote() {
 		return this.errorManagementDao.getAllErrorUrisWithNote();
 	}
 
@@ -224,8 +204,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getNotesByErrorUri(java.lang.String)
 	 */
 	@Override
-	public List<Note> getNotesByErrorUri(String errorUri)
-	{
+	public List<Note> getNotesByErrorUri(String errorUri) {
 		return this.errorManagementDao.getNotesByErrorUri(errorUri);
 	}
 
@@ -234,24 +213,21 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 */
 	@Override
 	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
-			String errorUri)
-	{
+			String errorUri) {
 		return this.errorManagementDao.getErrorOccurrenceNotesByErrorUri(errorUri);
 	}
 
 	/**
 	 * @return the batchSize
 	 */
-	public int getBatchSize()
-	{
+	public int getBatchSize() {
 		return batchSize;
 	}
 
 	/**
 	 * @param batchSize the batchSize to set
 	 */
-	public void setBatchSize(int batchSize)
-	{
+	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
 	}
 
@@ -259,36 +235,31 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getModuleErrorCount(java.util.List)
 	 */
 	@Override
-	public List<ModuleErrorCount> getModuleErrorCount(List<String> moduleNames,  boolean excluded, boolean actioned, Date startDate, Date endDate)
-	{
+	public List<ModuleErrorCount> getModuleErrorCount(List<String> moduleNames, boolean excluded, boolean actioned, Date startDate, Date endDate) {
 		ArrayList<ModuleErrorCount> errorCounts = new ArrayList<ModuleErrorCount>();
-		
-		for(String moduleName: moduleNames)
-		{
+
+		for (String moduleName : moduleNames) {
 			ModuleErrorCount errorCount = new ModuleErrorCount(moduleName,
 					this.errorManagementDao.getNumberOfModuleErrors(moduleName, excluded, actioned, startDate, endDate));
-			
+
 			errorCounts.add(errorCount);
 		}
-		
+
 		return errorCounts;
 	}
 
 	@Override
-	public boolean housekeepablesExist()
-	{
+	public boolean housekeepablesExist() {
 		return true;
 	}
 
 	@Override
-	public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
-	{
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
 		this.batchSize = housekeepingBatchSize;
 	}
 
 	@Override
-	public void setTransactionBatchSize(Integer transactionBatchSize)
-	{
+	public void setTransactionBatchSize(Integer transactionBatchSize) {
 		this.transactionBatchSize = transactionBatchSize;
 	}
 
@@ -296,15 +267,34 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#housekeep()
 	 */
 	@Override
-	public void housekeep()
-	{
+	public void housekeep() {
 		int deleted = 0;
 
-		while(deleted < this.transactionBatchSize)
-		{
+		while (deleted < this.transactionBatchSize) {
 			this.errorManagementDao.housekeep(this.batchSize);
 
 			deleted = deleted + this.batchSize;
 		}
 	}
+
+	@Override
+	public List<ErrorOccurrence> harvest(int transactionBatchSize) {
+		return new ArrayList<>(this.errorManagementDao.getHarvestableRecords(transactionBatchSize));
+	}
+
+	@Override
+	public boolean harvestableRecordsExist() {
+		return true;
+	}
+
+	@Override
+	public void saveHarvestedRecord(ErrorOccurrence harvestedRecord) {
+		this.errorManagementDao.saveErrorOccurrence(harvestedRecord);
+	}
+
+    @Override
+    public void updateAsHarvested(List<ErrorOccurrence> events)
+    {
+        this.errorManagementDao.updateAsHarvested(events);
+    }
 }

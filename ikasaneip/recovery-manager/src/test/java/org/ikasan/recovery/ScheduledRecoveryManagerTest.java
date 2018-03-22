@@ -43,9 +43,12 @@ package org.ikasan.recovery;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
@@ -137,7 +140,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null, null, null, null);
+        new ScheduledRecoveryManager(null, null, null, null);
     }
 
     /**
@@ -146,7 +149,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduledJobFactory()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, null, null, null);
     }
 
     /**
@@ -155,7 +158,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null);
     }
 
     /**
@@ -164,35 +167,49 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null);
     }
 
     /**
-     * Test failed constructor due to null consumer.
+     * Test successful constructor due to null consumer.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullConsumer()
+    @Test
+    public void test_successful_constructor()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
     }
 
     /**
-     * Test failed constructor due to null exclusionService.
+     * Test is consumer aware.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDieToNullExclusionService()
+    @Test
+    public void test_isConsumerAware()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, null, null);
+        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        Assert.assertTrue( scheduledRecoveryManager instanceof IsConsumerAware);
     }
 
     /**
      * Test successful instantiation.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_instantiation_null_errorReportingService()
+    @Test
+    public void test_isErrorReportingServiceAware()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, null);
+        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        Assert.assertTrue( scheduledRecoveryManager instanceof IsErrorReportingServiceAware);
     }
+
+
+    /**
+     * Test successful instantiation.
+     */
+    @Test
+    public void test_isExclusionServiceAware()
+    {
+        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        Assert.assertTrue( scheduledRecoveryManager instanceof IsExclusionServiceAware);
+    }
+
 
     /**
      * Test successful instantiation.
@@ -200,7 +217,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, errorReportingService);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
     }
 
     /**
@@ -213,7 +230,8 @@ public class ScheduledRecoveryManagerTest
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
-        ScheduledRecoveryManager scheduledRecoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flow", "module", consumer);
+        ScheduledRecoveryManager scheduledRecoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flow", "module");
+        setIsAware(scheduledRecoveryManager);
         scheduledRecoveryManager.cancelAll();
         Assert.assertTrue("cancelAll called with no jobs", true);
     }
@@ -245,7 +263,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         
         try
@@ -295,7 +314,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
 
         try
@@ -346,7 +366,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.setManagedResources(managedResources);
         
@@ -379,13 +400,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
-
-//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
-//                will(returnValue("errorUri"));
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         
         recoveryManager.recover("componentName", exception);
@@ -411,14 +430,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
-
-                // report error
-//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
-//                will(returnValue("errorUri"));
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.setManagedResources(managedResources);
 
@@ -437,7 +453,7 @@ public class ScheduledRecoveryManagerTest
         final Exception exception = new Exception();
         final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
 
-        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -484,6 +500,7 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
 
         try
@@ -512,7 +529,7 @@ public class ScheduledRecoveryManagerTest
     {
         final Exception exception = new Exception();
         
-        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
         final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
         final List managedResources = new ArrayList();
         managedResources.add(flowElement);
@@ -566,6 +583,7 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.setManagedResources(managedResources);
 
@@ -690,11 +708,14 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
                 
                 // cancelAll the recovery
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
 
         try
@@ -856,11 +877,14 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
                 
                 // cancelAll the recovery
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.setManagedResources(managedResources);
         
@@ -929,12 +953,37 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
         mockery.assertIsSatisfied();
     }
+
+    /**
+     * Call isAware setters on the RM to populate as required.
+     *
+     * @param recoveryManager
+     */
+    private void setIsAware(RecoveryManager recoveryManager)
+    {
+        if(recoveryManager instanceof IsConsumerAware)
+        {
+            ((IsConsumerAware)recoveryManager).setConsumer(consumer);
+        }
+
+        if(recoveryManager instanceof IsExclusionServiceAware)
+        {
+            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+        }
+
+        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+        }
+    }
+
 
     /**
      * Extended class allowing mocking of the quartz recovery job and trigger.
@@ -944,9 +993,9 @@ public class ScheduledRecoveryManagerTest
     private class StubbedScheduledRecoveryManager extends ScheduledRecoveryManager
     {
 
-        StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer)
+        StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName)
         {
-            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService, errorReportingService);
+            super(scheduler, scheduledJobFactory, flowName, moduleName);
         }
         
         @Override

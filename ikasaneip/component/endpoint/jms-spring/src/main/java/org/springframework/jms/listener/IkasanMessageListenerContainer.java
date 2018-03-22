@@ -43,7 +43,7 @@ package org.springframework.jms.listener;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.springframework.jms.util.JndiUtils;
@@ -98,9 +98,18 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         this.configuration = configuration;
     }
 
-    @Override
-    public void start()
+    /**
+     * If CF not already provided then look it up from JNDI
+     */
+    protected void establishConnectionFactory()
     {
+        // if we already have a CF instance just return
+        if(getConnectionFactory() != null)
+        {
+            return;
+        }
+
+        // get and set CF
         try
         {
             // get connection factory
@@ -111,7 +120,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
             }
             else
             {
-                ConnectionFactory connectionFactory = JndiUtils.getAuthenicatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
+                ConnectionFactory connectionFactory = JndiUtils.getAuthenticatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
                 setConnectionFactory(connectionFactory);
             }
         }
@@ -119,6 +128,14 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         {
             throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
         }
+
+    }
+
+    @Override
+    public void start()
+    {
+        // get connection factory
+        establishConnectionFactory();
 
         if (configuration.getDestinationJndiProperties() == null || configuration.getDestinationJndiProperties().isEmpty())
         {

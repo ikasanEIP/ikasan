@@ -45,7 +45,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-component</artifactId>
@@ -57,6 +57,7 @@
         <module>router</module>
         <module>splitter</module>
         <module>endpoint</module>
+        <module>filter</module>
         <module>validator</module>
     </modules>
 

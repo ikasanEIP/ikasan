@@ -40,7 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.module.StartupControl;
@@ -69,7 +69,7 @@ public class StartupControlServiceImpl implements StartupControlService
     /**
      * Logger instance
      */
-    private Logger logger = Logger.getLogger(StartupControlServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(StartupControlServiceImpl.class);
   
 
     /**

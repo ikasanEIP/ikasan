@@ -69,7 +69,6 @@ public class ComparatorServiceImpl
         put(IgnoreExpectation.class, new IgnoreComparator());
         put(TranslatorComponent.class, new FlowElementComparator());
         put(ConverterComponent.class, new FlowElementComparator());
-        put(RouterComponent.class, new FlowElementComparator());
         put(SingleRecipientRouterComponent.class, new FlowElementComparator());
         put(MultiRecipientRouterComponent.class, new FlowElementComparator());
         put(SequencerComponent.class, new FlowElementComparator());

@@ -40,28 +40,18 @@
  */
 package org.ikasan.configurationService.service;
 
+import org.ikasan.configurationService.model.*;
+import org.ikasan.configurationService.util.ReflectionUtils;
+import org.ikasan.spec.configuration.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
-import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.configurationService.model.DefaultConfiguration;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationException;
-import org.ikasan.spec.configuration.ConfigurationFactory;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.Masked;
 
 /**
  * Default implementation of the ConfigurationFactory for creating configuration
@@ -71,8 +61,7 @@ import org.ikasan.spec.configuration.Masked;
  */
 public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
 
-    private static Logger logger = Logger
-            .getLogger(ConfigurationFactoryDefaultImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationFactoryDefaultImpl.class);
 
     private static ConfigurationFactory configurationFactory = new ConfigurationFactoryDefaultImpl();
 
@@ -110,66 +99,66 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<ConfigurationParameter>());
 
-        try {
-            Map<String, Object> properties = PropertyUtils.describe(runtimeConfiguration);
-            // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
-            // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
-            TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
+        Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(runtimeConfiguration);
+        // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
+        // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
+        TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
 
-            for (Map.Entry<String, Object> entry : orderedProperties.entrySet()) {
+        for (Map.Entry<String, Object> entry : orderedProperties.entrySet())
+        {
+            String name = entry.getKey();
+            Object value = entry.getValue();
 
-                String name = entry.getKey();
-                Object value = entry.getValue();
+            try
+            {
+                if (value == null) {
+                    Class<?> cls = ReflectionUtils.getPropertyType(runtimeConfiguration, name);
 
-                // TODO - is there a cleaner way of ignoring the class property ?
-                if (!"class".equals(name)) {
-                    if (value == null) {
-                        Class<?> cls = PropertyUtils.getPropertyType(runtimeConfiguration, name);
-
-                        if (cls.isAssignableFrom(String.class)) {
-                            if (isMasked(runtimeConfiguration, name)) {
-                                configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, null));
-                            } else {
-                                configuration.getParameters().add(new ConfigurationParameterStringImpl(name, null));
-                            }
-                        } else if (cls.isAssignableFrom(Long.class)) {
-                            configuration.getParameters().add(new ConfigurationParameterLongImpl(name, null));
-                        } else if (cls.isAssignableFrom(Integer.class)) {
-                            configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, null));
-                        } else if (cls.isAssignableFrom(Boolean.class)) {
-                            configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, null));
-                        } else if (cls.isAssignableFrom(List.class)) {
-                            configuration.getParameters().add(new ConfigurationParameterListImpl(name, null));
-                        } else if (cls.isAssignableFrom(Map.class)) {
-                            configuration.getParameters().add(new ConfigurationParameterMapImpl(name, null));
+                    if (cls.isAssignableFrom(String.class)) {
+                        if (isMasked(runtimeConfiguration, name)) {
+                            configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, null));
                         } else {
-                            logger.warn("Ignoring unsupported configurationParameter class [" + cls.getName() + "].");
+                            configuration.getParameters().add(new ConfigurationParameterStringImpl(name, null));
                         }
+                    } else if (cls.isAssignableFrom(Long.class)) {
+                        configuration.getParameters().add(new ConfigurationParameterLongImpl(name, null));
+                    } else if (cls.isAssignableFrom(Integer.class)) {
+                        configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, null));
+                    } else if (cls.isAssignableFrom(Boolean.class)) {
+                        configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, null));
+                    } else if (cls.isAssignableFrom(List.class)) {
+                        configuration.getParameters().add(new ConfigurationParameterListImpl(name, null));
+                    } else if (cls.isAssignableFrom(Map.class)) {
+                        configuration.getParameters().add(new ConfigurationParameterMapImpl(name, null));
                     } else {
-                        if (value instanceof String) {
-                            if (isMasked(runtimeConfiguration, name)) {
-                                configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, (String) value));
-                            } else {
-                                configuration.getParameters().add(new ConfigurationParameterStringImpl(name, (String) value));
-                            }
-                        } else if (value instanceof Long) {
-                            configuration.getParameters().add(new ConfigurationParameterLongImpl(name, (Long) value));
-                        } else if (value instanceof Integer) {
-                            configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, (Integer) value));
-                        } else if (value instanceof Boolean) {
-                            configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, (Boolean) value));
-                        } else if (value instanceof List) {
-                            configuration.getParameters().add(new ConfigurationParameterListImpl(name, (List) value));
-                        } else if (value instanceof Map) {
-                            configuration.getParameters().add(new ConfigurationParameterMapImpl(name, (Map) value));
+                        logger.warn("Ignoring unsupported configurationParameter class [" + cls.getName() + "].");
+                    }
+                } else {
+                    if (value instanceof String) {
+                        if (isMasked(runtimeConfiguration, name)) {
+                            configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, (String) value));
                         } else {
-                            logger.warn("Ignoring unsupported configurationParameter class [" + value.getClass().getName() + "].");
+                            configuration.getParameters().add(new ConfigurationParameterStringImpl(name, (String) value));
                         }
+                    } else if (value instanceof Long) {
+                        configuration.getParameters().add(new ConfigurationParameterLongImpl(name, (Long) value));
+                    } else if (value instanceof Integer) {
+                        configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, (Integer) value));
+                    } else if (value instanceof Boolean) {
+                        configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, (Boolean) value));
+                    } else if (value instanceof List) {
+                        configuration.getParameters().add(new ConfigurationParameterListImpl(name, (List) value));
+                    } else if (value instanceof Map) {
+                        configuration.getParameters().add(new ConfigurationParameterMapImpl(name, (Map) value));
+                    } else {
+                        logger.warn("Ignoring unsupported configurationParameter class [" + value.getClass().getName() + "].");
                     }
                 }
             }
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new ConfigurationException(e);
+            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
+            {
+                logger.error("Failed to get property type for field [" + name + "].");
+            }
         }
 
         return configuration;

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--  ================================================================== -->
+    <!--  component implementations                                          -->
+    <!--  ================================================================== -->
+
+    <bean id="payloadToStringConverter" class="com.ikasan.sample.converter.PayloadToStringConverter"/>
+
+    <bean id="filePayloadGeneratorConverter" class="com.ikasan.sample.converter.FilePayloadGeneratorConverter"/>
+
+    <bean id="fileGeneratorScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler"/>
+        <property name="jobDetail">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory"/>
+                <property name="targetMethod" value="createJobDetail"/>
+                <property name="arguments">
+                    <list>
+                        <ref bean="fileGeneratorScheduledConsumer"/>
+                        <value type="java.lang.Class">
+                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
+                        </value>
+                        <value>fileGeneratorScheduledConsumer</value>
+                        <value>timeGeneratorToFtpFlow</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuration" ref="fileGeneratorScheduledConsumerConfiguration"/>
+        <property name="configuredResourceId" value="fileGeneratorScheduledConsumer"/>
+    </bean>
+
+    <bean id="fileGeneratorScheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
+        <property name="cronExpression" value="${fileGenerator.consumer.cronExpression}"/>
+    </bean>
+
+</beans>

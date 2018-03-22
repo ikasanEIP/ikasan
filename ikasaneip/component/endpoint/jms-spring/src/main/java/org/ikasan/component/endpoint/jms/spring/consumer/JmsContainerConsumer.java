@@ -40,11 +40,10 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
-import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;
@@ -56,6 +55,8 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
@@ -77,7 +78,7 @@ public class JmsContainerConsumer
 		ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(JmsContainerConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
 
     /** configured Resource identifier */
     String configuredResourceId;

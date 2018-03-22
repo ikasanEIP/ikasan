@@ -40,8 +40,11 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import org.apache.log4j.Logger;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,25 +54,31 @@ import java.util.Map;
 
 /**
  * Map implementation of the ErrorReportingServiceDao.
+ *
  * @author Ikasan Development Team
  */
 public class MapErrorReportingServiceDao<T>
         implements ErrorReportingServiceDao<ErrorOccurrence, String>
 {
-    /** logger instance */
-    private static Logger logger = Logger.getLogger(MapErrorReportingServiceDao.class);
+    /**
+     * logger instance
+     */
+    private static Logger logger = LoggerFactory.getLogger(MapErrorReportingServiceDao.class);
 
-    /** actual errorOccurrence instances */
-    LinkedHashMap<String,ErrorOccurrence> errorOccurrences;
+    /**
+     * actual errorOccurrence instances
+     */
+    LinkedHashMap<String, ErrorOccurrence> errorOccurrences;
 
     /**
      * Constructor
+     *
      * @param errorOccurrences
      */
     public MapErrorReportingServiceDao(LinkedHashMap<String, ErrorOccurrence> errorOccurrences)
     {
         this.errorOccurrences = errorOccurrences;
-        if(errorOccurrences == null)
+        if (errorOccurrences == null)
         {
             throw new IllegalArgumentException("errorOccurrences implementation cannot be 'null'");
         }
@@ -90,67 +99,64 @@ public class MapErrorReportingServiceDao<T>
     @Override
     public void deleteExpired()
     {
-        List<String> expiredIdentifiers = new ArrayList<String>();
-
+        List<String> expiredIdentifiers = new ArrayList<>();
         long expiryTime = System.currentTimeMillis();
-        for(Map.Entry<String,ErrorOccurrence> entry:errorOccurrences.entrySet())
+        for (Map.Entry<String, ErrorOccurrence> entry : errorOccurrences.entrySet())
         {
-            if(entry.getValue().getExpiry() < expiryTime)
+            if (entry.getValue().getExpiry() < expiryTime)
             {
                 expiredIdentifiers.add(entry.getKey());
             }
         }
-
-        for(String expiredIdentifier:expiredIdentifiers)
+        for (String expiredIdentifier : expiredIdentifiers)
         {
             errorOccurrences.remove(expiredIdentifier);
         }
-
-        if(logger.isDebugEnabled())
+        if (logger.isDebugEnabled())
         {
             logger.info("Deleted expired errorOccurrences events for identifiers[" + expiredIdentifiers + "]");
         }
     }
 
-
     @Override
-    public Map find(List uris) {
+    public Map find(List uris)
+    {
         return null;
     }
 
     /* (non-Javadoc)
-         * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+         * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
          */
-	@Override
-	public List<ErrorOccurrence> find(List<String> moduleName,
-			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, int size)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<ErrorOccurrence> find(List<String> moduleName,
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, int size)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
-	 */
-	@Override
-	public Long rowCount(List<String> moduleName, List<String> flowName,
-			List<String> flowElementname, Date startDate, Date endDate)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+     */
+    @Override
+    public Long rowCount(List<String> moduleName, List<String> flowName,
+            List<String> flowElementname, Date startDate, Date endDate)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
-	 */
-	@Override
-	public List<ErrorOccurrence> find(List<String> moduleName,
-			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, String action, String exceptionClass,
-			int size)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+     */
+    @Override
+    public List<ErrorOccurrence> find(List<String> moduleName,
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, String action, String exceptionClass,
+                                          int size)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

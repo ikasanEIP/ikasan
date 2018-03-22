@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+
+	<bean id="solrInitialiser" class="org.ikasan.dashboard.solr.SolrInitialiser">
+		<constructor-arg>
+			<list>
+				<ref bean="solrWiretapDao" />
+				<ref bean="solrGeneralSearchDao" />
+				<ref bean="solrErrorReportingServiceDao" />
+				<ref bean="solrExclusionServiceExclusionEventDao" />
+				<ref bean="solrReplayDao" />
+
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="platformConfigurationService"/>
+		<constructor-arg ref="solrHarvestSchedulerService"/>
+	</bean>
+
+	<bean id="componentConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
+	</bean>
+
+	<bean id="componentConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationImportHelper">
+	</bean>
+
+	<bean id="flowConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="flowConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+
+	<bean id="configurationCreationHelper"
+		  class="org.ikasan.configurationService.util.ConfigurationCreationHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="platformConfigurationService"/>
+	</bean>
+
+	<bean id="platformConfigurationService"
+		class="org.ikasan.configurationService.service.PlatformConfigurationServiceImpl">
+		<constructor-arg ref="configurationService"/>
+	</bean>
+	
+	<bean id="triggerManagementService"
+		class="org.ikasan.wiretap.service.TriggerManagementServiceImpl">
+		<constructor-arg ref="triggerDao"/>
+	</bean>
+	
+	<bean id="topologyService"
+        class="org.ikasan.topology.service.TopologyServiceImpl">
+        <constructor-arg ref="topologyDao"/>
+    </bean>
+
+	<bean id="topologyDao" class="org.ikasan.topology.dao.HibernateTopologyDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+    <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingManagementServiceImpl">
+        <constructor-arg ref="mappingConfigurationDao"/>
+    </bean>
+
+    <bean id="mappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory" />
+    </bean>
+    
+    <bean id="ldapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="securityDao" />
+		<constructor-arg ref="userDao" />
+		<constructor-arg ref="sha1PasswordEncoder"/>
+	</bean>
+
+	<bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="authenticationProviderFactory" />
+		<constructor-arg ref="securityService" />
+	</bean>
+
+	<bean id="authenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="securityService" />
+	</bean>
+
+	<bean id="securityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="securityDao" />
+	</bean>
+	
+	<bean id="userService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="userDao"/>
+        <constructor-arg ref="securityService"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+
+	<bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+	
+	<bean id="configurationService"
+		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
+		<constructor-arg ref="configurationServiceDao"/>
+		<constructor-arg ref="xaConfigurationServiceDao"/>
+	</bean>
+
+	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
+	</bean>
+
+	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+	
+	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
+				</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<bean id="solrWiretapService"
+		  class="org.ikasan.wiretap.service.SolrWiretapServiceImpl">
+		<constructor-arg name="wiretapDao" ref="solrWiretapDao" />
+		<constructor-arg name="moduleService" ref="moduleService" />
+	</bean>
+
+	<bean id="wiretapService"
+		  class="org.ikasan.wiretap.service.WiretapServiceImpl">
+		<constructor-arg name="wiretapDao" ref="wiretapEvent" />
+		<constructor-arg name="moduleService" ref="moduleService" />
+		<constructor-arg name="wiretapEventFactory" ref="wiretapEventFactory"/>
+	</bean>
+
+	<bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactoryDefaultImpl">
+		<!-- serializer -->
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="solrWiretapDao"
+		class="org.ikasan.wiretap.dao.SolrWiretapDao">
+	</bean>
+
+	<bean id="solrGeneralService"
+		  class="org.ikasan.solr.service.SolrGeneralServiceImpl">
+		<constructor-arg ref="solrGeneralSearchDao"/>
+	</bean>
+
+	<bean id="solrGeneralSearchDao"
+		  class="org.ikasan.solr.dao.SolrGeneralDaoImpl">
+	</bean>
+
+	<bean id="wiretapEvent"
+		  class="org.ikasan.wiretap.dao.HibernateWiretapDao">
+		<constructor-arg value="true"/>
+		<constructor-arg value="1000"/>
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.trigger.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+	
+	<bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
+
+    <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
+        <constructor-arg ref="ikasanSerialiserFactory"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+
+    <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+
+	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl">
+		<constructor-arg ref="solrErrorReportingServiceDao"/>
+	</bean>
+
+	<bean id="solrErrorReportingServiceDao" class="org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao">
+	</bean>
+
+	<bean id="solrExclusionManagementService" class="org.ikasan.exclusion.service.SolrExclusionServiceImpl">
+		<constructor-arg ref="solrExclusionServiceExclusionEventDao"/>
+	</bean>
+
+    <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
+
+    <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+
+	<bean id="solrExclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.SolrExclusionEventDao">
+	</bean>
+    
+    <bean id="startupControlService" class="org.ikasan.module.service.StartupControlServiceImpl">
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="startupControlDao" />
+    </bean>
+    
+    <bean id="startupControlDao"
+        class="org.ikasan.module.startup.dao.HibernateStartupControlDao">
+        <property name="sessionFactory" ref="moduleStartupControlHibernateSessionFactory" />
+    </bean>
+    
+    <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
+        <constructor-arg ref="systemEventDao" />
+        <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
+    </bean>
+    
+    <bean id="systemEventDao"
+        class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
+        <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
+        <constructor-arg value="true"/>
+        <constructor-arg value="100"/>
+    </bean>
+    
+    <bean id="errorCategorisationService" class="org.ikasan.error.reporting.service.ErrorCategorisationServiceImpl">
+        <constructor-arg ref="errorCategorisationDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+
+	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+    
+    <bean id="errorReportingManagementService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
+        <constructor-arg ref="errorManagementDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+    
+    <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+    
+    <bean id="replayManagementService" class="org.ikasan.replay.service.ReplayManagementServiceImpl">
+		<constructor-arg ref="replayDao" />
+	</bean>
+	
+	<bean id="replayService" class="org.ikasan.replay.service.ReplayServiceImpl">
+		<constructor-arg ref="replayDao" />
+	</bean>
+	
+	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="solrReplayManagementService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
+		<constructor-arg ref="solrReplayDao" />
+		<constructor-arg ref="replayDao" />
+	</bean>
+
+	<bean id="solrReplayService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
+		<constructor-arg ref="solrReplayDao" />
+		<constructor-arg ref="replayDao" />
+	</bean>
+
+	<bean id="solrReplayDao" class="org.ikasan.replay.dao.SolrReplayDao">
+	</bean>
+	
+    <bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
+		<constructor-arg ref="hospitalDao" />
+	</bean>
+
+	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
+		<constructor-arg ref="moduleContainer" />
+		<constructor-arg ref="hospitalDao" />
+		<constructor-arg ref="exclusionManagementService" />
+	</bean>
+	
+	<bean id="hospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+		<constructor-arg ref="duplicateFilterDao"/>
+	</bean>
+
+	<bean id="duplicateFilterDao"
+		  class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+		<constructor-arg index="0" ref="messageHistoryDao"/>
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="messageHistoryDao"
+		  class="org.ikasan.history.dao.HibernateMessageHistoryDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+
+    <bean id="ikasanSessionFactory"
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+           <list>
+               <value>/org/ikasan/mapping/model/ConfigurationContext.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/MappingConfiguration.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/MappingConfigurationLite.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ConfigurationServiceClient.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ConfigurationType.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ParameterName.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
+			   <value>/org/ikasan/mapping/model/ManyToManyTargetConfigurationValue.hbm.xml</value>
+               <value>/org/ikasan/security/model/Principal.hbm.xml</value>
+			   <value>/org/ikasan/security/model/PrincipalLite.hbm.xml</value>
+			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
+			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>
+			   <value>/org/ikasan/security/model/UserLite.hbm.xml</value>
+			   <value>/org/ikasan/security/model/User.hbm.xml</value>
+			   <value>/org/ikasan/security/model/UserPrincipal.hbm.xml</value>
+			   <value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+			   <value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+			   <value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/BusinessStream.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/BusinessStreamFlow.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Component.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Flow.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Module.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Server.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/UserBusinessStream.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Filter.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Notification.hbm.xml</value>
+			   <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
+			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+			   <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
+			   <value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
+			   <value>org/ikasan/module/startup/StartupControl.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/Link.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
+               <value>/org/ikasan/replay/model/ReplayEvent.hbm.xml</value>
+			   <value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
+			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
+               <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
+			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+			   <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
+           </list>
+        </property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+	
+
+    <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+    
+
+
+</beans>

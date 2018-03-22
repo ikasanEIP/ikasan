@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.apache.log4j.Logger;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -60,6 +60,8 @@ import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +77,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
 {
 	/** logger instance */
-    private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
+    private static Logger logger = LoggerFactory.getLogger(VisitingInvokerFlow.class);
 
     /** thread states */
     private static Boolean ACTIVE = true;
@@ -152,7 +154,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     private String configuredResourceId;
 
     /** map to keep track of active threads */
-    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<Long, Boolean>();
+    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<>();
 
     /** we don't want to wait for ever for the flow to stop. Default 30 seconds */
     private long stopWaitTimeout = 30000;
@@ -370,23 +372,27 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 }
             }
 
+            // configure the invokers
+            configure(this.flowConfiguration.getFlowElementInvokerConfiguredResources());
+
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
-            
+
+            final List<FlowElement<?>> flowElements = this.flowConfiguration.getFlowElements();
+
             // configure the flow elements
-            configureFlowElements(this.flowConfiguration.getFlowElements());
+            configureFlowElements(flowElements);
             
             // configure the flow itself
             this.flowConfiguration.configure(this);
             
             this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
-            // register the errorReportingService with those components requiring it
-            for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
-            {
-                IsErrorReportingServiceAware component = flowElement.getFlowComponent();
-                component.setErrorReportingService(this.errorReportingService);
-            }
+            // set error reporting service on aware flow elements
+            this.flowConfiguration.getErrorReportingServiceAwareFlowElements().forEach(fe -> fe.getFlowComponent().setErrorReportingService(this.errorReportingService));
+
+            // set exclusion service on aware flow elements
+            injectExclusionService(flowElements, exclusionService);
         }
         catch(RuntimeException e)
         {
@@ -423,7 +429,28 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
     }
-    
+
+    /**
+     * Configure the given list of configured resources
+     * @param configuredResourcesFlowElementInvokers
+     */
+    private void configure(Map<String,ConfiguredResource> configuredResourcesFlowElementInvokers)
+    {
+        for(Map.Entry<String,ConfiguredResource> entry : configuredResourcesFlowElementInvokers.entrySet())
+        {
+            ConfiguredResource configuredResource = entry.getValue();
+
+            // set the default configured resource id if none previously set.
+            // Ensure we are explicit that this is the invoker, not the POJO we are configuring
+            if(configuredResource.getConfiguredResourceId() == null)
+            {
+                configuredResource.setConfiguredResourceId(this.moduleName + this.name + entry.getKey() + "Invoker");
+            }
+
+            this.flowConfiguration.configure(configuredResource);
+        }
+    }
+
     /**
      * Configure the given list of configured flowElements
      * @param flowElements
@@ -452,9 +479,11 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 this.recoveryManager.cancelAll();
             }
 
-            // stop consumer and remove the listener
-            Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            Consumer<EventListener<?>,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();;
             consumer.stop();
+
+            // ensure we are still listening to this consumer if we are paused
+            consumer.setListener(this);
 
             this.consumerPaused = true;
             logger.info("Paused Flow[" + this.name + "] in Module[" + this.moduleName + "]");
@@ -667,13 +696,13 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             if(allInactive)
             {
                 logger.info("All threads are inactive.");
-                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                this.activeThreads = new ConcurrentHashMap<>();
                 return true;
             }
             else if(System.currentTimeMillis() - currentTimeMillis > this.stopWaitTimeout)
             {
                 logger.info("Timed out waiting for threads to complete.");
-                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                this.activeThreads = new ConcurrentHashMap<>();
                 return true;
             }
             else
@@ -730,6 +759,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         this.setThreadState(ACTIVE);
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
+        // set the lastComponentName before we try any logic with exclusion/replay, otherwise the resulting errorOccurrence will have null componentName and fail
+        flowInvocationContext.setLastComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         ID originalEventLifeIdentifier = (ID)event.getIdentifier();
@@ -789,6 +820,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
+        // set the lastComponentName before we try any logic with exclusion/replay, otherwise the resulting errorOccurrence will have null componentName and fail
+        flowInvocationContext.setLastComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
 
         try
         {
@@ -1173,5 +1206,17 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     public List<FlowInvocationContextListener> getFlowInvocationContextListeners()
     {
         return flowInvocationContextListeners;
+    }
+
+    private void injectExclusionService(List<FlowElement<?>> flowElements, ExclusionService exclusionService)
+    {
+
+        for (final FlowElement flowElement : flowElements)
+        {
+            if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware)
+            {
+                ((IsExclusionServiceAware)flowElement.getFlowComponent()).setExclusionService(exclusionService);
+            }
+        }
     }
 }
