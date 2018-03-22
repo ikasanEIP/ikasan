@@ -52,22 +52,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-h2-standalone-persistence</artifactId>
+    <artifactId>ikasan-standalone-persistence</artifactId>
     <packaging>jar</packaging>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-standalone-persistence</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-
-    </dependencies>
 
 </project>
