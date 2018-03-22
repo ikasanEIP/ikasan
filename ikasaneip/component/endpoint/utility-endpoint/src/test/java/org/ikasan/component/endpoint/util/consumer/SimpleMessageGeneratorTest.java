@@ -101,7 +101,8 @@ public class SimpleMessageGeneratorTest
             }
         });
 
-        messageGenerator.run();
+        ((SimpleMessageGenerator)messageGenerator).setRunning(true);
+        ((SimpleMessageGenerator)messageGenerator).execute();
         mockery.assertIsSatisfied();
     }
 
@@ -133,7 +134,8 @@ public class SimpleMessageGeneratorTest
             }
         });
 
-        messageGenerator.run();
+        ((SimpleMessageGenerator)messageGenerator).setRunning(true);
+        ((SimpleMessageGenerator)messageGenerator).execute();
         mockery.assertIsSatisfied();
     }
 
@@ -167,7 +169,8 @@ public class SimpleMessageGeneratorTest
             }
         });
 
-        messageGenerator.run();
+        ((SimpleMessageGenerator)messageGenerator).setRunning(true);
+        ((SimpleMessageGenerator)messageGenerator).execute();
         mockery.assertIsSatisfied();
     }
 
