@@ -106,6 +106,17 @@ public class FtpProducerConfiguration
     /** System key */
     private String systemKey = "";
 
+    /** The path of the file that contains the password. **/
+    private String passwordFilePath;
+
+    // FTPS connection details
+    private Boolean isFTPS = false;
+    private Integer ftpsPort = 21;
+    private String  ftpsProtocol = "SSL";
+    private Boolean ftpsIsImplicit = false;
+    private String  ftpsKeyStoreFilePath = "";
+    private String  ftpsKeyStoreFilePassword = "";
+
     /** Logger instance */
     private static final Logger logger = LoggerFactory.getLogger(FtpProducerConfiguration.class);
 
@@ -411,6 +422,62 @@ public class FtpProducerConfiguration
     public void setCreateParentDirectory(Boolean createParentDirectory)
     {
         this.createParentDirectory = createParentDirectory;
+    }
+
+    public String getPasswordFilePath() {
+        return passwordFilePath;
+    }
+
+    public void setPasswordFilePath(String passwordFilePath) {
+        this.passwordFilePath = passwordFilePath;
+    }
+
+    public Boolean getFTPS() {
+        return isFTPS;
+    }
+
+    public void setFTPS(Boolean FTPS) {
+        isFTPS = FTPS;
+    }
+
+    public Integer getFtpsPort() {
+        return ftpsPort;
+    }
+
+    public void setFtpsPort(Integer ftpsPort) {
+        this.ftpsPort = ftpsPort;
+    }
+
+    public String getFtpsProtocol() {
+        return ftpsProtocol;
+    }
+
+    public void setFtpsProtocol(String ftpsProtocol) {
+        this.ftpsProtocol = ftpsProtocol;
+    }
+
+    public Boolean getFtpsIsImplicit() {
+        return ftpsIsImplicit;
+    }
+
+    public void setFtpsIsImplicit(Boolean ftpsIsImplicit) {
+        this.ftpsIsImplicit = ftpsIsImplicit;
+    }
+
+    public String getFtpsKeyStoreFilePath() {
+        return ftpsKeyStoreFilePath;
+    }
+
+    public void setFtpsKeyStoreFilePath(String ftpsKeyStoreFilePath) {
+        this.ftpsKeyStoreFilePath = ftpsKeyStoreFilePath;
+    }
+
+    public String getFtpsKeyStoreFilePassword() {
+        return ftpsKeyStoreFilePassword;
+    }
+
+    public void setFtpsKeyStoreFilePassword(String ftpsKeyStoreFilePassword) {
+        this.ftpsKeyStoreFilePassword = ftpsKeyStoreFilePassword;
     }
 
     /**
