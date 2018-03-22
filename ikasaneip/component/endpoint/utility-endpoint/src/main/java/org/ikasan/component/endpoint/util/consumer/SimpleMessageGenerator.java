@@ -67,7 +67,7 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
     private ExceptionListener exceptionListener;
 
     /** control the thread execution */
-    private boolean running;
+    private volatile boolean running;
 
     public void run()
     {
