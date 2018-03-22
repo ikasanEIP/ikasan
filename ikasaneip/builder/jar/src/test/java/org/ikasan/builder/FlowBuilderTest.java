@@ -65,6 +65,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.SocketUtils;
 
 import java.util.ArrayList;
@@ -212,6 +213,43 @@ public class FlowBuilderTest
         Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_simple_transitions_with_default_autowiring()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .consumer("consumer", consumer)
+            .producer("producer", producer).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 2);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have SerialiserFactory", flow.getSerialiserFactory()!=null);
+        Assert.assertTrue("Should have ErrorReportingService", ReflectionTestUtils.getField(flow,"errorReportingService")!=null);
+        Assert.assertTrue("Should have ExclusionService", ReflectionTestUtils.getField(flow,"exclusionService")!=null);
+        Assert.assertTrue("Should have RecoveryManager", ReflectionTestUtils.getField(flow,"recoveryManager")!=null);
+        Assert.assertTrue("Should have one FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 1);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
         Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
