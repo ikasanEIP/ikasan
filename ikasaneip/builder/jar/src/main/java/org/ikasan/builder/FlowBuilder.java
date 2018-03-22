@@ -52,9 +52,7 @@ import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.ikasan.history.listener.MessageHistoryContextListener;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -67,6 +65,7 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
@@ -74,9 +73,11 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
+import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -87,7 +88,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple Flow builder.
@@ -141,6 +145,10 @@ public class FlowBuilder implements ApplicationContextAware
     /** error reporting service */
     @Autowired
     ErrorReportingService errorReportingService;
+
+    /** message history service */
+    @Autowired
+    MessageHistoryService messageHistoryService;
 
     /** flow monitor */
     Monitor monitor;
@@ -335,6 +343,18 @@ public class FlowBuilder implements ApplicationContextAware
     public FlowBuilder withSerialiserFactory(SerialiserFactory serialiserFactory)
     {
         this.serialiserFactory = serialiserFactory;
+        return this;
+    }
+
+
+    /**
+     * Add in a MessageHistoryService
+     * @param messageHistoryService
+     * @return the current builder
+     */
+    public FlowBuilder withMessageHistoryService(MessageHistoryService messageHistoryService)
+    {
+        this.messageHistoryService = messageHistoryService;
         return this;
     }
 
@@ -713,6 +733,16 @@ public class FlowBuilder implements ApplicationContextAware
             ((MonitorSubject)flow).setMonitor(monitor);
         }
 
+        // add a default MessageHistoryContextListener if necessary.
+        if(this.flowInvocationContextListeners == null)
+        {
+            this.flowInvocationContextListeners = new ArrayList<>();
+            MessageHistoryContextListener listener = new MessageHistoryContextListener(this.messageHistoryService,
+                moduleName, flowName);
+
+            this.flowInvocationContextListeners.add(listener);
+        }
+
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         logger.info("Instantiated flow - name[" + flowName + "] module[" + moduleName
@@ -734,6 +764,7 @@ public class FlowBuilder implements ApplicationContextAware
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         this.context = context;
     }
+
 
     public class PrimaryRouteBuilder
     {
