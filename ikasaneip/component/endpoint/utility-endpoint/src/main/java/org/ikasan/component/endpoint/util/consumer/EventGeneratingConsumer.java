@@ -44,6 +44,7 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,8 @@ public class EventGeneratingConsumer extends AbstractConsumer
     @Override
     public void submit(String message)
     {
-        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+        Resubmission resubmission = new Resubmission( flowEventFactory.newEvent(message.toString(), message) );
+        this.eventListener.invoke(resubmission);
     }
 
     @Override
