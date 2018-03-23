@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -127,6 +128,9 @@ public class ScheduledConsumer<T>
      * Recovery manager for this Managed Resource and any extending implementations of it
      */
     protected ManagedResourceRecoveryManager managedResourceRecoveryManager;
+
+    /** resubmission event factory */
+    private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
     /**
      * Constructor
@@ -300,7 +304,7 @@ public class ScheduledConsumer<T>
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
-	public void submit(T event)
+	public void onResubmission(T event)
 	{
         boolean isRecovering = managedResourceRecoveryManager.isRecovering();
 
@@ -308,7 +312,7 @@ public class ScheduledConsumer<T>
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(event);
 
-            Resubmission resubmission = new Resubmission(flowEvent);
+            Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
             
             this.eventListener.invoke(resubmission);
         }
@@ -336,6 +340,12 @@ public class ScheduledConsumer<T>
             }
         }
 	}
+
+    @Override
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionEventFactory = resubmissionEventFactory;
+    }
 
     /**
      * Override this is you want control over the flow event created by this

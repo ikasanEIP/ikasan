@@ -44,6 +44,8 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
+import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,9 @@ public class EventGeneratingConsumer extends AbstractConsumer
 
     /** provider of messages */
     private MessageGenerator messageGenerator;
+
+    /** resubmission event factory */
+    private ResubmissionEventFactory resubmissionEventFactory;
 
     /**
      * Constructor
@@ -167,9 +172,15 @@ public class EventGeneratingConsumer extends AbstractConsumer
     }
 
     @Override
-    public void submit(String message)
+    public void onResubmission(String message)
     {
-        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+        this.eventListener.invoke( this.resubmissionEventFactory.newResubmissionEvent( flowEventFactory.newEvent(message.toString(), message) ) );
+    }
+
+    @Override
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionEventFactory = resubmissionEventFactory;
     }
 
     @Override

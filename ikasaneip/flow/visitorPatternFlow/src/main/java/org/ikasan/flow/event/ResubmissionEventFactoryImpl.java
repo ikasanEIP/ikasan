@@ -38,14 +38,45 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.event;
+package org.ikasan.flow.event;
+
+import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public interface Resubmission<EVENT>
+public class ResubmissionEventFactoryImpl implements ResubmissionEventFactory<Resubmission>
 {
-	public EVENT getEvent();
+	@Override
+	public <EVENT> Resubmission newResubmissionEvent(EVENT event)
+	{
+		return new GenericResubmissionEvent(event);
+	}
+
+	/**
+	 * Generic internal implementation for a reubsmission event.
+	 *
+	 * @param <EVENT>
+	 */
+	private class GenericResubmissionEvent<EVENT> implements Resubmission<EVENT>
+	{
+		private EVENT event;
+
+		public GenericResubmissionEvent(EVENT event)
+		{
+			this.event = event;
+		}
+
+		/**
+		 * @return the event
+		 */
+		public EVENT getEvent()
+		{
+			return event;
+		}
+
+	}
 }

@@ -144,7 +144,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		
 		logger.debug("deserialisedEvent " + deserialisedEvent);
 		
-		resubmissionService.submit(deserialisedEvent);
+		resubmissionService.onResubmission(deserialisedEvent);
 		
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
 				ExclusionEventAction.RESUBMIT, event, moduleName, flowName);
