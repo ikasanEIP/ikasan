@@ -50,6 +50,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
+import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.history.listener.MessageHistoryContextListener;
@@ -79,6 +80,7 @@ import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
@@ -178,6 +180,9 @@ public class FlowBuilder implements ApplicationContextAware
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     ApplicationContext context;
+
+    /** resubmission event factory */
+    ResubmissionEventFactory resubmissionEventFactory = new ResubmissionEventFactoryImpl();
 
     /** Aop Proxy Provider for applying pointcuts */
     @Autowired
@@ -657,6 +662,10 @@ public class FlowBuilder implements ApplicationContextAware
         if(resubmissionService == null)
         {
             logger.info("Resubmission is not supported for ModuleName[" + moduleName + "] Flowname[" + flowName + "]");
+        }
+        else
+        {
+            resubmissionService.setResubmissionEventFactory(resubmissionEventFactory);
         }
 
         if (exclusionService == null)

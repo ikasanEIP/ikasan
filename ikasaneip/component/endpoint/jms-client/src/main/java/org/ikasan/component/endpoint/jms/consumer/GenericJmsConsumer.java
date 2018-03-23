@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
@@ -110,6 +111,9 @@ public class GenericJmsConsumer
     
     /** session message consumer */
     protected MessageConsumer messageConsumer;
+
+    /** resubmission event factory */
+    protected ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
     /**
      * Default constructor
@@ -377,7 +381,7 @@ public class GenericJmsConsumer
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
-	public void submit(Message event)
+	public void onResubmission(Message event)
 	{
 		logger.debug("attempting to submit event: " + event);
 
@@ -389,11 +393,17 @@ public class GenericJmsConsumer
         FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( this.managedEventIdentifierService.getEventIdentifier(event)
                 , event);
 
-        Resubmission resubmission = new Resubmission(flowEvent);
 
+        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
         this.eventListener.invoke(resubmission);
 
 	}
+
+    @Override
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionEventFactory = resubmissionEventFactory;
+    }
 
     @Override
     public Object convert(Message message) throws TransformationException
