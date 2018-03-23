@@ -1,5 +1,5 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,14 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.event;
+package org.ikasan.spec.resubmission;
 
 /**
+ * Interface for an EventFactory providing the contract for any event type 
+ * creation within Ikasan.
  * 
  * @author Ikasan Development Team
  *
  */
-public interface Resubmission<EVENT>
+public interface ResubmissionEventFactory<RESUBMISSION>
 {
-	public EVENT getEvent();
+    /**
+     * Create a new instance of an event with the provided identifier and payload.
+     * @param event - internal flow event identifier
+     * @return EVENT
+     */
+    public <EVENT> RESUBMISSION newResubmissionEvent(EVENT event);
 }

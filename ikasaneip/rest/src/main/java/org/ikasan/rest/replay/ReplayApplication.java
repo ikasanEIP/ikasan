@@ -144,7 +144,7 @@ public class ReplayApplication extends IkasanRestApplication
 			
 			logger.debug("deserialisedEvent " + deserialisedEvent);
 			
-			resubmissionService.submit(deserialisedEvent);
+			resubmissionService.onResubmission(deserialisedEvent);
 		}
 		catch (Exception e)
 		{

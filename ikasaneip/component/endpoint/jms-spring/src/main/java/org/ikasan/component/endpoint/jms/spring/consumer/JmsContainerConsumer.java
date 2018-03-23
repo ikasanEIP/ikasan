@@ -54,6 +54,7 @@ import org.ikasan.spec.event.*;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +99,9 @@ public class JmsContainerConsumer
     /** handle to the configuration */
     private SpringMessageConsumerConfiguration configuration;
     private ExclusionService exclusionService;
+
+    /** resubmission event factory */
+    ResubmissionEventFactory<Resubmission> resubmissionResubmissionEventFactory;
 
     /**
      * Setter for the underlying message provider tech
@@ -223,7 +227,7 @@ public class JmsContainerConsumer
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
-	public void submit(Message event)
+	public void onResubmission(Message event)
 	{
 		logger.debug("attempting to submit event: " + event);
 
@@ -237,7 +241,7 @@ public class JmsContainerConsumer
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
                             msg);
-                    invoke(new Resubmission(flowEvent));
+                    invoke(this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent));
                 }
             }
             else
@@ -245,7 +249,7 @@ public class JmsContainerConsumer
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
                         event);
-                invoke(new Resubmission(flowEvent));
+                invoke(this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent));
             }
         }
         catch (ManagedEventIdentifierException e)
@@ -253,6 +257,12 @@ public class JmsContainerConsumer
             this.eventListener.invoke(e);
         }
 	}
+
+    @Override
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionResubmissionEventFactory = resubmissionEventFactory;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
