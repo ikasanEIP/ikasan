@@ -134,7 +134,8 @@ public class SampleFlowBuilderTest
             }
         });
 
-		ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+		ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 	}
 
 	@After
