@@ -54,6 +54,7 @@ import org.ikasan.spec.event.*;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
@@ -241,7 +242,8 @@ public class JmsContainerConsumer
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
                             msg);
-                    invoke(this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent));
+                    Resubmission resubmission = this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent);
+                    invoke(resubmission);
                 }
             }
             else
@@ -249,7 +251,8 @@ public class JmsContainerConsumer
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
                         event);
-                invoke(this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent));
+                Resubmission resubmission = this.resubmissionResubmissionEventFactory.newResubmissionEvent(flowEvent);
+                invoke(resubmission);
             }
         }
         catch (ManagedEventIdentifierException e)
