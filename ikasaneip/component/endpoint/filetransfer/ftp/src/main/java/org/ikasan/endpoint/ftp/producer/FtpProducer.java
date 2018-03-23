@@ -42,10 +42,12 @@ package org.ikasan.endpoint.ftp.producer;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import javax.resource.ResourceException;
 
 import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
+import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -117,13 +119,17 @@ public class FtpProducer implements Producer<Payload>,
 
     private JtaTransactionManager transactionManager;
 
+    private FileBasedPasswordHelper fileBasedPasswordHelper;
+
     public FtpProducer(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
-            FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+                       FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                       FileBasedPasswordHelper fileBasedPasswordHelper)
     {
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+        this.fileBasedPasswordHelper = fileBasedPasswordHelper;
     }
 
     public FtpProducerConfiguration getConfiguration() {
@@ -236,10 +242,34 @@ public class FtpProducer implements Producer<Payload>,
         spec.setUsername(configuration.getUsername());
         spec.setCleanupJournalOnComplete(configuration.getCleanupJournalOnComplete());
         spec.setActive(configuration.getActive());
-        spec.setPassword(configuration.getPassword());
         spec.setDataTimeout(configuration.getDataTimeout());
         spec.setSocketTimeout(configuration.getSocketTimeout());
         spec.setSystemKey(configuration.getSystemKey());
+        // We get the password from a file if it is so configured.
+        if (configuration.getPasswordFilePath() != null
+            && configuration.getPasswordFilePath().length() > 0)
+        {
+            try
+            {
+                spec.setPassword(
+                    fileBasedPasswordHelper.getPasswordFromFile(configuration.getPasswordFilePath()));
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+        {
+            spec.setPassword(configuration.getPassword());
+        }
+
+        spec.setIsFTPS(configuration.getFTPS());
+        spec.setFtpsProtocol(configuration.getFtpsProtocol());
+        spec.setFtpsPort(configuration.getFtpsPort());
+        spec.setFtpsIsImplicit(configuration.getFtpsIsImplicit());
+        spec.setFtpsKeyStoreFilePath(configuration.getFtpsKeyStoreFilePath());
+        spec.setFtpsKeyStoreFilePassword(configuration.getFtpsKeyStoreFilePassword());
 
         return spec;
     }

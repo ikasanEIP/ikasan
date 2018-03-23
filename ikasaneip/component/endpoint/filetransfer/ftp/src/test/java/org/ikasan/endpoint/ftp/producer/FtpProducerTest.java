@@ -90,7 +90,7 @@ public class FtpProducerTest {
 
 	@Before
 	public void setup() {
-		uut = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
+		uut = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO,null);
 		uut.setConfiguration(configuration);
 	}
 
