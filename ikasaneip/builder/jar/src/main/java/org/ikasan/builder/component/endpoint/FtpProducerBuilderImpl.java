@@ -45,8 +45,7 @@ import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransf
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.ftp.producer.FtpProducer;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
-import org.ikasan.endpoint.sftp.producer.SftpProducer;
-import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -66,6 +65,8 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
     private BaseFileTransferDao baseFileTransferDao;
 
     private JtaTransactionManager transactionManager;
+
+    private FileBasedPasswordHelper fileBasedPasswordHelper;
 
     private FtpProducerConfiguration configuration;
 
@@ -131,6 +132,18 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
         this.managedResourceRecoveryManager = managedResourceRecoveryManager;
         return this;
     }
+
+    /**
+     * Give the component a FileBasedPasswordHelper
+     * @param fileBasedPasswordHelper
+     * @return
+     */
+    public FtpProducerBuilder setFileBasedPasswordHelper(FileBasedPasswordHelper fileBasedPasswordHelper)
+    {
+        this.fileBasedPasswordHelper = fileBasedPasswordHelper;
+        return this;
+    }
+
 
     @Override
     public FtpProducerBuilder setOutputDirectory(String outputDirectory)
@@ -265,6 +278,48 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
         return this;
     }
 
+    @Override
+    public FtpProducerBuilder setIsFTPS(Boolean isFTPS)
+    {
+        getConfiguration().setFTPS(isFTPS);
+        return this;
+    }
+
+    @Override
+    public FtpProducerBuilder setFtpsPort(Integer ftpsPort)
+    {
+        getConfiguration().setFtpsPort(ftpsPort);
+        return this;
+    }
+
+    @Override
+    public FtpProducerBuilder setFtpsProtocol(String ftpsProtocol)
+    {
+        getConfiguration().setFtpsProtocol(ftpsProtocol);
+        return this;
+    }
+
+    @Override
+    public FtpProducerBuilder setFtpsIsImplicit(Boolean ftpsIsImplicit)
+    {
+        getConfiguration().setFtpsIsImplicit(ftpsIsImplicit);
+        return this;
+    }
+
+    @Override
+    public FtpProducerBuilder setFtpsKeyStoreFilePath(String ftpsKeyStoreFilePath)
+    {
+        getConfiguration().setFtpsKeyStoreFilePath(ftpsKeyStoreFilePath);
+        return this;
+    }
+
+    @Override
+    public FtpProducerBuilder setFtpsKeyStoreFilePassword(String ftpsKeyStoreFilePassword)
+    {
+        getConfiguration().setFtpsKeyStoreFilePassword(ftpsKeyStoreFilePassword);
+        return this;
+    }
+
     private FtpProducerConfiguration getConfiguration()
     {
         if(configuration == null)
@@ -282,8 +337,11 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
      */
     public FtpProducer build()
     {
+        if(this.fileBasedPasswordHelper == null){
+            this.fileBasedPasswordHelper = new FileBasedPasswordHelper();
+        }
         FtpProducer ftpProducer = new FtpProducer(transactionManager, baseFileTransferDao, fileChunkDao,
-                transactionalResourceCommandDAO);
+                transactionalResourceCommandDAO, fileBasedPasswordHelper);
         ftpProducer.setConfiguration(this.configuration);
         ftpProducer.setConfiguredResourceId(this.configuredResourceId);
         if(this.criticalOnStartup)
