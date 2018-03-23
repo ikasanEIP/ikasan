@@ -51,5 +51,12 @@ public interface ResubmissionService<EVENT>
      * Entry point for submission of an event.
      * @param event
      */
-    public void submit(EVENT event);
+    public void onResubmission(EVENT event);
+
+    /**
+     * Provide a reubsmission event factory.
+     *
+     * @param resubmissionEventFactory
+     */
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory);
 }
