@@ -69,8 +69,6 @@
             <artifactId>ikasan-filetransfer-common</artifactId>
         </dependency>
 
-
-
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -123,6 +121,13 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-serialiser</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 </project>
