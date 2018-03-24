@@ -26,13 +26,26 @@ public class MapMessageToPayloadConverter
         {
             String id = message.getString(configuration.getIdAttributeName());
             Object contentObject = message.getObject(configuration.getContentAttributeName());
-            if (contentObject instanceof String)
+            if (contentObject != null)
             {
-                payload = new DefaultPayload(id, ((String) contentObject).getBytes());
+                if (contentObject instanceof String)
+                {
+                    payload = new DefaultPayload(id, ((String) contentObject).getBytes());
+                }
+                else if (contentObject instanceof byte[])
+                {
+                    payload = new DefaultPayload(id, (byte[]) contentObject);
+                }
+                else
+                {
+                    throw new TransformationException(
+                        "Message property [" + configuration.getContentAttributeName() + "] type is not supported.");
+                }
             }
-            else if (contentObject instanceof byte[])
+            else
             {
-                payload = new DefaultPayload(id, (byte[]) contentObject);
+                throw new TransformationException(
+                    "Message property [" + configuration.getContentAttributeName() + "] is empty.");
             }
         }
         catch (JMSException e)
