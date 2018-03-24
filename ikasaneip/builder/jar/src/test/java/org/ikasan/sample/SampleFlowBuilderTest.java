@@ -63,6 +63,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.util.SocketUtils;
 
 import java.util.List;
 
