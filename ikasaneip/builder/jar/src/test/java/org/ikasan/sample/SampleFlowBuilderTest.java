@@ -63,6 +63,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.util.SocketUtils;
 
 import java.util.List;
 
@@ -134,7 +135,8 @@ public class SampleFlowBuilderTest
             }
         });
 
-		ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+		ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 	}
 
 	@After
