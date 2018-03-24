@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
