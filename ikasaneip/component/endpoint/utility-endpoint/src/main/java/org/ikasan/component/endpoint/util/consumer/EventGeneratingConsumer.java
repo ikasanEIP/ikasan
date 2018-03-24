@@ -80,7 +80,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
     private MessageGenerator messageGenerator;
 
     /** resubmission event factory */
-    private ResubmissionEventFactory resubmissionEventFactory;
+    private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
     /**
      * Constructor
@@ -174,7 +174,8 @@ public class EventGeneratingConsumer extends AbstractConsumer
     @Override
     public void onResubmission(String message)
     {
-        this.eventListener.invoke( this.resubmissionEventFactory.newResubmissionEvent( flowEventFactory.newEvent(message.toString(), message) ) );
+        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent( flowEventFactory.newEvent(message.toString(), message) );
+        this.eventListener.invoke(resubmission);
     }
 
     @Override
