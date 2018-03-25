@@ -40,16 +40,19 @@
  */
 package org.ikasan.dashboard.ui.replay.component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
+import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
@@ -70,33 +73,13 @@ import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
-import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -122,6 +105,8 @@ public class ReplayTab extends TopologyTab
 	
 	private float splitPosition;
 	private Unit splitUnit;
+
+    private CheckBox useDbCheckbox;
 	
 	private IndexedContainer tableContainer;
 	
@@ -159,8 +144,11 @@ public class ReplayTab extends TopologyTab
     }
 	
 	public void createLayout()
-	{	
-		this.replayEventsTable = new FilterTable();
+	{
+        this.useDbCheckbox = new CheckBox("Use RMDBS for search");
+        this.useDbCheckbox.setValue(false);
+
+	    this.replayEventsTable = new FilterTable();
 		this.replayEventsTable.setFilterBarVisible(true);
 		this.replayEventsTable.setSizeFull();
 		this.replayEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -231,7 +219,7 @@ public class ReplayTab extends TopologyTab
 
 				List<ReplayEvent> replayEvents = null;
 
-				if(solrEnabled != null && solrEnabled.equals("true"))
+				if(solrEnabled != null && solrEnabled.equals("true") && ReplayTab.this.useDbCheckbox.getValue() == false)
 				{
 					logger.info("Performing replay search via Solr Index.");
 					replayEvents = solrReplayManagementService
@@ -436,6 +424,18 @@ public class ReplayTab extends TopologyTab
 		filterButtonLayout.setHeight(25, Unit.PIXELS);
 		filterButtonLayout.addComponent(hideFilterButton, 0, 0);
 		filterButtonLayout.addComponent(showFilterButton, 1, 0);
+
+        String solrEnabled = this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+            .getAttribute(DashboardSessionValueConstants.USER);
+
+        if(solrEnabled != null && solrEnabled.equals("true")
+            && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+            || authentication.hasGrantedAuthority(SecurityConstants.WIRETAP_ADMIN)))
+        {
+            layout.addComponent(useDbCheckbox);
+        }
 		
 		Label filterHintLabel = new Label();
 		filterHintLabel.setCaptionAsHtml(true);
@@ -529,9 +529,7 @@ public class ReplayTab extends TopologyTab
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
             }
         });
-
-		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-				.getAttribute(DashboardSessionValueConstants.USER);
+        
 
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
