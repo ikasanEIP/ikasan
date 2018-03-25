@@ -432,7 +432,7 @@ public class ReplayTab extends TopologyTab
 
         if(solrEnabled != null && solrEnabled.equals("true")
             && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-            || authentication.hasGrantedAuthority(SecurityConstants.WIRETAP_ADMIN)))
+            || authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)))
         {
             layout.addComponent(useDbCheckbox);
         }
