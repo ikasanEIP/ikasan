@@ -58,29 +58,30 @@ public interface ReplayDao
 	 */
 	public void saveOrUpdate(ReplayEvent replayEvent);
 
-	/**
+    /**
      * Get a list of ReplayEvent depending upon search criteria.
      *
      * @param moduleName
      * @param flowName
      * @param startDate
      * @param endDate
+     * @param resultSize
      * @return
-     */
-    public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate);
+	 */
+    public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate, int resultSize);
 
-    /**
+	/**
      * Get a list of ReplayEvent depending upon search criteria.
      *
      * @param moduleNames
      * @param flowNames
      * @param eventId
      * @param payloadContent
-	 *@param fromDate
-	 * @param toDate   @return
+     * @param fromDate
+     * @param toDate   @return
      */
     public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames,
-											 String eventId, String payloadContent, Date fromDate, Date toDate);
+											 String eventId, String payloadContent, Date fromDate, Date toDate, int resultSize);
 
 	/**
 	 * Get the harvestable records

@@ -52,11 +52,11 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
      */
     @Override
     public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId
-            , String payloadContent, Date fromDate, Date toDate)
+            , String payloadContent, Date fromDate, Date toDate, int resultSize)
     {
         this.replayDao.setSolrUsername(this.solrUsername);
         this.replayDao.setSolrPassword(this.solrPassword);
-        return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate);
+        return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate, resultSize);
     }
 
     @Override

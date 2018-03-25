@@ -6,30 +6,33 @@ import java.util.List;
 
 public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT>
 {
-	/**
-	 *  Get all replay events for a given date range.
-	 *  
-	 * @param moduleNames
-	 * @param flowNames
-	 * @param eventId
-	 * @param payloadContent
-     *@param fromDate
-     * @param toDate   @return
+    /**
+     * Get all replay events for a given date range.
+     *
+     * @param moduleNames
+     * @param flowNames
+     * @param eventId
+     * @param payloadContent
+     * @param fromDate
+     * @param toDate
+     * @param resultSize
+     * @return
 	 */
 	public List<EVENT> getReplayEvents(List<String> moduleNames, List<String> flowNames,
-                                       String eventId, String payloadContent, Date fromDate, Date toDate);
-	
+                                       String eventId, String payloadContent, Date fromDate, Date toDate, int resultSize);
+
 	/**
-     *  Get a list of ReplayAudit depending upon search criteria.
-     *  
+     * Get a list of ReplayAudit depending upon search criteria.
+     *
      * @param moduleNames
      * @param flowNames
      * @param eventId
      * @param user
      * @param startDate
      * @param endDate
+     * @param resultSize
      * @return
-     */
+	 */
     public List<AUDIT> getReplayAudits(List<String> moduleNames, List<String> flowNames,
 			String eventId, String user, Date startDate, Date endDate);
     
