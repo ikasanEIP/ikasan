@@ -167,7 +167,7 @@ public class ReplayServiceTest
     	flowNames.add("flowName");
     	
     	List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
-    			(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    			(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
     	
     	this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
     	
@@ -291,7 +291,7 @@ public class ReplayServiceTest
 		flowNames.add("flowName");
 
 		List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
-				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
 
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
@@ -319,7 +319,7 @@ public class ReplayServiceTest
 
 		replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 		replayEvents = this.replayDao.getReplayEvents
-				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
 		auditEvents = this.replayAuditDao.getReplayAuditEventsByAuditId(auditId1);
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId2));
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId3));

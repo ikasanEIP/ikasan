@@ -185,7 +185,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     				query.setParameter(EVENT_ID, eventId);
     		    }
 
-
                 return (List<HibernateReplayAudit>)query.list();
             }
         });
@@ -205,34 +204,33 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 */
 	@Override
 	public List<ReplayEvent> getReplayEvents(String moduleName,
-                                                      String flowName, Date startDate, Date endDate)
+                                                      String flowName, Date startDate, Date endDate, int resultSize)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
-		
+
 		if(moduleName != null && moduleName.length() > 0)
 		{
 			criteria.add(Restrictions.eq("moduleName", moduleName));
 		}
-		
+
 		if(flowName != null && flowName.length() > 0)
 		{
 			criteria.add(Restrictions.eq("flowName", flowName));
 		}
-		
+
 		if(startDate != null)
 		{
 			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
 		}
-		
+
 		if(endDate != null)
 		{
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
-		
+
 		criteria.addOrder(Order.desc("timestamp"));
 
-		
-		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, resultSize);
 	}
 	
 	
@@ -243,7 +241,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
                                                       List<String> flowNames, String eventId,
-                                                      String payloadContent, Date fromDate, Date toDate)
+                                                      String payloadContent, Date fromDate, Date toDate, int resultSize)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
 		
@@ -276,11 +274,10 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		{
 			criteria.add(Restrictions.like("eventAsString", payloadContent, MatchMode.ANYWHERE));
 		}
-		 
 		
 		criteria.addOrder(Order.desc("timestamp"));	
 		
-		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, resultSize);
 	}
 
 	@Override

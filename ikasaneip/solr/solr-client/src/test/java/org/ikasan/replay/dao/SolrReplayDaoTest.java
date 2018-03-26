@@ -81,7 +81,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             dao.saveOrUpdate(replayEvent);
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -122,7 +122,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             dao.saveOrUpdate(replayEvent);
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(null, null
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -166,7 +166,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             moduleNames.add("moduleName");
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(moduleNames, new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -210,9 +210,53 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             flowNames.add("flowName");
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_restrict_result_size() throws Exception
+    {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+
+            SolrReplayDao dao = new SolrReplayDao();
+            dao.setSolrClient(server);
+
+            SolrReplayEvent replayEvent = new SolrReplayEvent();
+            replayEvent.setModuleName("moduleName");
+            replayEvent.setFlowName("flowName");
+            replayEvent.setEvent("event".getBytes());
+            replayEvent.setTimestamp(System.currentTimeMillis());
+            replayEvent.setExpiry(0);
+            replayEvent.setId(1l);
+
+            dao.saveOrUpdate(replayEvent);
+
+            ArrayList flowNames = new ArrayList<>();
+            flowNames.add("flowName");
+
+            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
+                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 1);
+
+            assertEquals(1, replayEventList.size());
 
             server.close();
         }
@@ -264,7 +308,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             flowNames.add("flowName");
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , null,"data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,"data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -320,12 +364,12 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             flowNames.add("flowName");
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , "eventId2","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , "eventId2","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
             replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(0, replayEventList.size());
 
@@ -367,7 +411,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             dao.saveOrUpdate(replayEvent);
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -491,7 +535,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             dao.saveOrUpdate(replayEvent);
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
@@ -534,14 +578,14 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             dao.saveOrUpdate(replayEvent);
 
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
 
             dao.housekeep(100);
 
             replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(0, replayEventList.size());
 
@@ -617,7 +661,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
         dao.setSolrClient(server);
 
         dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l));
+                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
     }
 
     public static String TEST_HOME() {

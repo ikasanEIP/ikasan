@@ -125,13 +125,13 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
     }
 
     @Override
-    public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate)
+    public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate, int resultSize)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId, String payloadContent, Date fromDate, Date toDate)
+    public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId, String payloadContent, Date fromDate, Date toDate, int resultSize)
     {
         List<SolrReplayEvent> results = null;
 
@@ -163,7 +163,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
-        query.setRows(100);
+        query.setRows(resultSize);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW);
 
@@ -207,7 +207,6 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
-        query.setRows(100);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW);
 
