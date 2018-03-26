@@ -236,14 +236,14 @@ public class ReplayTab extends TopologyTab
 					logger.info("Performing replay search via Solr Index.");
 					replayEvents = solrReplayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
-									fromDate.getValue(), toDate.getValue());
+									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
 				}
 				else
 				{
 					logger.info("Performing replay search via RMDBS.");
 					replayEvents = replayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
-									fromDate.getValue(), toDate.getValue());
+									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
 				}
             	
             	if(replayEvents == null || replayEvents.size() == 0)
