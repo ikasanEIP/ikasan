@@ -66,6 +66,7 @@ import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -94,7 +95,7 @@ public class ReplayTab extends TopologyTab
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
+    private SolrReplayServiceImpl solrReplayManagementService;
 
 
 	private PopupDateField fromDate;
@@ -118,8 +119,7 @@ public class ReplayTab extends TopologyTab
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
 					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-					 ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
-					 PlatformConfigurationService platformConfigurationService)
+                     SolrReplayServiceImpl solrReplayManagementService, PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
@@ -222,6 +222,9 @@ public class ReplayTab extends TopologyTab
 				if(solrEnabled != null && solrEnabled.equals("true") && ReplayTab.this.useDbCheckbox.getValue() == false)
 				{
 					logger.info("Performing replay search via Solr Index.");
+
+                    solrReplayManagementService.setSolrUsername(platformConfigurationService.getSolrUsername());
+                    solrReplayManagementService.setSolrPassword(platformConfigurationService.getSolrPassword());
 					replayEvents = solrReplayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
 									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
