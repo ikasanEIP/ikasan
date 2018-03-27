@@ -56,6 +56,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
@@ -213,7 +214,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
 	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
+    private SolrReplayServiceImpl solrReplayManagementService;
 
 	private boolean initialised = false;
 	
@@ -226,9 +227,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 						   SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
 						   TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
 						   PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-						   ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
-						   FlowConfigurationWindow flowConfigurationWindow)
+                           HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
+                           ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+                           SolrReplayServiceImpl solrReplayManagementService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
