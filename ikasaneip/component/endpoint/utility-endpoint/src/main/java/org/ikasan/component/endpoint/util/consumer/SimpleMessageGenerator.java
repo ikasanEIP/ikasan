@@ -100,8 +100,9 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
             }
             catch (ForceTransactionRollbackException thrownByRecoveryManager)
             {
-                logger.debug("ForceTransactionRollbackException", thrownByRecoveryManager);
-                //throw thrownByRecoveryManager;
+                // rollback the count
+                count--;
+                logger.debug("Rolling back the count to [" + count +"]", thrownByRecoveryManager);
             }
             catch (Throwable throwable)
             {
