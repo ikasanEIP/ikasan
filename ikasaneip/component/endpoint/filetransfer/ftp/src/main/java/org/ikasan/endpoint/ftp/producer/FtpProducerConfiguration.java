@@ -110,7 +110,7 @@ public class FtpProducerConfiguration
     private String passwordFilePath;
 
     // FTPS connection details
-    private Boolean isFTPS = false;
+    private Boolean FTPS = false;
     private Integer ftpsPort = 21;
     private String  ftpsProtocol = "SSL";
     private Boolean ftpsIsImplicit = false;
@@ -433,11 +433,15 @@ public class FtpProducerConfiguration
     }
 
     public Boolean getFTPS() {
-        return isFTPS;
+        return FTPS;
+    }
+
+    public Boolean isFTPS() {
+        return FTPS;
     }
 
     public void setFTPS(Boolean FTPS) {
-        isFTPS = FTPS;
+        this.FTPS = FTPS;
     }
 
     public Integer getFtpsPort() {

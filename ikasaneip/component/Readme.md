@@ -357,12 +357,12 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 | socketTimeout | integer | Optional only available on FTP consumer. Default(300000) expressed in milliseconds. Internal FTP connector socket connection timeout value. |
 | systemKey | String | Optional only available on FTP consumer.  |
 | passwordFilePath | String | Optional only available on FTP consumer. The path of the file that contains the password. |
-| isFTPS | boolean | Optional only available on FTP consumer. Default(false) used to determine if connection is using FTPs |
-| ftpsPort | integer | Optional only available on FTP consumer. Default(21) only applicable when isFTPS=true. The remote port of FTPs server where consumer needs to connect. |
-| ftpsProtocol | String | Optional only available on FTP consumer. Default(‘SSL’) only applicable when isFTPS=true. The protocol used for remote FTPs connection. |
-| ftpsIsImplicit | booleans | Optional only available on FTP consumer. Default(false) only applicable when isFTPS=true. |
-| ftpsKeyStoreFilePath | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
-| ftpsKeyStoreFilePassword | String | Optional only available on FTP consumer. Only applicable when isFTPS=true. |
+| FTPS | boolean | Optional only available on FTP consumer. Default(false) used to determine if connection is using FTPs |
+| ftpsPort | integer | Optional only available on FTP consumer. Default(21) only applicable when FTPS=true. The remote port of FTPs server where consumer needs to connect. |
+| ftpsProtocol | String | Optional only available on FTP consumer. Default(‘SSL’) only applicable when FTPS=true. The protocol used for remote FTPs connection. |
+| ftpsIsImplicit | booleans | Optional only available on FTP consumer. Default(false) only applicable when FTPS=true. |
+| ftpsKeyStoreFilePath | String | Optional only available on FTP consumer. Only applicable when FTPS=true. |
+| ftpsKeyStoreFilePassword | String | Optional only available on FTP consumer. Only applicable when FTPS=true. |
 
 
 ##### Sample Usage - builder pattern

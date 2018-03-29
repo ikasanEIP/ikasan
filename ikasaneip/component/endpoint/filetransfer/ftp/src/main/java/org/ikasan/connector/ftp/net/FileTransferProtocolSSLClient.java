@@ -117,7 +117,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol {
     private FTPSClient ftpClient;
 
     // FTPS connection details
-    private Boolean isFTPS = false;
+    private Boolean FTPS = false;
     private Integer ftpsPort = 21;
     private String  ftpsProtocol = "SSL";
     private Boolean ftpsIsImplicit = false;
@@ -138,7 +138,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol {
      * @param connectionTimeout connection timeout
      * @param soTimeout Socket timeout in ms after getting a connection
      * @param dataTimeout Data connection timeout in ms after opening a socket
-     * @param isFTPS Whether use FTPS or not, default false
+     * @param FTPS Whether use FTPS or not, default false
      * @param ftpsPort FTPS port
      * @param ftpsProtocol FTPS protocol - SSL TSL
      * @param ftpsIsImplicit FTPS implicit or explicit
@@ -156,7 +156,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol {
                                           Integer connectionTimeout,
                                           Integer soTimeout,
                                           Integer dataTimeout,
-                                          boolean isFTPS,
+                                          boolean FTPS,
                                           Integer ftpsPort,
                                           String ftpsProtocol,
                                           boolean ftpsIsImplicit,
@@ -188,7 +188,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol {
         this.username = username;
         this.systemKey = systemKey;
 
-        this.isFTPS = isFTPS;
+        this.FTPS = FTPS;
         this.ftpsPort = ftpsPort;
         this.ftpsProtocol = ftpsProtocol;
         this.ftpsIsImplicit = ftpsIsImplicit;
