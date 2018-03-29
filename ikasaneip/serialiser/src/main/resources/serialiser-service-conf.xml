@@ -23,6 +23,12 @@
                 <entry key="javax.jms.ObjectMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsObjectMessageConverter"/>
                 </entry>
+                <entry key="javax.jms.BytesMessage">
+                    <bean class="org.ikasan.serialiser.converter.JmsBytesMessageConverter"/>
+                </entry>
+                <entry key="javax.jms.StreamMessage">
+                    <bean class="org.ikasan.serialiser.converter.JmsStreamMessageConverter"/>
+                </entry>
             </map>
         </constructor-arg>
     </bean>
