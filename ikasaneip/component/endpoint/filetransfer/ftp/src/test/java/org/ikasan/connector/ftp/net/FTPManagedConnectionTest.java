@@ -23,7 +23,7 @@ public class FTPManagedConnectionTest {
         info.setMaxRetryAttempts(3);
         info.setConnectionTimeout(10000);
 
-        info.setIsFTPS(true);
+        info.setFTPS(true);
         info.setFtpsProtocol("SSL");
         info.setFtpsPort(21);
         info.setFtpsIsImplicit(false);

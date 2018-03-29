@@ -87,7 +87,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
     private String systemKey = new String();
 
     // FTPS connection details
-    private Boolean isFTPS = false;
+    private Boolean FTPS = false;
     private Integer ftpsPort = 21;
     private String  ftpsProtocol = "SSL";
     private Boolean ftpsIsImplicit = false;
@@ -322,12 +322,12 @@ public class FTPConnectionSpec extends EISConnectionSpec
         this.socketTimeout = socketTimeout;
     }
 
-    public Boolean getIsFTPS() {
-        return isFTPS;
+    public Boolean getFTPS() {
+        return FTPS;
     }
 
-    public void setIsFTPS(Boolean isFTPS) {
-        this.isFTPS = isFTPS;
+    public void setFTPS(Boolean FTPS) {
+        this.FTPS = FTPS;
     }
 
     public Integer getFtpsPort() {
@@ -392,7 +392,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
             + "Poll Time                         [" + this.pollTime + "]\n"
             + "System Key                        [" + this.systemKey + "]\n"
             + "Username:                         [" + this.username + "]\n"
-            + "Is FTPS                           [" + this.isFTPS + "]\n"
+            + "Is FTPS                           [" + this.FTPS + "]\n"
             + "FTPS Protocol                     [" + this.ftpsProtocol + "]\n"
             + "FTPS Port                         [" + this.ftpsPort + "]\n"
             + "FTPS isImplicit                   [" + this.ftpsIsImplicit + "]\n"

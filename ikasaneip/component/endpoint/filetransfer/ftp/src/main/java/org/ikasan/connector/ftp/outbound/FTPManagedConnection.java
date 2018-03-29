@@ -250,8 +250,8 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         Integer soTimeout = this.fcri.getSocketTimeout();
 
         // Create a FileTransferProtocolClient
-        if (fcri.getIsFTPS()) {
-            Boolean isFTPS = true;
+        if (fcri.getFTPS()) {
+            Boolean FTPS = true;
             Integer ftpsPort = fcri.getFtpsPort();
             String  ftpsProtocol = fcri.getFtpsProtocol();
             Boolean ftpsIsImplicit = fcri.getFtpsIsImplicit();
@@ -261,7 +261,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
 
             this.ftpClient = new FileTransferProtocolSSLClient(active, remoteHostname, localHostname, maxRetryAttempts, password, remotePort, username, systemKey,
                                                                connectionTimeout, dataTimeout, soTimeout,
-                                                               isFTPS, ftpsPort, ftpsProtocol, ftpsIsImplicit, ftpsKeyStoreFilePath, ftpsKeyStoreFilePassword);
+                                                               FTPS, ftpsPort, ftpsProtocol, ftpsIsImplicit, ftpsKeyStoreFilePath, ftpsKeyStoreFilePassword);
         } else {
             this.ftpClient = new FileTransferProtocolClient(active, remoteHostname, localHostname, maxRetryAttempts, password, remotePort, username, systemKey,
                                                             connectionTimeout, dataTimeout, soTimeout);

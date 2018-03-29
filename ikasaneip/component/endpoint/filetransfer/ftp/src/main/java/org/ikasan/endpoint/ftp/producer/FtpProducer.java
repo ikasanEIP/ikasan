@@ -264,7 +264,7 @@ public class FtpProducer implements Producer<Payload>,
             spec.setPassword(configuration.getPassword());
         }
 
-        spec.setIsFTPS(configuration.getFTPS());
+        spec.setFTPS(configuration.getFTPS());
         spec.setFtpsProtocol(configuration.getFtpsProtocol());
         spec.setFtpsPort(configuration.getFtpsPort());
         spec.setFtpsIsImplicit(configuration.getFtpsIsImplicit());

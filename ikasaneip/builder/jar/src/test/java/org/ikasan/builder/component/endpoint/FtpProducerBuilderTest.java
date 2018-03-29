@@ -116,7 +116,7 @@ public class FtpProducerBuilderTest
                 .setSystemKey("testSystemKey")
                 .setSocketTimeout(300)
                 .setDataTimeout(300)
-                .setIsFTPS(true)
+                .setFTPS(true)
                 .setFtpsIsImplicit(true)
                 .setFtpsIsImplicit(true)
                 .setFtpsKeyStoreFilePath("testFtpsKeyStoreFilePath")
@@ -148,7 +148,7 @@ public class FtpProducerBuilderTest
         assertEquals("socketTimeout should be '300'",300, configuration.getSocketTimeout().intValue());
         assertEquals("dataTimeout should be '300'",300, configuration.getDataTimeout().intValue());
 
-        assertTrue("isFtps should be 'true'", configuration.getFTPS());
+        assertTrue("Ftps should be 'true'", configuration.getFTPS());
         assertTrue("FtpsIsImplicit should be 'false'", configuration.getFtpsIsImplicit());
         assertEquals("ftpsKeyStoreFilePath should be 'testFtpsKeyStoreFilePath'","testFtpsKeyStoreFilePath", configuration.getFtpsKeyStoreFilePath());
         assertEquals("ftpsKeyStoreFilePassword should be 'testFtpsKeyStoreFilePassword'","testFtpsKeyStoreFilePassword", configuration.getFtpsKeyStoreFilePassword());

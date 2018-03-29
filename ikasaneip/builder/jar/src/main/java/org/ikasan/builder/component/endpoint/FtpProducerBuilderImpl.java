@@ -279,9 +279,9 @@ public class FtpProducerBuilderImpl implements FtpProducerBuilder
     }
 
     @Override
-    public FtpProducerBuilder setIsFTPS(Boolean isFTPS)
+    public FtpProducerBuilder setFTPS(Boolean FTPS)
     {
-        getConfiguration().setFTPS(isFTPS);
+        getConfiguration().setFTPS(FTPS);
         return this;
     }
 

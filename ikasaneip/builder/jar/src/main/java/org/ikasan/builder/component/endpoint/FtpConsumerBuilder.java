@@ -140,7 +140,7 @@ public interface FtpConsumerBuilder extends ScheduledConsumerBuilder
 
     FtpConsumerBuilder setFtpsPort(Integer ftpsPort);
 
-    FtpConsumerBuilder setIsFTPS(Boolean isFTPS);
+    FtpConsumerBuilder setFTPS(Boolean FTPS);
 
     FtpConsumerBuilder setPasswordFilePath(String passwordFilePath);
 
