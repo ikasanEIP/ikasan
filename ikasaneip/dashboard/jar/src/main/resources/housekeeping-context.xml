@@ -54,7 +54,7 @@
         <ref bean="systemEventServiceHousekeepingJob" />
         <ref bean="duplicateFilterHousekeepingJob" />
         <ref bean="messageHistoryHousekeepingJob" />
-        <ref bean="solrWiretapHousekeepingJob" />
+        <ref bean="solrHousekeepingJob" />
     </util:list>
 
     <bean id="replyHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
@@ -99,7 +99,7 @@
         <constructor-arg ref="platformConfigurationService" />
     </bean>
 
-    <bean id="solrWiretapHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+    <bean id="solrHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
         <constructor-arg value="solrHousekeepingJob" />
         <constructor-arg ref="solrGeneralService" />
         <constructor-arg ref="platformConfigurationService" />

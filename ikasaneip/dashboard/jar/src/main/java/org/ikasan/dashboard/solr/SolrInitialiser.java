@@ -85,7 +85,8 @@ public class SolrInitialiser
                 }
                 catch (Exception e)
                 {
-                    logger.warn("Solr initialisation has been unsucessful. It appears that Solr is not running." ,e);
+                    logger.warn(String.format("Solr initialisation has been unsuccessful. It appears that Solr is not running. " +
+                        "Attempted to connect to the following Solr URLs[s].", solrUrlsList));
                     platformConfigurationService.saveConfigurationValue(ConfigurationConstants.SOLR_ENABLED, "false");
 
                     return false;
