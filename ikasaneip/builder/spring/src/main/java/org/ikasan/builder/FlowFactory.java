@@ -44,6 +44,7 @@ import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
+import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
@@ -65,6 +66,7 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
@@ -109,6 +111,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
     /** exclusionService factory for getting a default exclusionService instance */
     ErrorReportingServiceFactory errorReportingServiceFactory;
+
+    /** resubmission event factory */
+    ResubmissionEventFactory resubmissionEventFactory = new ResubmissionEventFactoryImpl();
 
     /** allow override of recovery manager instance */
     RecoveryManager recoveryManager;
@@ -293,10 +298,15 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.flowInvocationContextListeners = flowInvocationContextListeners;
     }
 
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionEventFactory = resubmissionEventFactory;
+    }
+
     /*
-         * (non-Javadoc)
-         * @see org.springframework.beans.factory.FactoryBean#getObject()
-         */
+             * (non-Javadoc)
+             * @see org.springframework.beans.factory.FactoryBean#getObject()
+             */
     @Override
     public Flow getObject()
     {
@@ -304,6 +314,10 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         if(resubmissionService == null && this.consumer != null && this.consumer.getFlowComponent() instanceof ResubmissionService)
         {
             resubmissionService = (ResubmissionService)this.consumer.getFlowComponent();
+            if(resubmissionService!=null)
+            {
+                resubmissionService.setResubmissionEventFactory(resubmissionEventFactory);
+            }
         }
 
         // add a default MessageHistoryContextListener if necessary.
@@ -504,6 +518,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.ikasanSerialiserFactory = applicationContext.getBean(SerialiserFactory.class);
         this.replayRecordService = applicationContext.getBean(ReplayRecordService.class);
         this.messageHistoryService = applicationContext.getBean(MessageHistoryService.class);
+
     }
 
     /**
