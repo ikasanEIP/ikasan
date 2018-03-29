@@ -6,7 +6,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <aop:config>
-        <aop:pointcut id="resubmissionPointcut" expression="execution(* org.ikasan.spec.resubmission.ResubmissionService.submit(..))" />
+        <aop:pointcut id="resubmissionPointcut" expression="execution(* org.ikasan.spec.resubmission.ResubmissionService.onResubmission(..))" />
         <aop:advisor id="resubmissionPointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="resubmissionPointcut" />
     </aop:config>
 
