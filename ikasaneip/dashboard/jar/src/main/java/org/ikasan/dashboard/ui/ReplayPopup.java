@@ -18,6 +18,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.UI;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -43,8 +44,10 @@ public class ReplayPopup extends UI
 				.getWrappedSession().getAttribute("replayService");
 		PlatformConfigurationService platformConfigurationService = (PlatformConfigurationService)VaadinService.getCurrentRequest()
 				.getWrappedSession().getAttribute("platformConfigurationService");
+        TopologyService topologyService = (TopologyService)VaadinService.getCurrentRequest()
+            .getWrappedSession().getAttribute("topologyService");
 		
-		ReplayStatusPanel panel = new ReplayStatusPanel(replayEvents, replayService, platformConfigurationService);
+		ReplayStatusPanel panel = new ReplayStatusPanel(replayEvents, replayService, platformConfigurationService, topologyService);
 		
 		this.setContent(panel);
 	}

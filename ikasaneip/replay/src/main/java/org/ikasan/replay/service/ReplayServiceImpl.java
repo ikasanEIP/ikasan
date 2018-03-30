@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 import org.ikasan.replay.model.BulkReplayResponse;
@@ -62,7 +63,8 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 	 */
 	@Override
 	public BulkReplayResponse replay(String targetServer, List<ReplayEvent> events,
-								 String authUser, String authPassword, String user, String replayReason)
+                                     String authUser, String authPassword, String user, String replayReason,
+                                     Map<String, String> moduleContextMappings)
 	{
 		cancel = false;
 
@@ -81,63 +83,9 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
     			return bulkReplayResponse;
     		}
 
-//    		if(!targetServer.endsWith("/"))
-//    		{
-//    			targetServer += "/";
-//    		}
-//
-//            logger.info("Event: " + event.getEventId());
-//
-//            ResponseEntity<String> response = null;
-//
-//			String url = targetServer
-//					+ event.getModuleName().replace(" ", "%20")
-//					+ "/rest/replay/eventReplay/"
-//					+ event.getModuleName().replace(" ", "%20")
-//					+ "/"
-//					+ event.getFlowName().replace(" ", "%20");
-//
-//			HttpEntity request = initRequest(event.getEvent(), event.getModuleName(), authUser, authPassword);
-//
-//			logger.info("Attempting to call URL: " + url);
-//
-//			String responseBody = null;
-//
-//			RuntimeException exception = null;
-//
-//			try
-//			{
-//				response = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
-//				responseBody = response.getBody();
-//			}
-//			catch(final HttpClientErrorException e)
-//			{
-//				responseBody = String.format("An error has occurred attempting to replay event: HTTP Status Code[%s], Response[%s]", e.getRawStatusCode(),
-//						e.getResponseBodyAsString());
-//
-//				exception = new RuntimeException(responseBody, e);
-//			}
-//			catch (Exception e)
-//			{
-//				responseBody = String.format("An error has occurred attempting to replay event: Error Message[%s]", e.getMessage());
-//				exception = new RuntimeException(responseBody, e);
-//			}
-//
-//			boolean success = true;
-//
-//			if(response == null || !response.getStatusCode().is2xxSuccessful())
-//			{
-//				success = false;
-//			}
-//
-//			HibernateReplayAuditEvent replayAuditEvent = new HibernateReplayAuditEvent(replayAudit, event, success,
-//					responseBody, System.currentTimeMillis());
-//
-//			logger.info("Saving replayAuditEvent: " + replayAuditEvent);
-//
-//			this.replayAuditDao.saveOrUpdate(replayAuditEvent);
+    		String contextPath = moduleContextMappings.get(event.getModuleName());
 
-			ReplayResponse replayResponse = this.replay(targetServer, event, authUser, authPassword, user, replayReason, replayAudit);
+			ReplayResponse replayResponse = this.replay(targetServer, event, authUser, authPassword, user, replayReason, replayAudit,contextPath);
 
 			bulkReplayResponse.addReplayResponse(replayResponse);
 
@@ -151,14 +99,15 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 	 */
 	@Override
 	public ReplayResponse replay(String targetServer, ReplayEvent event,
-					   String authUser, String authPassword, String user, String replayReason)
+                                 String authUser, String authPassword, String user, String replayReason, String contextPath)
 	{
-		return this.replay(targetServer, event, authUser, authPassword, user, replayReason, null);
+		return this.replay(targetServer, event, authUser, authPassword, user, replayReason, null, contextPath);
 	}
 
 
 	private ReplayResponse replay(String targetServer, ReplayEvent event,
-								 String authUser, String authPassword, String user, String replayReason, HibernateReplayAudit replayAudit)
+                                  String authUser, String authPassword, String user,
+                                  String replayReason, HibernateReplayAudit replayAudit, String contextPath)
 	{
 		cancel = false;
 
@@ -172,7 +121,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 
 		logger.info("Event: " + event.getEvent());
 
-		ReplayResponse replayResponse = this.replayMessage(targetServer, event, authUser, authPassword);
+		ReplayResponse replayResponse = this.replayMessage(targetServer, event, authUser, authPassword, contextPath);
 
 		HibernateReplayAuditEvent replayAuditEvent = new HibernateReplayAuditEvent(replayAudit, event, replayResponse.isSuccess(),
 				replayResponse.getResponseBody(), System.currentTimeMillis());
@@ -206,7 +155,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 	}
 
 	private ReplayResponse replayMessage(String targetServer, ReplayEvent event,
-										 String authUser, String authPassword)
+										 String authUser, String authPassword, String contextPath)
 	{
 		ResponseEntity<String> response = null;
 
@@ -221,8 +170,13 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 			targetServer += "/";
 		}
 
+		if(targetServer.endsWith("/") && contextPath.startsWith("/"))
+        {
+            targetServer = targetServer.substring(0, targetServer.length()-1);
+        }
+
 		String url = targetServer
-				+ event.getModuleName().replace(" ", "%20")
+				+ contextPath.replace(" ", "%20")
 				+ "/rest/replay/eventReplay/"
 				+ event.getModuleName().replace(" ", "%20")
 				+ "/"

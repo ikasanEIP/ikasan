@@ -259,26 +259,7 @@ public class ReplayAuditViewPanel extends Panel
 			item.getItemProperty("Event Id / Payload Id").setValue(replayAuditEvent.getEventId());
 			item.getItemProperty("Message").setValue(replayAuditEvent.getResultMessage());
 			item.getItemProperty("Timestamp").setValue(timestamp);
-			
-			Button popupButton = new Button();
-			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			popupButton.setDescription("Open in new window");
-			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-			popupButton.setIcon(VaadinIcons.MODAL);
-			
-			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayEventViewPopup.class);
-			popupOpener.setFeatures("height=600,width=900,resizable");
-	        popupOpener.extend(popupButton);
-	        
-	        popupButton.addClickListener(new Button.ClickListener() 
-	    	{
-	            public void buttonClick(ClickEvent event) 
-	            {
-//	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
-	            }
-	        });
-	        
-//	        item.getItemProperty("").setValue(popupButton);
+
     	}
 		
 		GridLayout layout = new GridLayout(1, 2);

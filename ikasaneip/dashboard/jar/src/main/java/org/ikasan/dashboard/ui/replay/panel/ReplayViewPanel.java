@@ -347,7 +347,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     	{
     		
     		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService,
-					this.solrReplayManagementService, this.platformConfigurationService);
+					this.solrReplayManagementService, this.platformConfigurationService, topologyService);
 
     		replayTab.createLayout();
 			

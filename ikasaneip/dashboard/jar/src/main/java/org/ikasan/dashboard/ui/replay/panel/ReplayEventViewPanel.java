@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.ikasan.topology.service.TopologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayPopup;
@@ -97,6 +98,7 @@ public class ReplayEventViewPanel extends Panel
 	private ReplayEvent replayEvent;
 	private ReplayService replayService;
 	private PlatformConfigurationService platformConfigurationService;
+    private TopologyService topologyService;
 
 	/**
 	 * Constructor
@@ -106,12 +108,14 @@ public class ReplayEventViewPanel extends Panel
 	 * @param platformConfigurationService
 	 */
 	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService replayService,
-								PlatformConfigurationService platformConfigurationService)
+								PlatformConfigurationService platformConfigurationService,
+                                TopologyService topologyService)
 	{
 		super();
 		this.replayEvent = replayEvent;
 		this.replayService = replayService;
 		this.platformConfigurationService = platformConfigurationService;
+        this.topologyService = topologyService;
 		
 		this.init();
 	}
@@ -218,6 +222,7 @@ public class ReplayEventViewPanel extends Panel
             	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", replayEvents);
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+                 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
             }
         });
 
