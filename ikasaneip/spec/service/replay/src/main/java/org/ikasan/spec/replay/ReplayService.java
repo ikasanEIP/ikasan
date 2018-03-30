@@ -41,6 +41,7 @@
 package org.ikasan.spec.replay;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -59,26 +60,26 @@ public interface ReplayService<EVENT, AUDIT_EVENT, REPLAY_RESPONSE, BULK_REPLAY_
 
     /**
      * Entry point for replay of a list of events.
-     * 
-     * @param targetServer
+     *  @param targetServer
      * @param events
      * @param authUser
      * @param authPassword
      * @param user
+     * @param moduleContextMappings
      */
-    public BULK_REPLAY_RESPONSE replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
+    public BULK_REPLAY_RESPONSE replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason, Map<String, String> moduleContextMappings);
 
 
     /**
      * Entry point for replay of an individual event.
-     *
-     * @param targetServer
+     *  @param targetServer
      * @param event
      * @param authUser
      * @param authPassword
      * @param user
+     * @param contextPath
      */
-    public REPLAY_RESPONSE replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason);
+    public REPLAY_RESPONSE replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason, String contextPath);
     
     /**
      * Method to cancel the replay.

@@ -49,6 +49,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -71,8 +72,11 @@ public class ReplayEventViewPopup extends UI
 		 
 		PlatformConfigurationService platformConfigurationService 
 			= (PlatformConfigurationService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("platformConfigurationService");
+
+        TopologyService topologyService
+            = (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
 	        
-		ReplayEventViewPanel panel = new ReplayEventViewPanel(replayEvent, replayService, platformConfigurationService);
+		ReplayEventViewPanel panel = new ReplayEventViewPanel(replayEvent, replayService, platformConfigurationService, topologyService);
 		
 		this.setContent(panel);
 	}

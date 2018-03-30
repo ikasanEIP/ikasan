@@ -75,10 +75,7 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -292,7 +289,8 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 								String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
 
 								bulkReplayResponse = replayService.replay(targetServer, replayEvents, authentication.getName(),
-										(String) authentication.getCredentials(), authentication.getName(), comments.getValue());
+										(String) authentication.getCredentials(), authentication.getName(), comments.getValue(),
+                                        getModuleContextMappings());
 							}
 							else
 							{
@@ -404,7 +402,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		    	{
 					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
-			    			, replayService, platformConfigurationService);
+			    			, replayService, platformConfigurationService, topologyService);
 			    
 			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
@@ -438,7 +436,10 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    	{
 	            public void buttonClick(ClickEvent event) 
 	            {
-	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
 	            }
 	        });
 	        
@@ -460,6 +461,20 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 
 		return panel;
 	}
+
+	private Map<String, String> getModuleContextMappings()
+    {
+        HashMap<String, String> moduleContextMappings = new HashMap<>();
+
+        List<Module> modules = this.topologyService.getAllModules();
+
+        for(Module module: modules)
+        {
+            moduleContextMappings.put(module.getName(), module.getContextRoot());
+        }
+
+        return moduleContextMappings;
+    }
 	
 	private List<String> getValidTargetServers()
 	{
