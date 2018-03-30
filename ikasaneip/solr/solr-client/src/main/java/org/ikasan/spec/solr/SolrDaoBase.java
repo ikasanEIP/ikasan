@@ -354,6 +354,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
             req.deleteByQuery(query.toString());
 
+            if(this.solrClient == null)
+            {
+                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
+                return;
+            }
+
             UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
             req.commit(solrClient, SolrConstants.CORE);
 
@@ -381,6 +387,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             req = req.deleteByQuery(query.toString());
 
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            if(this.solrClient == null)
+            {
+                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
+                return;
+            }
 
             UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
             req.commit(solrClient, SolrConstants.CORE);
