@@ -5,6 +5,7 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,7 +211,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
         if(payloadContent != null && !payloadContent.trim().isEmpty())
         {
-            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(payloadContent).append("\"");
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(SolrSpecialCharacterEscapeUtil.escape(payloadContent)).append("\"");
 
         }
 
