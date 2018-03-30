@@ -98,7 +98,7 @@ public interface FtpProducerBuilder extends Builder<Producer>
 
     FtpProducerBuilder setDataTimeout(Integer dataTimeout);
 
-    FtpProducerBuilder setIsFTPS(Boolean isFTPS);
+    FtpProducerBuilder setFTPS(Boolean FTPS);
 
     FtpProducerBuilder setFtpsPort(Integer ftpsPort);
 

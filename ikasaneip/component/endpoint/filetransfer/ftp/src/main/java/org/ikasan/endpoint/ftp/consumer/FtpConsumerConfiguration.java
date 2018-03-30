@@ -151,7 +151,7 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     private String passwordFilePath;
 
     // FTPS connection details
-    private Boolean isFTPS = false;
+    private Boolean FTPS = false;
     private Integer ftpsPort = 21;
     private String  ftpsProtocol = "SSL";
     private Boolean ftpsIsImplicit = false;
@@ -708,12 +708,16 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
         return this.systemKey;
     }
 
-    public Boolean getIsFTPS() {
-        return isFTPS;
+    public Boolean getFTPS() {
+        return FTPS;
     }
 
-    public void setIsFTPS(Boolean isFTPS) {
-        this.isFTPS = isFTPS;
+    public Boolean isFTPS() {
+        return FTPS;
+    }
+
+    public void setFTPS(Boolean FTPS) {
+        this.FTPS = FTPS;
     }
 
     public Integer getFtpsPort() {

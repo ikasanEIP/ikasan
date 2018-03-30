@@ -332,7 +332,7 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
         spec.setSocketTimeout(ftpConsumerConfiguration.getSocketTimeout());
         spec.setSystemKey(ftpConsumerConfiguration.getSystemKey());
         spec.setUsername(ftpConsumerConfiguration.getUsername());
-        spec.setIsFTPS(ftpConsumerConfiguration.getIsFTPS());
+        spec.setFTPS(ftpConsumerConfiguration.getFTPS());
         spec.setFtpsProtocol(ftpConsumerConfiguration.getFtpsProtocol());
         spec.setFtpsPort(ftpConsumerConfiguration.getFtpsPort());
         spec.setFtpsIsImplicit(ftpConsumerConfiguration.getFtpsIsImplicit());
@@ -360,7 +360,7 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
             alternateSpec.setSocketTimeout(alternateConfig.getAlternateSocketTimeout());
             alternateSpec.setSystemKey(alternateConfig.getAlternateSystemKey());
             alternateSpec.setUsername(alternateConfig.getAlternateUsername());
-            alternateSpec.setIsFTPS(ftpConsumerConfiguration.getIsFTPS());
+            alternateSpec.setFTPS(ftpConsumerConfiguration.getFTPS());
             alternateSpec.setFtpsProtocol(ftpConsumerConfiguration.getFtpsProtocol());
             alternateSpec.setFtpsPort(ftpConsumerConfiguration.getFtpsPort());
             alternateSpec.setFtpsIsImplicit(ftpConsumerConfiguration.getFtpsIsImplicit());
