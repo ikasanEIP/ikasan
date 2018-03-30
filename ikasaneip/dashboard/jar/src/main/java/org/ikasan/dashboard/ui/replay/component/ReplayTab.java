@@ -74,6 +74,7 @@ import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tepi.filtertable.FilterTable;
@@ -116,15 +117,19 @@ public class ReplayTab extends TopologyTab
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	private PlatformConfigurationService platformConfigurationService;
+
+    private TopologyService topologyService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
-					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-                     SolrReplayServiceImpl solrReplayManagementService, PlatformConfigurationService platformConfigurationService)
+                     ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+                     SolrReplayServiceImpl solrReplayManagementService, PlatformConfigurationService platformConfigurationService,
+                     TopologyService topologyService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
 		this.solrReplayManagementService = solrReplayManagementService;
 		this.platformConfigurationService = platformConfigurationService;
+        this.topologyService = topologyService;
 		
 		tableContainer = this.buildContainer();
 	}
@@ -175,7 +180,7 @@ public class ReplayTab extends TopologyTab
 		    	{
 					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
-			    			, replayService, platformConfigurationService);
+			    			, replayService, platformConfigurationService, topologyService);
 			    
 			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
@@ -301,7 +306,10 @@ public class ReplayTab extends TopologyTab
         	    	{
         	            public void buttonClick(ClickEvent event) 
         	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
         	            }
         	        });
         	        
@@ -529,6 +537,7 @@ public class ReplayTab extends TopologyTab
             	 // todo add replay events            	 
             	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", getReplayEvents());
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService",topologyService );
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
             }
         });
