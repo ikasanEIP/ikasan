@@ -48,7 +48,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -71,10 +70,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
 
 /**
  * 
@@ -252,7 +248,8 @@ public class ReplayEventViewPanel extends Panel
 					String targetServer = module.getServer().getUrl() + ":" + module.getServer().getPort();
 
 					replayResponse = replayService.replay(targetServer, replayEvent, authentication.getName(),
-							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue());
+							(String)authentication.getCredentials(), authentication.getName(),commentTextArea.getValue(),
+                            getModuleContextMappings().get(replayEvent.getModuleName()));
 				}
 				catch (RuntimeException e)
 				{
@@ -370,6 +367,20 @@ public class ReplayEventViewPanel extends Panel
             
 	    StreamResource resource = new StreamResource ( source,"payload.txt");
 	    return resource;
+    }
+
+    private Map<String, String> getModuleContextMappings()
+    {
+        HashMap<String, String> moduleContextMappings = new HashMap<>();
+
+        List<Module> modules = this.topologyService.getAllModules();
+
+        for(Module module: modules)
+        {
+            moduleContextMappings.put(module.getName(), module.getContextRoot());
+        }
+
+        return moduleContextMappings;
     }
     
     /**

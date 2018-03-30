@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.replay.window;
 
+import org.ikasan.topology.service.TopologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.replay.panel.ReplayEventViewPanel;
@@ -63,6 +64,7 @@ public class ReplayEventViewWindow extends Window
 	private ReplayEvent replayEvent;
 	private ReplayService replayService;
 	private PlatformConfigurationService platformConfigurationService;
+    private TopologyService topologyService;
 
 	/**
 	 * Constructor
@@ -72,12 +74,14 @@ public class ReplayEventViewWindow extends Window
 	 * @param platformConfigurationService
 	 */
 	public ReplayEventViewWindow(ReplayEvent replayEvent, ReplayService replayService,
-								 PlatformConfigurationService platformConfigurationService)
+								 PlatformConfigurationService platformConfigurationService,
+                                 TopologyService topologyService)
 	{
 		super();
 		this.replayEvent = replayEvent;
 		this.replayService = replayService;
 		this.platformConfigurationService = platformConfigurationService;
+        this.topologyService = topologyService;
 		
 		this.init();
 	}
@@ -91,7 +95,7 @@ public class ReplayEventViewWindow extends Window
 		this.setWidth("90%");
 		
 		ReplayEventViewPanel panel = new ReplayEventViewPanel(this.replayEvent, replayService,
-				platformConfigurationService);		
+				platformConfigurationService, topologyService);
 		
 		this.setContent(panel);
 	}
