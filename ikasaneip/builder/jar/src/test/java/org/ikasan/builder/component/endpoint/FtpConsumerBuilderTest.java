@@ -205,7 +205,7 @@ public class FtpConsumerBuilderTest
                 .setFtpsIsImplicit(true)
                 .setFtpsProtocol("protocol")
                 .setFtpsPort(24)
-                .setIsFTPS(true)
+                .setFTPS(true)
                 .setPasswordFilePath("testPasswordFilePath")
                 .setSystemKey("testKey")
                 .setSocketTimeout(6000)
@@ -252,7 +252,7 @@ public class FtpConsumerBuilderTest
         assertTrue("ftpsIsImplicit should be 'true'", configuration.getFtpsIsImplicit());
         assertEquals("ftpsProtocol should be 'protocol'","protocol", configuration.getFtpsProtocol());
         assertEquals("ftpsPort should be 'protocol'",24, configuration.getFtpsPort().intValue());
-        assertTrue("isFTPS should be 'true'", configuration.getIsFTPS());
+        assertTrue("FTPS should be 'true'", configuration.getFTPS());
         assertEquals("passwordFilePath should be 'testPasswordFilePath'", "testPasswordFilePath",configuration.getPasswordFilePath());
         assertEquals("systemKey should be 'testKey'", "testKey",configuration.getSystemKey());
         assertEquals("socketTimeout should be '6000'",6000, configuration.getSocketTimeout().intValue());

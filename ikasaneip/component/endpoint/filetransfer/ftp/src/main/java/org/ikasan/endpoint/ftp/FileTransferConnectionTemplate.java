@@ -376,7 +376,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
             fcri.setDataTimeout(ftpConnectionSpec.getDataTimeout());
             fcri.setSocketTimeout(ftpConnectionSpec.getSocketTimeout());
 
-            fcri.setIsFTPS(ftpConnectionSpec.getIsFTPS());
+            fcri.setFTPS(ftpConnectionSpec.getFTPS());
             fcri.setFtpsPort(ftpConnectionSpec.getFtpsPort());
             fcri.setFtpsProtocol(ftpConnectionSpec.getFtpsProtocol());
             fcri.setFtpsIsImplicit(ftpConnectionSpec.getFtpsIsImplicit());

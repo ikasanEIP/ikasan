@@ -91,7 +91,7 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
     private Integer socketTimeout = 0;
 
     // FTPS connection details
-    private Boolean isFTPS = false;
+    private Boolean FTPS = false;
     private Integer ftpsPort = 21;
     private String  ftpsProtocol = "SSL";
     private Boolean ftpsIsImplicit = false;
@@ -127,7 +127,7 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
             return false;
         if (ftpsPort != null ? !ftpsPort.equals(that.ftpsPort) : that.ftpsPort != null) return false;
         if (ftpsProtocol != null ? !ftpsProtocol.equals(that.ftpsProtocol) : that.ftpsProtocol != null) return false;
-        if (isFTPS != null ? !isFTPS.equals(that.isFTPS) : that.isFTPS != null) return false;
+        if (FTPS != null ? !FTPS.equals(that.FTPS) : that.FTPS != null) return false;
         if (maxRetryAttempts != null ? !maxRetryAttempts.equals(that.maxRetryAttempts) : that.maxRetryAttempts != null)
             return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
@@ -157,7 +157,7 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
         result = 31 * result + (connectionTimeout != null ? connectionTimeout.hashCode() : 0);
         result = 31 * result + (dataTimeout != null ? dataTimeout.hashCode() : 0);
         result = 31 * result + (socketTimeout != null ? socketTimeout.hashCode() : 0);
-        result = 31 * result + (isFTPS != null ? isFTPS.hashCode() : 0);
+        result = 31 * result + (FTPS != null ? FTPS.hashCode() : 0);
         result = 31 * result + (ftpsPort != null ? ftpsPort.hashCode() : 0);
         result = 31 * result + (ftpsProtocol != null ? ftpsProtocol.hashCode() : 0);
         result = 31 * result + (ftpsIsImplicit != null ? ftpsIsImplicit.hashCode() : 0);
@@ -407,12 +407,12 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
         return this.socketTimeout;
     }
 
-    public Boolean getIsFTPS() {
-        return isFTPS;
+    public Boolean getFTPS() {
+        return FTPS;
     }
 
-    public void setIsFTPS(Boolean isFTPS) {
-        this.isFTPS = isFTPS;
+    public void setFTPS(Boolean FTPS) {
+        this.FTPS = FTPS;
     }
 
     public Integer getFtpsPort() {
@@ -477,7 +477,7 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
                 + "Poll Time                         [" + this.pollTime + "]\n"
                 + "Username:                         [" + this.username + "]\n"
                 + "SystemKey:                        [" + this.systemKey + "]\n"
-                + "Is FTPS                           [" + this.isFTPS + "]\n"
+                + "Is FTPS                           [" + this.FTPS + "]\n"
                 + "FTPS Protocol                     [" + this.ftpsProtocol + "]\n"
                 + "FTPS Port                         [" + this.ftpsPort + "]\n"
                 + "FTPS isImplicit                   [" + this.ftpsIsImplicit + "]\n"
