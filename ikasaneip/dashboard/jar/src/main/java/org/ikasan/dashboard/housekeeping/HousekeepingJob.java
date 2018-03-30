@@ -174,7 +174,7 @@ public class HousekeepingJob implements Job
         {
             this.executionErrorMessage = e.getMessage();
             this.lastExecutionSuccessful = false;
-            throw new JobExecutionException("Could not execute housekeeping job: " + this.jobName, e);
+            logger.error(String.format("Could not execute housekeeping job[%s]. Error message[%s].", this.jobName, this.executionErrorMessage));
         }
 
         this.lastExecutionSuccessful = true;
