@@ -40,6 +40,10 @@
             <where>RoleId = (SELECT Id FROM SecurityRole WHERE Name = 'COP Stream Administrator')</where>
         </delete>
 
+        <delete tableName="RolePolicy">
+            <where>RoleId = (SELECT Id FROM SecurityRole WHERE Name = 'COP Stream Administrator')</where>
+        </delete>
+
         <delete tableName="SecurityRole">
             <where>Name = 'COP Stream Administrator'</where>
         </delete>
