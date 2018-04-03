@@ -24,9 +24,10 @@
 	<include file="db/data/db-changelog-policies-harvesting.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-search-policies.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-search-replay-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-removeRedundantSecurityRecords.xml" relativeToChangelogFile="true" />
 
-	
-	<!-- 2.0.x index creation -->
+
+    <!-- 2.0.x index creation -->
 
 	<!-- 2.0.x table drop -->
 	
