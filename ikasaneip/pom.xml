@@ -399,6 +399,7 @@
         <version.commons-dbcp>1.4</version.commons-dbcp>
         <version.org.quartz-scheduler>2.0.2</version.org.quartz-scheduler>
         <version.com.h2database>1.4.178</version.com.h2database>
+        <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>9.4.7.v20170914</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
@@ -2085,6 +2086,12 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${version.com.h2database}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${version.com.mysqldriver}</version>
             </dependency>
 
             <dependency>
