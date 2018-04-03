@@ -59,6 +59,7 @@
         <module>ikasan-setup</module>
         <module>ikasan-standalone-persistence</module>
         <module>ikasan-h2-standalone-persistence</module>
+        <module>ikasan-mysql-standalone-persistence</module>
     </modules>
 
 </project>
