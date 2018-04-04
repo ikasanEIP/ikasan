@@ -57,6 +57,8 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
+import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -136,6 +138,10 @@ public class FlowBuilderTest
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
+
+    }
+
+    private void setupMockExpectations(){
         // expectations
         mockery.checking(new Expectations()
         {
@@ -147,6 +153,7 @@ public class FlowBuilderTest
             }
         });
     }
+
 
     @After
     public void teardown()
@@ -160,6 +167,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
@@ -222,8 +230,168 @@ public class FlowBuilderTest
     }
 
     @Test
+    public void test_build_with_resubmissionService_set_explicitly_to_consumer()
+    {
+        class ComplexConsumer implements Consumer,ResubmissionService{
+            @Override public void onResubmission(Object o)
+            {
+            }
+
+            @Override public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+            {
+            }
+
+            @Override public void setListener(Object o)
+            {
+            }
+
+            @Override public void setEventFactory(Object o)
+            {
+            }
+
+            @Override public Object getEventFactory()
+            {
+                return null;
+            }
+
+            @Override public void start()
+            {
+            }
+
+            @Override public boolean isRunning()
+            {
+                return false;
+            }
+
+            @Override public void stop()
+            {
+            }
+        }
+
+        final Consumer consumer = mockery.mock(ComplexConsumer.class, "mockComplexConsumer");
+
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                oneOf((ResubmissionService)consumer).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
+
+            }
+        });
+
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withResubmissionService((ResubmissionService) consumer)
+            .consumer("consumer", consumer)
+            .producer("producer", producer).build();
+
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_build_with_resubmissionService_not_set_and_consumer_implementing_Resubmission()
+    {
+        class ComplexConsumer implements Consumer,ResubmissionService{
+            @Override public void onResubmission(Object o)
+            {
+            }
+
+            @Override public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+            {
+            }
+
+            @Override public void setListener(Object o)
+            {
+            }
+
+            @Override public void setEventFactory(Object o)
+            {
+            }
+
+            @Override public Object getEventFactory()
+            {
+                return null;
+            }
+
+            @Override public void start()
+            {
+            }
+
+            @Override public boolean isRunning()
+            {
+                return false;
+            }
+
+            @Override public void stop()
+            {
+            }
+        }
+
+        final Consumer consumer = mockery.mock(ComplexConsumer.class, "mockComplexConsumer");
+
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                oneOf((ResubmissionService)consumer).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
+
+            }
+        });
+
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .consumer("consumer", consumer)
+            .producer("producer", producer).build();
+
+
+        mockery.assertIsSatisfied();
+    }
+
+
+    @Test
+    public void test_successful_simple_transitions_with_resubmission_being_different_than_consumer()
+    {
+
+
+        final ResubmissionService resubmissionService = mockery.mock(ResubmissionService.class, "mockResubmissionService");
+
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                oneOf(resubmissionService).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
+
+            }
+        });
+
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withResubmissionService(resubmissionService)
+            .consumer("consumer", consumer)
+            .producer("producer", producer).build();
+
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
     public void test_successful_simple_transitions_with_default_autowiring()
     {
+        setupMockExpectations();
+
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .withDescription("flowDescription")
@@ -264,6 +432,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_router_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
@@ -337,6 +506,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_nested_router_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Route nestedRoute1 = builderFactory.getRouteBuilder().producer("nestedRoute1-publisher1", producer);
         Route nestedRoute2 = builderFactory.getRouteBuilder().producer("nestedRoute2-publisher2", producer);
@@ -418,6 +588,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_router_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         ExceptionResolver exceptionResolver = builderFactory.getExceptionResolverBuilder()
@@ -519,6 +690,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_multiReceipientRouter_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         ExceptionResolver exceptionResolver = builderFactory.getExceptionResolverBuilder()
@@ -620,6 +792,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_multiReceipientRouter_transitions_with_mmr_invoker_configuration()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         ExceptionResolver exceptionResolver = builderFactory.getExceptionResolverBuilder()
@@ -723,6 +896,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_sequencer_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
@@ -778,6 +952,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_sequencer_nested_transitions()
     {
+        setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
         Route nestedRoute1 = builderFactory.getRouteBuilder().producer("name1", producer);
