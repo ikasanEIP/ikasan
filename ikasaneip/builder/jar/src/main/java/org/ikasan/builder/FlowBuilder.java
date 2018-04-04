@@ -85,6 +85,8 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -646,11 +648,33 @@ public class FlowBuilder implements ApplicationContextAware
             configurationService = ConfiguredResourceConfigurationService
                     .getDefaultConfigurationService();
         }
-
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-        if(resubmissionService == null && headFlowElement.getFlowComponent() instanceof ResubmissionService)
+        if (resubmissionService != null)
         {
-            resubmissionService = (ResubmissionService)headFlowElement.getFlowComponent();
+            if (!(AopUtils.isJdkDynamicProxy(resubmissionService)))
+            {
+                Consumer unwrappedConsumer = getTargetObject(headFlowElement.getFlowComponent(), Consumer.class);
+                if (unwrappedConsumer == resubmissionService)
+                {
+                    logger.info(
+                        "ResubmissionService is equal to Proxied Consumer. Setting resubmissionService to Proxy object.");
+                    resubmissionService = (ResubmissionService) headFlowElement.getFlowComponent();
+                }
+                else
+                {
+                    logger.info(
+                        "ResubmissionService is not instance of JdkDynamicProxy. Trying to proxy resubmissionService.");
+                    resubmissionService = this.aopProxyProvider
+                        .applyPointcut(flowName + "resubmissionService", resubmissionService);
+                }
+            }
+        }
+        else
+        {
+            if (headFlowElement.getFlowComponent() instanceof ResubmissionService)
+            {
+                resubmissionService = (ResubmissionService) headFlowElement.getFlowComponent();
+            }
         }
 
         // replayRecordService
@@ -791,6 +815,22 @@ public class FlowBuilder implements ApplicationContextAware
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         this.context = context;
+    }
+
+    private <T> T getTargetObject(Object proxy, Class<T> targetClass) {
+        try
+        {
+            if (AopUtils.isJdkDynamicProxy(proxy))
+            {
+                return (T) ((Advised) proxy).getTargetSource().getTarget();
+            }
+            else
+            {
+                return (T) proxy; // expected to be cglib proxy then, which is simply a specialized class
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
 
