@@ -48,6 +48,7 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -99,6 +100,16 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      * configuration consumer
      */
     SpringMessageConsumerConfiguration configuration = new SpringMessageConsumerConfiguration();
+
+    /**
+     * Optional username to authenticate on connection
+     */
+    String username;
+
+    /**
+     * Optional password to authenticate on connection
+     */
+    String password;
 
     String componentName = "jmsConsumer";
 
@@ -397,6 +408,20 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
         return configuration;
     }
 
+    @Override
+    public JmsConsumerBuilder setConnectionUsername(String username)
+    {
+        this.username = username;
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setConnectionPassword(String password)
+    {
+        this.password = password;
+        return this;
+    }
+
     /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
@@ -417,10 +442,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
             if (messageProvider instanceof IkasanMessageListenerContainer)
             {
-                if(connectionFactory != null)
-                {
-                    ((IkasanMessageListenerContainer)messageProvider).setConnectionFactory(connectionFactory);
-                }
+                ((IkasanMessageListenerContainer)messageProvider).setConnectionFactory( getConnectionFactory(connectionFactory, username, password) );
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setMessageListener(aopProxiedMessageListener);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setErrorHandler(jmsConsumer);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setExceptionListener(jmsConsumer);
@@ -430,10 +452,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
         } else {
             ArjunaIkasanMessageListenerContainer messageListenerContainer = new ArjunaIkasanMessageListenerContainer();
-            if(connectionFactory != null)
-            {
-                messageListenerContainer.setConnectionFactory(connectionFactory);
-            }
+            messageListenerContainer.setConnectionFactory( getConnectionFactory(connectionFactory, username, password) );
             messageListenerContainer.setMessageListener(aopProxiedMessageListener);
             messageListenerContainer.setErrorHandler(jmsConsumer);
             messageListenerContainer.setExceptionListener(jmsConsumer);
@@ -450,12 +469,42 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
         return this.jmsConsumer;
     }
 
+    /**
+     * Get the connectionFactory based on set properties.
+     * @param connectionFactory
+     * @param username
+     * @param password
+     * @return ConnectionFactory
+     */
+    private ConnectionFactory getConnectionFactory(ConnectionFactory connectionFactory, String username, String password)
+    {
+        // if connectionFactory and username specified then return a credentials based CF
+        if(connectionFactory != null && username != null)
+        {
+            UserCredentialsConnectionFactoryAdapter cfCredentialsAdapter = getUserCredentialsConnectionFactoryAdapter();
+            cfCredentialsAdapter.setTargetConnectionFactory(connectionFactory);
+            cfCredentialsAdapter.setUsername(username);
+            cfCredentialsAdapter.setPassword(password);
+            return cfCredentialsAdapter;
+        }
+
+        return connectionFactory;
+    }
+
     @Override
     public void setAopProxyProvider(AopProxyProvider aopProxyProvider)
     {
         this.aopProxyProvider = aopProxyProvider;
     }
 
+    /**
+     * Factory method to aid testing of this class
+     * @return
+     */
+    protected UserCredentialsConnectionFactoryAdapter getUserCredentialsConnectionFactoryAdapter()
+    {
+        return new UserCredentialsConnectionFactoryAdapter();
+    }
 
 }
 
