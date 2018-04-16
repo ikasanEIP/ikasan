@@ -61,6 +61,8 @@ than another development framework.
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
 
 # Documentation
+## Getting Started
+* [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
 * [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
 * [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
 * [Component Quick Start](ikasaneip/component/Readme.md)
