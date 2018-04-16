@@ -1,7 +1,7 @@
 
-# Ikasan Documentation
+# Ikasan Getting Started Guide
 
-# Getting Started Guides
+# Introduction
 
 ## Overview
 
