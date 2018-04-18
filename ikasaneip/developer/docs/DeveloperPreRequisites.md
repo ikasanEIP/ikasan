@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Ikasan Enterprise Integration Platform (IkasanEIP) provides a robust and scalable ESB platform based on open technologies and standards. 
+The Ikasan Enterprise Integration Platform (IkasanEIP aka IkasanESB) provides a robust and scalable ESB platform based on open technologies and standards. 
 IkasanEIP can be adopted as little or as much as required to meet your integration needs.
 
 ## About
@@ -76,7 +76,7 @@ The important point is that we have the JAVA_HOME and PATH environment variables
 #### Setting Unix Environment Variables
 ```
 export JAVA_HOME=${root_install_dir}/${platform_install_dir}/<java install dir name>;
-export PATH=$JAVA_HOME/bin;$PATH |
+export PATH=$JAVA_HOME/bin;$PATH
 ```
 
 #### Setting Windows Environment Variables
@@ -156,8 +156,13 @@ OS name: "mac os x", version: "10.12.6", arch: "x86_64", family: "mac"
 ```
 
 ### update mvn settings.xml 
+Your default Maven settings.xml can be found under your Maven .m2 directory, located under your user home dir by default.
 
-If you using Snapshot versions, please make sure you refer to oss repo in your .m2/settings.xml
+```
+cd ~<username>/.m2
+```
+
+If you using Snapshot versions, edit your settings.xml to ensure you refer to the ikasaneip-snapshots and ikasaneip-releases _oss_ repositories in your .m2/settings.xml.
 ```xml  
 <profile>
   <id>securecentral</id>
@@ -208,7 +213,8 @@ If you using Snapshot versions, please make sure you refer to oss repo in your .
  
 
 ## Java IDE
-Any Java IDE will suffice (even a text editor if you are feeling brave), we recommend IntelliJ CE.
+Any Java IDE will suffice (even a text editor if you are feeling brave). 
+We recommend IntelliJ CE as the Java IDE.
  
 # Document Info
 

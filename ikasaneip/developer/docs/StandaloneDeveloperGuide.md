@@ -10,7 +10,7 @@ IkasanEIP can be adopted as little or as much as required to meet your integrati
 
 ## About
 
-This guide demonstrates the IkasanESB features by through a hands-on Ikasan Application build from scratch to a fully working solution.
+This guide demonstrates the IkasanESB features through a hands-on Ikasan Application build from scratch to a fully working solution.
 
 _NOTE: This is an example to demonstrate the development and core features of Ikasan - it is not intended to produce a production ready solution._
 
@@ -32,12 +32,10 @@ On completion of this document the reader should have installed and configured a
 
 [Developer Pre-Requisiites](./DeveloperPreRequisites.md)
  
-
 ## Problem Definition
 To begin we can define a simple problem to give some context to the demo. 
-Typically the problem domain addressed by IkasanESB requires the sourcing of business events from one application followed by various conversions and orchestrations to other downstream applications.
-
-
+Typically the problem domain addressed by IkasanESB requires the sourcing of business events from one application followed by 
+various conversions, orchestrations, and delivery to other downstream applications.
 
 ## Design
 We will create an Ikasan Integration Module which consists of a single flow containing two component operations.
@@ -57,12 +55,13 @@ In IntelliJ select `File/New/Project...`
 Select maven (blank archetype). Ensure you select JDK 1.8 as the SDK for this new project.
 ![Login](quickstart-images/IntelliJ-new-project-screen1.png) 
 
-Specify your project Maven coordinates such as Groupid, ArtefactId, and Version.
+Specify your project Maven coordinates such as GroupId, ArtefactId, and Version.
 
 For instance, 
 - GroupId --> `com.ikasan.example`
 - ArtefactId --> `MyIntegrationModule`
 - Version --> `1.0.0-SNAPSHOT`
+
 ![Login](quickstart-images/IntelliJ-new-project-screen2.png) 
 
 Select the directory/workspace to create this project.
@@ -75,7 +74,7 @@ Your project will be created and look something like this.
 
 We now have a blank Java project based on a Maven project structure.
 Next we need to update the Maven pom.xml to set the application packaging to create a Jar.
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -93,7 +92,7 @@ Next we need to update the Maven pom.xml to set the application packaging to cre
 Now add the first Ikasan Application dependency to the Maven pom.xml.
  
 Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the build plugin execution requirement.
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -145,10 +144,10 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
    </project>
 ```
 
-Now create a class with a fully qualified name of ```com.ikasan.example.MyApplication``` to instantiate the Ikasan Application.
+Now create a class with a fully qualified name of ```com.ikasan.example.MyApplication``` from which we will instantiate the Ikasan Application.
 
 Copy and paste the entirety of the code below replacing the content of that class.
-```
+```java
 package com.ikasan.example;
 
 import org.ikasan.builder.*;
@@ -168,7 +167,7 @@ public class MyApplication
 ```
 
 Provide some configuration properties for the module by creating a resources/application.properties
-```
+```properties
 # Logging levels across packages (optional)
 logging.level.com.arjuna=INFO
 logging.level.org.springframework=INFO
@@ -200,7 +199,7 @@ datasource.validationQuery=select 1
 
 The web binding section in ```application.properties``` is particularly important and you should ensure you choose a free server.port to bind to.
 
-Build and run the application,
+Build and run the application.
 From IntelliJ just right click on MyApplication and select run ```MyApplication.main()```
 
 Alternatively to run from the command line ensure you are in the project root directory i.e. MyIntegrationModule then run a Maven clean install
@@ -225,7 +224,7 @@ Selecting 'Modules' will show the Integration Module for this example, but as we
 Lets define a module.
 
 Go back to the MyApplication class in IntelliJ and update it to the following
-```
+```java
 package com.ikasan.example;
 
 import org.ikasan.builder.*;
@@ -297,19 +296,19 @@ Congratulations - your first working Ikasan Integration Module, but what is it d
 
 Lets go back to the code, specifically the ```main()``` method to understand what we just implemented and ran.
 
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-       ...
+
    }
 ```
-Firstly, we get an instance of an IkasanAppication from the IkasanApplicationFactory. This ikasanApplication will 
+Firstly, we get an instance of an IkasanApplication from the IkasanApplicationFactory. This ikasanApplication will 
 provision everything we need to instantiate and run this application.
 
 
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -318,7 +317,7 @@ provision everything we need to instantiate and run this application.
        // Get an instance of a builder factory from the application which will
        // provide access to all required builders for the application
        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-       ...
+
    }
 ```
 We then get an instance of a builderFactory from the application. 
@@ -328,7 +327,7 @@ This builderFactory will provide all other builders required to create modules, 
 The first thing to create is a moduleBuilder from the builderFactory. When we create the moduleBuilder we provide the name we are going to assign to the module.
 We can also set other properties on the module through this moduleBuilder such as description.
 
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -341,11 +340,11 @@ We can also set other properties on the module through this moduleBuilder such a
        // Create a module builder from the builder factory
        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                .withDescription("My first integration module.");
-       ...
+
    }
 ```
 Next, get a componentBuilder instance from the builderFactory - we will be using this in the flowBuilder.
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -361,7 +360,7 @@ Next, get a componentBuilder instance from the builderFactory - we will be using
 
        // Create a component builder from the builder factory
        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-       ...
+
    }
 ```
 
@@ -370,7 +369,7 @@ We use the moduleBuilder to get a flowBuilder and provide the name of the flow.
 The components within the flow are then added as consumer and producer, both from the componentBuilder.
 Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -392,12 +391,15 @@ Ikasan components, however, your own components can be easily written and added 
                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
                .producer("My Target Producer", componentBuilder.logProducer().build())
                .build();
-       ...
+
    }
 ```
-Each off-the-shelf component has ```build()``` called against it as has the flowBuilder to create the flow.
+So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
+```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Source Producer".
+
+Each off-the-shelf component has ```build()``` called against it which tells the builder pattern to create this instance, as does the flow.
  
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -424,12 +426,12 @@ Each off-the-shelf component has ```build()``` called against it as has the flow
        Module module = moduleBuilder
                .addFlow(eventGeneratingFlow)
                .build();
-       ...
+
    }
 ```
  Now we have the flow we can add it to the moduleBuilder and ```build()``` the module.
  
-```
+```java
    public static void main(String[] args)
    {
        // Create instance of an ikasan application
@@ -468,21 +470,14 @@ That is how every Ikasan Application Integration Module is created regardless of
 ## Adding your own Components
 Lets add a custom Converter between the Consumer and Producer components.
 
-To do this we simply need to update the flowBuilder lines to insert this new component.
-```
-        // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-                .converter("My Converter", new MyConverter())
-                .producer("My Target Producer", componentBuilder.logProducer().build())
-                .build();
-```
-And implement the ```com.ikasan.example.converter.MyConverter``` class.
+To start with we will create a new Converter component implementation.
+
+Create a new class called ```com.ikasan.example.converter.MyConverter```.
 To implement the class as an Ikasan Converter component we simply need to use the Converter contract through ```implement Converter```
-The contract for the Converter allows for the provision of generic types defining the incoming type and the return type.
+The contract for the Converter allows for the provision of generic types defining the incoming type and the return type on the method.
 In the example below the Converter is expecting an incoming String which it will convert and return as an Integer.
 
-```
+```java
 package com.ikasan.example.converter;
 
 import org.ikasan.spec.component.transformation.Converter;
@@ -499,15 +494,27 @@ public class MyConverter implements Converter<String,Integer>
 }
 ```
 
+Now we need to add this new Converter operation to our flow.
+
+Simply update the flowBuilder lines to insert this new component called "My Converter".
+```java
+        // create a flow from the module builder and add required orchestration components
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                .converter("My Converter", new MyConverter())
+                .producer("My Target Producer", componentBuilder.logProducer().build())
+                .build();
+```
+
 Build it, run it, and start the flow from the Browser and see what gets output to the logs by the LogProducer.
 
-You will notice that the payload= has changed from the 'Message 1' etc, to simply just the integer part of the message from the consumer.
+You will notice that the `payload=` has changed from the 'Message 1' etc, to simply just the integer part of the message from the consumer.
 
 ## Exception Handling
-Every Ikasan flow has an automatically create 'Recovery Manager'. The role of the Recovery Manager is to decide what to do if things fail at runtime i.e. an Exception occurs in the flow or any of its components.
+Every Ikasan flow has an automatically created and assigned 'Recovery Manager'. The role of the Recovery Manager is to manage the flow if things fail at runtime i.e. an Exception occurs in the flow or any of its components.
 
 Lets see what happens if we get our Converter to throw an exception on a specific message i.e message 5.
-```
+```java
     public Integer convert(String payload) throws TransformationException
     {
         String[] strings = payload.split(" ");
@@ -523,7 +530,7 @@ Build it, run it, and start the flow from the Browser.
 
 If you look at the logs you will see that when it gets to message 5 an exception occurs 
 and the Recovery Manager kicked in to decide what to do. 
-```
+```java
 RecoveryManager resolving to [Stop] for componentName[My Converter] exception [error - bad number received [5]]
 
 org.ikasan.spec.component.transformation.TransformationException: error - bad number received [5]
@@ -561,10 +568,10 @@ it resolves to stopping the flow in error. This stoppedInError state can also be
 ![Login](quickstart-images/new-project-embeddedConsole-screen13.png)
 
 Lets tell the Recovery Manager to take a different action on this exception.
-As this is a configuration on the flow we need to update the code on the flowBuilder to add
+As this is a setting on the flow we need to update the code on the flowBuilder to add
 a different exceptionResolver. In this case when we see a TransformationException we are now going to exclude the event
 that caused the exception.
-```
+```java
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
                 .withExceptionResolver(builderFactory
@@ -624,11 +631,16 @@ Hibernate: insert into ExclusionEvent (Id, ModuleName, FlowName, Identifier, Eve
 2018-04-14 11:57:57.774  INFO 4811 --- [pool-4-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Message 7, relatedIdentifier=null, timestamp=1523703477773, payload=7]
 2018-04-14 11:57:58.778  INFO 4811 --- [pool-4-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Message 8, relatedIdentifier=null, timestamp=1523703478778, payload=8]
 ```
+
+If you are running the Ikasan Dashboard, you will be able to navigate to the Topology view and select the Error tab, to see the error; or the Exclusion tab to see the excluded event.
+
 ## Configuring Components
 Currently we have hardcoded a value of 5 to indicate the bad message in the Converter. What if we want this to be user defined or even dynamic based on runtime?
-Well we can tell a componenet that it is a ConfiguredResource. Telling it this allows access to configure attributes on the component through the Console.
+
+### Configured Resources
+We can tell a componenet that it is a ConfiguredResource. Telling it this allows access to configure attributes on the component through the Console.
 Update the Converter component to implement ```ConfiguredResource``` and specify a Configuration class defining the allowed attributes.
-```
+```java
 package com.ikasan.example.converter;
 
 public class MyConverterConfiguration
@@ -645,7 +657,7 @@ public class MyConverterConfiguration
 }
 ```
 
-```
+```java
 package com.ikasan.example.converter;
 
 import org.ikasan.spec.component.transformation.Converter;
@@ -685,8 +697,21 @@ public class MyConverter implements Converter<String,Integer>, ConfiguredResourc
     }
 }
 ```
+The ConfiguredResource interface allows you to specify the exact type of the configuration, 
+in this case MyConverterConfiguration; as well as enforcing getter/setter methods for the configuration instance 
+and something called the ConfiguredResourceId.
 
-Build it, run it, and open the Console from a Browser.
+The ConfiguredResourceId is an identifier which ties this instance of the configuration with this component. Infact, if you use the same ConfiguredResourceId across multiple components
+it will load the same instance of the configuration. This can sometimes be very useful where multiple components need to share a configuration.
+However, care should be taken as sometimes shared configuration is not what you want and in that case you simply need to provide a different ConfiguredResourceId value.
+It is best practice to set the ConfiguredResourceId to something representative of that module, flow, and component.
+
+Ikasan also has the concept of Configured - this is typically used where your component, marked as a ConfiguredResource, has other classes that can also be configured, but arent defined as specific components.
+
+In this case the subsequent classes would simply be marked as Configured.
+
+ 
+So now we have updated our module lets build it, run it, and open the Console from a Browser.
 
 # Document Info
 
