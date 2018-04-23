@@ -58,6 +58,9 @@
         <requiredProperty key="flowName">
             <defaultValue>sampleFlow</defaultValue>
         </requiredProperty>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
     </requiredProperties>
 
     <fileSets>

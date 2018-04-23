@@ -49,6 +49,9 @@
         <requiredProperty key="targetFlowName">
             <defaultValue>Jms to Sftp Flow</defaultValue>
         </requiredProperty>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
     </requiredProperties>
 
     <fileSets>
