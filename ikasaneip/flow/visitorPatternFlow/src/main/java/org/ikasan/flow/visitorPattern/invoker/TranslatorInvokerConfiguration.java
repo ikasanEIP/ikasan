@@ -50,13 +50,13 @@ package org.ikasan.flow.visitorPattern.invoker;
 public class TranslatorInvokerConfiguration
 {
     /** apply translator component - default true */
-    private boolean isApplyTranslator = true;
+    private boolean applyTranslator = true;
 
     public boolean isApplyTranslator() {
-        return isApplyTranslator;
+        return applyTranslator;
     }
 
     public void setApplyTranslator(boolean applyTranslator) {
-        isApplyTranslator = applyTranslator;
+        this.applyTranslator = applyTranslator;
     }
 }
