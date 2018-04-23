@@ -52,6 +52,9 @@
         <requiredProperty key="version">
             <defaultValue>1.0.1</defaultValue>
         </requiredProperty>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
     </requiredProperties>
 
     <fileSets>
