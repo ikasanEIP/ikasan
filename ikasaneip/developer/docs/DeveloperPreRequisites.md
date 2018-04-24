@@ -214,7 +214,7 @@ If you using Snapshot versions, edit your settings.xml to ensure you refer to th
 
 ## Java IDE
 Any Java IDE will suffice (even a text editor if you are feeling brave). 
-We recommend IntelliJ CE as the Java IDE.
+We recommend IntelliJ Community Edition Java IDE which can be downloaded from [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/).
  
 # Document Info
 
