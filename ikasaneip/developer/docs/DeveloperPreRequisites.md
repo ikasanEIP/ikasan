@@ -65,7 +65,7 @@ IkasanEIP version 2.x.y+ requires Java 1.8.x.
 
 Download the JDK appropriate for your Operating System.
 
-All Java JDK downloads are available from [http://www.oracle.com./technetwork/java/javase/downloads/index.html](http://www.oracle.com./technetwork/java/javase/downloads/index.html)
+All Java JDK downloads are available from [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 Install by following the JDK installation instructions.
 
@@ -110,11 +110,11 @@ For more details on Maven see [http://maven.apache.org](http://maven.apache.org/
 
 ### Version
 
-IkasanEIP version 2.x.y+ requires Maven 3.3.x.
+IkasanEIP version 2.x.y+ requires at least Maven 3.3.x, but has been validated up to Maven 3.5.3.
 
 ### Installation
 
-Download the latest 3.3.x Maven binary from [http://maven.apache.org/download.cgi](http://maven.apache.org/download.cgi)
+Download the latest 3.5.3 Maven binary from [http://maven.apache.org/download.cgi](http://maven.apache.org/download.cgi)
 
 Unzip the image under ${devtools\_install\_dir}.
 
@@ -147,12 +147,13 @@ This should reflect the Maven version you have just installed.
 For instance – the bold output depicts the important information,
 
 ```
-Apache Maven 3.3.9 (bb52d8502b132ec0a5a3f4c09453c07478323dc5; 2015-11-10T16:41:47+00:00)
-Maven home: /usr/local/Cellar/maven/3.3.9/libexec
-Java version: 1.8.0_31, vendor: Oracle Corporation
-Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/jre
+Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0
+Apache Maven 3.5.3 (3383c37e1f9e9b3bc3df5050c29c8aff9f295297; 2018-02-24T19:49:05Z)
+Maven home: /opt/platform/maven-platform/apache-maven-3.5.3
+Java version: 1.8.0_141, vendor: Oracle Corporation
+Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_141.jdk/Contents/Home/jre
 Default locale: en_GB, platform encoding: UTF-8
-OS name: "mac os x", version: "10.12.6", arch: "x86_64", family: "mac"
+OS name: "mac os x", version: "10.13.3", arch: "x86_64", family: "mac"
 ```
 
 ### update mvn settings.xml 
