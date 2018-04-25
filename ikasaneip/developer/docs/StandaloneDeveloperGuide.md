@@ -197,6 +197,45 @@ datasource.hbm2ddl.auto=create
 datasource.validationQuery=select 1
 ```
 
+NOTE: To run any of the examples along with the Ikasan Dashboard, then the H2 db will not suffice.
+To change ikasan persistence to another DB simply change the persistence drivers and configuration.
+
+For instance, to change to MySQL update the pom.xml to switch h2 to MySql
+
+```xml
+        *** REMOVE H2 dependency ***
+        <!-- Use Ikasan h2 persistence (Do not use in production) -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-mysql-standalone-persistence</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        
+        *** ADD MySQL dependency ***
+        <!-- Use Ikasan MySQL persistence (Do not use in production) -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-mysql-standalone-persistence</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+```
+
+Update the application datasource to load that for MySQL.
+```java
+UPDATE --> @ImportResource({ "classpath:h2-datasource-conf.xml", "classpath:ikasan-transaction-pointcut-eventListener.xml" })
+TO --> @ImportResource({ "classpath:mysql-datasource-conf.xml", "classpath:ikasan-transaction-pointcut-eventListener.xml" })
+```
+Upate connection properties to be specific to MySQL instance.
+```properties
+datasource.username=username
+datasource.password=password
+datasource.url=jdbc:mysql://localhost:3306/Ikasan01
+datasource.dialect=org.hibernate.dialect.MySQL5Dialect
+datasource.driver-class-name=com.mysql.jdbc.Driver
+datasource.xadriver-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+datasource.validationQuery=select 1\
+```
+
 The web binding section in ```application.properties``` is particularly important and you should ensure you choose a free server.port to bind to.
 
 Build and run the application.
@@ -667,7 +706,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 public class MyConverter implements Converter<String,Integer>, ConfiguredResource<MyConverterConfiguration>
 {
     String configuredResourceId;
-    MyConverterConfiguration configuration;
+    MyConverterConfiguration configuration = new MyConverterConfiguration();
     
     public Integer convert(String payload) throws TransformationException
     {
@@ -712,6 +751,90 @@ In this case the subsequent classes would simply be marked as Configured.
 
  
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
+
+## Managed Resource Component
+TOOO
+
+```java
+package com.ikasan.example.converter;
+
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class MyConverter implements Converter<String,Integer>,
+        ConfiguredResource<MyConverterConfiguration>, ManagedResource
+{
+    private final static Logger logger = LoggerFactory.getLogger(MyConverter.class);
+
+    MyConverterConfiguration configuration  = new MyConverterConfiguration();
+    String configuredResourceId;
+    boolean critical;
+
+    public Integer convert(String payload) throws TransformationException
+    {
+        String[] strings = payload.split(" ");
+        int intPart = Integer.valueOf( strings[1] );
+        if(intPart == configuration.getBadNumber())
+        {
+            throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
+        }
+        return Integer.valueOf(intPart);
+    }
+
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    public MyConverterConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(MyConverterConfiguration myConverterConfiguration)
+    {
+        this.configuration =  myConverterConfiguration;
+    }
+
+    public void startManagedResource() {
+        logger.info("Call to start any managed resources");
+    }
+
+    public void stopManagedResource() {
+        logger.info("Call to stop any managed resources");
+    }
+
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
+
+    }
+
+    public boolean isCriticalOnStartup() {
+        return critical;
+    }
+
+    public void setCriticalOnStartup(boolean critical) {
+        this.critical = critical;
+    }
+}
+```
+## Testing
+TOOO
+### Unit Testing
+#### Methods
+#### Components
+#### Flows
+#### Exception Handling
+#### Monitoring
+#### Modules
+#### Business Streams
 
 # Ikasan Maven Archetypes
 The basic constituents of an Ikasan Integration Module (IM) are the same. 
