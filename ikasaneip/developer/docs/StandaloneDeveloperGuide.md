@@ -207,7 +207,7 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
         <!-- Use Ikasan h2 persistence (Do not use in production) -->
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-mysql-standalone-persistence</artifactId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
             <version>2.0.0</version>
         </dependency>
         
