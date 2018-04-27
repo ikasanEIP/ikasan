@@ -78,19 +78,19 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     private static Logger logger = LoggerFactory.getLogger(TransactionalCommandConnection.class);
 
     /** A list of method calls that the command has gone through */
-    private List<String> methodCalls = new ArrayList<String>();
+    private ThreadLocal<List<String>> methodCalls = new ThreadLocal<List<String>>(){
+        @Override
+        protected List<String> initialValue()
+        {
+            return new ArrayList<>();
+        }
+    };
 
     /** The currently executing transaction */
-    protected Xid xid;
+    protected ThreadLocal<Xid> xid = new ThreadLocal<>();
 
     /** Journaling service for logging all significant state changes to commands */
     protected TransactionJournal transactionJournal;
-
-    /** Debug counter for monitoring instance count */
-    protected static int instanceCount = 0;
-
-    /** Debug counter for monitoring instance count */
-    protected Integer instanceOrdinal = null;
 
     protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
 
@@ -103,19 +103,15 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     @Override
     public final void start(Xid pXid, int flag) throws XAException
     {
-        methodCalls.add("start " + new String(pXid.getBranchQualifier()) + " instance [" + instanceOrdinal + "] of ["   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-                + instanceCount + "]"); //$NON-NLS-1$
+        getMethodCalls().add("start " + new String(pXid.getBranchQualifier()) + " instance ["
+            + Thread.currentThread().getName() + "]"); //$NON-NLS-1$
 
         boolean tmjoin = flag == XAResource.TMJOIN;
         boolean tmresume = flag == XAResource.TMRESUME;
-
-        if (xid != null)
+        if (getXid() != null)
         {
             logger.warn("in XAResource.start, but the xid is already set as [" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-            for (String methodCall : methodCalls)
-            {
-                logger.warn("method call:" + methodCall); //$NON-NLS-1$
-            }
+            getMethodCalls().stream().forEach(m -> logger.warn("method call:" + m));
         }
 
         logger.debug("in start, got xid [" + pXid + "] and arg1 [" + flag + "] tmjoin =[" + tmjoin + "] tmresume =[" + tmresume + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -127,7 +123,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
             try
             {
-                transactionJournal.onXAEvent(xid, "start");
+                transactionJournal.onXAEvent(getXid(), "start");
             }
             catch (TransactionJournalingException e)
             {
@@ -137,7 +133,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         }
         else
         {
-            logger.info("attempt made to resume with xid [" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.info("attempt made to resume with xid [" + getXid() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
     }
@@ -155,17 +151,17 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         boolean tmfail = flag == XAResource.TMFAIL;
         boolean tmsuspend = flag == XAResource.TMSUSPEND;
 
-        methodCalls.add("end " + new String(arg0.getBranchQualifier()) + " storedXid=[" //$NON-NLS-1$//$NON-NLS-2$
+        getMethodCalls().add("end " + new String(arg0.getBranchQualifier()) + " storedXid=[" //$NON-NLS-1$//$NON-NLS-2$
             + xid + "] tmsuccess =[" + tmsuccess + "] tmfail=[" + tmfail + "] tmsuspend=["  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             + tmsuspend + "]"); //$NON-NLS-1$
 
-        testXidArg(arg0, xid);
+        testXidArg(arg0, getXid());
 
         logger.debug("in end, xid=[" + arg0 + "]" + "] flag=[" + flag + "] tmsuccess =[" + tmsuccess + "] tmfail=[" + tmfail + "] tmsuspend=[" + tmsuspend + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 
         try
         {
-            transactionJournal.onXAEvent(xid, "end");
+            transactionJournal.onXAEvent(getXid(), "end");
         }
         catch (TransactionJournalingException e)
         {
@@ -193,10 +189,8 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
                 || (receivedXid.getFormatId() != storedXid.getFormatId()))
         {
             logger.warn("Received a different xid [" + receivedXid + "] than that recorded during start [" + storedXid + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            for (String methodCall : methodCalls)
-            {
-                logger.warn("method call:" + methodCall); //$NON-NLS-1$
-            }
+            getMethodCalls().stream().forEach(m -> logger.warn("method call:" + m));
+
         }
 
     }
@@ -212,7 +206,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
      */
     public ExecutionOutput executeCommand(TransactionalResourceCommand command) throws ResourceException
     {
-        methodCalls.add("executeCommand stored xid =[" + xid + "]");  //$NON-NLS-1$//$NON-NLS-2$
+        getMethodCalls().add("executeCommand stored xid =[" + getXid() + "]");  //$NON-NLS-1$//$NON-NLS-2$
         ExecutionOutput result = null;
         try
         {
@@ -226,19 +220,19 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
             TransactionalResource transactionalResource = getTransactionalResource();
             transactionalResource.ensureConnection();
-            result = command.execute(transactionalResource, xid);
+            result = command.execute(transactionalResource, getXid());
         }
         catch (ResourceException re)
         {
             // remove this connection from the pool
             this.sendErrorEvent(re);
             
-            methodCalls.add("exception in executeCommand stored xid =[" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            getMethodCalls().add("exception in executeCommand stored xid =[" + getXid() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             logger.error("Exception caught when executing command: [" + command + "]", //$NON-NLS-1$ //$NON-NLS-2$
                 re);
             throw re;
         }
-        methodCalls.add("end of executeCommand stored xid =[" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        getMethodCalls().add("end of executeCommand stored xid =[" + getXid() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return result;
     }
 
@@ -250,12 +244,12 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     @Override
     public void rollback(Xid pXid) throws XAException
     {
-        methodCalls.add("rollback stored Xid =[" + new String(xid.getBranchQualifier()) + "] received Xid=["  //$NON-NLS-1$//$NON-NLS-2$
+        getMethodCalls().add("rollback stored Xid =[" + new String(getXid().getBranchQualifier()) + "] received Xid=["  //$NON-NLS-1$//$NON-NLS-2$
                 + new String(pXid.getBranchQualifier() + "]"));
         
         logger.debug("rollback called with xid [" + pXid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        testXidArg(pXid, xid);
+        testXidArg(pXid, getXid());
 
         preRollback(pXid);
         try
@@ -274,7 +268,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
         try
         {
-            transactionJournal.onXAEvent(xid, "rollback");
+            transactionJournal.onXAEvent(getXid(), "rollback");
         }
         catch (TransactionJournalingException e)
         {
@@ -287,7 +281,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         {
             try
             {
-                transactionJournal.cleanup(xid);
+                transactionJournal.cleanup(getXid());
             }
             catch (TransactionJournalingException e)
             {
@@ -299,15 +293,6 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         setXid(null);
     }
 
-    /**
-     * Set the Xid for this command
-     * @param xid
-     */
-    private void setXid(Xid xid)
-    {
-        logger.debug("setXid called with [" + xid + "] was previously [" + this.xid + "]");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-        this.xid = xid;
-    }
 
     /**
      * Perform the commit, performs special processing for the get and put cases
@@ -319,8 +304,8 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     public void commit(Xid resourceId, boolean flag) throws XAException
     {
         logger.debug("in commit, got xid [" + resourceId + "] and flag [" + flag + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        methodCalls.add("commit " + new String(resourceId.getBranchQualifier())); //$NON-NLS-1$
-        testXidArg(resourceId, xid);
+        getMethodCalls().add("commit " + new String(resourceId.getBranchQualifier())); //$NON-NLS-1$
+        testXidArg(resourceId, getXid());
         // Calling preCommit
         preCommit(resourceId);
         try
@@ -342,7 +327,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
         try
         {
-            transactionJournal.onXAEvent(xid, "commit");
+            transactionJournal.onXAEvent(getXid(), "commit");
         }
         catch (TransactionJournalingException e)
         {
@@ -358,7 +343,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         {
             try
             {
-                transactionJournal.cleanup(xid);
+                transactionJournal.cleanup(getXid());
             }
             catch (TransactionJournalingException e)
             {
@@ -369,6 +354,8 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         // reset the Xid
         setXid(null);
     }
+
+
 
     /**
      * Should this connection clean up its entries in the transaction journal on
@@ -423,6 +410,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         return result;
     }
 
+
     /**
      * Calls commit on all of the transactional commands
      * 
@@ -458,11 +446,11 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         List<TransactionalResourceCommand> commands;
         try
         {
-            commands = transactionJournal.getCommands(xid);
+            commands = transactionJournal.getCommands(getXid());
         }
         catch (TransactionJournalingException e)
         {
-            throw new ResourceException("Exception finding command history in journal for tx [" + xid + "]", e);  //$NON-NLS-1$//$NON-NLS-2$
+            throw new ResourceException("Exception finding command history in journal for tx [" + getXid() + "]", e);  //$NON-NLS-1$//$NON-NLS-2$
         }
         return commands;
     }
@@ -561,7 +549,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     public int prepare(Xid arg0) throws XAException
     {
 
-        methodCalls.add("prepare " + new String(arg0.getBranchQualifier())); //$NON-NLS-1$
+        getMethodCalls().add("prepare " + new String(arg0.getBranchQualifier())); //$NON-NLS-1$
         
         /*
          * duncro - For SFTP we simply vote 'OK'
@@ -574,11 +562,11 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
         logger.info("in prepare with [" + arg0 + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        testXidArg(arg0, xid);
+        testXidArg(arg0, getXid());
 
         try
         {
-            transactionJournal.onXAEvent(xid, "prepare");
+            transactionJournal.onXAEvent(getXid(), "prepare");
         }
         catch (TransactionJournalingException e)
         {
@@ -596,8 +584,50 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
      */
     public boolean transactionInProgress()
     {
-        return (xid != null);
+        return (getXid() != null);
     }
+
+    /**
+     * Set the Xid for this command on thread local.
+     * @param xid
+     */
+    private void setXid(Xid xid)
+    {
+        logger.debug("setXid called with [" + xid + "] was previously [" + this.xid.get()
+            + "]");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+        if (xid == null)
+        {
+            this.xid.remove();
+        }
+        else
+        {
+            this.xid.set(xid);
+        }
+    }
+
+    /**
+     * Get the Xid from thread local.
+     *
+     * @return Xid
+     */
+    private Xid getXid()
+    {
+        logger.debug(
+            "getXid called from [" + Thread.currentThread().getName() + "]");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+        return this.xid.get();
+    }
+
+    /**
+     * Get the methodCalls from thread local.
+     *
+     * @return Collection of methodCalls
+     */
+    private List<String> getMethodCalls()
+    {
+        return this.methodCalls.get();
+    }
+
+
 
     /**
      * 
