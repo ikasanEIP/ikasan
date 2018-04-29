@@ -57,6 +57,9 @@ public class ScheduledConsumerConfiguration
     /** Determines whether consumer will be eagerly executing after successful run */
     private boolean eager = false;
 
+    /** maximum number of consecutive eager scheduled callbacks before reverting to business schedule - default 0 = unlimited */
+    private int maxEagerCallbacks;
+
     /** a valid optional timezone to set on the scheduled job
      *  a default of blank or null will use the JVM's timezone */
     private String timezone;
@@ -73,6 +76,14 @@ public class ScheduledConsumerConfiguration
 
     public boolean isEager() {
         return eager;
+    }
+
+    public int getMaxEagerCallbacks() {
+        return maxEagerCallbacks;
+    }
+
+    public void setMaxEagerCallbacks(int maxEagerCallbacks) {
+        this.maxEagerCallbacks = maxEagerCallbacks;
     }
 
     public void setEager(boolean eager) {

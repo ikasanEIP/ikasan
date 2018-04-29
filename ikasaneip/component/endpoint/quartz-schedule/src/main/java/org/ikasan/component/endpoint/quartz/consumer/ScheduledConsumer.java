@@ -82,6 +82,9 @@ public class ScheduledConsumer<T>
     /** distinguish between business schedule callback and eager schedule callback */
     private static String EAGER_SCHEDULE = "eagerSchedule_";
 
+    /** literal to identify entry in jobMap for eager callback counts */
+    private static String EAGER_CALLBACK = "eagerCallback";
+
     /**
      * Scheduler
      */
@@ -222,12 +225,10 @@ public class ScheduledConsumer<T>
         {
             T t = (T) messageProvider.invoke(context);
             this.invoke(t);
-            if(this.getConfiguration().isEager() && t != null){
-                // if this consumer is eager to consume messages and message provided returned not null
-                // results then quartz scheduler should be triggered
 
-
-                triggerSchedulerNow();
+            if(this.getConfiguration().isEager())
+            {
+                invokeEagerSchedule( (t!=null), context.getTrigger());
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
@@ -241,6 +242,47 @@ public class ScheduledConsumer<T>
         }
     }
 
+    /**
+     * Logic to determine how to manage the eager trigger schedule.
+     * @param dataAvailable
+     * @param trigger
+     * @throws SchedulerException
+     */
+    protected void invokeEagerSchedule(boolean dataAvailable, Trigger trigger) throws SchedulerException
+    {
+        JobKey jobkey = jobDetail.getKey();
+
+        Integer eagerCallbacks = (Integer)scheduler.getContext().get(EAGER_CALLBACK);
+        if(eagerCallbacks == null)
+        {
+            eagerCallbacks = new Integer(0);
+        }
+
+        // if data available and maxEagerCallbacks is not set or less than max
+        if (dataAvailable && (consumerConfiguration.getMaxEagerCallbacks() == 0 || eagerCallbacks < consumerConfiguration.getMaxEagerCallbacks()) )
+        {
+
+            // need to determine whether this context call back is from normal
+            // business scheduled or eager schedule
+            if(trigger.getKey().getName().equals( jobkey.getName() ) && trigger.getKey().getGroup().equals( jobkey.getGroup() ))
+            {
+                // suspend business trigger if we are scheduling the eager trigger
+                scheduler.pauseTrigger(trigger.getKey());
+            }
+
+            // schedule the eager trigger
+            triggerSchedulerNow(++eagerCallbacks);
+        }
+        else
+        {
+            // restore the business trigger if its paused
+            TriggerKey triggerKey = triggerKey(jobkey.getName(), jobkey.getGroup());
+            if(scheduler.getTriggerState(triggerKey).equals(Trigger.TriggerState.PAUSED))
+            {
+                scheduler.resumeTrigger(triggerKey);
+            }
+        }
+    }
 
     /**
      * Invoke the eventListener with the incoming mes
@@ -364,7 +406,7 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    public void triggerSchedulerNow() throws SchedulerException
+    public void triggerSchedulerNow(int eagerCallback) throws SchedulerException
     {
         try
         {
@@ -372,6 +414,7 @@ public class ScheduledConsumer<T>
             TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
             Trigger trigger = newTrigger().
                     withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
+                    usingJobData(EAGER_CALLBACK, eagerCallback).
                     startAt(new Date()).
                     withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
                     build();

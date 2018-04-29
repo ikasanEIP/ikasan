@@ -51,6 +51,7 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
+import org.quartz.utils.Key;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -77,6 +78,9 @@ public class ScheduledConsumerTest
     /** Mock scheduler */
     private final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
+    /** Mock scheduler Context */
+    private final SchedulerContext schedulerContext = mockery.mock(SchedulerContext.class, "mockSchedulerContext");
+
     /** Mock job detail */
     private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
@@ -100,7 +104,6 @@ public class ScheduledConsumerTest
     private final EventListener eventListener = mockery.mock(EventListener.class);
 
     private final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
-
 
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
@@ -363,7 +366,7 @@ public class ScheduledConsumerTest
     public void test_execute_when_messageProvider_message_is_null_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
     {
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final JobKey jobKey = new JobKey("");
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -463,6 +466,7 @@ public class ScheduledConsumerTest
         final String identifier = "testId";
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -489,6 +493,32 @@ public class ScheduledConsumerTest
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
 
+                exactly(1).of(scheduler).getContext();
+                will(returnValue(schedulerContext));
+
+                exactly(1).of(schedulerContext).get("eagerCallback");
+                will(returnValue(null));
+
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(scheduler).pauseTrigger(triggerKey);
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
             }
         });
@@ -514,6 +544,7 @@ public class ScheduledConsumerTest
         final String identifier = "testId";
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -533,6 +564,32 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
+
+                exactly(1).of(scheduler).getContext();
+                will(returnValue(schedulerContext));
+
+                exactly(1).of(schedulerContext).get("eagerCallback");
+                will(returnValue(Integer.valueOf(1)));
+
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(scheduler).pauseTrigger(triggerKey);
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));

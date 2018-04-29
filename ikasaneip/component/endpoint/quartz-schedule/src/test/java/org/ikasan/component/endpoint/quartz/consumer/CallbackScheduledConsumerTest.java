@@ -76,6 +76,9 @@ public class CallbackScheduledConsumerTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
+    /** Mock scheduler Context */
+    private final SchedulerContext schedulerContext = mockery.mock(SchedulerContext.class, "mockSchedulerContext");
+
     /** Mock job detail */
     final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
@@ -350,10 +353,9 @@ public class CallbackScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_returns_true_and_not_in_recovery_and_consumer_is_eager() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        final String identifier = "testId";
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -365,6 +367,32 @@ public class CallbackScheduledConsumerTest
                 // check if consumer is eager
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
+
+                exactly(1).of(scheduler).getContext();
+                will(returnValue(schedulerContext));
+
+                exactly(1).of(schedulerContext).get("eagerCallback");
+                will(returnValue(null));
+
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(scheduler).pauseTrigger(triggerKey);
+
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // trigger now
                 exactly(1).of(mockJobDetail).getKey();
@@ -398,7 +426,7 @@ public class CallbackScheduledConsumerTest
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        final String identifier = "testId";
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -410,6 +438,32 @@ public class CallbackScheduledConsumerTest
                 // check if consumer is eager
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
+
+                exactly(1).of(schedulerContext).get("eagerCallback");
+                will(returnValue(null));
+
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(scheduler).pauseTrigger(triggerKey);
+
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(scheduler).getContext();
+                will(returnValue(schedulerContext));
 
                 // trigger now
                 exactly(1).of(mockJobDetail).getKey();
