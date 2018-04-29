@@ -107,6 +107,8 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.fcri = fcri;
         this.clientID = this.fcri.getClientID();
+        instanceCount++;
+        instanceOrdinal = instanceCount;
     }
 
     /**
