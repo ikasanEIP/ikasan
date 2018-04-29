@@ -105,6 +105,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.scri = scri;
         this.clientID = this.scri.getClientID();
+
+        instanceCount++;
+        instanceOrdinal = instanceCount;
     }
 
 

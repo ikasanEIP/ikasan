@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=master)](https://travis-ci.org/ikasanEIP/ikasan)
 
-Ikasan
+ikasan
 ======
 
 Open Source Enterprise Integration Platform
@@ -60,13 +60,14 @@ than another development framework.
  * Service APIs support management of the flow, runtime status, resubmission, and replay
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
 
-# Documentation
-## Getting Started
-* [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
-* [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
-* [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
-* [Component Quick Start](ikasaneip/component/Readme.md)
-* [Dashboard Guide](ikasaneip/dashboard/Readme.md)
+[Component Quick Start](ikasaneip/component/Readme.md)
+======
+
+[Dashboard Guide](ikasaneip/dashboard/Readme.md)
+======
+
+[Getting Started Guide](ikasaneip/developer/docs/Readme.md)
+======
 
 
 | Samples overview |
