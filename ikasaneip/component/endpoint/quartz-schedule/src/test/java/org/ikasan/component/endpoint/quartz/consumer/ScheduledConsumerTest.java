@@ -467,6 +467,7 @@ public class ScheduledConsumerTest
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
+        final JobDataMap jobDataMap = new JobDataMap();
 
         // expectations
         mockery.checking(new Expectations()
@@ -493,12 +494,6 @@ public class ScheduledConsumerTest
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
 
-                exactly(1).of(scheduler).getContext();
-                will(returnValue(schedulerContext));
-
-                exactly(1).of(schedulerContext).get("eagerCallback");
-                will(returnValue(null));
-
                 exactly(1).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
@@ -513,6 +508,9 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).pauseTrigger(triggerKey);
 
@@ -545,6 +543,8 @@ public class ScheduledConsumerTest
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
+        final JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("eagerCallbacks", Integer.valueOf(1));
 
         // expectations
         mockery.checking(new Expectations()
@@ -565,12 +565,6 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                exactly(1).of(scheduler).getContext();
-                will(returnValue(schedulerContext));
-
-                exactly(1).of(schedulerContext).get("eagerCallback");
-                will(returnValue(Integer.valueOf(1)));
-
                 exactly(1).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
@@ -585,6 +579,9 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).pauseTrigger(triggerKey);
 

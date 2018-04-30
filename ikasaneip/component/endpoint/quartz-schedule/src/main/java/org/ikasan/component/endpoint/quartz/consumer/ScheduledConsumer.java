@@ -252,7 +252,7 @@ public class ScheduledConsumer<T>
     {
         JobKey jobkey = jobDetail.getKey();
 
-        Integer eagerCallbacks = (Integer)scheduler.getContext().get(EAGER_CALLBACK);
+        Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK);
         if(eagerCallbacks == null)
         {
             eagerCallbacks = new Integer(0);
