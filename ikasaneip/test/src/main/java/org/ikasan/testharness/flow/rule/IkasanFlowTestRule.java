@@ -378,7 +378,7 @@ public class IkasanFlowTestRule implements TestRule
         ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
         try
         {
-            consumer.triggerSchedulerNow();
+            consumer.triggerSchedulerNow(0);
         }
         catch (SchedulerException se)
         {
