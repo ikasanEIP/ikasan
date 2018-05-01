@@ -56,11 +56,13 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * JUnit Rule implementation allowing flow tests to be created and executed using a builder pattern.
@@ -378,7 +380,8 @@ public class IkasanFlowTestRule implements TestRule
         ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
         try
         {
-            consumer.triggerSchedulerNow(0);
+            Trigger trigger = newTrigger().withIdentity("name", "group").build();
+            consumer.scheduleAsEagerTrigger(trigger, 0);
         }
         catch (SchedulerException se)
         {

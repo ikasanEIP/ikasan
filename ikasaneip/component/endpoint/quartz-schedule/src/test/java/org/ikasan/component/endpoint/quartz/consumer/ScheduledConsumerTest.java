@@ -84,6 +84,9 @@ public class ScheduledConsumerTest
     /** Mock job detail */
     private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
+    /** Mock triggerBuilder */
+    private final TriggerBuilder triggerBuilder = mockery.mock(TriggerBuilder.class, "mockTriggerBuilder");
+
     /** Mock trigger */
     private final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
 
@@ -133,7 +136,19 @@ public class ScheduledConsumerTest
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
+                will(returnValue("* * * * * ?"));
+
+                // access configuration for details
+                exactly(1).of(consumerConfiguration).isIgnoreMisfire();
+                will(returnValue(true));
+
+                // access configuration for details
+                exactly(3).of(consumerConfiguration).getTimezone();
+                will(returnValue("UTC"));
+
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                exactly(1).of(triggerBuilder).build();
+                will(returnValue(trigger));
 
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
@@ -372,14 +387,27 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
-                will(returnValue(null));
-
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
                 exactly(2).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
+
+                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(null));
+
+                exactly(1).of(consumerConfiguration).getCronExpression();
+                will(returnValue("* * * * * ?"));
+
+                exactly(1).of(consumerConfiguration).isIgnoreMisfire();
+                will(returnValue(true));
+
+                exactly(3).of(consumerConfiguration).getTimezone();
+                will(returnValue("UTC"));
+
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                exactly(1).of(triggerBuilder).build();
+                will(returnValue(trigger));
 
                 // cancelAll recovery
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
@@ -397,8 +425,7 @@ public class ScheduledConsumerTest
                 // start consumer
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("*"));
+
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
 
@@ -488,9 +515,6 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
-
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
 
@@ -500,22 +524,20 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
                 will(returnValue(0));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
-
-                exactly(1).of(scheduler).pauseTrigger(triggerKey);
-
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
 
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
             }
@@ -565,6 +587,15 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
+
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+
                 exactly(1).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
@@ -577,19 +608,8 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
-
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
-
-                exactly(1).of(scheduler).pauseTrigger(triggerKey);
-
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
-
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(true));
@@ -625,9 +645,9 @@ public class ScheduledConsumerTest
         }
         
         @Override
-        protected Trigger getCronTrigger(JobKey jobkey, String cronExpression)
+        protected TriggerBuilder newTriggerFor(String name, String group)
         {
-            return trigger;
+            return triggerBuilder;
         }
     }
 

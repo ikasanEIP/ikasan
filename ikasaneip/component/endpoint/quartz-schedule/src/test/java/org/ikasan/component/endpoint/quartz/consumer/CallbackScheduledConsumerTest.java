@@ -82,6 +82,9 @@ public class CallbackScheduledConsumerTest
     /** Mock job detail */
     final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
+    /** Mock triggerBuilder */
+    private final TriggerBuilder triggerBuilder = mockery.mock(TriggerBuilder.class, "mockTriggerBuilder");
+
     /** Mock trigger */
     final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
 
@@ -130,10 +133,6 @@ public class CallbackScheduledConsumerTest
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
-
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
 
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
@@ -375,26 +374,20 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
                 will(returnValue(0));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
-
-                exactly(1).of(scheduler).pauseTrigger(triggerKey);
-
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
-
-                // trigger now
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
@@ -444,26 +437,20 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
                 will(returnValue(0));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
 
-                exactly(1).of(trigger).getKey();
-                will(returnValue(triggerKey));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
-                exactly(1).of(trigger).getKey();
+                exactly(2).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
-
-                exactly(1).of(scheduler).pauseTrigger(triggerKey);
-
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
-
-                // trigger now
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(true));
@@ -540,7 +527,7 @@ public class CallbackScheduledConsumerTest
         }
         
         @Override
-        protected Trigger getCronTrigger(JobKey jobkey, String cronExpression)
+        protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
         {
             return trigger;
         }

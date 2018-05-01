@@ -97,7 +97,20 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
             boolean isSuccessful = messageProvider.invoke(context);
             if(this.getConfiguration().isEager() && isSuccessful)
             {
-                invokeEagerSchedule(isSuccessful, context.getTrigger());
+                Trigger trigger = context.getTrigger();
+
+                // potentially more data so use eager trigger
+                if(isSuccessful)
+                {
+                    invokeEagerSchedule(trigger);
+                }
+                // no more data and if callback is from an eager trigger then switch back to the business trigger
+                else if(isEagerCallback(trigger))
+                {
+                    scheduleAsBusinessTrigger(trigger);
+                }
+
+                // else do not change the business trigger
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)

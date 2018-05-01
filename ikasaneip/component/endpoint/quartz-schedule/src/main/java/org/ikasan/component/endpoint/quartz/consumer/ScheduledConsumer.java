@@ -62,7 +62,6 @@ import java.util.TimeZone;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.TriggerKey.triggerKey;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -78,9 +77,6 @@ public class ScheduledConsumer<T>
      * logger
      */
     private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
-
-    /** distinguish between business schedule callback and eager schedule callback */
-    private static String EAGER_SCHEDULE = "eagerSchedule_";
 
     /** literal to identify entry in jobMap for eager callback counts */
     private static String EAGER_CALLBACK = "eagerCallback";
@@ -157,10 +153,9 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            // create trigger
-            // TODO - allow configuration to support multiple triggers
             JobKey jobkey = jobDetail.getKey();
-            Trigger trigger = getCronTrigger(jobkey, this.consumerConfiguration.getCronExpression());
+            TriggerBuilder triggerBuilder = newTriggerFor(jobkey.getName(), jobkey.getGroup());
+            Trigger trigger = getBusinessTrigger(triggerBuilder);
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
             logger.info("Scheduled consumer for flow ["
                     + jobkey.getName()
@@ -171,6 +166,11 @@ public class ScheduledConsumer<T>
         {
             throw new RuntimeException(e);
         }
+    }
+
+    protected TriggerBuilder newTriggerFor(String name, String group)
+    {
+        return newTrigger().withIdentity(name, group);
     }
 
     /**
@@ -228,7 +228,20 @@ public class ScheduledConsumer<T>
 
             if(this.getConfiguration().isEager())
             {
-                invokeEagerSchedule( (t!=null), context.getTrigger());
+                Trigger trigger = context.getTrigger();
+
+                // potentially more data so use eager trigger
+                if(t != null)
+                {
+                    invokeEagerSchedule(trigger);
+                }
+                // no more data and if callback is from an eager trigger then switch back to the business trigger
+                else if(isEagerCallback(trigger))
+                {
+                    scheduleAsBusinessTrigger(trigger);
+                }
+
+                // else do not change the business trigger
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
@@ -242,16 +255,18 @@ public class ScheduledConsumer<T>
         }
     }
 
+    protected boolean isEagerCallback(Trigger trigger)
+    {
+        return trigger.getJobDataMap().containsKey(EAGER_CALLBACK);
+    }
+
     /**
      * Logic to determine how to manage the eager trigger schedule.
-     * @param dataAvailable
      * @param trigger
      * @throws SchedulerException
      */
-    protected void invokeEagerSchedule(boolean dataAvailable, Trigger trigger) throws SchedulerException
+    protected void invokeEagerSchedule(Trigger trigger) throws SchedulerException
     {
-        JobKey jobkey = jobDetail.getKey();
-
         Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK);
         if(eagerCallbacks == null)
         {
@@ -259,28 +274,14 @@ public class ScheduledConsumer<T>
         }
 
         // if data available and maxEagerCallbacks is not set or less than max
-        if (dataAvailable && (consumerConfiguration.getMaxEagerCallbacks() == 0 || eagerCallbacks < consumerConfiguration.getMaxEagerCallbacks()) )
+        if ((consumerConfiguration.getMaxEagerCallbacks() == 0 || eagerCallbacks < consumerConfiguration.getMaxEagerCallbacks()) )
         {
-
-            // need to determine whether this context call back is from normal
-            // business scheduled or eager schedule
-            if(trigger.getKey().getName().equals( jobkey.getName() ) && trigger.getKey().getGroup().equals( jobkey.getGroup() ))
-            {
-                // suspend business trigger if we are scheduling the eager trigger
-                scheduler.pauseTrigger(trigger.getKey());
-            }
-
             // schedule the eager trigger
-            triggerSchedulerNow(++eagerCallbacks);
+            scheduleAsEagerTrigger(trigger, ++eagerCallbacks);
         }
         else
         {
-            // restore the business trigger if its paused
-            TriggerKey triggerKey = triggerKey(jobkey.getName(), jobkey.getGroup());
-            if(scheduler.getTriggerState(triggerKey).equals(Trigger.TriggerState.PAUSED))
-            {
-                scheduler.resumeTrigger(triggerKey);
-            }
+            scheduleAsBusinessTrigger(trigger);
         }
     }
 
@@ -406,36 +407,74 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    public void triggerSchedulerNow(int eagerCallback) throws SchedulerException
+    public void scheduleAsEagerTrigger(Trigger oldTrigger, int eagerCallback) throws SchedulerException
     {
         try
         {
-            JobKey jobkey = jobDetail.getKey();
-            TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
-            Trigger trigger = newTrigger().
-                    withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
-                    usingJobData(EAGER_CALLBACK, eagerCallback).
-                    startAt(new Date()).
+            TriggerBuilder oldTriggerBuilder = oldTrigger.getTriggerBuilder();
+            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK, eagerCallback).
+                    startNow().
                     withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
                     build();
 
             Date scheduledDate;
-            if(this.scheduler.checkExists(triggerKey))
+            if(this.scheduler.checkExists(oldTrigger.getKey()))
             {
-                scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
+                scheduledDate = scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
             }
             else
             {
-                scheduledDate = scheduler.scheduleJob(trigger);
+                scheduledDate = scheduler.scheduleJob(newTrigger);
             }
 
             if(logger.isDebugEnabled())
             {
                 logger.debug("Rescheduled consumer for flow ["
-                        + jobkey.getName()
-                        + "] module [" + jobkey.getGroup()
-                        + "] for immediate callback [" + scheduledDate + "]");
+                        + newTrigger.getKey().getName()
+                        + "] module [" + newTrigger.getKey().getGroup()
+                        + "] on eager callback schedule [" + scheduledDate + "]");
             }
+        }
+        catch (SchedulerException e)
+        {
+            if(this.isRunning())
+            {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     *  Trigger Scheduler now.
+     */
+    public void scheduleAsBusinessTrigger(Trigger oldTrigger) throws SchedulerException
+    {
+        try
+        {
+            Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder());
+            newTrigger.getJobDataMap().clear();
+
+            Date scheduledDate;
+            if(this.scheduler.checkExists(oldTrigger.getKey()))
+            {
+                scheduledDate = scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
+            }
+            else
+            {
+                scheduledDate = scheduler.scheduleJob(newTrigger);
+            }
+
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("Rescheduled consumer for flow ["
+                        + newTrigger.getKey().getName()
+                        + "] module [" + newTrigger.getKey().getGroup()
+                        + "] on business callback schedule [" + scheduledDate + "]");
+            }
+        }
+        catch (ParseException e)
+        {
+            throw new SchedulerException(e);
         }
         catch (SchedulerException e)
         {
@@ -527,11 +566,9 @@ public class ScheduledConsumer<T>
      * @return jobDetail
      * @throws java.text.ParseException
      */
-    protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
+    protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
     {
-        TriggerBuilder triggerBuilder = newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup());
-
-        CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
+        CronScheduleBuilder cronScheduleBuilder = cronSchedule(this.consumerConfiguration.getCronExpression());
         if (this.consumerConfiguration.isIgnoreMisfire())
         {
             cronScheduleBuilder.withMisfireHandlingInstructionDoNothing();
@@ -541,6 +578,7 @@ public class ScheduledConsumer<T>
             cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(this.consumerConfiguration.getTimezone()));
         }
         triggerBuilder.withSchedule(cronScheduleBuilder);
+
         return triggerBuilder.build();
     }
 
