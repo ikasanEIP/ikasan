@@ -94,23 +94,38 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     {
         try
         {
+            boolean isRecovering = managedResourceRecoveryManager.isRecovering();
             boolean isSuccessful = messageProvider.invoke(context);
-            if(this.getConfiguration().isEager() && isSuccessful)
+
+            // we were recovering, but are now ok so restore eager or business trigger
+            if(isRecovering)
             {
-                Trigger trigger = context.getTrigger();
-
-                // potentially more data so use eager trigger
-                if(isSuccessful)
+                if(this.getConfiguration().isEager() && isSuccessful)
                 {
-                    invokeEagerSchedule(trigger);
+                    invokeEagerSchedule(context.getTrigger());
                 }
-                // no more data and if callback is from an eager trigger then switch back to the business trigger
-                else if(isEagerCallback(trigger))
+                else
                 {
-                    scheduleAsBusinessTrigger(trigger);
+                    scheduleAsBusinessTrigger(context.getTrigger());
                 }
+            }
+            else
+            {
+                if(this.getConfiguration().isEager())
+                {
+                    // potentially more data so use eager trigger
+                    if(isSuccessful)
+                    {
+                        invokeEagerSchedule(context.getTrigger());
+                    }
+                    // no more data and if callback is from an eager trigger then switch back to the business trigger
+                    else if(isEagerCallback(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
 
-                // else do not change the business trigger
+                    // else do not change the business trigger
+                }
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)

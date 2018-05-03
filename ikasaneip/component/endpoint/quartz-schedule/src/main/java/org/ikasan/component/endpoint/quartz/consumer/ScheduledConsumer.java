@@ -59,6 +59,7 @@ import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -207,7 +208,13 @@ public class ScheduledConsumer<T>
                 return false;
             }
             JobKey jobKey = jobDetail.getKey();
-            return this.scheduler.checkExists(jobKey);
+            List<? extends Trigger> triggers = this.scheduler.getTriggersOfJob(jobKey);
+            if(triggers.isEmpty())
+            {
+                return false;
+            }
+
+            return true;
         }
         catch (SchedulerException e)
         {
@@ -224,25 +231,39 @@ public class ScheduledConsumer<T>
     {
         try
         {
+            boolean isRecovering = managedResourceRecoveryManager.isRecovering();
             T t = (T) messageProvider.invoke(context);
             this.invoke(t);
 
-            if(this.getConfiguration().isEager())
+            // we were recovering, but are now ok so restore eager or business trigger
+            if(isRecovering)
             {
-                Trigger trigger = context.getTrigger();
-
-                // potentially more data so use eager trigger
-                if(t != null)
+                if(this.getConfiguration().isEager() && t != null)
                 {
-                    invokeEagerSchedule(trigger);
+                    invokeEagerSchedule(context.getTrigger());
                 }
-                // no more data and if callback is from an eager trigger then switch back to the business trigger
-                else if(isEagerCallback(trigger))
+                else
                 {
-                    scheduleAsBusinessTrigger(trigger);
+                    scheduleAsBusinessTrigger(context.getTrigger());
                 }
+            }
+            else
+            {
+                if(this.getConfiguration().isEager())
+                {
+                    // potentially more data so use eager trigger
+                    if(t != null)
+                    {
+                        invokeEagerSchedule(context.getTrigger());
+                    }
+                    // no more data and if callback is from an eager trigger then switch back to the business trigger
+                    else if(isEagerCallback(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
 
-                // else do not change the business trigger
+                    // else do not change the business trigger
+                }
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
@@ -292,8 +313,6 @@ public class ScheduledConsumer<T>
      */
     public void invoke(T message)
     {
-        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
-
         if (message != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(message);
@@ -304,26 +323,6 @@ public class ScheduledConsumer<T>
             if(logger.isDebugEnabled())
             {
                 logger.debug("'null' returned from MessageProvider. Flow not invoked");
-            }
-        }
-
-        if(isRecovering)
-        {
-            // We need to restart the business schedule PRIOR to cancelling the recovery
-            // otherwise the change in state on cancelling recovery reports the
-            // consumer as stopped as the business schedule isn't active.
-            // Starting it before the cancelAll should not cause any issues
-            // as we only allow one quartz callback at a time and so will get
-            // blocked until this recovery schedule has completed.
-
-            // only start this consumer if its not currently running or purposefully paused.
-            if(!this.isRunning() && !this.isPaused())
-            {
-                // clear any jobDetail based recovery jobs and triggers
-                this.stop();
-
-                // restore the business scheduled job and triggers
-                this.start();
             }
         }
     }
@@ -348,44 +347,20 @@ public class ScheduledConsumer<T>
 	@Override
 	public void onResubmission(T event)
 	{
-        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
-
         if (event != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(event);
-
             Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
-            
             this.eventListener.invoke(resubmission);
         }
         else
         {
             if(logger.isDebugEnabled())
             {
-                logger.debug("'null' returned from MessageProvider. Flow not invoked");
+                logger.debug("'null' value resubmitted. Flow not invoked");
             }
         }
-
-        if(isRecovering)
-        {
-            // cancelAll the recovery schedule if still active
-            // could be the flow has already cancelled this, so check
-            if(managedResourceRecoveryManager.isRecovering())
-            {
-                managedResourceRecoveryManager.cancel();
-            }
-
-            // only start this consumer if its not currently running or purposefully paused.
-            if(!this.isRunning() && !this.isPaused())
-            {
-                // clear any jobDetail based recovery jobs and triggers
-                this.stop();
-
-                // restore the business scheduled job and triggers
-                this.start();
-            }
-        }
-	}
+    }
 
     @Override
     public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
