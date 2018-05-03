@@ -40,9 +40,11 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
@@ -71,15 +73,14 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @DisallowConcurrentExecution
 @SuppressWarnings("unchecked")
 public class ScheduledConsumer<T>
-        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ResubmissionService<T>
+        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ScheduledComponent<JobDetail>, ResubmissionService<T>
 {
     /**
      * logger
      */
     private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
 
-    /** literal to identify entry in jobMap for eager callback counts */
-    private static String EAGER_CALLBACK = "eagerCallback";
+    private static String EAGER_CALLBACK_COUNT = "eagerCallbackCount";
 
     /**
      * Scheduler
@@ -257,7 +258,7 @@ public class ScheduledConsumer<T>
 
     protected boolean isEagerCallback(Trigger trigger)
     {
-        return trigger.getJobDataMap().containsKey(EAGER_CALLBACK);
+        return trigger.getJobDataMap().containsKey(EAGER_CALLBACK_COUNT);
     }
 
     /**
@@ -267,7 +268,7 @@ public class ScheduledConsumer<T>
      */
     protected void invokeEagerSchedule(Trigger trigger) throws SchedulerException
     {
-        Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK);
+        Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK_COUNT);
         if(eagerCallbacks == null)
         {
             eagerCallbacks = new Integer(0);
@@ -318,14 +319,11 @@ public class ScheduledConsumer<T>
             // only start this consumer if its not currently running or purposefully paused.
             if(!this.isRunning() && !this.isPaused())
             {
-                this.start();
-            }
+                // clear any jobDetail based recovery jobs and triggers
+                this.stop();
 
-            // cancelAll the recovery schedule if still active
-            // could be the flow has already cancelled this, so check
-            if(managedResourceRecoveryManager.isRecovering())
-            {
-                managedResourceRecoveryManager.cancel();
+                // restore the business scheduled job and triggers
+                this.start();
             }
         }
     }
@@ -380,6 +378,10 @@ public class ScheduledConsumer<T>
             // only start this consumer if its not currently running or purposefully paused.
             if(!this.isRunning() && !this.isPaused())
             {
+                // clear any jobDetail based recovery jobs and triggers
+                this.stop();
+
+                // restore the business scheduled job and triggers
                 this.start();
             }
         }
@@ -412,7 +414,7 @@ public class ScheduledConsumer<T>
         try
         {
             TriggerBuilder oldTriggerBuilder = oldTrigger.getTriggerBuilder();
-            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK, eagerCallback).
+            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK_COUNT, eagerCallback).
                     startNow().
                     withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
                     build();
@@ -577,7 +579,11 @@ public class ScheduledConsumer<T>
         {
             cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(this.consumerConfiguration.getTimezone()));
         }
-        triggerBuilder.withSchedule(cronScheduleBuilder);
+
+        // start the business schedule 1 second in the future to ensure we
+        // do not immediately callback on submission to quartz
+        triggerBuilder.withSchedule(cronScheduleBuilder)
+                .startAt(new Date(System.currentTimeMillis() + 1000));
 
         return triggerBuilder.build();
     }
@@ -630,9 +636,16 @@ public class ScheduledConsumer<T>
         this.criticalOnStartup = criticalOnStartup;
     }
 
+    @Override
     public void setJobDetail(JobDetail jobDetail)
     {
         this.jobDetail = jobDetail;
+    }
+
+    @Override
+    public JobDetail getJobDetail()
+    {
+        return this.jobDetail;
     }
 
 }

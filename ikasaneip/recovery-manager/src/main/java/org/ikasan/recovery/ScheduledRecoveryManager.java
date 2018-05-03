@@ -42,6 +42,7 @@ package org.ikasan.recovery;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
+import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -67,6 +68,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.TriggerKey.triggerKey;
 
@@ -85,14 +87,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     /** recovery job name */
     private static final String RECOVERY_JOB_NAME = "recoveryJob_";
 
-    /** consumer recovery job name */
-    private static final String CONSUMER_RECOVERY_JOB_NAME = "consumerRecoveryJob_";
-
     /** recovery job trigger name */
     private static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger_";
-
-    /** recovery job trigger name */
-    private static final String IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME = "immediateRecoveryJobTrigger_";
 
     /** consumer to stop and start for recovery */
     private Consumer<?,?> consumer;
@@ -134,8 +130,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private ErrorReportingService errorReportingService;
 
     private JobKey recoveryJobKey;
-
-    private JobKey consumerRecoveryJobKey;
 
     private Set<Object> recoveringIdentifiers = new HashSet<>();
 
@@ -585,19 +579,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         return newTrigger()
         .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
         .startAt(new Date(System.currentTimeMillis() + delay))
+        .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
         .build();
-    }
-
-    /**
-     * Factory method for creating a new recovery trigger which starts immediately.
-     * @return Trigger
-     */
-    protected Trigger newImmediateRecoveryTrigger()
-    {
-        return newTrigger()
-                .withIdentity(triggerKey(IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-                .startNow()
-                .build();
     }
 
     /**
@@ -638,19 +621,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                 logger.info("Failed to remove recovery job " + recoveryJobKey);
             }
         }
-
-        if(consumerRecoveryJobKey != null && this.scheduler.checkExists(consumerRecoveryJobKey))
-        {
-            boolean deletedConsumerRecoveryJob = this.scheduler.deleteJob(consumerRecoveryJobKey);
-            if(deletedConsumerRecoveryJob)
-            {
-                logger.info("Successfully removed consumer recovery job " + consumerRecoveryJobKey);
-            }
-            else
-            {
-                logger.info("Failed to remove consumer recovery job " + consumerRecoveryJobKey);
-            }
-        }
     }
 
     /**
@@ -664,13 +634,23 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         {
             startManagedResources();
 
-            if(this.consumer instanceof Job)
+            if(this.consumer instanceof ScheduledComponent)
             {
-                Class consumerClass = this.consumer.getClass();
-                JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail((Job)this.consumer, consumerClass, CONSUMER_RECOVERY_JOB_NAME + this.flowName, this.moduleName);
-                consumerRecoveryJobKey = recoveryJobDetail.getKey(); // set the consumer's jobkey so it can be canceled as necessary
+                JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
+                Trigger trigger = newTrigger()
+                            .withIdentity(triggerKey(jobDetail.getKey().getName(), jobDetail.getKey().getGroup() ))
+                            .startNow()
+                            .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
+                            .build();
 
-                this.scheduler.scheduleJob(recoveryJobDetail, newImmediateRecoveryTrigger());
+                Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
+                if(logger.isDebugEnabled())
+                {
+                    logger.debug("RecoveryManager scheduled callback on consumer flow ["
+                            + trigger.getKey().getName()
+                            + "] module [" + trigger.getKey().getGroup()
+                            + "] for [" + scheduledDate + "]");
+                }
             }
             else
             {
