@@ -136,7 +136,7 @@ public class CallbackMessageProviderImplTest
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
 
-                exactly(3).of(mockManagedResourceRecoveryManager).isRecovering();
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
 
                 // create flowEvent and call flow

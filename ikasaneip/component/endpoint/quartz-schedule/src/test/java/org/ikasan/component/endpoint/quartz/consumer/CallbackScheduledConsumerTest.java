@@ -291,6 +291,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -324,6 +327,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(false));
 
@@ -361,6 +367,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -377,7 +386,7 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).startNow();
                 will(returnValue(triggerBuilder));
@@ -424,6 +433,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -440,7 +452,7 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallback", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).startNow();
                 will(returnValue(triggerBuilder));
@@ -486,6 +498,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
                 exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
