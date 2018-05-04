@@ -53,16 +53,16 @@ import java.util.Enumeration;
  */
 public class IkasanListMessage extends ArrayList<Message> implements Message
 {
-    String jmsMessageId;
+    String jMSMessageID;
 
     @Override
     public String getJMSMessageID() throws JMSException {
-        return jmsMessageId;
+        return jMSMessageID;
     }
 
     @Override
     public void setJMSMessageID(String jmsMessageId) throws JMSException {
-        this.jmsMessageId = jmsMessageId;
+        this.jMSMessageID = jmsMessageId;
     }
 
     @Override
@@ -288,14 +288,14 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
 
         IkasanListMessage messages = (IkasanListMessage) o;
 
-        return !(jmsMessageId != null ? !jmsMessageId.equals(messages.jmsMessageId) : messages.jmsMessageId != null);
+        return !(jMSMessageID != null ? !jMSMessageID.equals(messages.jMSMessageID) : messages.jMSMessageID != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (jmsMessageId != null ? jmsMessageId.hashCode() : 0);
+        result = 31 * result + (jMSMessageID != null ? jMSMessageID.hashCode() : 0);
         return result;
     }
 }
