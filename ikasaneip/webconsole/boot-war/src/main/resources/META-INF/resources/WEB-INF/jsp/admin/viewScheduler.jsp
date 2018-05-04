@@ -101,10 +101,10 @@
             <tbody>
             <c:forEach items="${triggers}" var="trigger">
                 <tr>
-                    <td><c:out value="${trigger.name}" /></td>          
+                    <td><c:out value="${trigger.name}" /></td>
                     <td><c:out value="${trigger.jobName}" /></td>
-                    <td><fmt:formatDate value="${trigger.nextFireTime}" pattern="dd/MM/yyyy h:mma"/></td>
-                    <td><fmt:formatDate value="${trigger.previousFireTime}" pattern="dd/MM/yyyy h:mma"/></td>
+                    <td><fmt:formatDate value="${trigger.nextFireTime}" pattern="dd/MM/yyyy h:mm:ssa"/></td>
+                    <td><fmt:formatDate value="${trigger.previousFireTime}" pattern="dd/MM/yyyy h:mm:ssa"/></td>
                 </tr>
             </c:forEach>
             </tbody>

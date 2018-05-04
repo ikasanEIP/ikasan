@@ -38,75 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.quartz.consumer;
-
+package org.ikasan.scheduler;
 
 /**
- * Scheduled consumer configuration bean.
- * 
+ * Contract for an Ikasan Scheduled Job.
+ *
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerConfiguration
+public interface ScheduledComponent<DETAIL>
 {
-    /** cron based expression for this schedule */
-    private String cronExpression;
+   /**
+     * Getter for the scheduled component's job detail
+     * @return DETAIL
+     */
+    public DETAIL getJobDetail();
 
-    /** whether to ignore a misfire - default true */
-    private boolean ignoreMisfire = true;
-
-    /** Determines whether consumer will be eagerly executing after successful run */
-    private boolean eager = false;
-
-    /** maximum number of consecutive eager scheduled callbacks before reverting to business schedule - default 0 = unlimited */
-    private int maxEagerCallbacks;
-
-    /** a valid optional timezone to set on the scheduled job
-     *  a default of blank or null will use the JVM's timezone */
-    private String timezone;
-
-    public String getCronExpression()
-    {
-        return cronExpression;
-    }
-
-    public void setCronExpression(String cronExpression)
-    {
-        this.cronExpression = cronExpression;
-    }
-
-    public boolean isEager() {
-        return eager;
-    }
-
-    public int getMaxEagerCallbacks() {
-        return maxEagerCallbacks;
-    }
-
-    public void setMaxEagerCallbacks(int maxEagerCallbacks) {
-        this.maxEagerCallbacks = maxEagerCallbacks;
-    }
-
-    public void setEager(boolean eager) {
-        this.eager = eager;
-    }
-
-    public void setIgnoreMisfire(boolean ignoreMisfire)
-    {
-        this.ignoreMisfire = ignoreMisfire;
-    }
-
-    public boolean isIgnoreMisfire()
-    {
-        return this.ignoreMisfire;
-    }
-
-    public String getTimezone()
-    {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone)
-    {
-        this.timezone = timezone;
-    }
+    /**
+     * Setter for the scheduled component's job detail
+     * @param detail
+     */
+    public void setJobDetail(DETAIL detail);
 }
