@@ -55,6 +55,16 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
 {
     String jmsMessageId;
 
+    public String getJmsMessageId()
+    {
+        return jmsMessageId;
+    }
+
+    public void setJmsMessageId(String jmsMessageId)
+    {
+        this.jmsMessageId = jmsMessageId;
+    }
+
     @Override
     public String getJMSMessageID() throws JMSException {
         return jmsMessageId;

@@ -52,6 +52,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,15 +132,11 @@ public class CallbackMessageProviderImplTest
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
-
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
 
-                exactly(3).of(mockManagedResourceRecoveryManager).isRecovering();
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
 
                 // create flowEvent and call flow
@@ -197,7 +194,7 @@ public class CallbackMessageProviderImplTest
         }
         
         @Override
-        protected Trigger getCronTrigger(JobKey jobkey, String cronExpression)
+        protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
         {
             return trigger;
         }

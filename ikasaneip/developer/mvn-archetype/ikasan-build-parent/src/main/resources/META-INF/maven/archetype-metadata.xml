@@ -53,6 +53,7 @@
             <defaultValue>1.0.0-SNAPSHOT</defaultValue>
         </requiredProperty>
         <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
         </requiredProperty>
     </requiredProperties>
 

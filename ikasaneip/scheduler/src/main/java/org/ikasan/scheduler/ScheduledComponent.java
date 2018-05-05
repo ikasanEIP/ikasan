@@ -1,8 +1,8 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,27 +36,26 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.scheduler;
 
 /**
- * Default Configration options common to all invokers.
+ * Contract for an Ikasan Scheduled Job.
  *
  * @author Ikasan Development Team
- *
  */
-public class TranslatorInvokerConfiguration
+public interface ScheduledComponent<DETAIL>
 {
-    /** apply translator component - default true */
-    private boolean applyTranslator = true;
+   /**
+     * Getter for the scheduled component's job detail
+     * @return DETAIL
+     */
+    public DETAIL getJobDetail();
 
-    public boolean isApplyTranslator() {
-        return applyTranslator;
-    }
-
-    public void setApplyTranslator(boolean applyTranslator) {
-        this.applyTranslator = applyTranslator;
-    }
+    /**
+     * Setter for the scheduled component's job detail
+     * @param detail
+     */
+    public void setJobDetail(DETAIL detail);
 }

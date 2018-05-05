@@ -123,5 +123,10 @@ public interface JmsProducerBuilder extends Builder<Producer> {
     JmsProducerBuilder setPostProcessor(PostProcessor<?,?> postProcessor);
 
     JmsProducerBuilder setMessageConverter(MessageConverter messageConverter);
+
+    JmsProducerBuilder setConnectionUsername(String username);
+
+    JmsProducerBuilder setConnectionPassword(String password);
+
 }
 

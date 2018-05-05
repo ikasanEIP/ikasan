@@ -45,6 +45,7 @@ import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.FlowObserver;
@@ -57,8 +58,10 @@ import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.util.SocketUtils;
@@ -69,6 +72,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * JUnit Rule implementation allowing flow tests to be created and executed using a builder pattern.
@@ -440,7 +444,9 @@ public class IkasanStandaloneFlowTestRule implements TestRule
         ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
         try
         {
-            consumer.triggerSchedulerNow();
+            JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
+            Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
+            consumer.scheduleAsEagerTrigger(trigger, 0);
         }
         catch (SchedulerException se)
         {

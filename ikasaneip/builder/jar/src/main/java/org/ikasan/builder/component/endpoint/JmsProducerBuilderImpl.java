@@ -44,6 +44,7 @@ import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 
@@ -79,6 +80,16 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
      * Configuration resource id
      */
     String configuredResourceId;
+
+    /**
+     * Optional username to authenticate on connection
+     */
+    String username;
+
+    /**
+     * Optional password to authenticate on connection
+     */
+    String password;
 
     /**
      * Constructor
@@ -353,6 +364,18 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         return this;
     }
 
+    @Override
+    public JmsProducerBuilder setConnectionUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    @Override
+    public JmsProducerBuilder setConnectionPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
     /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
@@ -366,11 +389,43 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         jmsProducer.setConfiguration(configuration);
         jmsProducer.setConfiguredResourceId(configuredResourceId);
 
+        this.ikasanJmsTemplate.setConnectionFactory( getConnectionFactory(this.ikasanJmsTemplate.getConnectionFactory(), username, password) );
         if(jmsProducer instanceof ArjunaJmsTemplateProducer)
         {
             ((ArjunaJmsTemplateProducer) jmsProducer).setLocalTransactionManager(arjunaTransactionManager);
         }
         return jmsProducer;
+    }
+
+    /**
+     * Get the connectionFactory based on set properties.
+     * @param connectionFactory
+     * @param username
+     * @param password
+     * @return ConnectionFactory
+     */
+    private ConnectionFactory getConnectionFactory(ConnectionFactory connectionFactory, String username, String password)
+    {
+        // if connectionFactory and username specified then return a credentials based CF
+        if(connectionFactory != null && username != null)
+        {
+            UserCredentialsConnectionFactoryAdapter cfCredentialsAdapter = getUserCredentialsConnectionFactoryAdapter();
+            cfCredentialsAdapter.setTargetConnectionFactory(connectionFactory);
+            cfCredentialsAdapter.setUsername(username);
+            cfCredentialsAdapter.setPassword(password);
+            return cfCredentialsAdapter;
+        }
+
+        return connectionFactory;
+    }
+
+    /**
+     * Factory method to aid testing of this class
+     * @return
+     */
+    protected UserCredentialsConnectionFactoryAdapter getUserCredentialsConnectionFactoryAdapter()
+    {
+        return new UserCredentialsConnectionFactoryAdapter();
     }
 
     /**
