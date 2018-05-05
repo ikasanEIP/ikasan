@@ -300,6 +300,10 @@ public class FileConsumerBuilderImpl extends ScheduledConsumerBuilderImpl
     public ScheduledConsumer build()
     {
         this.scheduledConsumer.setMessageProvider(this.fileMessageProvider);
+
+        // it maybe no configuration properties are set by the developer, so call getConfiguration to ensure one exists
+        getConfiguration();
+
         return super.build();
     }
 

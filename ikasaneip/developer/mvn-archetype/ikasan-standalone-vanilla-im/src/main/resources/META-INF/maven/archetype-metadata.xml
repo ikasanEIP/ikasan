@@ -42,6 +42,12 @@
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
                       name="ikasan-standalone-vanilla-im-maven-plugin" partial="true">
 
+    <requiredProperties>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+
     <fileSets>
         <fileSet filtered="true" packaged="false">
             <directory>docs</directory>

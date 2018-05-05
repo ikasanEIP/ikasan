@@ -40,9 +40,11 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
@@ -57,12 +59,12 @@ import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.TriggerKey.triggerKey;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -72,15 +74,14 @@ import static org.quartz.TriggerKey.triggerKey;
 @DisallowConcurrentExecution
 @SuppressWarnings("unchecked")
 public class ScheduledConsumer<T>
-        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ResubmissionService<T>
+        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ScheduledComponent<JobDetail>, ResubmissionService<T>
 {
     /**
      * logger
      */
     private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
 
-    /** distinguish between business schedule callback and eager schedule callback */
-    private static String EAGER_SCHEDULE = "eagerSchedule_";
+    private static String EAGER_CALLBACK_COUNT = "eagerCallbackCount";
 
     /**
      * Scheduler
@@ -154,10 +155,9 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            // create trigger
-            // TODO - allow configuration to support multiple triggers
             JobKey jobkey = jobDetail.getKey();
-            Trigger trigger = getCronTrigger(jobkey, this.consumerConfiguration.getCronExpression());
+            TriggerBuilder triggerBuilder = newTriggerFor(jobkey.getName(), jobkey.getGroup());
+            Trigger trigger = getBusinessTrigger(triggerBuilder);
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
             logger.info("Scheduled consumer for flow ["
                     + jobkey.getName()
@@ -168,6 +168,11 @@ public class ScheduledConsumer<T>
         {
             throw new RuntimeException(e);
         }
+    }
+
+    protected TriggerBuilder newTriggerFor(String name, String group)
+    {
+        return newTrigger().withIdentity(name, group);
     }
 
     /**
@@ -203,7 +208,13 @@ public class ScheduledConsumer<T>
                 return false;
             }
             JobKey jobKey = jobDetail.getKey();
-            return this.scheduler.checkExists(jobKey);
+            List<? extends Trigger> triggers = this.scheduler.getTriggersOfJob(jobKey);
+            if(triggers.isEmpty())
+            {
+                return false;
+            }
+
+            return true;
         }
         catch (SchedulerException e)
         {
@@ -220,14 +231,39 @@ public class ScheduledConsumer<T>
     {
         try
         {
+            boolean isRecovering = managedResourceRecoveryManager.isRecovering();
             T t = (T) messageProvider.invoke(context);
             this.invoke(t);
-            if(this.getConfiguration().isEager() && t != null){
-                // if this consumer is eager to consume messages and message provided returned not null
-                // results then quartz scheduler should be triggered
 
+            // we were recovering, but are now ok so restore eager or business trigger
+            if(isRecovering)
+            {
+                if(this.getConfiguration().isEager() && t != null)
+                {
+                    invokeEagerSchedule(context.getTrigger());
+                }
+                else
+                {
+                    scheduleAsBusinessTrigger(context.getTrigger());
+                }
+            }
+            else
+            {
+                if(this.getConfiguration().isEager())
+                {
+                    // potentially more data so use eager trigger
+                    if(t != null)
+                    {
+                        invokeEagerSchedule(context.getTrigger());
+                    }
+                    // no more data and if callback is from an eager trigger then switch back to the business trigger
+                    else if(isEagerCallback(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
 
-                triggerSchedulerNow();
+                    // else do not change the business trigger
+                }
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
@@ -241,6 +277,35 @@ public class ScheduledConsumer<T>
         }
     }
 
+    protected boolean isEagerCallback(Trigger trigger)
+    {
+        return trigger.getJobDataMap().containsKey(EAGER_CALLBACK_COUNT);
+    }
+
+    /**
+     * Logic to determine how to manage the eager trigger schedule.
+     * @param trigger
+     * @throws SchedulerException
+     */
+    protected void invokeEagerSchedule(Trigger trigger) throws SchedulerException
+    {
+        Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK_COUNT);
+        if(eagerCallbacks == null)
+        {
+            eagerCallbacks = new Integer(0);
+        }
+
+        // if data available and maxEagerCallbacks is not set or less than max
+        if ((consumerConfiguration.getMaxEagerCallbacks() == 0 || eagerCallbacks < consumerConfiguration.getMaxEagerCallbacks()) )
+        {
+            // schedule the eager trigger
+            scheduleAsEagerTrigger(trigger, ++eagerCallbacks);
+        }
+        else
+        {
+            scheduleAsBusinessTrigger(trigger);
+        }
+    }
 
     /**
      * Invoke the eventListener with the incoming mes
@@ -248,8 +313,6 @@ public class ScheduledConsumer<T>
      */
     public void invoke(T message)
     {
-        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
-
         if (message != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(message);
@@ -260,29 +323,6 @@ public class ScheduledConsumer<T>
             if(logger.isDebugEnabled())
             {
                 logger.debug("'null' returned from MessageProvider. Flow not invoked");
-            }
-        }
-
-        if(isRecovering)
-        {
-            // We need to restart the business schedule PRIOR to cancelling the recovery
-            // otherwise the change in state on cancelling recovery reports the
-            // consumer as stopped as the business schedule isn't active.
-            // Starting it before the cancelAll should not cause any issues
-            // as we only allow one quartz callback at a time and so will get
-            // blocked until this recovery schedule has completed.
-
-            // only start this consumer if its not currently running or purposefully paused.
-            if(!this.isRunning() && !this.isPaused())
-            {
-                this.start();
-            }
-
-            // cancelAll the recovery schedule if still active
-            // could be the flow has already cancelled this, so check
-            if(managedResourceRecoveryManager.isRecovering())
-            {
-                managedResourceRecoveryManager.cancel();
             }
         }
     }
@@ -307,40 +347,20 @@ public class ScheduledConsumer<T>
 	@Override
 	public void onResubmission(T event)
 	{
-        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
-
         if (event != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(event);
-
             Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
-            
             this.eventListener.invoke(resubmission);
         }
         else
         {
             if(logger.isDebugEnabled())
             {
-                logger.debug("'null' returned from MessageProvider. Flow not invoked");
+                logger.debug("'null' value resubmitted. Flow not invoked");
             }
         }
-
-        if(isRecovering)
-        {
-            // cancelAll the recovery schedule if still active
-            // could be the flow has already cancelled this, so check
-            if(managedResourceRecoveryManager.isRecovering())
-            {
-                managedResourceRecoveryManager.cancel();
-            }
-
-            // only start this consumer if its not currently running or purposefully paused.
-            if(!this.isRunning() && !this.isPaused())
-            {
-                this.start();
-            }
-        }
-	}
+    }
 
     @Override
     public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
@@ -364,35 +384,74 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    public void triggerSchedulerNow() throws SchedulerException
+    public void scheduleAsEagerTrigger(Trigger oldTrigger, int eagerCallback) throws SchedulerException
     {
         try
         {
-            JobKey jobkey = jobDetail.getKey();
-            TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
-            Trigger trigger = newTrigger().
-                    withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
-                    startAt(new Date()).
+            TriggerBuilder oldTriggerBuilder = oldTrigger.getTriggerBuilder();
+            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK_COUNT, eagerCallback).
+                    startNow().
                     withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
                     build();
 
             Date scheduledDate;
-            if(this.scheduler.checkExists(triggerKey))
+            if(this.scheduler.checkExists(oldTrigger.getKey()))
             {
-                scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
+                scheduledDate = scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
             }
             else
             {
-                scheduledDate = scheduler.scheduleJob(trigger);
+                scheduledDate = scheduler.scheduleJob(newTrigger);
             }
 
             if(logger.isDebugEnabled())
             {
                 logger.debug("Rescheduled consumer for flow ["
-                        + jobkey.getName()
-                        + "] module [" + jobkey.getGroup()
-                        + "] for immediate callback [" + scheduledDate + "]");
+                        + newTrigger.getKey().getName()
+                        + "] module [" + newTrigger.getKey().getGroup()
+                        + "] on eager callback schedule [" + scheduledDate + "]");
             }
+        }
+        catch (SchedulerException e)
+        {
+            if(this.isRunning())
+            {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     *  Trigger Scheduler now.
+     */
+    public void scheduleAsBusinessTrigger(Trigger oldTrigger) throws SchedulerException
+    {
+        try
+        {
+            Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder());
+            newTrigger.getJobDataMap().clear();
+
+            Date scheduledDate;
+            if(this.scheduler.checkExists(oldTrigger.getKey()))
+            {
+                scheduledDate = scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
+            }
+            else
+            {
+                scheduledDate = scheduler.scheduleJob(newTrigger);
+            }
+
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("Rescheduled consumer for flow ["
+                        + newTrigger.getKey().getName()
+                        + "] module [" + newTrigger.getKey().getGroup()
+                        + "] on business callback schedule [" + scheduledDate + "]");
+            }
+        }
+        catch (ParseException e)
+        {
+            throw new SchedulerException(e);
         }
         catch (SchedulerException e)
         {
@@ -484,11 +543,9 @@ public class ScheduledConsumer<T>
      * @return jobDetail
      * @throws java.text.ParseException
      */
-    protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
+    protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
     {
-        TriggerBuilder triggerBuilder = newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup());
-
-        CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
+        CronScheduleBuilder cronScheduleBuilder = cronSchedule(this.consumerConfiguration.getCronExpression());
         if (this.consumerConfiguration.isIgnoreMisfire())
         {
             cronScheduleBuilder.withMisfireHandlingInstructionDoNothing();
@@ -497,7 +554,12 @@ public class ScheduledConsumer<T>
         {
             cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(this.consumerConfiguration.getTimezone()));
         }
-        triggerBuilder.withSchedule(cronScheduleBuilder);
+
+        // start the business schedule 1 second in the future to ensure we
+        // do not immediately callback on submission to quartz
+        triggerBuilder.withSchedule(cronScheduleBuilder)
+                .startAt(new Date(System.currentTimeMillis() + 1000));
+
         return triggerBuilder.build();
     }
 
@@ -549,9 +611,16 @@ public class ScheduledConsumer<T>
         this.criticalOnStartup = criticalOnStartup;
     }
 
+    @Override
     public void setJobDetail(JobDetail jobDetail)
     {
         this.jobDetail = jobDetail;
+    }
+
+    @Override
+    public JobDetail getJobDetail()
+    {
+        return this.jobDetail;
     }
 
 }

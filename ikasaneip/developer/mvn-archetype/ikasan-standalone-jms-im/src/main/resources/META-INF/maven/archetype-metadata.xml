@@ -46,6 +46,9 @@
         <requiredProperty key="sourceFlowName">
             <defaultValue>Jms Sample Flow</defaultValue>
         </requiredProperty>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
     </requiredProperties>
 
     <fileSets>

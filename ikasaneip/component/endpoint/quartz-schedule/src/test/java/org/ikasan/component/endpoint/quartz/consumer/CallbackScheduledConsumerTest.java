@@ -76,8 +76,14 @@ public class CallbackScheduledConsumerTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
+    /** Mock scheduler Context */
+    private final SchedulerContext schedulerContext = mockery.mock(SchedulerContext.class, "mockSchedulerContext");
+
     /** Mock job detail */
     final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
+
+    /** Mock triggerBuilder */
+    private final TriggerBuilder triggerBuilder = mockery.mock(TriggerBuilder.class, "mockTriggerBuilder");
 
     /** Mock trigger */
     final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
@@ -127,10 +133,6 @@ public class CallbackScheduledConsumerTest
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
-
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
 
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
@@ -289,6 +291,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -322,6 +327,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(false));
 
@@ -350,15 +358,18 @@ public class CallbackScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_returns_true_and_not_in_recovery_and_consumer_is_eager() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        final String identifier = "testId";
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
+        final JobDataMap jobDataMap = new JobDataMap();
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -366,9 +377,26 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                // trigger now
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
+
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
@@ -398,12 +426,16 @@ public class CallbackScheduledConsumerTest
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        final String identifier = "testId";
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
+        final JobDataMap jobDataMap = new JobDataMap();
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(true));
 
@@ -411,9 +443,26 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                // trigger now
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
+                will(returnValue(0));
+
+                exactly(1).of(trigger).getTriggerBuilder();
+                will(returnValue(triggerBuilder));
+
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+
+                exactly(2).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(true));
@@ -449,6 +498,9 @@ public class CallbackScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
                 exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
@@ -490,7 +542,7 @@ public class CallbackScheduledConsumerTest
         }
         
         @Override
-        protected Trigger getCronTrigger(JobKey jobkey, String cronExpression)
+        protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
         {
             return trigger;
         }

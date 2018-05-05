@@ -94,11 +94,38 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     {
         try
         {
-              boolean isSuccessful = messageProvider.invoke(context);
-            if(this.getConfiguration().isEager() && isSuccessful){
-                // if this consumer is eager to consume messages and message provided returned not null
-                // results then quartz scheduler should be triggered
-                triggerSchedulerNow();
+            boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+            boolean isSuccessful = messageProvider.invoke(context);
+
+            // we were recovering, but are now ok so restore eager or business trigger
+            if(isRecovering)
+            {
+                if(this.getConfiguration().isEager() && isSuccessful)
+                {
+                    invokeEagerSchedule(context.getTrigger());
+                }
+                else
+                {
+                    scheduleAsBusinessTrigger(context.getTrigger());
+                }
+            }
+            else
+            {
+                if(this.getConfiguration().isEager())
+                {
+                    // potentially more data so use eager trigger
+                    if(isSuccessful)
+                    {
+                        invokeEagerSchedule(context.getTrigger());
+                    }
+                    // no more data and if callback is from an eager trigger then switch back to the business trigger
+                    else if(isEagerCallback(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
+
+                    // else do not change the business trigger
+                }
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
