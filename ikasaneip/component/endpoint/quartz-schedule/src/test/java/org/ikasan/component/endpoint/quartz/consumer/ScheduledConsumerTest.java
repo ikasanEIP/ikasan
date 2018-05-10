@@ -429,6 +429,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(scheduler).rescheduleJob(triggerKey, trigger);
                 will(returnValue(new Date()));
 
+                exactly(1).of(mockManagedResourceRecoveryManager).cancel();
             }
         });
 
