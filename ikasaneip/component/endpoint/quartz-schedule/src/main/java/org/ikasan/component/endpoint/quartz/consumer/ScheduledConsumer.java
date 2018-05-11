@@ -246,6 +246,9 @@ public class ScheduledConsumer<T>
                 {
                     scheduleAsBusinessTrigger(context.getTrigger());
                 }
+
+                // cancel any remnants of the recovery
+                this.managedResourceRecoveryManager.cancel();
             }
             else
             {
