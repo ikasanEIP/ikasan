@@ -41,13 +41,17 @@
 package org.ikasan.builder;
 
 import org.hamcrest.core.IsInstanceOf;
+import org.ikasan.exceptionResolver.ExceptionGroup;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.MatchingExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
+import org.ikasan.spec.flow.FlowElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple Exception Resolver builder.
@@ -59,7 +63,12 @@ public class ExceptionResolverBuilderImpl implements ExceptionResolverBuilder
 	/**
 	 * List of matcher based exception groups to be used by the exception resolver.
 	 */
-	List matcherBasedExceptionGroups = new ArrayList();
+	List<ExceptionGroup> matcherBasedExceptionGroups = new ArrayList();
+
+	/**
+	 * List of matcher based exception groups aligned to specific component names for use by the exception resolver.
+	 */
+	Map<String, List<ExceptionGroup>> componentExceptionGroupings;
 
 	/**
 	 * Build and return an instance of the exception resolver
@@ -67,7 +76,7 @@ public class ExceptionResolverBuilderImpl implements ExceptionResolverBuilder
      */
 	public ExceptionResolver build()
 	{
-		return new MatchingExceptionResolver(this.matcherBasedExceptionGroups);
+		return new MatchingExceptionResolver(this.matcherBasedExceptionGroups, componentExceptionGroupings);
 	}
 
 	/**
@@ -80,6 +89,39 @@ public class ExceptionResolverBuilderImpl implements ExceptionResolverBuilder
 	{
 		this.matcherBasedExceptionGroups.add( new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionAction) );
 		return this;
+	}
+
+	@Override
+	public ExceptionResolverBuilder addExceptionToAction(String componentName, Class exceptionClass, ExceptionAction exceptionAction)
+	{
+		MatcherBasedExceptionGroup matcherBasedExceptionGroup = new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionAction);
+
+		List matcherBasedExceptionGroups = getComponentExceptionGroups(componentName);
+		if(matcherBasedExceptionGroups == null)
+		{
+			matcherBasedExceptionGroups = new ArrayList();
+			this.componentExceptionGroupings.put(componentName, matcherBasedExceptionGroups);
+		}
+
+		matcherBasedExceptionGroups.add(matcherBasedExceptionGroup);
+		return this;
+	}
+
+	@Override
+	public ExceptionResolverBuilder addExceptionToAction(FlowElement flowElement, Class exceptionClass, ExceptionAction exceptionAction)
+	{
+		addExceptionToAction(flowElement.getComponentName(), exceptionClass, exceptionAction);
+		return this;
+	}
+
+	protected List<ExceptionGroup> getComponentExceptionGroups(String componentName)
+	{
+		if(this.componentExceptionGroupings == null)
+		{
+			this.componentExceptionGroupings = new HashMap<String,List<ExceptionGroup>>();
+		}
+
+		return this.componentExceptionGroupings.get(componentName);
 	}
 }
 
