@@ -305,7 +305,9 @@ public class TopologyServiceImpl implements TopologyService
      */
 	private void discoverOverRest(IkasanAuthentication authentication, Server server, Module module)
     {
-        String url = server.getUrl() + ":" + server.getPort() + module.getContextRoot().replace(" ", "%20") + "/rest/discovery/flows/"
+        String url = server.getUrl() + ":" + server.getPort()
+            + module.getContextRoot().replace(" ", "%20")
+            + "/rest/discovery/flows/"
             + module.getName().replace(" ", "%20");
         ResponseEntity<List<Flow>> flowResponse;
         try
