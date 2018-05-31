@@ -12,6 +12,7 @@
         <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
         <entry key="hibernate.hbm2ddl.auto" value="${datasource.hbm2ddl.auto}"/>
         <entry key="hibernate.transaction.jta.platform" value="JBossTS"/>
+        <entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
     </util:map>
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
@@ -29,6 +30,7 @@
         <property name="password" value="${datasource.password}" />
         <property name="xaDataSourceInstance" ref="ikasanXaDataSourceInstance" />
         <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="defaultAutoCommit" value="false" />
         <property name="transactionManager">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetObject" ref="transactionManager" />

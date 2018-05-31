@@ -50,14 +50,14 @@
 	
 	<bean id="configurationService"
 		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
-		<constructor-arg ref="configurationServiceDao"/>
-		<constructor-arg ref="xaConfigurationServiceDao"/>
+		<constructor-arg name="staticConfigurationDao" ref="configurationServiceDao"/>
+		<constructor-arg name="dynamicConfigurationDao" ref="xaConfigurationServiceDao"/>
 	</bean>
 
 	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
 		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
 	</bean>
-			
+
 	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
@@ -70,7 +70,7 @@
 	</bean>
 
 	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
-		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
+		<property name="sessionFactory" ref="configurationServiceSessionFactory"/>
 	</bean>
 
 	<bean id="configurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
