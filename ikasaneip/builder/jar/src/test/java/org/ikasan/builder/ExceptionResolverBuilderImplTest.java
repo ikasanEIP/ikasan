@@ -79,19 +79,19 @@ public class ExceptionResolverBuilderImplTest
         action = exceptionResolver.resolve(null, new ExceptionThree());
         Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
 
-        RetryAction actualRetryAction = exceptionResolver.resolve(null, new ExceptionFour());
-        RetryAction expectedRetryAction = new RetryAction();
+        SimpleRetryAction actualRetryAction = exceptionResolver.resolve(null, new ExceptionFour());
+        SimpleRetryAction expectedRetryAction = new SimpleRetryAction();
         Assert.assertTrue("ExceptionAction should be Retry with default delay", actualRetryAction.getDelay() == expectedRetryAction.getDelay());
         Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
 
-        RetryAction actualRetryActionDelayOverride = exceptionResolver.resolve(null, new ExceptionFourDelayOverride());
-        RetryAction expectedRetryActionDelayOverride = new RetryAction();
+        SimpleRetryAction actualRetryActionDelayOverride = exceptionResolver.resolve(null, new ExceptionFourDelayOverride());
+        SimpleRetryAction expectedRetryActionDelayOverride = new SimpleRetryAction();
         expectedRetryActionDelayOverride.setDelay(1l);
         Assert.assertTrue("ExceptionAction should be Retry with override delay", actualRetryActionDelayOverride.getDelay() == expectedRetryActionDelayOverride.getDelay());
         Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryActionDelayOverride.getMaxRetries() == expectedRetryActionDelayOverride.getMaxRetries());
 
         actualRetryAction = exceptionResolver.resolve(null, new ExceptionFive());
-        expectedRetryAction = new RetryAction(1, 1);
+        expectedRetryAction = new SimpleRetryAction(1, 1);
         Assert.assertTrue("ExceptionAction should be Retry with delay 1", actualRetryAction.getDelay() == expectedRetryAction.getDelay());
         Assert.assertTrue("ExceptionAction should be Retry with maxRetries 1", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
 
