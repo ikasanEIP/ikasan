@@ -1,0 +1,30 @@
+[
+  {
+    "id": null,
+    "name": "JDBC To SFTP Flow",
+    "description": "description",
+    "state": null,
+    "module": null,
+    "components": [
+
+      {
+        "id": null,
+        "name": "JDBC Consumer",
+        "description": "No description.",
+        "configurable": true,
+        "configurationId": "jdbc-sftp-im_JDBC To SFTP Flow_JDBC Consumer_2073513862_C",
+        "invokerConfigurable": false,
+        "invokerConfigurationId": null,
+        "flow": null,
+        "order": 0,
+        "createdDateTime": 1527022364497,
+        "updatedDateTime": 1527022364497
+      }
+    ],
+    "order": 0,
+    "configurable": true,
+    "configurationId": "jdbc-sftp-im-JDBC To SFTP Flow",
+    "createdDateTime": 1527022364497,
+    "updatedDateTime": 1527022364497
+  }
+]

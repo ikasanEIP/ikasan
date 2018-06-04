@@ -43,6 +43,7 @@ package org.ikasan.builder;
 import org.ikasan.builder.component.Builder;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
+import org.ikasan.spec.flow.FlowElement;
 
 /**
  * Contract for an Exception Resolver Builder.
@@ -57,7 +58,24 @@ public interface ExceptionResolverBuilder extends Builder<ExceptionResolver>
      * @param exceptionAction
      * @return
      */
-    ExceptionResolverBuilder addExceptionToAction(Class exceptionClass, ExceptionAction exceptionAction);
+    public ExceptionResolverBuilder addExceptionToAction(Class exceptionClass, ExceptionAction exceptionAction);
 
+    /**
+     * Associate a mapped class to a given exception action specific to a component name.
+     * @param componentName
+     * @param exceptionClass
+     * @param exceptionAction
+     * @return
+     */
+    public ExceptionResolverBuilder addExceptionToAction(String componentName, Class exceptionClass, ExceptionAction exceptionAction);
+
+    /**
+     * Associate a mapped class to a given exception action specific to a flow element
+     * @param flowElement
+     * @param exceptionClass
+     * @param exceptionAction
+     * @return
+     */
+    public ExceptionResolverBuilder addExceptionToAction(FlowElement flowElement, Class exceptionClass, ExceptionAction exceptionAction);
 }
 

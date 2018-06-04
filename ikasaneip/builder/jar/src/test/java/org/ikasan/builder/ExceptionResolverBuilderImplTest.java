@@ -42,6 +42,8 @@ package org.ikasan.builder;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.spec.flow.FlowElement;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -97,6 +99,59 @@ public class ExceptionResolverBuilderImplTest
         ScheduledRetryAction expectedScheduldeRetryAction = new ScheduledRetryAction("0 * 14 * * ?", 1);
         Assert.assertTrue("ExceptionAction should be ScheduledRetry with cron '0 * 14 * * ?'", actualScheduledRetryAction.getCronExpression().equals("0 * 14 * * ?"));
         Assert.assertTrue("ExceptionAction should be ScheduledRetry with maxRetries 1", expectedScheduldeRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+    }
+
+    /**
+     * Test.
+     */
+    @Test
+    public void test_successful_component_specific_exceptionResolver()
+    {
+        ExceptionResolverBuilder exceptionResolverBuilder = new ExceptionResolverBuilderImpl();
+        exceptionResolverBuilder.addExceptionToAction("componentOne", ExceptionOne.class, OnException.ignoreException());
+        exceptionResolverBuilder.addExceptionToAction("componentTwo", ExceptionOne.class, OnException.excludeEvent());
+        exceptionResolverBuilder.addExceptionToAction(ExceptionOne.class, OnException.stop());
+        ExceptionResolver exceptionResolver = exceptionResolverBuilder.build();
+
+        // specific action for componentTwo
+        ExceptionAction action = exceptionResolver.resolve("componentTwo", new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
+
+        // action for undefined component
+        action = exceptionResolver.resolve(null, new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Stop", action.equals(StopAction.instance()));
+
+        // specific action for componentOne
+        action = exceptionResolver.resolve("componentOne", new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Ignore", action.equals(IgnoreAction.instance()));
+    }
+
+    /**
+     * Test.
+     */
+    @Test
+    public void test_successful_component_specific_exceptionResolver_for_flowElement()
+    {
+        FlowElement flowElement1 = new FlowElementImpl("componentOne", null, null);
+        FlowElement flowElement2 = new FlowElementImpl("componentTwo", null, null);
+
+        ExceptionResolverBuilder exceptionResolverBuilder = new ExceptionResolverBuilderImpl();
+        exceptionResolverBuilder.addExceptionToAction(flowElement1, ExceptionOne.class, OnException.ignoreException());
+        exceptionResolverBuilder.addExceptionToAction(flowElement2, ExceptionOne.class, OnException.excludeEvent());
+        exceptionResolverBuilder.addExceptionToAction(ExceptionOne.class, OnException.stop());
+        ExceptionResolver exceptionResolver = exceptionResolverBuilder.build();
+
+        // specific action for componentTwo
+        ExceptionAction action = exceptionResolver.resolve("componentTwo", new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
+
+        // action for undefined component
+        action = exceptionResolver.resolve(null, new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Stop", action.equals(StopAction.instance()));
+
+        // specific action for componentOne
+        action = exceptionResolver.resolve("componentOne", new ExceptionOne());
+        Assert.assertTrue("ExceptionAction should be Ignore", action.equals(IgnoreAction.instance()));
     }
 
     class ExceptionOne extends Exception {}
