@@ -788,6 +788,9 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         {
             flowInvocationContext.endFlowInvocation();
             this.recoveryManager.recover(flowInvocationContext, throwable, event, originalEventLifeIdentifier);
+
+            // if we are here then we aren't rolling back, so update any dynamic configured resources
+            updateDynamicConfiguredResources();
         }
         finally
         {
@@ -823,6 +826,9 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         {
             flowInvocationContext.endFlowInvocation();
             this.recoveryManager.recover(flowInvocationContext, throwable, event.getEvent(), (ID)event.getEvent().getIdentifier());
+
+            // if we are here then we aren't rolling back, so update any dynamic configured resources
+            updateDynamicConfiguredResources();
         }
         finally
         {
