@@ -9,6 +9,13 @@
 
     <bean id="mysqldbCreation" depends-on="ikasan.ds" class="java.lang.Object"></bean>
 
+    <bean id="ikasanXaDataSourceInstance" depends-on="ikasan.ds" class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource">
+        <property name="url" value="${datasource.url}" />
+        <property name="user" value="${datasource.username}" />
+        <property name="password" value="${datasource.password}" />
+    </bean>
+
+
     <!-- should be able to use the Ikasan Dashboard for table creation -->
 
     <!--jdbc:initialize-database data-source="ikasanDatasource" >

@@ -61,11 +61,11 @@ public class ConfigurationCreationHelper
         String url = server.getUrl() + ":" + server.getPort()
                 + component.getFlow().getModule().getContextRoot()
                 + "/rest/configuration/createConfiguration/"
-                + component.getFlow().getModule().getName()
+                + component.getFlow().getModule().getName().replace(" ", "%20")
                 + "/"
-                + component.getFlow().getName()
+                + component.getFlow().getName().replace(" ", "%20")
                 + "/"
-                + component.getName();
+                + component.getName().replace(" ", "%20");
 
         String username = platformConfigurationService.getWebServiceUsername();
         String password = platformConfigurationService.getWebServicePassword();

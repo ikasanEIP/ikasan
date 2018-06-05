@@ -75,10 +75,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/topology-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
+        "/topology-conf.xml", "/h2db-config.xml",
+        "/substitute-components.xml"
 })
 public class HibernateTopologyDaoTest
 {
