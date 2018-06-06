@@ -73,7 +73,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @DisallowConcurrentExecution
 @SuppressWarnings("unchecked")
-public class ScheduledConsumer<T>
+public class
+ScheduledConsumer<T>
         implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ScheduledComponent<JobDetail>, ResubmissionService<T>
 {
     /**
@@ -394,8 +395,7 @@ public class ScheduledConsumer<T>
             TriggerBuilder oldTriggerBuilder = oldTrigger.getTriggerBuilder();
             Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK_COUNT, eagerCallback).
                     startNow().
-                    withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
-                    build();
+                    withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
 
             Date scheduledDate;
             if(this.scheduler.checkExists(oldTrigger.getKey()))
