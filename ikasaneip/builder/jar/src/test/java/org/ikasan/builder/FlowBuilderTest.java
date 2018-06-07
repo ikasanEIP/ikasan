@@ -1114,6 +1114,7 @@ public class FlowBuilderTest
                 .route("sequence name 1",
                         builderFactory.getRouteBuilder().sequencer("sequencerNested1",sequencer)
                                 .route("nestedSeq1", nestedRoute1)
+                                .route("nestedSeq1a", nestedRoute1)
                                 .route("nestedSeq2", nestedRoute2).build())
                 .route("sequence name 2", builderFactory.getRouteBuilder().producer("name3", producer))
                 .build();
@@ -1122,7 +1123,7 @@ public class FlowBuilderTest
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
-        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertTrue("Should be 6 flow elements was [" + flowElements.size() + "]", flowElements.size() == 7);
 
         // consumer
         FlowElement fe = flowElements.get(0);
@@ -1145,12 +1146,13 @@ public class FlowBuilderTest
         FlowElement feRoute1 = (FlowElement)fe.getTransitions().get("sequence name 1");
         Assert.assertTrue("flow element name should be 'sequencerNested1'", "sequencerNested1".equals(feRoute1.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", feRoute1.getFlowComponent() instanceof Sequencer);
-        Assert.assertTrue("flow element should have two transitions", feRoute1.getTransitions().size() == 2);
+        Assert.assertTrue("flow element should have three transitions", feRoute1.getTransitions().size() == 3);
 
         // ensure sequence order
         ArrayList<String> nestedSequenceNames = new ArrayList<String>(feRoute1.getTransitions().keySet());
         Assert.assertTrue("flow element transition sequence should be in order of 'nestedSeq1'..." + " returned order is " + nestedSequenceNames, nestedSequenceNames.get(0).equals("nestedSeq1"));
-        Assert.assertTrue("flow element transition sequence should be in order of ...'sequence name 2'"  + " returned order is " + nestedSequenceNames, nestedSequenceNames.get(1).equals("nestedSeq2"));
+        Assert.assertTrue("flow element transition sequence should be in order of ...'sequence name 1a'"  + " returned order is " + nestedSequenceNames, nestedSequenceNames.get(1).equals("nestedSeq1a"));
+        Assert.assertTrue("flow element transition sequence should be in order of ...'sequence name 2'"  + " returned order is " + nestedSequenceNames, nestedSequenceNames.get(2).equals("nestedSeq2"));
 
         // nested sequencer1 nestedSeq1
         FlowElement feNestedRoute1 = (FlowElement)feRoute1.getTransitions().get("nestedSeq1");
