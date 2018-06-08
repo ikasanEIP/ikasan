@@ -40,8 +40,7 @@
  */
 package org.ikasan.scheduler;
 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
@@ -52,22 +51,17 @@ import org.quartz.impl.StdSchedulerFactory;
 public class SchedulerFactory
 {
     /** singleton instance */
-    private static SchedulerFactory schedulerFactory;
+    private static SchedulerFactory schedulerFactory = new SchedulerFactory();
     
     /** scheduler */
     private Scheduler scheduler;
-    
+
     /**
      * Singleton instance accessor
      * @return
      */
     public static SchedulerFactory getInstance()
     {
-        if(schedulerFactory == null)
-        {
-            schedulerFactory = new SchedulerFactory();
-        }
-        
         return schedulerFactory;
     }
 
@@ -90,6 +84,7 @@ public class SchedulerFactory
         {
             this.scheduler = newScheduler();
             this.scheduler.setJobFactory(CachingScheduledJobFactory.getInstance());
+            this.scheduler.getListenerManager().addTriggerListener( new IkasanSchedulerTriggerListener() );
             this.scheduler.start();
         }
         catch(SchedulerException e)
@@ -117,4 +112,6 @@ public class SchedulerFactory
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
         return  StdSchedulerFactory.getDefaultScheduler();
     }
+
+
 }

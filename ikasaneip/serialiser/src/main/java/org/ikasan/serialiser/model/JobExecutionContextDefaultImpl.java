@@ -49,6 +49,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
  * 
@@ -71,6 +72,8 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 	private Scheduler scheduler;
 	private Trigger trigger;
 	private boolean isRecovering;
+	private String fireInstanceId;
+	private TriggerKey recoveringTriggerKey;
 	
 	/* (non-Javadoc)
 	 * @see org.quartz.JobExecutionContext#get(java.lang.Object)
@@ -330,9 +333,25 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 		this.isRecovering = isRecovering;
 	}
 
+	public String getFireInstanceId() {
+		return fireInstanceId;
+	}
+
+	public void setFireInstanceId(String fireInstanceId) {
+		this.fireInstanceId = fireInstanceId;
+	}
+
+	public TriggerKey getRecoveringTriggerKey() {
+		return recoveringTriggerKey;
+	}
+
+	public void setRecoveringTriggerKey(TriggerKey recoveringTriggerKey) {
+		this.recoveringTriggerKey = recoveringTriggerKey;
+	}
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode()
 	{
