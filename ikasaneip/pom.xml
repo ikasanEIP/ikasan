@@ -397,7 +397,7 @@
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.commons-io>2.5</version.commons-io>
         <version.commons-dbcp>1.4</version.commons-dbcp>
-        <version.org.quartz-scheduler>2.0.2</version.org.quartz-scheduler>
+        <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
         <version.com.h2database>1.4.178</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.subethamail>1.2</version.org.subethamail>

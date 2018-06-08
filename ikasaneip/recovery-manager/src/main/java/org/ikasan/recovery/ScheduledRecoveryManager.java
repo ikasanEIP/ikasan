@@ -588,19 +588,12 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param cronExpression
      * @return Trigger
      */
-    protected Trigger newRecoveryTrigger(String cronExpression) throws SchedulerException
+    protected Trigger newRecoveryTrigger(String cronExpression)
     {
-        try
-        {
-            return newTrigger()
-                    .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-                    .withSchedule(cronSchedule(cronExpression))
-                    .build();
-        }
-        catch(ParseException e)
-        {
-            throw new SchedulerException(e);
-        }
+        return newTrigger()
+                .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
+                .withSchedule(cronSchedule(cronExpression))
+                .build();
     }
 
     /**
