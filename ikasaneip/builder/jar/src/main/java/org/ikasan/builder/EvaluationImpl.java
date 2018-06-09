@@ -43,9 +43,6 @@ package org.ikasan.builder;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
-import org.ikasan.spec.flow.FlowElement;
-
-import java.util.List;
 
 /**
  * Implementation of the Evaluation contract for a Route being built through the builder pattern.
@@ -72,17 +69,19 @@ public class EvaluationImpl implements Evaluation<Route>
 
 	public Evaluation when(String name, Route evaluatedRoute)
 	{
-		List<FlowElement> fes = evaluatedRoute.getFlowElements();
-		fes.add(0, new FlowElementImpl(this.getClass().getName(), new When(name), null));
-		this.route.addNestedRoute(evaluatedRoute);
+        // create shallow copy of Route before adding When joining
+        Route shallowCopy = new RouteImpl(evaluatedRoute);
+        shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
+        this.route.addNestedRoute(shallowCopy);
 		return new EvaluationImpl(route);
 	}
 
 	public Evaluation<Route> otherwise(Route evaluatedRoute)
 	{
-		List<FlowElement> fes = evaluatedRoute.getFlowElements();
-		fes.add(0, new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
-		this.route.addNestedRoute(evaluatedRoute);
+		// create shallow copy of Route before adding Otherwise joining
+        Route shallowCopy = new RouteImpl(evaluatedRoute);
+        shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
+        this.route.addNestedRoute(shallowCopy);
 		return new EvaluationImpl(route);
 	}
 

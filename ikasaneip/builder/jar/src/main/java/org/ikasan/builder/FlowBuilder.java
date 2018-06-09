@@ -950,17 +950,19 @@ public class FlowBuilder implements ApplicationContextAware
 
         public Evaluation<Flow> when(String name, Route evaluatedRoute)
         {
-            List<FlowElement> fes = evaluatedRoute.getFlowElements();
-            fes.add(0, new FlowElementImpl(this.getClass().getName(), new When(name), null));
-            this.route.addNestedRoute(evaluatedRoute);
+            // create shallow copy of Route before adding When joining
+            Route shallowCopy = new RouteImpl(evaluatedRoute);
+            shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
+            this.route.addNestedRoute(shallowCopy);
             return new PrimaryEvaluationImpl(route);
         }
 
         public Evaluation<Flow> otherwise(Route evaluatedRoute)
         {
-            List<FlowElement> fes = evaluatedRoute.getFlowElements();
-            fes.add(0, new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
-            this.route.addNestedRoute(evaluatedRoute);
+            // create shallow copy of Route before adding Otherwise joining
+            Route shallowCopy = new RouteImpl(evaluatedRoute);
+            shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
+            this.route.addNestedRoute(shallowCopy);
             return new PrimaryEvaluationImpl(route);
         }
 
@@ -986,9 +988,10 @@ public class FlowBuilder implements ApplicationContextAware
 
         public Sequence<Flow> route(String name, Route sequencedRoute)
         {
-            List<FlowElement> fes = sequencedRoute.getFlowElements();
-            fes.add(0, new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
-            this.route.addNestedRoute(sequencedRoute);
+            // create shallow copy of Route before adding SequentialOrder joining
+            Route shallowCopy = new RouteImpl(sequencedRoute);
+            shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
+            this.route.addNestedRoute(shallowCopy);
             return new PrimarySequenceImpl(route);
         }
 
