@@ -40,7 +40,8 @@
  */
 package org.ikasan.scheduler;
 
-import org.quartz.*;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
@@ -51,7 +52,7 @@ import org.quartz.impl.StdSchedulerFactory;
 public class SchedulerFactory
 {
     /** singleton instance */
-    private static SchedulerFactory schedulerFactory = new SchedulerFactory();
+    private static SchedulerFactory schedulerFactory;
     
     /** scheduler */
     private Scheduler scheduler;
@@ -62,6 +63,11 @@ public class SchedulerFactory
      */
     public static SchedulerFactory getInstance()
     {
+        if(schedulerFactory == null)
+        {
+            schedulerFactory = new SchedulerFactory();
+        }
+
         return schedulerFactory;
     }
 
