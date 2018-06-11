@@ -188,7 +188,7 @@ public class ReflectionUtils
 	{
 		String partialMethodName = field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
 		Method method;
-		if(field.getType().isInstance(Boolean.class) || field.getType() == boolean.class)
+		if(field.getType().equals(Boolean.class) || field.getType() == boolean.class)
 		{
 			try
 			{
