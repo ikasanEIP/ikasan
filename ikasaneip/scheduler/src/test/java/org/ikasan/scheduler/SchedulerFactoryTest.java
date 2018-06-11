@@ -47,8 +47,10 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.quartz.ListenerManager;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.TriggerListener;
 
 /**
  * This test class supports the <code>SchedulerFactory</code> class.
@@ -70,6 +72,9 @@ public class SchedulerFactoryTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
+    /** Mock listener manager */
+    final ListenerManager listenerManager = mockery.mock(ListenerManager.class, "mockListenerManager");
+
     /**
      * Test successful retrieval of the scheduler instance.
      * @throws SchedulerException 
@@ -77,11 +82,15 @@ public class SchedulerFactoryTest
     @Test
     public void test_getScheduler() throws SchedulerException
     {
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 exactly(1).of(scheduler).setJobFactory(with(any(ScheduledJobFactory.class)));
+                exactly(1).of(scheduler).getListenerManager();
+                will(returnValue(listenerManager));
+                exactly(1).of(listenerManager).addTriggerListener(with(any(TriggerListener.class)));
                 exactly(1).of(scheduler).start();
             }
         });

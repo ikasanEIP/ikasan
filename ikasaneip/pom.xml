@@ -56,7 +56,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
@@ -397,7 +397,7 @@
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.commons-io>2.5</version.commons-io>
         <version.commons-dbcp>1.4</version.commons-dbcp>
-        <version.org.quartz-scheduler>2.0.2</version.org.quartz-scheduler>
+        <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
         <version.com.h2database>1.4.178</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.subethamail>1.2</version.org.subethamail>
@@ -2080,6 +2080,12 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${version.org.quartz-scheduler}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+                <version>${version.javax.transaction.jta}</version>
             </dependency>
 
             <dependency>
