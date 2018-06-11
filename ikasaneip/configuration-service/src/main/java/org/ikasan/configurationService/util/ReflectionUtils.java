@@ -42,6 +42,7 @@ package org.ikasan.configurationService.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -132,8 +133,8 @@ public class ReflectionUtils
 	 */
 	public static Map<String,Object> getPropertiesIgnoringExceptions(Object target)
 	{
-		Map<String,Object> properties = new HashMap<String,Object>();
-		Class cls = target.getClass();
+		Map<String,Object> properties = new HashMap<>();
+        Class cls = ClassUtils.getUserClass(target); // ensures we don't pick up CGLIB Spring proxied classes
 
 		for(Map.Entry<String,Field> entry:getDeclaredFields(cls).entrySet())
 		{
@@ -187,7 +188,7 @@ public class ReflectionUtils
 	{
 		String partialMethodName = field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
 		Method method;
-		if(field.getType().isInstance(Boolean.class) || field.getType() == boolean.class)
+		if(field.getType().equals(Boolean.class) || field.getType() == boolean.class)
 		{
 			try
 			{
@@ -229,7 +230,7 @@ public class ReflectionUtils
 	 */
 	protected static Map<String,Field> getDeclaredFields(Class cls)
 	{
-		Map<String,Field> fields = new HashMap<String,Field>();
+		Map<String,Field> fields = new HashMap<>();
 
 		while(cls != null)
 		{

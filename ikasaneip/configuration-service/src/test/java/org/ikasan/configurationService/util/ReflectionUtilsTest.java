@@ -52,29 +52,27 @@ import java.util.Map;
  */
 public class ReflectionUtilsTest
 {
-	@Test
-	public void test_reflection_on_method() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
-		ReflectionUtilsExtendedExampleConfiguration persistedConfiguration = new ReflectionUtilsExtendedExampleConfiguration();
-		persistedConfiguration.setInty(Integer.valueOf(10));
-		persistedConfiguration.setLongy(Long.valueOf(100));
-		persistedConfiguration.setStry("My String");
-
-		ReflectionUtilsExtendedExampleConfiguration runtimeConfiguration = new ReflectionUtilsExtendedExampleConfiguration();
-		Assert.isNull(runtimeConfiguration.getInty(), "Integer should be null");
-		Assert.isNull(runtimeConfiguration.getLongy(), "Long should be null");
-		Assert.isNull(runtimeConfiguration.getStry(), "String should be null");
-
-		Map<String,Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(persistedConfiguration);
-		for(Map.Entry<String,Object> entry:properties.entrySet())
-		{
-			ReflectionUtils.setProperty(runtimeConfiguration, entry.getKey(), entry.getValue());
-		}
-
-		Assert.isTrue(runtimeConfiguration.getInty().equals( persistedConfiguration.getInty() ), "persisted and runtime should have the same Integer instance");
-		Assert.isTrue(runtimeConfiguration.getLongy().equals( persistedConfiguration.getLongy() ), "persisted and runtime should have the same Long instance");
-		Assert.isTrue(runtimeConfiguration.getStry().equals( persistedConfiguration.getStry() ), "persisted and runtime should have the same String instance");
-		Assert.isTrue(runtimeConfiguration.getShorty() == persistedConfiguration.getShorty(), "persisted and runtime should have the same Short instance");
-		Assert.isTrue(runtimeConfiguration.getBool().equals( persistedConfiguration.getBool() ), "persisted and runtime should have the same Boolean instance");
-		Assert.isTrue(runtimeConfiguration.isPrimBool() == persistedConfiguration.isPrimBool(), "persisted and runtime should have the same primBool instance");
-	}
+    @Test
+    public void test_reflection_on_method() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException
+    {
+        ReflectionUtilsExtendedExampleConfiguration persistedConfiguration = new ReflectionUtilsExtendedExampleConfiguration();
+        persistedConfiguration.setInty(10);
+        persistedConfiguration.setLongy(100L);
+        persistedConfiguration.setStry("My String");
+        ReflectionUtilsExtendedExampleConfiguration runtimeConfiguration = new ReflectionUtilsExtendedExampleConfiguration();
+        Assert.isNull(runtimeConfiguration.getInty(), "Integer should be null");
+        Assert.isNull(runtimeConfiguration.getLongy(), "Long should be null");
+        Assert.isNull(runtimeConfiguration.getStry(), "String should be null");
+        Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(persistedConfiguration);
+        for (Map.Entry<String, Object> entry : properties.entrySet())
+        {
+            ReflectionUtils.setProperty(runtimeConfiguration, entry.getKey(), entry.getValue());
+        }
+        Assert.isTrue(runtimeConfiguration.getInty().equals(persistedConfiguration.getInty()), "persisted and runtime should have the same Integer instance");
+        Assert.isTrue(runtimeConfiguration.getLongy().equals(persistedConfiguration.getLongy()), "persisted and runtime should have the same Long instance");
+        Assert.isTrue(runtimeConfiguration.getStry().equals(persistedConfiguration.getStry()), "persisted and runtime should have the same String instance");
+        Assert.isTrue(runtimeConfiguration.getShorty() == persistedConfiguration.getShorty(), "persisted and runtime should have the same Short instance");
+        Assert.isTrue(runtimeConfiguration.getBool().equals(persistedConfiguration.getBool()), "persisted and runtime should have the same Boolean instance");
+        Assert.isTrue(runtimeConfiguration.isPrimBool() == persistedConfiguration.isPrimBool(), "persisted and runtime should have the same primBool instance");
+    }
 }
