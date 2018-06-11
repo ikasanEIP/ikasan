@@ -56,7 +56,7 @@ public class SchedulerFactory
     
     /** scheduler */
     private Scheduler scheduler;
-    
+
     /**
      * Singleton instance accessor
      * @return
@@ -67,7 +67,7 @@ public class SchedulerFactory
         {
             schedulerFactory = new SchedulerFactory();
         }
-        
+
         return schedulerFactory;
     }
 
@@ -90,6 +90,7 @@ public class SchedulerFactory
         {
             this.scheduler = newScheduler();
             this.scheduler.setJobFactory(CachingScheduledJobFactory.getInstance());
+            this.scheduler.getListenerManager().addTriggerListener( new IkasanSchedulerTriggerListener() );
             this.scheduler.start();
         }
         catch(SchedulerException e)
@@ -117,4 +118,6 @@ public class SchedulerFactory
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
         return  StdSchedulerFactory.getDefaultScheduler();
     }
+
+
 }

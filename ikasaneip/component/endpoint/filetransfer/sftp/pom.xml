@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>2.0.3-SNAPSHOT</version>
     </parent>
 
 
@@ -58,20 +58,12 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-quartz-endpoint</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-scheduler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-quartz-endpoint</artifactId>
         </dependency>
 
         <!-- Tests -->
@@ -112,18 +104,12 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
     </dependencies>
 
