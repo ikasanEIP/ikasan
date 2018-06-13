@@ -8,6 +8,10 @@
         <constructor-arg ref="duplicateFilterDao"/>
     </bean>
 
+    <bean id="duplicateStringFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+        <constructor-arg ref="duplicateStringFilterDao"/>
+    </bean>
+
     <!-- As this service is stateful managing a cache per client id, it is defined as scope = prototype -->
     <bean id="entityAgeFilterService" class="org.ikasan.filter.duplicate.service.DefaultEntityAgeFilterService" scope="prototype">
         <constructor-arg ref="duplicateFilterDao"/>
@@ -18,12 +22,18 @@
         <property name="sessionFactory" ref="filterHibernateSessionFactory" />
     </bean>
 
+    <bean id="duplicateStringFilterDao"
+          class="org.ikasan.filter.duplicate.dao.HibernateStringFilteredMessageDaoImpl">
+        <property name="sessionFactory" ref="filterHibernateSessionFactory" />
+    </bean>
+
     <bean id="filterHibernateSessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>
                 <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+                <value>/org/ikasan/filter/duplicate/model/DefaultStringFilterEntry.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties" />

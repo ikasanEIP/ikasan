@@ -5,9 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
 
 	<!-- 2.0.x table creation -->
+    <include file="db/tables/db-changeLog-createMessageStringFilter.xml" relativeToChangelogFile="true" />
 
-	<!-- 2.0.x table alterations -->
-	<include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvested.xml" relativeToChangelogFile="true" />
+    <!-- 2.0.x table alterations -->
+    <include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterErrorOccurrenceAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterExclusionEventAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterReplayEventAddHarvested.xml" relativeToChangelogFile="true" />

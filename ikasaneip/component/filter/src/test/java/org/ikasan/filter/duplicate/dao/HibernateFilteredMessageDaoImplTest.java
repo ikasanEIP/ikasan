@@ -71,7 +71,7 @@ import java.util.Date;
         "/FilteredMessageDaoInMemDBTest-context.xml",
         "/filter-service-conf.xml"
 })
-public class FilteredMessageDaoInMemDBTest
+public class HibernateFilteredMessageDaoImplTest
 {
     @Autowired
     private FilteredMessageDao duplicateFilterDao;
