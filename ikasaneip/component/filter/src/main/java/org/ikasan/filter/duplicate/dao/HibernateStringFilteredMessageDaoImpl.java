@@ -41,37 +41,41 @@
 
 package org.ikasan.filter.duplicate.dao;
 
-import java.util.List;
-
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
+import org.ikasan.filter.duplicate.model.DefaultStringFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.ikasan.filter.duplicate.model.StringFilterEntry;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.List;
+
 /**
- * Hibernate implementation of {@link FilteredMessageDao}
+ * Hibernate implementation of {@link FilteredMessageDao} using StringFilterEntry
  * 
  * @author Ikasan Development Team
  *
  */
-public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
+public class HibernateStringFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
 {
     public static final String EXPIRY = "expiry";
-    public static final String EVENT_IDS = "eventIds";
+    public static final String EVENT_IDS = "eventValues";
     public static final String NOW = "now";
 
     /** Query used for housekeeping expired filtered messages */
-    private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= :" + EXPIRY;
+    private static final String HOUSEKEEP_QUERY = "delete DefaultStringFilterEntry m where m.expiry <= :" + EXPIRY;
 
-    public static final String MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY = "select id from DefaultFilterEntry se " +
+    public static final String MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY = "select value from DefaultStringFilterEntry se " +
             " where se.expiry < :" + NOW;
 
-    public static final String MESSAGE_FILTER_ENTRIES_DELETE_QUERY = "delete DefaultFilterEntry se " +
-            " where se.id in(:" + EVENT_IDS + ")";
+    public static final String MESSAGE_FILTER_ENTRIES_DELETE_QUERY = "delete DefaultStringFilterEntry se " +
+            " where se.value in(:" + EVENT_IDS + ")";
 
     /** Flag for batch housekeeping option. Defaults to true */
     private boolean batchHousekeepDelete = true;
@@ -88,7 +92,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @Override
     public List<FilterEntry> findMessages(String clientId)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(DefaultFilterEntry.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(DefaultStringFilterEntry.class);
         criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
         return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
     }
@@ -100,18 +104,22 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(DefaultFilterEntry.class);
-        criteria.add(Restrictions.eq(FilterEntry.CRITERIA_PROP_KEY, message.getCriteria()));
-        criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, message.getClientId()));
-        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
-        if (foundMessages == null || foundMessages.isEmpty())
+        if(message instanceof StringFilterEntry)
         {
-            return null;
+            DetachedCriteria criteria = DetachedCriteria.forClass(DefaultStringFilterEntry.class);
+            criteria.add(Restrictions.eq(StringFilterEntry.VALUE_PROP_KEY, ((StringFilterEntry) message).getValue()));
+            criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, message.getClientId()));
+            List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
+            if (foundMessages == null || foundMessages.isEmpty())
+            {
+                return null;
+            }
+            else
+            {
+                return foundMessages.get(0);
+            }
         }
-        else
-        {
-            return foundMessages.get(0);
-        }
+        return null;
     }
 
     @Override
@@ -177,12 +185,12 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
                     query.setParameter(NOW, System.currentTimeMillis());
                     query.setMaxResults(housekeepingBatchSize);
 
-                    List<Long> wiretapEventIds = (List<Long>)query.list();
+                    List<Long> eventIds = (List<Long>)query.list();
 
-                    if(wiretapEventIds.size() > 0)
+                    if(eventIds.size() > 0)
                     {
                         query = session.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
-                        query.setParameterList(EVENT_IDS, wiretapEventIds);
+                        query.setParameterList(EVENT_IDS, eventIds);
                         query.executeUpdate();
                     }
 

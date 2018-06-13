@@ -312,12 +312,21 @@
 		<constructor-arg ref="duplicateFilterDao"/>
 	</bean>
 
+    <bean id="duplicateStringFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+        <constructor-arg ref="duplicateStringFilterDao"/>
+    </bean>
+
 	<bean id="duplicateFilterDao"
 		  class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
-	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+    <bean id="duplicateStringFilterDao"
+          class="org.ikasan.filter.duplicate.dao.HibernateStringFilteredMessageDaoImpl">
+        <property name="sessionFactory" ref="ikasanSessionFactory" />
+    </bean>
+
+    <bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
 		<constructor-arg index="0" ref="messageHistoryDao"/>
 		<constructor-arg>
 			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
@@ -388,7 +397,8 @@
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
 			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-			   <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+               <value>/org/ikasan/filter/duplicate/model/DefaultStringFilterEntry.hbm.xml</value>
+               <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
