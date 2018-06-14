@@ -11,6 +11,7 @@
         <entry key="hibernate.dialect" value="${datasource.dialect}"/>
         <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
         <entry key="hibernate.hbm2ddl.auto" value="${datasource.hbm2ddl.auto}"/>
+        <entry key="hibernate.transaction.jta.platform" value="JBossTS"/>
         <entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
     </util:map>
 
@@ -27,6 +28,7 @@
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
+        <property name="xaDataSourceInstance" ref="ikasanXaDataSourceInstance" />
         <property name="validationQuery" value="${datasource.validationQuery}" />
         <property name="defaultAutoCommit" value="false" />
         <property name="transactionManager">
