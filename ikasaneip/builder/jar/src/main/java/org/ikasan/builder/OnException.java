@@ -83,7 +83,7 @@ public class OnException
      */
     public static ExceptionAction retryIndefinitely(long delay)
     {
-        RetryAction retryAction = new RetryAction();
+        SimpleRetryAction retryAction = new SimpleRetryAction();
         retryAction.setDelay(delay);
         return retryAction;
     }
@@ -94,7 +94,7 @@ public class OnException
      */
     public static ExceptionAction retryIndefinitely()
     {
-        return new RetryAction();
+        return new SimpleRetryAction();
     }
 
     /**
@@ -105,7 +105,17 @@ public class OnException
      */
     public static ExceptionAction retry(long delay, int maxRetries)
     {
-        return new RetryAction(delay, maxRetries);
+        return new SimpleRetryAction(delay, maxRetries);
+    }
+
+    public static ExceptionAction retry(long delay, int maxRetries, IgnoreAction finalAction)
+    {
+        return new SimpleRetryAction(delay, maxRetries, finalAction);
+    }
+
+    public static ExceptionAction retry(long delay, int maxRetries, ExcludeEventAction finalAction)
+    {
+        return new SimpleRetryAction(delay, maxRetries, finalAction);
     }
 
     /**
