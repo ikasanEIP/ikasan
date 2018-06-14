@@ -41,16 +41,16 @@
 package org.ikasan.exceptionResolver.action;
 
 /**
- * Exception Action indicating the operation should be retried within the context of a cron expressed schedule.
+ * Exception Action indicating the operation should be retried
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalAction, RetryAction
+public class SimpleRetryAction implements ExceptionAction, HasAlternateFinalAction, RetryAction
 {
     /**
-     * cron expression
+     * Length of time in milliseconds between retries
      */
-    private String cronExpression;
+    private long delay = 5000l;
 
     /**
      * Maximum no of times to retry
@@ -65,7 +65,7 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     /**
      * Default Constructor
      */
-    public ScheduledRetryAction()
+    public SimpleRetryAction()
     {
         // Do Nothing
     }
@@ -73,37 +73,49 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     /**
      * Constructor
      *
-     * @param cronExpression - cron expression for the retry
+     * @param delay - The delay in milliseconds before retrying
      * @param maxRetries - The maximum number of retries to attempt
      */
-    public ScheduledRetryAction(String cronExpression, int maxRetries)
+    public SimpleRetryAction(long delay, int maxRetries)
     {
         super();
-        this.cronExpression = cronExpression;
+        this.delay = delay;
         this.maxRetries = maxRetries;
     }
 
     /**
      * Constructor
      *
-     * @param cronExpression - cron expression for the retry
+     * @param delay - The delay in milliseconds before retrying
      * @param maxRetries - The maximum number of retries to attempt
      * @param finalAction - final action to take when we exhaust the max retries
      */
-    public ScheduledRetryAction(String cronExpression, int maxRetries, ExceptionAction finalAction)
+    public SimpleRetryAction(long delay, int maxRetries, ExceptionAction finalAction)
     {
         super();
-        this.cronExpression = cronExpression;
+        this.delay = delay;
         this.maxRetries = maxRetries;
         this.finalAction = finalAction;
     }
 
-    public String getCronExpression() {
-        return cronExpression;
+    /**
+     * Accessor for delay
+     * 
+     * @return delay
+     */
+    public long getDelay()
+    {
+        return delay;
     }
 
-    public void setCronExpression(String cronExpression) {
-        this.cronExpression = cronExpression;
+    /**
+     * Mutator for delay
+     * 
+     * @param delay
+     */
+    public void setDelay(long delay)
+    {
+        this.delay = delay;
     }
 
     /**
@@ -125,7 +137,7 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     @Override
     public String toString()
     {
-        return "ScheduledRetry (cronExpression=" + cronExpression + ", maxRetries=" + maxRetries + ", finalAction=" + finalAction + ")";
+        return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ", finalAction=" + finalAction + ")";
     }
     
     /*
@@ -136,11 +148,11 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     @Override
     public boolean equals(Object object)
     {
-        if(object instanceof ScheduledRetryAction)
+        if(object instanceof SimpleRetryAction)
         {
             // is same object type
-            ScheduledRetryAction retryAction = (ScheduledRetryAction) object;
-            if(this.getCronExpression() == retryAction.getCronExpression() && this.getMaxRetries() == retryAction.getMaxRetries() && this.getFinalAction().equals(retryAction.getFinalAction()))
+            SimpleRetryAction retryAction = (SimpleRetryAction) object;
+            if(this.getDelay() == retryAction.getDelay() && this.getMaxRetries() == retryAction.getMaxRetries() && this.getFinalAction().equals(retryAction.getFinalAction()))
             {
                 return true;
             }
@@ -159,8 +171,8 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     {
         int hash = 1;
         hash = hash * 31 + this.maxRetries;
-        hash = hash * 31 + this.cronExpression.hashCode();
-        hash = hash * 31 + this.finalAction.hashCode();
+        hash = hash * 31 + (int)this.delay;
+        hash = hash * 31 + finalAction.hashCode();
         return hash;
     }
 }

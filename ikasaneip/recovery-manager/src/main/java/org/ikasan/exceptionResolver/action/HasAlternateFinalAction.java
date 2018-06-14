@@ -45,16 +45,7 @@ package org.ikasan.exceptionResolver.action;
  * 
  * @author Ikasan Development Team
  */
-public interface RetryAction extends ExceptionAction
+public interface HasAlternateFinalAction
 {
-    /**
-     * indicator for an infinite retry
-     */
-    public static final Integer RETRY_INFINITE = -1;
-
-    /**
-     * Maximum retry attempts for this retry action.
-     * @return
-     */
-    public int getMaxRetries();
+    public ExceptionAction getFinalAction();
 }
