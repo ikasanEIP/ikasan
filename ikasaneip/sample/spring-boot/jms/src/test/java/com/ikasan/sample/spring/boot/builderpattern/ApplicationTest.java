@@ -227,7 +227,7 @@ public class ApplicationTest
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(EndpointException.class.getName(), error.getExceptionClass());
-        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
+        assertEquals("Retry (delay=10000, maxRetries=-1, finalAction=Stop)", error.getAction());
 
         // Verify the exclusion was not stored to DB
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);

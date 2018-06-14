@@ -293,7 +293,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             return;
         }
 
-        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, IgnoreAction.instance()))
+        if(action instanceof RetryAction && hasMatchingAlternateFinalAction((RetryAction)action, IgnoreAction.instance()))
         {
             logger.info("Exhausted maximum retries. Resorting to final action of " + IgnoreAction.instance().toString() + " for flow ["
                     + flowName + "] module [" + moduleName
@@ -316,19 +316,12 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param benchmarkFinalAction
      * @return
      */
-    protected boolean hasMatchingInvokableFinalAction(RetryAction action, ExceptionAction benchmarkFinalAction)
+    protected boolean hasMatchingAlternateFinalAction(RetryAction action, ExceptionAction benchmarkFinalAction)
     {
-        if(action instanceof HasAlternateFinalAction)
-        {
-            if(action.getMaxRetries() != action.RETRY_INFINITE &&
-                    recoveryAttempts == action.getMaxRetries() &&
-                    ((HasAlternateFinalAction)action).getFinalAction().equals(benchmarkFinalAction))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return (action.getMaxRetries() != action.RETRY_INFINITE &&
+                recoveryAttempts == action.getMaxRetries() &&
+                (action instanceof HasAlternateFinalAction) &&
+                ((HasAlternateFinalAction)action).getFinalAction().equals(benchmarkFinalAction));
     }
 
     /**
@@ -354,8 +347,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         // if retry and we are on the final action and that action is ignore then cancel existing recovery and return
-        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, IgnoreAction.instance()))
+        if(action instanceof RetryAction && hasMatchingAlternateFinalAction((RetryAction)action, IgnoreAction.instance()))
         {
+            flowInvocationContext.setFinalAction(getFinalAction( ((HasAlternateFinalAction)action).getFinalAction() ));
+
             logger.info("Exhausted maximum retries. Resorting to final action of " + IgnoreAction.instance().toString() + " for flow ["
                     + flowName + "] module [" + moduleName
                     + "].");
@@ -375,11 +370,13 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         // if retry and we are on the final action and that action is exclude then cancel existing recovery, notify error and blacklist and rollback
-        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, ExcludeEventAction.instance()))
+        if(action instanceof RetryAction && hasMatchingAlternateFinalAction((RetryAction)action, ExcludeEventAction.instance()))
         {
-            logger.info("Exhausted maximum retries. Resorting to final action of " + ExcludeEventAction.instance().toString() + " for flow ["
+            flowInvocationContext.setFinalAction(getFinalAction( ((HasAlternateFinalAction)action).getFinalAction() ));
+            String msg = "Exhausted maximum retries. " + action.toString() + " resorting to final action of " + ExcludeEventAction.instance().toString() + " for flow ["
                     + flowName + "] module [" + moduleName
-                    + "].");
+                    + "].";
+            logger.info(msg);
 
             // cancel inflight recovery
             cancelAll();
@@ -387,7 +384,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                     ((action instanceof RetryAction) ? action.toString() + "/" + ExcludeEventAction.instance().toString() : ExcludeEventAction.instance().toString()) );
             flowInvocationContext.setErrorUri(errorUri);
             this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
-            throw new ForceTransactionRollbackException(action.toString(), throwable);
+            throw new ForceTransactionRollbackException(msg, throwable);
         }
 
         // notify error and continue to find out what to do with the action
@@ -573,21 +570,19 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         if(retryAction instanceof SimpleRetryAction)
         {
             SimpleRetryAction simpleRetryAction = (SimpleRetryAction)retryAction;
-            return newTrigger()
+            return buildTrigger(newTrigger()
                     .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
                     .startAt(new Date(System.currentTimeMillis() + simpleRetryAction.getDelay()))
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
-                    .build();
+                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()));
         }
         else if(retryAction instanceof ScheduledRetryAction)
         {
             try
             {
                 ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)retryAction;
-                return newTrigger()
+                return buildTrigger(newTrigger()
                         .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-                        .withSchedule(cronSchedule(scheduledRetryAction.getCronExpression()))
-                        .build();
+                        .withSchedule(cronSchedule(scheduledRetryAction.getCronExpression())));
             }
             catch(ParseException e)
             {
@@ -600,6 +595,16 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                     + retryAction.getClass().getName() + "]");
         }
 
+    }
+
+    /**
+     * Method to aid testing.
+     * @param triggerBuilder
+     * @return
+     */
+    protected Trigger buildTrigger(TriggerBuilder triggerBuilder)
+    {
+        return triggerBuilder.build();
     }
 
     /**
