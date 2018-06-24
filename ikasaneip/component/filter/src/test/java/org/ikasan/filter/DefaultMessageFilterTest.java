@@ -69,7 +69,7 @@ public class DefaultMessageFilterTest
     /** A mocked {@link FilterRule} */
     private final FilterRule<String> filterRule = this.mockery.mock(FilterRule.class, "filterRule");
 
-    /** The {@link MessageFilter} implementation to test*/
+    /** The {@link Filter} implementation to test*/
     private Filter<String> filterToTest = new DefaultMessageFilter(this.filterRule);
 
     /**

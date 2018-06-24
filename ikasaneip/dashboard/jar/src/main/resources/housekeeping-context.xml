@@ -94,11 +94,6 @@
         <constructor-arg ref="platformConfigurationService" />
     </bean>
 
-    <bean id="duplicateStringFilterHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
-        <constructor-arg value="duplicateStringFilterHousekeepingJob" />
-        <constructor-arg ref="duplicateStringFilterService" />
-        <constructor-arg ref="platformConfigurationService" />
-    </bean>
 
     <bean id="messageHistoryHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
         <constructor-arg value="messageHistoryHousekeepingJob" />

@@ -56,20 +56,27 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
     /** {@link FilteredMessageDao} for accessing encountered messages*/
     private final FilteredMessageDao dao;
 
+    /** {@link FilteredMessageDao} for accessing encountered messages*/
+    private final FilteredMessageDao oldDao;
+
     /** filter configuration - provide a default instance */
     private FilteredMessageConfiguration configuration = new FilteredMessageConfiguration();
 
+    private boolean checkOldMessageEntries = true;
     /**
      * Constructor
      * @param dao
      */
-    public DefaultDuplicateFilterService(final FilteredMessageDao dao)
+    public DefaultDuplicateFilterService(final FilteredMessageDao dao, final FilteredMessageDao oldDao)
     {
         this.dao = dao;
         if(dao == null)
         {
             throw new IllegalArgumentException("dao cannot be 'null'");
         }
+
+        this.oldDao = oldDao;
+
     }
 
     /*
@@ -78,6 +85,16 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
      */
     public boolean isDuplicate(FilterEntry message)
     {
+        if(configuration.isShouldCheckOldMessageEntries() && checkOldMessageEntries)
+        {
+            if(oldDao.hasMessages(message.getClientId()))
+            {
+               throw new RequiresFilterMessageMigrationException(
+                   "There are messages in MessageFilter table for clientId [ "+ message.getClientId()+" ]. You need to " +
+                       "migrate and remove the entries manually.");
+            }
+            checkOldMessageEntries=false;
+        }
         FilterEntry messageEntryFound = this.dao.findMessage(message);
         if (messageEntryFound == null)
         {
@@ -121,7 +138,7 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
     @Override
     public boolean housekeepablesExist()
     {
-        return this.dao.housekeepablesExist();
+        return this.dao.housekeepablesExist() & this.oldDao.housekeepablesExist();
     }
 
     @Override
@@ -143,5 +160,10 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
     public void housekeep()
     {
         this.dao.deleteAllExpired();
+        if(configuration.isShouldCheckOldMessageEntries())
+        {
+            this.oldDao.deleteAllExpired();
+        }
+
     }
 }

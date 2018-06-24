@@ -64,8 +64,11 @@ public class DefaultStringFilterEntry implements StringFilterEntry, Serializable
     /** The client id */
     private String clientId;
 
-    /** string form of the criteria to aid support should entries need cherry pick removal */
+    /** string form of the criteria */
     private String value;
+
+    /** string form of the criteria to aid support should entries need cherry pick removal */
+    private String criteriaDescription;
 
     /** date/time of insertion */
     private long createdDateTime;
@@ -90,6 +93,22 @@ public class DefaultStringFilterEntry implements StringFilterEntry, Serializable
     {
         this.value = value;
         this.clientId = clientId;
+        long now = System.currentTimeMillis();
+        this.createdDateTime = now;
+        this.expiry = now + (timeToLive * 24 * 3600 * 1000L);
+    }
+    /**
+     * Constructor
+     * @param value
+     * @param clientId
+     * @param timeToLive Time in <b>days</b> to keep keep {@link FilterEntry} persisted before
+     *                   it is removed.
+     */
+    public DefaultStringFilterEntry(String value, String clientId, String criteriaDescription, int timeToLive)
+    {
+        this.value = value;
+        this.clientId = clientId;
+        this.criteriaDescription = criteriaDescription;
         long now = System.currentTimeMillis();
         this.createdDateTime = now;
         this.expiry = now + (timeToLive * 24 * 3600 * 1000L);
@@ -135,7 +154,7 @@ public class DefaultStringFilterEntry implements StringFilterEntry, Serializable
      */
     public void setCriteriaDescription(String criteriaDescription)
     {
-
+        this.criteriaDescription = criteriaDescription;
     }
 
     /**
@@ -143,7 +162,7 @@ public class DefaultStringFilterEntry implements StringFilterEntry, Serializable
      */
     public String getCriteriaDescription()
     {
-        return null;
+        return this.criteriaDescription;
     }
 
     /**

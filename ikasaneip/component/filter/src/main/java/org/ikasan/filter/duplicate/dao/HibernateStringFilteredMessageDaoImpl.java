@@ -97,6 +97,12 @@ public class HibernateStringFilteredMessageDaoImpl extends HibernateDaoSupport i
         return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
     }
 
+    @Override
+    public boolean hasMessages(String clientId) {
+        // Not required
+        return false;
+    }
+
     /*
          * (non-Javadoc)
          * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.window.FilterEntry)

@@ -63,6 +63,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     public static final String EXPIRY = "expiry";
     public static final String EVENT_IDS = "eventIds";
     public static final String NOW = "now";
+    public static final String CLIENT_ID = "clientId";
 
     /** Query used for housekeeping expired filtered messages */
     private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= :" + EXPIRY;
@@ -72,6 +73,10 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     public static final String MESSAGE_FILTER_ENTRIES_DELETE_QUERY = "delete DefaultFilterEntry se " +
             " where se.id in(:" + EVENT_IDS + ")";
+
+    public static final String COUNT_MESSAGE_FILTER_ENTRIES_BY_CLIENTID_QUERY = "select count(id( from DefaultFilterEntry se " +
+        " where se.clientId  :" +CLIENT_ID;
+
 
     /** Flag for batch housekeeping option. Defaults to true */
     private boolean batchHousekeepDelete = true;
@@ -91,6 +96,19 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         DetachedCriteria criteria = DetachedCriteria.forClass(DefaultFilterEntry.class);
         criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
         return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
+    }
+
+    @Override
+    public boolean hasMessages(final String clientId) {
+        return getHibernateTemplate().execute( session ->
+            {
+                Query query = session.createQuery(COUNT_MESSAGE_FILTER_ENTRIES_BY_CLIENTID_QUERY);
+                query.setParameter(CLIENT_ID, clientId);
+
+                Long count = (Long)query.list().get(0);
+                return count > 0l;
+            }
+        );
     }
 
     /*

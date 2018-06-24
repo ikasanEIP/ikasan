@@ -45,7 +45,9 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Test class for {@link DefaultDuplicateFilterService}
@@ -55,17 +57,23 @@ import org.junit.Test;
  */
 public class DefaultDuplicateFilterServiceTest
 {
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     /** {@link Mockery} for mocking interfaces */
     private Mockery mockery = new Mockery();
 
     /** Mocked {@link FilteredMessageDao} */
     private final FilteredMessageDao dao = this.mockery.mock(FilteredMessageDao.class, "mockDao");
 
+    /** Mocked {@link FilteredMessageDao} */
+    private final FilteredMessageDao oldDao = this.mockery.mock(FilteredMessageDao.class, "mockOldDao");
+
     /** Mocked {@link FilterEntry} returned by {@link #converter} */
     private final FilterEntry entry = this.mockery.mock(FilterEntry.class, "filterEntry");
 
     /** Implementation of {@link DuplicateFilterService} to be tested*/
-    private DefaultDuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao);
+    private DefaultDuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao,this.oldDao);
 
     /**
      * Test case: persist message
@@ -85,11 +93,36 @@ public class DefaultDuplicateFilterServiceTest
     /**
      * Test case: if message not found, service must return false
      */
-    @Test public void return_false_when_message_not_found()
+    @Test
+    public void isDuplicate_when_oldFilter_hasMessages()
     {
+
+        expectedException.expect(RequiresFilterMessageMigrationException.class);
+
         this.mockery.checking(new Expectations()
         {
             {
+                atLeast(2).of(entry).getClientId();will(returnValue("testClientId"));
+                one(oldDao).hasMessages("testClientId");will(returnValue(true));
+            }
+        });
+        boolean result = this.serviceToTest.isDuplicate(this.entry);
+        Assert.assertFalse(result);
+        this.mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * Test case: if message not found, service must return false
+     */
+    @Test public void return_false_when_message_not_found()
+    {
+
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(entry).getClientId();will(returnValue("testClientId"));
+                one(oldDao).hasMessages("testClientId");will(returnValue(false));
                 one(dao).findMessage(entry);will(returnValue(null));
             }
         });
@@ -98,14 +131,17 @@ public class DefaultDuplicateFilterServiceTest
         this.mockery.assertIsSatisfied();
     }
 
+
     /**
      * Test case: if message is found, service must resturn true
      */
-    @Test public void return_true_when_message_not_found()
+    @Test public void return_true_when_message_found_first_run()
     {
         this.mockery.checking(new Expectations()
         {
             {
+                one(entry).getClientId();will(returnValue("testClientId"));
+                one(oldDao).hasMessages("testClientId");will(returnValue(false));
                 one(dao).findMessage(entry);will(returnValue(entry));
             }
         });
@@ -113,6 +149,27 @@ public class DefaultDuplicateFilterServiceTest
         Assert.assertTrue(result);
         this.mockery.assertIsSatisfied();
     }
+
+    /**
+     * Test case: if message is found, service must resturn true
+     */
+    @Test public void return_true_when_message_found_subsequence_runs()
+    {
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(entry).getClientId();will(returnValue("testClientId"));
+                one(oldDao).hasMessages("testClientId");will(returnValue(false));
+
+                atLeast(2).of(dao).findMessage(entry);will(returnValue(entry));
+            }
+        });
+      this.serviceToTest.isDuplicate(this.entry);
+        boolean result = this.serviceToTest.isDuplicate(this.entry);
+        Assert.assertTrue(result);
+        this.mockery.assertIsSatisfied();
+    }
+
 
     /**
      * Test case: housekeep persisted messages
@@ -123,6 +180,7 @@ public class DefaultDuplicateFilterServiceTest
         {
             {
                 one(dao).deleteAllExpired();
+                one(oldDao).deleteAllExpired();
             }
         });
         this.serviceToTest.housekeep();

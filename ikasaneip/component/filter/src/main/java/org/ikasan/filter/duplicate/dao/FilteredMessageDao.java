@@ -87,6 +87,16 @@ public interface FilteredMessageDao
     public List<FilterEntry> findMessages(String clientId);
 
     /**
+     * Checks if any records for given clientId exists.
+     *
+     * @param clientId of {@link FilterEntry}s to be found
+     *
+     * @return boolean value indicating wherther any records exists
+     */
+    public boolean hasMessages(String clientId);
+
+
+    /**
      * Delete expired Filter Entries from persistence 
      */
     public void deleteAllExpired();

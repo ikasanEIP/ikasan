@@ -5,11 +5,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
-        <constructor-arg ref="duplicateFilterDao"/>
-    </bean>
-
-    <bean id="duplicateStringFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
-        <constructor-arg ref="duplicateStringFilterDao"/>
+        <constructor-arg name="dao" ref="duplicateFilterDao"/>
+        <constructor-arg name="oldDao" ref="duplicateStringFilterDao"/>
     </bean>
 
     <!-- As this service is stateful managing a cache per client id, it is defined as scope = prototype -->

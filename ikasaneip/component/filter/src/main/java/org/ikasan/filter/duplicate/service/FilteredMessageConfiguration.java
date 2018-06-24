@@ -58,6 +58,9 @@ public class FilteredMessageConfiguration
     /** default transaction size of 1000 */
     private int transactionBatchSize = 1000;
 
+    /** Flag allowing to disable/enable check for old file filter entries. */
+    private boolean shouldCheckOldMessageEntries = true;
+
     public int getHousekeepingBatchSize() {
         return housekeepingBatchSize;
     }
@@ -72,6 +75,14 @@ public class FilteredMessageConfiguration
 
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
         this.batchHousekeepDelete = batchHousekeepDelete;
+    }
+
+    public boolean isShouldCheckOldMessageEntries() {
+        return shouldCheckOldMessageEntries;
+    }
+
+    public void setShouldCheckOldMessageEntries(boolean shouldCheckOldMessageEntries) {
+        this.shouldCheckOldMessageEntries = shouldCheckOldMessageEntries;
     }
 
     /**

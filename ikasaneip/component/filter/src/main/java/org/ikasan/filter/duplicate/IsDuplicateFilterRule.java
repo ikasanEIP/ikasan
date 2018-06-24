@@ -46,6 +46,8 @@ import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.filter.FilterRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link FilterRule} determining if a message has been "seen" before, or not.
@@ -55,6 +57,10 @@ import org.ikasan.spec.component.filter.FilterRule;
  */
 public class IsDuplicateFilterRule<T> implements FilterRule<T>
 {
+
+    /** Logger for this class */
+    private static Logger logger = LoggerFactory.getLogger(IsDuplicateFilterRule.class);
+
     /** Service to access previous encountered messages*/
     private final DuplicateFilterService filterService;
     private final FilterEntryConverter<T> converter;
@@ -85,6 +91,7 @@ public class IsDuplicateFilterRule<T> implements FilterRule<T>
         }
         else
         {
+            logger.info("Duplicate was detected for message ["+ messageToFilter +"]");
             return false;
         }
     }
