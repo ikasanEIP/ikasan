@@ -93,25 +93,26 @@
 
 		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
 
-		<access-denied-handler error-page="/accessDenied.jsp" />
+		<!--<access-denied-handler error-page="/accessDenied.jsp" />-->
 		<intercept-url pattern="/login.jsp" access="permitAll"/>
 		<intercept-url pattern="/css/style.css" access="permitAll"/>
 		<intercept-url pattern="/images/**" access="permitAll"/>
 		<!-- Keep Authorization on rest on the code level -->
 		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
 		<intercept-url pattern="/rest/**" access="permitAll"/>
-		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
+		<intercept-url pattern="/swagger-ui.html" access="permitAll"/>
+		<!--<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />-->
 		<!--<intercept-url pattern="/org/ikasan/trigger/service" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>-->
-		<intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole')"/>
+		<!--<intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole')"/>-->
 
-		<form-login login-page="/login.jsp"
-					always-use-default-target="true"
-					default-target-url="/home.htm"
-					username-parameter="j_username"
-					password-parameter="j_password"
-					login-processing-url="/j_spring_security_check"
-					authentication-failure-url="/login.jsp?login_error=1"
-		/>
+		<!--<form-login login-page="/login.jsp"-->
+					<!--always-use-default-target="true"-->
+					<!--default-target-url="/home.htm"-->
+					<!--username-parameter="j_username"-->
+					<!--password-parameter="j_password"-->
+					<!--login-processing-url="/j_spring_security_check"-->
+					<!--authentication-failure-url="/login.jsp?login_error=1"-->
+		<!--/>-->
 
 		<csrf disabled="true"/>
 		<logout logout-success-url="/" logout-url="/j_spring_security_logout" />

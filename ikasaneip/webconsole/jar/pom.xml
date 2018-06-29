@@ -85,31 +85,31 @@
             <artifactId>ikasan-replay</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-js</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.webflow</groupId>
-                    <artifactId>spring-js-resources</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.webflow</groupId>-->
+            <!--<artifactId>spring-js</artifactId>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.springframework.webflow</groupId>-->
+                    <!--<artifactId>spring-js-resources</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-logging</groupId>-->
+                    <!--<artifactId>commons-logging</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-webflow</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.webflow</groupId>-->
+            <!--<artifactId>spring-webflow</artifactId>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-logging</groupId>-->
+                    <!--<artifactId>commons-logging</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.webflow</groupId>

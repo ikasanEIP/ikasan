@@ -140,16 +140,6 @@
 <!--  end Webflow integraion  -->
 <!-- ************************ -->
 
-	<bean id="triggerDetailsService" class="org.ikasan.web.service.TriggerDetailsService">
-		<constructor-arg ref="wiretapFlowEventListener"/>
-		<constructor-arg ref="moduleService" />
-	</bean>
 
-    <bean id="configurationManagementService"
-          class="org.ikasan.web.service.ConfigurationManagementService">
-        <constructor-arg ref="configurationService" />
-        <constructor-arg ref="systemEventService" />
-        <constructor-arg ref="moduleService" />
-    </bean>
 
 </beans>

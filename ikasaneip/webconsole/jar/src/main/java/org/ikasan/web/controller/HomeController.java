@@ -40,12 +40,8 @@
  */
 package org.ikasan.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Controller for the home page for the web console
@@ -53,18 +49,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/home.htm")
 public class HomeController
 {
-    /**
-     * Handle the request
-     * @param request - Standard Request object
-     * @param response - Standard response object
-     * @return a key to the home view
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public String handleRequest(HttpServletRequest request, HttpServletResponse response)
-    {
-        return "home";
+    @RequestMapping(value = "/")
+    public String index() {
+        return "index";
     }
 }
