@@ -83,7 +83,7 @@ public class ModuleConverter implements Converter<Module<Flow>, org.ikasan.topol
             topologyFlow.setComponents(components);
         }
 
-        org.ikasan.topology.model.Module module = new org.ikasan.topology.model.Module(moduleRuntime.getName(),null,null,null,null,null);
+        org.ikasan.topology.model.Module module = new org.ikasan.topology.model.Module(moduleRuntime.getName(),null,moduleRuntime.getDescription(),moduleRuntime.getVersion(),null,null);
         module.setFlows(flows);
         return module;
     }
