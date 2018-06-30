@@ -70,6 +70,32 @@ public class DiscoveryApplication {
     private ModuleContainer moduleContainer;
 
     private ModuleConverter converter = new ModuleConverter();
+
+    /**
+     * Method to get modules from given application. Typically there is only going to be one module.
+     *
+     * @return List of Modules
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/",
+        produces = {"application/json"})
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public List<org.ikasan.topology.model.Module> getModules() {
+
+        List<Module> modules = moduleContainer.getModules();
+
+        List<org.ikasan.topology.model.Module> moduleList = new ArrayList<>(modules.size());
+
+        for (Module module : modules) {
+
+            moduleList.add(converter.convert(module));
+        }
+
+        return moduleList;
+    }
+
+
     /**
      * Method to get the flows associated with a module.
      *
