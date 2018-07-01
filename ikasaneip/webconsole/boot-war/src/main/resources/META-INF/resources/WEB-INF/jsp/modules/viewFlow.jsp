@@ -90,8 +90,7 @@
 							<c:out value="${flowElement.componentName}" />
 						</a>
 					</td>
-						
-						
+
 					
 					<td><c:out value="${flowElement.flowComponent.getClass().simpleName}" /></td>
 				</tr>
