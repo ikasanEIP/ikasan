@@ -1,94 +1,96 @@
 'use strict';
 // tag::vars[]
 
-import React, {Component} from "react";
+import React, { Component } from "react";
 
 const client = require('./client');
-// end::vrs[]
+
+
+// end::vars[]
 
 // tag::app[]
 class Flows extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {flows: [], moduleName: ""};
+        this.state = {flows: []};
     }
 
-
     componentDidMount() {
-
-        const {match: {params}} = this.props;
-        //console.dir('moduleName', {this.props.match.params.moduleName});
-        var moduleName = this.props.match.params.moduleName;
-        var path = "./rest/discovery/flows/" + moduleName;
-
-        this.setState({moduleName: moduleName});
-
-        client({method: 'GET', path: path}).done(response => {
+        client({method: 'GET', path: './rest/discovery/flows/sample-boot-jms'}).done(response => {
             this.setState({flows: response.entity});
-        });
+    });
     }
 
     render() {
         return (
             <FlowList flows={this.state.flows}/>
-        )
+    )
     }
 }
-
 // end::app[]
 
 
 // tag::flow-list[]
-class FlowList extends Component {
+class FlowList extends Component{
     render() {
         var flows = this.props.flows.map(flow =>
             <Flow key={flow.name} flow={flow}/>
-        );
+    );
         return (
 
-            <div className="middle">
-                <h3>Flows</h3>
-                <table id="initiatorsList" className="listTable">
-                    <thead>
+
+            <div class="middle">
+
+                <h2>Module</h2>
+
+                <span id="moduleDescription"></span>
+
+                <h3>Details</h3>
+                <table id="schedulerDetails" class="keyValueTable">
                     <tr>
-                        <th>Flow Name</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>&nbsp;</th>
+                        <th>
+                            Module Name
+                        </th>
+                        <td>
+                            moduleNae
+                        </td>
                     </tr>
+                </table>
+
+                 <h3>Flows</h3>
+                 <table id="initiatorsList" class="listTable">
+                    <thead>
+                        <tr>
+                            <th>Flow Name</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>&nbsp;</th>
+                        </tr>
                     </thead>
 
                     <tbody>
-                    {flows}
+                        {flows}
                     </tbody>
                 </table>
             </div>
-        )
+    )
     }
 }
-
 // end::flow-list[]
 
 // tag::flow[]
-class Flow extends Component {
+class Flow extends Component{
     render() {
         return (
             <tr>
-                <td>
-                    <Link  to={`/flows/${this.props.flows.module}/${this.props.flow.name}/components/`} >{this.props.flow.name}</Link>
-                </td>
-                <td>type</td>
-                <td className={`initiatorState-${this.props.flow.state}`}>
-                {this.props.flow.state}
-                </td>
-                <td>button</td>
+                <td>{this.props.flow.name}</td>
             </tr>
-        )
+    )
     }
 }
-
 // end::flow[]
+
 
 
 export default Flows;
