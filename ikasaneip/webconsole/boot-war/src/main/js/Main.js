@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Flows from "./Flows";
 import Modules from "./Modules";
-import FlowComponents from "./FlowComponents";
 
 class Main extends Component {
     render() {
@@ -17,14 +16,14 @@ class Main extends Component {
                         <ul id="mainNavigation">
                             <li><a href="<c:url value='/home.htm'/>">Home</a></li>
                             <li><NavLink to="/modules">Modules</NavLink></li>
+                            <li><NavLink to="/flows">Flows</NavLink></li>
                         </ul>
 
                     </div>
 
                     <div id="middle" className="middle">
                         <Route path="/modules" component={Modules}/>
-                        <Route path="/flows/:moduleName" component={Flows}/>
-                        <Route path="/flows/:moduleName/:flowName/components" component={FlowComponents}/>
+                        <Route path="/flows" component={Flows}/>
                     </div>
                 </div>
             </HashRouter>
