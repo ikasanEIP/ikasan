@@ -2,7 +2,7 @@
 // tag::vars[]
 
 import React, { Component } from "react";
-
+import { Link } from 'react-router-dom'
 const client = require('./client');
 
 
@@ -65,9 +65,7 @@ class Module extends Component {
 
             <tr>
                 <td>
-                    <a href="view.htm?moduleName={this.props.module.name}">
-                    {this.props.module.name}
-                    </a>
+                    <Link  to={`/flows/${this.props.module.name}`} >{this.props.module.name}</Link>
                 </td>
                 <td>
                  {this.props.module.description}
