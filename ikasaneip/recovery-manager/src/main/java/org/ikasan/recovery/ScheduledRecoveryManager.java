@@ -230,7 +230,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 
-        // simple delay retry action
+        // retry action
         else if(action instanceof RetryAction)
         {
             RetryAction retryAction = (RetryAction)action;
@@ -272,45 +272,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
-
-        // cron expression based delay retry action
-        else if(action instanceof ScheduledRetryAction)
-        {
-            ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
-
-            this.consumer.stop();
-            stopManagedResources();
-
-            try
-            {
-                if(!isRecovering())
-                {
-                    startRecovery(scheduledRetryAction);
-                }
-                else
-                {
-                    // TODO - not 100% identification of same issue, but sufficient
-                    if(this.previousExceptionAction.equals(scheduledRetryAction) && this.previousComponentName.equals(componentName))
-                    {
-                        continueRecovery(scheduledRetryAction);
-                    }
-                    else
-                    {
-                        cancelAll();
-                        startRecovery(scheduledRetryAction);
-                    }
-                }
-
-                this.previousComponentName = componentName;
-                this.previousExceptionAction = scheduledRetryAction;
-            }
-            catch (SchedulerException e)
-            {
-                throw new RuntimeException(e);
-            }
-
-            throw new ForceTransactionRollbackException(action.toString(), throwable);
-        }
         else
         {
             throw new UnsupportedOperationException("Unsupported action [" + action + "]");
@@ -332,8 +293,42 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             return;
         }
 
+        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, IgnoreAction.instance()))
+        {
+            logger.info("Exhausted maximum retries. Resorting to final action of " + IgnoreAction.instance().toString() + " for flow ["
+                    + flowName + "] module [" + moduleName
+                    + "].");
+
+            // cancel inflight recovery
+            cancelAll();
+            return;
+        }
+
         this.errorReportingService.notify(componentName, throwable, action.toString());
         this.recover(action, componentName, throwable, null);
+    }
+
+    /**
+     * Checks the incoming action against a benchmark action to see if either the action
+     * or any final actions within the action match the incoming action.
+     *
+     * @param action
+     * @param benchmarkFinalAction
+     * @return
+     */
+    protected boolean hasMatchingInvokableFinalAction(RetryAction action, ExceptionAction benchmarkFinalAction)
+    {
+        if(action instanceof HasAlternateFinalAction)
+        {
+            if(action.getMaxRetries() != action.RETRY_INFINITE &&
+                    recoveryAttempts == action.getMaxRetries() &&
+                    ((HasAlternateFinalAction)action).getFinalAction().equals(benchmarkFinalAction))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -351,19 +346,53 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         String lastComponentName = flowInvocationContext.getLastComponentName();
         ExceptionAction action = resolveAction(lastComponentName, throwable);
         flowInvocationContext.setFinalAction(getFinalAction(action));
+
+        // if action is ignore just return
         if(action instanceof IgnoreAction)
         {
             return;
         }
 
-        String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
-        flowInvocationContext.setErrorUri(errorUri);
+        // if retry and we are on the final action and that action is ignore then cancel existing recovery and return
+        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, IgnoreAction.instance()))
+        {
+            logger.info("Exhausted maximum retries. Resorting to final action of " + IgnoreAction.instance().toString() + " for flow ["
+                    + flowName + "] module [" + moduleName
+                    + "].");
+
+            // cancel inflight recovery
+            cancelAll();
+            return;
+        }
+
+        // if exclusion then notify error and blacklist and rollback
         if(action instanceof ExcludeEventAction)
         {
+            String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
+            flowInvocationContext.setErrorUri(errorUri);
             this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 
+        // if retry and we are on the final action and that action is exclude then cancel existing recovery, notify error and blacklist and rollback
+        if(action instanceof RetryAction && hasMatchingInvokableFinalAction((RetryAction)action, ExcludeEventAction.instance()))
+        {
+            logger.info("Exhausted maximum retries. Resorting to final action of " + ExcludeEventAction.instance().toString() + " for flow ["
+                    + flowName + "] module [" + moduleName
+                    + "].");
+
+            // cancel inflight recovery
+            cancelAll();
+            String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable,
+                    ((action instanceof RetryAction) ? action.toString() + "/" + ExcludeEventAction.instance().toString() : ExcludeEventAction.instance().toString()) );
+            flowInvocationContext.setErrorUri(errorUri);
+            this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
+        }
+
+        // notify error and continue to find out what to do with the action
+        String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
+        flowInvocationContext.setErrorUri(errorUri);
         this.recover(action, lastComponentName, throwable, identifier);
     }
 
@@ -401,33 +430,14 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     {
         JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
         recoveryJobKey = recoveryJobDetail.getKey(); // store the jobkey for this recovery execution so it can be cancelled in-flight
-        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
+        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction);
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
         recoveryAttempts = 1;
         logger.info("Recovery [" + recoveryAttempts + "/" 
             + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries()) 
             + "] flow [" + flowName + "] module [" + moduleName + "] started at ["
-            + scheduled + "]");
-    }
-
-    /**
-     * Start a new scheduled recovery job.
-     * @param scheduledRetryAction
-     * @throws SchedulerException
-     */
-    private void startRecovery(ScheduledRetryAction scheduledRetryAction) throws SchedulerException
-    {
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
-        recoveryJobKey = recoveryJobDetail.getKey(); // store the jobkey for this recovery execution so it can be cancelled in-flight
-        Trigger recoveryJobTrigger = newRecoveryTrigger(scheduledRetryAction.getCronExpression());
-        Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
-
-        recoveryAttempts = 1;
-        logger.info("Recovery [" + recoveryAttempts + "/"
-                + ((scheduledRetryAction.getMaxRetries() < 0) ? "unlimited" : scheduledRetryAction.getMaxRetries())
-                + "] flow [" + flowName + "] module [" + moduleName + "] started at ["
-                + scheduled + "] with cronExpression[" + scheduledRetryAction.getCronExpression() + "]");
+                + scheduled + "] " + ((retryAction instanceof ScheduledRetryAction) ? "with cronExpression[" + ((ScheduledRetryAction)retryAction).getCronExpression() + "]" : ""));
     }
 
     /**
@@ -438,8 +448,9 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     {
         recoveryAttempts++;
 
-        if(retryAction.getMaxRetries() != RetryAction.RETRY_INFINITE && recoveryAttempts > retryAction.getMaxRetries())
+        if(retryAction.getMaxRetries() != SimpleRetryAction.RETRY_INFINITE && recoveryAttempts > retryAction.getMaxRetries())
         {
+            // cancel recovery regardless
             cancelAll();
             this.isUnrecoverable = true;
 
@@ -447,50 +458,33 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             throw new RuntimeException("Exhausted maximum retries.");
         }
 
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
-        recoveryJobKey = recoveryJobDetail.getKey(); // store the jobkey for this recovery execution so it can be cancelled in-flight
-        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
-        
-        // Only schedule a new recovery if we don't have one in-progress.
-        // This can be the case on very high volume feeds where 
-        // multiple recoveries are created by in-flight messages 
-        // between stop/start of the flow
-        if(this.scheduler.checkExists(recoveryJobKey))
+        if(retryAction instanceof SimpleRetryAction)
         {
-            logger.info("Recovery in progress flow [" 
-                + flowName + "] module [" + moduleName 
-                + "]. No additional recoveries will be scheduled!");
-        }
-        else
-        {
-            Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
-            logger.info("Recovery [" + recoveryAttempts + "/" 
-                + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries()) 
-                + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
-                + scheduled + "]");
-        }
+            JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
+            recoveryJobKey = recoveryJobDetail.getKey(); // store the jobkey for this recovery execution so it can be cancelled in-flight
+            Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction);
 
-    }
-
-    /**
-     * Continue an in progress recovery based on the retry action.
-     * @param scheduledRetryAction
-     */
-    private void continueRecovery(ScheduledRetryAction scheduledRetryAction) throws SchedulerException
-    {
-        recoveryAttempts++;
-
-        if(scheduledRetryAction.getMaxRetries() != RetryAction.RETRY_INFINITE && recoveryAttempts > scheduledRetryAction.getMaxRetries())
-        {
-            this.cancelRecovery(null);
-            this.isUnrecoverable = true;
-
-            // TODO - define a better exception!?!
-            throw new RuntimeException("Exhausted maximum retries.");
+            // Only schedule a new recovery if we don't have one in-progress.
+            // This can be the case on very high volume feeds where
+            // multiple recoveries are created by in-flight messages
+            // between stop/start of the flow
+            if(this.scheduler.checkExists(recoveryJobKey))
+            {
+                logger.info("Recovery in progress flow ["
+                        + flowName + "] module [" + moduleName
+                        + "]. No additional recoveries will be scheduled!");
+            }
+            else
+            {
+                Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
+                logger.info("Recovery [" + recoveryAttempts + "/"
+                        + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries())
+                        + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
+                        + scheduled + "]");
+            }
         }
 
-        // nothing else to do as its on a cron expression schedule currently running
-
+        // if we are here then there is nothing else to do as we are on a cron schedule
     }
 
     /**
@@ -571,21 +565,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     
     /**
      * Factory method for creating a new recovery trigger.
-     * @param delay
-     * @return Trigger
-     */
-    protected Trigger newRecoveryTrigger(long delay)
-    {
-        return newTrigger()
-        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-        .startAt(new Date(System.currentTimeMillis() + delay))
-        .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
-        .build();
-    }
-
-    /**
-     * Factory method for creating a new recovery trigger.
-     * @param cronExpression
+     * @param retryAction
      * @return Trigger
      */
     protected Trigger newRecoveryTrigger(String cronExpression)
