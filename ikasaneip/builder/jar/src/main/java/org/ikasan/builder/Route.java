@@ -57,7 +57,13 @@ public interface Route
      */
 	public void addFlowElement(FlowElement flowElement);
 
-	/**
+    /**
+     * Add flow elements to the top of the route.
+     * @param flowElement
+     */
+    public void addFlowElementAsFirst(FlowElement flowElement);
+
+    /**
 	 * Add a nested route to the existing route.
 	 * @param route
      */
