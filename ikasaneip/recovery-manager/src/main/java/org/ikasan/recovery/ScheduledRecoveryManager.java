@@ -568,38 +568,12 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param retryAction
      * @return Trigger
      */
-    protected Trigger newRecoveryTrigger(RetryAction retryAction) throws SchedulerException
+    protected Trigger newRecoveryTrigger(String cronExpression)
     {
-        if(retryAction instanceof SimpleRetryAction)
-        {
-            SimpleRetryAction simpleRetryAction = (SimpleRetryAction)retryAction;
-            return newTrigger()
-                    .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-                    .startAt(new Date(System.currentTimeMillis() + simpleRetryAction.getDelay()))
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
-                    .build();
-        }
-        else if(retryAction instanceof ScheduledRetryAction)
-        {
-            try
-            {
-                ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)retryAction;
-                return newTrigger()
-                        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
-                        .withSchedule(cronSchedule(scheduledRetryAction.getCronExpression()))
-                        .build();
-            }
-            catch(ParseException e)
-            {
-                throw new SchedulerException(e);
-            }
-        }
-        else
-        {
-            throw new SchedulerException("retryAction must be an instance of SimpleRetryAction or ScheduledRetryAction. RetryAction instance["
-                    + retryAction.getClass().getName() + "]");
-        }
-
+        return newTrigger()
+                .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
+                .withSchedule(cronSchedule(cronExpression))
+                .build();
     }
 
     /**

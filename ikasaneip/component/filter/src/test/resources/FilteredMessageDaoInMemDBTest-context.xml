@@ -61,8 +61,12 @@
 	
 	<aop:config>
         <aop:pointcut id="daoMethods"
-                expression="execution(* org.ikasan.filter.duplicate.dao.*.*(..))"/>
-                
+                expression="execution(* org.ikasan.filter.duplicate.dao.FilteredMessageDao.save(..))
+                             ||execution(* org.ikasan.filter.duplicate.dao.FilteredMessageDao.saveOrUpdate(..))
+                             ||execution(* org.ikasan.filter.duplicate.dao.FilteredMessageDao.deleteAllExpired(..))
+
+"/>
+
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
     </aop:config>
 
@@ -72,20 +76,18 @@
         </tx:attributes>
     </tx:advice>
 
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+    </util:map>
+
     <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
         id="ikasan.xads">
-        <property name="driverClassName">
-            <value>org.hsqldb.jdbcDriver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:hsqldb:mem:testdb</value>
-        </property>
-        <property name="username">
-            <value>sa</value>
-        </property>
-        <property name="password">
-            <value></value>
-        </property>
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa"/>
+        <property name="password" value="sa"/>
     </bean>
 
 </beans>

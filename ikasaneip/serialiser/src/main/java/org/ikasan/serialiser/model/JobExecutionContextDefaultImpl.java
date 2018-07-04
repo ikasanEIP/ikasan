@@ -49,6 +49,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
  * 
@@ -71,7 +72,9 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 	private Scheduler scheduler;
 	private Trigger trigger;
 	private boolean isRecovering;
-	
+	private String fireInstanceId;
+	private TriggerKey recoveringTriggerKey;
+
 	/* (non-Javadoc)
 	 * @see org.quartz.JobExecutionContext#get(java.lang.Object)
 	 */
@@ -330,9 +333,25 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 		this.isRecovering = isRecovering;
 	}
 
+	public String getFireInstanceId() {
+		return fireInstanceId;
+	}
+
+	public void setFireInstanceId(String fireInstanceId) {
+		this.fireInstanceId = fireInstanceId;
+	}
+
+	public TriggerKey getRecoveringTriggerKey() {
+		return recoveringTriggerKey;
+	}
+
+	public void setRecoveringTriggerKey(TriggerKey recoveringTriggerKey) {
+		this.recoveringTriggerKey = recoveringTriggerKey;
+	}
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode()
 	{
@@ -364,6 +383,8 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 		result = prime * result
 				+ ((scheduler == null) ? 0 : scheduler.hashCode());
 		result = prime * result + ((trigger == null) ? 0 : trigger.hashCode());
+		result = prime * result + ((fireInstanceId == null) ? 0 : fireInstanceId.hashCode());
+		result = prime * result + ((recoveringTriggerKey == null) ? 0 : recoveringTriggerKey.hashCode());
 		return result;
 	}
 
@@ -451,6 +472,18 @@ public class JobExecutionContextDefaultImpl implements JobExecutionContext
 			if (other.trigger != null)
 				return false;
 		} else if (!trigger.equals(other.trigger))
+			return false;
+		if (fireInstanceId== null)
+		{
+			if (other.fireInstanceId != null)
+				return false;
+		} else if (!fireInstanceId.equals(other.fireInstanceId))
+			return false;
+		if (recoveringTriggerKey== null)
+		{
+			if (other.recoveringTriggerKey != null)
+				return false;
+		} else if (!recoveringTriggerKey.equals(other.recoveringTriggerKey))
 			return false;
 		return true;
 	}
