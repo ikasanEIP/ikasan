@@ -434,7 +434,7 @@ Ikasan components, however, your own components can be easily written and added 
    }
 ```
 So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
-```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Source Producer".
+```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
 
 Each off-the-shelf component has ```build()``` called against it which tells the builder pattern to create this instance, as does the flow.
  
@@ -603,7 +603,7 @@ org.ikasan.spec.component.transformation.TransformationException: error - bad nu
 	at java.lang.Thread.run(Thread.java:745) [na:1.8.0_111]
 ```
 In this case because we havent told the Recovery Manager to take specific action on this type of exception
-it resolves to stopping the flow in error. This stoppedInError state can also be seen on the Console.
+it resolves to stopping the flow in error. This stoppedInError state can also be seen on the Console when refreshed.
 ![Login](quickstart-images/new-project-embeddedConsole-screen13.png)
 
 Lets tell the Recovery Manager to take a different action on this exception.
@@ -753,7 +753,7 @@ In this case the subsequent classes would simply be marked as Configured.
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
 
 ## Managed Resource Component
-TOOO
+TODO
 
 ```java
 package com.ikasan.example.converter;
