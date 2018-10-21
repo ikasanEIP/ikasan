@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans  xmlns="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="
@@ -7,16 +7,29 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        ">
 
-    <bean id="h2dbCreation" depends-on="ikasan.ds" class="java.lang.Object"></bean>
+    <!--<bean id="h2dbCreation" depends-on="ikasan.ds" class="java.lang.Object"></bean>-->
 
-    <jdbc:initialize-database data-source="ikasanDatasource" >
-        <jdbc:script location="classpath:overwriteDBCreation.sql"/>
-    </jdbc:initialize-database>
+    <!--<jdbc:initialize-database data-source="ikasan.ds"  >-->
+    <!--<jdbc:script location="classpath:overwriteDBCreation.sql"/>-->
+    <!--</jdbc:initialize-database>-->
 
-    <bean id="ikasanXaDataSourceInstance" depends-on="ikasan.ds" class="org.h2.jdbcx.JdbcDataSource">
-        <property name="url" value="${datasource.url}" />
-        <property name="user" value="${datasource.username}" />
-        <property name="password" value="${datasource.password}" />
+    <bean class="org.springframework.jdbc.datasource.init.DataSourceInitializer" depends-on="errorReportingSessionFactory,wiretapHibernateSessionFactory,securitySessionFactory,exclusionEventHibernateSessionFactory" id="dataSourceInitializer2">
+        <property name="databasePopulator" ref="resourceDatabasePopulator"/>
+        <property name="dataSource" ref="ikasanDatasource"/>
+    </bean>
+    <bean id="resourceDatabasePopulator"
+          class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+        <property name="scripts">
+            <array>
+                <value>classpath:overwriteDBCreation.sql</value>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="ikasanXaDataSourceInstance" depends-on="ikasanDatasource" class="org.h2.jdbcx.JdbcDataSource">
+        <property name="url" value="${datasource.url}"/>
+        <property name="user" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
     </bean>
 
 </beans>

@@ -383,6 +383,11 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-standalone-persistence</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
 
     </dependencies>
 </project>

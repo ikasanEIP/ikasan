@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.ikasan.builder.IkasanBaseAutoConfiguration,\
+org.ikasan.web.IkasanWebAutoConfiguration,\
+org.ikasan.rest.module.IkasanRestAutoConfiguration
