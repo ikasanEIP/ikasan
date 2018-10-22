@@ -57,7 +57,6 @@ import org.springframework.web.servlet.view.JstlView;
 import javax.annotation.Resource;
 
 @Configuration
-@EnableWebMvc
 public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 {
     @Override public void configureViewResolvers(ViewResolverRegistry registry)
