@@ -52,6 +52,14 @@
     <name>Ikasan Enterprise Integration builder</name>
 
     <build>
+        <!-- used to get maven properties into pom.properties for use at runtime -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
               <plugin>
                      <groupId>org.apache.maven.plugins</groupId>

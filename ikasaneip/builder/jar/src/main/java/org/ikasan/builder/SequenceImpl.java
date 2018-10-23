@@ -66,9 +66,10 @@ public class SequenceImpl implements Sequence<Route>
 
 	public Sequence<Route> route(String name, Route sequencedRoute)
 	{
-		List<FlowElement> fes = sequencedRoute.getFlowElements();
-		fes.add(0, new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
-		this.route.addNestedRoute(sequencedRoute);
+        // create shallow copy of Route before adding SequentialOrder joining
+        Route shallowCopy = new RouteImpl(sequencedRoute);
+        shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
+		this.route.addNestedRoute(shallowCopy);
 		return new SequenceImpl(route);
 	}
 

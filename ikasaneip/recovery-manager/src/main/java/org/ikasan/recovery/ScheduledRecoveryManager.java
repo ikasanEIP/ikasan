@@ -565,7 +565,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param retryAction
      * @return Trigger
      */
-    protected Trigger newRecoveryTrigger(RetryAction retryAction) throws SchedulerException
+    protected Trigger newRecoveryTrigger(String cronExpression)
     {
         if(retryAction instanceof SimpleRetryAction)
         {
@@ -594,7 +594,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             throw new SchedulerException("retryAction must be an instance of SimpleRetryAction or ScheduledRetryAction. RetryAction instance["
                     + retryAction.getClass().getName() + "]");
         }
-
     }
 
     /**

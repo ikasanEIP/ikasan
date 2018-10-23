@@ -66,10 +66,22 @@ public class RouteImpl implements Route
         nestedRoutes = new ArrayList<Route>();
     }
 
+    RouteImpl(Route existingRoute)
+    {
+        this.flowElements = new ArrayList<>(existingRoute.getFlowElements());
+
+        this.nestedRoutes = new ArrayList<>(existingRoute.getNestedRoutes());
+    }
+
     @Override
     public void addFlowElement(FlowElement flowElement)
     {
         this.flowElements.add(flowElement);
+    }
+
+    public void addFlowElementAsFirst(FlowElement flowElement)
+    {
+        this.flowElements.add(0,flowElement);
     }
 
     @Override
