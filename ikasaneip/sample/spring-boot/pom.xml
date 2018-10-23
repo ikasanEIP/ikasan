@@ -59,6 +59,7 @@
         <module>file</module>
         <module>sftp-jms</module>
         <module>ftp-jms</module>
+        <module>exception-management</module>
     </modules>
 
 </project>
