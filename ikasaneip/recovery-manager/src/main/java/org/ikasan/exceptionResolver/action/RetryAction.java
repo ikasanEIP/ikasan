@@ -41,11 +41,11 @@
 package org.ikasan.exceptionResolver.action;
 
 /**
- * Interface for the Ikasan Exception Action.
+ * Exception Action indicating the operation should be retried
  * 
  * @author Ikasan Development Team
  */
-public interface RetryAction extends ExceptionAction
+public class RetryAction implements ExceptionAction
 {
     /**
      * indicator for an infinite retry
@@ -53,8 +53,104 @@ public interface RetryAction extends ExceptionAction
     public static final Integer RETRY_INFINITE = -1;
 
     /**
-     * Maximum retry attempts for this retry action.
-     * @return
+     * Length of time in milliseconds between retries
      */
-    public int getMaxRetries();
+    private long delay = 5000l;
+
+    /**
+     * Maximum no of times to retry
+     */
+    private int maxRetries = RETRY_INFINITE;
+
+    /**
+     * Default Constructor
+     */
+    public RetryAction()
+    {
+        // Do Nothing
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param delay - The delay in milliseconds before retrying
+     * @param maxRetries - The maximum number of retries to attempt
+     */
+    public RetryAction(long delay, int maxRetries)
+    {
+        super();
+        this.delay = delay;
+        this.maxRetries = maxRetries;
+    }
+
+    /**
+     * Accessor for delay
+     * 
+     * @return delay
+     */
+    public long getDelay()
+    {
+        return delay;
+    }
+
+    /**
+     * Mutator for delay
+     * 
+     * @param delay
+     */
+    public void setDelay(long delay)
+    {
+        this.delay = delay;
+    }
+
+    /**
+     * Accessor for maxRetries
+     * 
+     * @return maxRetries
+     */
+    public int getMaxRetries()
+    {
+        return maxRetries;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ")";
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object object)
+    {
+        if(object instanceof RetryAction)
+        {
+            // is same object type
+            RetryAction retryAction = (RetryAction) object;
+            if(this.getDelay() == retryAction.getDelay() && this.getMaxRetries() == retryAction.getMaxRetries())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * HashCode default implementation
+     * 
+     * @return int hashcode
+     */
+    @Override
+    public int hashCode()
+    {
+        int hash = 1;
+        hash = hash * 31 + this.maxRetries;
+        hash = hash * 31 + (int)this.delay;
+        return hash;
+    }
 }
