@@ -825,6 +825,8 @@ public class ScheduledRecoveryManagerTest
                 exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
                 will(returnValue (new Date()) );
                 exactly(1).of(jobDetail).getKey();
+                exactly(1).of(trigger).getKey();
+
 
                 //
                 // second time retry action is invoked
@@ -868,7 +870,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(IgnoreAction.instance()));
 
                 // is recovery job already scheduled
-                exactly(1).of(jobDetail).getKey();
+                exactly(2).of(jobDetail).getKey();
                 will(returnValue(jobKey));
                 exactly(1).of(scheduler).checkExists(jobKey);
                 will(returnValue(false));
@@ -908,7 +910,14 @@ public class ScheduledRecoveryManagerTest
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
 
-        recoveryManager.recover("componentName", exception);
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+        }
 
         Assert.assertFalse(recoveryManager.isUnrecoverable());
 
@@ -938,10 +947,6 @@ public class ScheduledRecoveryManagerTest
                 //
                 // first time retry action is invoked
                 //
-                exactly(1).of(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
 
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -952,9 +957,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
 
                 // report error
-                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, retryAction.toString());
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
-                exactly(1).of(flowInvocationContext).setErrorUri("errorUri");
 
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
@@ -978,10 +982,6 @@ public class ScheduledRecoveryManagerTest
                 //
                 // second time retry action is invoked
                 //
-                exactly(1).of(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
 
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -992,9 +992,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
 
                 // report error
-                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, retryAction.toString());
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
-                exactly(1).of(flowInvocationContext).setErrorUri("errorUri");
 
                 // stop the consumer
                 exactly(1).of(consumer).stop();
@@ -1004,19 +1003,12 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
 
                 // check we have not exceeded retry limits
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
                 exactly(4).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
 
                 //
                 // third time retry action is invoked
                 //
-                exactly(1).of(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
 
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -1025,12 +1017,8 @@ public class ScheduledRecoveryManagerTest
                 // check retryAction max retries
                 exactly(2).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-                exactly(3).of(retryAction).getFinalAction();
+                exactly(1).of(retryAction).getFinalAction();
                 will(returnValue(excludeEventAction.instance()));
-
-                exactly(4).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.EXCLUDE);
 
                 // is recovery job already scheduled
                 exactly(2).of(jobDetail).getKey();
@@ -1044,8 +1032,9 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).deleteJob(jobKey);
 
                 // report error
-                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, retryAction.toString() + "/" + excludeEventAction.toString());
+                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, retryAction.toString());
                 will(returnValue("errorUri"));
+
                 exactly(1).of(flowInvocationContext).setErrorUri("errorUri");
 
                 // add to exclusion list
@@ -1059,7 +1048,7 @@ public class ScheduledRecoveryManagerTest
 
         try
         {
-            recoveryManager.recover(flowInvocationContext, exception, flowEvent, "identifier");
+            recoveryManager.recover("componentName", exception);
         }
         catch(RuntimeException e)
         {
@@ -1071,7 +1060,7 @@ public class ScheduledRecoveryManagerTest
 
         try
         {
-            recoveryManager.recover(flowInvocationContext, exception, flowEvent, "identifier");
+            recoveryManager.recover("componentName", exception);
         }
         catch(RuntimeException e)
         {
@@ -1083,11 +1072,11 @@ public class ScheduledRecoveryManagerTest
 
         try
         {
-            recoveryManager.recover(flowInvocationContext, exception, flowEvent, "identifier");
+            recoveryManager.recover("componentName", exception);
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Exhausted maximum retries. Retry resorting to final action of ExcludeEvent for flow [flowName] module [moduleName].", e.getMessage());
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
         }
 
         Assert.assertFalse(recoveryManager.isUnrecoverable());
@@ -1352,7 +1341,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         @Override
-        protected Trigger buildTrigger(TriggerBuilder triggerBuilder)
+        protected Trigger newRecoveryTrigger(RetryAction action)
         {
             return trigger;
         }
