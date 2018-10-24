@@ -65,7 +65,6 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -109,7 +108,7 @@ public class ScheduledRecoveryManagerTest
     private final StopAction stopAction = mockery.mock(StopAction.class, "Stop");
     
     /** Mock retryAction */
-    private final SimpleRetryAction retryAction = mockery.mock(SimpleRetryAction.class, "Retry");
+    private final RetryAction retryAction = mockery.mock(RetryAction.class, "Retry");
     
     /** Mock excludeEventAction */
     private final ExcludeEventAction excludeEventAction = mockery.mock(ExcludeEventAction.class, "ExcludeEvent");
@@ -464,10 +463,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // check retryaction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(2));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -481,8 +476,12 @@ public class ScheduledRecoveryManagerTest
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
+                
+//                // so start the scheduler
+//                exactly(1).of(scheduler).start();
 
                 // create the recovery job and associated trigger
+//                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
 
@@ -490,7 +489,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(2));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(2000L));
-
+//                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
+                
                 // schedule the recovery job with its trigger
                 exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
 
@@ -542,11 +542,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(2));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -565,8 +560,11 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
+//                // so start the scheduler
+//                exactly(1).of(scheduler).start();
 
                 // create the recovery job and associated trigger
+//                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
 
@@ -574,7 +572,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(2));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(2000L));
-
+//                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
+                
                 // schedule the recovery job with its trigger
                 exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
 
@@ -631,10 +630,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -666,10 +661,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -685,6 +676,8 @@ public class ScheduledRecoveryManagerTest
                 exactly(4).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
 
+
+
                 //
                 // third time retry action is invoked
                 // 
@@ -692,12 +685,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getFinalAction();
-                will(returnValue(StopAction.instance()));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
@@ -778,321 +765,6 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_finalAction_ignore_noManagedResources() throws SchedulerException
-    {
-        final Exception exception = new Exception();
-        final long delay = 2000;
-        final int maxRetries = 2;
-        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                //
-                // first time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // for this test we are already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(jobDetail));
-
-                // create the recovery job and associated trigger
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(2).of(retryAction).getDelay();
-                will(returnValue(delay));
-
-                // schedule the recovery job with its trigger
-                exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
-                will(returnValue (new Date()) );
-                exactly(1).of(jobDetail).getKey();
-                exactly(1).of(trigger).getKey();
-
-
-                //
-                // second time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // for this test we are already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                // check we have not exceeded retry limits
-                exactly(4).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                //
-                // third time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getFinalAction();
-                will(returnValue(IgnoreAction.instance()));
-
-                // is recovery job already scheduled
-                exactly(2).of(jobDetail).getKey();
-                will(returnValue(jobKey));
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(false));
-
-                // cancelAll the recovery
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(true));
-                exactly(1).of(scheduler).deleteJob(jobKey);
-            }
-        });
-
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
-        setIsAware(recoveryManager);
-        recoveryManager.setResolver(exceptionResolver);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
-        }
-
-        Assert.assertFalse(recoveryManager.isUnrecoverable());
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test successful three consecutive retry actions with the last one
-     * exceeding the maximum attempts limit.
-     * @throws SchedulerException if the scheduler fails
-     */
-    @Test
-    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_finalAction_exclude_noManagedResources() throws SchedulerException
-    {
-        final Exception exception = new Exception();
-        final long delay = 2000;
-        final int maxRetries = 2;
-        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                //
-                // first time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // for this test we are already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(jobDetail));
-
-                // create the recovery job and associated trigger
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(2).of(retryAction).getDelay();
-                will(returnValue(delay));
-
-                // schedule the recovery job with its trigger
-                exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
-
-                //
-                // second time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // for this test we are already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                // check we have not exceeded retry limits
-                exactly(4).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
-                //
-                // third time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getFinalAction();
-                will(returnValue(excludeEventAction.instance()));
-
-                // is recovery job already scheduled
-                exactly(2).of(jobDetail).getKey();
-                will(returnValue(jobKey));
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(false));
-
-                // cancelAll the recovery
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(true));
-                exactly(1).of(scheduler).deleteJob(jobKey);
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                exactly(1).of(flowInvocationContext).setErrorUri("errorUri");
-
-                // add to exclusion list
-                exactly(1).of(exclusionService).addBlacklisted("identifier", "errorUri", flowInvocationContext);
-            }
-        });
-
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
-        setIsAware(recoveryManager);
-        recoveryManager.setResolver(exceptionResolver);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
-        }
-
-        Assert.assertFalse(recoveryManager.isUnrecoverable());
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test successful three consecutive retry actions with the last one
-     * exceeding the maximum attempts limit.
-     * @throws SchedulerException if the scheduler fails
-     */
-    @Test
     public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_withManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
@@ -1113,10 +785,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
@@ -1154,10 +822,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -1185,12 +849,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // check retryAction max retries
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getFinalAction();
-                will(returnValue(StopAction.instance()));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
@@ -1341,7 +999,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         @Override
-        protected Trigger newRecoveryTrigger(RetryAction action)
+        protected Trigger newRecoveryTrigger(long delay)
         {
             return trigger;
         }

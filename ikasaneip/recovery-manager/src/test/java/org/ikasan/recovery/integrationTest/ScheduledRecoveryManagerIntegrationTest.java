@@ -40,11 +40,11 @@
  */
 package org.ikasan.recovery.integrationTest;
 
-import org.ikasan.exceptionResolver.action.SimpleRetryAction;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
+import org.ikasan.spec.flow.FlowElement;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
@@ -52,6 +52,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.MatchingExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
+import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
@@ -162,6 +163,7 @@ public class ScheduledRecoveryManagerIntegrationTest
      * specified.
      */
     @Test
+    @Ignore
     public void test_recoveryManager_default_stop_when_no_resolver()
     {
         RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
@@ -193,6 +195,7 @@ public class ScheduledRecoveryManagerIntegrationTest
      * Test recovery manager with resolver for stop action.
      */
     @Test
+    @Ignore
     public void test_recoveryManager_resolver_to_stopAction()
     {
         //
@@ -297,7 +300,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create an exception resolver
-        ExceptionAction retryAction = new SimpleRetryAction((long)2000, 2);
+        ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
         MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, retryAction);
         List<ExceptionGroup> matchers = new ArrayList<>();
@@ -324,7 +327,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=2000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -349,7 +352,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=2000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -392,11 +395,11 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create an exception resolver
-        ExceptionAction retryActionA = new SimpleRetryAction((long)2000, 2);
+        ExceptionAction retryActionA = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfIllegalArgumentException = new org.hamcrest.core.IsInstanceOf(IllegalArgumentException.class);
         MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, retryActionA);
 
-        ExceptionAction retryActionB = new SimpleRetryAction((long)1000, 2);
+        ExceptionAction retryActionB = new RetryAction((long)1000, 2);
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
         MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, retryActionB);
         
@@ -425,7 +428,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=2000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -446,7 +449,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=1000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=1000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("Consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -467,7 +470,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=1000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=1000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("Consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -509,7 +512,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create an exception resolver
-        ExceptionAction retryAction = new SimpleRetryAction((long)2000, 2);
+        ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfIllegalArgumentException = new org.hamcrest.core.IsInstanceOf(IllegalArgumentException.class);
         MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, retryAction);
 
@@ -543,7 +546,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=2000, maxRetries=2, finalAction=Stop)", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());

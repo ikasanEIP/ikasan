@@ -44,7 +44,7 @@ import org.ikasan.exceptionResolver.action.*;
 
 /**
  * Helper for Exception Actions.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class OnException
@@ -83,7 +83,7 @@ public class OnException
      */
     public static ExceptionAction retryIndefinitely(long delay)
     {
-        SimpleRetryAction retryAction = new SimpleRetryAction();
+        RetryAction retryAction = new RetryAction();
         retryAction.setDelay(delay);
         return retryAction;
     }
@@ -94,7 +94,7 @@ public class OnException
      */
     public static ExceptionAction retryIndefinitely()
     {
-        return new SimpleRetryAction();
+        return new RetryAction();
     }
 
     /**
@@ -105,17 +105,7 @@ public class OnException
      */
     public static ExceptionAction retry(long delay, int maxRetries)
     {
-        return new SimpleRetryAction(delay, maxRetries);
-    }
-
-    public static ExceptionAction retry(long delay, int maxRetries, IgnoreAction finalAction)
-    {
-        return new SimpleRetryAction(delay, maxRetries, finalAction);
-    }
-
-    public static ExceptionAction retry(long delay, int maxRetries, ExcludeEventAction finalAction)
-    {
-        return new SimpleRetryAction(delay, maxRetries, finalAction);
+        return new RetryAction(delay, maxRetries);
     }
 
     /**

@@ -45,8 +45,13 @@ package org.ikasan.exceptionResolver.action;
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalAction, RetryAction
+public class ScheduledRetryAction implements ExceptionAction
 {
+    /**
+     * indicator for an infinite retry
+     */
+    public static final Integer RETRY_INFINITE = -1;
+
     /**
      * cron expression
      */
@@ -56,11 +61,6 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
      * Maximum no of times to retry
      */
     private int maxRetries = RETRY_INFINITE;
-
-    /**
-     * final action if we hit max retries
-     */
-    private ExceptionAction finalAction = StopAction.instance();
 
     /**
      * Default Constructor
@@ -83,21 +83,6 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
         this.maxRetries = maxRetries;
     }
 
-    /**
-     * Constructor
-     *
-     * @param cronExpression - cron expression for the retry
-     * @param maxRetries - The maximum number of retries to attempt
-     * @param finalAction - final action to take when we exhaust the max retries
-     */
-    public ScheduledRetryAction(String cronExpression, int maxRetries, ExceptionAction finalAction)
-    {
-        super();
-        this.cronExpression = cronExpression;
-        this.maxRetries = maxRetries;
-        this.finalAction = finalAction;
-    }
-
     public String getCronExpression() {
         return cronExpression;
     }
@@ -117,15 +102,9 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
     }
 
     @Override
-    public ExceptionAction getFinalAction()
-    {
-        return this.finalAction;
-    }
-
-    @Override
     public String toString()
     {
-        return "ScheduledRetry (cronExpression=" + cronExpression + ", maxRetries=" + maxRetries + ", finalAction=" + finalAction + ")";
+        return "ScheduledRetry (cronExpression=" + cronExpression + ", maxRetries=" + maxRetries + ")";
     }
     
     /*
@@ -140,7 +119,7 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
         {
             // is same object type
             ScheduledRetryAction retryAction = (ScheduledRetryAction) object;
-            if(this.getCronExpression() == retryAction.getCronExpression() && this.getMaxRetries() == retryAction.getMaxRetries() && this.getFinalAction().equals(retryAction.getFinalAction()))
+            if(this.getCronExpression() == retryAction.getCronExpression() && this.getMaxRetries() == retryAction.getMaxRetries())
             {
                 return true;
             }
@@ -160,7 +139,6 @@ public class ScheduledRetryAction implements ExceptionAction, HasAlternateFinalA
         int hash = 1;
         hash = hash * 31 + this.maxRetries;
         hash = hash * 31 + this.cronExpression.hashCode();
-        hash = hash * 31 + this.finalAction.hashCode();
         return hash;
     }
 }
