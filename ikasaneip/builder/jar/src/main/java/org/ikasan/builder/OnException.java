@@ -113,11 +113,6 @@ public class OnException
         return new SimpleRetryAction(delay, maxRetries, finalAction);
     }
 
-    public static ExceptionAction retry(long delay, int maxRetries, RetryAction finalAction)
-    {
-        return new SimpleRetryAction(delay, maxRetries, finalAction);
-    }
-
     public static ExceptionAction retry(long delay, int maxRetries, ExcludeEventAction finalAction)
     {
         return new SimpleRetryAction(delay, maxRetries, finalAction);
