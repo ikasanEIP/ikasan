@@ -38,23 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
-
-import org.ikasan.builder.component.Builder;
-
-import org.ikasan.component.endpoint.consumer.TechEndpoint;
-import org.ikasan.component.endpoint.consumer.TechEndpointEventProvider;
-import org.ikasan.spec.component.endpoint.Consumer;
+package org.ikasan.component.endpoint.consumer.event;
 
 /**
- * Contract for a default event generating consumer builder.
+ * Contract for a repeat event.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
+public interface APIRepeatEvent extends APIEvent
 {
-    EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint);
-    EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider);
-    EventGeneratingConsumerBuilder repeatProvider(int repeatTimes);
-}
+    /** allow for infinite repeats */
+    int INFINITE = -1;
 
+    /**
+     * Get the number of repeat times.
+     * @return
+     */
+    int getRepeat();
+}

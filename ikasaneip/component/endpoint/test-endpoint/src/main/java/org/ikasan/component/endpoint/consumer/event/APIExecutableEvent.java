@@ -38,32 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
-
-import org.ikasan.spec.event.ExceptionListener;
-import org.ikasan.spec.event.MessageListener;
+package org.ikasan.component.endpoint.consumer.event;
 
 /**
- * Contract for a message generator.
+ * Contract for an executable event.
  *
  * @author Ikasan Development Team
  */
-public interface MessageGenerator extends Runnable
+public interface APIExecutableEvent extends APIEvent
 {
     /**
-     * Set the listener for the message generator.
-     * @param messageListener
+     * Call execute on the event.
      */
-    public void setMessageListener(MessageListener messageListener);
-
-    /**
-     * Set the listener for any exceptions.
-     * @param exceptionListener
-     */
-    public void setExceptionListener(ExceptionListener exceptionListener);
-
-    /**
-     * Set the listener for any exceptions.
-     */
-    public void stop();
+    void execute();
 }

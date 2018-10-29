@@ -38,50 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
-
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.FlowEvent;
+package org.ikasan.component.endpoint.consumer;
 
 /**
- * This abstract consumer provides a convenience base for any standard consumer extending classes.
+ * Contract for the TechEndpointProviderBuilder to set specific events to
+ * send in the build of the TechEndpointProvider.
  * 
  * @author Ikasan Development Team
  */
-public abstract class AbstractConsumer
-    implements Consumer<EventListener, EventFactory>
+public interface SendMessage
 {
-    /** consumer event factory */
-    protected EventFactory<FlowEvent<?,?>> flowEventFactory;
-
-    /** consumer event listener */
-    protected EventListener eventListener;
+    /**
+     * Send a message event.
+     * The lifeIdentifier will simply be a hash of the message.
+     * @param message
+     * @param <M>
+     * @return
+     */
+    <M> TechEndpointProviderBuilder messageEvent(M message);
 
     /**
-     * Setter for eventFactory
-     * @param flowEventFactory
+     * Send a message event with a specific lifeIdentifier.
+     * @param lifeIdentifier
+     * @param message
+     * @param <I>
+     * @param <M>
+     * @return
      */
-    public void setEventFactory(EventFactory flowEventFactory)
-    {
-    	this.flowEventFactory = flowEventFactory;
-    }
-    
-    /**
-     * Set the consumer event listener
-     * @param eventListener
-     */
-    public void setListener(EventListener eventListener)
-    {
-        this.eventListener = eventListener;
-    }
+    <I,M> TechEndpointProviderBuilder messageEvent(I lifeIdentifier, M message);
 
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
+    /**
+     * Send an exception.
+     * @param exception
+     * @param <T>
+     * @return
      */
-    public EventFactory getEventFactory()
-    {
-        return this.flowEventFactory;
-    }
+    <T> TechEndpointProviderBuilder exceptionEvent(T exception);
+
+    /**
+     * Invoke an interval (wait) for the given interval period.
+     * @param interval
+     * @return
+     */
+    TechEndpointProviderBuilder interval(long interval);
 }
