@@ -38,8 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
+package org.ikasan.component.endpoint.consumer;
 
+import org.ikasan.component.endpoint.consumer.event.APIMessageEvent;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ExceptionListener;
@@ -59,7 +60,8 @@ import java.util.concurrent.Future;
  * @author Ikasan Development Team
  */
 public class EventGeneratingConsumer extends AbstractConsumer
-    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<String>, MessageListener<String>, ExceptionListener<Throwable>
+    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<APIMessageEvent>, MessageListener<APIMessageEvent>,
+        ExceptionListener<Throwable>
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
@@ -68,7 +70,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
     private ExecutorService executorService;
 
     /** handle to the future thread */
-    private Future eventGeneratorThread;
+    private Future apiTechThread;
 
     /** configuredResourceId */
     private String configuredResourceId;
@@ -77,16 +79,16 @@ public class EventGeneratingConsumer extends AbstractConsumer
     private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
 
     /** provider of messages */
-    private MessageGenerator messageGenerator;
+    TechEndpoint techEndpoint;
 
     /** resubmission event factory */
     private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
     /**
      * Constructor
-     * @param messageGenerator
+     * @param techEndpoint
      */
-    public EventGeneratingConsumer(ExecutorService executorService, MessageGenerator messageGenerator)
+    public EventGeneratingConsumer(ExecutorService executorService, TechEndpoint techEndpoint)
     {
         this.executorService = executorService;
         if(executorService == null)
@@ -94,10 +96,10 @@ public class EventGeneratingConsumer extends AbstractConsumer
             throw new IllegalArgumentException("executorService cannot be 'null'");
         }
 
-        this.messageGenerator = messageGenerator;
-        if(messageGenerator == null)
+        this.techEndpoint = techEndpoint;
+        if(techEndpoint == null)
         {
-            throw new IllegalArgumentException("messageGenerator cannot be 'null'");
+            throw new IllegalArgumentException("apiTech cannot be 'null'");
         }
     }
 
@@ -106,7 +108,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
      */
     public void start()
     {
-        eventGeneratorThread = this.executorService.submit( messageGenerator );
+        apiTechThread = this.executorService.submit(techEndpoint);
     }
 
     /**
@@ -116,8 +118,8 @@ public class EventGeneratingConsumer extends AbstractConsumer
     {
         if(this.isRunning())
         {
-            messageGenerator.stop();
-            this.eventGeneratorThread.cancel(true);
+            techEndpoint.stop();
+            this.apiTechThread.cancel(true);
         }
     }
 
@@ -127,7 +129,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
      */
     public boolean isRunning()
     {
-        if(this.eventGeneratorThread == null || this.eventGeneratorThread.isCancelled() || this.eventGeneratorThread.isDone()) {return false;}
+        if(this.apiTechThread == null || this.apiTechThread.isCancelled() || this.apiTechThread.isDone()) {return false;}
         return true;
     }
 
@@ -156,9 +158,9 @@ public class EventGeneratingConsumer extends AbstractConsumer
     public void setConfiguration(EventGeneratingConsumerConfiguration consumerConfiguration)
     {
         this.consumerConfiguration = consumerConfiguration;
-        if(messageGenerator instanceof Configured)
+        if(techEndpoint instanceof Configured)
         {
-            ((Configured)messageGenerator).setConfiguration(consumerConfiguration);
+            ((Configured) techEndpoint).setConfiguration(consumerConfiguration);
         }
     }
 
@@ -172,9 +174,9 @@ public class EventGeneratingConsumer extends AbstractConsumer
     }
 
     @Override
-    public void onResubmission(String message)
+    public void onResubmission(APIMessageEvent apiMessageEvent)
     {
-        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent( flowEventFactory.newEvent(message.toString(), message) );
+        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent( flowEventFactory.newEvent(apiMessageEvent.getLifeIdentifer(), apiMessageEvent.getPayload()) );
         this.eventListener.invoke(resubmission);
     }
 
@@ -185,9 +187,9 @@ public class EventGeneratingConsumer extends AbstractConsumer
     }
 
     @Override
-    public void onMessage(String message)
+    public void onMessage(APIMessageEvent apiMessageEvent)
     {
-        eventListener.invoke( flowEventFactory.newEvent(message.toString(), message) );
+        eventListener.invoke( flowEventFactory.newEvent(apiMessageEvent.getLifeIdentifer(), apiMessageEvent.getPayload()) );
     }
 
     @Override

@@ -48,9 +48,6 @@ import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
-import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
-import org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -61,12 +58,13 @@ import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.transaction.TransactionManager;
-import java.util.concurrent.Executors;
 
 /**
  * A simple Component builder.
@@ -75,6 +73,9 @@ import java.util.concurrent.Executors;
  */
 public class ComponentBuilder
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ComponentBuilder.class);
+
     /** handle to spring context */
     ApplicationContext applicationContext;
 
@@ -267,9 +268,14 @@ public class ComponentBuilder
      */
     public EventGeneratingConsumerBuilder eventGeneratingConsumer()
     {
-        MessageGenerator messageGenerator = new SimpleMessageGenerator();
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(Executors.newSingleThreadExecutor(), messageGenerator);
-        return new EventGeneratingConsumerBuilderImpl( messageGenerator, eventGeneratingConsumer, this.applicationContext.getBean(AopProxyProvider.class) );
+        try
+        {
+            return new EventGeneratingConsumerBuilderImpl(this.applicationContext.getBean(AopProxyProvider.class) );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include ikasan-test-component!", e);
+        }
     }
 
 }

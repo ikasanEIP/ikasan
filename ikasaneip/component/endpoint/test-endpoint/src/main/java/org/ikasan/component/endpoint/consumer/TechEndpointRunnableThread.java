@@ -38,8 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
+package org.ikasan.component.endpoint.consumer;
 
+import org.ikasan.component.endpoint.consumer.event.APIExecutableEvent;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -52,10 +53,10 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ikasan Development Team
  */
-public class SimpleMessageGenerator implements MessageGenerator, Configured<EventGeneratingConsumerConfiguration>
+public class TechEndpointRunnableThread implements TechEndpoint, Configured<EventGeneratingConsumerConfiguration>
 {
     /** Logger instance */
-    private static Logger logger = LoggerFactory.getLogger(SimpleMessageGenerator.class);
+    private static Logger logger = LoggerFactory.getLogger(TechEndpointRunnableThread.class);
 
     /** configuration */
     private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
@@ -69,6 +70,8 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
     /** control the thread execution */
     private volatile boolean running;
 
+    protected TechEndpointEventProvider<APIExecutableEvent> techEndpointEventProvider;
+
     public void run()
     {
         setRunning(true);
@@ -78,31 +81,33 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
             throw new IllegalStateException("messageListener cannot be 'null");
         }
 
-        while(isRunning())
+        if(exceptionListener == null)
+        {
+            throw new IllegalStateException("exceptionListener cannot be 'null");
+        }
+
+        try
         {
             execute();
         }
+        catch(Throwable t)
+        {
+            logger.error(t.getMessage(), t);
+        }
     }
 
-    public void execute()
+    private void execute()
     {
-        long count = 0;
-        while(consumerConfiguration.getMaxEventLimit() == 0 || consumerConfiguration.getMaxEventLimit() > count)
+        APIExecutableEvent apiEvent = null;
+        while(isRunning() && (apiEvent = techEndpointEventProvider.consumeEvent()) != null)
         {
             try
             {
-                count++;
-                this.messageListener.onMessage( "Message " + count );
-                if(consumerConfiguration.getEventGenerationInterval() > 0 && count % consumerConfiguration.getEventsPerInterval() == 0)
-                {
-                    sleep();
-                }
+                apiEvent.execute();
             }
             catch (ForceTransactionRollbackException thrownByRecoveryManager)
             {
-                // rollback the count
-                count--;
-                logger.debug("Rolling back the count to [" + count +"]", thrownByRecoveryManager);
+                techEndpointEventProvider.rollback();
             }
             catch (Throwable throwable)
             {
@@ -111,27 +116,14 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
                     throw throwable;
                 }
 
+
                 this.exceptionListener.onException(throwable);
             }
-
-            if( !isRunning() )
-            {
-                break;
-            }
         }
 
-        logger.info("eventGenerator stopped. EventLimit [" + consumerConfiguration.getMaxEventLimit() + "]");
-    }
-
-    private void sleep()
-    {
-        try
+        if(apiEvent == null)
         {
-            Thread.sleep(consumerConfiguration.getEventGenerationInterval());
-        }
-        catch(InterruptedException e)
-        {
-            logger.debug(e.getMessage(), e);
+            logger.info("EventGenerator stopped, no more events." );
         }
     }
 
@@ -157,6 +149,12 @@ public class SimpleMessageGenerator implements MessageGenerator, Configured<Even
     public void setExceptionListener(ExceptionListener exceptionListener)
     {
         this.exceptionListener = exceptionListener;
+    }
+
+    @Override
+    public void setTechEndpointEventProvider(TechEndpointEventProvider techEndpointEventProvider)
+    {
+        this.techEndpointEventProvider = techEndpointEventProvider;
     }
 
     @Override

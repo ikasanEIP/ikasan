@@ -38,23 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
+package org.ikasan.component.endpoint.consumer;
 
-import org.ikasan.builder.component.Builder;
-
-import org.ikasan.component.endpoint.consumer.TechEndpoint;
-import org.ikasan.component.endpoint.consumer.TechEndpointEventProvider;
-import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.MessageListener;
 
 /**
- * Contract for a default event generating consumer builder.
+ * Contract for the tech endpoint providing events to the consumer.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
+public interface TechEndpoint extends Runnable
 {
-    EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint);
-    EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider);
-    EventGeneratingConsumerBuilder repeatProvider(int repeatTimes);
-}
+    /**
+     * Set the message listener.
+     * @param messageListener
+     */
+    void setMessageListener(MessageListener messageListener);
 
+    /**
+     * Set the exception listener.
+     * @param exceptionListener
+     */
+    void setExceptionListener(ExceptionListener exceptionListener);
+
+    /**
+     * Set the techEndpointEventProvider.
+     * @param techEndpointEventProvider
+     */
+    void setTechEndpointEventProvider(TechEndpointEventProvider techEndpointEventProvider);
+
+    /**
+     * Stop the tech endpoint.
+     */
+    void stop();
+}

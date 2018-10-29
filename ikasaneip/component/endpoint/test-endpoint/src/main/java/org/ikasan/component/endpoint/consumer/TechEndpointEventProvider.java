@@ -38,23 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
+package org.ikasan.component.endpoint.consumer;
 
-import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.consumer.event.TechEndpointEventFactoryImpl;
 
-import org.ikasan.component.endpoint.consumer.TechEndpoint;
-import org.ikasan.component.endpoint.consumer.TechEndpointEventProvider;
-import org.ikasan.spec.component.endpoint.Consumer;
+import java.util.List;
 
 /**
- * Contract for a default event generating consumer builder.
+ * Contract for the tech endpoint event provider.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
+public interface TechEndpointEventProvider<E>
 {
-    EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint);
-    EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider);
-    EventGeneratingConsumerBuilder repeatProvider(int repeatTimes);
-}
+    static SendMessage with()
+    {
+        return new DefaultTechEndpointEventProviderImpl(new TechEndpointEventFactoryImpl());
+    }
 
+    /**
+     * Consume the next event
+     * @return
+     */
+    E consumeEvent();
+
+    /**
+     * Get all events from this provider
+     * @return
+     */
+    List<E> getEvents();
+
+    /**
+     * Rollback the current event being consumed if a message event.
+     */
+    void rollback();
+}
