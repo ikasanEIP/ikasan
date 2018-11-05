@@ -40,16 +40,13 @@
  */
 package org.ikasan.component.endpoint.consumer;
 
-import org.ikasan.component.endpoint.consumer.event.APIMessageEvent;
-import org.ikasan.spec.configuration.Configured;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.component.endpoint.consumer.api.TechEndpoint;
+import org.ikasan.component.endpoint.consumer.api.event.APIMessageEvent;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -60,23 +57,14 @@ import java.util.concurrent.Future;
  * @author Ikasan Development Team
  */
 public class EventGeneratingConsumer extends AbstractConsumer
-    implements ConfiguredResource<EventGeneratingConsumerConfiguration>, ResubmissionService<APIMessageEvent>, MessageListener<APIMessageEvent>,
+    implements ResubmissionService<APIMessageEvent>, MessageListener<APIMessageEvent>,
         ExceptionListener<Throwable>
 {
-    /** Logger instance */
-    private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
-
     /** allow techEndpoint to execute in a separate thread */
     private ExecutorService executorService;
 
     /** handle to the future thread */
     private Future apiTechThread;
-
-    /** configuredResourceId */
-    private String configuredResourceId;
-
-    /** configuration */
-    private EventGeneratingConsumerConfiguration consumerConfiguration = new EventGeneratingConsumerConfiguration();
 
     /** provider of messages */
     TechEndpoint techEndpoint;
@@ -131,46 +119,6 @@ public class EventGeneratingConsumer extends AbstractConsumer
     {
         if(this.apiTechThread == null || this.apiTechThread.isCancelled() || this.apiTechThread.isDone()) {return false;}
         return true;
-    }
-
-    /**
-     * Getter for configuration
-     * @return
-     */
-    public EventGeneratingConsumerConfiguration getConfiguration()
-    {
-        return consumerConfiguration;
-    }
-
-    /**
-     * Getter for configured resourceId
-     * @return
-     */
-    public String getConfiguredResourceId()
-    {
-        return this.configuredResourceId;
-    }
-
-    /**
-     * Setter for configuration
-     * @param consumerConfiguration
-     */
-    public void setConfiguration(EventGeneratingConsumerConfiguration consumerConfiguration)
-    {
-        this.consumerConfiguration = consumerConfiguration;
-        if(techEndpoint instanceof Configured)
-        {
-            ((Configured) techEndpoint).setConfiguration(consumerConfiguration);
-        }
-    }
-
-    /**
-     * Setter for configured resource Id
-     * @param configuredResourceId
-     */
-    public void setConfiguredResourceId(String configuredResourceId)
-    {
-        this.configuredResourceId = configuredResourceId;
     }
 
     @Override

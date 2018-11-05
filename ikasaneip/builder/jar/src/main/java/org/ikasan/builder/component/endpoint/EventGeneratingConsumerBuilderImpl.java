@@ -42,9 +42,9 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.consumer.*;
-import org.ikasan.component.endpoint.consumer.event.TechEndpointExecutableEventFactoryImpl;
+import org.ikasan.component.endpoint.consumer.api.*;
+import org.ikasan.component.endpoint.consumer.api.event.TechEndpointExecutableEventFactoryImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
 
@@ -66,9 +66,6 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
 
     // API tech endpoint
     private TechEndpoint techEndpoint;
-
-    String configuredResourceId;
-    EventGeneratingConsumerConfiguration eventGeneratingConsumerConfiguration;
 
     /**
      * Constructor
@@ -125,9 +122,6 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
 
         techEndpoint.setTechEndpointEventProvider( new TechEndpointMultipleEventProvidersImpl(executableProviders) );
 
-        ((ConfiguredResource)eventGeneratingConsumer).setConfiguration(eventGeneratingConsumerConfiguration);
-        ((ConfiguredResource)eventGeneratingConsumer).setConfiguredResourceId(configuredResourceId);
-
         return eventGeneratingConsumer;
     }
 
@@ -138,9 +132,30 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
     }
 
     @Override
+    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
+    {
+        this.techEndpointEventProviders.clear();
+        this.techEndpointEventProviders.add(techEndpointEventProvider);
+        return this;
+    }
+
+    @Override
+    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
+    {
+        return this.setTechEventProvider(techEndpointProviderBuilder.build());
+    }
+
+    @Override
     public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
     {
         this.techEndpointEventProviders.add(techEndpointEventProvider);
+        return this;
+    }
+
+    @Override
+    public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
+    {
+        this.withTechEventProvider(techEndpointProviderBuilder.build());
         return this;
     }
 
@@ -156,7 +171,7 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
 
         for(int count=0; count<repeatTimes; count++)
         {
-            this.techEndpointEventProviders.add(techEndpointEventProvider);
+            this.techEndpointEventProviders.add( techEndpointEventProvider.clone() );
         }
 
         return this;
