@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.Builder;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -77,10 +78,20 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder converter(String name, Builder<Converter> converterBuilder)
+	{
+		return this.converter(name, converterBuilder.build());
+	}
+
 	public RouteBuilder translator(String name, Translator translator)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
 		return this;
+	}
+
+	public RouteBuilder translator(String name, Builder<Translator> translatorBuilder)
+	{
+		return this.translator(name, translatorBuilder.build());
 	}
 
 	public RouteBuilder translator(String name, Translator translator, TranslatorInvokerConfiguration translatorInvokerConfiguration)
@@ -91,10 +102,20 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder translator(String name, Builder<Translator> translatorBuilder, TranslatorInvokerConfiguration translatorInvokerConfiguration)
+	{
+		return this.translator(name, translatorBuilder.build(), translatorInvokerConfiguration);
+	}
+
 	public RouteBuilder splitter(String name, Splitter splitter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
 		return this;
+	}
+
+	public RouteBuilder splitter(String name, Builder<Splitter> splitterBuilder)
+	{
+		return this.splitter(name, splitterBuilder.build());
 	}
 
 	public RouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
@@ -105,10 +126,20 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder splitter(String name, Builder<Splitter> splitterBuilder, SplitterInvokerConfiguration splitterInvokerConfiguration)
+	{
+		return this.splitter(name, splitterBuilder.build(), splitterInvokerConfiguration);
+	}
+
 	public RouteBuilder filter(String name, Filter filter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
 		return this;
+	}
+
+	public RouteBuilder filter(String name, Builder<Filter> filterBuilder)
+	{
+		return this.filter(name, filterBuilder.build());
 	}
 
 	public RouteBuilder filter(String name, Filter filter, FilterInvokerConfiguration filterInvokerConfiguration)
@@ -119,10 +150,20 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder filter(String name, Builder<Filter> filterBuilder, FilterInvokerConfiguration filterInvokerConfiguration)
+	{
+		return this.filter(name, filterBuilder.build(), filterInvokerConfiguration);
+	}
+
 	public Sequence<Route> sequencer(String name, Sequencer sequencer)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
 		return new SequenceImpl(route);
+	}
+
+	public Sequence<Route> sequencer(String name, Builder<Sequencer> sequencerBuilder)
+	{
+		return this.sequencer(name, sequencerBuilder.build());
 	}
 
 	public RouteBuilder broker(String name, Broker broker)
@@ -131,16 +172,31 @@ public class RouteBuilder
 		return this;
 	}
 
+	public RouteBuilder broker(String name, Builder<Broker> brokerBuilder)
+	{
+		return this.broker(name, brokerBuilder.build());
+	}
+
 	public Evaluation<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
 		return new EvaluationImpl(route);
 	}
 
+	public Evaluation<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
+	{
+		return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build());
+	}
+
 	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
 		return new EvaluationImpl(route);
+	}
+
+	public Evaluation<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder)
+	{
+		return this.multiRecipientRouter(name, multiRecipientRouterBuilder);
 	}
 
 	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
@@ -150,10 +206,19 @@ public class RouteBuilder
 		return new EvaluationImpl(route);
 	}
 
+	public Evaluation<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+	{
+		return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfiguration);
+	}
+
 	public Route producer(String name, Producer producer)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
 		return this.route;
 	}
 
+	public Route producer(String name, Builder<Producer> producerBuilder)
+	{
+		return this.producer(name, producerBuilder.build());
+	}
 }
