@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.Builder;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.builder.sequential.SequenceName;
@@ -465,6 +466,18 @@ public class FlowBuilder implements ApplicationContextAware
      * Add a consumer
      *
      * @param name
+     * @param consumerBuilder
+     * @return
+     */
+    public PrimaryRouteBuilder consumer(String name, Builder<Consumer> consumerBuilder)
+    {
+        return consumer(name, consumerBuilder.build());
+    }
+
+    /**
+     * Add a consumer
+     *
+     * @param name
      * @param consumer
      * @return
      */
@@ -853,9 +866,20 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
-        public PrimaryRouteBuilder translator(String name, Translator translator) {
+        public PrimaryRouteBuilder converter(String name, Builder<Converter> converterBuilder)
+        {
+            return this.converter(name, converterBuilder.build());
+        }
+
+        public PrimaryRouteBuilder translator(String name, Translator translator)
+        {
             this.route.addFlowElement(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
             return this;
+        }
+
+        public PrimaryRouteBuilder translator(String name, Builder<Translator> translatorBuilder)
+        {
+            return this.translator(name, translatorBuilder.build());
         }
 
         public PrimaryRouteBuilder translator(String name, Translator translator, TranslatorInvokerConfiguration translatorInvokerConfiguration)
@@ -866,10 +890,20 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder translator(String name, Builder<Translator> translatorBuilder, TranslatorInvokerConfiguration translatorInvokerConfiguration)
+        {
+            return this.translator(name, translatorBuilder.build(), translatorInvokerConfiguration);
+        }
+
         public PrimaryRouteBuilder splitter(String name, Splitter splitter)
         {
             this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
             return this;
+        }
+
+        public PrimaryRouteBuilder splitter(String name, Builder<Splitter> splitterBuilder)
+        {
+            return this.splitter(name, splitterBuilder.build());
         }
 
         public PrimaryRouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
@@ -880,10 +914,20 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder splitter(String name, Builder<Splitter> splitterBuilder, SplitterInvokerConfiguration splitterInvokerConfiguration)
+        {
+            return this.splitter(name, splitterBuilder.build(), splitterInvokerConfiguration);
+        }
+
         public PrimaryRouteBuilder filter(String name, Filter filter)
         {
             this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
             return this;
+        }
+
+        public PrimaryRouteBuilder filter(String name, Builder<Filter> filterBuilder)
+        {
+            return this.filter(name, filterBuilder.build());
         }
 
         public PrimaryRouteBuilder filter(String name, Filter filter, FilterInvokerConfiguration filterInvokerConfiguration)
@@ -894,9 +938,19 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder filter(String name, Builder<Filter> filterBuilder, FilterInvokerConfiguration filterInvokerConfiguration)
+        {
+            return this.filter(name, filterBuilder.build(), filterInvokerConfiguration);
+        }
+
         public Sequence<Flow> sequencer(String name, Sequencer sequencer) {
             this.route.addFlowElement(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
             return new PrimarySequenceImpl(route);
+        }
+
+        public Sequence<Flow> sequencer(String name, Builder<Sequencer> sequencerBuilder)
+        {
+            return this.sequencer(name, sequencerBuilder.build());
         }
 
         public PrimaryRouteBuilder broker(String name, Broker broker) {
@@ -904,14 +958,27 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder broker(String name, Builder<Broker> brokerBuilder)
+        {
+            return this.broker(name, brokerBuilder.build());
+        }
+
         public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter) {
             this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
             return new PrimaryEvaluationImpl(route);
         }
 
+        public Evaluation<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder) {
+            return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build());
+        }
+
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
             this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
             return new PrimaryEvaluationImpl(route);
+        }
+
+        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder) {
+            return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build());
         }
 
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
@@ -921,9 +988,18 @@ public class FlowBuilder implements ApplicationContextAware
             return new PrimaryEvaluationImpl(route);
         }
 
+        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration) {
+            return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfiguration);
+        }
+
         public Endpoint<Flow> producer(String name, Producer producer) {
             this.route.addFlowElement(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
             return new EndpointImpl();
+        }
+
+        public Endpoint<Flow> producer(String name, Builder<Producer> producerBuilder)
+        {
+            return producer(name, producerBuilder.build());
         }
 
         class EndpointImpl implements Endpoint<Flow>

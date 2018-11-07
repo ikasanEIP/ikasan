@@ -41,13 +41,16 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
-import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumerConfiguration;
-import org.ikasan.component.endpoint.util.consumer.MessageGenerator;
+import org.ikasan.component.endpoint.consumer.*;
+import org.ikasan.component.endpoint.consumer.api.*;
+import org.ikasan.component.endpoint.consumer.api.event.TechEndpointExecutableEventFactoryImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * Ikasan provided event generating consumer builder implementation.
@@ -56,35 +59,20 @@ import org.ikasan.spec.event.MessageListener;
  */
 public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsumerBuilder
 {
-    // message generator tech
-    private MessageGenerator messageGenerator;
-
     // aop point cut proxy
     private AopProxyProvider aopProxyProvider;
 
-    // Consumer
-    private EventGeneratingConsumer eventGeneratingConsumer;
+    private List<TechEndpointEventProvider> techEndpointEventProviders = new ArrayList<TechEndpointEventProvider>();
+
+    // API tech endpoint
+    private TechEndpoint techEndpoint;
 
     /**
      * Constructor
-     * @param messageGenerator
-     * @param eventGeneratingConsumer
      * @param aopProxyProvider
      */
-    public EventGeneratingConsumerBuilderImpl(MessageGenerator messageGenerator, EventGeneratingConsumer eventGeneratingConsumer, AopProxyProvider aopProxyProvider)
+    public EventGeneratingConsumerBuilderImpl(AopProxyProvider aopProxyProvider)
     {
-        this.messageGenerator = messageGenerator;
-        if(messageGenerator == null)
-        {
-            throw new IllegalArgumentException("messageGenerator cannot be 'null'");
-        }
-
-        this.eventGeneratingConsumer = eventGeneratingConsumer;
-        if(eventGeneratingConsumer == null)
-        {
-            throw new IllegalArgumentException("eventGeneratingConsumer cannot be 'null'");
-        }
-
         this.aopProxyProvider = aopProxyProvider;
         if(aopProxyProvider == null)
         {
@@ -98,53 +86,104 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
      */
     public Consumer build()
     {
-        MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventGeneratingConsumer", eventGeneratingConsumer);
-        messageGenerator.setMessageListener(messageListener);
+        // default tech endpoint if not provided
+        if(techEndpoint == null)
+        {
+            this.techEndpoint = new TechEndpointRunnableThread();
+        }
 
+        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(Executors.newSingleThreadExecutor(), techEndpoint);
+        MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventGeneratingConsumer", eventGeneratingConsumer);
+        techEndpoint.setMessageListener(messageListener);
+
+        if(this.techEndpointEventProviders.isEmpty())
+        {
+            this.techEndpointEventProviders.add( getDefaultTechEndpointProvider() );
+        }
+
+        TechEndpointEventFactory eventFactory;
         if(messageListener instanceof ExceptionListener)
         {
-            messageGenerator.setExceptionListener( (ExceptionListener)messageListener );
+            eventFactory = new TechEndpointExecutableEventFactoryImpl(messageListener, (ExceptionListener)messageListener);
+            techEndpoint.setExceptionListener( (ExceptionListener)messageListener );
         }
+        else
+        {
+            eventFactory = new TechEndpointExecutableEventFactoryImpl(messageListener, null);
+        }
+
+        //
+        List<TechEndpointEventProvider> executableProviders =
+                new ArrayList<TechEndpointEventProvider>( this.techEndpointEventProviders.size() );
+        for(TechEndpointEventProvider techEndpointEventProvider:this.techEndpointEventProviders)
+        {
+            executableProviders.add( new DefaultTechEndpointEventProviderImpl(eventFactory, techEndpointEventProvider) );
+        }
+
+        techEndpoint.setTechEndpointEventProvider( new TechEndpointMultipleEventProvidersImpl(executableProviders) );
 
         return eventGeneratingConsumer;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setMessageGenerator(MessageGenerator messageGenerator) {
-        this.messageGenerator = messageGenerator;
+    public EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint) {
+        this.techEndpoint = techEndpoint;
         return this;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setEventGenerationInterval(long eventGenerationInterval) {
-        this.eventGeneratingConsumer.getConfiguration().setEventGenerationInterval(eventGenerationInterval);
-        return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder setEventsPerInterval(int eventsPerInterval) {
-        this.eventGeneratingConsumer.getConfiguration().setEventsPerInterval(eventsPerInterval);
-        return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder setMaxEventLimit(int maxEventLimit) {
-        this.eventGeneratingConsumer.getConfiguration().setMaxEventLimit(maxEventLimit);
-        return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder setConfiguredResourceId(String configuredResourceId)
+    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
     {
-        ((ConfiguredResource)this.eventGeneratingConsumer).setConfiguredResourceId(configuredResourceId);
+        this.techEndpointEventProviders.clear();
+        this.techEndpointEventProviders.add(techEndpointEventProvider);
         return this;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setConfiguration(EventGeneratingConsumerConfiguration eventGeneratingConsumerConfiguration)
+    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
     {
-        ((ConfiguredResource)this.eventGeneratingConsumer).setConfiguration(eventGeneratingConsumerConfiguration);
+        return this.setTechEventProvider(techEndpointProviderBuilder.build());
+    }
+
+    @Override
+    public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
+    {
+        this.techEndpointEventProviders.add(techEndpointEventProvider);
         return this;
+    }
+
+    @Override
+    public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
+    {
+        this.withTechEventProvider(techEndpointProviderBuilder.build());
+        return this;
+    }
+
+    @Override
+    public EventGeneratingConsumerBuilder repeatProvider(int repeatTimes)
+    {
+        if(this.techEndpointEventProviders.isEmpty())
+        {
+            this.techEndpointEventProviders.add( getDefaultTechEndpointProvider() );
+        }
+
+        TechEndpointEventProvider techEndpointEventProvider = this.techEndpointEventProviders.remove( this.techEndpointEventProviders.size()-1 );
+
+        for(int count=0; count<repeatTimes; count++)
+        {
+            this.techEndpointEventProviders.add( techEndpointEventProvider.clone() );
+        }
+
+        return this;
+    }
+
+    protected TechEndpointEventProvider getDefaultTechEndpointProvider()
+    {
+        return TechEndpointEventProvider.with()
+                .messageEvent("Test Message")
+                .repeatForever()
+                .interval(1000)
+                .build();
     }
 }
 

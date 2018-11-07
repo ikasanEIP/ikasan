@@ -38,66 +38,57 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
-
-import org.ikasan.builder.component.Builder;
-
-import org.ikasan.component.endpoint.consumer.api.TechEndpoint;
-import org.ikasan.component.endpoint.consumer.api.TechEndpointEventProvider;
-import org.ikasan.component.endpoint.consumer.api.TechEndpointProviderBuilder;
-import org.ikasan.spec.component.endpoint.Consumer;
+package org.ikasan.component.endpoint.consumer.api.event;
 
 /**
- * Contract for a default event generating consumer builder.
+ * Contract for a generic API event provider.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface EventGeneratingConsumerBuilder extends Builder<Consumer>
+public interface APIEvent
 {
     /**
-     * Set the tech endpoint for this event generating consumer.
-     * @param techEndpoint
+     * Get payload of the provided event
+     * @param <PAYLOAD>
      * @return
      */
-    EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint);
+    <PAYLOAD> PAYLOAD getPayload();
 
     /**
-     * Set this single tech endpoint event provider as the only event provider.
-     * Any existing techEventProviders will be removed and replaced by this single provider.
-     * @param techEndpointEventProvider
+     * Is this a message event instance with business or data value
      * @return
      */
-    EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointEventProvider techEndpointEventProvider);
+    default boolean isMessageEvent()
+    {
+        return (this instanceof APIMessageEvent);
+    }
 
     /**
-     * Set this single tech endpoint event provider as the only event provider.
-     * Any existing techEventProviders will be removed and replaced by this single provider.
-     * @param techEndpointProviderBuilder
+     * Is this a wait event instance whereby we pause the
+     * provider for the period of the wait event.
      * @return
      */
-    EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder);
+    default boolean isIntervalEvent()
+    {
+        return (this instanceof APIIntervalEvent);
+    }
 
     /**
-     * Add this tech endpoint event provider.
-     * This will be added to any existing tech endpoint event providers.
-     * @param techEndpointEventProvider
+     * Is this an exception event instance event
+     * from the API provider.
      * @return
      */
-    EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider);
+    default boolean isExceptionEvent()
+    {
+        return (this instanceof APIExceptionEvent);
+    }
 
     /**
-     * Add this tech endpoint event provider.
-     * This will be added to any existing tech endpoint event providers.
-     * @param techEndpointProviderBuilder
+     * Is this a repeat event instance.
      * @return
      */
-    EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder);
-
-    /**
-     * Repeat the last specified tech endpoint event provider.
-     * @param repeatTimes
-     * @return
-     */
-    EventGeneratingConsumerBuilder repeatProvider(int repeatTimes);
+    default boolean isRepeatEvent()
+    {
+        return (this instanceof APIRepeatEvent);
+    }
 }
-

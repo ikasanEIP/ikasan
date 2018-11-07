@@ -38,50 +38,60 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
-
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.FlowEvent;
+package org.ikasan.component.endpoint.consumer.api.event;
 
 /**
- * This abstract consumer provides a convenience base for any standard consumer extending classes.
+ * Implementation of the APIRepeatEvent contract.
  * 
  * @author Ikasan Development Team
  */
-public abstract class AbstractConsumer
-    implements Consumer<EventListener, EventFactory>
+public class APIRepeatEventImpl<PAYLOAD> implements APIRepeatEvent
 {
-    /** consumer event factory */
-    protected EventFactory<FlowEvent<?,?>> flowEventFactory;
+    PAYLOAD apiEvent;
+    int repeat;
+    int getPayloadCount;
 
-    /** consumer event listener */
-    protected EventListener eventListener;
+    public APIRepeatEventImpl(PAYLOAD apiEvent, int repeat)
+    {
+        this.apiEvent = apiEvent;
+        if(apiEvent == null)
+        {
+            throw new IllegalArgumentException("apiEvent cannot be 'null'");
+        }
 
-    /**
-     * Setter for eventFactory
-     * @param flowEventFactory
-     */
-    public void setEventFactory(EventFactory flowEventFactory)
-    {
-    	this.flowEventFactory = flowEventFactory;
-    }
-    
-    /**
-     * Set the consumer event listener
-     * @param eventListener
-     */
-    public void setListener(EventListener eventListener)
-    {
-        this.eventListener = eventListener;
+        this.repeat = repeat;
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
-     */
-    public EventFactory getEventFactory()
+    @Override
+    public PAYLOAD getPayload()
     {
-        return this.flowEventFactory;
+        if(repeat == INFINITE) return apiEvent;
+
+        if(hasMore())
+        {
+            getPayloadCount++;
+            return apiEvent;
+        }
+
+        return null;
+    }
+
+    protected boolean hasMore()
+    {
+        return (getPayloadCount < repeat);
+    }
+
+    @Override
+    public <APIEVENT> APIEVENT getEvent()
+    {
+        return (APIEVENT)apiEvent;
+    }
+
+    @Override
+    public int getRepeat() {
+        return repeat;
     }
 }
+
+
+

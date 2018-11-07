@@ -38,32 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
+package org.ikasan.component.endpoint.consumer.api;
 
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.MessageListener;
 
 /**
- * Contract for a message generator.
+ * Contract for the tech endpoint providing events to the consumer.
  *
  * @author Ikasan Development Team
  */
-public interface MessageGenerator extends Runnable
+public interface TechEndpoint extends Runnable
 {
     /**
-     * Set the listener for the message generator.
+     * Set the message listener.
      * @param messageListener
      */
-    public void setMessageListener(MessageListener messageListener);
+    void setMessageListener(MessageListener messageListener);
 
     /**
-     * Set the listener for any exceptions.
+     * Set the exception listener.
      * @param exceptionListener
      */
-    public void setExceptionListener(ExceptionListener exceptionListener);
+    void setExceptionListener(ExceptionListener exceptionListener);
 
     /**
-     * Set the listener for any exceptions.
+     * Set the techEndpointEventProvider.
+     * @param techEndpointEventProvider
      */
-    public void stop();
+    void setTechEndpointEventProvider(TechEndpointEventProvider techEndpointEventProvider);
+
+    /**
+     * Stop the tech endpoint.
+     */
+    void stop();
 }
