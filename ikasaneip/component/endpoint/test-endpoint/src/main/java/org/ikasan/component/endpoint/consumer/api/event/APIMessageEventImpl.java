@@ -38,64 +38,41 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
-
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+package org.ikasan.component.endpoint.consumer.api.event;
 
 /**
- * Test class for AbstractConsumer.
+ * Implementation of the APIMessageEvent contract.
  * 
  * @author Ikasan Development Team
  */
-public class AbstractConsumerTest
+public class APIMessageEventImpl<LIFE_ID,PAYLOAD> implements APIMessageEvent
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {{
-            setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    LIFE_ID lifeIdentifier;
+    PAYLOAD payload;
 
-    private EventFactory eventFactory = mockery.mock(EventFactory.class);
-    private EventListener eventListener = mockery.mock(EventListener.class);
-
-    /**
-     * Test mutators on abstractConsumer
-     */
-    @Test
-    public void test_mutators()
+    public APIMessageEventImpl(PAYLOAD payload)
     {
-        StubbedAbstractConsumer consumer = new StubbedAbstractConsumer();
-        consumer.setEventFactory(eventFactory);
-        consumer.setListener(eventListener);
-        Assert.assertEquals(eventFactory, consumer.flowEventFactory);
-        Assert.assertEquals(eventListener, consumer.eventListener);
+        this( (payload != null) ? (LIFE_ID)payload.toString() : null, payload);
     }
 
-    /**
-     * Need to instantiate an extended class to test the AbstractConsumer
-     */
-    class StubbedAbstractConsumer extends AbstractConsumer
+    public APIMessageEventImpl(LIFE_ID lifeIdentifier, PAYLOAD payload)
     {
-        @Override
-        public void start() {
+        this.lifeIdentifier = lifeIdentifier;
+        this.payload = payload;
+    }
 
-        }
+    @Override
+    public PAYLOAD getPayload()
+    {
+        return payload;
+    }
 
-        @Override
-        public boolean isRunning() {
-            return false;
-        }
-
-        @Override
-        public void stop() {
-
-        }
+    @Override
+    public LIFE_ID getLifeIdentifer()
+    {
+        return lifeIdentifier;
     }
 }
+
+
+

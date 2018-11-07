@@ -38,45 +38,51 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.util.consumer;
+package org.ikasan.component.endpoint.consumer.api.event;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This configuration class for the EventGeneratingConsumer implementation.
+ * Implementation of the APIIntervalEvent contract.
  * 
  * @author Ikasan Development Team
  */
-public class EventGeneratingConsumerConfiguration
+public class APIIntervalEventImpl implements APIIntervalEvent
 {
-    /** event generation interval in millis - default = 1000, 1 second interval between event generation */
-    long eventGenerationInterval = 1000;
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(APIIntervalEventImpl.class);
 
-    /** used in conjunction with eventGenerationInterval to determine number of events per interval */
-    int eventsPerInterval = 1;
+    Long payload;
 
-    /** allow a limit to be set on the total number of events published - default 0 unlimited */
-    int maxEventLimit;
-
-    public long getEventGenerationInterval() {
-        return eventGenerationInterval;
+    public APIIntervalEventImpl(Long payload)
+    {
+        this.payload = payload;
+        if(payload == null)
+        {
+            this.payload = Long.valueOf(0);
+        }
     }
 
-    public void setEventGenerationInterval(long eventGenerationInterval) {
-        this.eventGenerationInterval = eventGenerationInterval;
+    @Override
+    public Long getPayload()
+    {
+        return payload;
     }
 
-    public int getEventsPerInterval() {
-        return eventsPerInterval;
-    }
-
-    public void setEventsPerInterval(int eventsPerInterval) {
-        this.eventsPerInterval = eventsPerInterval;
-    }
-
-    public int getMaxEventLimit() {
-        return maxEventLimit;
-    }
-
-    public void setMaxEventLimit(int maxEventLimit) {
-        this.maxEventLimit = maxEventLimit;
+    @Override
+    public void execute()
+    {
+        try
+        {
+            Thread.sleep(payload.longValue());
+        }
+        catch (InterruptedException e)
+        {
+            logger.warn("APIEventInterval interrupted", e);
+        }
     }
 }
+
+
+

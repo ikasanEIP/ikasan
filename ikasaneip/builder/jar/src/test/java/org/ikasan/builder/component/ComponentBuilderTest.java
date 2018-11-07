@@ -43,7 +43,7 @@ package org.ikasan.builder.component;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.builder.component.endpoint.FileProducerBuilder;
-import org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer;
+import org.ikasan.component.endpoint.consumer.EventGeneratingConsumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
@@ -380,6 +380,27 @@ public class ComponentBuilderTest {
 
                 oneOf(aopProxyProvider).applyPointcut(with(any(String.class)), with(any(EventGeneratingConsumer.class)));
                 will(returnValue(messageListener));
+            }
+        });
+
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Consumer consumer = componentBuilder.eventGeneratingConsumer().build();
+        assertTrue("instance should be a Consumer", consumer instanceof Consumer);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test eventGeneratingConsumer builder.
+     */
+    @Test(expected = RuntimeException.class)
+    public void test_successful_eventGeneratingConsumer_noClassDefFoundException()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(throwException(new NoClassDefFoundError("class definition missing")));
             }
         });
 
