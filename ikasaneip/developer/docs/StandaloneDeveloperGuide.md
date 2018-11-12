@@ -144,33 +144,34 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
    </project>
 ```
 
-Now create a class with a fully qualified name of ```com.ikasan.example.MyApplication``` from which we will instantiate the Ikasan Application.
+Now create a class with a fully qualified name of ```com.ikasan.example.MyApplication``` which is entry point to Springboot Application.
 
 Copy and paste the entirety of the code below replacing the content of that class.
 ```java
 package com.ikasan.example;
 
 import org.ikasan.builder.*;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
-@ComponentScan({"org.ikasan", "com.ikasan"})
+@SpringBootApplication
 @ImportResource({ "classpath:h2-datasource-conf.xml" })
 public class MyApplication
 {
     public static void main(String[] args)
     {
-        // Create instance of an ikasan application
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
+        // Start Springboot application 
+        SpringApplication.run(MyApplication.class, args);
+
     }
 }  
 ```
 
+
 Provide some configuration properties for the module by creating a resources/application.properties
 ```properties
 # Logging levels across packages (optional)
-logging.level.com.arjuna=INFO
-logging.level.org.springframework=INFO
+logging.level.root=INFO
 
 # Blue console servlet settings (optional)
 server.error.whitelabel.enabled=false
@@ -262,29 +263,31 @@ Selecting 'Modules' will show the Integration Module for this example, but as we
  
 Lets define a module.
 
-Go back to the MyApplication class in IntelliJ and update it to the following
+Go back to IntelliJ and create new MyModule class. This class will hold the definiton of Ikasan Integration Module. It is important to annotate method returning Module with @Bean annotation.  
 ```java
 package com.ikasan.example;
 
-import org.ikasan.builder.*;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-@ComponentScan({"org.ikasan", "com.ikasan"})
-@ImportResource({ "classpath:h2-datasource-conf.xml", "classpath:ikasan-transaction-pointcut-eventListener.xml" })
-public class MyApplication
-{
-    public static void main(String[] args)
-    {
-        // Create instance of an ikasan application
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
+import javax.annotation.Resource;
 
-        // Get an instance of a builder factory from the application which will
-        // provide access to all required builders for the application
-        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+@Configuration("MyModuleFactory")
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
+
+    @Bean
+    public Module myModule()
+    {
 
         // Create a module builder from the builder factory
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
@@ -303,9 +306,7 @@ public class MyApplication
         Module module = moduleBuilder
                 .addFlow(eventGeneratingFlow)
                 .build();
-
-        // Pass the module to the Ikasan Application for execution
-        ikasanApplication.run(module);
+        return module;
     }
 }
 ```
@@ -333,33 +334,17 @@ View the application logs (either in IntelliJ or the command line, depending on 
 
 Congratulations - your first working Ikasan Integration Module, but what is it doing...
 
-Lets go back to the code, specifically the ```main()``` method to understand what we just implemented and ran.
+Lets go back to the code, specifically the ```MyModule``` class to understand what we just implemented and ran.
 
 ```java
-   public static void main(String[] args)
+   @Configuration("MyModuleFactory")
+   public class MyModule
    {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
+       @Resource BuilderFactory builderFactory;
+...
    }
 ```
-Firstly, we get an instance of an IkasanApplication from the IkasanApplicationFactory. This ikasanApplication will 
-provision everything we need to instantiate and run this application.
-
-
-```java
-   public static void main(String[] args)
-   {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-   }
-```
-We then get an instance of a builderFactory from the application. 
+Firstly, we get a instance of a builderFactory from Spring context.
 
 This builderFactory will provide all other builders required to create modules, flows, and components.
 
@@ -367,40 +352,41 @@ The first thing to create is a moduleBuilder from the builderFactory. When we cr
 We can also set other properties on the module through this moduleBuilder such as description.
 
 ```java
-   public static void main(String[] args)
+   @Configuration("MyModuleFactory")
+   public class MyModule
    {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-       // Create a module builder from the builder factory
-       ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-               .withDescription("My first integration module.");
-
-   }
+       @Resource BuilderFactory builderFactory;
+   
+       @Bean
+       public Module myModule()
+       {
+   
+           // Create a module builder from the builder factory
+           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                   .withDescription("My first integration module.");
+       ...
+       }
+   
 ```
 Next, get a componentBuilder instance from the builderFactory - we will be using this in the flowBuilder.
 ```java
-   public static void main(String[] args)
-   {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-       // Create a module builder from the builder factory
-       ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-               .withDescription("My first integration module.");
-
-       // Create a component builder from the builder factory
-       ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-   }
+  @Configuration("MyModuleFactory")
+  public class MyModule
+  {
+      @Resource BuilderFactory builderFactory;
+  
+      @Bean
+      public Module myModule()
+  
+      {
+  
+          // Create a module builder from the builder factory
+          ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                  .withDescription("My first integration module.");
+  
+          // Create a component builder from the builder factory
+          ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+      }
 ```
 
 Now on to the interesting parts. 
@@ -409,28 +395,28 @@ The components within the flow are then added as consumer and producer, both fro
 Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
 ```java
-   public static void main(String[] args)
+   @Configuration("MyModuleFactory")
+   public class MyModule
    {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-       // Create a module builder from the builder factory
-       ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-               .withDescription("My first integration module.");
-
-       // Create a component builder from the builder factory
-       ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-       // create a flow from the module builder and add required orchestration components
-       Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-               .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-               .producer("My Target Producer", componentBuilder.logProducer().build())
-               .build();
-
+       @Resource BuilderFactory builderFactory;
+   
+       @Bean
+       public Module myModule()
+       {
+   
+           // Create a module builder from the builder factory
+           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                   .withDescription("My first integration module.");
+   
+           // Create a component builder from the builder factory
+           ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+   
+           // create a flow from the module builder and add required orchestration components
+           Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                   .producer("My Target Producer", componentBuilder.logProducer().build())
+                   .build(); 
+       }
    }
 ```
 So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
@@ -439,71 +425,38 @@ So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-s
 Each off-the-shelf component has ```build()``` called against it which tells the builder pattern to create this instance, as does the flow.
  
 ```java
-   public static void main(String[] args)
+   @Configuration("MyModuleFactory")
+   public class MyModule
    {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-       // Create a module builder from the builder factory
-       ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-               .withDescription("My first integration module.");
-
-       // Create a component builder from the builder factory
-       ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-       // create a flow from the module builder and add required orchestration components
-       Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-               .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-               .producer("My Target Producer", componentBuilder.logProducer().build())
-               .build();
-
-       // Add the created flow to the module builder and create the module
-       Module module = moduleBuilder
-               .addFlow(eventGeneratingFlow)
-               .build();
-
+       @Resource BuilderFactory builderFactory;
+   
+       @Bean
+       public Module myModule()
+       {
+   
+           // Create a module builder from the builder factory
+           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                   .withDescription("My first integration module.");
+   
+           // Create a component builder from the builder factory
+           ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+   
+           // create a flow from the module builder and add required orchestration components
+           Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                   .producer("My Target Producer", componentBuilder.logProducer().build())
+                   .build();
+   
+           // Add the created flow to the module builder and create the module
+           Module module = moduleBuilder
+                   .addFlow(eventGeneratingFlow)
+                   .build();
+           return module; 
+       }
    }
 ```
- Now we have the flow we can add it to the moduleBuilder and ```build()``` the module.
+Finally we have the flow we can add it to the moduleBuilder and ```build()``` the module.
  
-```java
-   public static void main(String[] args)
-   {
-       // Create instance of an ikasan application
-       IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(MyApplication.class);
-
-       // Get an instance of a builder factory from the application which will
-       // provide access to all required builders for the application
-       BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-
-       // Create a module builder from the builder factory
-       ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-               .withDescription("My first integration module.");
-
-       // Create a component builder from the builder factory
-       ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-       // create a flow from the module builder and add required orchestration components
-       Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-               .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-               .producer("My Target Producer", componentBuilder.logProducer().build())
-               .build();
-
-       // Add the created flow to the module builder and create the module
-       Module module = moduleBuilder
-               .addFlow(eventGeneratingFlow)
-               .build();
-
-       // Pass the module to the Ikasan Application for execution
-       ikasanApplication.run(module);
-   }
-```
-Finally we pass the module to the ```ikasanApplication.run()``` method to execute.
-
 That is how every Ikasan Application Integration Module is created regardless of how simple or complex the operations.
 
 ## Adding your own Components
@@ -831,6 +784,59 @@ TOOO
 #### Methods
 #### Components
 #### Flows
+The flow testing is if great method of verifying that whole Spring application boostrap correctly. Also Flow test will help you assess if all flow branches has been executed as expected. Here is how to create a flow test.
+```java
+package com.sample;
+
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {MyApplication.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class MyApplicationTest
+{
+
+    @Resource
+    private Module moduleUnderTest;
+
+
+    @Rule
+    public IkasanFlowTestRule ikasanFlowTestRule = new IkasanFlowTestRule();
+
+    @Before
+    public void setup()
+    {
+        Flow flowUnderTest = (Flow) moduleUnderTest.getFlow("EventGeneratingFlow");
+        ikasanFlowTestRule.withFlow(flowUnderTest);
+    }
+
+    @Test
+    public void test(){
+
+        ikasanFlowTestRule
+                .consumer("My Source Consumer")
+                .producer("My Target Producer");
+
+        ikasanFlowTestRule.startFlow();
+
+        ikasanFlowTestRule.sleep(500);
+
+    }
+}
+
+```
+
 #### Exception Handling
 #### Monitoring
 #### Modules
