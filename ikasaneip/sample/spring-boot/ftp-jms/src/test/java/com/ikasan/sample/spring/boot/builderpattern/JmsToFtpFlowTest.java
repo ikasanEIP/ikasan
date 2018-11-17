@@ -43,43 +43,69 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.ftp.FtpRule;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * This test Ftp To Log Flow.
  *
  * @author Ikasan Development Team
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsToFtpFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    public IkasanStandaloneFlowTestRule flowTestRule = new IkasanStandaloneFlowTestRule("Jms To Ftp Flow",
-        Application.class);
+    @Resource
+    public Module moduleUnderTest;
 
-    public FtpRule ftp = new FtpRule("test", "test", null, 22999);
+    @Resource
+    public JmsTemplate jmsTemplate;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    @Rule
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    @Rule public TestRule chain = RuleChain.outerRule(broker).around(ftp).around(flowTestRule);
+    public FtpRule ftp;
 
-    @Test public void test_file_upload() throws Exception
+    public EmbeddedActiveMQBroker broker;
+
+    @Before
+    public void setup(){
+        ftp  = new FtpRule("test","test",null,22999);
+        ftp.start();
+
+        broker = new EmbeddedActiveMQBroker();
+        broker.start();
+
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms To Ftp Flow"));
+    }
+
+
+    @Test
+    public void test_file_upload() throws Exception
     {
 
         // Prepare test data
-        JmsTemplate jmsTemplate = flowTestRule.getIkasanApplication().getBean(JmsTemplate.class);
         System.out.println("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
         jmsTemplate.send("ftp.private.jms.queue", new MessageCreator()
         {
@@ -93,17 +119,24 @@ public class JmsToFtpFlowTest
         });
 
         //Update Ftp Consumer config
-        FtpProducerConfiguration consumerConfiguration = flowTestRule
+        FtpProducerConfiguration configuration = flowTestRule
             .getComponentConfig("Ftp Producer", FtpProducerConfiguration.class);
-        consumerConfiguration.setOutputDirectory(ftp.getBaseDir());
+        configuration.setOutputDirectory(ftp.getBaseDir());
+        configuration.setOverwrite(true);
+
 
         //Setup component expectations
-        flowTestRule.consumer("Ftp Jms Consumer").converter("MapMessage to FTP Payload Converter").producer("Ftp Producer");
+        flowTestRule
+            .consumer("Ftp Jms Consumer")
+            .converter("MapMessage to FTP Payload Converter")
+            .producer("Ftp Producer");
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(2000L);
+
+        assertNotNull(ftp.getFile("generatedFtpProducertest.out"));
 
 
     }
