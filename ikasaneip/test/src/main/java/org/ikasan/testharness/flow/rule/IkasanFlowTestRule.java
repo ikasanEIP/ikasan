@@ -458,6 +458,27 @@ public class IkasanFlowTestRule implements TestRule
         Assert.assertEquals("flow should be running", "running", flow.getState());
     }
 
+    public void stopFlow()
+    {
+        flow.stop();
+        assertEquals("flow should be stopped", errorEndState ?
+            "stoppedInError" :
+            "stopped", flow.getState());
+    }
+
+
+    public void assertIsSatisfied()
+    {
+        flowTestHarness.assertIsSatisfied();
+    }
+
+    public String getFlowState()
+    {
+        return flow.getState();
+    }
+
+
+
     /**
      * Gets component of given name from this flow.
      *
