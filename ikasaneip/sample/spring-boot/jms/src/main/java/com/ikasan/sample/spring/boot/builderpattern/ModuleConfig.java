@@ -9,7 +9,10 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ExitCodeGenerator;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -62,17 +65,18 @@ public class ModuleConfig {
                 .build();
 
         Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+                .withDescription("Flow demonstrates usage of JMS Consumer and JMS Producer")
                 .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("JMS Consumer", jmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .producer("JMS Producer", jmsProducer)
                 .build();
 
-        Module module = mb.withDescription("Sample Module").addFlow(flow).build();
+        Module module = mb.withDescription("Sample Module")
+            .addFlow(flow)
+            .build();
         return module;
     }
-
 
 
 
