@@ -51,13 +51,19 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.aop.framework.Advised;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
+import javax.annotation.Resource;
 import javax.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
@@ -74,53 +80,52 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
 {
     private static String FILE_PRODUCER_FILE_NAME = "testProducer.out";
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
+    @Resource
     private EmbeddedActiveMQBroker broker;
 
-    private IkasanApplication ikasanApplication;
+    @Resource
+    private Module moduleUnderTest;
 
-    @Before public void setup()
-    {
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
-        Application myApplication = new Application();
-        ikasanApplication = myApplication.boot(args);
-        System.out.println("Check is module healthy.");
-    }
+    @Resource
+    private ConfigurationManagement configurationManagement;
+
+    @Resource
+    MessageListenerVerifier messageListenerVerifierTarget;
+
+    @Resource
+    JmsTemplate jmsTemplate;
 
     @After public void shutdown() throws IOException
     {
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME));
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_CONSUMER_FILE_NAME));
-        ikasanApplication.close();
         broker.stop();
     }
 
-    @Test public void sourceFileFlow_flow() throws Exception
+    @Test
+    @DirtiesContext
+    public void sourceFileFlow_flow() throws Exception
     {
         // create file to be consumed
         String content = "Hello World !!";
         Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
-        List<Module> modules = ikasanApplication.getModules();
-        assertTrue("There should only be 1 module in this application, but found " + modules.size(),
-            modules.size() == 1);
-        Module<Flow> module = modules.get(0);
-        Flow flow = module.getFlow("sourceFileFlow");
 
-        ConfigurationManagement configurationManagement = ikasanApplication.getBean(ConfigurationManagement.class);
+        Flow flow = (Flow) moduleUnderTest.getFlow("sourceFileFlow");
+
         ConfiguredResource configuredResource = ((ConfiguredResource)flow.getFlowElement("File Consumer").getFlowComponent());
         Object configuration = configurationManagement.createConfiguration(configuredResource);
         configurationManagement.saveConfiguration(configuration);
 
         // Get MessageListenerVerifier and start the listner
-        MessageListenerVerifier messageListenerVerifierTarget = ikasanApplication
-            .getBean("messageListenerVerifierTarget", MessageListenerVerifier.class);
         messageListenerVerifierTarget.start();
 
 
@@ -137,20 +142,18 @@ public class ApplicationTest
             FILE_CONSUMER_FILE_NAME);
     }
 
-    @Test public void targetFileFlow_test_file_delivery() throws Exception
+    @Test
+    @DirtiesContext
+    public void targetFileFlow_test_file_delivery() throws Exception
     {
         // Prepare test data
-        JmsTemplate jmsTemplate = ikasanApplication.getBean(JmsTemplate.class);
         String message = "Random Text";
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("private.file.queue.test", message);
 
         // get targetFileFlow from context
-        List<Module> modules = ikasanApplication.getModules();
-        assertTrue("There should only be 1 module in this application, but found " + modules.size(),
-            modules.size() == 1);
-        Module<Flow> module = modules.get(0);
-        Flow flow = module.getFlow("targetFileFlow");
+
+        Flow flow = (Flow) moduleUnderTest.getFlow("targetFileFlow");
 
         // update producer with file producer name
         FileProducerConfiguration producerConfiguration = ((FileProducer) flow.getFlowElement("File Producer")
