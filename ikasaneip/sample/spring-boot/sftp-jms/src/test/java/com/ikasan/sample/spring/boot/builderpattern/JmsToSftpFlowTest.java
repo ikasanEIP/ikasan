@@ -55,6 +55,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -74,6 +75,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToSftpFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
@@ -84,7 +86,6 @@ public class JmsToSftpFlowTest
     @Resource
     public JmsTemplate jmsTemplate;
 
-    @Rule
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
     public SftpRule sftp;
@@ -106,6 +107,7 @@ public class JmsToSftpFlowTest
     {
         flowTestRule.stopFlow();
         broker.stop();
+        sftp.stop();
     }
 
     @Test public void test_file_upload() throws Exception
