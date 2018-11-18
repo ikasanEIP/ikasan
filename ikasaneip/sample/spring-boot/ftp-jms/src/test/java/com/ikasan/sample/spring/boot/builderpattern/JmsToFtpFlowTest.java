@@ -47,6 +47,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.ftp.FtpRule;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +55,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
 import javax.jms.JMSException;
@@ -72,6 +75,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToFtpFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
@@ -82,7 +86,6 @@ public class JmsToFtpFlowTest
     @Resource
     public JmsTemplate jmsTemplate;
 
-    @Rule
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
     public FtpRule ftp;
@@ -91,7 +94,7 @@ public class JmsToFtpFlowTest
 
     @Before
     public void setup(){
-        ftp  = new FtpRule("test","test",null,22999);
+        ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
         ftp.start();
 
         broker = new EmbeddedActiveMQBroker();
@@ -100,6 +103,14 @@ public class JmsToFtpFlowTest
         flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms To Ftp Flow"));
     }
 
+    @After
+    public void teardown()
+    {
+        flowTestRule.stopFlow();
+        broker.stop();
+        ftp.stop();
+
+    }
 
     @Test
     public void test_file_upload() throws Exception
@@ -123,6 +134,7 @@ public class JmsToFtpFlowTest
             .getComponentConfig("Ftp Producer", FtpProducerConfiguration.class);
         configuration.setOutputDirectory(ftp.getBaseDir());
         configuration.setOverwrite(true);
+        configuration.setRemotePort(ftp.getPort());
 
 
         //Setup component expectations

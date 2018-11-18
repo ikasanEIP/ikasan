@@ -54,7 +54,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
 
@@ -69,6 +71,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class FtpToJmsFlowTest
 {
 
@@ -80,7 +83,6 @@ public class FtpToJmsFlowTest
     @Resource
     public JmsListenerEndpointRegistry registry;
 
-    @Rule
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
     public FtpRule ftp;
@@ -89,7 +91,7 @@ public class FtpToJmsFlowTest
 
    @Before
     public void setup(){
-        ftp  = new FtpRule("test","test",null,22999);
+        ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
         ftp.start();
 
         broker = new EmbeddedActiveMQBroker();
@@ -101,8 +103,10 @@ public class FtpToJmsFlowTest
     @After
     public void teardown()
     {
+        flowTestRule.stopFlow();
         broker.stop();
         ftp.stop();
+
     }
         @Test
     public void test_file_download() throws Exception
@@ -114,6 +118,8 @@ public class FtpToJmsFlowTest
         //Update Ftp Consumer config
         FtpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Ftp Consumer",FtpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory(ftp.getBaseDir());
+        consumerConfiguration.setRemotePort(ftp.getPort());
+
 
         //Create test queue listener
         final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "ftp.private.jms.queue", registry);
