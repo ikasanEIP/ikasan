@@ -42,33 +42,69 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test Sftp To JMS Flow.
  * 
  * @author Ikasan Development Team
  */
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SftpToJmsFlowTest
 {
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    public IkasanStandaloneFlowTestRule flowTestRule = new IkasanStandaloneFlowTestRule("${sourceFlowName}" ,
-        Application.class);
+    @Resource
+    public Module moduleUnderTest;
 
-    public SftpRule sftp  = new SftpRule("test","test",null,22999);
+    @Resource
+    public JmsListenerEndpointRegistry registry;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    @Rule
-    public TestRule chain = RuleChain.outerRule(sftp).around(broker).around(flowTestRule);
+    public SftpRule sftp;
+
+    public EmbeddedActiveMQBroker broker;
+
+    @Before
+    public void setup(){
+        sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
+        sftp.start();
+
+        broker = new EmbeddedActiveMQBroker();
+        broker.start();
+
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Sftp To Jms Flow"));
+    }
+
+    @After public void teardown()
+    {
+        flowTestRule.stopFlow();
+        broker.stop();
+        sftp.stop();
+    }
 
     @Test
     public void test_file_download() throws Exception
@@ -80,6 +116,10 @@ public class SftpToJmsFlowTest
         //Update Sftp Consumer config
         SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer",SftpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
+        consumerConfiguration.setRemotePort(sftp.getPort());
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "sftp.private.jms.queue", registry);
+        messageListenerVerifier.start();
 
         //Setup component expectations
 
@@ -93,7 +133,10 @@ public class SftpToJmsFlowTest
         flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(2000L);
+
+        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
+
 
     }
 
