@@ -72,7 +72,7 @@ public class ModuleConfig {
     private Integer ftpProducerRemotePort;
 
     @Value("${ftp.producer.outputDirectory}")
-    private String ftpConsumerOutputDirectory;
+    private String ftpProducerOutputDirectory;
 
 
     @Value("${jms.provider.url}")
@@ -148,7 +148,7 @@ public class ModuleConfig {
             .setPassword(ftpProducerPassword)
             .setRemoteHost(ftpProducerRemoteHost)
             .setRemotePort(ftpProducerRemotePort)
-            .setOutputDirectory(ftpConsumerOutputDirectory)
+            .setOutputDirectory(ftpProducerOutputDirectory)
             .setOverwrite(true)
             .setConfiguredResourceId("ftpProducerConfiguration")
             .build();

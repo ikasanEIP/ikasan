@@ -40,14 +40,8 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.builder.*;
-import org.ikasan.flow.visitorPattern.invoker.FilterInvokerConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorInvokerConfiguration;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Sample local file consumer and local file producer Integration Module
