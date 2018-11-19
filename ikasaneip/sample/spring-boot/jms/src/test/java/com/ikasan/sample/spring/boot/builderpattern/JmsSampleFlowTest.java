@@ -41,8 +41,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.ikasan.builder.IkasanApplication;
-import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -51,46 +49,81 @@ import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
-import org.ikasan.trigger.model.Trigger;
-import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
+import javax.annotation.Resource;
+import javax.jms.TextMessage;
+import java.util.List;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
- * This test class supports the <code>SimpleExample</code> class.
+ * This test class supports the <code>JmsSampleFlow</code> class.
  * 
  * @author Ikasan Development Team
  */
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsSampleFlowTest
 {
+
+    private static String SAMPLE_MESSAGE = "Hello world!";
+
+    @Resource
+    private Module moduleUnderTest;
+
+    @Resource
+    private JmsTemplate jmsTemplate;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
+    @Resource
+    private JmsListenerEndpointRegistry registry;
+
+    @Resource
+    private ErrorReportingServiceFactory errorReportingServiceFactory;
+
+    private ErrorReportingService errorReportingService;
+
+    @Resource
+    private ExclusionManagementService exclusionManagementService;
+
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
     public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
 
-    private static String SAMPLE_MESSAGE = "Hello world!";
+    @Before
+    public void setup(){
 
-    public IkasanStandaloneFlowTestRule flowTestRule = new IkasanStandaloneFlowTestRule("Jms Sample Flow",Application.class);
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms Sample Flow"));
 
-    @Rule
-    public TestRule chain = RuleChain.outerRule(broker).around(flowTestRule);
+        errorReportingService = errorReportingServiceFactory.getErrorReportingService();
+
+        broker.start();
+
+    }
+
+    @After
+    public void teardown(){
+
+        flowTestRule.stopFlow();
+        broker.stop();
+    }
 
     @Test
     public void test_Jms_Sample_Flow() throws Exception
@@ -98,10 +131,12 @@ public class JmsSampleFlowTest
 
         //
         // Prepare test data
-        JmsTemplate jmsTemplate = flowTestRule.getIkasanApplication().getBean(JmsTemplate.class);
         String message = SAMPLE_MESSAGE;
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        messageListenerVerifier.start();
 
         //Setup component expectations
 
@@ -113,7 +148,152 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(2000L);
+
+        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
+        assertEquals(((TextMessage)messageListenerVerifier.getCaptureResults().get(0)).getText(),
+            SAMPLE_MESSAGE);
+
+
+    }
+
+    @Test
+    public void test_exclusion()
+    {
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        messageListenerVerifier.start();
+
+        // update broker config to force exception throwing
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+
+
+    }
+
+
+    @Test
+    public void test_flow_in_recovery() throws Exception
+    {
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        messageListenerVerifier.start();
+
+        // setup custom broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowRecoveryException(true);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+        assertEquals("recovering",flowTestRule.getFlowState());
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(EndpointException.class.getName(), error.getExceptionClass());
+        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+
+
+    }
+
+    @Test
+    public void test_flow_stopped_in_error() throws Exception
+    {
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        messageListenerVerifier.start();
+
+
+        // setup custom broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowStoppedInErrorException(true);
+
+        //Setup component expectations
+
+        flowTestRule
+            .withErrorEndState()
+            .consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+        assertEquals("stoppedInError",flowTestRule.getFlowState());
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+        
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(RuntimeException.class.getName(), error.getExceptionClass());
+        assertEquals("Stop", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+
 
     }
 

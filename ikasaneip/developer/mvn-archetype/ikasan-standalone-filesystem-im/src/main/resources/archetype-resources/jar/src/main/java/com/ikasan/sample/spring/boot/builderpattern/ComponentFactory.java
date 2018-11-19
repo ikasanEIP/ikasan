@@ -174,6 +174,15 @@ public class ComponentFactory
                 .build();
     }
 
+
+    Filter getFilter()
+    {
+        MyFilter myFilter = new MyFilter();
+        myFilter.setConfiguredResourceId("myFilterPoJo");
+        myFilter.setConfiguration( new MyFilterConfiguration() );
+        return myFilter;
+    }
+
     Producer getJmsProducer()
     {
         ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
@@ -217,6 +226,35 @@ public class ComponentFactory
         }
     }
 
+    class MyFilter implements Filter, ConfiguredResource<MyFilterConfiguration>
+    {
+        String configuredResourceId;
+        MyFilterConfiguration configuration;
 
+        @Override
+        public Object filter(Object message) throws FilterException {
+            return message;
+        }
+
+        @Override
+        public String getConfiguredResourceId() {
+            return configuredResourceId;
+        }
+
+        @Override
+        public void setConfiguredResourceId(String configuredResourceId) {
+            this.configuredResourceId = configuredResourceId;
+        }
+
+        @Override
+        public MyFilterConfiguration getConfiguration() {
+            return configuration;
+        }
+
+        @Override
+        public void setConfiguration(MyFilterConfiguration configuration) {
+            this.configuration = configuration;
+        }
+    }
 
 }

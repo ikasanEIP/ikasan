@@ -41,53 +41,56 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.ikasan.builder.IkasanApplication;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  * 
  * @author Ikasan Development Team
  */
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {MyApplication.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsFlowTest
 {
 
-    IkasanApplication ikasanApplication;
+    @Resource
+    private Module moduleUnderTest;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    @Resource
+    private JmsTemplate jmsTemplate;
+
+    @Resource
+    public EmbeddedActiveMQBroker broker;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    public IkasanStandaloneFlowTestRule flowTestRule;
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
+    @Resource MessageListenerVerifier messageListenerVerifierTarget;
 
     @Before
     public  void setup(){
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
-
-        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
-
-        MyApplication  myApplication = new MyApplication();
-        ikasanApplication = myApplication.executeIM(args);
-
-        flowTestRule = new IkasanStandaloneFlowTestRule("Jms Flow",ikasanApplication);
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms Flow"));
     }
 
     @After
     public void shutdown(){
 
-        ikasanApplication.close();
         broker.stop();
     }
     @Test
@@ -95,7 +98,6 @@ public class JmsFlowTest
     {
 
         // Prepare test data
-        JmsTemplate jmsTemplate = flowTestRule.getIkasanApplication().getBean(JmsTemplate.class);
         String message = SAMPLE_MESSAGE;
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
@@ -105,13 +107,14 @@ public class JmsFlowTest
         flowTestRule.consumer("consumer")
             .producer("producer");
 
+        messageListenerVerifierTarget.start();
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(2000L);
 
-        flowTestRule.assertFlowComponentExecution();
+        assertEquals(1,messageListenerVerifierTarget.getCaptureResults().size());
 
     }
 

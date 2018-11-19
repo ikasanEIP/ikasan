@@ -42,13 +42,34 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
+import org.ikasan.component.endpoint.filesystem.producer.FileProducer;
+import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
+import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
+import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.framework.Advised;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
+import javax.annotation.Resource;
+import javax.jms.TextMessage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -56,48 +77,114 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
 {
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    private static String FILE_PRODUCER_FILE_NAME = "testProducer.out";
 
-    @Before
-    public void setup()
+    private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
+
+    @Resource
+    private EmbeddedActiveMQBroker broker;
+
+    @Resource
+    private Module moduleUnderTest;
+
+    @Resource
+    private ConfigurationManagement configurationManagement;
+
+    @Resource
+    MessageListenerVerifier messageListenerVerifierTarget;
+
+    @Resource
+    JmsTemplate jmsTemplate;
+
+    @After public void shutdown() throws IOException
     {
-        broker.start();
+        Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME));
+        Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_CONSUMER_FILE_NAME));
+        broker.stop();
     }
 
-    
-    /**
-     * Test simple invocation.
-     */
     @Test
-    public void test_createModule_start_and_stop_flow() throws Exception
+    @DirtiesContext
+    public void sourceFileFlow_flow() throws Exception
     {
-        String[] args = {""};
+        // create file to be consumed
+        String content = "Hello World !!";
+        Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
 
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = myApplication.boot(args);
-        System.out.println("Check is module healthy.");
+        Flow flow = (Flow) moduleUnderTest.getFlow("sourceFileFlow");
 
-        List<Module> modules  = ikasanApplication.getModules();
-        assertTrue("There should only be 1 module in this application, but found " + modules.size(), modules.size() == 1);
-        Module<Flow> module = modules.get(0);
-        Flow flow = module.getFlow("sourceFileFlow");
+        ConfiguredResource configuredResource = ((ConfiguredResource)flow.getFlowElement("File Consumer").getFlowComponent());
+        Object configuration = configurationManagement.createConfiguration(configuredResource);
+        configurationManagement.saveConfiguration(configuration);
+
+        // Get MessageListenerVerifier and start the listner
+        messageListenerVerifierTarget.start();
 
 
         // start flow
         flow.start();
-        assertEquals("running",flow.getState());
+        // give flow time
+        pause(7000);
+        assertEquals("running", flow.getState());
         flow.stop();
-        assertEquals("stopped",flow.getState());
+        assertEquals("stopped", flow.getState());
+        // Set expectation
+        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
+            FILE_CONSUMER_FILE_NAME);
+    }
+
+    @Test
+    @DirtiesContext
+    public void targetFileFlow_test_file_delivery() throws Exception
+    {
+        // Prepare test data
+        String message = "Random Text";
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("private.file.queue.test", message);
+
+        // get targetFileFlow from context
+
+        Flow flow = (Flow) moduleUnderTest.getFlow("targetFileFlow");
+
+        // update producer with file producer name
+        FileProducerConfiguration producerConfiguration = ((FileProducer) flow.getFlowElement("File Producer")
+            .getFlowComponent()).getConfiguration();
+        producerConfiguration.setFilename(FILE_PRODUCER_FILE_NAME);
+
+        // update flow consumer  with file producer name
+        JmsContainerConsumer containerConsumer = (JmsContainerConsumer) ((Advised) flow.getFlowElement("JMS Consumer")
+            .getFlowComponent()).getTargetSource().getTarget();
+        SpringMessageConsumerConfiguration jmsConfiguration = containerConsumer.getConfiguration();
+        jmsConfiguration.setDestinationJndiName("private.file.queue.test");
+
+        // start flow
+        flow.start();
+
+        // give flow time
+        pause(4000);
+        assertEquals("running", flow.getState());
+        flow.stop();
+        assertEquals("stopped", flow.getState());
+
+        File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
+
+        assertTrue("File does not exist.", result.exists());
+        assertEquals("Generated file, has different content.", message,
+            new String(Files.readAllBytes(result.toPath())));
     }
 
     /**
      * Sleep for value in millis
+     *
      * @param value
      */
     private void pause(long value)
@@ -106,7 +193,7 @@ public class ApplicationTest
         {
             Thread.sleep(value);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new RuntimeException(e);
         }

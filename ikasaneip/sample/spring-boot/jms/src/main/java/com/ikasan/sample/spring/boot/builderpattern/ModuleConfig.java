@@ -62,17 +62,18 @@ public class ModuleConfig {
                 .build();
 
         Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+                .withDescription("Flow demonstrates usage of JMS Consumer and JMS Producer")
                 .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("JMS Consumer", jmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .producer("JMS Producer", jmsProducer)
                 .build();
 
-        Module module = mb.withDescription("Sample Module").addFlow(flow).build();
+        Module module = mb.withDescription("Sample Module")
+            .addFlow(flow)
+            .build();
         return module;
     }
-
 
 
 
