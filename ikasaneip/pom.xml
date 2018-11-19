@@ -369,6 +369,7 @@
         <version.org.springframework.spring-oxm>4.3.10.RELEASE</version.org.springframework.spring-oxm>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.org.springboot>1.5.6.RELEASE</version.org.springboot>
+        <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
         <version.org.slf4j>1.7.25</version.org.slf4j>
         <version.junit>4.12</version.junit>
         <version.org.jmock>2.6.0</version.org.jmock>
@@ -1732,6 +1733,19 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
                 <version>${version.org.springframework}</version>
+            </dependency>
+
+            <!-- Swagger -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${version.io.spingfox.swagger}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${version.io.spingfox.swagger}</version>
             </dependency>
 
             <!-- Jersey -->
