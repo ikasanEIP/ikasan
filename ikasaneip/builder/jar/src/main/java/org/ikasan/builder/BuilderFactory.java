@@ -41,7 +41,6 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.component.ComponentBuilder;
-import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.monitor.MonitorFactory;
 import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
