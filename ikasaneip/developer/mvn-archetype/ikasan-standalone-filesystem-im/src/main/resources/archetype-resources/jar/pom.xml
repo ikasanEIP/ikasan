@@ -76,7 +76,6 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-all</artifactId>
             <version>${version.activemq}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -84,11 +83,8 @@
             <artifactId>activemq-junit</artifactId>
             <version>${version.activemq}</version>
             <scope>test</scope>
-
         </dependency>
-
     </dependencies>
-
 
     <build>
         <plugins>

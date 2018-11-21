@@ -40,19 +40,47 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.junit.EmbeddedActiveMQBroker;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.jms.core.JmsTemplate;
 
-/**
- * Sample local file consumer and local file producer Integration Module
- *
- * @author Ikasan Development Team
- */
-@SpringBootApplication
-public class Application
+import javax.annotation.Resource;
+
+@Configuration
+public class ModuleTestConfig
 {
-    public static void main(String[] args)
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
+    @Resource JmsListenerEndpointRegistry registry;
+
+    @Bean
+    @DependsOn("broker")
+    JmsTemplate jmsTemplate()
     {
-        SpringApplication.run(Application.class, args);
+        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
+        return jmsTemplate;
+    }
+
+    @Bean
+    @DependsOn("broker")
+    MessageListenerVerifier messageListenerVerifierTarget()
+    {
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
+        return messageListenerVerifier;
+    }
+
+    @Bean EmbeddedActiveMQBroker broker()
+    {
+        EmbeddedActiveMQBroker broker =  new EmbeddedActiveMQBroker();
+        broker.start();
+        return broker;
     }
 }
