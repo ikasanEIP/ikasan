@@ -50,6 +50,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -75,16 +76,19 @@ public class JmsFlowTest
     private JmsTemplate jmsTemplate;
 
     @Resource
+    private JmsListenerEndpointRegistry registry;
+
     public EmbeddedActiveMQBroker broker;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
-    @Resource MessageListenerVerifier messageListenerVerifierTarget;
-
     @Before
-    public  void setup(){
+    public void setup(){
+        broker =  new EmbeddedActiveMQBroker();
+        broker.start();
+
         flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms Flow"));
     }
 
@@ -103,18 +107,18 @@ public class JmsFlowTest
         jmsTemplate.convertAndSend("source", message);
 
         //Setup component expectations
-
         flowTestRule.consumer("consumer")
             .producer("producer");
 
-        messageListenerVerifierTarget.start();
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        messageListenerVerifier.start();
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
 
-        assertEquals(1,messageListenerVerifierTarget.getCaptureResults().size());
+        assertEquals(1,messageListenerVerifier.getCaptureResults().size());
 
     }
 
