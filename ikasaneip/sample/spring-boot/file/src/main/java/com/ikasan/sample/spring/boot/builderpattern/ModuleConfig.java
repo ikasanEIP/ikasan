@@ -10,14 +10,16 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
-@Configuration("MyModuleFactory")
-public class MyModule
+@Configuration
+public class ModuleConfig
 {
-    @Resource BuilderFactory builderFactory;
-    @Resource ComponentFactory componentFactory;
+    @Resource
+    private BuilderFactory builderFactory;
+    @Resource
+    private ComponentFactory componentFactory;
 
     @Bean
-    public Module myModule()
+    public Module getModule()
     {
 
         // get the builders
@@ -27,7 +29,7 @@ public class MyModule
             .withDescription("Sample file to JMS flow")
             .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
             .consumer("File Consumer", componentFactory.getFileConsumer())
-            .filter("myFilter", componentFactory.getFilter(), new FilterInvokerConfiguration())
+            .filter("My Filter", componentFactory.getFilter(), new FilterInvokerConfiguration())
             .converter("File Converter", componentFactory.getSourceFileConverter())
             .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 

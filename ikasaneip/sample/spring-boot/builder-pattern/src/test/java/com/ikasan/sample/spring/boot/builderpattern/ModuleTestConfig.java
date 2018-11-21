@@ -15,8 +15,6 @@ import javax.annotation.Resource;
 @Configuration
 public class ModuleTestConfig
 {
-    @Resource
-    JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
@@ -27,21 +25,5 @@ public class ModuleTestConfig
         return jmsTemplate;
     }
 
-    @Bean
-    @DependsOn("broker")
-    MessageListenerVerifier messageListenerVerifierTarget()
-    {
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        return messageListenerVerifier;
-    }
-
-    @Bean
-    EmbeddedActiveMQBroker broker()
-    {
-        EmbeddedActiveMQBroker broker =  new EmbeddedActiveMQBroker();
-        broker.start();
-        return broker;
-    }
 
 }
