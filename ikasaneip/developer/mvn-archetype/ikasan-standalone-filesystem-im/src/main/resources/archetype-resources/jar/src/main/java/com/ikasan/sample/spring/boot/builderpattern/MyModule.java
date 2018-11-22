@@ -76,7 +76,7 @@ public class MyModule
             .consumer("JMS Consumer", componentFactory.getJmsConsumer())
             .producer("File Producer", componentFactory.getFileProducer()).build();
 
-        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.")
+        Module module = moduleBuilder
             .addFlow(sourceFlow)
             .addFlow(targetFlow)
             .build();
