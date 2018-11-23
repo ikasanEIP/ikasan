@@ -18,7 +18,7 @@ public class ModuleTestConfig
         JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
         return jmsTemplate;
     }
-
+  
     @Bean String brokerUrl()
     {
         return brokerUrl;
