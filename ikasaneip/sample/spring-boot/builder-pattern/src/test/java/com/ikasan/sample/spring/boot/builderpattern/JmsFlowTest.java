@@ -49,6 +49,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
@@ -68,9 +70,14 @@ import static org.junit.Assert.assertEquals;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsFlowTest
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(JmsFlowTest.class);
 
     @Resource
-    private Module moduleUnderTest;
+    private Module<Flow> moduleUnderTest;
+
+    @Resource
+    private String brokerUrl;
 
     @Resource
     private JmsTemplate jmsTemplate;
@@ -78,40 +85,38 @@ public class JmsFlowTest
     @Resource
     private JmsListenerEndpointRegistry registry;
 
-    public EmbeddedActiveMQBroker broker;
-
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
     @Before
-    public void setup(){
-        broker =  new EmbeddedActiveMQBroker();
-        broker.start();
-
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms Flow"));
+    public void setup()
+    {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
     }
 
     @After
-    public void shutdown(){
+    public void shutdown()
+    {
 
-        broker.stop();
     }
+
     @Test
     public void test_Jms_Flow() throws Exception
     {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
 
         //Setup component expectations
         flowTestRule.consumer("consumer")
             .producer("producer");
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
         messageListenerVerifier.start();
+
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
@@ -119,7 +124,6 @@ public class JmsFlowTest
         flowTestRule.sleep(2000L);
 
         assertEquals(1,messageListenerVerifier.getCaptureResults().size());
-
     }
 
 }
