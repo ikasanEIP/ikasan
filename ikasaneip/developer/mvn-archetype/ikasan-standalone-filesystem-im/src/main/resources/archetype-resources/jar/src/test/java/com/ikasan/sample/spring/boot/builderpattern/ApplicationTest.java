@@ -43,6 +43,7 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducer;
+
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -54,7 +55,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -90,20 +93,31 @@ public class ApplicationTest
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
-    @Resource
     private EmbeddedActiveMQBroker broker;
 
     @Resource
     private Module<Flow> moduleUnderTest;
 
     @Resource
-    MessageListenerVerifier messageListenerVerifierTarget;
+    private JmsListenerEndpointRegistry registry;
 
     @Resource
-    JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
+
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
+    @Before
+    public void setup(){
+
+        broker =  new EmbeddedActiveMQBroker();
+        broker.start();
+
+    }
 
     @After public void shutdown() throws IOException
     {
+        flowTestRule.stopFlow();
+
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME));
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_CONSUMER_FILE_NAME));
         broker.stop();
@@ -113,6 +127,8 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFileFlow_flow() throws Exception
     {
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("${sourceFlowName}"));
+
         // create file to be consumed
         String content = "Hello World !!";
         Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
@@ -127,8 +143,23 @@ public class ApplicationTest
         configuration.setCronExpression("*/1 * * * * ?");
 
         // Get MessageListenerVerifier and start the listener
+        final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(broker.getVmURL(), "jms.topic.test", registry);
+
         messageListenerVerifierTarget.start();
 
+        //Setup component expectations
+        flowTestRule.consumer("File Consumer")
+            .filter("My Filter")
+            .converter("File Converter")
+            .producer("JMS Producer");
+
+
+        flowTestRule.startFlow();
+        flowTestRule.sleep(1000L);
+        flowTestRule.fireScheduledConsumer();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
 
         // start flow
         flow.start();
@@ -155,6 +186,9 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFileFlow_test_file_delivery() throws Exception
     {
+        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("${targetFlowName}"));
+
+
         // Prepare test data
         String message = "Random Text";
         logger.info("Sending a JMS message.[" + message + "]");
@@ -172,8 +206,9 @@ public class ApplicationTest
         SpringMessageConsumerConfiguration jmsConfiguration = ((ConfiguredResource<SpringMessageConsumerConfiguration>)flow.getFlowElement("JMS Consumer").getFlowComponent()).getConfiguration();
         jmsConfiguration.setDestinationJndiName("private.file.queue.test");
 
-        // start flow
-        flow.start();
+        //Setup component expectations
+        flowTestRule.consumer("JMS Consumer")
+            .producer("File Producer");
 
         // give flow time
         pause(2000);
@@ -188,20 +223,4 @@ public class ApplicationTest
                 new String(Files.readAllBytes(result.toPath())));
     }
 
-    /**
-     * Sleep for value in millis
-     *
-     * @param value
-     */
-    private void pause(long value)
-    {
-        try
-        {
-            Thread.sleep(value);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 }

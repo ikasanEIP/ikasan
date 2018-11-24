@@ -44,12 +44,13 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.monitor.MonitorFactory;
-import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -103,18 +104,6 @@ public class ComponentFactory
 
     @Value("${jms.provider.url}")
     private String jmsProviderUrl;
-
-    @Value("${monitor.email.notifier.mailfrom}")
-    private String mailFrom;
-
-    @Value("${monitor.email.notifier.mailhost}")
-    private String mailhost;
-
-    @Value("${monitor.email.notifier.torecipients}")
-    private List<String> torecipients;
-
-    @Value("${monitor.email.notifier.ccrecipients}")
-    private List<String> ccrecipients;
 
     /**
      * Return an instance of a configured file consumer
