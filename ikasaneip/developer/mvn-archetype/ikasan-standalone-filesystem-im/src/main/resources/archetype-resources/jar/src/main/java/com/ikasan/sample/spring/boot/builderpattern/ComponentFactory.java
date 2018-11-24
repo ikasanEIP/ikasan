@@ -50,7 +50,7 @@ import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.configuration.ConfiguredResource;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -123,7 +123,7 @@ public class ComponentFactory
 
     Producer getFileProducer()
     {
-         return builderFactory.getComponentBuilder().fileProducer()
+        return builderFactory.getComponentBuilder().fileProducer()
                 .setConfiguredResourceId(fileProducerConfiguredResourceId)
                 .setFilename(targetFilename)
                 .setOverwrite(true)
@@ -134,7 +134,7 @@ public class ComponentFactory
     {
         ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
 
-       return builderFactory.getComponentBuilder().jmsConsumer()
+        return builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("jms.topic.test")
                 .setDurableSubscriptionName("testDurableSubscription")
@@ -150,15 +150,6 @@ public class ComponentFactory
                 .setSessionTransacted(true)
                 .setPubSubDomain(false)
                 .build();
-    }
-
-
-    Filter getFilter()
-    {
-        MyFilter myFilter = new MyFilter();
-        myFilter.setConfiguredResourceId("myFilterPoJo");
-        myFilter.setConfiguration( new MyFilterConfiguration() );
-        return myFilter;
     }
 
     Producer getJmsProducer()
@@ -201,37 +192,6 @@ public class ComponentFactory
                 throw new TransformationException("Filename started with 'err'");
             }
             return file.getName();
-        }
-    }
-
-    class MyFilter implements Filter, ConfiguredResource<MyFilterConfiguration>
-    {
-        String configuredResourceId;
-        MyFilterConfiguration configuration;
-
-        @Override
-        public Object filter(Object message) throws FilterException {
-            return message;
-        }
-
-        @Override
-        public String getConfiguredResourceId() {
-            return configuredResourceId;
-        }
-
-        @Override
-        public void setConfiguredResourceId(String configuredResourceId) {
-            this.configuredResourceId = configuredResourceId;
-        }
-
-        @Override
-        public MyFilterConfiguration getConfiguration() {
-            return configuration;
-        }
-
-        @Override
-        public void setConfiguration(MyFilterConfiguration configuration) {
-            this.configuration = configuration;
         }
     }
 

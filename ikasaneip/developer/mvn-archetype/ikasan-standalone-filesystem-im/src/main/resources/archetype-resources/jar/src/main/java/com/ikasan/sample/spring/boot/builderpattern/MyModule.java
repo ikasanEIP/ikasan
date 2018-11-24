@@ -40,19 +40,49 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * Vanilla integration module implementation.
- *
- * @author Ikasan Development Team
- */
-@SpringBootApplication
-public class Application
+import javax.annotation.Resource;
+
+@Configuration("ModuleFactory")
+public class MyModule
 {
-    public static void main(String[] args)
+    @Resource
+    BuilderFactory builderFactory;
+    @Resource
+    ComponentFactory componentFactory;
+
+    @Bean
+    public Module myModule()
     {
-        SpringApplication.run(Application.class, args);
+        // get the module builder
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
+
+        Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
+            .withDescription("Sample file to JMS flow")
+            .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
+            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().build())
+            .consumer("File Consumer", componentFactory.getFileConsumer())
+            .converter("File Converter", componentFactory.getSourceFileConverter())
+            .producer("JMS Producer", componentFactory.getJmsProducer()).build();
+
+        Flow targetFlow = moduleBuilder.getFlowBuilder("targetFileFlow")
+            .withDescription("Sample JMS to file flow")
+            .consumer("JMS Consumer", componentFactory.getJmsConsumer())
+            .producer("File Producer", componentFactory.getFileProducer()).build();
+
+        Module module = moduleBuilder
+            .addFlow(sourceFlow)
+            .addFlow(targetFlow)
+            .build();
+
+        return module;
     }
 }
+
+

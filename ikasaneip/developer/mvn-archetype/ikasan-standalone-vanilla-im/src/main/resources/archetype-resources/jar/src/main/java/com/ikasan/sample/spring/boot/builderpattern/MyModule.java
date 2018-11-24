@@ -40,19 +40,45 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.OnException;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * Vanilla integration module implementation.
- *
- * @author Ikasan Development Team
- */
-@SpringBootApplication
-public class Application
+import javax.annotation.Resource;
+
+@Configuration("ModuleFactory")
+public class MyModule
 {
-    public static void main(String[] args)
+    @Resource
+    BuilderFactory builderFactory;
+    @Resource
+    ComponentFactory componentFactory;
+
+    @Bean
+    public Module myModule()
     {
-        SpringApplication.run(Application.class, args);
+        // get the module builder
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Vanilla Integration Module")
+                .withDescription("Vanilla Integration Module.");
+
+        Flow flow = moduleBuilder.getFlowBuilder("flow name")
+            .withDescription("Vanilla source flow")
+            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()).build())
+            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().build())
+            .consumer("Event Generating Consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer().build())
+            .converter("Event Converter", componentFactory.getConverter())
+            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer().build()).build();
+
+        Module module = moduleBuilder
+            .addFlow(flow)
+            .build();
+
+        return module;
     }
 }
+
+

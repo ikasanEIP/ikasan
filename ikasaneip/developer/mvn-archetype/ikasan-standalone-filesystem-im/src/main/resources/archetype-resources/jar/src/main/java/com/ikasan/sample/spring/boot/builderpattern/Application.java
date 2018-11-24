@@ -45,12 +45,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Sample local file consumer and local file producer Integration Module
+ *
  * @author Ikasan Development Team
  */
 @SpringBootApplication
 public class Application
 {
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         SpringApplication.run(Application.class, args);
     }
 }
