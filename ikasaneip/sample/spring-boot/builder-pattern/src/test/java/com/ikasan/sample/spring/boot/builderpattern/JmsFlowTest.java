@@ -95,7 +95,7 @@ public class JmsFlowTest
     }
 
     @Test
-    public void test_Jms_Flow() throws Exception
+    public void test_Jms_Flow()
     {
 
         // Prepare test data
