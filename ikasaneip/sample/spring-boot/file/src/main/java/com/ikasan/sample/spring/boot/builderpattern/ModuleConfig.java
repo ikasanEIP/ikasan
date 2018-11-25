@@ -23,7 +23,7 @@ public class ModuleConfig
     {
 
         // get the builders
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
             .withDescription("Sample file to JMS flow")
@@ -38,7 +38,7 @@ public class ModuleConfig
             .consumer("JMS Consumer", componentFactory.getJmsConsumer())
             .producer("File Producer", componentFactory.getFileProducer()).build();
 
-        Module module = moduleBuilder
+        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.")
             .addFlow(sourceFlow)
             .addFlow(targetFlow)
             .build();

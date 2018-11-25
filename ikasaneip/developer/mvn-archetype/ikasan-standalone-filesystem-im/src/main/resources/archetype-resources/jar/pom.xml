@@ -78,12 +78,6 @@
             <version>${version.activemq}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.activemq.tooling</groupId>
-            <artifactId>activemq-junit</artifactId>
-            <version>${version.activemq}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
