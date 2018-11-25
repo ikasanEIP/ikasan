@@ -40,7 +40,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -55,6 +54,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
@@ -82,8 +83,9 @@ public class JmsSampleFlowTest
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
+    private Logger logger = LoggerFactory.getLogger(JmsSampleFlowTest.class);
     @Resource
-    private Module moduleUnderTest;
+    private Module<Flow> moduleUnderTest;
 
     @Resource
     private JmsTemplate jmsTemplate;
@@ -102,41 +104,42 @@ public class JmsSampleFlowTest
     @Resource
     private ExclusionManagementService exclusionManagementService;
 
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
-
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
-
+    public IkasanFlowTestRule flowTestRule;
 
     @Before
     public void setup(){
 
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms Sample Flow"));
+        flowTestRule = new IkasanFlowTestRule();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
 
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
-
-        broker.start();
 
     }
 
     @After
     public void teardown(){
 
+        // consume messages from source queue if any were left
+        MessageListenerVerifier mlv = new MessageListenerVerifier(brokerUrl, "source", registry);
+        mlv.start();
+
+
         flowTestRule.stopFlow();
-        broker.stop();
     }
 
     @Test
     public void test_Jms_Sample_Flow() throws Exception
     {
 
-        //
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
+
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
-        messageListenerVerifier.start();
 
         //Setup component expectations
 
@@ -148,7 +151,9 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
+        flowTestRule.sleep(1000L);
+
+        flowTestRule.assertIsSatisfied();
 
         assertEquals(1, messageListenerVerifier.getCaptureResults().size());
         assertEquals(((TextMessage)messageListenerVerifier.getCaptureResults().get(0)).getText(),
@@ -161,13 +166,13 @@ public class JmsSampleFlowTest
     public void test_exclusion()
     {
 
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
+
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
-        messageListenerVerifier.start();
 
         // update broker config to force exception throwing
         ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
@@ -183,6 +188,8 @@ public class JmsSampleFlowTest
 
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
@@ -203,18 +210,17 @@ public class JmsSampleFlowTest
 
     }
 
-
     @Test
-    public void test_flow_in_recovery() throws Exception
+    public void test_flow_in_recovery()
     {
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
-        messageListenerVerifier.start();
 
         // setup custom broker to throw an exception
         ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
@@ -231,6 +237,8 @@ public class JmsSampleFlowTest
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
         assertEquals("recovering",flowTestRule.getFlowState());
+
+        flowTestRule.assertIsSatisfied();
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
@@ -250,16 +258,16 @@ public class JmsSampleFlowTest
     }
 
     @Test
-    public void test_flow_stopped_in_error() throws Exception
+    public void test_flow_stopped_in_error()
     {
+
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "target", registry);
-        messageListenerVerifier.start();
 
 
         // setup custom broker to throw an exception
@@ -279,6 +287,8 @@ public class JmsSampleFlowTest
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
         assertEquals("stoppedInError",flowTestRule.getFlowState());
+
+        flowTestRule.assertIsSatisfied();
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());

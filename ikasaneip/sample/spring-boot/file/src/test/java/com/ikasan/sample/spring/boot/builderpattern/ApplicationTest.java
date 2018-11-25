@@ -40,7 +40,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -50,15 +49,14 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
 
 import javax.annotation.Resource;
 import javax.jms.TextMessage;
@@ -85,10 +83,8 @@ public class ApplicationTest
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
-    private EmbeddedActiveMQBroker broker;
-
     @Resource
-    private Module moduleUnderTest;
+    private Module<Flow> moduleUnderTest;
 
     @Resource
     private ConfigurationManagement configurationManagement;
@@ -99,15 +95,11 @@ public class ApplicationTest
     @Resource
     private JmsTemplate jmsTemplate;
 
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
-    @Before
-    public void setup(){
-
-        broker =  new EmbeddedActiveMQBroker();
-        broker.start();
-
-    }
 
     @After public void shutdown() throws IOException
     {
@@ -115,26 +107,24 @@ public class ApplicationTest
 
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME));
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_CONSUMER_FILE_NAME));
-        broker.stop();
     }
 
     @Test
     @DirtiesContext
     public void sourceFileFlow_flow() throws Exception
     {
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("sourceFileFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("sourceFileFlow"));
 
         // create file to be consumed
         String content = "Hello World !!";
         Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
-
 
         ConfiguredResource configuredResource = (ConfiguredResource)flowTestRule.getComponent("File Consumer");
         Object configuration = configurationManagement.createConfiguration(configuredResource);
         configurationManagement.saveConfiguration(configuration);
 
         // Get MessageListenerVerifier and start the listner
-        final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(broker.getVmURL(), "jms.topic.test", registry);
+        final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
         messageListenerVerifierTarget.start();
 
         //Setup component expectations
@@ -151,6 +141,8 @@ public class ApplicationTest
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
 
+        flowTestRule.assertIsSatisfied();
+
         // Set expectation
         assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
@@ -161,14 +153,7 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFileFlow_test_file_delivery() throws Exception
     {
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("targetFileFlow"));
-
-
-        // Prepare test data
-        String message = "Random Text";
-        System.out.println("Sending a JMS message.[" + message + "]");
-        jmsTemplate.convertAndSend("private.file.queue.test", message);
-
+        flowTestRule.withFlow(moduleUnderTest.getFlow("targetFileFlow"));
 
         // update producer with file producer name
         FileProducerConfiguration producerConfiguration =  flowTestRule.getComponentConfig("File Producer",FileProducerConfiguration.class);
@@ -183,7 +168,16 @@ public class ApplicationTest
             .producer("File Producer");
 
         flowTestRule.startFlow();
-        flowTestRule.sleep(2000L);
+        flowTestRule.sleep(1000L);
+
+        // Prepare test data
+        String message = "Random Text";
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("private.file.queue.test", message);
+
+        flowTestRule.sleep(1000L);
+
+        flowTestRule.assertIsSatisfied();
 
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
 

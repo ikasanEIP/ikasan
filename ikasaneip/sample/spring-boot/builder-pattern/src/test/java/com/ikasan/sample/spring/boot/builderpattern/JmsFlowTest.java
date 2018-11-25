@@ -40,17 +40,16 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
@@ -77,28 +76,22 @@ public class JmsFlowTest
     private Module<Flow> moduleUnderTest;
 
     @Resource
-    private String brokerUrl;
-
-    @Resource
     private JmsTemplate jmsTemplate;
 
     @Resource
     private JmsListenerEndpointRegistry registry;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
     @Before
-    public void setup()
-    {
+    public void setup(){
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
-    }
-
-    @After
-    public void shutdown()
-    {
-
     }
 
     @Test
@@ -106,6 +99,9 @@ public class JmsFlowTest
     {
 
         // Prepare test data
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
+
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
@@ -114,16 +110,16 @@ public class JmsFlowTest
         flowTestRule.consumer("consumer")
             .producer("producer");
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        messageListenerVerifier.start();
-
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
 
+        flowTestRule.assertIsSatisfied();
+
         assertEquals(1,messageListenerVerifier.getCaptureResults().size());
+
     }
 
 }
