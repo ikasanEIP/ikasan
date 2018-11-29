@@ -103,16 +103,6 @@
             <!--<scope>test</scope>-->
         </dependency>
 
-        <!-- activemq-junit should be with scope test however for the sample purpose we
-         spin up the embedded broker as part of sample application.-->
-
-        <dependency>
-            <groupId>org.apache.activemq.tooling</groupId>
-            <artifactId>activemq-junit</artifactId>
-            <!--<scope>test</scope>-->
-            <version>${version.activemq}</version>
-        </dependency>
-
     </dependencies>
 
 

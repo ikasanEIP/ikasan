@@ -74,27 +74,24 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.mockftpserver</groupId>
+            <artifactId>MockFtpServer</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+        </dependency>
+
+
         <!-- activemq-all should be with scope test however for the sample purpose we
          spin up the embedded broker as part of sample application.-->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-all</artifactId>
             <!--<scope>test</scope>-->
-        </dependency>
-
-        <!-- activemq-junit should be with scope test however for the sample purpose we
-         spin up the embedded broker as part of sample application.-->
-
-        <dependency>
-            <groupId>org.apache.activemq.tooling</groupId>
-            <artifactId>activemq-junit</artifactId>
-            <!--<scope>test</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockftpserver</groupId>
-            <artifactId>MockFtpServer</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

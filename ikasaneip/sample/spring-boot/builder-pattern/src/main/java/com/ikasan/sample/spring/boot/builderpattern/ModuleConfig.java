@@ -6,6 +6,7 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -22,6 +23,21 @@ import javax.annotation.Resource;
 public class ModuleConfig
 {
     @Resource BuilderFactory builderFactory;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
+    @Value("${jms.connectionFactory.jndi.name}")
+    private String jmsConnectionFactoryName;
+
+    @Value("${jms.naming.factory.initial}")
+    private String jmsNamingFactoryInitial;
+
+    @Value("${jms.source.destination}")
+    private String jmsSourceDestination;
+
+    @Value("${jms.target.destination}")
+    private String jmsTargetDestination;
 
     @Bean
     public Module getModule()
@@ -56,23 +72,23 @@ public class ModuleConfig
 
         return flowBuilder.withDescription("Jms flow description")
             .consumer("consumer", componentBuilder.jmsConsumer().setConfiguredResourceId("configuredResourceId")
-                .setDestinationJndiName("dynamicQueues/source")
-                .setConnectionFactoryName("ConnectionFactory")
-                .setConnectionFactoryJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
-                .setConnectionFactoryJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
-                .setDestinationJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
-                .setDestinationJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                .setDestinationJndiName(jmsSourceDestination)
+                .setConnectionFactoryName(jmsConnectionFactoryName)
+                .setConnectionFactoryJndiPropertyFactoryInitial(jmsNamingFactoryInitial)
+                .setConnectionFactoryJndiPropertyProviderUrl(brokerUrl)
+                .setDestinationJndiPropertyFactoryInitial(jmsNamingFactoryInitial)
+                .setDestinationJndiPropertyProviderUrl(brokerUrl)
                 .setAutoContentConversion(true)
                 .build()
             )
             .producer("producer", componentBuilder.jmsProducer()
                 .setConfiguredResourceId("crid")
-                .setDestinationJndiName("dynamicQueues/target")
-                .setConnectionFactoryName("ConnectionFactory")
-                .setConnectionFactoryJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
-                .setConnectionFactoryJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
-                .setDestinationJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
-                .setDestinationJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)").build()
+                .setDestinationJndiName(jmsTargetDestination)
+                .setConnectionFactoryName(jmsConnectionFactoryName)
+                .setConnectionFactoryJndiPropertyFactoryInitial(jmsNamingFactoryInitial)
+                .setConnectionFactoryJndiPropertyProviderUrl(brokerUrl)
+                .setDestinationJndiPropertyFactoryInitial(jmsNamingFactoryInitial)
+                .setDestinationJndiPropertyProviderUrl(brokerUrl).build()
             )
             .build();
 

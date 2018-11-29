@@ -78,9 +78,9 @@ public class ModuleConfig
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("${artifactId}");
 
-        FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
+        FlowBuilder fb = mb.getFlowBuilder("${sourceFlowName}");
 
         ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
         Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
@@ -110,10 +110,11 @@ public class ModuleConfig
                 .producer("JMS Producer", jmsProducer)
                 .build();
 
-        Module module = mb.withDescription("Sample Module").addFlow(flow).build();
+        Module module = mb.withDescription("Sample Module")
+            .addFlow(flow)
+            .build();
         return module;
     }
-
 
 
 

@@ -23,7 +23,7 @@ public class ModuleConfig
     {
 
         // get the builders
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("${artifactId}");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("${sourceFlowName}")
             .withDescription("Sample file to JMS flow")

@@ -41,7 +41,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.command.ActiveMQMapMessage;
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -49,9 +48,10 @@ import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -80,8 +80,10 @@ public class JmsToSftpFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
 
+    private Logger logger = LoggerFactory.getLogger(JmsToSftpFlowTest.class);
+
     @Resource
-    public Module moduleUnderTest;
+    public Module<Flow> moduleUnderTest;
 
     @Resource
     public JmsTemplate jmsTemplate;
@@ -90,41 +92,24 @@ public class JmsToSftpFlowTest
 
     public SftpRule sftp;
 
-    public EmbeddedActiveMQBroker broker;
-
     @Before
     public void setup(){
         sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
 
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
-
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Jms To Sftp Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
     }
 
-    @After public void teardown()
+    @After
+    public void teardown()
     {
         flowTestRule.stopFlow();
-        broker.stop();
         sftp.stop();
     }
 
-    @Test public void test_file_upload() throws Exception
+    @Test
+    public void test_file_upload() throws Exception
     {
-
-        // Prepare test data
-        System.out.println("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
-        jmsTemplate.send("sftp.private.jms.queue", new MessageCreator()
-        {
-            @Override public Message createMessage(Session session) throws JMSException
-            {
-                MapMessage mapMessage = new ActiveMQMapMessage();
-                mapMessage.setString("content",SAMPLE_MESSAGE);
-                mapMessage.setString("fileName","generatedSftpProducertest.out");
-                return mapMessage;
-            }
-        });
 
         //Update Sftp Consumer config
         SftpProducerConfiguration consumerConfiguration = flowTestRule
@@ -142,7 +127,22 @@ public class JmsToSftpFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
+        // Prepare test data
+        logger.info("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
+        jmsTemplate.send("sftp.private.jms.queue", new MessageCreator()
+        {
+            @Override public Message createMessage(Session session) throws JMSException
+            {
+                MapMessage mapMessage = new ActiveMQMapMessage();
+                mapMessage.setString("content",SAMPLE_MESSAGE);
+                mapMessage.setString("fileName","generatedSftpProducertest.out");
+                return mapMessage;
+            }
+        });
+
         flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
 
         assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
 

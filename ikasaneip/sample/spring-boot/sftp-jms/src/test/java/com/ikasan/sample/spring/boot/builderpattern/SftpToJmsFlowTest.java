@@ -40,7 +40,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -49,9 +48,9 @@ import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
@@ -77,32 +76,29 @@ public class SftpToJmsFlowTest
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     @Resource
-    public Module moduleUnderTest;
+    public Module<Flow> moduleUnderTest;
 
     @Resource
     public JmsListenerEndpointRegistry registry;
 
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
     public SftpRule sftp;
-
-    public EmbeddedActiveMQBroker broker;
 
     @Before
     public void setup(){
         sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
 
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
-
-        flowTestRule.withFlow((Flow) moduleUnderTest.getFlow("Sftp To Jms Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
     @After public void teardown()
     {
         flowTestRule.stopFlow();
-        broker.stop();
         sftp.stop();
     }
 
@@ -118,7 +114,7 @@ public class SftpToJmsFlowTest
         consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
         consumerConfiguration.setRemotePort(sftp.getPort());
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(broker.getVmURL(), "sftp.private.jms.queue", registry);
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
         messageListenerVerifier.start();
 
         //Setup component expectations
@@ -134,6 +130,8 @@ public class SftpToJmsFlowTest
 
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
 
         assertEquals(1, messageListenerVerifier.getCaptureResults().size());
 
