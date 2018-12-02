@@ -19,9 +19,6 @@ import javax.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-
-        "classpath:monitor-service-conf.xml",
-        "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
