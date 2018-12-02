@@ -93,7 +93,7 @@ mvn archetype:generate \
 ```
     
 Where,
-- Ikasan Version       - the version of the Ikasan platform being used. i.e. 2.0.0-rc2
+- Ikasan Version       - the version of the Ikasan platform being used. i.e. 2.0.4
 - Maven Group Id       - maven group coordinates you want this build pom to have
 - Module Name          - artifact is you want this build to have
 - Module Version       - artifact version you want this build to have
