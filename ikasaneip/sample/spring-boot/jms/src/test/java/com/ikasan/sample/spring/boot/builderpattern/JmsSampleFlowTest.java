@@ -144,7 +144,9 @@ public class JmsSampleFlowTest
     @Resource
     private ExclusionManagementService exclusionManagementService;
 
-    public IkasanFlowTestRule flowTestRule;
+    private IkasanFlowTestRule flowTestRule;
+
+    private MessageListenerVerifier messageListenerVerifier;
 
     @Before
     public void setup(){
@@ -154,6 +156,8 @@ public class JmsSampleFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
 
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
+        messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        messageListenerVerifier.start();
 
     }
 
@@ -164,17 +168,14 @@ public class JmsSampleFlowTest
         MessageListenerVerifier mlv = new MessageListenerVerifier(brokerUrl, "source", registry);
         mlv.start();
 
-
+        mlv.stop();
+        messageListenerVerifier.stop();
         flowTestRule.stopFlow();
     }
 
     @Test
     public void test_Jms_Sample_Flow() throws Exception
     {
-
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -205,9 +206,6 @@ public class JmsSampleFlowTest
     @Test
     public void test_exclusion()
     {
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -254,8 +252,6 @@ public class JmsSampleFlowTest
     public void test_flow_in_recovery()
     {
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -301,8 +297,6 @@ public class JmsSampleFlowTest
     public void test_flow_stopped_in_error()
     {
 
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
-        messageListenerVerifier.start();
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
