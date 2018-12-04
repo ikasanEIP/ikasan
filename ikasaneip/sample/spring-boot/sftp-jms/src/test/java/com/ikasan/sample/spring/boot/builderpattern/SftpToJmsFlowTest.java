@@ -88,10 +88,14 @@ public class SftpToJmsFlowTest
 
     public SftpRule sftp;
 
+    public MessageListenerVerifier messageListenerVerifier;
+
     @Before
     public void setup(){
         sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
+        messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
+        messageListenerVerifier.start();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
@@ -99,6 +103,7 @@ public class SftpToJmsFlowTest
     @After public void teardown()
     {
         flowTestRule.stopFlow();
+        messageListenerVerifier.stop();
         sftp.stop();
     }
 
@@ -113,9 +118,6 @@ public class SftpToJmsFlowTest
         SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer",SftpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
         consumerConfiguration.setRemotePort(sftp.getPort());
-
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
-        messageListenerVerifier.start();
 
         //Setup component expectations
 
