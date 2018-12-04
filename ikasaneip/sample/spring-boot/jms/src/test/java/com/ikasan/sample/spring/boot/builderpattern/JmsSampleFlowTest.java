@@ -164,15 +164,19 @@ public class JmsSampleFlowTest
     @After
     public void teardown(){
 
+
         // consume messages from source queue if any were left
         MessageListenerVerifier mlv = new MessageListenerVerifier(brokerUrl, "source", registry);
         mlv.start();
-
+        flowTestRule.sleep(1000L);
         mlv.stop();
+
         messageListenerVerifier.stop();
         flowTestRule.stopFlow();
+
     }
 
+    @DirtiesContext
     @Test
     public void test_Jms_Sample_Flow() throws Exception
     {
@@ -203,6 +207,7 @@ public class JmsSampleFlowTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_exclusion()
     {
@@ -248,6 +253,7 @@ public class JmsSampleFlowTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_in_recovery()
     {
@@ -293,6 +299,7 @@ public class JmsSampleFlowTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_stopped_in_error()
     {
