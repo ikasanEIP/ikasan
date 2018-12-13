@@ -54,7 +54,7 @@ public class SftpProducerConfiguration
     protected Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** SFTP default Remote host */
-    protected String remoteHost = String.valueOf("localhost");
+    protected String remoteHost = String.valueOf("127.0.0.1");
 
     /** SFTP private key hosts */
     protected String privateKeyFilename;
