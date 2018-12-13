@@ -84,11 +84,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-        </dependency>
-
         <!-- activemq-all should be with scope test however for the sample purpose we
          spin up the embedded broker as part of sample application.-->
         <dependency>
