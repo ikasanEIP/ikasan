@@ -36,7 +36,7 @@ public class SFTPClientTest
         tempDir = Files.createTempDirectory("tempfiles");
         server = new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD, tempDir);
         server.start();
-        uut = new SFTPClient(null,null,"testUser","testPassword","localhost",SFTP_PORT_PASSWORD,"localhost",3,"",20000,null);
+        uut = new SFTPClient(null,null,"testUser","testPassword","127.0.0.1",SFTP_PORT_PASSWORD,"127.0.0.1",3,"",20000,null);
 
         uut.connect();
 
