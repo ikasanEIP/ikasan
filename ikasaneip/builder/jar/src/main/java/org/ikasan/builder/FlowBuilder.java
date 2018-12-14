@@ -641,8 +641,11 @@ public class FlowBuilder implements ApplicationContextAware
 
     protected Flow _build(Route _route)
     {
-        FlowElement headFlowElement = connectElements(_route);
+        return _build( connectElements(_route) );
+    }
 
+    Flow _build(FlowElement headFlowElement)
+    {
         if (configurationService == null)
         {
             configurationService = ConfiguredResourceConfigurationService

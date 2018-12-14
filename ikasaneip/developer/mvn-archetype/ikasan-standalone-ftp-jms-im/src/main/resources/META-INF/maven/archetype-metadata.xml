@@ -44,7 +44,7 @@
 
     <requiredProperties>
         <requiredProperty key="sourceFlowName">
-            <defaultValue>=Ftp to Jms Flow</defaultValue>
+            <defaultValue>Ftp to Jms Flow</defaultValue>
         </requiredProperty>
         <requiredProperty key="targetFlowName">
             <defaultValue>Jms to Ftp Flow</defaultValue>

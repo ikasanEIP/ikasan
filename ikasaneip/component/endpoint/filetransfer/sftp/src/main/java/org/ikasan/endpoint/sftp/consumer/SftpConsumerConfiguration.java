@@ -113,7 +113,7 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
     private Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** SFTP default Remote host */
-    private String remoteHost = String.valueOf("localhost");
+    private String remoteHost = String.valueOf("127.0.0.1");
 
     /** SFTP private key hosts */
     private String privateKeyFilename;

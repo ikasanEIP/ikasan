@@ -32,6 +32,11 @@ public class MessageListenerVerifier implements MessageListener
         this.endpoint.startMessageListener();
     }
 
+    public void stop()
+    {
+        this.endpoint.stopMessageListener();
+    }
+
     protected List<Object> captureResults = new ArrayList<>();
 
     public List<Object> getCaptureResults()
@@ -77,6 +82,11 @@ public class MessageListenerVerifier implements MessageListener
         void startMessageListener()
         {
             this.listenerContainer.start();
+        }
+
+        void stopMessageListener()
+        {
+            this.listenerContainer.stop();
         }
     }
 }

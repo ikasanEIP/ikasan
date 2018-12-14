@@ -40,11 +40,8 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.builder.*;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Vanilla integration module implementation.
@@ -52,35 +49,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @author Ikasan Development Team
  */
 @SpringBootApplication
-@ComponentScan({"org.ikasan.*", "com.ikasan.*"})
 public class Application
 {
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
-        new Application().boot(args);
-    }
-
-    /**
-     * Create the ikasan application instance and boot it.
-     * @param args
-     * @return IkasanApplication
-     */
-    public IkasanApplication boot(String[] args)
-    {
-        // get an ikasanApplication instance
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class, args);
-
-        // get builders
-
-        // create a module
-
-        // create flows
-
-        // add flows to the module
-
-        // pass the module to the ikasan application
-
-        // return the ikasan application
-        return ikasanApplication;
+        SpringApplication.run(Application.class, args);
     }
 }
