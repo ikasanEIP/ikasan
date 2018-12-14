@@ -82,7 +82,7 @@ public class FtpConsumerAlternateConfigurationTest
         Assert.assertEquals(Integer.valueOf(-1), ftpConfiguration.getAgeOfFiles());
         Assert.assertNull(ftpConfiguration.getClientID());
         Assert.assertTrue(ftpConfiguration.getCleanupJournalOnComplete().booleanValue());
-        Assert.assertEquals(String.valueOf("localhost"), ftpConfiguration.getRemoteHost());
+        Assert.assertEquals(String.valueOf("127.0.0.1"), ftpConfiguration.getRemoteHost());
         Assert.assertEquals(String.valueOf("localhost"), ftpConfiguration.getAlternateRemoteHost());
         Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getMaxRetryAttempts());
         Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getAlternateMaxRetryAttempts());
