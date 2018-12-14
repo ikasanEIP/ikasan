@@ -40,30 +40,21 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
-import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
-import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.history.listener.MessageHistoryContextListener;
-import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
@@ -77,8 +68,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.ImportResource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,10 +77,15 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
+@ImportResource( {
+        "classpath:builder-conf.xml"
+} )
 public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 {
  	/** logger */
     private static Logger logger = LoggerFactory.getLogger(FlowFactory.class);
+
+    BuilderFactory builderFactory;
 
     /** name of the flow's module owner */
     String moduleName;
@@ -310,136 +306,24 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     @Override
     public Flow getObject()
     {
-        // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-        if(resubmissionService == null && this.consumer != null && this.consumer.getFlowComponent() instanceof ResubmissionService)
-        {
-            resubmissionService = (ResubmissionService)this.consumer.getFlowComponent();
-            if(resubmissionService!=null)
-            {
-                resubmissionService.setResubmissionEventFactory(resubmissionEventFactory);
-            }
-        }
-
-        // add a default MessageHistoryContextListener if necessary.
-        if(!this.messageHistoryContextListenerExist())
-        {
-            this.flowInvocationContextListeners = new ArrayList<FlowInvocationContextListener>();
-            MessageHistoryContextListener listener = new MessageHistoryContextListener(this.messageHistoryService,
-                    this.moduleName, this.name);
-
-            this.flowInvocationContextListeners.add(listener);
-        }
-
-        final FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(this.consumer, this.configurationService, this.resubmissionService, this.replayRecordService);
-
-        if(exclusionService == null)
-        {
-            if(this.exclusionServiceFactory == null)
-            {
-                throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
-            }
-
-            exclusionService = this.exclusionServiceFactory.getExclusionService(moduleName, name);
-        }
-
-        if(errorReportingService == null)
-        {
-            errorReportingService = this.errorReportingServiceFactory.getErrorReportingService();
-        }
-
-        final ErrorReportingService proxiedTarget = this.getTargetObject(errorReportingService, ErrorReportingService.class);
-        if(proxiedTarget instanceof ErrorReportingServiceDefaultImpl)
-        {
-            ((ErrorReportingServiceDefaultImpl)proxiedTarget).setModuleName(moduleName);
-            ((ErrorReportingServiceDefaultImpl)proxiedTarget).setFlowName(name);
-        }
-
-        if(recoveryManager == null)
-        {
-            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName);
-        }
-
-        if(recoveryManager instanceof IsConsumerAware)
-        {
-            ((IsConsumerAware)recoveryManager).setConsumer(consumer.getFlowComponent());
-        }
-
-        if(recoveryManager instanceof IsExclusionServiceAware)
-        {
-            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
-        }
-
-        if(recoveryManager instanceof IsErrorReportingServiceAware)
-        {
-            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
-        }
-
-        if(exceptionResolver != null)
-        {
-            recoveryManager.setResolver(exceptionResolver);
-        }
-
-        ExclusionFlowConfiguration exclusionFlowConfiguration = null;
-        if(exclusionFlowHeadElement != null)
-        {
-            exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, this.configurationService, this.resubmissionService, this.replayRecordService);
-        }
-
-        final Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, ikasanSerialiserFactory);
-        flow.setFlowListener(flowEventListener);
-        
-        if(this.flowPersistentConfiguration != null)
-        {
-        	((ConfiguredResource)flow).setConfiguration(this.flowPersistentConfiguration);
-        }
-
-        // pass handle to the error reporting service if flow needs to be aware of this
-        if(flow instanceof IsErrorReportingServiceAware)
-        {
-            ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
-        }
-
-        // pass exclusion service handle to the main flow elements
-        injectExclusionService(flow.getFlowElements(), exclusionService);
-
-        // pass exclusion service handle to the excluded event flow if it exists
-        if (exclusionFlowConfiguration != null) 
-        {
-            injectExclusionService(exclusionFlowConfiguration.getFlowElements(), exclusionService);
-        }
-
-        if(monitor != null && flow instanceof MonitorSubject)
-        {
-            if(monitor.getEnvironment() == null)
-            {
-                monitor.setEnvironment("Undefined Environment");
-            }
-
-            if(monitor.getModuleName() == null)
-            {
-                monitor.setModuleName(moduleName);
-            }
-
-            if(monitor.getFlowName() == null)
-            {
-                monitor.setFlowName(name);
-            }
-
-            ((MonitorSubject)flow).setMonitor(monitor);
-        }
-
-        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
-
-        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
-            + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
-            + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
-            + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
-            + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
-            + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
-            + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
-            + "]");
-
-        return flow;
+        return builderFactory.getFlowBuilder(moduleName, name)
+                .withConfigurationService(configurationService)
+                .withResubmissionService(resubmissionService)
+                .withReplayRecordService(replayRecordService)
+                .withExclusionService(exclusionService)
+                .withExclusionServiceFactory(exclusionServiceFactory)
+                .withErrorReportingService(errorReportingService)
+                .withErrorReportingServiceFactory(errorReportingServiceFactory)
+                .withRecoveryManager(recoveryManager)
+                .withRecoveryManagerFactory(recoveryManagerFactory)
+                .withExceptionResolver(exceptionResolver)
+                .withExclusionFlowHeadElement(exclusionFlowHeadElement)
+                .withFlowListener(flowEventListener)
+                .withMessageHistoryService(messageHistoryService)
+                .withMonitor(monitor)
+                .withSerialiserFactory(ikasanSerialiserFactory)
+                .withFlowInvocationContextListeners(flowInvocationContextListeners)
+                ._build(consumer);
     }
 
     /**
@@ -509,6 +393,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
+        this.builderFactory = applicationContext.getBean(BuilderFactory.class);
         this.configurationService = applicationContext.getBean(ConfigurationService.class);
         this.recoveryManagerFactory = applicationContext.getBean(RecoveryManagerFactory.class);
         this.exclusionServiceFactory = applicationContext.getBean(ExclusionServiceFactory.class);
@@ -518,7 +403,6 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.ikasanSerialiserFactory = applicationContext.getBean(SerialiserFactory.class);
         this.replayRecordService = applicationContext.getBean(ReplayRecordService.class);
         this.messageHistoryService = applicationContext.getBean(MessageHistoryService.class);
-
     }
 
     /**

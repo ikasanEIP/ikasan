@@ -44,16 +44,13 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.monitor.MonitorFactory;
-import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
-import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.Notifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -62,7 +59,6 @@ import javax.annotation.Resource;
 import javax.jms.DeliveryMode;
 import javax.jms.Session;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.jms.listener.DefaultMessageListenerContainer.CACHE_CONNECTION;
@@ -81,12 +77,6 @@ public class ComponentFactory
 {
     @Resource
     private BuilderFactory builderFactory;
-
-    @Resource
-    private MonitorFactory monitorFactory;
-
-    @Resource
-    private NotifierFactory notifierFactory;
 
     @Value("#{'${file.consumer.filenames}'.split(',')}")
     List<String> sourceFilenames;
@@ -114,18 +104,6 @@ public class ComponentFactory
 
     @Value("${jms.provider.url}")
     private String jmsProviderUrl;
-
-    @Value("${monitor.email.notifier.mailfrom}")
-    private String mailFrom;
-
-    @Value("${monitor.email.notifier.mailhost}")
-    private String mailhost;
-
-    @Value("${monitor.email.notifier.torecipients}")
-    private List<String> torecipients;
-
-    @Value("${monitor.email.notifier.ccrecipients}")
-    private List<String> ccrecipients;
 
     /**
      * Return an instance of a configured file consumer
@@ -174,6 +152,15 @@ public class ComponentFactory
                 .build();
     }
 
+
+    Filter getFilter()
+    {
+        MyFilter myFilter = new MyFilter();
+        myFilter.setConfiguredResourceId("myFilterPoJo");
+        myFilter.setConfiguration( new MyFilterConfiguration() );
+        return myFilter;
+    }
+
     Producer getJmsProducer()
     {
         ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
@@ -217,6 +204,35 @@ public class ComponentFactory
         }
     }
 
+    class MyFilter implements Filter, ConfiguredResource<MyFilterConfiguration>
+    {
+        String configuredResourceId;
+        MyFilterConfiguration configuration;
 
+        @Override
+        public Object filter(Object message) throws FilterException {
+            return message;
+        }
+
+        @Override
+        public String getConfiguredResourceId() {
+            return configuredResourceId;
+        }
+
+        @Override
+        public void setConfiguredResourceId(String configuredResourceId) {
+            this.configuredResourceId = configuredResourceId;
+        }
+
+        @Override
+        public MyFilterConfiguration getConfiguration() {
+            return configuration;
+        }
+
+        @Override
+        public void setConfiguration(MyFilterConfiguration configuration) {
+            this.configuration = configuration;
+        }
+    }
 
 }

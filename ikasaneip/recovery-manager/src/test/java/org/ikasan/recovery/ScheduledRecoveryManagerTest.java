@@ -932,8 +932,7 @@ public class ScheduledRecoveryManagerTest
     /**
      * Test failed recovery due to unsupported recovery action.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void test_failed_recover_due_to_unsupported_recovery_action()
+    public void test_failed_recover_due_to_unsupported_recovery_action() throws SchedulerException
     {
         final Exception exception = new Exception();
         
@@ -950,14 +949,33 @@ public class ScheduledRecoveryManagerTest
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, unsupportedExceptionAction.toString());
                 will(returnValue("errorUri"));
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(false));
+                exactly(1).of(consumer).stop();
+
+                // stop managed resources
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+                exactly(1).of(managedResource).stopManagedResource();
             }
         });
 
         RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
         setIsAware(recoveryManager);
         recoveryManager.setResolver(exceptionResolver);
-        recoveryManager.recover("componentName", exception);
 
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Stop", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
         mockery.assertIsSatisfied();
     }
 

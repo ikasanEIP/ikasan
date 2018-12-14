@@ -19,9 +19,6 @@ import javax.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-
-        "classpath:monitor-service-conf.xml",
-        "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
@@ -75,7 +72,7 @@ public class ModuleConfig {
     private Integer sftpProducerRemotePort;
 
     @Value("${sftp.producer.outputDirectory}")
-    private String sftpConsumerOutputDirectory;
+    private String sftpProducerOutputDirectory;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
@@ -152,7 +149,7 @@ public class ModuleConfig {
             .setPassword(sftpProducerPassword)
             .setRemoteHost(sftpProducerRemoteHost)
             .setRemotePort(sftpProducerRemotePort)
-            .setOutputDirectory(sftpConsumerOutputDirectory)
+            .setOutputDirectory(sftpProducerOutputDirectory)
             .setConfiguredResourceId("sftpProducerConfiguration")
             .build();
 

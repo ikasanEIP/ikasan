@@ -40,14 +40,26 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.ftp.FtpRule;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
-import org.junit.Rule;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test Sftp To JMS Flow.
@@ -55,20 +67,44 @@ import org.junit.rules.TestRule;
  * @author Ikasan Development Team
  */
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class FtpToJmsFlowTest
 {
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    public IkasanStandaloneFlowTestRule flowTestRule = new IkasanStandaloneFlowTestRule("Ftp To Jms Flow" ,
-        Application.class);
+    @Resource
+    public Module<Flow> moduleUnderTest;
 
-    public FtpRule ftp  = new FtpRule("test","test",null,22999);
+    @Resource
+    public JmsListenerEndpointRegistry registry;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
-    @Rule
-    public TestRule chain = RuleChain.outerRule(ftp).around(broker).around(flowTestRule);
+
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
+    public FtpRule ftp;
+
+   @Before
+    public void setup(){
+        ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
+        ftp.start();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Ftp To Jms Flow"));
+    }
+
+    @After
+    public void teardown()
+    {
+        flowTestRule.stopFlow();
+        ftp.stop();
+
+    }
 
     @Test
     public void test_file_download() throws Exception
@@ -80,6 +116,11 @@ public class FtpToJmsFlowTest
         //Update Ftp Consumer config
         FtpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Ftp Consumer",FtpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory(ftp.getBaseDir());
+        consumerConfiguration.setRemotePort(ftp.getPort());
+
+        //Create test queue listener
+        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "ftp.private.jms.queue", registry);
+        messageListenerVerifier.start();
 
         //Setup component expectations
 
@@ -93,7 +134,11 @@ public class FtpToJmsFlowTest
         flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(1000L);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
 
     }
 
