@@ -40,31 +40,31 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.ikasan.builder.IkasanApplication;
-import org.ikasan.component.endpoint.filesystem.producer.FileProducer;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.aop.framework.Advised;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import javax.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,103 +74,110 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {Application.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
 {
     private static String FILE_PRODUCER_FILE_NAME = "testProducer.out";
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
-    private EmbeddedActiveMQBroker broker;
+    @Resource
+    private Module<Flow> moduleUnderTest;
 
-    private IkasanApplication ikasanApplication;
+    @Resource
+    private ConfigurationManagement configurationManagement;
 
-    @Before public void setup()
-    {
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
-        Application myApplication = new Application();
-        ikasanApplication = myApplication.boot(args);
-        System.out.println("Check is module healthy.");
-    }
+    @Resource
+    private JmsListenerEndpointRegistry registry;
+
+    @Resource
+    private JmsTemplate jmsTemplate;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
 
     @After public void shutdown() throws IOException
     {
+        flowTestRule.stopFlow();
+
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME));
         Files.deleteIfExists(FileSystems.getDefault().getPath(FILE_CONSUMER_FILE_NAME));
-        ikasanApplication.close();
-        broker.stop();
     }
 
-    @Test public void sourceFileFlow_flow() throws Exception
+    @Test
+    @DirtiesContext
+    public void sourceFileFlow_flow() throws Exception
     {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("sourceFileFlow"));
+
         // create file to be consumed
         String content = "Hello World !!";
         Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
-        List<Module> modules = ikasanApplication.getModules();
-        assertTrue("There should only be 1 module in this application, but found " + modules.size(),
-            modules.size() == 1);
-        Module<Flow> module = modules.get(0);
-        Flow flow = module.getFlow("sourceFileFlow");
 
-        ConfigurationManagement configurationManagement = ikasanApplication.getBean(ConfigurationManagement.class);
-        ConfiguredResource configuredResource = ((ConfiguredResource)flow.getFlowElement("File Consumer").getFlowComponent());
+        ConfiguredResource configuredResource = (ConfiguredResource)flowTestRule.getComponent("File Consumer");
         Object configuration = configurationManagement.createConfiguration(configuredResource);
         configurationManagement.saveConfiguration(configuration);
 
         // Get MessageListenerVerifier and start the listner
-        MessageListenerVerifier messageListenerVerifierTarget = ikasanApplication
-            .getBean("messageListenerVerifierTarget", MessageListenerVerifier.class);
+        final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
         messageListenerVerifierTarget.start();
 
+        //Setup component expectations
+        flowTestRule.consumer("File Consumer")
+            .filter("My Filter")
+            .converter("File Converter")
+            .producer("JMS Producer");
 
-        // start flow
-        flow.start();
-        // give flow time
-        pause(7000);
-        assertEquals("running", flow.getState());
-        flow.stop();
-        assertEquals("stopped", flow.getState());
+
+        flowTestRule.startFlow();
+        flowTestRule.sleep(1000L);
+        flowTestRule.fireScheduledConsumer();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
+
         // Set expectation
         assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
             FILE_CONSUMER_FILE_NAME);
     }
 
-    @Test public void targetFileFlow_test_file_delivery() throws Exception
+    @Test
+    @DirtiesContext
+    public void targetFileFlow_test_file_delivery() throws Exception
     {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("targetFileFlow"));
+
+        // update producer with file producer name
+        FileProducerConfiguration producerConfiguration =  flowTestRule.getComponentConfig("File Producer",FileProducerConfiguration.class);
+        producerConfiguration.setFilename(FILE_PRODUCER_FILE_NAME);
+
+        // update flow consumer  with file producer name
+        SpringMessageConsumerConfiguration jmsConfiguration = flowTestRule.getComponentConfig("JMS Consumer",SpringMessageConsumerConfiguration.class);
+        jmsConfiguration.setDestinationJndiName("private.file.queue.test");
+
+        //Setup component expectations
+        flowTestRule.consumer("JMS Consumer")
+            .producer("File Producer");
+
+        flowTestRule.startFlow();
+        flowTestRule.sleep(1000L);
+
         // Prepare test data
-        JmsTemplate jmsTemplate = ikasanApplication.getBean(JmsTemplate.class);
         String message = "Random Text";
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("private.file.queue.test", message);
 
-        // get targetFileFlow from context
-        List<Module> modules = ikasanApplication.getModules();
-        assertTrue("There should only be 1 module in this application, but found " + modules.size(),
-            modules.size() == 1);
-        Module<Flow> module = modules.get(0);
-        Flow flow = module.getFlow("targetFileFlow");
+        flowTestRule.sleep(1000L);
 
-        // update producer with file producer name
-        FileProducerConfiguration producerConfiguration = ((FileProducer) flow.getFlowElement("File Producer")
-            .getFlowComponent()).getConfiguration();
-        producerConfiguration.setFilename(FILE_PRODUCER_FILE_NAME);
-
-        // update flow consumer  with file producer name
-        JmsContainerConsumer containerConsumer = (JmsContainerConsumer) ((Advised) flow.getFlowElement("JMS Consumer")
-            .getFlowComponent()).getTargetSource().getTarget();
-        SpringMessageConsumerConfiguration jmsConfiguration = containerConsumer.getConfiguration();
-        jmsConfiguration.setDestinationJndiName("private.file.queue.test");
-
-        // start flow
-        flow.start();
-
-        // give flow time
-        pause(4000);
-        assertEquals("running", flow.getState());
-        flow.stop();
-        assertEquals("stopped", flow.getState());
+        flowTestRule.assertIsSatisfied();
 
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
 
@@ -179,20 +186,4 @@ public class ApplicationTest
             new String(Files.readAllBytes(result.toPath())));
     }
 
-    /**
-     * Sleep for value in millis
-     *
-     * @param value
-     */
-    private void pause(long value)
-    {
-        try
-        {
-            Thread.sleep(value);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 }

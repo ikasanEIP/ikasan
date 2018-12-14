@@ -63,7 +63,7 @@ public class SftpProducerConfigurationTest
         
         Assert.assertNull(sftpConfiguration.getClientID());
         Assert.assertTrue(sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
-        Assert.assertEquals("localhost", sftpConfiguration.getRemoteHost());
+        Assert.assertEquals("127.0.0.1", sftpConfiguration.getRemoteHost());
         Assert.assertNull(sftpConfiguration.getPrivateKeyFilename());
         Assert.assertEquals(Integer.valueOf(3), sftpConfiguration.getMaxRetryAttempts());
         Assert.assertEquals(Integer.valueOf(22), sftpConfiguration.getRemotePort());

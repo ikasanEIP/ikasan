@@ -118,7 +118,7 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     private Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** Remote host */
-    private String remoteHost = String.valueOf("localhost");
+    private String remoteHost = String.valueOf("127.0.0.1");
     
     /** Remote port */
     private Integer remotePort = Integer.valueOf(21);

@@ -42,6 +42,8 @@ package org.ikasan.testharness.flow.rule;
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.FlowObserver;
@@ -50,14 +52,20 @@ import org.ikasan.testharness.flow.FlowTestHarness;
 import org.ikasan.testharness.flow.FlowTestHarnessImpl;
 import org.ikasan.testharness.flow.expectation.model.*;
 import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
+import org.ikasan.testharness.flow.listener.FlowEventListenerSubject;
 import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,9 +116,13 @@ public class IkasanFlowTestRule implements TestRule
      */
     private boolean errorEndState = false;
 
+    FlowEventListenerSubject testHarnessFlowEventListener;
+
     public IkasanFlowTestRule()
     {
         this.flowExpectations = new OrderedExpectation();
+        testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
+
     }
 
     /**
@@ -193,7 +205,7 @@ public class IkasanFlowTestRule implements TestRule
         }
         addExpectation(new ConsumerComponent(name));
         // detect a ScheduledConsumer
-        if (flow.getFlowElement(name).getFlowComponent().getClass().getCanonicalName().equals("org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer"))
+        if (getComponent(name) instanceof ScheduledConsumer)
         {
             this.scheduledConsumerName = name;
         }
@@ -376,11 +388,11 @@ public class IkasanFlowTestRule implements TestRule
      */
     public void fireScheduledConsumer()
     {
-        FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
-        ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
+        ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
         try
         {
-            Trigger trigger = newTrigger().withIdentity("name", "group").build();
+            JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
+            Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
             consumer.scheduleAsEagerTrigger(trigger, 0);
         }
         catch (SchedulerException se)
@@ -398,8 +410,7 @@ public class IkasanFlowTestRule implements TestRule
      */
     public void fireScheduledConsumerSynchronously(JobExecutionContext jobExecutionContext)
     {
-        FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
-        ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
+        ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
         consumer.execute(jobExecutionContext);
     }
 
@@ -423,6 +434,107 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.start();
         Assert.assertEquals("flow should be running", "running", flow.getState());
+    }
+
+    /**
+     * Setup the flow expectations and start the given flow.
+     *
+     */
+    public void startFlow()
+    {
+        flowTestHarness = new FlowTestHarnessImpl(flowExpectations);
+        testHarnessFlowEventListener.removeAllObservers();
+        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
+        testHarnessFlowEventListener.setIgnoreEventCapture(true);
+        if (this.scheduledConsumerName != null)
+        {
+            Object component = getComponent(scheduledConsumerName);
+            ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) component).getConfiguration();
+            configuration.setCronExpression("0/5 * * * * ? 2099"); // set to never run
+            configuration.setEager(false); // do not callback on the provider once complete
+        }
+        flow.setFlowListener(testHarnessFlowEventListener);
+        flow.start();
+        Assert.assertEquals("flow should be running", "running", flow.getState());
+    }
+
+    public void stopFlow()
+    {
+        flow.stop();
+        assertEquals("flow should be stopped", errorEndState ?
+            "stoppedInError" :
+            "stopped", flow.getState());
+    }
+
+
+    public void assertIsSatisfied()
+    {
+        flowTestHarness.assertIsSatisfied();
+    }
+
+    public String getFlowState()
+    {
+        return flow.getState();
+    }
+
+
+
+    /**
+     * Gets component of given name from this flow.
+     *
+     * @param componentName component name to be looked up in flow
+     * @return component as Object
+     */
+    public Object getComponent(String componentName){
+        Object flowElement =  flow.getFlowElement(componentName).getFlowComponent();
+        return getTargetObject(flowElement,Object.class);
+    }
+
+    /**
+     * Gets object or unwraps object from JdkDynamicProxy.
+     *
+     * @param proxy object which might have been proxied
+     * @param targetClass target class type
+     * @param <T> returned Object casted to type T
+     * @return
+     */
+    private <T> T getTargetObject(Object proxy, Class<T> targetClass) {
+        try
+        {
+            if (AopUtils.isJdkDynamicProxy(proxy))
+            {
+                return (T) ((Advised) proxy).getTargetSource().getTarget();
+            }
+            else
+            {
+                return (T) proxy; // expected to be cglib proxy then, which is simply a specialized class
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Gets configuration of component with given name from this flow.
+     *
+     * @param componentName component name to be looked up in flow
+     * @param classType class Type to configuration object
+     * @return configuration object casted to T
+     */
+    public <T> T getComponentConfig(String componentName, Class<T> classType){
+        Object  component = getComponent(componentName);
+        Class<?> c = component.getClass();
+        try
+        {
+
+            Method method = c.getDeclaredMethod ("getConfiguration", null);
+            return (T) method.invoke (component, null);
+        }
+        catch (IllegalAccessException|InvocationTargetException |NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
     /**

@@ -313,7 +313,18 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
         else
         {
-            throw new UnsupportedOperationException("Unsupported action [" + action + "]");
+            // undefine/unsupported action - stop consumer in error and throw exception to rollback
+            if(isRecovering())
+            {
+                cancelAll();
+            }
+
+            this.consumer.stop();
+            stopManagedResources();
+
+            this.isUnrecoverable = true;
+            logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "] due to Unsupported action [" + action + "]");
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
     }
 

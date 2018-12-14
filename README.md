@@ -74,9 +74,7 @@ than another development framework.
 |  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
 |  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
 |  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
-|  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
 |  [spring-boot-ftp-jms](ikasaneip/sample/spring-boot/ftp-jms/README.md) |
-|  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
 |  [spring-boot-sftp-jms](ikasaneip/sample/spring-boot/sftp-jms/README.md) |
 ---------------------
 

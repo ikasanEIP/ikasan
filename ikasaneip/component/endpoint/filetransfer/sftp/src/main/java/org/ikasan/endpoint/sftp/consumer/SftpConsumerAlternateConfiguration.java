@@ -48,7 +48,7 @@ package org.ikasan.endpoint.sftp.consumer;
 public class SftpConsumerAlternateConfiguration extends SftpConsumerConfiguration
 {
     /** SFTP default Remote host */
-    private String alternateRemoteHost = String.valueOf("localhost");
+    private String alternateRemoteHost = String.valueOf("127.0.0.1");
 
     /** SFTP private key hosts */
     private String alternatePrivateKeyFilename;
