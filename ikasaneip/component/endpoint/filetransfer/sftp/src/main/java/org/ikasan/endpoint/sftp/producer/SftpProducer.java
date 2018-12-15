@@ -40,13 +40,6 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
-import java.io.ByteArrayInputStream;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
@@ -54,6 +47,7 @@ import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -61,7 +55,13 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.resource.ResourceException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * SFTP Implementation of a producer based on the JCA specification.
@@ -147,11 +147,15 @@ public class SftpProducer implements Producer<Payload>,
         {
             if (activeFileTransferConnectionTemplate != null)
             {
-                activeFileTransferConnectionTemplate.deliverInputStream(new ByteArrayInputStream(payload.getContent()),
-                    payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), configuration.getOutputDirectory(),
-                    configuration.getOverwrite(), configuration.getRenameExtension(),
-                    configuration.getChecksumDelivered(), configuration.getUnzip(),
-                    configuration.getCreateParentDirectory(), configuration.getTempFileName());
+                try (InputStream inputStream = payload.getInputStream()) {
+                    activeFileTransferConnectionTemplate.deliverInputStream(inputStream,
+                        payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), configuration.getOutputDirectory(),
+                        configuration.getOverwrite(), configuration.getRenameExtension(),
+                        configuration.getChecksumDelivered(), configuration.getUnzip(),
+                        configuration.getCreateParentDirectory(), configuration.getTempFileName());
+                } catch (IOException e) {
+                    throw new EndpointException(e);
+                }
             }
             else
             {

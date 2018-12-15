@@ -114,36 +114,6 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
     }
 
     /**
-     * Test Delivering a payload
-     *
-     * @param payload - The payload to deliver
-     * @param outputDir - The directory to place the file in
-     * @param outputTargets - The Map of targets to deliver the file to
-     * @param overwrite - Overwrite existing files flag
-     * @param renameExtension - The extension for the temp file rename
-     * @param checksumDelivered - Flag for whether we perform checksumming
-     * @param unzip - Flag for whether we unzip the delivered file
-     * @param cleanup - Cleanup txn journal flag
-     * @throws ResourceException - Exception if JCA connector fails
-     * @deprecated - use deliverInputStream
-     */
-    public void deliverPayload(final Payload payload, final String outputDir, final Map<String, String> outputTargets, final boolean overwrite,
-                               final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean cleanup) throws ResourceException
-    {
-        execute(new ConnectionCallback()
-        {
-            public Object doInConnection(Connection connection) throws ResourceException
-            {
-                addListenersToConnection((BaseFileTransferConnection) connection);
-
-                ((BaseFileTransferConnection) connection).deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered,
-                        unzip, cleanup);
-                return null;
-            }
-        });
-    }
-
-    /**
      * Delivering an InputStream
      *
      * @param inputStream - The 'file'

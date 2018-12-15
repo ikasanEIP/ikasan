@@ -59,7 +59,7 @@ public interface ChecksumSupplier
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public String extractChecksumFromChecksumFile(InputStream checksumFile) throws UnsupportedEncodingException, IOException;
+    String extractChecksumFromChecksumFile(InputStream checksumFile) throws UnsupportedEncodingException, IOException;
 
     /**
      * Returns the standard file extension for checksum files
@@ -68,7 +68,7 @@ public interface ChecksumSupplier
      * 
      * @return file extension
      */
-    public String getFileExtension();
+    String getFileExtension();
     
     
     /**
@@ -77,12 +77,20 @@ public interface ChecksumSupplier
      * @param bytes 
      * @return checksum as a String value
      */
-    public String calucluateChecksumString(byte[] bytes);
+    String calucluateChecksumString(byte[] bytes);
+
+    /**
+     * Calculates a new checksum
+     *
+     * @param inputStream the inputstream to read and checksum
+     * @return checksum as a String value
+     */
+    String calculateChecksumString(InputStream inputStream) throws IOException;
 
     /**
      * Returns the name of the checksum algorithm
      * @return name of the algorithm
      */
-    public String getAlgorithmName();
+    String getAlgorithmName();
     
 }

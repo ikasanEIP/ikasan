@@ -420,7 +420,7 @@ public abstract class AbstractBaseFileTransferTransactionalResourceCommand exten
      * 
      * @param entry - the file
      * @return content as an InputStream
-     * @throws ResourceException when downloding a file gails
+     * @throws ResourceException when downloading a file fails
      */
     protected InputStream getContentAsStream(ClientListEntry entry) throws ResourceException
     {

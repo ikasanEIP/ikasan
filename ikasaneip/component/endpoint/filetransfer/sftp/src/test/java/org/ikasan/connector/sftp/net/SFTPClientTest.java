@@ -1,17 +1,17 @@
 package org.ikasan.connector.sftp.net;
 
-import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
-import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
+import org.ikasan.connector.basefiletransfer.net.*;
 import org.ikasan.connector.sftp.ssh.SftpServerWithPasswordAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.SocketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,20 +23,20 @@ import static org.assertj.core.api.Assertions.tuple;
 public class SFTPClientTest
 {
 
-
-    private static final int SFTP_PORT_PASSWORD = 3001;
     private SftpServerWithPasswordAuthenticator server;
     private SFTPClient uut;
     private Path tempDir;
-
+    private Path dataFile;
 
     @Before
     public void before() throws ClientConnectionException, IOException
     {
+        int passwordSftpServerPort = SocketUtils.findAvailableTcpPort();
         tempDir = Files.createTempDirectory("tempfiles");
-        server = new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD, tempDir);
+        dataFile = Paths.get("src/test/resources/data/test-data.xml");
+        server = new SftpServerWithPasswordAuthenticator(passwordSftpServerPort, tempDir);
         server.start();
-        uut = new SFTPClient(null, null, "testUser", "testPassword", "127.0.0.1", SFTP_PORT_PASSWORD, "127.0.0.1", 3, "", 20000, null);
+        uut = new SFTPClient(null, null, "testUser", "testPassword", "127.0.0.1", passwordSftpServerPort, "127.0.0.1", 3, "", 20000, null);
 
         uut.connect();
 
@@ -130,5 +130,14 @@ public class SFTPClientTest
             tuple(tempFile1.getFileName().toString(), false),
             tuple(tempFile2.getFileName().toString(), false)
         );
+    }
+
+    @Test
+    public void putWithOutputStream_put_file_input_stream() throws IOException, ClientCommandLsException, ClientCommandMkdirException, ClientCommandPutException
+    {
+        uut.putWithOutputStream("testdir/file", Files.newInputStream(dataFile));
+        String writtenFileContents = new String(Files.readAllBytes(tempDir.resolve("testdir/file")));
+        String expectedFileContents = new String(Files.readAllBytes(dataFile));
+        assertThat(writtenFileContents).isEqualTo(expectedFileContents);
     }
 }
