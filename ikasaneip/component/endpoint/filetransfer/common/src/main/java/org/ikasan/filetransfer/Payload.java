@@ -40,6 +40,8 @@
  */
 package org.ikasan.filetransfer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,6 @@ import java.util.Map;
  */
 public interface Payload extends Cloneable
 {
-		
 
     /**
 	 * Returns the value of the attribute named, or null if no such attribute exists
@@ -58,44 +59,49 @@ public interface Payload extends Cloneable
 	 * @param attributeName
 	 * @return value of the attribute named, or null if no such attribute exists
 	 */
-	public String getAttribute(String attributeName);
+	String getAttribute(String attributeName);
 
     /**
-	 * Returns a List of names of all attributes of this Paylaod
+	 * Returns a List of names of all attributes of this Payload
 	 * 
 	 * @return List<String> attribute names
 	 */
-	public List<String> getAttributeNames();
+	List<String> getAttributeNames();
 	
 	/**
 	 * Return all Payload attributes as a Map
 	 * 
 	 * @return Map of payload attribute values keyed by attribute names
 	 */
-	public Map<String, String> getAttributeMap();
+	Map<String, String> getAttributeMap();
 
     /**
      * Get the content of the payload
      * 
      * @return content of payload
      */
-    public byte[] getContent();
+    byte[] getContent();
 
- 
+    /**
+     * Get the payload content as an input stream
+     *
+     * @return payload content as an input stream
+     */
+    InputStream getInputStream() throws IOException;
 
 	/**
 	 * Accessor for id
 	 * 
 	 * @return id
 	 */
-	public String getId();
+	String getId();
 	
 	/**
 	 * Convenience method giving the size of the payload contents
 	 * 
 	 * @return size of payload contents in bytes
 	 */
-	public long getSize();
+	long getSize();
 	
 	/**
 	 * Sets an attribute on the Payload, overriding any prior value
@@ -103,23 +109,29 @@ public interface Payload extends Cloneable
 	 * @param attributeName
 	 * @param attributeValue
 	 */
-	public void setAttribute(String attributeName, String attributeValue);
+	void setAttribute(String attributeName, String attributeValue);
 	
 	/**
      * Set the content of the payload
      * 
      * @param content content to set
+     * @deprecated remove from interface only
      */
-    public void setContent(final byte[] content);
-	
+	@Deprecated
+    default void setContent(final byte[] content) {
+        throw new UnsupportedOperationException("Payload does not support setting content.");
+    }
+
 	/**
 	 * Spawns a new child Payload based on this Payload
 	 * 
 	 * @param siblingNo
 	 * @return child Payload
 	 */
-	public Payload spawnChild(int siblingNo);
-
+	@Deprecated
+	default Payload spawnChild(int siblingNo) {
+        throw new UnsupportedOperationException("Payload does not support spawning children.");
+    }
 
 	/**
 	 * Clones the Payload
@@ -127,7 +139,8 @@ public interface Payload extends Cloneable
 	 * @return cloned Payload
 	 * @throws CloneNotSupportedException
 	 */
-	public Payload clone() throws CloneNotSupportedException;
+	@Deprecated
+	Payload clone() throws CloneNotSupportedException;
 
 
 }

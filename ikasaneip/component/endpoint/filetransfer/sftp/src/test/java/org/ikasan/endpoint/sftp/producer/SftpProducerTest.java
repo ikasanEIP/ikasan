@@ -40,11 +40,6 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
-import java.io.ByteArrayInputStream;
-
-import javax.resource.ResourceException;
-
-
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
@@ -61,6 +56,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.resource.ResourceException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * Test class for {@link SftpProducer}
@@ -114,14 +113,14 @@ public class SftpProducerTest
      * Test successful invocation based on a single file.
      * @throws EndpointException if error invoking the endpoint
      */
-    @Test public void test_successful_sftpPayloadProducer_invocation_single_file() throws ResourceException
-    {
+    @Test public void test_successful_sftpPayloadProducer_invocation_single_file() throws ResourceException, IOException {
         uut.setConfiguration(sftpConfiguration);
         ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -137,8 +136,8 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-				oneOf(payload).getContent();
-				will(returnValue(content.getBytes()));
+				oneOf(payload).getInputStream();
+				will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				oneOf(sftpConfiguration).getOutputDirectory();
@@ -156,7 +155,7 @@ public class SftpProducerTest
 				oneOf(sftpConfiguration).getTempFileName();
 				will(returnValue(tempFileName));
                 oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -175,18 +174,18 @@ public class SftpProducerTest
     /**
      * When the producer is configured with an alternate connection template, on failure, producer will switch to use the
      * alternate next time it is invoked.
-     * 
+     *
      * @throws EndpointException if error invoking endpoint
      */
     @Test
-    public void producer_fails_changes_to_alternate_connection_template() throws ResourceException
-    {
+    public void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
         uut.setConfiguration(sftpConfiguration);
         ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -204,8 +203,8 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-				oneOf(payload).getContent();
-				will(returnValue(content.getBytes()));
+                oneOf(payload).getInputStream();
+                will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				oneOf(sftpConfiguration).getOutputDirectory();
@@ -223,7 +222,7 @@ public class SftpProducerTest
 				oneOf(sftpConfiguration).getTempFileName();
 				will(returnValue(tempFileName));
                 oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -253,18 +252,18 @@ public class SftpProducerTest
 
     /**
      * If an error occurs while producer using alternative connection template, switch back to original connection template
-     * 
+     *
      * @throws EndpointException if error invoking endpoint
      */
     @Test
-    public void producer_fails_changes_to_original_connection_template() throws ResourceException
-    {
+    public void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
         uut.setConfiguration(sftpConfiguration);
         ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -282,8 +281,8 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-				exactly(2).of(payload).getContent();
-				will(returnValue(content.getBytes()));
+				exactly(2).of(payload).getInputStream();
+				will(returnValue(contentInputStream));
 				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				exactly(2).of(sftpConfiguration).getOutputDirectory();
@@ -301,7 +300,7 @@ public class SftpProducerTest
 				exactly(2).of(sftpConfiguration).getTempFileName();
 				will(returnValue(tempFileName));
 				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -312,7 +311,7 @@ public class SftpProducerTest
 						with(equal(tempFileName)));
 				will(throwException(exception));
 				oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),

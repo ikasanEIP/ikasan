@@ -40,11 +40,6 @@
  */
 package org.ikasan.endpoint.ftp.producer;
 
-import java.io.ByteArrayInputStream;
-
-import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
-
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
@@ -59,6 +54,11 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.resource.ResourceException;
+import javax.resource.cci.ConnectionFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class FtpProducerTest {
 
@@ -119,11 +119,12 @@ public class FtpProducerTest {
 	 *             if error invoking the endpoint
 	 */
 	@Test
-	public void producer_succeeds_when_receive_single_file() throws ResourceException {
+	public void producer_succeeds_when_receive_single_file() throws ResourceException, IOException {
 		// set up
 		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -136,8 +137,8 @@ public class FtpProducerTest {
 		// expectations
 		mockery.checking(new Expectations() {
 			{
-				oneOf(payload).getContent();
-				will(returnValue(content.getBytes()));
+				oneOf(payload).getInputStream();
+				will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				oneOf(configuration).getOutputDirectory();
@@ -155,7 +156,7 @@ public class FtpProducerTest {
 				oneOf(configuration).getTempFileName();
 				will(returnValue(tempFileName));
 				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -179,13 +180,14 @@ public class FtpProducerTest {
 	 *             if error invoking endpoint
 	 */
 	@Test
-	public void producer_fails_changes_to_alternate_connection_template() throws ResourceException {
+	public void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
 		// set up
 		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -201,8 +203,8 @@ public class FtpProducerTest {
 		// expectations
 		mockery.checking(new Expectations() {
 			{
-				oneOf(payload).getContent();
-				will(returnValue(content.getBytes()));
+				oneOf(payload).getInputStream();
+				will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				oneOf(configuration).getOutputDirectory();
@@ -220,7 +222,7 @@ public class FtpProducerTest {
 				oneOf(configuration).getTempFileName();
 				will(returnValue(tempFileName));
 				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -248,13 +250,14 @@ public class FtpProducerTest {
 	 *             if error invoking endpoint
 	 */
 	@Test
-	public void producer_fails_changes_to_original_connection_template() throws ResourceException {
+	public void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
 		// set up
 		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
 		final String content = "content";
+        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
 		final String outputDirectory = "outputDirectory";
 		final boolean overwrite = true;
@@ -270,8 +273,8 @@ public class FtpProducerTest {
 		// expectations
 		mockery.checking(new Expectations() {
 			{
-				exactly(2).of(payload).getContent();
-				will(returnValue(content.getBytes()));
+				exactly(2).of(payload).getInputStream();
+				will(returnValue(contentInputStream));
 				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
 				exactly(2).of(configuration).getOutputDirectory();
@@ -289,7 +292,7 @@ public class FtpProducerTest {
 				exactly(2).of(configuration).getTempFileName();
 				will(returnValue(tempFileName));
 				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),
@@ -300,7 +303,7 @@ public class FtpProducerTest {
 						with(equal(tempFileName)));
 				will(throwException(exception));
 				oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
-						with(any(ByteArrayInputStream.class)),
+						with(equal(contentInputStream)),
 						with(equal(fileName)),
 						with(equal(outputDirectory)),
 						with(equal(overwrite)),

@@ -63,10 +63,13 @@ import static java.util.Collections.singletonList;
 /**
  * A SFTP helper class used for unit testing sftp server.
  */
-public class SftpServerWithPublickeyAuthenticator {
+public class SftpServerWithPublickeyAuthenticator
+{
+
     private SshServer sshd;
 
-    public SftpServerWithPublickeyAuthenticator(int port) {
+    public SftpServerWithPublickeyAuthenticator(int port)
+    {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
 
@@ -88,7 +91,8 @@ public class SftpServerWithPublickeyAuthenticator {
         sshd.setSubsystemFactories(namedFactoryList);
     }
 
-    public void start() {
+    public void start()
+    {
         try {
             sshd.start();
         } catch (IOException e) {
@@ -96,7 +100,8 @@ public class SftpServerWithPublickeyAuthenticator {
         }
     }
 
-    public void stop() {
+    public void stop()
+    {
         try {
             sshd.stop();
         } catch (IOException e) {

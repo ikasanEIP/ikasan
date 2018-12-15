@@ -40,24 +40,23 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import javax.resource.ResourceException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.filetransfer.Payload;
-import org.ikasan.filetransfer.util.ChecksumUtils;
-import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ChecksumFailedException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.listener.TransactionCommitException;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.util.ChecksumUtils;
+import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.resource.ResourceException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Command for comparing the calculated checksum of a retrieved file with that
@@ -135,47 +134,31 @@ public class ChecksumValidatorCommand extends AbstractBaseFileTransferTransactio
             return result;
         }
    
-        Payload payload = (Payload) executionContext
-            .getRequired(ExecutionContext.PAYLOAD);
+        Payload payload = (Payload) executionContext.getRequired(ExecutionContext.PAYLOAD);
 
         try
         {
-        	
-        	//generate an MD5 checksum of the file contents
-            String generatedChecksum = checksumSupplier.calucluateChecksumString(payload.getContent());
-            
-            
-//            String generatedChecksumAlgorithm = "MD5";
-//            if (!generatedChecksumAlgorithm.equals(checksumSupplier
-//                .getAlgorithmName()))
-//            {
-//                throw new UnsupportedEncodingException(
-//                    "File was previously checksummed with an unsupported algorithm: [" + generatedChecksumAlgorithm + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-//            }
-            
-            
-            
+        	//generate an MD5 checksum of the payload contents
+            String payloadChecksum;
+            try (InputStream payloadInputStream = payload.getInputStream()) {
+                payloadChecksum = checksumSupplier.calculateChecksumString(payloadInputStream);
+            }
 
-            // Get the checksum file
+            // Get checksum from checksum file
             URI checksumURI = new URI(checksumFilePath);
             logger
                 .debug("Checksum File URI is: [" + checksumURI.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             ClientListEntry checksumEntry = new ClientListEntry();
             checksumEntry.setUri(checksumURI);
-            // Get the checksum file
-            InputStream checksumFile = getContentAsStream(checksumEntry);
+            String checksumFromFile;
+            try (InputStream checksumFile = getContentAsStream(checksumEntry)) {
+                checksumFromFile = checksumSupplier.extractChecksumFromChecksumFile(checksumFile);
+            }
 
-            String checksumFromFile = checksumSupplier
-                .extractChecksumFromChecksumFile(checksumFile);
-
-            // Close the InputStream now that we're done with it
-            checksumFile.close();
-            
-            logger.debug("generatedChecksum [" + generatedChecksum + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.debug("generatedChecksum [" + payloadChecksum + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             logger.debug("checksumFromFile [" + checksumFromFile + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-            if (!ChecksumUtils.checksumMatch(checksumFromFile,
-                generatedChecksum))
+            if (ChecksumUtils.checksumMatch(payloadChecksum, checksumFromFile))
             {
                 throw new ChecksumFailedException("Checksums didn't match!"); //$NON-NLS-1$
             }
