@@ -40,24 +40,16 @@
  */
 package org.ikasan.connector.sftp.ssh;
 
-import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.Session;
-import org.apache.sshd.common.file.FileSystemView;
-import org.apache.sshd.common.file.nativefs.NativeFileSystemFactory;
-import org.apache.sshd.common.file.nativefs.NativeFileSystemView;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.UserAuth;
-import org.apache.sshd.server.auth.UserAuthPassword;
-import org.apache.sshd.server.command.ScpCommandFactory;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.UserAuth;
+import org.apache.sshd.server.auth.password.UserAuthPasswordFactory;
+import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
-import org.junit.rules.TemporaryFolder;
+import org.apache.sshd.server.scp.ScpCommandFactory;
+import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -65,66 +57,35 @@ import java.util.List;
 
 /**
  * A SFTP helper class used for unit testing sftp server.
- *
  */
-public class SftpServerWithPasswordAuthenticator
-{
+public class SftpServerWithPasswordAuthenticator {
 
     private SshServer sshd;
 
-    public SftpServerWithPasswordAuthenticator(int port,final Path testFolder)
-    {
+    public SftpServerWithPasswordAuthenticator(int port, final Path testFolder) {
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
 
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
+        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider());
 
-        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<NamedFactory<UserAuth>>();
-        userAuthFactories.add(new UserAuthPassword.Factory());
-
+        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<>();
+        userAuthFactories.add(new UserAuthPasswordFactory());
         sshd.setUserAuthFactories(userAuthFactories);
 
-        sshd.setPasswordAuthenticator(new PasswordAuthenticator()
-        {
-            public boolean authenticate(String username, String password, ServerSession session)
-            {
-                return true;
-            }
-        });
+        sshd.setPasswordAuthenticator((username, password, session) -> true);
 
         sshd.setCommandFactory(new ScpCommandFactory());
 
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>();
-        namedFactoryList.add(new SftpSubsystem.Factory());
+        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
 
-//        sshd.setFileSystemFactory(new NativeFileSystemFactory() {
-//            @Override
-//            public FileSystemView createFileSystemView(final Session session) {
-//                return new NativeFileSystemView(session.getUsername(), false) {
-//
-//                    public String getVirtualUserDir() {
-//                        System.out.println("testFolder.toString()");
-//                        return testFolder.toString();
-//                    }
-//                };
-//            };
-//        });
-
         System.out.println(testFolder.toString());
-        sshd.setFileSystemFactory(new VirtualFileSystemFactory(testFolder.toString()));
+        sshd.setFileSystemFactory(new VirtualFileSystemFactory(testFolder));
     }
 
-    private PasswordAuthenticator PasswordAuthenticator() {
-        return new PasswordAuthenticator() {
-            @Override
-            public boolean authenticate(String arg0, String arg1, ServerSession arg2) {
-                return true;
-            }};
-    }
-
-    public void start(){
+    public void start() {
         try {
             sshd.start();
         } catch (IOException e) {
@@ -132,11 +93,12 @@ public class SftpServerWithPasswordAuthenticator
         }
     }
 
-    public void stop(){
+    public void stop() {
         try {
             sshd.stop();
-        } catch (InterruptedException e) {
-            e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sshd = null;
     }
 }

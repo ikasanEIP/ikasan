@@ -14,8 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 /**
  * Created by amajewski on 24/06/15.
@@ -24,7 +24,7 @@ public class SFTPClientTest
 {
 
 
-    private static final int SFTP_PORT_PASSWORD=3001;
+    private static final int SFTP_PORT_PASSWORD = 3001;
     private SftpServerWithPasswordAuthenticator server;
     private SFTPClient uut;
     private Path tempDir;
@@ -36,7 +36,7 @@ public class SFTPClientTest
         tempDir = Files.createTempDirectory("tempfiles");
         server = new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD, tempDir);
         server.start();
-        uut = new SFTPClient(null,null,"testUser","testPassword","127.0.0.1",SFTP_PORT_PASSWORD,"127.0.0.1",3,"",20000,null);
+        uut = new SFTPClient(null, null, "testUser", "testPassword", "127.0.0.1", SFTP_PORT_PASSWORD, "127.0.0.1", 3, "", 20000, null);
 
         uut.connect();
 
@@ -51,11 +51,15 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_dir_is_empty() throws URISyntaxException, ClientCommandLsException, IOException
+    public void doList_when_dir_is_empty() throws URISyntaxException, ClientCommandLsException
     {
         List<ClientListEntry> result = uut.ls(".");
-        assertEquals(true,result.isEmpty());
-
+        assertThat(result).extracting(
+            ClientListEntry::getName,
+            ClientListEntry::isDirectory
+        ).containsExactlyInAnyOrder(
+            tuple(".", true)
+        );
     }
 
     @Test
@@ -64,10 +68,13 @@ public class SFTPClientTest
         Path tempFile = Files.createTempFile(tempDir, "tempfile1", ".tmp");
 
         List<ClientListEntry> result = uut.ls(".");
-        assertEquals(false,result.isEmpty());
-        assertEquals(1,result.size());
-        assertThat(result.get(0).getName(), containsString("tempfile1"));
-
+        assertThat(result).extracting(
+            ClientListEntry::getName,
+            ClientListEntry::isDirectory
+        ).containsExactlyInAnyOrder(
+            tuple(".", true),
+            tuple(tempFile.getFileName().toString(), false)
+        );
     }
 
     @Test
@@ -77,77 +84,51 @@ public class SFTPClientTest
         Path tempFile2 = Files.createTempFile(tempDir, "tempfile2", ".tmp");
 
         List<ClientListEntry> result = uut.ls(".");
-        assertEquals(false,result.isEmpty());
-        assertEquals(2,result.size());
-        assertThat(result.get(0).getName(), containsString("tempfile1"));
-        assertThat(result.get(1).getName(), containsString("tempfile2"));
 
+        assertThat(result).extracting(
+            ClientListEntry::getName,
+            ClientListEntry::isDirectory
+        ).containsExactlyInAnyOrder(
+            tuple(".", true),
+            tuple(tempFile.getFileName().toString(), false),
+            tuple(tempFile2.getFileName().toString(), false)
+        );
     }
 
     @Test
-    public void doList_when_is_recursive_false_and_dir_has_file_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
+    public void doList_when_has_file_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
     {
-        Path tempDir2 = Files.createTempDirectory(tempDir,"subdir");
-        Path tempFile = Files.createTempFile(tempDir2, "tempfile1", ".tmp");
+        Path tempDir2 = Files.createTempDirectory(tempDir, "subdir");
+        Files.createTempFile(tempDir2, "tempfile1", ".tmp");
 
         List<ClientListEntry> result = uut.ls(".");
-        assertEquals(false,result.isEmpty());
-        assertEquals(1,result.size());
 
-        assertThat(result.get(0).getName(), containsString("subdir"));
-        assertTrue(result.get(0).isDirectory());
-
+        assertThat(result).extracting(
+            ClientListEntry::getName,
+            ClientListEntry::isDirectory
+        ).containsExactlyInAnyOrder(
+            tuple(".", true),
+            tuple(tempDir2.getFileName().toString(), true)
+        );
     }
 
     @Test
-    public void doList_when_is_recursive_true_and_dir_has_file_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
+    public void doList_when_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
     {
-        Path tempDir2 = Files.createTempDirectory(tempDir,"subdir");
-        Path tempFile = Files.createTempFile(tempDir2, "tempfile1", ".tmp");
+        Path tempDir2 = Files.createTempDirectory(tempDir, "subdir");
+        Path tempFile1 = Files.createTempFile(tempDir2, "tempfile1", ".tmp");
+        Path tempFile2 = Files.createTempFile(tempDir2, "tempfile2", ".tmp");
 
-        List<ClientListEntry> result = uut.ls(".");
-        assertEquals(false,result.isEmpty());
-        assertEquals(1,result.size());
+        List<ClientListEntry> result = uut.ls(tempDir2.getFileName().toString());
 
-        assertThat(result.get(0).getName(), containsString("subdir"));
-        assertTrue(result.get(0).isDirectory());
-
-        //assertThat(result.get(1).getName(), containsString("tempfile1"));
-
-    }
-
-    @Test
-    public void doList_when_is_recursive_true_and_file_is_five_level_deep() throws URISyntaxException, ClientCommandLsException, IOException
-    {
-        Path level1 = Files.createTempDirectory(tempDir,"level1");
-        Path level2 = Files.createTempDirectory(level1,"level2");
-        Path level3 = Files.createTempDirectory(level2,"level3");
-        Path level4 = Files.createTempDirectory(level3,"level4");
-        Path level5 = Files.createTempDirectory(level4,"level5");
-        Path tempFile = Files.createTempFile(level5, "tempfile1", ".tmp");
-
-        List<ClientListEntry> result = uut.ls(".");
-        assertEquals(false,result.isEmpty());
-        assertEquals(1,result.size());
-
-        assertThat(result.get(0).getName(), containsString("level1"));
-        assertTrue(result.get(0).isDirectory());
-
-        /**
-        assertThat(result.get(1).getName(), containsString("level2"));
-        assertTrue(result.get(1).isDirectory());
-
-        assertThat(result.get(2).getName(), containsString("level3"));
-        assertTrue(result.get(2).isDirectory());
-
-        assertThat(result.get(3).getName(), containsString("level4"));
-        assertTrue(result.get(3).isDirectory());
-
-        assertThat(result.get(4).getName(), containsString("level5"));
-        assertTrue(result.get(4).isDirectory());
-
-        assertThat(result.get(5).getName(), containsString("tempfile1"));
-         */
-
+        assertThat(result).extracting(
+            ClientListEntry::getName,
+            ClientListEntry::isDirectory
+        ).containsExactlyInAnyOrder(
+            tuple(".", true),
+            tuple("..", true),
+            tuple(tempFile1.getFileName().toString(), false),
+            tuple(tempFile2.getFileName().toString(), false)
+        );
     }
 }
