@@ -56,6 +56,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.apache.sshd.common.kex.BuiltinDHFactories.Constants.DIFFIE_HELLMAN_GROUP1_SHA1;
+
 /**
  * Test class for the <code>SFTPManagedConnection</code>
  * 
@@ -381,7 +383,6 @@ public class SFTPManagedConnectionOpenSessionTest
     }
 
     @Test
-    @Ignore
     public void openSession_when_user_privateKey_provided() throws ResourceException
     {
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
@@ -395,11 +396,11 @@ public class SFTPManagedConnectionOpenSessionTest
                 atLeast(1).of(connectionRequestInfo).getRemoteHostname();
                 will(returnValue("localhost"));
                 atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSWORD));
+                will(returnValue(SFTP_PORT_PUBLICKEY));
                 atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue("src/test/resources/id_rsa_test"));
+                will(returnValue("src/test/resources/auth/client/id_rsa_test"));
                 atLeast(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue("src/test/resources/known_hosts.test"));
+                will(returnValue("src/test/resources/auth/client/known_hosts_test"));
                 atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
                 will(returnValue(1));
                 atLeast(1).of(connectionRequestInfo).getUsername();
@@ -410,6 +411,8 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
+                atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
+                will(returnValue(DIFFIE_HELLMAN_GROUP1_SHA1));
             }
         });
 

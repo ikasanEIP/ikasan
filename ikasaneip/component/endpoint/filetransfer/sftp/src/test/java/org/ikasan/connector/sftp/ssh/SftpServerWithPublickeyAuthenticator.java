@@ -40,69 +40,55 @@
  */
 package org.ikasan.connector.sftp.ssh;
 
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.KeyExchange;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.random.JceRandom;
-import org.apache.sshd.common.random.SingletonRandomFactory;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.PublickeyAuthenticator;
-import org.apache.sshd.server.UserAuth;
-import org.apache.sshd.server.auth.UserAuthPassword;
-import org.apache.sshd.server.command.ScpCommandFactory;
-import org.apache.sshd.server.kex.DHG1;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
+import org.apache.sshd.common.kex.BuiltinDHFactories;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.random.JceRandomFactory;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.UserAuth;
+import org.apache.sshd.server.auth.pubkey.UserAuthPublicKeyFactory;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.config.keys.AuthorizedKeysAuthenticator;
+import org.apache.sshd.server.kex.DHGServer;
+import org.apache.sshd.server.scp.ScpCommandFactory;
+import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 
 import java.io.IOException;
-import java.security.PublicKey;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * A SFTP helper class used for unit testing sftp server.
- *
  */
-public class SftpServerWithPublickeyAuthenticator
-{
+public class SftpServerWithPublickeyAuthenticator {
     private SshServer sshd;
 
     public SftpServerWithPublickeyAuthenticator(int port) {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
 
-        //sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("./keys/mysample",
-                SimpleGeneratorHostKeyProvider.SSH_RSA));
+        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/auth/server/id_rsa_test")));
 
-        sshd.setKeyExchangeFactories(Arrays.<NamedFactory<KeyExchange>>asList(new DHG1.Factory()));
-        sshd.setRandomFactory(new SingletonRandomFactory(new JceRandom.Factory()));
+        sshd.setKeyExchangeFactories(singletonList(DHGServer.newFactory(BuiltinDHFactories.dhg1)));
+        sshd.setRandomFactory(new JceRandomFactory());
 
-        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<NamedFactory<UserAuth>>();
-        userAuthFactories.add(new UserAuthPassword.Factory());
+        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<>();
+        userAuthFactories.add(new UserAuthPublicKeyFactory());
         sshd.setUserAuthFactories(userAuthFactories);
 
-        sshd.setPublickeyAuthenticator(new PublickeyAuthenticator()
-        {
-            public boolean authenticate(String username, PublicKey publicKey, ServerSession session)
-            {
-                return true;
-            }
-        });
+        sshd.setPublickeyAuthenticator(new AuthorizedKeysAuthenticator(Paths.get("src/test/resources/auth/server/authorized_keys_test")));
 
         sshd.setCommandFactory(new ScpCommandFactory());
 
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>();
-        namedFactoryList.add(new SftpSubsystem.Factory());
+        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
-
     }
 
-
-    public void start(){
+    public void start() {
         try {
             sshd.start();
         } catch (IOException e) {
@@ -110,11 +96,12 @@ public class SftpServerWithPublickeyAuthenticator
         }
     }
 
-    public void stop(){
+    public void stop() {
         try {
             sshd.stop();
-        } catch (InterruptedException e) {
-            e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sshd = null;
     }
 }
