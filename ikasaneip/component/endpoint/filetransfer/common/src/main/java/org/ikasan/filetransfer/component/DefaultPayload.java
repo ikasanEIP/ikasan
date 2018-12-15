@@ -40,6 +40,8 @@
  */
 package org.ikasan.filetransfer.component;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +51,7 @@ import java.util.Map;
 import org.ikasan.filetransfer.Payload;
 
 /**
- * Default implementation of the Payload interface.
+ * Default implementation of the Payload interface. Backed by a byte[].
  * 
  * @author Ikasan Development Team
  */
@@ -105,30 +107,36 @@ public class DefaultPayload implements Payload
     @SuppressWarnings("unused")
 	private void setId(String id){
     	this.id=id;
-    } 
+    }
 
-
-
-    /* (non-Javadoc)
-     * @see org.ikasan.common.Payload#setContent(byte[])
+    /**
+     * Set the content of the payload
+     *
+     * @param content content to set
+     * @deprecated remove from interface only
      */
+    @SuppressWarnings("deprecated")
     public void setContent(final byte[] content)
     {
         this.content = content;
     }
 
-
-
-
     /* (non-Javadoc)
      * @see org.ikasan.common.Payload#getContent()
      */
+    @Override
     public byte[] getContent()
     {
         return this.content;
     }
 
-
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getInputStream()
+     */
+    @Override
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(this.content);
+    }
 
     /*
      * (non-Javadoc)
@@ -180,7 +188,7 @@ public class DefaultPayload implements Payload
 	 * @see org.ikasan.common.Payload#getAttributeNames()
 	 */
 	public List<String> getAttributeNames() {
-		List<String> attributeNames = new ArrayList<String>(attributes.keySet());
+		List<String> attributeNames = new ArrayList<>(attributes.keySet());
 		Collections.sort(attributeNames);
 		return attributeNames;
 	}
@@ -199,6 +207,7 @@ public class DefaultPayload implements Payload
      * 
      * @return persistenceId
      */
+    @Deprecated
     public Long getPersistenceId() {
 		return persistenceId;
 	}
@@ -209,6 +218,7 @@ public class DefaultPayload implements Payload
      * 
 	 * @param persistenceId
 	 */
+    @Deprecated
 	public void setPersistenceId(Long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
@@ -236,7 +246,7 @@ public class DefaultPayload implements Payload
 	 * @see org.ikasan.common.Payload#getAttributeMap()
 	 */
 	public Map<String, String> getAttributeMap() {
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		result.putAll(attributes);
 		return result;
 	}

@@ -40,46 +40,33 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.resource.ResourceException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.connector.base.command.*;
-import org.ikasan.filetransfer.Payload;
-import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
-import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
-import org.ikasan.connector.ConnectorException;
+import org.ikasan.connector.base.command.ExecutionContext;
+import org.ikasan.connector.base.command.ExecutionOutput;
+import org.ikasan.connector.base.command.TransactionalCommandConnection;
+import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferMappedRecordTransformer;
-import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumDeliveredCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumValidatorCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.ChunkingRetrieveFileCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.CleanupChunksCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.FileDiscoveryCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.RetrieveFileCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.FilenameRegexpMatchedTargetDirectorySelector;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.TargetDirectorySelector;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
-import org.ikasan.connector.util.chunking.io.ChunkInputStream;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
-import org.ikasan.connector.util.chunking.model.dao.ChunkHeaderLoadException;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
+import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.resource.ResourceException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class implements the virtual connection to the SFTP server. An instance
@@ -252,153 +239,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
                 destructive, baseFileTransferDao);
         }
         return result;
-    }
-
-    /**
-     * Deliver the Payload
-     * 
-     * @param payload to deliver
-     * @param unzip flag
-     * @throws ResourceException -
-     * @deprecated - use deliverInputStream
-     */
-    public void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite,
-            String renameExtension, boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException
-    {
-        ExecutionContext executionContext = new ExecutionContext();
-        executionContext.put(ExecutionContext.PAYLOAD, payload);
-        String tempFilePath;
-        TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(outputTargets);
-
-        // determine any the target directory for this payload within the output
-        // dir if a payload specific target directory has been specified
-        String outputTarget = selector.getTargetDirectory(payload, outputDir);
-
-        if (isChunkReference(payload))
-        {
-            FileChunkHeader reconstitutedFileChunkHeader = FileChunkHeader.fromXml(new String(payload.getContent()));
-            if (reconstitutedFileChunkHeader == null)
-            {
-                throw new ConnectorException("Could not deserialize payload content"); //$NON-NLS-1$
-            }
-            Long fileHeaderPrimaryKey = reconstitutedFileChunkHeader.getId();
-            if (fileHeaderPrimaryKey == null)
-            {
-                throw new ConnectorException("Could not get pk from deserialized payload content"); //$NON-NLS-1$
-            }
-
-            FileChunkHeader fileChunkHeader;
-            try
-            {
-                fileChunkHeader = fileChunkDao.load(fileHeaderPrimaryKey);
-            }
-            catch (ChunkHeaderLoadException e)
-            {
-                throw new ConnectorException(
-                    "FileChunkHeader with pk [" + fileHeaderPrimaryKey + "] could not be reloaded from the database", e); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-            List<FileConstituentHandle> handles = getConstituentHandles(fileChunkDao, fileChunkHeader.getFileName(),
-                fileChunkHeader.getChunkTimeStamp());
-            ChunkInputStream chunkInputStream;
-            try
-            {
-                chunkInputStream = new ChunkInputStream(handles, fileChunkDao);
-            }
-            catch (IOException e1)
-            {
-                throw new ResourceException("Exception creating ChunkInputStream", e1); //$NON-NLS-1$
-            }
-
-            TransactionalResourceCommand deliveryCommand = null;
-            if (!unzip)
-            {
-                executionContext.put(ExecutionContext.FILE_INPUT_STREAM, chunkInputStream);
-                executionContext.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, fileChunkHeader.getFileName());
-
-                // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
-            }
-            else
-            // unzip
-            {
-                try
-                {
-                    executionContext.put(ExecutionContext.BATCHED_FILE_PROVIDER, new UnzippingFileProvider(
-                        chunkInputStream));
-                }
-                catch (UnzipNotSupportedException e)
-                {
-                    throw new ResourceException("Exception trying to unzip stream", e); //$NON-NLS-1$
-
-                }
-                executionContext.put(ExecutionContext.BATCHED_FILE_NAME, fileChunkHeader.getFileName());
-
-                deliveryCommand = new DeliverBatchCommand(outputTarget, overwrite);
-
-            }
-            tempFilePath = (String) executeCommand(deliveryCommand, executionContext).getResult();
-
-            if (cleanup)
-            {
-                logger.debug("about to cleanup file chunks"); //$NON-NLS-1$
-                executionContext.put(ExecutionContext.FILE_CHUNK_HEADER, reconstitutedFileChunkHeader);
-                
-                Map<String, Object> beanFactory = new HashMap<String, Object>();
-                beanFactory.put("fileChunkDao", fileChunkDao);
-                
-                CleanupChunksCommand cleanupChunksCommand = new CleanupChunksCommand();
-                cleanupChunksCommand.setBeanFactory(beanFactory);
-
-                executeCommand(cleanupChunksCommand, executionContext);
-                // executeForResult(executionContext, "cleanupChunksCommand");
-                logger.debug("back from file chunk cleanup"); //$NON-NLS-1$
-            }
-
-        }
-        else
-        {
-            // not a chunked file
-            TransactionalResourceCommand deliveryCommand = null;
-            BaseFileTransferMappedRecord mappedRecord = BaseFileTransferMappedRecordTransformer
-                .payloadToMappedRecord(payload);
-
-            if (!unzip)
-            {
-
-                executionContext.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, mappedRecord);
-                // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
-
-            }
-            else
-            {
-                // unzip mapped record file
-                ByteArrayInputStream bais = new ByteArrayInputStream(mappedRecord.getContent());
-                try
-                {
-                    executionContext.put(ExecutionContext.BATCHED_FILE_PROVIDER, new UnzippingFileProvider(bais));
-                }
-                catch (UnzipNotSupportedException e)
-                {
-                    throw new ResourceException("Exception trying to unzip byte array", e); //$NON-NLS-1$
-
-                }
-                executionContext.put(ExecutionContext.BATCHED_FILE_NAME, mappedRecord.getName());
-
-                deliveryCommand = new DeliverBatchCommand(outputTarget, overwrite);
-
-            }
-            tempFilePath = (String) executeCommand(deliveryCommand, executionContext).getResult();
-        }
-
-        // reload and checksum the delivered file
-        if (checksumDelivered)
-        {
-            executionContext.put(ExecutionContext.DELIVERED_FILE_PATH_PARAM, tempFilePath);
-            ChecksumDeliveredCommand checksumDeliveredCommand = new ChecksumDeliveredCommand();
-            executeCommand(checksumDeliveredCommand, executionContext);
-        }
     }
 
     /**

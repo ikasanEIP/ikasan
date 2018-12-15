@@ -57,13 +57,11 @@ import org.ikasan.filetransfer.factory.PayloadFactoryImpl;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
-import org.ikasan.connector.base.outbound.EISConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
-import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 
 /**

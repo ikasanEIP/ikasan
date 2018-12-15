@@ -40,14 +40,12 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
-import org.ikasan.connector.base.outbound.EISConnection;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
+import org.ikasan.filetransfer.Payload;
 
 import javax.resource.ResourceException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * An interface for File Transfer based connections
@@ -63,36 +61,14 @@ public interface
      * 
      * @param managedConnection -
      */
-    public void setManagedConnection(TransactionalCommandConnection managedConnection);
+    void setManagedConnection(TransactionalCommandConnection managedConnection);
 
     /**
      * Get the managed connection
      * 
      * @return Base File Transfer Managed Connection
      */
-    public TransactionalCommandConnection getManagedConnection();
-    
-    /**
-     * Delivers the content of this <code>Payload</code> using a File Transfer
-     * client
-     * 
-     * @param payload <code>Payload</code> either containing, or refering to
-     *            the file content
-     * @param outputDir dir path on remote system to deliver the file or files
-     * @param outputTargets map of output subdirectories for file delivery keyed by regular expression matches on the delivered file name
-     * @param overwrite overwrite any existing files of the same name(s)
-     * @param renameExtension temporary extension to use whilst delivering
-     *            single file
-     * @param checksumDelivered if true, attempt to reload the delivered file to
-     *            compare the checksum value
-     * @param unzip if true, attempt to unzip the payload
-     * @param cleanup if true, cleans up any chunked data
-     * 
-     * @throws javax.resource.ResourceException -
-     */
-    public void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets,
-                               boolean overwrite, String renameExtension,
-                               boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException;
+    TransactionalCommandConnection getManagedConnection();
 
     /**
      * Delivers the content of this <code>InputStream</code> using a File Transfer
@@ -109,7 +85,7 @@ public interface
      * @param unzip if true, attempt to unzip the payload
      * @throws javax.resource.ResourceException -
      */
-    public void deliverInputStream(InputStream inputStream, String fileName, String outputDir, boolean overwrite, String renameExtension,
+    void deliverInputStream(InputStream inputStream, String fileName, String outputDir, boolean overwrite, String renameExtension,
                                    boolean checksumDelivered, boolean unzip, boolean createParentDirectory, final String tempFileName) throws ResourceException;
 
     /**
@@ -136,7 +112,7 @@ public interface
      * @return Payload containing the file as content
      * @throws javax.resource.ResourceException -
      */
-    public Payload getDiscoveredFile(String sourceDir, String filenamePattern,
+    Payload getDiscoveredFile(String sourceDir, String filenamePattern,
                                      boolean renameOnSuccess, String renameOnSuccessExtension,
                                      boolean moveOnSuccess, String moveOnSuccessNewPath,
                                      boolean chunking, int chunkSize, boolean checksum,
@@ -152,6 +128,6 @@ public interface
      *
      * @throws javax.resource.ResourceException Exception thrown by the Connector
      */
-    public void housekeep(int maxRows, int ageOfFiles) throws ResourceException;
-    
+    void housekeep(int maxRows, int ageOfFiles) throws ResourceException;
+
 }
