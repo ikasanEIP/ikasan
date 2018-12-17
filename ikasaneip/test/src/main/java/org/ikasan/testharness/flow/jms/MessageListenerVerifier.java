@@ -10,6 +10,7 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class MessageListenerVerifier implements MessageListener
         this.endpoint.stopMessageListener();
     }
 
-    protected List<Object> captureResults = new ArrayList<>();
+    protected List<Object> captureResults = Collections.synchronizedList(new ArrayList<>());
 
     public List<Object> getCaptureResults()
     {
