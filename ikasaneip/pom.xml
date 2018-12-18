@@ -402,7 +402,7 @@
         <version.com.h2database>1.4.178</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>9.4.7.v20170914</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>9.4.14.v20181114</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
