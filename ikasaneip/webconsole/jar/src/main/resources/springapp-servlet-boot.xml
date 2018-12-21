@@ -113,7 +113,9 @@
 
     <bean id="iconversionService" class="org.ikasan.web.service.SpringConversionService">
         <property name="converter">
-            <bean class="org.ikasan.web.converter.SpringConverter" />
+            <bean class="org.ikasan.web.converter.JacksonMapStringConverter" >
+                <constructor-arg ref="objectMapper" />
+            </bean>
         </property>
     </bean>
 
