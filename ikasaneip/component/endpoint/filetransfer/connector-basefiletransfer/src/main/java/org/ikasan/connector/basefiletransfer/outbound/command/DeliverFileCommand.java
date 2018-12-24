@@ -44,7 +44,7 @@ import java.io.InputStream;
 
 import javax.resource.ResourceException;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -362,17 +362,18 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
     /**
      * @see java.lang.Object#toString()
      */
-    @Override
-    public String toString()
+    @Override public String toString()
     {
-        return new ToStringBuilder(this)
-            .append("id", this.getId()) //$NON-NLS-1$
-            .append("renameExtension", this.renameExtension) //$NON-NLS-1$
-            .append("fileName", this.fileName) //$NON-NLS-1$
-            .append("outputDirectory", this.outputDirectory) //$NON-NLS-1$
-            .append("client", getClient()) //$NON-NLS-1$
-            .append("tempFileName", this.tempFileName) //$NON-NLS-1$
-            .append("fileSeparator", this.fileSeparator).toString(); //$NON-NLS-1$
+
+                return new ToStringBuilder(this)
+                    .append("id", this.getId()) //$NON-NLS-1$
+                    .append("renameExtension", this.renameExtension) //$NON-NLS-1$
+                    .append("fileName", this.fileName) //$NON-NLS-1$
+                    .append("outputDirectory", this.outputDirectory) //$NON-NLS-1$
+                    .append("client", getClient()) //$NON-NLS-1$
+                    .append("tempFileName", this.tempFileName) //$NON-NLS-1$
+                    .append("fileSeparator", this.fileSeparator).toString(); //$NON-NLS-1$
+
     }
 
     /**

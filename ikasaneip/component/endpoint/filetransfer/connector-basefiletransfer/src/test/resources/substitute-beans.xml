@@ -15,41 +15,34 @@
 
 
     <!-- =================================================================== -->
-    <!-- HSQL provides an in-memory database                                 -->
+    <!-- H2 provides an in-memory database                                 -->
     <!-- =================================================================== -->
     <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-        <entry key="hibernate.show_sql" value="true"/>
-        <entry key="hibernate.hbm2ddl.auto" value="update"/>
-
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
     </util:map>
 
-    <bean name="ikasan.xads ikasan.ds" id="xaDataSource"
+    <bean id="dataSource" name="ikasan.xads ikasan.ds"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName">
-            <value>org.hsqldb.jdbcDriver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:hsqldb:mem:testdb</value>
-        </property>
-        <property name="username">
-            <value>sa</value>
-        </property>
-        <property name="password">
-            <value></value>
-        </property>
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
     </bean>
+
 
     <!-- Session Factory for the moduleDao -->
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="xaDataSource"/>
+        <property name="dataSource" ref="ikasan.xads"/>
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/connector/basefiletransfer/persistence/FileFilter.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
+
     </bean>
 
 </beans>
