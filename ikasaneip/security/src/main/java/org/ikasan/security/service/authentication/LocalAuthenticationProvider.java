@@ -40,10 +40,7 @@
  */
 package org.ikasan.security.service.authentication;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
@@ -54,10 +51,17 @@ import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+//import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 /**
  * 
@@ -70,6 +74,7 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 	
 	private SecurityService securityService;
 	private UserService userService;
+	private PasswordEncoder encoder;
 
 	/**
 	 * @param userService
@@ -87,7 +92,9 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 		{
 			throw new IllegalArgumentException("userService cannot be null!");
 		}
-	}
+        encoder = delegatingPasswordEncoder();
+
+    }
 
 	/* (non-Javadoc)
 	 * @see org.springframework.security.authentication.AuthenticationProvider#authenticate(org.springframework.security.core.Authentication)
@@ -98,9 +105,10 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 	{
 		String userName = ((UsernamePasswordAuthenticationToken)authentication).getName();
 		String password = ((String)((UsernamePasswordAuthenticationToken)authentication).getCredentials());
-		
-		ShaPasswordEncoder encoder = new ShaPasswordEncoder();
-		String shaPassword = encoder.encodePassword(password, null);
+
+
+
+		String shaPassword = encoder.encode(password);
 
 		User user = userService.loadUserByUsername(userName);
 
@@ -147,5 +155,18 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 	{
 		 return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz));
 	}
+
+    public PasswordEncoder delegatingPasswordEncoder() {
+        PasswordEncoder defaultEncoder = new StandardPasswordEncoder();
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put("bcrypt", new BCryptPasswordEncoder());
+        encoders.put("scrypt", new SCryptPasswordEncoder());
+
+        DelegatingPasswordEncoder passworEncoder = new DelegatingPasswordEncoder(
+            "bcrypt", encoders);
+        passworEncoder.setDefaultPasswordEncoderForMatches(defaultEncoder);
+
+        return passworEncoder;
+    }
 
 }

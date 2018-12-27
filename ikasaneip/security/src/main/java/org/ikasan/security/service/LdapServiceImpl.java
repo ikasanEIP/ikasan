@@ -40,24 +40,13 @@
  */
 package org.ikasan.security.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.control.PagedResult;
 import org.springframework.ldap.control.PagedResultsCookie;
 import org.springframework.ldap.control.PagedResultsDirContextProcessor;
@@ -65,10 +54,18 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * 
@@ -218,7 +215,7 @@ public class LdapServiceImpl implements LdapService
 		do
 		{
 			result = getAllUsers(cookie, ldapTemplate);
-			results.addAll(result.getResultList());
+			results.addAll(new ArrayList(result.getResultList()));
 			cookie = result.getCookie();
 		} 
 		while (cookie.getCookie() != null);
@@ -270,7 +267,7 @@ public class LdapServiceImpl implements LdapService
 		do
 		{
 			result = getAllGroups(cookie, ldapTemplate);
-			results.addAll(result.getResultList());
+			results.addAll(new ArrayList(result.getResultList()));
 			cookie = result.getCookie();
 		} 
 		while (cookie.getCookie() != null);
@@ -388,7 +385,7 @@ public class LdapServiceImpl implements LdapService
 			if(user == null)
 			{
 				// Setting a default password. Need to think about forcing the user to change it,
-				String encodedPassword = passwordEncoder.encodePassword("pa55word", null);
+				String encodedPassword = passwordEncoder.encode("pa55word");
 				
 				user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
 				user.setDepartment(ldapUser.department);

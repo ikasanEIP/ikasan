@@ -8,7 +8,7 @@
         <property name="sessionFactory" ref="setupSessionFactory"/>
     </bean>
 
-	<bean id="setupSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="setupSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>
@@ -17,12 +17,13 @@
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-
+            
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="false"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
-        <entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
+        <entry key="hibernate.transaction.coordinator_class" value="jta"/>
+
     </util:map>
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"

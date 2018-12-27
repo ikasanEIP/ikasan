@@ -40,13 +40,13 @@
  */
 package org.ikasan.configurationService.dao;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
-import java.util.List;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Implementation of the ConfigurationDao interface providing
@@ -82,8 +82,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
-
-
         // work-around for Sybase issue where it converts empty strings to single spaces.
         // See http://open.jira.com/browse/IKASAN-520
         // Where we would have persisted "" change this to a null to stop Sybase
@@ -100,7 +98,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
                 configurationParameter.setValue(null);
             }
 
-
             if("".equals(configurationParameter.getDescription()))
             {
                 configurationParameter.setDescription(null);
@@ -109,8 +106,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
 
         // hibernate mutates the object and amends configurations Params with Id
         getHibernateTemplate().saveOrUpdate(configuration);
-
-
     }
 
     /* (non-Javadoc)

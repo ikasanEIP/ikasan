@@ -56,8 +56,8 @@ import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import java.util.*;
 
