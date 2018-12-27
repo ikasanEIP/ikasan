@@ -52,8 +52,8 @@ import org.hibernate.criterion.Restrictions;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.ArrayListPagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>SystemFlowEventDao</code>

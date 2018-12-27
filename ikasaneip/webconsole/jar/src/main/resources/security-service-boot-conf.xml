@@ -126,59 +126,58 @@
 
 	<authentication-manager id="auth-manager">
 		<authentication-provider user-service-ref="userDetailsService">
-			<password-encoder ref="sha1PasswordEncoder" />
+			<password-encoder ref="bcryptPasswordEncoder" />
 		</authentication-provider>
         <authentication-provider ref="ikasanAuthenticationProvider" />
 	</authentication-manager>
 
+    <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
- 	<beans:bean id="sha1PasswordEncoder"
-		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
 
-	<beans:bean id="securityTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <beans:bean id="securityTransactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="securitySessionFactory" />
 		</beans:property>
 	</beans:bean>
 	
 	<beans:bean id="systemEventTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="systemEventHibernateSessionFactory" />
 		</beans:property>
 	</beans:bean>
 	
 	<beans:bean id="configurationServiceTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="configurationServiceSessionFactory" />
 		</beans:property>
 	</beans:bean>
 
 	<beans:bean id="moduleServiceTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="moduleStartupControlHibernateSessionFactory" />
 		</beans:property>
 	</beans:bean>
 	
 	<beans:bean id="hospitalServiceTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="hospitalSessionFactory" />
 		</beans:property>
 	</beans:bean>
 	
 	<beans:bean id="wiretapServiceTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="wiretapHibernateSessionFactory" />
 		</beans:property>
 	</beans:bean>
 
 	<beans:bean id="errorReportingServiceDaoTransactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="errorReportingSessionFactory" />
 		</beans:property>
@@ -317,7 +316,7 @@
     <beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao" />
 		<beans:constructor-arg ref="securityService" />
-		<beans:constructor-arg ref="sha1PasswordEncoder" />
+		<beans:constructor-arg ref="bcryptPasswordEncoder" />
 	</beans:bean>
 
 	<beans:bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
@@ -325,7 +324,7 @@
 	</beans:bean>
 
 	<beans:bean id="securitySessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<beans:property name="dataSource" ref="ikasan.ds" />
 		<beans:property name="mappingResources">
 			<beans:list>

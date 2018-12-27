@@ -43,7 +43,7 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.ikasan.security.model.Authority;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>AuthorityDao</code>

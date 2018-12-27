@@ -53,8 +53,8 @@ import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 
 /**

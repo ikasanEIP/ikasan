@@ -40,19 +40,14 @@
  */
 package org.ikasan.security.service;
 
-import java.util.List;
-
 import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
-import org.ikasan.security.model.UserLite;
+import org.ikasan.security.model.*;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 /**
  * Default implementation of the <code>UserService</code>
@@ -166,7 +161,7 @@ public class UserServiceImpl implements UserService
         {
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
-        String encodedPassword = passwordEncoder.encodePassword(password, null);
+        String encodedPassword = passwordEncoder.encode(password);
         User userToCreate = new User(username, encodedPassword, email, enabled);
         userToCreate.setFirstName(firstName);
         userToCreate.setSurname(surname);
@@ -317,7 +312,7 @@ public class UserServiceImpl implements UserService
         {
             throw new IllegalArgumentException("Passwords do not match, please try again.");
         }
-        String encodedPassword = passwordEncoder.encodePassword(newPassword, null);
+        String encodedPassword = passwordEncoder.encode(newPassword);
         User user = loadUserByUsername(username);
         user.setPassword(encodedPassword);
         user.setEnabled(true);

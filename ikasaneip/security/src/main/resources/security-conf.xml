@@ -52,7 +52,7 @@
 	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="xaSecurityDao" />
 		<constructor-arg ref="xaUserDao" />
-		<constructor-arg ref="sha1PasswordEncoder"/>
+		<constructor-arg ref="bcryptPasswordEncoder"/>
 	</bean>
 	
 	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -73,7 +73,7 @@
         class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="xaUserDao"/>
         <constructor-arg ref="xaSecurityService"/>
-        <constructor-arg ref="sha1PasswordEncoder"/>
+        <constructor-arg ref="bcryptPasswordEncoder"/>
     </bean>
     
     <bean id="xaUserDao" class="org.ikasan.security.dao.HibernateUserDao">
@@ -91,7 +91,7 @@
 	</bean>
 
 	<bean id="xaSecuritySessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
@@ -113,7 +113,7 @@
 	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="localTxSecurityDao" />
 		<constructor-arg ref="localTxUserDao" />
-		<constructor-arg ref="sha1PasswordEncoder"/>
+		<constructor-arg ref="bcryptPasswordEncoder"/>
 	</bean>
 
 	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -134,7 +134,7 @@
         class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="localTxUserDao"/>
         <constructor-arg ref="localTxSecurityService"/>
-        <constructor-arg ref="sha1PasswordEncoder"/>
+        <constructor-arg ref="bcryptPasswordEncoder"/>
     </bean>
 
 
@@ -153,7 +153,7 @@
 	</bean>
 
 	<bean id="localTxSecuritySessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.ds" />
 		<property name="mappingResources">
 			<list>
@@ -169,7 +169,7 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
-	<bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
         <constructor-arg ref="authenticationProviderFactory" />
@@ -192,7 +192,7 @@
     <bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="userDao" />
         <constructor-arg ref="securityService" />
-        <constructor-arg ref="sha1PasswordEncoder" />
+        <constructor-arg ref="bcryptPasswordEncoder" />
     </bean>
 
     <bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
@@ -200,7 +200,7 @@
     </bean>
 
     <bean id="securitySessionFactory"
-        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
