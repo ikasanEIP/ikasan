@@ -34,7 +34,7 @@
 
     <!-- Session Factory for the moduleDao -->
     <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads"/>
         <property name="mappingResources">
             <list>

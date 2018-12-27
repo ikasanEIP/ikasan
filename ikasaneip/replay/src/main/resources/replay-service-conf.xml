@@ -69,7 +69,7 @@
 
 
 	<bean id="replaySessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>

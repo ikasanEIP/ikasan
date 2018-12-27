@@ -44,8 +44,8 @@ import java.util.List;
 
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.module.StartupControl;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;

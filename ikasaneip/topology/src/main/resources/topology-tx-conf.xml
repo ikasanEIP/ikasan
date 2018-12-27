@@ -53,31 +53,24 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
       ">
 
-
-    <bean id="topologyTransactionManager"
-          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory">
-            <ref bean="localTxTopologySessionFactory"/>
-        </property>
-    </bean>
-
     <aop:config>
 
         <aop:pointcut id="topologyDaoSaveMethods"
                       expression="execution(* org.ikasan.topology.dao.TopologyDao.save*(..))"/>
         <aop:pointcut id="topologyDaoDeleteMethods"
                       expression="execution(* org.ikasan.topology.dao.TopologyDao.delete*(..))"/>
+
         <aop:advisor  id="topologyDaoSaveMethodsPointcutAdvice"  advice-ref="topology-required-TransactionAdvice"
                      pointcut-ref="topologyDaoSaveMethods"/>
-
 
         <aop:advisor id="topologyDaoDeleteMethodsPointcutAdvice" advice-ref="topology-required-TransactionAdvice"
                      pointcut-ref="topologyDaoDeleteMethods"/>
     </aop:config>
 
 
+
     <tx:advice id="topology-required-TransactionAdvice"
-               transaction-manager="topologyTransactionManager">
+               transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>

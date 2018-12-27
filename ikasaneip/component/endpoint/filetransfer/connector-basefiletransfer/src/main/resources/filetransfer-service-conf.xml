@@ -9,7 +9,7 @@
         <constructor-arg name="sessionFactory" ref="transactionalResourceCommandHibernateSessionFactory"/>
     </bean>
 
-    <bean id="transactionalResourceCommandHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="transactionalResourceCommandHibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
@@ -24,7 +24,7 @@
         <constructor-arg name="sf" ref="fileChunkDaoHibernateSessionFactory"/>
     </bean>
 
-    <bean id="fileChunkDaoHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="fileChunkDaoHibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
@@ -39,7 +39,7 @@
         <constructor-arg name="sessionFactory" ref="baseFileTransferSessionFactory"/>
     </bean>
 
-    <bean id="baseFileTransferSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="baseFileTransferSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>

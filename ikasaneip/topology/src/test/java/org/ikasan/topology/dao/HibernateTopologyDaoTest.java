@@ -62,7 +62,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -75,8 +75,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/topology-conf.xml", "/h2db-config.xml",
-        "/substitute-components.xml"
+        "/topology-conf.xml",
+        "/topology-tx-conf.xml",
+        "/transaction-conf.xml",
+        "/h2db-config.xml"
 })
 public class HibernateTopologyDaoTest
 {

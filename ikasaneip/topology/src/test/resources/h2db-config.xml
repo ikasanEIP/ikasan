@@ -60,9 +60,9 @@
 
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.show_sql" value="true"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
-        <entry key="hibernate.flushMode" value="commit"/>
+        <entry key="hibernate.transaction.coordinator_class" value="jta"/>
     </util:map>
     
     <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"

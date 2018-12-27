@@ -11,8 +11,7 @@
         <entry key="hibernate.dialect" value="${datasource.dialect}"/>
         <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
         <entry key="hibernate.hbm2ddl.auto" value="${datasource.hbm2ddl.auto}"/>
-        <entry key="hibernate.transaction.jta.platform" value="JBossTS"/>
-        <entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
+        <entry key="hibernate.transaction.coordinator_class" value="jta"/>
     </util:map>
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">

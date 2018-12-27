@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="componentConfigurationExportHelper"
 		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
@@ -58,12 +58,11 @@
 		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
 	</bean>
 
-	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
-				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
-				</value>
+				<value>/org/ikasan/configurationService/model/Configuration.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
@@ -73,12 +72,12 @@
 		<property name="sessionFactory" ref="configurationServiceSessionFactory"/>
 	</bean>
 
-	<bean id="configurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.ds" />
+	<bean id="configurationServiceSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+
 		<property name="mappingResources">
 			<list>
-				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
-				</value>
+				<value>/org/ikasan/configurationService/model/Configuration.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
