@@ -251,11 +251,7 @@
 			<artifactId>ikasan-setup</artifactId>
 		</dependency>
 		
-		<dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip</artifactId>
-        </dependency>
- 
+
  		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-monitor</artifactId>
