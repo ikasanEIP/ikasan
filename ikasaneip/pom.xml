@@ -360,7 +360,7 @@
     </pluginRepositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.kryo>3.0.1</version.kryo>
+        <version.kryo>4.0.2</version.kryo>
         <version.org.hibernate>5.2.17.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.13.Final</version.org.hibernate-validator>
         <version.org.springframework>5.0.11.RELEASE</version.org.springframework>
@@ -369,6 +369,8 @@
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
         <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
+        <version.com.fasterxml.classmate>1.4.0</version.com.fasterxml.classmate>
+        <version.net.bytebuddy.byte-buddy>1.8.12</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.25</version.org.slf4j>
         <version.junit>4.12</version.junit>
         <version.org.jmock>2.6.0</version.org.jmock>
@@ -397,7 +399,7 @@
         <version.commons-io>2.5</version.commons-io>
         <version.commons-dbcp>1.4</version.commons-dbcp>
         <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
-        <version.com.h2database>1.4.178</version.com.h2database>
+        <version.com.h2database>1.4.197</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>9.4.14.v20181114</version.org.eclipse.jetty>
@@ -413,6 +415,7 @@
         <version.activemq>5.13.4</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
+        <version.javax.jms-api>2.0.1</version.javax.jms-api>
         <version.org.jboss.narayana.jta>5.5.32.Final</version.org.jboss.narayana.jta>
         <version.commons.net>3.3</version.commons.net>
         <version.com.thoughtworks.xstream>1.4.10</version.com.thoughtworks.xstream>
@@ -892,7 +895,7 @@
                 <module>transaction</module>
                 <module>replay</module>
 				<module>persistence</module>
-                <module>dashboard</module>
+                <!--<module>dashboard</module>-->
                 <module>sample</module> 
             </modules>
 
@@ -1076,6 +1079,11 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-jms-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-jms-spring-arjuna</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1273,12 +1281,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-eip</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-eip-standalone</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1424,7 +1426,7 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${version.org.hibernate-validator}</version>
                 <exclusions>
@@ -1494,6 +1496,12 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
                 <version>${version.geronimo.jms.spec}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${version.javax.jms-api}</version>
             </dependency>
 
             <dependency>
@@ -1774,6 +1782,19 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${version.io.spingfox.swagger}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml</groupId>
+                <artifactId>classmate</artifactId>
+                <version>${version.com.fasterxml.classmate}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${version.net.bytebuddy.byte-buddy}</version>
+            </dependency>
+
 
             <!-- Jersey -->
 

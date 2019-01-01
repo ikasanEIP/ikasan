@@ -38,55 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.web.converter;
 
-import org.ikasan.rest.module.IkasanRestAutoConfiguration;
-import org.ikasan.web.IkasanWebAutoConfiguration;
-import org.ikasan.web.WebSecurityConfig;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.binding.convert.converters.Converter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@Configuration
-@ImportResource( {
-        "classpath:exception-conf.xml",
-        "classpath:transaction-conf.xml",
-        "classpath:ikasan-transaction-conf.xml",
-        "classpath:ikasan-transaction-pointcut-resubmission.xml",
-        "classpath:serialiser-service-conf.xml",
-        "classpath:scheduler-service-conf.xml",
-        "classpath:error-reporting-service-conf.xml",
-        "classpath:recoveryManager-service-conf.xml",
-        "classpath:monitor-service-conf.xml",
-        "classpath:module-service-conf.xml",
-        "classpath:filter-service-conf.xml",
-        "classpath:configuration-service-conf.xml",
-        "classpath:systemevent-service-conf.xml",
-        "classpath:replay-service-conf.xml",
-        "classpath:wiretap-service-conf.xml",
-        "classpath:hospital-conf.xml",
-        "classpath:exclusion-service-conf.xml",
-        "classpath:ikasan-module-bootstrap-conf.xml",
-        "classpath:topology-conf.xml",
-        "classpath:topology-tx-conf.xml",
-        "classpath:datasource-conf.xml",
-        "classpath:security-service-boot-conf.xml",
-        "classpath:springapp-servlet-boot.xml",
+import java.util.Map;
 
-} )
-@Import({IkasanWebAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
-public class IkasanBaseAutoConfiguration
+/**
+ * Unit test class supporting <class>SpringConverter</class>
+ * @author  Ikasan Developmnet Team
+ */
+public class BCryptPasswordGeneratorTest
 {
-
-
-    @Bean
-    public BuilderFactory builderFactory(){
-         return new BuilderFactory();
-    }
-    @Bean
-    public AopProxyProvider aopProxyProvider()
+    /**
+     * Test null to map.
+     */
+    @Test
+    public void test_map_converter_with_null_value() throws Exception
     {
-        return new AopProxyProviderSpringImpl();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
+        String hashedPassword = passwordEncoder.encode("admin");
+
+        System.out.println(hashedPassword);
+
     }
+
+
 }

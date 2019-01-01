@@ -109,7 +109,12 @@ public class ModuleBuilderTest
             }
         });
 
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
+        };
+
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
     }
 

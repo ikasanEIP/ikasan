@@ -64,14 +64,18 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = { "/substitute-beans.xml" })
+@ContextConfiguration(locations = {
+    "/substitute-beans.xml",
+    "/transaction-conf.xml"
+})
 public class HibernateBaseFileTransferDaoImplTest
 {
 
-    @Resource SessionFactory sessionFactory;
+//    @Resource SessionFactory sessionFactory;
 
     @Resource DataSource xaDataSource;
 
+    @Resource
     BaseFileTransferDao uut;
 
     JdbcTemplate jdbcTemplate;
@@ -84,7 +88,7 @@ public class HibernateBaseFileTransferDaoImplTest
 
     @Before public void setup()
     {
-        uut = new HibernateBaseFileTransferDaoImpl(sessionFactory);
+//        uut = new HibernateBaseFileTransferDaoImpl(sessionFactory);
         jdbcTemplate = new JdbcTemplate(xaDataSource);
     }
 

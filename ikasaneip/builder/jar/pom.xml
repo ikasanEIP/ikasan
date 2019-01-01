@@ -213,7 +213,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${version.org.hibernate-validator}</version>
         </dependency>
@@ -290,15 +290,18 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring-arjuna</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
         </dependency>
 
         <dependency>

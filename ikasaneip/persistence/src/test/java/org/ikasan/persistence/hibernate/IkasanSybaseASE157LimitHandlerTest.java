@@ -16,9 +16,9 @@ public class IkasanSybaseASE157LimitHandlerTest
 
         RowSelection rowSelection = new RowSelection();
 
-        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler(sql, rowSelection);
+        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler();
 
-        String resultantSql = handler.getProcessedSql();
+        String resultantSql = handler.processSql(sql, rowSelection);
 
         Assert.assertEquals("Sql must equal", sql, resultantSql);
     }
@@ -31,9 +31,9 @@ public class IkasanSybaseASE157LimitHandlerTest
         RowSelection rowSelection = new RowSelection();
         rowSelection.setMaxRows(1000);
 
-        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler(sql, rowSelection);
+        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler();
 
-        String resultantSql = handler.getProcessedSql();
+        String resultantSql = handler.processSql(sql, rowSelection);
 
         Assert.assertEquals("Sql must equal", "select top 1000 * from SomeTable", resultantSql);
     }
@@ -47,9 +47,9 @@ public class IkasanSybaseASE157LimitHandlerTest
         rowSelection.setMaxRows(1000);
         rowSelection.setFirstRow(500);
 
-        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler(sql, rowSelection);
+        IkasanSybaseASE157LimitHandler handler = new IkasanSybaseASE157LimitHandler();
 
-        String resultantSql = handler.getProcessedSql();
+        String resultantSql = handler.processSql(sql, rowSelection);
 
         Assert.assertEquals("Sql must equal", "select top 1500 * from SomeTable", resultantSql);
     }
