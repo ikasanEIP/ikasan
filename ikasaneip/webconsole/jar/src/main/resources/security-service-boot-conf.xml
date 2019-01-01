@@ -28,160 +28,20 @@
 	Author: Ikasan Development Team 
 	
 -->
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
-              http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
-              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+              http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 	<!-- TODO point cuts below are commented out as these methods are called via REST and rest
  supplies its own security. -->
 
 
-	<global-method-security authentication-manager-ref="auth-manager"
-							pre-post-annotations="enabled">
-
-	    <!-- AspectJ pointcut expression that locates our "post" method and applies
-			security that way -->
-
-		<!--  protect-pointcut
-			expression="execution(* org.ikasan.spec.module.ModuleService.startFlow(..))"
-			access="MODULE_ADMIN" />
-		<protect-pointcut
-			expression="execution(* org.ikasan.spec.module.ModuleService.stopFlow(..))"
-			access="MODULE_ADMIN" / -->
-<!--
-		<protect-pointcut
-				expression="execution(* org.ikasan.security.service.UserService.changeUsersPassword(..))"
-				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
-
-		<protect-pointcut
-				expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..))"
-				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
-
-		<protect-pointcut
-				expression="execution(* org.ikasan.security.service.UserService.revokeAuthority(..))"
-				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
--->
-
-		<!-- protect-pointcut
-			expression="execution(* org.ikasan.spec.module.ModuleService.setStartupType(..))"
-			access="ROLE_ADMIN" / -->
-
-		<!-- Gaining access to a Module requires security check -->
-		<!--  protect-pointcut
-			expression="execution(* org.ikasan.spec.module.ModuleService.getModule(..))"
-			access="ROLE_USER,AFTER_MODULE_READ" />
-		<protect-pointcut
-			expression="execution(* org.ikasan.spec.module.ModuleService.getModules())"
-			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" / -->
 
 
-		<!--<after-invocation-provider-->
-				<!--ref="moduleCollectionFilteringAfterInvocationProvider" />-->
-		<!--<after-invocation-provider ref="moduleAfterInvocationProvider" />-->
-
-
-	</global-method-security>
-
-
-	<!--<http auto-config="false" use-expressions="false" authentication-manager-ref="auth-manager"-->
-		  <!--access-decision-manager-ref="accessDecisionManager" >-->
-	<http auto-config="false" use-expressions="true"
-
-		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
-
-		<access-denied-handler error-page="/accessDenied.jsp" />
-		<intercept-url pattern="/login.jsp" access="permitAll"/>
-		<intercept-url pattern="/css/style.css" access="permitAll"/>
-		<intercept-url pattern="/images/**" access="permitAll"/>
-		<!-- Keep Authorization on rest on the code level -->
-		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
-		<intercept-url pattern="/rest/**" access="permitAll"/>
-		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
-		<!--<intercept-url pattern="/org/ikasan/trigger/service" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>-->
-		<intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole')"/>
-
-		<form-login login-page="/login.jsp"
-					always-use-default-target="true"
-					default-target-url="/home.htm"
-					username-parameter="j_username"
-					password-parameter="j_password"
-					login-processing-url="/j_spring_security_check"
-					authentication-failure-url="/login.jsp?login_error=1"
-		/>
-
-		<csrf disabled="true"/>
-		<logout logout-success-url="/" logout-url="/j_spring_security_logout" />
-		<remember-me
-
-				remember-me-parameter="_spring_security_remember_me"
-				remember-me-cookie="SPRING_SECURITY_REMEMBER_ME_COOKIE"
-		/>
-		<http-basic />
-
-	</http>
-
-	<authentication-manager id="auth-manager">
-		<authentication-provider user-service-ref="userDetailsService">
-			<password-encoder ref="bcryptPasswordEncoder" />
-		</authentication-provider>
-        <authentication-provider ref="ikasanAuthenticationProvider" />
-	</authentication-manager>
-
-    <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-
-
-    <beans:bean id="securityTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="securitySessionFactory" />
-		</beans:property>
-	</beans:bean>
-	
-	<beans:bean id="systemEventTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="systemEventHibernateSessionFactory" />
-		</beans:property>
-	</beans:bean>
-	
-	<beans:bean id="configurationServiceTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="configurationServiceSessionFactory" />
-		</beans:property>
-	</beans:bean>
-
-	<beans:bean id="moduleServiceTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="moduleStartupControlHibernateSessionFactory" />
-		</beans:property>
-	</beans:bean>
-	
-	<beans:bean id="hospitalServiceTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="hospitalSessionFactory" />
-		</beans:property>
-	</beans:bean>
-	
-	<beans:bean id="wiretapServiceTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="wiretapHibernateSessionFactory" />
-		</beans:property>
-	</beans:bean>
-
-	<beans:bean id="errorReportingServiceDaoTransactionManager"
-		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="errorReportingSessionFactory" />
-		</beans:property>
-	</beans:bean>
 
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
@@ -191,7 +51,6 @@
 						execution(* org.ikasan.security.service.UserService.changeUsersEmail(..)) || 
 						execution(* org.ikasan.security.service.UserService.disableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
-						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
 						execution(* org.ikasan.security.service.UserService.deleteUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.createUser(..)) ||
 						execution(* org.ikasan.security.service.SecurityService.savePolicy(..)) ||
@@ -241,142 +100,91 @@
   </aop:config>
 
 	<tx:advice id="errorReportingServiceDao-TransactionAdvice"
-			   transaction-manager="errorReportingServiceDaoTransactionManager">
+			   transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
-		transaction-manager="wiretapServiceTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 		<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 
 	<tx:advice id="security-required-TransactionAdvice"
-		transaction-manager="securityTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	
 	<tx:advice id="systemevent-required-TransactionAdvice"
-		transaction-manager="systemEventTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	
 	<tx:advice id="configuration-service-required-TransactionAdvice"
-		transaction-manager="configurationServiceTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	
 	<tx:advice id="module-service-required-TransactionAdvice"
-		transaction-manager="moduleServiceTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	
 	<tx:advice id="hospital-service-required-TransactionAdvice"
-		transaction-manager="hospitalServiceTransactionManager">
+		transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	
-	<beans:bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
-		<beans:constructor-arg ref="authenticationProviderFactory" />
-		<beans:constructor-arg ref="securityService" />
-	</beans:bean>
 
-	<beans:bean id="authenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
-		<beans:constructor-arg ref="userDetailsService" />
-		<beans:constructor-arg ref="securityService" />
-	</beans:bean>
-
-	<beans:bean id="securityService" class="org.ikasan.security.service.SecurityServiceImpl">
-		<beans:constructor-arg ref="securityDao" />
-	</beans:bean>
-
-	<beans:bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
-		<beans:property name="sessionFactory" ref="securitySessionFactory" />
-	</beans:bean>
-
-
-    <beans:bean id="ikasanAuthenticationProvider" class="org.ikasan.security.service.authentication.CustomAuthenticationProvider">
-        <beans:constructor-arg name="authenticationService" ref="authenticationService" />
-    </beans:bean>
-
-
-    <beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
-		<beans:constructor-arg ref="userDao" />
-		<beans:constructor-arg ref="securityService" />
-		<beans:constructor-arg ref="bcryptPasswordEncoder" />
-	</beans:bean>
-
-	<beans:bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
-		<beans:property name="sessionFactory" ref="securitySessionFactory" />
-	</beans:bean>
-
-	<beans:bean id="securitySessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<beans:property name="dataSource" ref="ikasan.ds" />
-		<beans:property name="mappingResources">
-			<beans:list>
-				<beans:value>/org/ikasan/security/model/Principal.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Role.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Policy.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/User.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Authority.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/PolicyLink.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</beans:value>
-			</beans:list>
-		</beans:property>
-		<beans:property name="hibernateProperties" ref="platformHibernateProperties" />
-	</beans:bean>
 
 	<!-- Automatically receives AuthenticationEvent messages IKASAN-240 Disabled 
 		LoggerListener because it logs everything at WARN and the log messages aren't 
-		useful either <beans:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" 
+		useful either <bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" 
 		/> -->
 
-	<beans:bean id="accessDecisionManager"
+	<bean id="accessDecisionManager"
 				class="org.springframework.security.access.vote.UnanimousBased">
-		<beans:constructor-arg name="decisionVoters">
-			<beans:list>
-				<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+		<constructor-arg name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
 
-				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
-				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
 
-				<!--<beans:bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />-->
+				<!--<bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />-->
 
-			</beans:list>
-		</beans:constructor-arg>
-		<beans:property name="allowIfAllAbstainDecisions"
+			</list>
+		</constructor-arg>
+		<property name="allowIfAllAbstainDecisions"
 						value="true" />
-		<!-- beans:property name="decisionVoters">
+		<!-- property name="decisionVoters">
 			<beans:list>
-				<beans:bean id="roleVoter"
+				<bean id="roleVoter"
 					class="org.springframework.security.access.vote.RoleVoter" />
-				<beans:bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />
+				<bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />
 			</beans:list>
-		</beans:property -->
-	</beans:bean>
+		</property -->
+	</bean>
 
 
-	<beans:bean id="moduleCollectionFilteringAfterInvocationProvider"
+	<bean id="moduleCollectionFilteringAfterInvocationProvider"
 		class="org.ikasan.web.security.AfterInvocationModuleCollectionFilteringProvider">
-	</beans:bean>
+	</bean>
 
-	<beans:bean id="moduleAfterInvocationProvider"
+	<bean id="moduleAfterInvocationProvider"
 		class="org.ikasan.web.security.ModuleAfterInvocationProvider">
-	</beans:bean>
+	</bean>
 
-</beans:beans>
+</beans>

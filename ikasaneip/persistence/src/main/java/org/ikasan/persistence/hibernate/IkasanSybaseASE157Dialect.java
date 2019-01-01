@@ -16,8 +16,8 @@ public class IkasanSybaseASE157Dialect extends SybaseASE157Dialect
     }
 
     @Override
-    public LimitHandler buildLimitHandler(String sql, RowSelection selection)
+    public LimitHandler getLimitHandler()
     {
-        return new IkasanSybaseASE157LimitHandler(sql, selection);
+        return new IkasanSybaseASE157LimitHandler();
     }
 }

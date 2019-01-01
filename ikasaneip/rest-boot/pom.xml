@@ -112,27 +112,21 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-resubmission</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
 
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
-            <scope>provided</scope>
         </dependency>
 
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- spring web -->
@@ -145,15 +139,15 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.springfox</groupId>-->
+            <!--<artifactId>springfox-swagger2</artifactId>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.springfox</groupId>-->
+            <!--<artifactId>springfox-swagger-ui</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
