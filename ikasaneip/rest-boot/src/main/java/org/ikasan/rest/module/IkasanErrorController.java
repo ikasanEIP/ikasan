@@ -40,22 +40,17 @@
  */
 package org.ikasan.rest.module;
 
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
-import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
+
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,11 +74,11 @@ public class IkasanErrorController implements ErrorController
 
 
     @RequestMapping(value = PATH,produces = "text/html")
-    public ModelAndView errorHtml(HttpServletRequest request,
+    public ModelAndView errorHtml(HttpServletRequest request, WebRequest webRequest,
             HttpServletResponse response) {
         HttpStatus status = getStatus(request);
         Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
-                request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
+            webRequest, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
         response.setStatus(status.value());
 
         return  new ModelAndView("error", model);
@@ -103,10 +98,9 @@ public class IkasanErrorController implements ErrorController
         }
     }
 
-    protected Map<String, Object> getErrorAttributes(HttpServletRequest request,
+    protected Map<String, Object> getErrorAttributes(WebRequest request,
             boolean includeStackTrace) {
-        RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-        return this.errorAttributes.getErrorAttributes(requestAttributes,
+        return this.errorAttributes.getErrorAttributes(request,
                 includeStackTrace);
     }
 
