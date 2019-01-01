@@ -15,25 +15,6 @@
 	<modules>
 		<module>jar</module>
 		<module>boot</module>
-		<module>war</module>
 	</modules>
-  
-	<build>
-		<plugins>
-			<plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <finalName>ikasan-dashboard-${server}-${env}</finalName>
-                    <filters>
-                        <filter>environment/${server}/${env}/environment.properties</filter>
-                        <filter>module.properties</filter>
-                    </filters>
-                    <descriptors>
-                        <descriptor>environment/${server}/distribution.xml</descriptor>
-                    </descriptors>
-                </configuration>
-            </plugin>
-		</plugins>
-	</build>
 
 </project>
