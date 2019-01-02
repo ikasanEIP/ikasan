@@ -134,7 +134,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
     @Bean public BCryptPasswordEncoder passwordEncoder()
     {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(4);
     }
 
     @Bean
