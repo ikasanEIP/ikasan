@@ -79,112 +79,25 @@
 		<aop:pointcut id="errorReportingServiceDaoMethods"
 					  expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingServiceDao.save(..))" />
 
-		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
+		<aop:advisor id="securityServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
-		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="systemevent-required-TransactionAdvice"
+		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="systemEventServiceMethods" />
-	    <aop:advisor id="configurationServicePointcutAdvice" advice-ref="configuration-service-required-TransactionAdvice"
+	    <aop:advisor id="configurationServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="configurationServiceServiceMethods" />
-		<aop:advisor id="moduleServicePointcutAdvice" advice-ref="module-service-required-TransactionAdvice"
+		<aop:advisor id="moduleServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="moduleServiceServiceMethods" />
-		<aop:advisor id="hospitalServicePointcutAdvice" advice-ref="hospital-service-required-TransactionAdvice"
+		<aop:advisor id="hospitalServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="hospitalServiceMethods" />
-		<aop:advisor id="triggerDaoPointcutAdvice" advice-ref="wiretap-required-TransactionAdvice"
+		<aop:advisor id="triggerDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="triggerDaoMethods" />
 		<aop:advisor id="wiretapDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="wiretapDaoMethods" />
 
-		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="errorReportingServiceDao-TransactionAdvice"
+		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="errorReportingServiceDaoMethods" />
 
   </aop:config>
 
-	<tx:advice id="errorReportingServiceDao-TransactionAdvice"
-			   transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<tx:advice id="wiretap-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-		<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<tx:advice id="security-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	
-	<tx:advice id="systemevent-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	
-	<tx:advice id="configuration-service-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	
-	<tx:advice id="module-service-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	
-	<tx:advice id="hospital-service-required-TransactionAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-
-	<!-- Automatically receives AuthenticationEvent messages IKASAN-240 Disabled 
-		LoggerListener because it logs everything at WARN and the log messages aren't 
-		useful either <bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" 
-		/> -->
-
-	<bean id="accessDecisionManager"
-				class="org.springframework.security.access.vote.UnanimousBased">
-		<constructor-arg name="decisionVoters">
-			<list>
-				<bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
-
-				<bean class="org.springframework.security.access.vote.RoleVoter" />
-				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-
-				<!--<bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />-->
-
-			</list>
-		</constructor-arg>
-		<property name="allowIfAllAbstainDecisions"
-						value="true" />
-		<!-- property name="decisionVoters">
-			<beans:list>
-				<bean id="roleVoter"
-					class="org.springframework.security.access.vote.RoleVoter" />
-				<bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />
-			</beans:list>
-		</property -->
-	</bean>
-
-
-	<bean id="moduleCollectionFilteringAfterInvocationProvider"
-		class="org.ikasan.web.security.AfterInvocationModuleCollectionFilteringProvider">
-	</bean>
-
-	<bean id="moduleAfterInvocationProvider"
-		class="org.ikasan.web.security.ModuleAfterInvocationProvider">
-	</bean>
 
 </beans>
