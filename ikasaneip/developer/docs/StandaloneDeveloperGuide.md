@@ -111,14 +111,14 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
            <dependency>
                <groupId>org.ikasan</groupId>
                <artifactId>ikasan-eip-standalone</artifactId>
-               <version>2.0.0</version>
+               <version>2.0.4</version>
            </dependency>
            
            <!-- Use Ikasan h2 persistence (Do not use in production) -->
            <dependency>
                <groupId>org.ikasan</groupId>
                <artifactId>ikasan-h2-standalone-persistence</artifactId>
-               <version>2.0.0</version>
+               <version>2.0.4</version>
            </dependency>
                    
        </dependencies>
@@ -150,7 +150,7 @@ Copy and paste the entirety of the code below replacing the content of that clas
 ```java
 package com.ikasan.example;
 
-import org.ikasan.builder.*;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
@@ -209,7 +209,7 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.4</version>
         </dependency>
         
         *** ADD MySQL dependency ***
@@ -217,7 +217,7 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-mysql-standalone-persistence</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.4</version>
         </dependency>
 ```
 
@@ -272,11 +272,8 @@ import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 
@@ -882,7 +879,7 @@ Example Usage,
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-vanilla-im-maven-plugin 
-    \-DarchetypeVersion=2.0.0    
+    \-DarchetypeVersion=2.0.4    
     \-DgroupId=com.sample     
     \-DartifactId=vanilla-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -942,7 +939,7 @@ Example Usage,
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin 
-    \-DarchetypeVersion=2.0.0    
+    \-DarchetypeVersion=2.0.4    
     \-DgroupId=com.sample     
     \-DartifactId=jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -1003,7 +1000,7 @@ Example Usage,
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
-    \-DarchetypeVersion=2.0.0    
+    \-DarchetypeVersion=2.0.4    
     \-DgroupId=com.ikasan     
     \-DartifactId=myIntegrationModule     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -1065,7 +1062,7 @@ Example Usage,
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-ftp-jms-im-maven-plugin 
-    \-DarchetypeVersion=2.0.0    
+    \-DarchetypeVersion=2.0.4    
     \-DgroupId=com.sample     
     \-DartifactId=ftp-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -1128,7 +1125,7 @@ Example Usage,
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
-    \-DarchetypeVersion=2.0.0    
+    \-DarchetypeVersion=2.0.4    
     \-DgroupId=com.sample     
     \-DartifactId=sftp-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -1151,7 +1148,7 @@ This will build and create a zip binary containing all the required deployments 
 
 Occasionally you might see similar issue when generating an artifact
 ``` 
- mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=2.0.0-SNAPSHOT
+ mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=2.0.4
 [INFO] Scanning for projects...
 [INFO]
 [INFO] ------------------------------------------------------------------------
