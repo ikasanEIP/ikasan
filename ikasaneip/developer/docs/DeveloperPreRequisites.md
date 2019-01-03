@@ -55,7 +55,7 @@ IkasanEIP is built in Java (JDK) and runs on the Java Runtime Environment (JRE).
 
 IkasanEIP will support any language which compiles to bytecode and runs within the Java Virtual Machine (JVM).
 
-For more details on Java see [http://www.oracle.com./technetwork/java](http://www.oracle.com./technetwork/java)
+For more details on Java see [http://www.oracle.com/technetwork/java](http://www.oracle.com/technetwork/java)
 
 ### Version
 
@@ -65,7 +65,7 @@ IkasanEIP version 2.x.y+ requires Java 1.8.x.
 
 Download the JDK appropriate for your Operating System.
 
-All Java JDK downloads are available from [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+IkasanESB is built on AdoptOpenJDK, although most JDK's will work should you choose an alternative. All Java JDK downloads are available from [https://adoptopenjdk.net](https://adoptopenjdk.net)
 
 Install by following the JDK installation instructions.
 
@@ -76,13 +76,13 @@ The important point is that we have the JAVA_HOME and PATH environment variables
 #### Setting Unix Environment Variables
 ```
 export JAVA_HOME=${root_install_dir}/${platform_install_dir}/<java install dir name>;
-export PATH=$JAVA_HOME/bin;$PATH
+export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 #### Setting Windows Environment Variables
 ```
 set JAVA_HOME=%root_install_dir%\%platform_install_dir%\<java install dir name>
-set PATH=%JAVA_HOME%\bin:%PATH% 
+set PATH=%JAVA_HOME%\bin;%PATH% 
 ```
 
 ### Sanity Checks
@@ -124,7 +124,7 @@ The M2_HOME and PATH environment variables should be set to reflect this maven i
 
 ```
 export M2_HOME=${root_install_dir}/${platform_install_dir}/<maven install dir name>
-export PATH=$M2_HOME/bin;$PATH 
+export PATH=$M2_HOME/bin:$PATH 
 ```
 
 #### Setting Environment Variables From Windows Command Line
@@ -222,6 +222,6 @@ We recommend IntelliJ Community Edition Java IDE which can be downloaded from [h
 | Authors | Ikasan Development Team |
 | --- | --- |
 | Contributors | n/a |
-| Date | March 2018 |
+| Date | January 2019 |
 | Email | info@ikasan.org |
 | WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
