@@ -179,12 +179,12 @@ server.error.whitelabel.enabled=false
 # Web Bindings
 server.port=8090
 server.address=localhost
-server.contextPath=/example-im
+server.servlet.context-path=/example-im
 
 # health probs and remote management (optional)
 management.security.enabled=false
-management.context-path=/manage
-endpoints.shutdown.enabled=true
+management.server.servlet.context-path=/manage
+management.endpoint.shutdown.enabled=true
 
 # Ikasan persistence store
 datasource.username=sa

@@ -66,7 +66,7 @@ Navigate to Frontend [http://localhost:8080/ikasan-dashboard](http://localhost:8
 ```
 server.port=8080
 server.address=0.0.0.0
-server.contextPath=/ikasan-dashboard
+server.servlet.context-path=/ikasan-dashboard
 ```      
 
 
