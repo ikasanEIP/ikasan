@@ -49,7 +49,7 @@
 <h2>Specify Job</h2>
 
 
-<form:form id="eventTriggerJobForm" commandName="specifyJob" method="post" modelAttribute="triggerDetails" cssClass="dataform fancydataform">
+<form:form id="eventTriggerJobForm" method="post" modelAttribute="triggerDetails" cssClass="dataform fancydataform">
     <fieldset>
        <legend>Job Details</legend>
     
