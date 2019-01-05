@@ -52,7 +52,7 @@
 <form:errors path="triggerDetails.*" cssClass="errorMessages"/>
 
 
-<form:form id="eventTriggerParametersForm" commandName="specifyParameters" method="post" modelAttribute="triggerDetails" cssClass="dataform fancydataform">
+<form:form id="eventTriggerParametersForm" method="post" modelAttribute="triggerDetails" cssClass="dataform fancydataform">
     <fieldset>
        <legend>Job Parameters</legend>
     

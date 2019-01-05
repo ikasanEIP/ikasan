@@ -80,7 +80,7 @@
         </table>
 
 
-<form:form action="createUser.htm" id="changePasswordForm" commandName="user" cssClass="dataform">
+<form:form action="createUser.htm" id="changePasswordForm" modelAttribute="user" cssClass="dataform">
     <form:errors path="*" cssClass="errorMessages"/>
 
     <fieldset>
