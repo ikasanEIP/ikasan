@@ -44,6 +44,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,10 +89,23 @@ public class JmsFlowTest
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
+    private  MessageListenerVerifier messageListenerVerifier;
+
     @Before
     public void setup(){
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
+
+        messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+
+    }
+
+    @After
+    public void shutdown(){
+        flowTestRule.stopFlow();
+        messageListenerVerifier.stop();
+        flowTestRule.sleep(500L);
+
     }
 
     @Test
@@ -99,7 +113,6 @@ public class JmsFlowTest
     {
 
         // Prepare test data
-        final MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
         messageListenerVerifier.start();
 
         String message = SAMPLE_MESSAGE;
