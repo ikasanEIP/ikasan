@@ -68,7 +68,7 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
 {
 
     /** The logger instance. */
-    private static Logger logger = LoggerFactory.getLogger(FileDiscoveryCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(ChecksumDeliveredCommand.class);
 
     private ChecksumSupplier checksumSupplier;
 
