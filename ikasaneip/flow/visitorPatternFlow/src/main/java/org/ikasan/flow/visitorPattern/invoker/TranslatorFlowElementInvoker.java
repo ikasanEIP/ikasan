@@ -42,7 +42,6 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,16 +52,18 @@ import org.slf4j.LoggerFactory;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>, ConfiguredResource<TranslatorInvokerConfiguration>
+public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker<TranslatorInvokerConfiguration> implements FlowElementInvoker<Translator>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(TranslatorFlowElementInvoker.class);
 
-    /** configured resource identifer */
-    private String configuredResourceId;
-
-    /** configuration instance for this invoker */
-    TranslatorInvokerConfiguration configuration = new TranslatorInvokerConfiguration();
+    /**
+     * Constructor
+     */
+    public TranslatorFlowElementInvoker()
+    {
+        super( new TranslatorInvokerConfiguration() );
+    }
 
     @Override
     public String getInvokerType()
@@ -108,26 +109,6 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
                     + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
         }
         return flowElement;
-    }
-
-    @Override
-    public String getConfiguredResourceId() {
-        return configuredResourceId;
-    }
-
-    @Override
-    public void setConfiguredResourceId(String configuredResourceId) {
-        this.configuredResourceId = configuredResourceId;
-    }
-
-    @Override
-    public TranslatorInvokerConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public void setConfiguration(TranslatorInvokerConfiguration configuration) {
-        this.configuration = configuration;
     }
 }
 

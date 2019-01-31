@@ -43,7 +43,6 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.splitting.SplitterException;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 
 import java.util.List;
@@ -54,16 +53,18 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>, ConfiguredResource<SplitterInvokerConfiguration>
+public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<SplitterInvokerConfiguration> implements FlowElementInvoker<Splitter>
 {
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
 
-    /** configured resource identifier */
-    private String configuredResourceId;
-
-    /** configuration */
-    private SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
+    /**
+     * Constructor
+     */
+    public SplitterFlowElementInvoker()
+    {
+        super( new SplitterInvokerConfiguration() );
+    }
 
     @Override
     public String getInvokerType()
@@ -162,27 +163,4 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         return null;
     }
 
-    @Override
-    public String getConfiguredResourceId()
-    {
-        return this.configuredResourceId;
-    }
-
-    @Override
-    public void setConfiguredResourceId(String configuredResourceId)
-    {
-        this.configuredResourceId = configuredResourceId;
-    }
-
-    @Override
-    public SplitterInvokerConfiguration getConfiguration()
-    {
-        return configuration;
-    }
-
-    @Override
-    public void setConfiguration(SplitterInvokerConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
 }

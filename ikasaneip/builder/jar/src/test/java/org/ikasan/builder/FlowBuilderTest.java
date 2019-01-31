@@ -41,18 +41,21 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.component.Builder;
+import org.ikasan.builder.invoker.Configuration;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
@@ -123,6 +126,12 @@ public class FlowBuilderTest
     /** Mock Converter Builder */
     final Builder<Converter> converterBuilder = mockery.mock(Builder.class, "mockConverterBuilder");
 
+    // filters
+    /** Mock Filters */
+    final Filter filter = mockery.mock(Filter.class, "mockFilter");
+    /** Mock Filter Builder */
+    final Builder<Filter> filterBuilder = mockery.mock(Builder.class, "mockFilterBuilder");
+
     // Routers
     /** Mock SRR Router */
     final SingleRecipientRouter singleRecipientRouter = mockery.mock(SingleRecipientRouter.class, "mockSingleRecipientRouter");
@@ -182,6 +191,135 @@ public class FlowBuilderTest
 
     /**
      * Test successful flow creation.
+     *
+     * NOTE: No tests to run - the fact it compiles means the method signatures are present.
+     */
+    @Test
+    public void test_successful_method_combinations()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        FlowBuilder flowBuilder = builderFactory.getFlowBuilder("testModule","testFlow");
+
+        // get primary route builder
+        FlowBuilder.PrimaryRouteBuilder primaryRouteBuilder = flowBuilder.consumer("Consumer", consumer);
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(consumerBuilder).build();
+                will(returnValue(consumer));
+                exactly(3).of(converterBuilder).build();
+                will(returnValue(converter));
+                exactly(3).of(translatorBuilder).build();
+                will(returnValue(translator));
+                exactly(3).of(producerBuilder).build();
+                will(returnValue(producer));
+                exactly(3).of(brokerBuilder).build();
+                will(returnValue(broker));
+                exactly(3).of(sequencerBuilder).build();
+                will(returnValue(sequencer));
+                exactly(3).of(singleRecipientRouterBuilder).build();
+                will(returnValue(singleRecipientRouter));
+                exactly(3).of(multiRecipientRouterBuilder).build();
+                will(returnValue(multiRecipientRouter));
+                exactly(3).of(filterBuilder).build();
+                will(returnValue(filter));
+                exactly(3).of(splitterBuilder).build();
+                will(returnValue(splitter));
+            }
+        });
+
+        // consumer combinations
+        flowBuilder.consumer("Consumer", consumer);
+        flowBuilder.consumer("Consumer", consumerBuilder);
+        flowBuilder.consumer("Consumer", consumer, Configuration.consumerInvoker());
+        flowBuilder.consumer("Consumer", consumerBuilder, Configuration.consumerInvoker());
+        flowBuilder.consumer("Consumer", consumer, Configuration.consumerInvoker().build());
+        flowBuilder.consumer("Consumer", consumerBuilder, Configuration.consumerInvoker().build());
+
+        // converter combinations
+        primaryRouteBuilder.converter("Converter", converter);
+        primaryRouteBuilder.converter("Converter", converterBuilder);
+        primaryRouteBuilder.converter("Converter", converter, Configuration.converterInvoker());
+        primaryRouteBuilder.converter("Converter", converterBuilder, Configuration.converterInvoker());
+        primaryRouteBuilder.converter("Converter", converter, Configuration.converterInvoker().build());
+        primaryRouteBuilder.converter("Converter", converterBuilder, Configuration.converterInvoker().build());
+
+        // translator combinations
+        primaryRouteBuilder.translator("Translator", translator);
+        primaryRouteBuilder.translator("Translator", translatorBuilder);
+        primaryRouteBuilder.translator("Translator", translator, Configuration.translatorInvoker());
+        primaryRouteBuilder.translator("Translator", translatorBuilder, Configuration.translatorInvoker());
+        primaryRouteBuilder.translator("Translator", translator, Configuration.translatorInvoker().build());
+        primaryRouteBuilder.translator("Translator", translatorBuilder, Configuration.translatorInvoker().build());
+
+        // producer combinations
+        primaryRouteBuilder.producer("Producer", producer);
+        primaryRouteBuilder.producer("Producer", producerBuilder);
+        primaryRouteBuilder.producer("Producer", producer, Configuration.producerInvoker());
+        primaryRouteBuilder.producer("Producer", producerBuilder, Configuration.producerInvoker());
+        primaryRouteBuilder.producer("Producer", producer, Configuration.producerInvoker().build());
+        primaryRouteBuilder.producer("Producer", producerBuilder, Configuration.producerInvoker().build());
+
+        // broker combinations
+        primaryRouteBuilder.broker("Broker", broker);
+        primaryRouteBuilder.broker("Broker", brokerBuilder);
+        primaryRouteBuilder.broker("Broker", broker, Configuration.brokerInvoker());
+        primaryRouteBuilder.broker("Broker", brokerBuilder, Configuration.brokerInvoker());
+        primaryRouteBuilder.broker("Broker", broker, Configuration.brokerInvoker().build());
+        primaryRouteBuilder.broker("Broker", brokerBuilder, Configuration.brokerInvoker().build());
+
+        // sequencer combinations
+        primaryRouteBuilder.sequencer("Sequencer", sequencer);
+        primaryRouteBuilder.sequencer("Sequencer", sequencerBuilder);
+        primaryRouteBuilder.sequencer("Sequencer", sequencer, Configuration.sequencerInvoker());
+        primaryRouteBuilder.sequencer("Sequencer", sequencerBuilder, Configuration.sequencerInvoker());
+        primaryRouteBuilder.sequencer("Sequencer", sequencer, Configuration.sequencerInvoker().build());
+        primaryRouteBuilder.sequencer("Sequencer", sequencerBuilder, Configuration.sequencerInvoker().build());
+
+        // singleRecipientRouter combinations
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouter);
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouterBuilder);
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouter, Configuration.singleRecipientRouterInvoker());
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouterBuilder, Configuration.singleRecipientRouterInvoker());
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouter, Configuration.singleRecipientRouterInvoker().build());
+        primaryRouteBuilder.singleRecipientRouter("SingleRecipientRouter", singleRecipientRouterBuilder, Configuration.singleRecipientRouterInvoker().build());
+
+        // multiRecipientRouter combinations
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouter);
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouterBuilder);
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouter, Configuration.multiRecipientRouterInvoker());
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouterBuilder, Configuration.multiRecipientRouterInvoker());
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouter, Configuration.multiRecipientRouterInvoker().build());
+        primaryRouteBuilder.multiRecipientRouter("MultiRecipientRouter", multiRecipientRouterBuilder, Configuration.multiRecipientRouterInvoker().build());
+
+        // filter combinations
+        primaryRouteBuilder.filter("Filter", filter);
+        primaryRouteBuilder.filter("Filter", filterBuilder);
+        primaryRouteBuilder.filter("Filter", filter, Configuration.filterInvoker());
+        primaryRouteBuilder.filter("Filter", filterBuilder, Configuration.filterInvoker());
+        primaryRouteBuilder.filter("Filter", filter, Configuration.filterInvoker().build());
+        primaryRouteBuilder.filter("Filter", filterBuilder, Configuration.filterInvoker().build());
+
+        // splitter combinations
+        primaryRouteBuilder.splitter("Splitter", splitter);
+        primaryRouteBuilder.splitter("Splitter", splitterBuilder);
+        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.splitterInvoker());
+        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.splitterInvoker());
+        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.splitterInvoker().build());
+        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.splitterInvoker().build());
+
+        // TODO - need to consider whether concurrent splitter is a separate configuration
+//        // concurrent splitter combinations
+//        primaryRouteBuilder.splitter("Splitter", splitter);
+//        primaryRouteBuilder.splitter("Splitter", splitterBuilder);
+//        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker());
+//        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker());
+//        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker().build());
+//        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker().build());
+    }
+    /**
+     * Test successful flow creation.
      */
     @Test
     public void test_successful_simple_transitions()
@@ -213,6 +351,77 @@ public class FlowBuilderTest
         Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
         Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker should be an instance of ConfiguredResource", fe.getFlowElementInvoker() instanceof ConfiguredResource);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
+        Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(2);
+        Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to splitter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(3);
+        Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element invoker should be an instance of SplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SplitterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(4);
+        Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
+        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_simple_transitions_with_invokerConfiguration()
+    {
+        setupMockExpectations();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withDescription("flowDescription")
+                .withFlowInvocationContextListener(flowInvocationContextListener)
+                .withFlowInvocationContextListener(flowInvocationContextListener)
+                .withExclusionServiceFactory(exclusionServiceFactory)
+                .withSerialiserFactory(serialiserFactory)
+                .consumer("consumer", consumer, Configuration.consumerInvoker().withDynamicConfiguration(true))
+                .converter("converter", converter, Configuration.converterInvoker().withDynamicConfiguration(false))
+                .translator("translator", translator, Configuration.translatorInvoker().withApplyTranslator(true).withDynamicConfiguration(true))
+                .splitter("splitter", splitter, Configuration.splitterInvoker().withDynamicConfiguration(true))
+                .broker("broker", broker, Configuration.brokerInvoker().withDynamicConfiguration(true))
+                .producer("producer", producer, Configuration.producerInvoker().withDynamicConfiguration(true)).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have two FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 2);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker should be an instance of ConfiguredResource", fe.getFlowElementInvoker() instanceof ConfiguredResource);
+        Assert.assertTrue("flow element invoker should be have dynamicConfiguration set", ((ConfiguredResource<InvokerConfiguration>)fe.getFlowElementInvoker()).getConfiguration().isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(1);

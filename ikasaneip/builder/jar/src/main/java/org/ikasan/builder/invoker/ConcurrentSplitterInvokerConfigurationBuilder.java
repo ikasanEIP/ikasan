@@ -38,34 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.builder.invoker;
+
+import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterInvokerConfiguration;
 
 /**
- * Multi-Recipient Router Invoker Configuration
- *
+ * Concurrent Splitter invoker configuration builder.
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfiguration extends InvokerConfiguration
+public class ConcurrentSplitterInvokerConfigurationBuilder
 {
-    /** default behaviour is to clone the event for each route invoked by the MRR */
-    boolean cloneEventPerRoute = true;
+    ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration;
 
     /**
-     * Is the event to be cloned for each route out of the multi-recipient router
+     * Constructor
+     * @param concurrentSplitterInvokerConfiguration
+     */
+    public ConcurrentSplitterInvokerConfigurationBuilder(ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration)
+    {
+        this.concurrentSplitterInvokerConfiguration = concurrentSplitterInvokerConfiguration;
+        if(concurrentSplitterInvokerConfiguration == null)
+        {
+            throw new IllegalArgumentException("concurrentSplitterInvokerConfiguration cannot be 'null'");
+        }
+    }
+
+    public ConcurrentSplitterInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
+    {
+        this.concurrentSplitterInvokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
+        return this;
+    }
+
+    public ConcurrentSplitterInvokerConfigurationBuilder withSendSplitsAsSinglePayload(boolean sendSplitsAsSinglePayload)
+    {
+        this.concurrentSplitterInvokerConfiguration.setSendSplitsAsSinglePayload(sendSplitsAsSinglePayload);
+        return this;
+    }
+
+    /**
+     * Return the built instance
      * @return
      */
-    public boolean isCloneEventPerRoute() {
-        return cloneEventPerRoute;
-    }
-
-    /**
-     * Set whether or not the event should be cloned for each route out of the multi-recipient router.
-     * Default is true, clone the event so we send the same event structure/content down each route.
-     * If false the mutated event will be operated on by each route as it is mutated by the previous route.
-     * @param cloneEventPerRoute
-     */
-    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
-        this.cloneEventPerRoute = cloneEventPerRoute;
+    public ConcurrentSplitterInvokerConfiguration build()
+    {
+        return this.concurrentSplitterInvokerConfiguration;
     }
 }
-

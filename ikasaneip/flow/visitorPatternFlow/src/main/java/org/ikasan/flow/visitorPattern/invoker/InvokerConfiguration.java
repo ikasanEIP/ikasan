@@ -42,21 +42,23 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 /**
- * Default Configuration options for Splitter invoker.
+ * Default FilterConfiguration bean common to all filters.
  *
  * @author Ikasan Development Team
  *
  */
-public class SplitterInvokerConfiguration extends InvokerConfiguration
+public class InvokerConfiguration
 {
-    // whether to send the splits as a single payload or individual events
-    private boolean sendSplitsAsSinglePayload = false;
+    /** allow dynamic configuration be turned on or off - default off */
+    private boolean dynamicConfiguration = false;
 
-    public boolean isSendSplitsAsSinglePayload() {
-        return sendSplitsAsSinglePayload;
+    public boolean isDynamicConfiguration()
+    {
+        return dynamicConfiguration;
     }
 
-    public void setSendSplitsAsSinglePayload(boolean sendSplitsAsSinglePayload) {
-        this.sendSplitsAsSinglePayload = sendSplitsAsSinglePayload;
+    public void setDynamicConfiguration(boolean dynamicConfiguration)
+    {
+        this.dynamicConfiguration = dynamicConfiguration;
     }
 }
