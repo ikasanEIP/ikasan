@@ -44,7 +44,6 @@ import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
@@ -131,7 +130,6 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     /** flag to control invocation of the context listeners at runtime, defaults to true */
     protected volatile boolean invokeContextListeners = true;
 
-
     /** persistent flow configuration */
     private FlowPersistentConfiguration flowPersistentConfiguration = new FlowPersistentConfiguration();
     
@@ -143,6 +141,13 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
     /** we don't want to wait for ever for the flow to stop. Default 30 seconds */
     private long stopWaitTimeout = 30000;
+
+    /**
+     * handle to the dynamically configured resources within the flow.
+     * We hold on to this so its only refreshed on the start of the flow
+     * so we arent establishing this on every event invocation.
+     */
+    protected List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements;
 
     /**
      * Constructor
@@ -347,6 +352,10 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             // configure exclusion flow resources that are marked as configurable
             if(this.exclusionFlowConfiguration != null)
             {
+                // configure the invokers
+                configureInvokers(this.exclusionFlowConfiguration.getFlowElementInvokerConfiguredResources());
+
+                // configure the components
                 configure(this.exclusionFlowConfiguration.getConfiguredResourceFlowElements());
 
                 // register the errorReportingService with those components in the exclusion flow requiring it
@@ -357,8 +366,11 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 }
             }
 
+            // refresh the dynamic configured resource flow elements
+            this.dynamicConfiguredResourceFlowElements = this.flowConfiguration.getDynamicConfiguredResourceFlowElements();
+
             // configure the invokers
-            configure(this.flowConfiguration.getFlowElementInvokerConfiguredResources());
+            configureInvokers(this.flowConfiguration.getFlowElementInvokerConfiguredResources());
 
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
@@ -417,19 +429,19 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
     /**
      * Configure the given list of configured resources
-     * @param configuredResourcesFlowElementInvokers
+     * @param flowElements
      */
-    private void configure(Map<String,ConfiguredResource> configuredResourcesFlowElementInvokers)
+    private void configureInvokers(List<FlowElement<?>> flowElements)
     {
-        for(Map.Entry<String,ConfiguredResource> entry : configuredResourcesFlowElementInvokers.entrySet())
+        for(FlowElement flowElement:flowElements)
         {
-            ConfiguredResource configuredResource = entry.getValue();
+            ConfiguredResource configuredResource = (ConfiguredResource)flowElement.getFlowElementInvoker();
 
             // set the default configured resource id if none previously set.
             // Ensure we are explicit that this is the invoker, not the POJO we are configuring
             if(configuredResource.getConfiguredResourceId() == null)
             {
-                configuredResource.setConfiguredResourceId(this.moduleName + this.name + entry.getKey() + "Invoker");
+                configuredResource.setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName() + "Invoker");
             }
 
             this.flowConfiguration.configure(configuredResource);
@@ -839,7 +851,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
 	private void configureDynamicConfiguredResources()
     {
-        for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+        for(FlowElement<ConfiguredResource> flowElement:this.dynamicConfiguredResourceFlowElements)
         {
             this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
@@ -847,7 +859,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     
     private void updateDynamicConfiguredResources()
     {
-        for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+        for(FlowElement<ConfiguredResource> flowElement:this.dynamicConfiguredResourceFlowElements)
         {
             this.flowConfiguration.update(flowElement.getFlowComponent());
         }

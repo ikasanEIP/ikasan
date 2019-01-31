@@ -38,34 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.builder.invoker;
+
+import org.ikasan.flow.visitorPattern.invoker.TranslatorInvokerConfiguration;
 
 /**
- * Multi-Recipient Router Invoker Configuration
- *
+ * Translator invoker configuration builder.
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfiguration extends InvokerConfiguration
+public class TranslatorInvokerConfigurationBuilder
 {
-    /** default behaviour is to clone the event for each route invoked by the MRR */
-    boolean cloneEventPerRoute = true;
+    TranslatorInvokerConfiguration translatorInvokerConfiguration;
 
     /**
-     * Is the event to be cloned for each route out of the multi-recipient router
+     * Constructor
+     * @param translatorInvokerConfiguration
+     */
+    public TranslatorInvokerConfigurationBuilder(TranslatorInvokerConfiguration translatorInvokerConfiguration)
+    {
+        this.translatorInvokerConfiguration = translatorInvokerConfiguration;
+        if(translatorInvokerConfiguration == null)
+        {
+            throw new IllegalArgumentException("translatorInvokerConfiguration cannot be 'null'");
+        }
+    }
+
+    public TranslatorInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
+    {
+        this.translatorInvokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
+        return this;
+    }
+
+    public TranslatorInvokerConfigurationBuilder withApplyTranslator(boolean applyTranslator)
+    {
+        this.translatorInvokerConfiguration.setApplyTranslator(applyTranslator);
+        return this;
+    }
+
+    /**
+     * Return the built instance
      * @return
      */
-    public boolean isCloneEventPerRoute() {
-        return cloneEventPerRoute;
-    }
-
-    /**
-     * Set whether or not the event should be cloned for each route out of the multi-recipient router.
-     * Default is true, clone the event so we send the same event structure/content down each route.
-     * If false the mutated event will be operated on by each route as it is mutated by the previous route.
-     * @param cloneEventPerRoute
-     */
-    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
-        this.cloneEventPerRoute = cloneEventPerRoute;
+    public TranslatorInvokerConfiguration build()
+    {
+        return this.translatorInvokerConfiguration;
     }
 }
-

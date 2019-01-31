@@ -3,21 +3,20 @@ package org.ikasan.component.endpoint.rulecheck;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 
 import static org.joda.time.DateTime.now;
 
-public class DailyEventRuleRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends RuleBreachException>
-        implements Rule<PAYLOAD_TYPE, Object>, DynamicConfiguredResource<DailyEventRuleConfiguration>,
+public class DailyEventRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends RuleBreachException>
+        implements Rule<PAYLOAD_TYPE, Object>, ConfiguredResource<DailyEventRuleConfiguration>,
         IsErrorReportingServiceAware
 {
-    private static Logger logger = LoggerFactory.getLogger(DailyEventRuleRule.class);
+    private static Logger logger = LoggerFactory.getLogger(DailyEventRule.class);
 
     private DailyEventRuleConfiguration configuration;
 
-    public ConfigurationService<DailyEventRuleRule> configurationService;
+    public ConfigurationService<DailyEventRule> configurationService;
 
     private final String ruleName;
 
@@ -27,8 +26,8 @@ public class DailyEventRuleRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends Rule
 
     private ErrorReportingService errorReportingService;
 
-    public DailyEventRuleRule(ConfigurationService<DailyEventRuleRule> configurationService,
-            DailyEventRuleStrategy<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE> dailyEventRuleStrategy, String ruleName)
+    public DailyEventRule(ConfigurationService<DailyEventRule> configurationService,
+                          DailyEventRuleStrategy<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE> dailyEventRuleStrategy, String ruleName)
     {
         this.configurationService = configurationService;
         this.dailyEventRuleStrategy = dailyEventRuleStrategy;

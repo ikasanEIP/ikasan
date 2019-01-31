@@ -52,6 +52,15 @@ import org.ikasan.spec.flow.*;
 @SuppressWarnings("unchecked")
 public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<SingleRecipientRouter>
 {
+
+    /**
+     * Constructor
+     */
+    public SingleRecipientRouterFlowElementInvoker()
+    {
+        super( new InvokerConfiguration() );
+    }
+
     @Override
     public String getInvokerType()
     {

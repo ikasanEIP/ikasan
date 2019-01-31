@@ -38,55 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.builder.invoker;
 
-import java.util.List;
-import java.util.Map;
-
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
-import org.ikasan.spec.management.ManagedResource;
-import org.ikasan.spec.management.ManagedService;
-import org.ikasan.spec.replay.ReplayRecordService;
-import org.ikasan.spec.resubmission.ResubmissionService;
+import org.ikasan.flow.visitorPattern.invoker.SplitterInvokerConfiguration;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Default implementation of a Flow
- * 
+ * This test class supports the <code>SplitterInvokerConfigurationBuilder</code> class.
+ *
  * @author Ikasan Development Team
  */
-public interface FlowConfiguration
+public class SplitterInvokerConfigurationBuilderTest
 {
-    public FlowElement<Consumer> getConsumerFlowElement();
-    public List<FlowElement<?>> getFlowElements();
+    /**
+     * Test successful builder.
+     */
+    @Test
+    public void splitterInvokerConfigurationBuilder_test_properties_setters()
+    {
+        SplitterInvokerConfigurationBuilder sicb = new SplitterInvokerConfigurationBuilder(new SplitterInvokerConfiguration());
 
-    /**
-     * Getter for Managed Services within this flow.
-     * @return
-     *
-     * A Managed Service is something used by the flow that is automatically instantiated
-     * on deployment and requires destroying on undeployment.
-     */
-    public List<ManagedService> getManagedServices();
-    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
-    public List<FlowElement<?>> getFlowElementInvokerConfiguredResources();
-    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
-    public List<FlowElement<ConfiguredResource>> getDynamicConfiguredResourceFlowElements();
-    public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
-    public ResubmissionService getResubmissionService();
-    public ReplayRecordService getReplayRecordService();
+        Assert.assertTrue("SplitterInvokerConfiguration should have 2 properties", TestUtils.getFields(SplitterInvokerConfiguration.class).size() == 2);
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload());
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload());
+    }
 
-    /**
-     * Provision for the configuration of anything passed as a configuredResource
-     * @param configuredResource
-     */
-    public void configure(ConfiguredResource configuredResource);
-    
-    /**
-     * Allow for the saving of a DynamicConfiguredResources changed configuration
-     *
-     * @param dynamicConfiguredResource
-     */
-    public void update(ConfiguredResource dynamicConfiguredResource);
 }

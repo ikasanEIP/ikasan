@@ -50,10 +50,18 @@ import org.ikasan.spec.flow.*;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Converter>
+public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<InvokerConfiguration> implements FlowElementInvoker<Converter>
 {
     /** does this broker require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
+
+    /**
+     * Constructor
+     */
+    public ConverterFlowElementInvoker()
+    {
+        super( new InvokerConfiguration() );
+    }
 
     @Override
     public String getInvokerType()

@@ -630,7 +630,7 @@ If you are running the Ikasan Dashboard, you will be able to navigate to the Top
 Currently we have hardcoded a value of 5 to indicate the bad message in the Converter. What if we want this to be user defined or even dynamic based on runtime?
 
 ### Configured Resources
-We can tell a componenet that it is a ConfiguredResource. Telling it this allows access to configure attributes on the component through the Console.
+We can tell a component that it is a ConfiguredResource. Telling it this allows access to configure attributes on the component through the Console.
 Update the Converter component to implement ```ConfiguredResource``` and specify a Configuration class defining the allowed attributes.
 ```java
 package com.ikasan.example.converter;
@@ -704,6 +704,21 @@ In this case the subsequent classes would simply be marked as Configured.
 
  
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
+
+### Dynamic Configured Resources
+Another type of component configuration is that of a ```Dynamic Configured Resource```.
+A dynamic configured component allows the configuration to be changed dynamically at runtime by the inflight event. Any changes to components marked as dynamic configured have their state persisted on each flow invocation.
+Dynamic configured components can be very useful where the event or invocation of the flow needs to change a configured attribute as a result of the event or flow invocation.
+
+TODO Add FLuentAPI example code for dynamic configuration
+
+TODO Add Blue Console configuration on the invoker
+
+TODO DO we need to add an example via the Ikasan Dashboard?
+
+#### Compatibility Note ####
+Prior to release ikasaneip-2.1.0 you needed to implement a marker interface on the class to tell Ikasan that it was a dynamic configured resource. 
+From ikasan-2.1.0 onwards, the DynamicConfigured interface has been removed and components can be marked as dynamically configured through runtime configuration.
 
 ## Managed Resource Component
 TODO

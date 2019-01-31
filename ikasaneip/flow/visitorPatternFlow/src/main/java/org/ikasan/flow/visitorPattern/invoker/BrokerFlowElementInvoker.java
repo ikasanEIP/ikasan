@@ -49,10 +49,15 @@ import org.ikasan.spec.flow.*;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Broker>
+public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<InvokerConfiguration> implements FlowElementInvoker<Broker>
 {
     /** does this broker require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
+
+    public BrokerFlowElementInvoker()
+    {
+        super(new InvokerConfiguration());
+    }
 
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)

@@ -38,34 +38,55 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.builder.invoker;
+
+import org.ikasan.flow.visitorPattern.invoker.FilterInvokerConfiguration;
 
 /**
- * Multi-Recipient Router Invoker Configuration
- *
+ * Filter invoker configuration builder.
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfiguration extends InvokerConfiguration
+public class FilterInvokerConfigurationBuilder
 {
-    /** default behaviour is to clone the event for each route invoked by the MRR */
-    boolean cloneEventPerRoute = true;
+    FilterInvokerConfiguration filterInvokerConfiguration;
 
     /**
-     * Is the event to be cloned for each route out of the multi-recipient router
+     * Constructor
+     * @param filterInvokerConfiguration
+     */
+    public FilterInvokerConfigurationBuilder(FilterInvokerConfiguration filterInvokerConfiguration)
+    {
+        this.filterInvokerConfiguration = filterInvokerConfiguration;
+        if(filterInvokerConfiguration == null)
+        {
+            throw new IllegalArgumentException("filterInvokerConfiguration cannot be 'null'");
+        }
+    }
+
+    public FilterInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
+    {
+        this.filterInvokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
+        return this;
+    }
+
+    public FilterInvokerConfigurationBuilder withApplyFilter(boolean applyFilter)
+    {
+        this.filterInvokerConfiguration.setApplyFilter(applyFilter);
+        return this;
+    }
+
+    public FilterInvokerConfigurationBuilder withLogFiltered(boolean logFiltered)
+    {
+        this.filterInvokerConfiguration.setLogFiltered(logFiltered);
+        return this;
+    }
+
+    /**
+     * Return the built instance
      * @return
      */
-    public boolean isCloneEventPerRoute() {
-        return cloneEventPerRoute;
-    }
-
-    /**
-     * Set whether or not the event should be cloned for each route out of the multi-recipient router.
-     * Default is true, clone the event so we send the same event structure/content down each route.
-     * If false the mutated event will be operated on by each route as it is mutated by the previous route.
-     * @param cloneEventPerRoute
-     */
-    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
-        this.cloneEventPerRoute = cloneEventPerRoute;
+    public FilterInvokerConfiguration build()
+    {
+        return this.filterInvokerConfiguration;
     }
 }
-

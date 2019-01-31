@@ -40,7 +40,9 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.FlowElementInvocationFactory;
 import org.ikasan.spec.flow.*;
 
@@ -51,7 +53,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public abstract class AbstractFlowElementInvoker
+public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResource<T>
 {
     /** logger instance */
     private static final Logger logger = LoggerFactory.getLogger(AbstractFlowElementInvoker.class);
@@ -61,6 +63,25 @@ public abstract class AbstractFlowElementInvoker
 
     /** flag to control invocation of the context listeners at runtime, defaults to true */
     protected volatile boolean invokeContextListeners = true;
+
+    /** configuration id **/
+    protected String configuredResourceId;
+
+    /** configuration instance */
+    protected T configuration;
+
+    /**
+     * Constructor
+     * @param configuration
+     */
+    public AbstractFlowElementInvoker(T configuration)
+    {
+        this.configuration = configuration;
+        if(configuration == null)
+        {
+            throw new IllegalArgumentException("configuration cannot be 'null'");
+        }
+    }
 
     /**
      * Helper method to notify listeners before a flow element is invoked
@@ -214,5 +235,30 @@ public abstract class AbstractFlowElementInvoker
     {
         this.invokeContextListeners = invokeContextListeners;
     }
+
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public T getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(T configuration)
+    {
+        this.configuration = configuration;
+    }
+
 }
 

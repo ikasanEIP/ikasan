@@ -54,6 +54,14 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
     /** does this producer require the flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
 
+    /**
+     * Constructor
+     */
+    public ProducerFlowElementInvoker()
+    {
+        super( new InvokerConfiguration() );
+    }
+
     @Override
     public String getInvokerType()
     {

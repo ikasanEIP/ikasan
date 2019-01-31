@@ -38,34 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.builder.invoker;
+
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 
 /**
- * Multi-Recipient Router Invoker Configuration
- *
+ * Vanilla invoker configuration builder.
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfiguration extends InvokerConfiguration
+public class VanillaInvokerConfigurationBuilder
 {
-    /** default behaviour is to clone the event for each route invoked by the MRR */
-    boolean cloneEventPerRoute = true;
+    /** invoker configuration */
+    InvokerConfiguration invokerConfiguration;
 
     /**
-     * Is the event to be cloned for each route out of the multi-recipient router
+     * Constructor
+     * @param invokerConfiguration
+     */
+    public VanillaInvokerConfigurationBuilder(InvokerConfiguration invokerConfiguration)
+    {
+        this.invokerConfiguration = invokerConfiguration;
+        if(invokerConfiguration == null)
+        {
+            throw new IllegalArgumentException("InvokerConfiguration cannot be 'null'");
+        }
+    }
+
+    /**
+     * Set whether invoker supports dynamic configuration.
+     *
+     * @param dynamicConfiguration
      * @return
      */
-    public boolean isCloneEventPerRoute() {
-        return cloneEventPerRoute;
+    public VanillaInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
+    {
+        this.invokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
+        return this;
     }
 
     /**
-     * Set whether or not the event should be cloned for each route out of the multi-recipient router.
-     * Default is true, clone the event so we send the same event structure/content down each route.
-     * If false the mutated event will be operated on by each route as it is mutated by the previous route.
-     * @param cloneEventPerRoute
+     * Return an instance of the built InvokerConfiguration
+     * @return
      */
-    public void setCloneEventPerRoute(boolean cloneEventPerRoute) {
-        this.cloneEventPerRoute = cloneEventPerRoute;
+    public InvokerConfiguration build()
+    {
+        return this.invokerConfiguration;
     }
 }
-
