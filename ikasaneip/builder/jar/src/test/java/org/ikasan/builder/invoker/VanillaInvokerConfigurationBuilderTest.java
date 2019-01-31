@@ -38,18 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration;
+package org.ikasan.builder.invoker;
+
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Interface provisioning callbacks for setting configuration properties
- * for a flow component as required for runtime for dynamic configuration
- * Dynamic configuration can be changed by in-flight events and chnges will
- * be persisted. static ConfiguredResources do not have changes applied in 
- * the flow persisted. 
- * 
+ * This test class supports the <code>VanillaInvokerConfigurationBuilder</code> class.
+ *
  * @author Ikasan Development Team
  */
-public interface DynamicConfiguredResource<T> extends ConfiguredResource<T>
+public class VanillaInvokerConfigurationBuilderTest
 {
-    // same operations, but provides a marker for dynamic configured resources
+    /**
+     * Test successful builder.
+     */
+    @Test
+    public void vanillaInvokerConfigurationBuilder_test_properties_setters()
+    {
+        VanillaInvokerConfigurationBuilder ticb = new VanillaInvokerConfigurationBuilder(new InvokerConfiguration());
+
+        Assert.assertTrue("InvokerConfiguration should have 1 property", TestUtils.getFields(InvokerConfiguration.class).size() == 1);
+        Assert.assertFalse("InvokerConfiguration should be false", ticb.withDynamicConfiguration(false).build().isDynamicConfiguration());
+        Assert.assertTrue("InvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
+    }
+
 }

@@ -40,10 +40,8 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.hibernate.internal.FilterConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,16 +52,18 @@ import org.slf4j.LoggerFactory;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class FilterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Filter>, ConfiguredResource<FilterInvokerConfiguration>
+public class FilterFlowElementInvoker extends AbstractFlowElementInvoker<FilterInvokerConfiguration> implements FlowElementInvoker<Filter>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(FilterFlowElementInvoker.class);
 
-    // unique id for this invoker configuration
-    private String configuredResourceId;
-
-    // configuration instance
-    private FilterInvokerConfiguration configuration = new FilterInvokerConfiguration();
+    /**
+     * Constructor
+     */
+    public FilterFlowElementInvoker()
+    {
+        super( new FilterInvokerConfiguration() );
+    }
 
     @Override
     public String getInvokerType()

@@ -47,7 +47,7 @@ package org.ikasan.flow.visitorPattern.invoker;
  * @author Ikasan Development Team
  *
  */
-public class TranslatorInvokerConfiguration
+public class TranslatorInvokerConfiguration extends InvokerConfiguration
 {
     /** apply translator component - default true */
     private boolean applyTranslator = true;

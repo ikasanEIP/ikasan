@@ -2,7 +2,7 @@ package org.ikasan.component.endpoint.rulecheck.broker;
 
 
 import org.ikasan.component.endpoint.rulecheck.DailyEventRuleConfiguration;
-import org.ikasan.component.endpoint.rulecheck.DailyEventRuleRule;
+import org.ikasan.component.endpoint.rulecheck.DailyEventRule;
 import org.ikasan.component.endpoint.rulecheck.DailyEventRuleStrategy;
 import org.ikasan.component.endpoint.rulecheck.RuleBreachException;
 import org.ikasan.component.endpoint.util.JodaFixedTimeRule;
@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.is;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 import static org.junit.Assert.assertThat;
 
-public class DailyEventRuleRuleTest
+public class DailyEventRuleTest
 {
     private static final DateTimeFormatter dateFormatter = forPattern("yyyyMMdd");
 
@@ -38,7 +38,7 @@ public class DailyEventRuleRuleTest
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private DailyEventRuleRule rule;
+    private DailyEventRule rule;
 
     private ConfigurationService configurationService;
 
@@ -63,7 +63,7 @@ public class DailyEventRuleRuleTest
         configurationService = context.mock(ConfigurationService.class);
         errorReportingService = context.mock(ErrorReportingService.class);
         dailyEventRuleStrategy = context.mock(DailyEventRuleStrategy.class);
-        rule = new DailyEventRuleRule(configurationService, dailyEventRuleStrategy, RULENAME);
+        rule = new DailyEventRule(configurationService, dailyEventRuleStrategy, RULENAME);
         rule.setErrorReportingService(errorReportingService);
         rule.setConfiguration(configuration);
         context.checking(new Expectations(){
