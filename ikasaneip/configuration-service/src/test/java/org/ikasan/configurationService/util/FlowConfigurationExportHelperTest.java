@@ -1,14 +1,12 @@
 package org.ikasan.configurationService.util;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.service.SampleConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Server;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -27,9 +25,10 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations = {
-        "/configuration-service-conf.xml",
-        "/hsqldb-datasource-conf.xml",
-        "/substitute-components.xml"
+    "/configuration-service-conf.xml",
+    "/serialiser-service-conf.xml",
+    "/transaction-conf.xml", "/h2-datasource-conf.xml",
+    "/substitute-components.xml"
 })
 public class FlowConfigurationExportHelperTest
 {

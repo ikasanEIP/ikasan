@@ -41,10 +41,14 @@
 package org.ikasan.configurationService.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
+import org.ikasan.configurationService.model.*;
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationException;
@@ -74,9 +78,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /** configuration DAO used for accessing the configuration transactionally at runtime */
     private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
 
-    /** Default factory for the creation of configurations and configuration parameters */
-    private ConfigurationFactory configurationFactory = ConfigurationFactoryDefaultImpl.getInstance();
-
     /**
      * Default configuration service returns a cached based instance.
      * 
@@ -87,15 +88,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
     }
 
-    /**
-     * Allow the configurationFactory to be overridden
-     * 
-     * @param configurationFactory
-     */
-    public void setConfigurationFactory(ConfigurationFactory configurationFactory)
-    {
-        this.configurationFactory = configurationFactory;
-    }
 
     /**
      * Constructor
@@ -179,8 +171,36 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     {
         try
         {
-            return configurationFactory.createConfiguration(configuredResource.getConfiguredResourceId(),
-                configuredResource.getConfiguration());
+            Object runtimeConfiguration = configuredResource.getConfiguration();
+            String configurationResourceId = configuredResource.getConfiguredResourceId();
+            if (runtimeConfiguration == null) {
+                throw new ConfigurationException("Runtime configuration object cannot be 'null'");
+            }
+
+            Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<ConfigurationParameter>());
+
+            Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(runtimeConfiguration);
+            // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
+            // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
+            TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
+
+            for (Map.Entry<String, Object> entry : orderedProperties.entrySet())
+            {
+                String name = entry.getKey();
+                Object value = entry.getValue();
+
+                    if (value == null)
+                    {
+                        configuration.getParameters().add(new ConfigurationParameterObjectImpl(name, null));
+                    }
+                    else
+                    {
+                        configuration.getParameters().add(new ConfigurationParameterObjectImpl(name, value));
+                    }
+
+            }
+
+            return configuration;
         }
         catch (ConfigurationException e)
         {
