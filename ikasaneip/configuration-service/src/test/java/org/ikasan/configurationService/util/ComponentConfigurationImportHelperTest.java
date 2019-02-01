@@ -2,16 +2,14 @@ package org.ikasan.configurationService.util;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.configurationService.service.SampleConfiguration;
 import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
@@ -31,9 +29,10 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations = {
-        "/configuration-service-conf.xml",
-        "/hsqldb-datasource-conf.xml",
-        "/substitute-components.xml"
+    "/configuration-service-conf.xml",
+    "/serialiser-service-conf.xml",
+    "/transaction-conf.xml", "/h2-datasource-conf.xml",
+    "/substitute-components.xml"
 })
 public class ComponentConfigurationImportHelperTest
 {
@@ -80,6 +79,7 @@ public class ComponentConfigurationImportHelperTest
     ComponentConfigurationImportHelper helper;
 
     @Test
+    @DirtiesContext
     public void test() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException
     {
         Map<String, String> map = new HashMap();
@@ -104,15 +104,19 @@ public class ComponentConfigurationImportHelperTest
 
         this.configurationService.saveConfiguration(configuration);
 
-        this.helper.updateComponentConfiguration(configuration, configXml.getBytes());
 
-        this.configurationService.saveConfiguration(configuration);
+        Configuration configuration2 = this.configurationService.getConfiguration("configureResourceId");
+
+        this.helper.updateComponentConfiguration(configuration2, configXml.getBytes());
+
+        this.configurationService.saveConfiguration(configuration2);
+
 
         this.configurationService.configure(this.configuredResource);
 
-        Assert.assertEquals("Map item must be updated", this.configuredResource.getConfiguration().getMap().get("key"), "updated value");
-        Assert.assertEquals("List size must equal!", this.configuredResource.getConfiguration().getList().size(), 1);
-        Assert.assertEquals("List.get(0) value must equal!", this.configuredResource.getConfiguration().getList().get(0), "value");
+        Assert.assertEquals("Map item must be updated", "updated value", this.configuredResource.getConfiguration().getMap().get("key"));
+        Assert.assertEquals("List size must equal!", 1, this.configuredResource.getConfiguration().getList().size());
+        Assert.assertEquals("List.get(0) value must equal!", "value", this.configuredResource.getConfiguration().getList().get(0));
         Assert.assertEquals("Boolean value must equal", this.configuredResource.getConfiguration().getBooleanParam(), true);
         Assert.assertEquals("Long value must equal", this.configuredResource.getConfiguration().getLongParam(), new Long(1L));
         Assert.assertEquals("Bollean value must equal", this.configuredResource.getConfiguration().getIntParam(), new Integer(1));
@@ -120,6 +124,7 @@ public class ComponentConfigurationImportHelperTest
     }
 
     @Test (expected = RuntimeException.class)
+    @DirtiesContext
     public void test_exception_no_configured_resource_id() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException
     {
         Map<String, String> map = new HashMap();
