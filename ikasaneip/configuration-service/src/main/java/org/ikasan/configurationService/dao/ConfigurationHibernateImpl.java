@@ -145,39 +145,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         // hibernate mutates the object and amends configurations Params with Id
         getHibernateTemplate().saveOrUpdate(configuration);
 
-        // we rehidrating Values from original object
-
-//        copyOfConfigurationParametersList.stream()
-//            .forEach(p->{
-//                    Long id = configuration.getParameters().stream()
-//                        .filter(configurationParameter -> configurationParameter.getName().equals(p.getName()) )
-//                        .filter(configurationParameter -> configurationParameter.getId() != null  )
-//                        .map( p1 -> p1.getId())
-//                        .findFirst().get();
-//
-//                p.setId(id);
-//                }
-//            );
-
-
-//        configuration.getParameters().stream().forEach(
-//            p ->{
-//                Optional<Object> value = copyOfConfigurationParametersList.stream()
-//                    .filter(configurationParameter -> configurationParameter.getName().equals(p.getName()) )
-//                    .filter(configurationParameter -> configurationParameter.getValue()!=null)
-//                    .map(configurationParameter ->  configurationParameter.getValue())
-//                    .findFirst();
-//                if(value.isPresent())
-//                {
-//                    p.setValue(value.get());
-//                }
-//            }
-//
-//
-//        );
-
-       // ((DefaultConfiguration)configuration).setParameters(copyOfConfigurationParametersList);
-
 
     }
 
