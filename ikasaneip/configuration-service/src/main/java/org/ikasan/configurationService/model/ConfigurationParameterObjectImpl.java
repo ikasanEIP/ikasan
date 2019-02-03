@@ -53,6 +53,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class ConfigurationParameterObjectImpl extends AbstractComponentParameter<Object> implements Serializable
 {
+
     /**
      * Constructor
      * @param name
@@ -60,8 +61,19 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
      */
     public ConfigurationParameterObjectImpl(String name, Object value)
     {
-        this(name, value, null);
+        this(name, value, null, null);
     }
+
+    /**
+     * Constructor
+     * @param name
+     * @param value
+     */
+    public ConfigurationParameterObjectImpl(String name, Object value, byte[] serialisedValue)
+    {
+        this(name, value, serialisedValue, null);
+    }
+
 
     /**
      * Constructor
@@ -78,6 +90,26 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
         }
 
         this.value = value;
+        this.serialisedValue = null;
+        this.description = description;
+    }
+
+    /**
+     * Constructor
+     * @param name
+     * @param value
+     * @param description
+     */
+    public ConfigurationParameterObjectImpl(String name, Object value, byte[] serialisedValue, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.value = value;
+        this.serialisedValue = serialisedValue;
         this.description = description;
     }
 
@@ -94,6 +126,7 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
         }
 
         this.value = object.getValue();
+        this.serialisedValue = object.getSerialisedValue();
         this.description = object.getDescription();
     }
 
@@ -105,4 +138,8 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
     {
         // required by ORM
     }
+
+
+
+
 }
