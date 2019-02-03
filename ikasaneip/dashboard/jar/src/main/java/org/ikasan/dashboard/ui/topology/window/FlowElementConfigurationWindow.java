@@ -40,27 +40,17 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
@@ -75,15 +65,18 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -217,35 +210,31 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
 		
 		for(ConfigurationParameter parameter: parameters)
 		{	
-			if(parameter instanceof ConfigurationParameterIntegerImpl)
+			if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
     		{
 				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
     		}
-			else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
-    		{
-    			this.layout.addComponent(this.createPasswordFieldPanel(parameter, new StringValidator()), 0, i, 1, i);
-    		}
-    		else if(parameter instanceof ConfigurationParameterStringImpl)
+			else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof String)
     		{
     			this.layout.addComponent(this.createTextAreaPanel(parameter, new StringValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterBooleanImpl)
+    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Boolean)
     		{
     			this.layout.addComponent(this.createTextAreaPanel(parameter, new BooleanValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterLongImpl)
+    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
     		{
     			this.layout.addComponent(this.createTextAreaPanel(parameter, new LongValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterMapImpl)
+    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Map)
     		{
     			this.layout.addComponent(this.createMapPanel
-    					((ConfigurationParameterMapImpl)parameter), 0, i, 1, i);
+    					((ConfigurationParameterObjectImpl)parameter), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterListImpl)
+    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof List)
     		{
     			this.layout.addComponent(this.createListPanel
-    					((ConfigurationParameterListImpl)parameter), 0, i, 1, i);
+    					((ConfigurationParameterObjectImpl)parameter), 0, i, 1, i);
     		}
 			
 			i++;
@@ -289,7 +278,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             			parameter.setDescription(descriptionTextField.getValue());
             		}
 
-            		if(parameter instanceof ConfigurationParameterIntegerImpl)
+            		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
             		{
             			
             			if(textField.getValue() != null && textField.getValue().length() > 0)
@@ -298,7 +287,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(new Integer(textField.getValue()));
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterStringImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof String)
             		{
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             			{
@@ -306,7 +295,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(textField.getValue());
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterBooleanImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Boolean)
             		{
             			
             			if(textField.getValue() != null && textField.getValue().length() > 0)
@@ -315,7 +304,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(new Boolean(textField.getValue()));
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterLongImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
             		{
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             			{
@@ -323,7 +312,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(new Long	(textField.getValue()));
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof String)
             		{
             			PasswordField passwordField = passwordFields.get(parameter.getName());
             			
@@ -333,9 +322,9 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(passwordField.getValue());
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterMapImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Map)
             		{
-            			ConfigurationParameterMapImpl mapParameter = (ConfigurationParameterMapImpl) parameter;
+                        ConfigurationParameterObjectImpl mapParameter = (ConfigurationParameterObjectImpl) parameter;
             			
             			HashMap<String, String> map = new HashMap<String, String>();
             			
@@ -343,7 +332,7 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             			
             			for(String key: mapTextFields.keySet())
             			{
-            				if(key.startsWith(parameter.getName()))
+            				if(key.startsWith(mapParameter.getName()))
             				{
             					TextFieldKeyValuePair pair = mapTextFields.get(key);
             					
@@ -358,21 +347,21 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
             			
             			parameter.setValue(map);
             		}
-            		else if(parameter instanceof ConfigurationParameterListImpl)
+            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof List)
             		{
-            			ConfigurationParameterListImpl mapParameter = (ConfigurationParameterListImpl) parameter;
+                        ConfigurationParameterObjectImpl mapParameter = (ConfigurationParameterObjectImpl) parameter;
             			
-            			ArrayList<String> map = new ArrayList<String>();
+            			ArrayList<String> list = new ArrayList<String>();
             			
             			for(String key: valueTextFields.keySet())
             			{
-            				if(key.startsWith(parameter.getName()))
+            				if(key.startsWith(mapParameter.getName()))
             				{
-            					map.add(valueTextFields.get(key).getValue());
+            					list.add(valueTextFields.get(key).getValue());
             				}
             			}
             			
-            			parameter.setValue(map);
+            			parameter.setValue(list);
             		}
   
         			

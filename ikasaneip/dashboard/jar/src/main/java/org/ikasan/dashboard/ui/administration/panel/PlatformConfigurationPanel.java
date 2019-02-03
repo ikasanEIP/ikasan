@@ -40,50 +40,37 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+ import com.vaadin.data.Validator;
+ import com.vaadin.data.Validator.InvalidValueException;
+ import com.vaadin.data.util.BeanItem;
+ import com.vaadin.data.util.converter.StringToIntegerConverter;
+ import com.vaadin.data.util.converter.StringToLongConverter;
+ import com.vaadin.navigator.View;
+ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+ import com.vaadin.server.Page;
+ import com.vaadin.server.VaadinService;
+ import com.vaadin.ui.*;
+ import com.vaadin.ui.Button.ClickEvent;
+ import com.vaadin.ui.Notification.Type;
+ import com.vaadin.ui.themes.ValoTheme;
+ import org.ikasan.configurationService.model.*;
+ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+ import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
+ import org.ikasan.security.service.authentication.IkasanAuthentication;
+ import org.ikasan.spec.configuration.Configuration;
+ import org.ikasan.spec.configuration.ConfigurationManagement;
+ import org.ikasan.spec.configuration.ConfigurationParameter;
+ import org.ikasan.spec.configuration.ConfiguredResource;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.server.VaadinService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.PlatformConfiguration;
-import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.vaadin.teemu.VaadinIcons;
-
-import com.vaadin.data.Validator;
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.StringToIntegerConverter;
-import com.vaadin.data.util.converter.StringToLongConverter;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.themes.ValoTheme;
+ import java.text.NumberFormat;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Map;
 
 /**
  * @author CMI2 Development Team
@@ -162,7 +149,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 		passwordField.setWidth("80%");
 		passwordField.setId(parameter.getName());
 		
-		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
 		{
 			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
 			{
@@ -177,7 +164,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 			// either set for the field or in your field factory for multiple fields
 			passwordField.setConverter(plainIntegerConverter);
 		}
-		else if (parameter instanceof ConfigurationParameterLongImpl)
+		else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
 		{
 			StringToLongConverter plainLongConverter = new StringToLongConverter() 
 			{
@@ -240,7 +227,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 		usernameField.setWidth("80%");
 		usernameField.setId(parameter.getName());
 		
-		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
 		{
 			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
 			{
@@ -255,7 +242,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 			// either set for the field or in your field factory for multiple fields
 			usernameField.setConverter(plainIntegerConverter);
 		}
-		else if (parameter instanceof ConfigurationParameterLongImpl)
+		else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
 		{
 			StringToLongConverter plainLongConverter = new StringToLongConverter() 
 			{
@@ -288,7 +275,7 @@ public class PlatformConfigurationPanel extends Panel implements View
     }
 
 	
-	protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+	protected Panel createMapPanel(final ConfigurationParameterObjectImpl parameter)
     {
     	Panel paramPanel = new Panel();
     	paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -301,7 +288,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.setColumnExpandRatio(0, .25f);
 		paramLayout.setColumnExpandRatio(1, .75f);
 				
-		final Map<String, String> valueMap = parameter.getValue();
+		final Map<String, String> valueMap = (Map<String, String>) parameter.getValue();
 		
 		final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1);
 		mapLayout.setColumnExpandRatio(0, .05f);
@@ -642,7 +629,7 @@ public class PlatformConfigurationPanel extends Panel implements View
         	}
         	if(parameter.getName().equals("configurationMap"))
         	{
-        		mapPanel = this.createMapPanel((ConfigurationParameterMapImpl)parameter);
+        		mapPanel = this.createMapPanel((ConfigurationParameterObjectImpl)parameter);
         	}
         }
         
