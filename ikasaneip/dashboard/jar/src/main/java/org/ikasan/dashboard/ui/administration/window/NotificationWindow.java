@@ -40,12 +40,13 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
-import java.util.List;
-
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.VaadinService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.notification.NotificationConfiguredResource;
 import org.ikasan.dashboard.notification.NotificationContentProducerConfiguration;
 import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
@@ -60,22 +61,10 @@ import org.ikasan.topology.constants.NotificationConstants;
 import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
+import java.util.List;
 
 /**
  * 
@@ -343,19 +332,19 @@ public class NotificationWindow extends Window
                 {
                 	if(parameter.getName().equals("subject"))
                 	{
-                		((ConfigurationParameterStringImpl)parameter).setValue(NotificationWindow.this.subject.getValue());
+                		parameter.setValue(NotificationWindow.this.subject.getValue());
                 	}
                 	else if(parameter.getName().equals("body"))
                 	{
-                		((ConfigurationParameterStringImpl)parameter).setValue(NotificationWindow.this.body.getValue());
+                		parameter.setValue(NotificationWindow.this.body.getValue());
                 	}
                 	if(parameter.getName().equals("recipients"))
                 	{
-                		((ConfigurationParameterStringImpl)parameter).setValue(NotificationWindow.this.recipients.getValue());
+                		parameter.setValue(NotificationWindow.this.recipients.getValue());
                 	}
                 	if(parameter.getName().equals("notificationName"))
                 	{
-                		((ConfigurationParameterStringImpl)parameter).setValue(NotificationWindow.this.name.getValue());
+                		parameter.setValue(NotificationWindow.this.name.getValue());
                 	}
                 }
  
@@ -414,15 +403,15 @@ public class NotificationWindow extends Window
             {
             	if(parameter.getName().equals("subject"))
             	{
-            		this.subject.setValue(((ConfigurationParameterStringImpl)parameter).getValue());
+            		this.subject.setValue((String)parameter.getValue());
             	}
             	else if(parameter.getName().equals("body"))
             	{
-            		this.body.setValue(((ConfigurationParameterStringImpl)parameter).getValue());
+            		this.body.setValue((String)parameter.getValue());
             	}
             	if(parameter.getName().equals("recipients"))
             	{
-            		this.recipients.setValue(((ConfigurationParameterStringImpl)parameter).getValue());
+            		this.recipients.setValue((String)parameter.getValue());
             	}
             }
     	}
