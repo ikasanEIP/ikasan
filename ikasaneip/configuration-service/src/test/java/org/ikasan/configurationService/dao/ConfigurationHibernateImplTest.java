@@ -44,6 +44,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -53,6 +56,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.util.*;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -66,7 +70,8 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = {
         "/configuration-service-conf.xml",
         "/serialiser-service-conf.xml",
-        "/transaction-conf.xml", "/h2-datasource-conf.xml",
+        "/transaction-conf.xml",
+        "/h2-datasource-conf.xml",
         "/substitute-components.xml"
 })
 public class ConfigurationHibernateImplTest
@@ -74,6 +79,15 @@ public class ConfigurationHibernateImplTest
 
     @Resource
     ConfigurationDao configurationServiceDao;
+    @Resource
+    SerialiserFactory ikasanSerialiserFactory;
+
+    private Serialiser<Object,byte[]> serialiser;
+
+    @Before
+    public void setup(){
+        serialiser = ikasanSerialiserFactory.getDefaultSerialiser();
+    }
 
     @Test
     @DirtiesContext
@@ -81,7 +95,8 @@ public class ConfigurationHibernateImplTest
 
         String resourceId = "testResourceId";
         String stringValue = "stringTestValue";
-        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("stringValue",stringValue, "testDescription");
+        byte[] serialisedValue = serialiser.serialise(stringValue);
+        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("stringValue",stringValue, serialisedValue, "testDescription");
 
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(resourceId, Arrays.asList(stringParam));
@@ -93,7 +108,7 @@ public class ConfigurationHibernateImplTest
         // get results and compare values
         Configuration<List<ConfigurationParameter>> result = configurationServiceDao.findByConfigurationId(resourceId);
 
-        assertEquals(stringValue,result.getParameters().get(0).getValue());
+        assertArrayEquals(serialisedValue,result.getParameters().get(0).getSerialisedValue());
         assertEquals("stringValue",result.getParameters().get(0).getName());
 
     }
@@ -104,7 +119,8 @@ public class ConfigurationHibernateImplTest
 
         String resourceId = "testResourceId";
         Integer integerValue = 100;
-        ConfigurationParameter intgerParam = new ConfigurationParameterObjectImpl("intValue", integerValue, "testDescription");
+        byte[] serialisedValue = serialiser.serialise(integerValue);
+        ConfigurationParameter intgerParam = new ConfigurationParameterObjectImpl("intValue", integerValue, serialisedValue, "testDescription");
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(resourceId, Arrays.asList(intgerParam));
 
@@ -113,7 +129,7 @@ public class ConfigurationHibernateImplTest
         // get results and compare values
         Configuration<List<ConfigurationParameter>> result = configurationServiceDao.findByConfigurationId(resourceId);
 
-        assertEquals(integerValue,result.getParameters().get(0).getValue());
+        assertArrayEquals(serialisedValue,result.getParameters().get(0).getSerialisedValue());
         assertEquals("intValue",result.getParameters().get(0).getName());
 
     }
@@ -124,7 +140,8 @@ public class ConfigurationHibernateImplTest
 
         String resourceId = "testResourceId";
         Long longValue = 100l;
-        ConfigurationParameter longParam = new ConfigurationParameterObjectImpl("longValue", longValue, "testDescription");
+        byte[] serialisedValue = serialiser.serialise(longValue);
+        ConfigurationParameter longParam = new ConfigurationParameterObjectImpl("longValue", longValue, serialisedValue,"testDescription");
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(resourceId, Arrays.asList(longParam));
 
@@ -133,7 +150,7 @@ public class ConfigurationHibernateImplTest
         // get results and compare values
         Configuration<List<ConfigurationParameter>> result = configurationServiceDao.findByConfigurationId(resourceId);
 
-        assertEquals(longValue,result.getParameters().get(0).getValue());
+        assertArrayEquals(serialisedValue,result.getParameters().get(0).getSerialisedValue());
         assertEquals("longValue",result.getParameters().get(0).getName());
 
     }
@@ -144,8 +161,8 @@ public class ConfigurationHibernateImplTest
 
         String resourceId = "testResourceId";
         List listValue = new ArrayList(Arrays.asList("a","b","c"));
-
-        ConfigurationParameter listParam = new ConfigurationParameterObjectImpl("listValue", listValue, "testDescription");
+        byte[] serialisedValue = serialiser.serialise(listValue);
+        ConfigurationParameter listParam = new ConfigurationParameterObjectImpl("listValue", listValue, serialisedValue, "testDescription");
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(resourceId, Arrays.asList(listParam));
 
@@ -155,7 +172,7 @@ public class ConfigurationHibernateImplTest
         // get results and compare values
         Configuration<List<ConfigurationParameter>> result = configurationServiceDao.findByConfigurationId(resourceId);
 
-        assertEquals(listValue,result.getParameters().get(0).getValue());
+        assertArrayEquals(serialisedValue,result.getParameters().get(0).getSerialisedValue());
         assertEquals("listValue",result.getParameters().get(0).getName());
 
     }
@@ -167,8 +184,8 @@ public class ConfigurationHibernateImplTest
         String resourceId = "testResourceId";
         Map<String,String> mapValue = new HashMap<>();
         mapValue.put("key","value");
-
-        ConfigurationParameter listParam = new ConfigurationParameterObjectImpl("mapValue", mapValue, "testDescription");
+        byte[] serialisedValue = serialiser.serialise(mapValue);
+        ConfigurationParameter listParam = new ConfigurationParameterObjectImpl("mapValue", mapValue, serialisedValue, "testDescription");
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(resourceId, Arrays.asList(listParam));
 
@@ -178,7 +195,7 @@ public class ConfigurationHibernateImplTest
         // get results and compare values
         Configuration<List<ConfigurationParameter>> result = configurationServiceDao.findByConfigurationId(resourceId);
 
-        assertEquals(mapValue,result.getParameters().get(0).getValue());
+        assertArrayEquals(serialisedValue,result.getParameters().get(0).getSerialisedValue());
         assertEquals("mapValue",result.getParameters().get(0).getName());
 
     }

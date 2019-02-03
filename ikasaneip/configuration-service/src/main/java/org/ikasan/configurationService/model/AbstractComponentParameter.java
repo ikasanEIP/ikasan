@@ -43,6 +43,7 @@ package org.ikasan.configurationService.model;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -59,6 +60,9 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
 
     /** configuration value */
     protected T value;
+
+    /** configuration value in serialised format*/
+    protected byte[] serialisedValue;
 
     /** configuration description */
     protected String description;
@@ -136,6 +140,24 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
     }
 
     /**
+     * Getter for serialised value
+     * @return
+     */
+    public byte[] getSerialisedValue()
+    {
+        return serialisedValue;
+    }
+
+    /**
+     * Setter for serialised value
+     * @param serialisedValue
+     */
+    public void setSerialisedValue(byte[] serialisedValue)
+    {
+        this.serialisedValue = serialisedValue;
+    }
+
+    /**
      * Utility method for object comparison
      * @param object1
      * @param object2
@@ -162,12 +184,14 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
         if (o == null || getClass() != o.getClass())
             return false;
         AbstractComponentParameter<?> that = (AbstractComponentParameter<?>) o;
-        return Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects
-            .equals(description, that.description);
+        return Objects.equals(name, that.name) && Objects.equals(value, that.value) && Arrays
+            .equals(serialisedValue, that.serialisedValue) && Objects.equals(description, that.description);
     }
 
     @Override public int hashCode()
     {
-        return Objects.hash(name, value, description);
+        int result = Objects.hash(name, value, description);
+        result = 31 * result + Arrays.hashCode(serialisedValue);
+        return result;
     }
 }
