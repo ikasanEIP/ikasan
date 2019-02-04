@@ -96,67 +96,56 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spring-resource</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-recovery-manager</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-serialiser</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-error-reporting-service</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -186,50 +175,47 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-replay</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-boot</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-hospital</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${version.org.hibernate-validator}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- web console -->
@@ -255,7 +241,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Hibernate dependency -->
@@ -269,13 +254,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -287,19 +270,16 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-quartz-endpoint</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
