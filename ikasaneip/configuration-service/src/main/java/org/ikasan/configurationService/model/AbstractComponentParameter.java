@@ -43,6 +43,8 @@ package org.ikasan.configurationService.model;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Abstract Configuration Parameter for modelling common properties of a configuration parameter
@@ -58,6 +60,9 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
 
     /** configuration value */
     protected T value;
+
+    /** configuration value in serialised format*/
+    protected byte[] serialisedValue;
 
     /** configuration description */
     protected String description;
@@ -135,6 +140,24 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
     }
 
     /**
+     * Getter for serialised value
+     * @return
+     */
+    public byte[] getSerialisedValue()
+    {
+        return serialisedValue;
+    }
+
+    /**
+     * Setter for serialised value
+     * @param serialisedValue
+     */
+    public void setSerialisedValue(byte[] serialisedValue)
+    {
+        this.serialisedValue = serialisedValue;
+    }
+
+    /**
      * Utility method for object comparison
      * @param object1
      * @param object2
@@ -154,51 +177,21 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object object)
+    @Override public boolean equals(Object o)
     {
-        // is same instance
-        if(this == object)
-        {
+        if (this == o)
             return true;
-        }
-
-        // is an instanceof
-        if(object == null || !(object instanceof ConfigurationParameterBooleanImpl))
-        {
+        if (o == null || getClass() != o.getClass())
             return false;
-        }
-
-        // is same object type
-        ConfigurationParameterBooleanImpl configurationParameter = (ConfigurationParameterBooleanImpl) object;
-        if( this.name.equals(configurationParameter.getName()) &&
-                equalsOrNull(this.value, configurationParameter.getValue()) &&
-                equalsOrNull(this.description, configurationParameter.getDescription()) )
-        {
-            return true;
-        }
-
-        // nothing equal
-        return false;
+        AbstractComponentParameter<?> that = (AbstractComponentParameter<?>) o;
+        return Objects.equals(name, that.name) && Objects.equals(value, that.value) && Arrays
+            .equals(serialisedValue, that.serialisedValue) && Objects.equals(description, that.description);
     }
 
-    /**
-     * HashCode default implementation
-     *
-     * @return int hashcode
-     */
-    @Override
-    public int hashCode()
+    @Override public int hashCode()
     {
-        int hash = 1;
-        hash = hash * 31 + this.name.hashCode();
-        hash = hash * 31 + (this.value == null ? 0 : this.value.hashCode());
-        hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
-        return hash;
+        int result = Objects.hash(name, value, description);
+        result = 31 * result + Arrays.hashCode(serialisedValue);
+        return result;
     }
 }

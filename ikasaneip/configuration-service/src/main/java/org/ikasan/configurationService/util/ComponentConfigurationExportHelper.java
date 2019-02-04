@@ -127,7 +127,7 @@ package org.ikasan.configurationService.util;
 
          for(ConfigurationParameter parameter: parameters)
          {
-             if(parameter instanceof ConfigurationParameterIntegerImpl)
+             if(parameter.getValue() != null  && parameter.getValue() instanceof Integer )
              {
                 exportString.append(CONFIGURATION_PARAMETER_INTEGER_START_TAG)
                         .append(NAME_START_TAG)
@@ -141,21 +141,7 @@ package org.ikasan.configurationService.util;
                         .append(CONFIGURATION_DESCRIPTION_END_TAG)
                         .append(CONFIGURATION_PARAMETERS_INTEGER_END_TAG);
              }
-             else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
-             {
-                 exportString.append(CONFIGURATION_PARAMETER_MASKED_STRING_START_TAG)
-                         .append(NAME_START_TAG)
-                         .append(StringEscapeUtils.escapeXml(parameter.getName()))
-                         .append(NAME_END_TAG)
-                         .append(VALUE_START_TAG)
-                         .append((parameter.getValue() == null) ? "" : StringEscapeUtils.escapeXml((String)parameter.getValue()))
-                         .append(VALUE_END_TAG)
-                         .append(CONFIGURATION_DESCRIPTION_START_TAG)
-                         .append((parameter.getDescription() == null) ? "" : StringEscapeUtils.escapeXml( parameter.getDescription()))
-                         .append(CONFIGURATION_DESCRIPTION_END_TAG)
-                         .append(CONFIGURATION_PARAMETERS_MASKED_STRING_END_TAG);
-             }
-             else if(parameter instanceof ConfigurationParameterStringImpl)
+             else  if(parameter.getValue() != null  && parameter.getValue() instanceof String )
              {
                  exportString.append(CONFIGURATION_PARAMETER_STRING_START_TAG)
                          .append(NAME_START_TAG)
@@ -169,7 +155,7 @@ package org.ikasan.configurationService.util;
                          .append(CONFIGURATION_DESCRIPTION_END_TAG)
                          .append(CONFIGURATION_PARAMETERS_STRING_END_TAG);
              }
-             else if(parameter instanceof ConfigurationParameterBooleanImpl)
+             else  if(parameter.getValue() != null  && parameter.getValue() instanceof Boolean )
              {
                  exportString.append(CONFIGURATION_PARAMETER_BOOLEAN_START_TAG)
                          .append(NAME_START_TAG)
@@ -183,7 +169,7 @@ package org.ikasan.configurationService.util;
                          .append(CONFIGURATION_DESCRIPTION_END_TAG)
                          .append(CONFIGURATION_PARAMETERS_BOOLEAN_END_TAG);
              }
-             else if(parameter instanceof ConfigurationParameterLongImpl)
+             else  if(parameter.getValue() != null  && parameter.getValue() instanceof Long )
              {
                  exportString.append(CONFIGURATION_PARAMETER_LONG_START_TAG)
                          .append(NAME_START_TAG)
@@ -197,7 +183,7 @@ package org.ikasan.configurationService.util;
                          .append(CONFIGURATION_DESCRIPTION_END_TAG)
                          .append(CONFIGURATION_PARAMETERS_LONG_END_TAG);
              }
-             else if(parameter instanceof ConfigurationParameterMapImpl)
+             else  if(parameter.getValue() != null  && parameter.getValue() instanceof Map )
              {
                  Map<String, String> map = (Map<String, String>)parameter.getValue();
 
@@ -223,7 +209,7 @@ package org.ikasan.configurationService.util;
 
                  exportString.append(CONFIGURATION_PARAMETERS_MAP_END_TAG);
              }
-             else if(parameter instanceof ConfigurationParameterListImpl)
+             else if(parameter.getValue() != null  && parameter.getValue() instanceof List )
              {
                  List<String> list = (List<String>)parameter.getValue();
 

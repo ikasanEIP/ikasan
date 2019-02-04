@@ -40,16 +40,12 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.List;
-
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.PlatformConfigurationConstants;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.configuration.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -83,13 +79,15 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         
         final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
         
-        ConfigurationParameterMapImpl parameterMap = null;
-        
+        Map<String,String> parameterMap = null;
+
         for(ConfigurationParameter parameter: parameters)
         {
-        	if(parameter instanceof ConfigurationParameterMapImpl)
+        	if(parameter instanceof ConfigurationParameterObjectImpl
+                && parameter.getValue() != null
+                && parameter.getValue() instanceof Map)
         	{
-        		parameterMap = (ConfigurationParameterMapImpl)parameter;
+        		parameterMap = (Map<String,String>)parameter.getValue();
         	}
         }
         
@@ -98,7 +96,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         	throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
         }
         
-        return parameterMap.getValue().get(paramName) == null ? "":parameterMap.getValue().get(paramName);
+        return parameterMap.get(paramName) == null ? "":parameterMap.get(paramName);
 	}
 
 	@Override
@@ -110,13 +108,15 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 
-		ConfigurationParameterMapImpl parameterMap = null;
+		Map<String,String> parameterMap = null;
 
 		for(ConfigurationParameter parameter: parameters)
 		{
-			if(parameter instanceof ConfigurationParameterMapImpl)
+			if(parameter instanceof ConfigurationParameterObjectImpl
+                && parameter.getValue() != null
+                && parameter.getValue() instanceof Map)
 			{
-				parameterMap = (ConfigurationParameterMapImpl)parameter;
+				parameterMap = (Map<String,String>)parameter.getValue();
 			}
 		}
 
@@ -125,7 +125,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 			throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
 		}
 
-		parameterMap.getValue().put(paramName, value);
+		parameterMap.put(paramName, value);
 
 		this.configurationManagement.saveConfiguration(configuration);
 	}
