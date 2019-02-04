@@ -895,7 +895,7 @@
                 <module>transaction</module>
                 <module>replay</module>
 				<module>persistence</module>
-                <!--<module>dashboard</module>-->
+                <module>dashboard</module>
                 <module>sample</module> 
             </modules>
 
@@ -1807,6 +1807,10 @@
                         <artifactId>validation-api</artifactId>
                         <groupId>javax.validation</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>javax.annotation-api</artifactId>
+                        <groupId>javax.annotation</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1850,6 +1854,12 @@
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-client</artifactId>
                 <version>${version.org.glassfish.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>javax.annotation-api</artifactId>
+                        <groupId>javax.annotation</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

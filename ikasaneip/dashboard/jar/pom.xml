@@ -275,7 +275,7 @@
 		<dependency>
 		    <groupId>org.yaml</groupId>
 		    <artifactId>snakeyaml</artifactId>
-		    <version>1.17</version>
+		    <version>1.19</version>
 		</dependency>
 		
 		<dependency>
@@ -386,6 +386,10 @@
 				<exclusion>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
 				</exclusion>
 			</exclusions>
 	    </dependency>
