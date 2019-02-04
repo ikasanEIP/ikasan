@@ -13,7 +13,7 @@
     <!--<jdbc:script location="classpath:overwriteDBCreation.sql"/>-->
     <!--</jdbc:initialize-database>-->
 
-    <bean class="org.springframework.jdbc.datasource.init.DataSourceInitializer" depends-on="errorReportingSessionFactory,wiretapHibernateSessionFactory,securitySessionFactory,exclusionEventHibernateSessionFactory" id="dataSourceInitializer2">
+    <bean class="org.springframework.jdbc.datasource.init.DataSourceInitializer" depends-on="errorReportingSessionFactory,wiretapHibernateSessionFactory,securitySessionFactory,exclusionEventHibernateSessionFactory,xaConfigurationServiceSessionFactory,configurationServiceSessionFactory" id="dataSourceInitializer2">
         <property name="databasePopulator" ref="resourceDatabasePopulator"/>
         <property name="dataSource" ref="ikasanDatasource"/>
     </bean>

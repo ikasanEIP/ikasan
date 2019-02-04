@@ -53,9 +53,9 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Notification.Type;
  import com.vaadin.ui.themes.ValoTheme;
- import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
- import org.ikasan.configurationService.model.*;
+ import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
+ import org.ikasan.configurationService.model.PlatformConfiguration;
+ import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
@@ -64,6 +64,8 @@ import org.slf4j.LoggerFactory;
  import org.ikasan.spec.configuration.ConfigurationManagement;
  import org.ikasan.spec.configuration.ConfigurationParameter;
  import org.ikasan.spec.configuration.ConfiguredResource;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
  import org.vaadin.teemu.VaadinIcons;
 
  import java.text.NumberFormat;
@@ -149,7 +151,7 @@ import org.slf4j.LoggerFactory;
          passwordField.setWidth("80%");
          passwordField.setId(parameter.getName());
 
-         if(parameter instanceof ConfigurationParameterIntegerImpl)
+         if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
          {
              StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
              {
@@ -164,7 +166,7 @@ import org.slf4j.LoggerFactory;
              // either set for the field or in your field factory for multiple fields
              passwordField.setConverter(plainIntegerConverter);
          }
-         else if (parameter instanceof ConfigurationParameterLongImpl)
+         else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
          {
              StringToLongConverter plainLongConverter = new StringToLongConverter()
              {
@@ -227,7 +229,7 @@ import org.slf4j.LoggerFactory;
          usernameField.setWidth("80%");
          usernameField.setId(parameter.getName());
 
-         if(parameter instanceof ConfigurationParameterIntegerImpl)
+         if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
          {
              StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
              {
@@ -242,7 +244,7 @@ import org.slf4j.LoggerFactory;
              // either set for the field or in your field factory for multiple fields
              usernameField.setConverter(plainIntegerConverter);
          }
-         else if (parameter instanceof ConfigurationParameterLongImpl)
+         else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
          {
              StringToLongConverter plainLongConverter = new StringToLongConverter()
              {
@@ -275,7 +277,7 @@ import org.slf4j.LoggerFactory;
      }
 
 
-     protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+     protected Panel createMapPanel(final ConfigurationParameterObjectImpl parameter)
      {
          Panel paramPanel = new Panel();
          paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -288,7 +290,7 @@ import org.slf4j.LoggerFactory;
          paramLayout.setColumnExpandRatio(0, .25f);
          paramLayout.setColumnExpandRatio(1, .75f);
 
-         final Map<String, String> valueMap = parameter.getValue();
+         final Map<String, String> valueMap = (Map<String,String>)parameter.getValue();
 
          final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1);
          mapLayout.setColumnExpandRatio(0, .05f);
@@ -629,7 +631,7 @@ import org.slf4j.LoggerFactory;
              }
              if(parameter.getName().equals("configurationMap"))
              {
-                 mapPanel = this.createMapPanel((ConfigurationParameterMapImpl)parameter);
+                 mapPanel = this.createMapPanel((ConfigurationParameterObjectImpl) parameter);
              }
          }
 

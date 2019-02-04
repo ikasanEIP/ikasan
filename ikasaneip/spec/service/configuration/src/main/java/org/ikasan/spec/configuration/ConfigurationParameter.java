@@ -53,47 +53,60 @@ public interface ConfigurationParameter<T>
      * Required by ORM
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Required by ORM
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Get the configuration parameter name
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the configuration parameter name
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Get the configuration parameter value
      * @return
      */
-    public T getValue();
+    T getValue();
 
     /**
      * Set the configuration parameter value
      * @param value
      */
-    public void setValue(T value);
+    void setValue(T value);
 
     /**
      * Get the configuration parameter description
      * @return
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Set the configuration parameter description
      * @param description
      */
-    public void setDescription(String description);
+    void setDescription(String description);
+
+    /**
+     * Getter for serialised value
+     * @return
+     */
+    byte[] getSerialisedValue();
+
+    /**
+     * Setter for serialised value
+     * @param serialisedValue
+     */
+    void setSerialisedValue(byte[] serialisedValue);
+
 }

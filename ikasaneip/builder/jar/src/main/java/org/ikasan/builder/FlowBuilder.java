@@ -662,7 +662,7 @@ public class FlowBuilder implements ApplicationContextAware
         if (configurationService == null)
         {
             configurationService = ConfiguredResourceConfigurationService
-                    .getDefaultConfigurationService();
+                    .getDefaultConfigurationService(serialiserFactory);
         }
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
         if (resubmissionService != null)

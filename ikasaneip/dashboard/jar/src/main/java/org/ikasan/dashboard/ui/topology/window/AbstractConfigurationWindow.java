@@ -40,32 +40,28 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.vaadin.data.Validator;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.converter.StringToIntegerConverter;
+import com.vaadin.data.util.converter.StringToLongConverter;
 import com.vaadin.ui.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Validator;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.StringToIntegerConverter;
-import com.vaadin.data.util.converter.StringToLongConverter;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * 
@@ -142,7 +138,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		passwordField.setWidth("80%");
 		passwordField.setId(parameter.getName());
 		
-		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
 		{
 			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
 			{
@@ -157,7 +153,7 @@ public abstract class AbstractConfigurationWindow extends Window
 			// either set for the field or in your field factory for multiple fields
 			passwordField.setConverter(plainIntegerConverter);
 		}
-		else if (parameter instanceof ConfigurationParameterLongImpl)
+		else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
 		{
 			StringToLongConverter plainLongConverter = new StringToLongConverter() 
 			{
@@ -241,7 +237,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		textField.setWidth("80%");
 		textField.setId(parameter.getName());
 		
-		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
 		{
 			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
 			{
@@ -256,7 +252,7 @@ public abstract class AbstractConfigurationWindow extends Window
 			// either set for the field or in your field factory for multiple fields
 			textField.setConverter(plainIntegerConverter);
 		}
-		else if (parameter instanceof ConfigurationParameterLongImpl)
+		else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
 		{
 			StringToLongConverter plainLongConverter = new StringToLongConverter() 
 			{
@@ -405,7 +401,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		textField.setWidth("15%");
 		textField.setId(parameter.getName());
 
-		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
 		{
 			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
 			{
@@ -420,7 +416,7 @@ public abstract class AbstractConfigurationWindow extends Window
 			// either set for the field or in your field factory for multiple fields
 			textField.setConverter(plainIntegerConverter);
 		}
-		else if (parameter instanceof ConfigurationParameterLongImpl)
+		else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
 		{
 			StringToLongConverter plainLongConverter = new StringToLongConverter()
 			{
@@ -472,7 +468,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		return paramPanel;
 	}
     
-    protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+    protected Panel createMapPanel(final ConfigurationParameterObjectImpl parameter)
     {
     	Panel paramPanel = new Panel();
 		paramPanel.setStyleName("dashboard");
@@ -493,7 +489,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 				
-		final Map<String, String> valueMap = parameter.getValue();
+		final Map<String, String> valueMap = (Map<String, String>)parameter.getValue();
 		
 		final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1	);
 		mapLayout.setMargin(true);
@@ -641,7 +637,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		return paramPanel;
     }
 
-    protected Panel createListPanel(final ConfigurationParameterListImpl parameter)
+    protected Panel createListPanel(final ConfigurationParameterObjectImpl parameter)
     {
     	Panel paramPanel = new Panel();
 		paramPanel.setStyleName("dashboard");
@@ -662,7 +658,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 				
-		final List<String> valueList = parameter.getValue();
+		final List<String> valueList = (List<String>)parameter.getValue();
 		
 		final GridLayout listLayout = new GridLayout(3, (valueList.size() != 0 ? valueList.size(): 1) + 1);
 		listLayout.setWidth("100%");

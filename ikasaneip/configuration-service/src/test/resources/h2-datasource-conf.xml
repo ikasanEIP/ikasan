@@ -1,8 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="setupDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
         <property name="sessionFactory" ref="setupSessionFactory"/>
@@ -17,11 +17,12 @@
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-            
+
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="false"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
+        <entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
     </util:map>
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"
@@ -31,5 +32,4 @@
         <property name="username" value="sa" />
         <property name="password" value="sa" />
     </bean>
-    
 </beans>
