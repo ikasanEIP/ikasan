@@ -175,6 +175,11 @@ public abstract class AbstractFlowConfiguration
         {
             try
             {
+                // read from persistence and configure if available
+                ConfiguredResource configuredResource = (ConfiguredResource)flowElement.getFlowElementInvoker();
+                this.configure(configuredResource);
+
+                // is this dynamically configured
                 if( ((ConfiguredResource<InvokerConfiguration>)flowElement.getFlowElementInvoker()).getConfiguration().isDynamicConfiguration() )
                 {
                     flowElements.add(flowElement);
