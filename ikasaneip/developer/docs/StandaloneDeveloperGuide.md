@@ -703,19 +703,92 @@ In this case the subsequent classes would simply be marked as Configured.
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
 
 ### Dynamic Configured Resources
-Another type of component configuration is that of a ```Dynamic Configured Resource```.
-A dynamic configured component allows the configuration to be changed dynamically at runtime by the inflight event. Any changes to components marked as dynamic configured have their state persisted on each flow invocation.
-Dynamic configured components can be very useful where the event or invocation of the flow needs to change a configured attribute as a result of the event or flow invocation.
+Configured resources can specifically be set to persist their configuration on every event invocation through the flow.
+This can be useful where the configuration itself can be updated based on the inflight event.
+To do this the component must first be set as a ConfiguredResource (interface implementation on the component class) at build time. 
+Once set as a configured resource, dynamic configuration can be turned on at runtime through the configuration of the component invoker.
 
-TODO Add FLuentAPI example code for dynamic configuration
+*NOTE: If dynamicConfiguration is false, any updates to a component configuration will only work whilst the flow is running - it will not be persisted. Restart of a flow will reset that configuration back to its original state.*
 
-TODO Add Blue Console configuration on the invoker
+Setting the component invoker with dynamicConfiguration true or false turns dynamic configuration on and off respectively. 
+Turning this on will ensure the configuration is loaded at the start of the inflight event and updated on completion of processing the inflight event.
+Changing the content of the configuration is left to the remit of the developer. This can be achieved by updating the configuration in 
+the component using that configuration; or for off-the-shelf components as a subsequent translator component.
 
-TODO DO we need to add an example via the Ikasan Dashboard?
+#### FluentAPI Builder Pattern Usage
+Dynamic Configuration can be programmatically set via the FLuentAPI builder pattern.
+```java
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                .withExceptionResolver(builderFactory
+                        .getExceptionResolverBuilder()
+                        .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                .converter("My Converter", new MyConverter(), Configuration.converterInvoker().withDynamicConfiguration(true))
+                .producer("My Target Producer", componentBuilder.logProducer())
+                .build();
+```
+Here is an example of changing a configuration property based on the incoming event within a ConfiguredResource component.
+
+In this example a timestamp configuration property is set to current timestamp on the occurrence of each inflight event. By turning on dynamicConfiguration we can ensure this configuration change is persisted with the success of the event publication.
+Should any exceptions occur within the flow then the persistence does not occur.
+
+*NOTE: Although the change isn't persisted on exception, the state of the configuration is still changed on the configuration instance in memory, so the developer needs to accommodate this scenario.*
+```java
+package com.ikasan.example.converter;
+
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+
+public class MyConverter implements Converter<String,Integer>, ConfiguredResource<MyConverterConfiguration>
+{
+    String configuredResourceId;
+    MyConverterConfiguration configuration = new MyConverterConfiguration();
+    
+    public Integer convert(String payload) throws TransformationException
+    {
+        // update a timestamp in the configuration based on the time the event hits this component
+        configuration.setTimestamp( System.currentTimeMillis() );
+        
+        String[] strings = payload.split(" ");
+        int intPart = Integer.valueOf( strings[1] );
+        if(intPart == configuration.getBadNumber())
+        {
+            throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
+        }
+        return Integer.valueOf(intPart);
+    }
+
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    public void setConfiguredResourceId(String configuredResourceId) {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    public MyConverterConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(MyConverterConfiguration configuration) {
+        this.configuration = configuration;
+    }
+}
+```
+
+#### Configuration of Invoker via the Management Console
+Changing DynamicConfiguration at runtime.
+![Login](quickstart-images/dynamicConfiguration-invokerConfiguration.png)
+
+![Login](quickstart-images/dynamicConfiguration-settingProperty.png)
+
+#### Configuration of Invoker via the Ikasan Dashboard
+TODO
 
 #### Compatibility Note ####
 Prior to release ikasaneip-2.1.0 you needed to implement a marker interface on the class to tell Ikasan that it was a dynamic configured resource. 
-From ikasan-2.1.0 onwards, the DynamicConfigured interface has been removed and components can be marked as dynamically configured through runtime configuration.
+From ikasan-2.1.0 onwards, the DynamicConfigured interface has been removed and components can be marked as dynamically configured through runtime configuration on the component invoker.
 
 ## Managed Resource Component
 TODO
