@@ -704,19 +704,19 @@ So now we have updated our module lets build it, run it, and open the Console fr
 
 ### Dynamic Configured Resources
 Configured resources can specifically be set to persist their configuration on every event invocation through the flow.
-This can be useful where the configuration itself can be updated based on the inflight event.
+This can be useful where the configuration itself is updated based on the inflight event.
 To do this the component must first be set as a ConfiguredResource (interface implementation on the component class) at build time. 
-Once set as a configured resource, dynamic configuration can be turned on at runtime through the configuration of the component invoker.
+Once set dynamic configuration can be turned on at runtime through the configuration of the component invoker.
 
 *NOTE: If dynamicConfiguration is false, any updates to a component configuration will only work whilst the flow is running - it will not be persisted. Restart of a flow will reset that configuration back to its original state.*
 
 Setting the component invoker with dynamicConfiguration true or false turns dynamic configuration on and off respectively. 
 Turning this on will ensure the configuration is loaded at the start of the inflight event and updated on completion of processing the inflight event.
 Changing the content of the configuration is left to the remit of the developer. This can be achieved by updating the configuration in 
-the component using that configuration; or for off-the-shelf components as a subsequent translator component.
+the component using that configuration; or, for off-the-shelf components, as a subsequent translator component.
 
 #### FluentAPI Builder Pattern Usage
-Dynamic Configuration can be programmatically set via the FLuentAPI builder pattern.
+Dynamic Configuration can be programmatically set via the FluentAPI builder pattern.
 ```java
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
                 .withExceptionResolver(builderFactory
@@ -729,10 +729,6 @@ Dynamic Configuration can be programmatically set via the FLuentAPI builder patt
 ```
 Here is an example of changing a configuration property based on the incoming event within a ConfiguredResource component.
 
-In this example a timestamp configuration property is set to current timestamp on the occurrence of each inflight event. By turning on dynamicConfiguration we can ensure this configuration change is persisted with the success of the event publication.
-Should any exceptions occur within the flow then the persistence does not occur.
-
-*NOTE: Although the change isn't persisted on exception, the state of the configuration is still changed on the configuration instance in memory, so the developer needs to accommodate this scenario.*
 ```java
 package com.ikasan.example.converter;
 
@@ -777,6 +773,9 @@ public class MyConverter implements Converter<String,Integer>, ConfiguredResourc
 }
 ```
 
+In this example a timestamp configuration property is set to current timestamp on the occurrence of each inflight event. By turning on dynamicConfiguration we can ensure this configuration change is persisted with the success of the event publication.
+Should any exceptions occur within the flow then the persistence does not occur and the original configuration values restored on the next inflight event.
+
 #### Configuration of Invoker via the Management Console
 Changing DynamicConfiguration at runtime.
 ![Login](quickstart-images/dynamicConfiguration-invokerConfiguration.png)
@@ -789,6 +788,8 @@ TODO
 #### Compatibility Note ####
 Prior to release ikasaneip-2.1.0 you needed to implement a marker interface on the class to tell Ikasan that it was a dynamic configured resource. 
 From ikasan-2.1.0 onwards, the DynamicConfigured interface has been removed and components can be marked as dynamically configured through runtime configuration on the component invoker.
+
+When upgrading from a version prior to 2.1.0, you will need to remove any DynamicConfiguration interface implementations on your component classes and ensure you turn on dynamicConfiguration either through the FluentAPI builder pattern or the runtime console for that component.
 
 ## Managed Resource Component
 TODO
