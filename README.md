@@ -23,7 +23,7 @@ than another development framework.
 * It is commonly agreed that “spaghetti integration” is bad
 * Bleed out of APIs, data syntax and business semantics
 * Ripple effect of change is massive
-* ![Problem Domain](ikasaneip/developer/docs/quickstart-images/problem-domain.png) 
+* ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Problem Domain.png) 
 
 
 # Solution
@@ -32,7 +32,7 @@ than another development framework.
   * Provision of an Event/Service backbone
   * Single point of integration for EIS business flow
   * Ripple effect of change is localised (assuming best practice)
-  * ![Problem Domain](ikasaneip/developer/docs/quickstart-images/ei-standard-approach.png) 
+  * ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Solution.png) 
 * Ikasan adopts the standard EAI approach and helps users solve integration problems by building applications constructed of modules/flows/components
 
 #  Integration Module
@@ -40,7 +40,7 @@ than another development framework.
 * An Integration Module is a high level logical construct
 * Provides a logical grouping of business operations as a single integration point
 * Provide either a source, target, or bi-directional business flow
-![Integration Modules](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy.png) 
+![Integration Modules](ikasaneip/developer/docs/quickstart-images/Integration Module.png) 
 
 #  Flows
 
@@ -48,7 +48,7 @@ than another development framework.
  * Flows are cohesive operations on a business artifact as a synchronous operation
  * Multiple flows can be chained to isolate concerns
  * Standard event container allows any data type to be transported
- ![Flows](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-flows.png) 
+ ![Flows](ikasaneip/developer/docs/quickstart-images/Flows.png) 
 
 #  Components
 
