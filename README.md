@@ -62,7 +62,18 @@ than another development framework.
  * Consumer Component is a POJO with injected tech API for application integration to source events
  * Core services automatically bound to each flow
  * Service APIs support management of the flow, runtime status, resubmission, and replay
- ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png) 
+ 
+ ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png)
+ 
+ #  Services
+ 
+ ![Detail view](ikasaneip/developer/docs/quickstart-images/hospital-service.png)
+ 
+ ![Detail view](ikasaneip/developer/docs/quickstart-images/wiretap-service.png)
+ 
+ ![Detail view](ikasaneip/developer/docs/quickstart-images/mapping-service.png)
+ 
+ ![Detail view](ikasaneip/developer/docs/quickstart-images/replay-service.png) 
 
 [Component Quick Start](ikasaneip/component/Readme.md)
 ======
