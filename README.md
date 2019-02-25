@@ -67,7 +67,7 @@ than another development framework.
  
  #  Services
  
- ![Detail view](ikasaneip/developer/docs/quickstart-images/hospital-service.png)
+ <img src="ikasaneip/developer/docs/quickstart-images/hospital-service.png" width="250px">
  
  ![Detail view](ikasaneip/developer/docs/quickstart-images/wiretap-service.png)
  
