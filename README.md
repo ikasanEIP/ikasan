@@ -67,7 +67,8 @@ than another development framework.
  
  #  Services
  
- <img src="ikasaneip/developer/docs/quickstart-images/hospital-service.png" width="250px">
+ <img src="ikasaneip/developer/docs/quickstart-images/hospital-service.png" width="200px" align="left"> ## Hospital Service
+ Trying to get sime text to flow around the image.
  
  ![Detail view](ikasaneip/developer/docs/quickstart-images/wiretap-service.png)
  
