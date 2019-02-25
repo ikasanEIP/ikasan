@@ -76,11 +76,36 @@ than another development framework.
  Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
  
  <br/>
- ![Detail view](ikasaneip/developer/docs/quickstart-images/wiretap-service.png)
  
- ![Detail view](ikasaneip/developer/docs/quickstart-images/mapping-service.png)
- 
- ![Detail view](ikasaneip/developer/docs/quickstart-images/replay-service.png) 
+ ## Wiretap Service
+<img src="ikasaneip/developer/docs/quickstart-images/wiretap-service.png" width="200px" align="left"> 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+
+</br/>
+
+## Mapping Service
+<img src="ikasaneip/developer/docs/quickstart-images/mapping-service.png" width="200px" align="left"> 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+
+</br/>
+
+## Replay Service
+<img src="ikasaneip/developer/docs/quickstart-images/replay-service.png" width="200px" align="left"> 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+
+</br/>
 
 [Component Quick Start](ikasaneip/component/Readme.md)
 ======
