@@ -19,8 +19,7 @@ In order to create your own consumer you need to implement [Consumer Interface](
 
 <img src="../developer/docs/quickstart-images/polling_consumer.png" width="200px" align="left">This is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
-
-
+<br/>
 ##### Configuration Options
 
 | Option | Type | Purpose |
