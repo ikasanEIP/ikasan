@@ -24,8 +24,6 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 <br/>
 <br/>
 <br/>
-<br/>
-<br/>
 ##### Configuration Options
 
 | Option | Type | Purpose |
@@ -61,10 +59,12 @@ public class ModuleConfig {
 
 #### Generic JMS Consumer
 
-The JMS consumer is a event driven consumer, used to connect to Legacy JBoss 4.3 and JBoss 5.1 Jboss Messaging.
+<img src="../developer/docs/quickstart-images/event_driven_consumer.png" width="200px" align="left">The JMS consumer is a event driven consumer, used to connect to Legacy JBoss 4.3 and JBoss 5.1 Jboss Messaging.
 Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/EventDrivenConsumer.html)
-
-
+<br/>
+<br/>
+<br/>
+<br/>
 ##### Configuration Options
 
 | Option | Type | Purpose |
