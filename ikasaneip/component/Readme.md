@@ -91,7 +91,7 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
 
 #### SpringTemplate JMS Consumer
 
-<img src="../developer/docs/quickstart-images/event_driven_consumer.png" width="200px" align="left">The JMS consumer is Event Driven Consumer, used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
+<img src="../developer/docs/quickstart-images/event-driven-consumer.png" width="200px" align="left">The JMS consumer is Event Driven Consumer, used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
 Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/EventDrivenConsumer.html)
 <br/>
 <br/>
@@ -541,7 +541,7 @@ This type of producer discards all data passed to it and does not perform any pr
 
 #### JMS Template Producer
 
-<img src="../developer/docs/quickstart-images/channel-adaptor.png" width="200px" align="left">The JMS producer is based on Spring template and is used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
+<img src="../developer/docs/quickstart-images/channel-adapter.png" width="200px" align="left">The JMS producer is based on Spring template and is used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
 <br/>
 <br/>
 <br/>
