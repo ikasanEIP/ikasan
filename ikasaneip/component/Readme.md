@@ -18,7 +18,7 @@ In order to create your own consumer you need to implement [Consumer Interface](
 #### Scheduled Consumer
 
 
-<img src="../developer/docs/quickstart-images/polling_consumer.png" width="200px" align="left">This is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule.
+<img src="../developer/docs/quickstart-images/polling-consumer.png" width="200px" align="left">This is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 <br/>
 <br/>
@@ -91,9 +91,12 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
 
 #### SpringTemplate JMS Consumer
 
-The JMS consumer is Event Driven Consumer, used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM. 
+<img src="../developer/docs/quickstart-images/event_driven_consumer.png" width="200px" align="left">The JMS consumer is Event Driven Consumer, used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
 Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/EventDrivenConsumer.html)
-
+<br/>
+<br/>
+<br/>
+<br/>
 
 ##### Configuration Options
 
@@ -432,9 +435,12 @@ Utility consumer for the generation of ad-hoc events for demonstration or test o
 
 ### Purpose
 
-Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
+<img src="../developer/docs/quickstart-images/message-translator.png" width="200px" align="left">Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
 In order to create your own translator you need to implement [Translator Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Translator.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 ### Types
@@ -443,10 +449,13 @@ In order to create your own translator you need to implement [Translator Interfa
 
 ### Purpose
 
-The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
+<img src="../developer/docs/quickstart-images/message-translator.png" width="200px" align="left">The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
 Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
 In order to create your own converter you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 ### Types
@@ -455,9 +464,12 @@ In order to create your own converter you need to implement [Converter Interface
 
 ### Purpose
 
-The main responsibility of a broker is enrich the contents of the existing message with additional data very often coming from synchronously calls to other systems. Very often broker would be utilising REST calls or DB calls.
+<img src="../developer/docs/quickstart-images/broker.png" width="200px" align="left">The main responsibility of a broker is enrich the contents of the existing message with additional data very often coming from synchronously calls to other systems. Very often broker would be utilising REST calls or DB calls.
 In order to create your own broker you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 
 ### Pattern
 
@@ -467,10 +479,13 @@ In order to create your own broker you need to implement [Converter Interface](.
 
 ### Purpose
 
-Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
+<img src="../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
 Read more about EIP [Sequencer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
 In order to create your own splitter you need to implement [Splitter Interface](../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 ### Types
@@ -479,9 +494,12 @@ In order to create your own splitter you need to implement [Splitter Interface](
 
 ### Purpose
 
-Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
+<img src="../developer/docs/quickstart-images/message-filter.png" width="200px" align="left">Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
 In order to create your own filter you need to implement [Filter Interface](../spec/component/src/main/java/org/ikasan/spec/component/filter/Filter.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 ### Types
@@ -491,9 +509,12 @@ In order to create your own filter you need to implement [Filter Interface](../s
 ### Purpose
 
 
-Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageRouter.html)
+<img src="../developer/docs/quickstart-images/message-router.png" width="200px" align="left">Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageRouter.html)
 In order to create your own router you need to implement  [SingleRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/SingleRecipientRouter.java) or [MultiRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/MultiRecipientRouter.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 ### Types
@@ -502,10 +523,13 @@ In order to create your own router you need to implement  [SingleRecipientRouter
 
 ### Purpose
 
-Ending component of the flow, the only component in the flow which have no transition.
+<img src="../developer/docs/quickstart-images/message-endpoint.png" width="200px" align="left">Ending component of the flow, the only component in the flow which have no transition.
 Read more about EIP [Message Endpoint](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageEndpoint.html)
 In order to create your own broker you need to implement [Producer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Producer.java)
-
+<br/>
+<br/>
+<br/>
+<br/>
 ### Pattern
 
 
@@ -517,8 +541,11 @@ This type of producer discards all data passed to it and does not perform any pr
 
 #### JMS Template Producer
 
-The JMS producer is based on Spring template and is used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM. 
-
+<img src="../developer/docs/quickstart-images/channel-adaptor.png" width="200px" align="left">The JMS producer is based on Spring template and is used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
+<br/>
+<br/>
+<br/>
+<br/>
 ##### Configuration Options
 
 | Option | Type | Purpose |
