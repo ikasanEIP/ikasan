@@ -41,10 +41,16 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.converter.ObjectToXmlStringConverterBuilder;
+import org.ikasan.builder.component.converter.ObjectToXmlStringConverterBuilderImpl;
+import org.ikasan.builder.component.converter.XmlStringToObjectConverterBuilder;
+import org.ikasan.builder.component.converter.XmlStringToObjectConverterBuilderImpl;
 import org.ikasan.builder.component.endpoint.*;
 import org.ikasan.builder.component.filter.MessageFilterBuilder;
 import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
+import org.ikasan.component.converter.xml.XmlConfiguration;
+import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
@@ -65,6 +71,7 @@ import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.transaction.TransactionManager;
+import java.util.ArrayList;
 
 /**
  * A simple Component builder.
@@ -274,10 +281,53 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include ikasan-test-component!", e);
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-test-component</artifactId>\n"
+                    + "</dependency>\n", e);
         }
     }
 
+    /**
+     * New instance of an Ikasan ObjectToXmlStringConverterBuilder
+     * @return ObjectToXmlStringConverterBuilderImpl
+     */
+    public ObjectToXmlStringConverterBuilder objectToXmlStringConverter()
+    {
+        try
+        {
+            return new ObjectToXmlStringConverterBuilderImpl( new ArrayList<Class>(), new XmlConfiguration() );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
+                    + "</dependency>\n", e);
+        }
+    }
+
+    /**
+     * New instance of an Ikasan XmlStringToObjectConverterBuilder
+     * @return XmlStringToObjectConverterBuilder
+     */
+    public XmlStringToObjectConverterBuilder xmlStringToObjectConverter()
+    {
+        try
+        {
+            return new XmlStringToObjectConverterBuilderImpl( new XmlStringToObjectConfiguration() );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
+                    + "</dependency>\n", e);
+        }
+    }
 }
 
 
