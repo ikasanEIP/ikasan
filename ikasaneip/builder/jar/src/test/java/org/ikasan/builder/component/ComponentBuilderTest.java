@@ -43,6 +43,7 @@ package org.ikasan.builder.component;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.builder.component.endpoint.FileProducerBuilder;
+import org.ikasan.component.converter.xml.XmlConfiguration;
 import org.ikasan.component.endpoint.consumer.EventGeneratingConsumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
@@ -54,6 +55,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.splitting.Splitter;
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.MessageListener;
 import org.jmock.Expectations;
@@ -433,4 +435,29 @@ public class ComponentBuilderTest {
         assertTrue("configuredResourceId should be 'configuredResourceId'",  "configuredResourceId".equals(((ConfiguredResource) filter).getConfiguredResourceId()));
     }
 
+    /**
+     * Test objectToXmlBuilder no config.
+     */
+    @Test
+    public void test_successful_objectToXmlConverterBuilder()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Converter converter = componentBuilder.objectToXmlStringConverter().build();
+        assertTrue("instance should be a Converter", converter instanceof Converter);
+    }
+
+    /**
+     * Test objectToXmlBuilder with config.
+     */
+    @Test
+    public void test_successful_objectToXmlConverterBuilder_withConfiguration()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Converter converter = componentBuilder.objectToXmlStringConverter()
+                .setConfiguration( new XmlConfiguration() )
+                .setConfiguredResourceId("myConfiguredResourceId")
+                .build();
+        assertTrue("instance should be a Converter", converter instanceof Converter);
+        assertTrue("configuredResourceId should be 'myConfiguredResourceId'",  "myConfiguredResourceId".equals(((ConfiguredResource) converter).getConfiguredResourceId()));
+    }
 }
