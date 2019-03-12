@@ -12,7 +12,12 @@
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="${datasource.dialect}"/>
         <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
+        <!--<entry key="hibernate.hbm2ddl.auto" value=""/>-->
+        <entry key="hibernate.transaction.coordinator_class" value="jta"/>
+
     </util:map>
+
+
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="${datasource.driver-class-name}"/>

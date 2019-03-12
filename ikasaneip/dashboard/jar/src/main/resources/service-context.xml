@@ -124,9 +124,10 @@
 	
 	<bean id="configurationService"
 		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
-		<constructor-arg ref="configurationServiceDao"/>
-		<constructor-arg ref="xaConfigurationServiceDao"/>
-	</bean>
+		<constructor-arg name="staticConfigurationDao" ref="configurationServiceDao"/>
+		<constructor-arg name="dynamicConfigurationDao" ref="xaConfigurationServiceDao"/>
+        <constructor-arg name="serialiserFactory" ref="ikasanSerialiserFactory"/>
+    </bean>
 
 	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
 		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
