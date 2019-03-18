@@ -38,52 +38,56 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration;
+package org.ikasan.configurationService.model;
+
+import java.io.Serializable;
 
 /**
- * ConfigurationService defines the operational contract of any configuration
- * service in Ikasan.
+ * Boolean based configuration parameter.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ConfigurationManagement<RESOURCE,MODEL>
+@SuppressWarnings("serial")
+public class ConfigurationParameterBooleanImpl extends AbstractComponentParameter<Boolean> implements Serializable
 {
     /**
-     * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * Constructor
+     * @param name
+     * @param value
      */
-    public MODEL getConfiguration(RESOURCE configuredResource);
-    
-    /**
-     * Create a configuration instance for the given configured resource id.
-     * @param configuredResource
-     * @return
-     */
-    public MODEL getConfiguration(String configuredResourceId);
+    public ConfigurationParameterBooleanImpl(String name, Boolean value)
+    {
+        this(name, value, null);
+    }
 
     /**
-     * Allow the setting (override) of the configurationFactory
-     * @param configurationFactory
+     * Constructor
+     * @param name
+     * @param value - defaults to FALSE if null
+     * @param description
      */
-    public void setConfigurationFactory(ConfigurationFactory configurationFactory);
+    public ConfigurationParameterBooleanImpl(String name, Boolean value, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.value = value;
+        if(value == null)
+        {
+            this.value = Boolean.FALSE;
+        }
+        this.description = description;
+    }
 
     /**
-     * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * Constructor
      */
-    public MODEL createConfiguration(RESOURCE configuredResource);
-
-    /**
-     * Save the given configuration.
-     * @param configuredResource
-     */
-    public void saveConfiguration(MODEL configuration);
-
-    /**
-     * Delete the given configuration.
-     * @param configuredResource
-     */
-    public void deleteConfiguration(MODEL configuration);
+    protected ConfigurationParameterBooleanImpl()
+    {
+        // required by ORM
+    }
 }

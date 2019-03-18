@@ -40,17 +40,13 @@
  */
 package org.ikasan.configurationService.dao;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
-import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.serialiser.Serialiser;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.configuration.Configuration;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the ConfigurationDao interface providing
@@ -61,15 +57,6 @@ import java.util.stream.Collectors;
 public class ConfigurationHibernateImpl extends HibernateDaoSupport 
     implements ConfigurationDao<List<ConfigurationParameter>>
 {
-
-    /** need a serialiser to serialise the incoming event payload of T */
-    private Serialiser<Object,byte[]> serialiser;
-
-    public ConfigurationHibernateImpl(SerialiserFactory serialiserFactory)
-    {
-        this.serialiser = serialiserFactory.getDefaultSerialiser();
-    }
-
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
@@ -78,24 +65,13 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
         criteria.add(Restrictions.eq("configurationId", configurationId));
 
-        List<Configuration<List<ConfigurationParameter>>> configurations = (List<Configuration<List<ConfigurationParameter>>>) getHibernateTemplate().findByCriteria(criteria);
-        if(configurations == null || configurations.size() == 0)
+        List<Configuration> configuration = (List<Configuration>) getHibernateTemplate().findByCriteria(criteria);
+        if(configuration == null || configuration.size() == 0)
         {
             return null;
         }
 
-        Configuration<List<ConfigurationParameter>> configuration = configurations.get(0);
-
-        for(ConfigurationParameter configurationParameter:configuration.getParameters())
-        {
-
-            if(configurationParameter.getValue() != null && configurationParameter.getValue() instanceof byte[])
-            {
-                Object deserialisedValue = serialiser.deserialise((byte[]) configurationParameter.getValue());
-                configurationParameter.setValue(deserialisedValue);
-            }
-        }
-        return configuration;
+        return configuration.get(0);
     }
 
     /* (non-Javadoc)
@@ -103,14 +79,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
-        //copy all configParams for later
-        List<ConfigurationParameter> copyOfConfigurationParametersList =
-            configuration.getParameters().stream()
-                .map(cp -> new ConfigurationParameterObjectImpl(cp))
-                .collect(Collectors.toList());
-
-
-
         // work-around for Sybase issue where it converts empty strings to single spaces.
         // See http://open.jira.com/browse/IKASAN-520
         // Where we would have persisted "" change this to a null to stop Sybase
@@ -119,66 +87,20 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         {
             configuration.setDescription(null);
         }
-
-        configuration.getParameters().forEach(configurationParameter->
+        for(ConfigurationParameter configurationParameter:configuration.getParameters())
         {
             if("".equals(configurationParameter.getValue()))
             {
                 configurationParameter.setValue(null);
             }
 
-            // if value !=null serialiser is used to convert value to byte
-            // this is mutating original object
-            // we going place the values from before serialisation before returning the object
-            if(configurationParameter.getValue()!=null)
-            {
-                byte[] bytes = serialiser.serialise(configurationParameter.getValue());
-                configurationParameter.setValue(bytes);
-            }
-
             if("".equals(configurationParameter.getDescription()))
             {
                 configurationParameter.setDescription(null);
             }
-        });
-
-        // hibernate mutates the object and amends configurations Params with Id
+        }
+        
         getHibernateTemplate().saveOrUpdate(configuration);
-
-        // we rehidrating Values from original object
-
-//        copyOfConfigurationParametersList.stream()
-//            .forEach(p->{
-//                    Long id = configuration.getParameters().stream()
-//                        .filter(configurationParameter -> configurationParameter.getName().equals(p.getName()) )
-//                        .filter(configurationParameter -> configurationParameter.getId() != null  )
-//                        .map( p1 -> p1.getId())
-//                        .findFirst().get();
-//
-//                p.setId(id);
-//                }
-//            );
-
-
-//        configuration.getParameters().stream().forEach(
-//            p ->{
-//                Optional<Object> value = copyOfConfigurationParametersList.stream()
-//                    .filter(configurationParameter -> configurationParameter.getName().equals(p.getName()) )
-//                    .filter(configurationParameter -> configurationParameter.getValue()!=null)
-//                    .map(configurationParameter ->  configurationParameter.getValue())
-//                    .findFirst();
-//                if(value.isPresent())
-//                {
-//                    p.setValue(value.get());
-//                }
-//            }
-//
-//
-//        );
-
-       // ((DefaultConfiguration)configuration).setParameters(copyOfConfigurationParametersList);
-
-
     }
 
     /* (non-Javadoc)

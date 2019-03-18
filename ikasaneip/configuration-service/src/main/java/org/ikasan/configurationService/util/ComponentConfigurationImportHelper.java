@@ -61,13 +61,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Ikasan Development Team
  *
  */
-
 public class ComponentConfigurationImportHelper
 {
     private static Logger logger = LoggerFactory.getLogger(ComponentConfigurationImportHelper.class);
@@ -122,9 +120,14 @@ public class ComponentConfigurationImportHelper
     public void updateComponentConfiguration(Configuration configuration, Document document) throws SAXException
             , IOException, ParserConfigurationException, XPathExpressionException
     {
+        List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 
-        this.configurationParameters = ((List<ConfigurationParameter>)configuration.getParameters()).stream()
-            .collect(Collectors.toMap(p -> p.getName(), p->p));
+        this.configurationParameters = new HashMap<String, ConfigurationParameter>();
+
+        for(ConfigurationParameter parameter: parameters)
+        {
+            this.configurationParameters.put(parameter.getName(), parameter);
+        }
 
         XPath xpath = this.xpathFactory.newXPath();
         String id = (String) xpath.evaluate(ID_XPATH, document, XPathConstants.STRING);
@@ -176,7 +179,7 @@ public class ComponentConfigurationImportHelper
             String paramValue = ((Element)parameters.item(i)).getElementsByTagName(VALUE).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl)this.configurationParameters.get(paramName);
+            ConfigurationParameterStringImpl param = (ConfigurationParameterStringImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -211,7 +214,7 @@ public class ComponentConfigurationImportHelper
             String paramValue = ((Element)parameters.item(i)).getElementsByTagName(VALUE).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl) this.configurationParameters.get(paramName);
+            ConfigurationParameterMaskedStringImpl param = (ConfigurationParameterMaskedStringImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -246,7 +249,7 @@ public class ComponentConfigurationImportHelper
             String paramValue = ((Element)parameters.item(i)).getElementsByTagName(VALUE).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl) this.configurationParameters.get(paramName);
+            ConfigurationParameterIntegerImpl param = (ConfigurationParameterIntegerImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -295,7 +298,7 @@ public class ComponentConfigurationImportHelper
             String paramValue = ((Element)parameters.item(i)).getElementsByTagName(VALUE).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl) this.configurationParameters.get(paramName);
+            ConfigurationParameterLongImpl param = (ConfigurationParameterLongImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -340,7 +343,7 @@ public class ComponentConfigurationImportHelper
             String paramValue = ((Element)parameters.item(i)).getElementsByTagName(VALUE).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl)this.configurationParameters.get(paramName);
+            ConfigurationParameterBooleanImpl param = (ConfigurationParameterBooleanImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -385,7 +388,7 @@ public class ComponentConfigurationImportHelper
             String paramName = ((Element)parameters.item(i)).getElementsByTagName(NAME).item(0).getTextContent();
             String paramDescription = ((Element)parameters.item(i)).getElementsByTagName(DESCRIPTION).item(0).getTextContent();
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl) this.configurationParameters.get(paramName);
+            ConfigurationParameterMapImpl param = (ConfigurationParameterMapImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -404,7 +407,7 @@ public class ComponentConfigurationImportHelper
                 String itemName = ((Element)items.item(j)).getElementsByTagName(NAME).item(0).getTextContent();
                 String itemValue = ((Element)items.item(j)).getElementsByTagName(VALUE).item(0).getTextContent();
 
-                ((Map<String,String>)param.getValue()).put(itemName, itemValue);
+                param.getValue().put(itemName, itemValue);
             }
         }
     }
@@ -425,7 +428,7 @@ public class ComponentConfigurationImportHelper
 
             logger.info("List paramName = " + paramName);
 
-            ConfigurationParameterObjectImpl param = (ConfigurationParameterObjectImpl) this.configurationParameters.get(paramName);
+            ConfigurationParameterListImpl param = (ConfigurationParameterListImpl)this.configurationParameters.get(paramName);
 
             if(param == null)
             {
@@ -441,14 +444,14 @@ public class ComponentConfigurationImportHelper
 
             logger.info("Number of list values = " + items.getLength());
 
-            ((List<String>)param.getValue()).clear();
+            param.getValue().clear();
 
             for(int j=0; j<items.getLength(); j++)
             {
                 String itemValue = items.item(j).getTextContent();
 
                 logger.info("Adding list value = " + itemValue);
-                ((List<String>)param.getValue()).add(itemValue);
+                param.getValue().add(itemValue);
             }
         }
     }

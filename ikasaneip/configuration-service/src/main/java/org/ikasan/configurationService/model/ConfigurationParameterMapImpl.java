@@ -38,52 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration;
+package org.ikasan.configurationService.model;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
- * ConfigurationService defines the operational contract of any configuration
- * service in Ikasan.
+ * Map based configuration parameter.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ConfigurationManagement<RESOURCE,MODEL>
+@SuppressWarnings("serial")
+public class ConfigurationParameterMapImpl  extends AbstractComponentParameter<Map<String,String>> implements Serializable
 {
     /**
-     * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * Constructor
+     * @param name
+     * @param value
      */
-    public MODEL getConfiguration(RESOURCE configuredResource);
-    
-    /**
-     * Create a configuration instance for the given configured resource id.
-     * @param configuredResource
-     * @return
-     */
-    public MODEL getConfiguration(String configuredResourceId);
+    public ConfigurationParameterMapImpl(String name, Map<String,String> value)
+    {
+        this(name, value, null);
+    }
 
     /**
-     * Allow the setting (override) of the configurationFactory
-     * @param configurationFactory
+     * Constructor
+     * @param name
+     * @param value
+     * @param description
      */
-    public void setConfigurationFactory(ConfigurationFactory configurationFactory);
+    public ConfigurationParameterMapImpl(String name, Map<String,String> value, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.value = value;
+        this.description = description;
+    }
 
     /**
-     * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * Constructor
      */
-    public MODEL createConfiguration(RESOURCE configuredResource);
-
-    /**
-     * Save the given configuration.
-     * @param configuredResource
-     */
-    public void saveConfiguration(MODEL configuration);
-
-    /**
-     * Delete the given configuration.
-     * @param configuredResource
-     */
-    public void deleteConfiguration(MODEL configuration);
+    protected ConfigurationParameterMapImpl()
+    {
+        // required by ORM
+    }
 }

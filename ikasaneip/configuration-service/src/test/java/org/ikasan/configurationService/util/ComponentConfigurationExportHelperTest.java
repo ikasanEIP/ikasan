@@ -24,9 +24,7 @@ import java.util.Map;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations = {
         "/configuration-service-conf.xml",
-    "/serialiser-service-conf.xml",
-
-    "/transaction-conf.xml", "/h2-datasource-conf.xml",
+        "/hsqldb-datasource-conf.xml",
         "/substitute-components.xml"
 })
 public class ComponentConfigurationExportHelperTest

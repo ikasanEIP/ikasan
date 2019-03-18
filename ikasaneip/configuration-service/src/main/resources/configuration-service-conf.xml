@@ -70,7 +70,6 @@
 	</bean>
 
 	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
-        <constructor-arg name="serialiserFactory" ref="ikasanSerialiserFactory"/>
 		<property name="sessionFactory" ref="configurationServiceSessionFactory"/>
 	</bean>
 
