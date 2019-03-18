@@ -40,17 +40,40 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
- import com.vaadin.navigator.View;
- import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
- import com.vaadin.server.Page;
- import com.vaadin.ui.*;
- import com.vaadin.ui.Button.ClickEvent;
- import com.vaadin.ui.Notification.Type;
- import com.vaadin.ui.themes.ValoTheme;
- import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
- import org.ikasan.spec.configuration.PlatformConfigurationService;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.PlatformConfiguration;
+import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
+import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.*;
+import org.vaadin.teemu.VaadinIcons;
+
+import com.vaadin.data.Validator;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.converter.StringToIntegerConverter;
+import com.vaadin.data.util.converter.StringToLongConverter;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Page;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author CMI2 Development Team
