@@ -51,6 +51,7 @@ import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.component.converter.xml.XmlConfiguration;
 import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
+import org.ikasan.component.endpoint.db.messageprovider.DbMessageProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
@@ -267,6 +268,16 @@ public class ComponentBuilder
     public MessageFilterBuilder messageFilter()
     {
         return new MessageFilterBuilderImpl(this.applicationContext.getBean(DuplicateFilterService.class));
+    }
+
+    /**
+     * Get an instance of an Ikasan messageFilterBuilder
+     * @return MessageFilterBuilder
+     */
+    public DbConsumerBuilder dbConsumer()
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        return new DbConsumerBuilderImpl(scheduledConsumer, this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class), new DbMessageProvider());
     }
 
     /**

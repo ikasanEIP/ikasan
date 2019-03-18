@@ -37,28 +37,49 @@
  ====================================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+                      name="ikasan-standalone-hibernate-jms-im-maven-plugin" partial="true">
 
-    <modelVersion>4.0.0</modelVersion>
+    <requiredProperties>
+        <requiredProperty key="ikasanVersion">
+            <defaultValue></defaultValue>
+        </requiredProperty>
+    </requiredProperties>
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-developer</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>ikasan-mvn-archetype</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
+    <fileSets>
+        <fileSet filtered="true" packaged="false">
+            <directory>docs</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>jar</directory>
+        </fileSet>
+    </fileSets>
 
     <modules>
-        <module>ikasan-standalone-filesystem-im</module>
-        <module>ikasan-standalone-jms-im</module>
-        <module>ikasan-standalone-ftp-jms-im</module>
-        <module>ikasan-standalone-sftp-jms-im</module>
-        <module>ikasan-standalone-vanilla-im</module>
-        <module>ikasan-standalone-db-jms-im</module>
-        <module>ikasan-standalone-hibernate-jms-im</module>
+        <module name="${artifactId}" id="${artifactId}" dir="jar">
+            <fileSets>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false">
+                    <directory>src/test/resources</directory>
+                    <includes>
+                        <include>*</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
     </modules>
 
-</project>
+</archetype-descriptor>
