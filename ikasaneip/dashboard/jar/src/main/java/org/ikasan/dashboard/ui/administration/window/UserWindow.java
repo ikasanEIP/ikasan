@@ -40,14 +40,33 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
-import com.vaadin.ui.Window;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.dashboard.notification.NotificationConfiguredResource;
+import org.ikasan.dashboard.notification.NotificationContentProducerConfiguration;
+import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
 import org.ikasan.dashboard.ui.administration.panel.UserPanel;
 import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.systemevent.service.SystemEventService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ikasan.topology.constants.NotificationConstants;
+import org.ikasan.topology.model.Filter;
+import org.ikasan.topology.model.Notification;
+import org.ikasan.topology.service.TopologyService;
+
+import java.util.List;
 
 /**
  * 

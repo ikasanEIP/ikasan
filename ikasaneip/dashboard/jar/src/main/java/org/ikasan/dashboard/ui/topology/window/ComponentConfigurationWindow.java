@@ -40,19 +40,33 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.data.Validator.InvalidValueException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+
 import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.configurationService.model.*;
+import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.configurationService.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -67,22 +81,15 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.*;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.vaadin.teemu.VaadinIcons;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -273,31 +280,35 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		
 		for(ConfigurationParameter parameter: parameters)
 		{	
-			if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
+			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
 				this.layout.addComponent(this.createTextFieldPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
     		}
-			else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof String)
+			else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
+    		{
+    			this.layout.addComponent(this.createPasswordFieldPanel(parameter, new StringValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterStringImpl)
     		{
     			this.layout.addComponent(this.createTextAreaPanel(parameter, new StringValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Boolean)
+    		else if(parameter instanceof ConfigurationParameterBooleanImpl)
     		{
     			this.layout.addComponent(this.createTrueFalsePanel(parameter, new BooleanValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
+    		else if(parameter instanceof ConfigurationParameterLongImpl)
     		{
     			this.layout.addComponent(this.createTextFieldPanel(parameter, new LongValidator()), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Map)
+    		else if(parameter instanceof ConfigurationParameterMapImpl)
     		{
     			this.layout.addComponent(this.createMapPanel
-    					((ConfigurationParameterObjectImpl)parameter), 0, i, 1, i);
+    					((ConfigurationParameterMapImpl)parameter), 0, i, 1, i);
     		}
-    		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof List)
+    		else if(parameter instanceof ConfigurationParameterListImpl)
     		{
     			this.layout.addComponent(this.createListPanel
-    					((ConfigurationParameterObjectImpl)parameter), 0, i, 1, i);
+    					((ConfigurationParameterListImpl)parameter), 0, i, 1, i);
     		}
 			
 			i++;
@@ -341,7 +352,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             			parameter.setDescription(descriptionTextField.getValue());
             		}
 
-            		if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
+            		if(parameter instanceof ConfigurationParameterIntegerImpl)
             		{
             			
             			if(textField.getValue() != null && textField.getValue().length() > 0)
@@ -350,7 +361,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(new Integer(textField.getValue()));
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof String)
+            		else if(parameter instanceof ConfigurationParameterStringImpl)
             		{
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             			{
@@ -358,7 +369,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(textField.getValue());
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Boolean)
+            		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
             			ComboBox combo = ComponentConfigurationWindow
 								.this.comboBoxes.get(parameter.getName());
@@ -368,7 +379,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue((Boolean)combo.getValue());
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
+            		else if(parameter instanceof ConfigurationParameterLongImpl)
             		{
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             			{
@@ -376,8 +387,20 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             				parameter.setValue(new Long	(textField.getValue()));
             			}
             		}
-            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Map)
+            		else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
             		{
+            			PasswordField passwordField = passwordFields.get(parameter.getName());
+            			
+            			if(passwordField.getValue() != null && passwordField.getValue().length() > 0)
+            			{
+            				logger.debug("Setting Masked String value: " + passwordField.getValue());
+            				parameter.setValue(passwordField.getValue());
+            			}
+            		}
+            		else if(parameter instanceof ConfigurationParameterMapImpl)
+            		{
+            			ConfigurationParameterMapImpl mapParameter = (ConfigurationParameterMapImpl) parameter;
+            			
             			HashMap<String, String> map = new HashMap<String, String>();
             			
             			logger.debug("Saving map: " + mapTextFields.size());
@@ -399,9 +422,10 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             			
             			parameter.setValue(map);
             		}
-            		else if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof List)
+            		else if(parameter instanceof ConfigurationParameterListImpl)
             		{
-
+            			ConfigurationParameterListImpl mapParameter = (ConfigurationParameterListImpl) parameter;
+            			
             			ArrayList<String> map = new ArrayList<String>();
             			
             			for(String key: valueTextFields.keySet())
