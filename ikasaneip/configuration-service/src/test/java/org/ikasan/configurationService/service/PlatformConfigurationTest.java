@@ -47,7 +47,9 @@ import javax.annotation.Resource;
 
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
-import org.ikasan.spec.configuration.*;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,16 +67,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
       "/configuration-service-conf.xml",
-      "/serialiser-service-conf.xml",
-      "/transaction-conf.xml",
-      "/h2-datasource-conf.xml",
+      "/hsqldb-datasource-conf.xml",
       "/substitute-components.xml"
       })
 public class PlatformConfigurationTest
 {
 	
 	@Resource
-    ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
+	ConfiguredResourceConfigurationService configurationService;
 	
 	@Resource
     PlatformConfigurationService platformConfigurationService;
@@ -119,7 +119,7 @@ public class PlatformConfigurationTest
         map.put("value1", "value1");
         map.put("value2", "value2");
         
-        mapParam.setValue(map);
+        mapParam.setValue(map);    			
 		userParam.setValue("username");
 		passwordParam.setValue("password");
     	
@@ -139,14 +139,14 @@ public class PlatformConfigurationTest
     {
 		Assert.assertEquals(platformConfigurationService.getWebServicePassword(), "password");
     }
-
+	
 	@Test
     @DirtiesContext
     public void test_platform_configuration_map_1()
     {
 		Assert.assertEquals(platformConfigurationService.getConfigurationValue("value1"), "value1");
     }
-
+	
 	@Test
     @DirtiesContext
     public void test_platform_configuration_map_2()

@@ -40,8 +40,15 @@
  */
 package org.ikasan.configurationService.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -57,11 +64,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * Test class for ConfiguredResourceConfigurationService based on
@@ -73,9 +75,7 @@ import java.util.Map;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations = {
         "/configuration-service-conf.xml",
-        "/serialiser-service-conf.xml",
-        "/transaction-conf.xml",
-        "/h2-datasource-conf.xml",
+        "/hsqldb-datasource-conf.xml",
         "/substitute-components.xml"
 })
 public class ConfiguredResourceConfigurationServiceTest {
@@ -90,7 +90,7 @@ public class ConfiguredResourceConfigurationServiceTest {
     ConfigurationDao configurationServiceDao;
 
     @Resource
-    ConfigurationService<ConfiguredResource> configurationService;
+    ConfigurationService configurationService;
 
     ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockedConfiguredResource");
 
@@ -140,7 +140,7 @@ public class ConfiguredResourceConfigurationServiceTest {
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
 
         // add a string parameter
-        persistedConfiguration.getParameters().add(new ConfigurationParameterObjectImpl("one", "1", "Number One"));
+        persistedConfiguration.getParameters().add(new ConfigurationParameterStringImpl("one", "1", "Number One"));
 
         // save it
         this.configurationServiceDao.save(persistedConfiguration);
@@ -179,7 +179,7 @@ public class ConfiguredResourceConfigurationServiceTest {
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
 
         // add a string parameter
-        persistedConfiguration.getParameters().add(new ConfigurationParameterObjectImpl("one", "1", "Number One"));
+        persistedConfiguration.getParameters().add(new ConfigurationParameterStringImpl("one", "1", "Number One"));
 
         // save it
         this.configurationServiceDao.save(persistedConfiguration);
@@ -215,7 +215,7 @@ public class ConfiguredResourceConfigurationServiceTest {
     @DirtiesContext
     public void test_configurationService_setting_of_a_static_configuration_with_configuration_null_resource_configuration() {
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
-        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("name", "value", "description");
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("name", "value", "description");
         persistedConfiguration.getParameters().add(stringParam);
         this.configurationServiceDao.save(persistedConfiguration);
 
@@ -251,7 +251,7 @@ public class ConfiguredResourceConfigurationServiceTest {
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration() {
-        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("one", "0", "description");
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("one", "0", "description");
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
         persistedConfiguration.getParameters().add(stringParam);
         this.configurationServiceDao.save(persistedConfiguration);
@@ -279,7 +279,7 @@ public class ConfiguredResourceConfigurationServiceTest {
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration_that_hasnt_been_saved_previously() {
-        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("one", "0", "description");
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("one", "0", "description");
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
         persistedConfiguration.getParameters().add(stringParam);
 
@@ -315,7 +315,7 @@ public class ConfiguredResourceConfigurationServiceTest {
     @Test
     @DirtiesContext
     public void test_exception_masked_field_not_string() {
-        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("one", "0", "description");
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("one", "0", "description");
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
         persistedConfiguration.getParameters().add(stringParam);
 
@@ -350,9 +350,9 @@ public class ConfiguredResourceConfigurationServiceTest {
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration_with_map_property() {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap();
         map.put("key", "value");
-        ConfigurationParameter mapParam = new ConfigurationParameterObjectImpl("map", map, "description");
+        ConfigurationParameter<Map<String, String>> mapParam = new ConfigurationParameterMapImpl("map", map, "description");
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
         persistedConfiguration.getParameters().add(mapParam);
 

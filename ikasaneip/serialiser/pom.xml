@@ -98,11 +98,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-serialiser</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

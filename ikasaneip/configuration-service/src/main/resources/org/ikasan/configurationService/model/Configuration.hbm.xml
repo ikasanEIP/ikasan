@@ -50,11 +50,11 @@
 
 <hibernate-mapping>
 
-	<!--<typedef name="encryptedString" class="org.jasypt.hibernate4.type.EncryptedStringType">  -->
-	      <!--<param name="algorithm">PBEWithMD5AndDES</param>  -->
-	      <!--<param name="password">ikasanIsBest!</param>  -->
-	      <!--<param name="keyObtentionIterations">1000</param>  -->
-	<!--</typedef>-->
+	<typedef name="encryptedString" class="org.jasypt.hibernate4.type.EncryptedStringType">  
+	      <param name="algorithm">PBEWithMD5AndDES</param>  
+	      <param name="password">ikasanIsBest!</param>  
+	      <param name="keyObtentionIterations">1000</param>  
+	</typedef>
   
     <class name="org.ikasan.configurationService.model.DefaultConfiguration" table="Configuration">
 
@@ -68,25 +68,123 @@
         <list name="parameters" cascade="all" inverse="false" lazy="false" table="ConfigurationParameter">
             <key column="ConfigurationIdentifier" not-null="true"/>
             <list-index column="PositionRef"/>
-            <one-to-many class="org.ikasan.configurationService.model.ConfigurationParameterObjectImpl" />
+            <one-to-many class="org.ikasan.spec.configuration.ConfigurationParameter" />
         </list>
     </class>
 
-
-    <class name="org.ikasan.configurationService.model.ConfigurationParameterObjectImpl" table="ConfParamKryo">
+    <class name="org.ikasan.spec.configuration.ConfigurationParameter" abstract="true">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity" />
         </id>
 
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+               table="ConfParamString">
+
+            <key column="Id" />
+
             <property name="name"           type="java.lang.String"
                       column="Name"         not-null="true" />
-            <property name="value"          type="byte[]"
+            <property name="value"          type="java.lang.String"
                       column="Value"        not-null="false" />
             <property name="description"    type="java.lang.String"
                       column="Description"  not-null="false" />
 
-    </class>
+        </joined-subclass>
+        
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
+               table="ConfParamMaskedString">
 
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+            <property name="value"          type="encryptedString"
+                      column="Value"        not-null="false" />
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+                         table="ConfParamBoolean">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+            <property name="value"          type="java.lang.Boolean"
+                      column="Value"        not-null="false" />
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+                         table="ConfParamInteger">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+            <property name="value"          type="java.lang.Integer"
+                      column="Value"        not-null="false" />
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+                         table="ConfParamLong">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+            <property name="value"          type="java.lang.Long"
+                      column="Value"        not-null="false" />
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterListImpl"
+                         table="ConfParamList">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+
+            <list name="value" cascade="all" inverse="false" lazy="false" table="ConfParamListString" >
+                <key column="Id" not-null="true"/>
+                <list-index column="PositionRef"/>
+                <element column="Value" type="java.lang.String" not-null="false" />
+            </list>
+
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+                         table="ConfParamMap">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+
+            <map name="value" cascade="all" inverse="false" lazy="false" table="ConfParamMapString" >
+                <key column="Id" not-null="true"/>
+                <map-key type="java.lang.String" column="MapKey"/>
+                <element column="Value" type="java.lang.String" not-null="false" />
+            </map>
+
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+    </class>
 
 </hibernate-mapping>
