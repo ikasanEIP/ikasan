@@ -1233,6 +1233,130 @@ mvn clean package
 
 This will build and create a zip binary containing all the required deployments for your integration module.
 
+## DB (SQL) to JMS / JMS to DB (SQL) Integration Module Archetype
+
+This archetype creates a working integration module containing two flows,
+
+- **DB to JMS Flow** – Database (SQL) events are consumed and published as JMS (ActiveMQ Map Message) events as XML JmsText messages
+- **JMS to DB Flow** – JMS (ActiveMQ Map Message) Text message events containing Xml representation of an object events are consumed and published to a Database
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+    -DtargetFlowName=<Target Flow Name>
+```
+
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-db-jms-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.1.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+- **targetFlowName** – target flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.1.0    
+    \-DgroupId=com.sample     
+    \-DartifactId=db-jms-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName="DB to JMS Flow" 
+    \-DtargetFlowName="JMS To DB Flow"
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
+
+```
+cd db-jms-im
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
+
+## Hibernate DB to JMS / JMS to Hibernate DB Integration Module Archetype
+
+This archetype creates a working integration module containing two flows,
+
+- **DB to JMS Flow** – Database (SQL or Hibernate) events are consumed and published as JMS (ActiveMQ Map Message) events as XML JmsText messages
+- **JMS to DB Flow** – JMS (ActiveMQ Map Message) Text message events containing Xml representation of an object events are consumed and published to a Database
+
+A Maven archetype to create this is available from Maven Central and can be invoked as follows,
+
+```
+mvn archetype:generate     
+    -DarchetypeGroupId=org.ikasan    
+    -DarchetypeArtifactId=ikasan-standalone-hibernate-jms-im-maven-plugin 
+    -DarchetypeVersion=<Ikasan Version>    
+    -DgroupId=<Maven Group Id>     
+    -DartifactId=<Module Name>     
+    -Dversion=<Module Version>     
+    -DsourceFlowName=<Source Flow Name>     
+    -DtargetFlowName=<Target Flow Name>
+```
+
+
+where the standard Maven archetype coordinates are,
+
+- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
+- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-hibernate-jms-im-maven-plugin**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke **2.1.0 and above**
+
+where the following parameters provide the configuration for the Integration Module pom being created,
+
+- **groupId** – groupId for this new Integration Module
+- **artifactId** – artifactId for this new Integration Module
+- **version** – version of this new Integration Module
+- **sourceFlowName** – source flow name within this Integration Module
+- **targetFlowName** – target flow name within this Integration Module
+
+
+Example Usage,
+
+```
+mvn archetype:generate     
+    \-DarchetypeGroupId=org.ikasan     
+    \-DarchetypeArtifactId=ikasan-standalone-hibernate-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.1.0    
+    \-DgroupId=com.sample     
+    \-DartifactId=hibernate-jms-im     
+    \-Dversion=1.0.0-SNAPSHOT     
+    \-DsourceFlowName="DB to JMS Flow" 
+    \-DtargetFlowName="JMS To DB Flow"
+```
+
+(Accept defaults or update as required)
+
+This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
+
+```
+cd db-jms-im
+mvn clean package 
+```
+
+This will build and create a zip binary containing all the required deployments for your integration module.
+
 ## Common Problems When Generating From Archetypes
 
 Occasionally you might see similar issue when generating an artifact

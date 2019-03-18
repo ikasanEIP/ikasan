@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>${groupId}</groupId>
+        <artifactId>${artifactId}-parent</artifactId>
+        <version>${version}</version>
+    </parent>
+
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}</artifactId>
+    <packaging>jar</packaging>
+    <version>${version}</version>
+    <name>${artifactId} Integration Module</name>
+    <description>Describe the purpose of this Integration Module</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.ikasan>${ikasanVersion}</version.ikasan>
+        <version.org.springboot>1.5.18.RELEASE</version.org.springboot>
+        <version.junit>4.12</version.junit>
+        <version.activemq>5.13.4</version.activemq>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-standalone</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-converter</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-splitter</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${version.org.springboot}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <version>${version.junit}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <version>${version.ikasan}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${version.activemq}</version>
+        </dependency>
+
+        <!-- activemq-all should be with scope test however for the sample purpose we
+      spin up the embedded broker as part of sample application.-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <version>${version.activemq}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${version.org.springboot}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

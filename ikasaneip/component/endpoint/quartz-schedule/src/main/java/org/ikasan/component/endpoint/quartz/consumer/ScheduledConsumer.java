@@ -42,6 +42,7 @@ package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.management.ManagedLifecycle;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,7 @@ ScheduledConsumer<T>
     {
         try
         {
+
             JobKey jobkey = jobDetail.getKey();
             TriggerBuilder triggerBuilder = newTriggerFor(jobkey.getName(), jobkey.getGroup());
             Trigger trigger = getBusinessTrigger(triggerBuilder);
@@ -581,6 +583,10 @@ ScheduledConsumer<T>
         {
             ((ManagedResource)messageProvider).startManagedResource();
         }
+        else if(messageProvider instanceof ManagedLifecycle)
+        {
+            ((ManagedLifecycle)messageProvider).start();
+        }
     }
 
     @Override
@@ -590,6 +596,11 @@ ScheduledConsumer<T>
         {
             ((ManagedResource)messageProvider).stopManagedResource();
         }
+        else if(messageProvider instanceof ManagedLifecycle)
+        {
+            ((ManagedLifecycle)messageProvider).stop();
+        }
+
     }
 
     @Override
