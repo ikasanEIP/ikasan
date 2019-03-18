@@ -57,8 +57,6 @@ import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.serialiser.Serialiser;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,17 +78,14 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /** configuration DAO used for accessing the configuration transactionally at runtime */
     private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
 
-    /** need a serialiser to serialise the incoming event payload of T */
-    private Serialiser<Object,byte[]> serialiser;
-
     /**
      * Default configuration service returns a cached based instance.
      * 
      * @return
      */
-    public static ConfigurationService getDefaultConfigurationService(SerialiserFactory serialiserFactory)
+    public static ConfigurationService getDefaultConfigurationService()
     {
-        return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl(), serialiserFactory);
+        return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
     }
 
 
@@ -101,7 +96,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      * @param dynamicConfigurationDao - used to update configuration at runtime within a transaction
      */
     public ConfiguredResourceConfigurationService(ConfigurationDao staticConfigurationDao,
-            ConfigurationDao dynamicConfigurationDao, SerialiserFactory serialiserFactory)
+            ConfigurationDao dynamicConfigurationDao)
     {
         this.staticConfigurationDao = staticConfigurationDao;
         if (staticConfigurationDao == null)
@@ -113,8 +108,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         {
             throw new IllegalArgumentException("dynamicConfigurationDao cannot be 'null'");
         }
-        this.serialiser = serialiserFactory.getDefaultSerialiser();
-
     }
 
     /**
@@ -131,18 +124,14 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      */
     public void configure(ConfiguredResource configuredResource)
     {
-
-        Configuration<List<ConfigurationParameter>> persistedConfiguration =
-            getPersistedConfiguration(this.dynamicConfigurationDao,
-                configuredResource.getConfiguredResourceId());
-
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.staticConfigurationDao
+            .findByConfigurationId(configuredResource.getConfiguredResourceId());
         if (persistedConfiguration == null)
         {
             logger.warn("No persisted dao for configuredResource [" + configuredResource.getConfiguredResourceId()
                     + "]. Default programmatic dao will be used.");
             return;
         }
-
         Object runtimeConfiguration = configuredResource.getConfiguration();
         if (runtimeConfiguration != null)
         {
@@ -206,8 +195,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
                     }
                     else
                     {
-                        byte[] serialisedValue = serialiser.serialise(value);
-                        configuration.getParameters().add(new ConfigurationParameterObjectImpl(name, value, serialisedValue));
+                        configuration.getParameters().add(new ConfigurationParameterObjectImpl(name, value));
                     }
 
             }
@@ -236,14 +224,10 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     {
         boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
-
-        Configuration<List<ConfigurationParameter>> persistedConfiguration =
-            getPersistedConfiguration(this.dynamicConfigurationDao,
-                configuredResource.getConfiguredResourceId());
-
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.dynamicConfigurationDao
+            .findByConfigurationId(configuredResource.getConfiguredResourceId());
         if (persistedConfiguration != null)
         {
-
             for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
             {
                 Object runtimeParameterValue;
@@ -262,8 +246,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
                             .equals(persistedConfigurationParameter.getValue()))))
                 {
                     configurationUpdated = true;
-                    byte[] serialisedValue = serialiser.serialise(runtimeParameterValue);
-                    persistedConfigurationParameter.setSerialisedValue(serialisedValue);
                     persistedConfigurationParameter.setValue(runtimeParameterValue);
                 }
             }
@@ -297,18 +279,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      * )
      */
     public void saveConfiguration(Configuration configuration)
-    {
-
-        if(configuration.getParameters() != null && configuration.getParameters() instanceof List)
-            ((List<ConfigurationParameter>)configuration.getParameters()).stream()
-                .filter(configurationParameter -> configurationParameter.getValue()!=null)
-                // we going place the values from before serialisation before returning the object
-                .forEach(configurationParameter -> {
-                byte[] serialisedValue = serialiser.serialise(configurationParameter.getValue());
-                configurationParameter.setSerialisedValue(serialisedValue);
-
-        });
-
+    {    	
         this.staticConfigurationDao.save(configuration);
     }
 
@@ -319,7 +290,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
     {
-        return getConfiguration(configuredResource.getConfiguredResourceId());
+        return this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
     }
 
 	/* (non-Javadoc)
@@ -328,25 +299,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
 	@Override
 	public Configuration getConfiguration(String configuredResourceId)
 	{
-
-        return getPersistedConfiguration(staticConfigurationDao,configuredResourceId);
-    }
-
-    private Configuration getPersistedConfiguration(ConfigurationDao configurationDao, String configuredResourceId)
-    {
-        Configuration<List<ConfigurationParameter>> persistedConfiguration = configurationDao
-            .findByConfigurationId(configuredResourceId);
-        if (persistedConfiguration != null)
-        {
-            persistedConfiguration.getParameters().stream()
-                .filter(configurationParameter -> configurationParameter.getSerialisedValue() != null)
-                .forEach(configurationParameter -> {
-                    // this is mutating original object
-                    // we going place the values from before serialisation before returning the object
-                    Object deserialisedValue = serialiser.deserialise(configurationParameter.getSerialisedValue());
-                    configurationParameter.setValue(deserialisedValue);
-                });
-        }
-        return persistedConfiguration;
-    }
+		return this.staticConfigurationDao.findByConfigurationId(configuredResourceId);
+	}
 }

@@ -104,9 +104,13 @@ public class ComponentConfigurationImportHelperTest
 
         this.configurationService.saveConfiguration(configuration);
 
-        this.helper.updateComponentConfiguration(configuration, configXml.getBytes());
 
-        this.configurationService.saveConfiguration(configuration);
+        Configuration configuration2 = this.configurationService.getConfiguration("configureResourceId");
+
+        this.helper.updateComponentConfiguration(configuration2, configXml.getBytes());
+
+        this.configurationService.saveConfiguration(configuration2);
+
 
         this.configurationService.configure(this.configuredResource);
 

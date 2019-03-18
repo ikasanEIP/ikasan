@@ -287,74 +287,101 @@ public class ConfiguredResourceConfigurationServiceTest {
         runtimeConfiguration.setOne("1");
         runtimeConfiguration.setPrimitiveBool(false);
 
-        TestConfiguredResource configuredResource = new TestConfiguredResource("configuredResourceId", runtimeConfiguration);
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                oneOf(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                oneOf(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                oneOf(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                oneOf(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
 
         configurationService.update(configuredResource);
-
-        TestConfiguredResource emptyConfiguration = new TestConfiguredResource("configuredResourceId", new ExtendedExtendedSampleConfiguration());
-
-        configurationService.configure(emptyConfiguration);
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", "1", ((ExtendedExtendedSampleConfiguration)emptyConfiguration.getConfiguration()).getOne());
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", false, ((ExtendedExtendedSampleConfiguration)emptyConfiguration.getConfiguration()).isPrimitiveBool());
+        Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "maskedString", foundConfig.getParameters().get(2).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", null, foundConfig.getParameters().get(2).getValue());
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "primitiveBool", foundConfig.getParameters().get(4).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", false, foundConfig.getParameters().get(4).getValue());
         this.mockery.assertIsSatisfied();
     }
 
+    @Test
+    @DirtiesContext
+    public void test_exception_masked_field_not_string() {
+        ConfigurationParameter stringParam = new ConfigurationParameterObjectImpl("one", "0", "description");
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+        persistedConfiguration.getParameters().add(stringParam);
 
+        final SampleConfigurationMaskFieldNotString runtimeConfiguration = new SampleConfigurationMaskFieldNotString();
+        runtimeConfiguration.setOne("1");
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                oneOf(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                oneOf(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                oneOf(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                oneOf(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
+
+        configurationService.update(configuredResource);
+        Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "maskedString", foundConfig.getParameters().get(1).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", null, foundConfig.getParameters().get(1).getValue());
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "one", foundConfig.getParameters().get(2).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", "1", foundConfig.getParameters().get(2).getValue());
+        this.mockery.assertIsSatisfied();
+    }
 
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration_with_map_property() {
         Map<String, String> map = new HashMap<>();
         map.put("key", "value");
+        ConfigurationParameter mapParam = new ConfigurationParameterObjectImpl("map", map, "description");
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+        persistedConfiguration.getParameters().add(mapParam);
 
         final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
         runtimeConfiguration.setMap(map);
 
-        TestConfiguredResource configuredResource = new TestConfiguredResource("configuredResourceId", runtimeConfiguration);
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                allowing(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                allowing(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                allowing(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+                // find by dao id
+                allowing(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
 
         configurationService.update(configuredResource);
-
-        ((SampleConfiguration)configuredResource.getConfiguration()).getMap().put("extraKey","extraValue");
-
         configurationService.update(configuredResource); // update twice to ensure configuration is persisted
-
-
-        TestConfiguredResource emptyconfiguredResource = new TestConfiguredResource("configuredResourceId", new SampleConfiguration());
-
-        configurationService.configure(emptyconfiguredResource);
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", map, ((SampleConfiguration)emptyconfiguredResource.getConfiguration()).getMap());
+        Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "map", foundConfig.getParameters().get(0).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", map, foundConfig.getParameters().get(0).getValue());
+        this.mockery.assertIsSatisfied();
     }
 
-
-    private static class TestConfiguredResource implements ConfiguredResource{
-        private String configurationId;
-        private Object configuration;
-
-        public TestConfiguredResource(String configurationId, Object configuration)
-        {
-            this.configurationId = configurationId;
-            this.configuration = configuration;
-        }
-
-        @Override public String getConfiguredResourceId()
-        {
-            return configurationId;
-        }
-
-        @Override public void setConfiguredResourceId(String id)
-        {
-            configurationId = id;
-        }
-
-        @Override public Object getConfiguration()
-        {
-            return configuration;
-        }
-
-        @Override public void setConfiguration(Object configuration)
-        {
-            this.configuration= configuration;
-        }
-    }
 
 }
