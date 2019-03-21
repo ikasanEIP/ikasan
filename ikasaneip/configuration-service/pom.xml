@@ -109,6 +109,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
@@ -145,12 +150,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.jasypt</groupId>-->
-            <!--<artifactId>jasypt</artifactId>-->
-            <!--<version>1.9.2</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.2</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!--<dependency>-->
             <!--<groupId>org.jasypt</groupId>-->
@@ -158,6 +163,13 @@
             <!--<version>1.9.2</version>-->
             <!--<scope>compile</scope>-->
         <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/de.qaware.jasypt/jasypt-hibernate5 -->
+        <dependency>
+            <groupId>de.qaware.jasypt</groupId>
+            <artifactId>jasypt-hibernate5</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.commons</groupId>
