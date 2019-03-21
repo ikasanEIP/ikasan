@@ -44,6 +44,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 
@@ -59,7 +61,7 @@ public class BCryptPasswordGeneratorTest
     @Test
     public void test_map_converter_with_null_value() throws Exception
     {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String hashedPassword = passwordEncoder.encode("admin");
 
         System.out.println(hashedPassword);
