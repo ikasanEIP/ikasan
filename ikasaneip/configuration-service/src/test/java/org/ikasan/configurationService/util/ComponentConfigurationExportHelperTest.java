@@ -25,7 +25,8 @@ import java.util.Map;
 @ContextConfiguration(locations = {
         "/configuration-service-conf.xml",
         "/hsqldb-datasource-conf.xml",
-        "/substitute-components.xml"
+        "/substitute-components.xml",
+        "/transaction-conf.xml"
 })
 public class ComponentConfigurationExportHelperTest
 {
