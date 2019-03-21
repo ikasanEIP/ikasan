@@ -40,8 +40,6 @@
  */
 package org.ikasan.configurationService.model;
 
-import org.ikasan.spec.configuration.ConfigurationParameter;
-
 import java.io.Serializable;
 
 /**
@@ -51,47 +49,16 @@ import java.io.Serializable;
  *
  */
 @SuppressWarnings("serial")
-public class ConfigurationParameterObjectImpl extends AbstractComponentParameter<Object> implements Serializable
+public class ConfigurationParameterMaskedStringImpl extends AbstractComponentParameter<String> implements Serializable
 {
-
     /**
      * Constructor
      * @param name
      * @param value
      */
-    public ConfigurationParameterObjectImpl(String name, Object value)
+    public ConfigurationParameterMaskedStringImpl(String name, String value)
     {
-        this(name, value, null, null);
-    }
-
-    /**
-     * Constructor
-     * @param name
-     * @param value
-     */
-    public ConfigurationParameterObjectImpl(String name, Object value, byte[] serialisedValue)
-    {
-        this(name, value, serialisedValue, null);
-    }
-
-
-    /**
-     * Constructor
-     * @param name
-     * @param value
-     * @param description
-     */
-    public ConfigurationParameterObjectImpl(String name, Object value, String description)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-
-        this.value = value;
-        this.serialisedValue = null;
-        this.description = description;
+        this(name, value, null);
     }
 
     /**
@@ -100,7 +67,7 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
      * @param value
      * @param description
      */
-    public ConfigurationParameterObjectImpl(String name, Object value, byte[] serialisedValue, String description)
+    public ConfigurationParameterMaskedStringImpl(String name, String value, String description)
     {
         this.name = name;
         if(name == null)
@@ -108,38 +75,15 @@ public class ConfigurationParameterObjectImpl extends AbstractComponentParameter
             throw new IllegalArgumentException("name cannot be 'null'");
         }
 
-        this.value = value;
-        this.serialisedValue = serialisedValue;
+        this.value = value; 
         this.description = description;
     }
-
-
-    /**
-     * Constructor for cloning
-     */
-    public ConfigurationParameterObjectImpl(ConfigurationParameter object)
-    {
-        this.name = object.getName();
-        if(name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-
-        this.value = object.getValue();
-        this.serialisedValue = object.getSerialisedValue();
-        this.description = object.getDescription();
-    }
-
 
     /**
      * Constructor
      */
-    protected ConfigurationParameterObjectImpl()
+    protected ConfigurationParameterMaskedStringImpl()
     {
         // required by ORM
     }
-
-
-
-
 }

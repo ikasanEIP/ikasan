@@ -53,9 +53,9 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Notification.Type;
  import com.vaadin.ui.themes.ValoTheme;
- import org.ikasan.configurationService.model.ConfigurationParameterObjectImpl;
- import org.ikasan.configurationService.model.PlatformConfiguration;
- import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
+ import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+ import org.ikasan.configurationService.model.*;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
@@ -64,8 +64,6 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.spec.configuration.ConfigurationManagement;
  import org.ikasan.spec.configuration.ConfigurationParameter;
  import org.ikasan.spec.configuration.ConfiguredResource;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
  import org.vaadin.teemu.VaadinIcons;
 
  import java.text.NumberFormat;
@@ -151,7 +149,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          passwordField.setWidth("80%");
          passwordField.setId(parameter.getName());
 
-         if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
+         if(parameter instanceof ConfigurationParameterIntegerImpl)
          {
              StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
              {
@@ -166,7 +164,7 @@ package org.ikasan.dashboard.ui.administration.panel;
              // either set for the field or in your field factory for multiple fields
              passwordField.setConverter(plainIntegerConverter);
          }
-         else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
+         else if (parameter instanceof ConfigurationParameterLongImpl)
          {
              StringToLongConverter plainLongConverter = new StringToLongConverter()
              {
@@ -229,7 +227,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          usernameField.setWidth("80%");
          usernameField.setId(parameter.getName());
 
-         if(parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Integer)
+         if(parameter instanceof ConfigurationParameterIntegerImpl)
          {
              StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
              {
@@ -244,7 +242,7 @@ package org.ikasan.dashboard.ui.administration.panel;
              // either set for the field or in your field factory for multiple fields
              usernameField.setConverter(plainIntegerConverter);
          }
-         else if (parameter instanceof ConfigurationParameterObjectImpl && parameter.getValue() instanceof Long)
+         else if (parameter instanceof ConfigurationParameterLongImpl)
          {
              StringToLongConverter plainLongConverter = new StringToLongConverter()
              {
@@ -277,7 +275,7 @@ package org.ikasan.dashboard.ui.administration.panel;
      }
 
 
-     protected Panel createMapPanel(final ConfigurationParameterObjectImpl parameter)
+     protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
      {
          Panel paramPanel = new Panel();
          paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -290,7 +288,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.setColumnExpandRatio(0, .25f);
          paramLayout.setColumnExpandRatio(1, .75f);
 
-         final Map<String, String> valueMap = (Map<String,String>)parameter.getValue();
+         final Map<String, String> valueMap = parameter.getValue();
 
          final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1);
          mapLayout.setColumnExpandRatio(0, .05f);
@@ -631,7 +629,7 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
              if(parameter.getName().equals("configurationMap"))
              {
-                 mapPanel = this.createMapPanel((ConfigurationParameterObjectImpl) parameter);
+                 mapPanel = this.createMapPanel((ConfigurationParameterMapImpl)parameter);
              }
          }
 

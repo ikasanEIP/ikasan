@@ -48,7 +48,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.model.*;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -72,9 +77,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/configuration-service-conf.xml",
-        "/serialiser-service-conf.xml",
-        "/transaction-conf.xml",
-        "/h2-datasource-conf.xml",
+        "/hsqldb-datasource-conf.xml",
         "/substitute-components.xml"
         })
 
@@ -166,21 +169,21 @@ public class ConfiguredResourceConfigurationManagementTest
     {
         Configuration<List<ConfigurationParameter>> configuration =
                 new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("sname", "value", "desc"));
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("iname", Integer.valueOf(10), "desc"));
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("lname", Long.valueOf(10), "desc"));
+        configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
+        configuration.getParameters().add( new ConfigurationParameterIntegerImpl("name", Integer.valueOf(10), "desc"));
+        configuration.getParameters().add( new ConfigurationParameterLongImpl("name", Long.valueOf(10), "desc"));
 
         List<String> listVals = new ArrayList<String>();
         listVals.add("one");
         listVals.add("two");
         listVals.add("three");
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("listname", listVals, "desc"));
+        configuration.getParameters().add( new ConfigurationParameterListImpl("name", listVals, "desc"));
 
         Map<String,String> mapVals = new HashMap<String,String>();
         mapVals.put("one", "1");
         mapVals.put("two", "2");
         mapVals.put("three", "3");
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("mapname", mapVals, "desc"));
+        configuration.getParameters().add( new ConfigurationParameterMapImpl("name", mapVals, "desc"));
 
         configurationManagement.saveConfiguration(configuration);
         this.mockery.assertIsSatisfied();
@@ -190,17 +193,15 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful delete of a dao through the configurationManagement contract implementation.
      */
     @Test
-    @DirtiesContext
-
     public void test_configurationManagement_delete_configuration()
     {
         Configuration<List<ConfigurationParameter>> configuration =
                 new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
-        configuration.getParameters().add( new ConfigurationParameterObjectImpl("name", "value", "desc"));
+        configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
         this.configurationServiceDao.save(configuration);
 
         configurationManagement.deleteConfiguration(configuration);
-//        this.mockery.assertIsSatisfied();
+        this.mockery.assertIsSatisfied();
     }
 
 
