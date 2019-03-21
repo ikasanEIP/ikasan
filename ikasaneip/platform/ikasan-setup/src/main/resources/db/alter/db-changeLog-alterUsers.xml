@@ -69,15 +69,9 @@
         ALTER TABLE Users ADD NewPassword  VARCHAR(255);
         -->
 
-        <sql>UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password)</sql>
+        <!--<sql>UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password)</sql>-->
+        <sql >UPDATE Users SET NewPassword = CONCAT('{SHA-1}',Password)</sql>
 
-
-        <!--<modifyDataType -->
-        <!--catalogName="cat"-->
-        <!--columnName="Password"-->
-        <!--newDataType="VARCHAR(255)"-->
-        <!--schemaName="public"-->
-        <!--tableName="Users"/>-->
 
 
     </changeSet>
