@@ -363,8 +363,8 @@
         <version.kryo>4.0.2</version.kryo>
         <version.org.hibernate>5.2.17.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.13.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.0.11.RELEASE</version.org.springframework>
-        <version.org.springframework.security>5.0.10.RELEASE</version.org.springframework.security>
+        <version.org.springframework>5.0.12.RELEASE</version.org.springframework>
+        <version.org.springframework.security>5.0.11.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
@@ -416,7 +416,7 @@
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
-        <version.org.jboss.narayana.jta>5.5.32.Final</version.org.jboss.narayana.jta>
+        <version.org.jboss.narayana.jta>5.8.2.Final</version.org.jboss.narayana.jta>
         <version.commons.net>3.3</version.commons.net>
         <version.com.thoughtworks.xstream>1.4.10</version.com.thoughtworks.xstream>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
@@ -436,7 +436,7 @@
 		<version.com.google.guava>23.0</version.com.google.guava>
 		<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
 		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
-        <version.org.apache.tomcat>8.5.27</version.org.apache.tomcat>
+        <version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.solr>7.1.0</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
@@ -895,8 +895,8 @@
                 <module>transaction</module>
                 <module>replay</module>
 				<module>persistence</module>
-                <!--<module>dashboard</module>-->
-                <module>sample</module> 
+                <module>sample</module>
+                <module>dashboard</module>
             </modules>
 
 
@@ -1813,6 +1813,10 @@
                         <artifactId>validation-api</artifactId>
                         <groupId>javax.validation</groupId>
                     </exclusion>
+                        <exclusion>
+                            <groupId>javax.annotation</groupId>
+                            <artifactId>javax.annotation-api</artifactId>
+                        </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1856,6 +1860,13 @@
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-client</artifactId>
                 <version>${version.org.glassfish.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.annotation</groupId>
+                        <artifactId>javax.annotation-api</artifactId>
+                    </exclusion>
+
+                </exclusions>
             </dependency>
 
             <dependency>

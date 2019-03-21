@@ -52,7 +52,7 @@
 	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="xaSecurityDao" />
 		<constructor-arg ref="xaUserDao" />
-		<constructor-arg ref="bcryptPasswordEncoder"/>
+		<constructor-arg ref="delegatingPasswordEncoder"/>
 	</bean>
 	
 	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -113,7 +113,7 @@
 	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="localTxSecurityDao" />
 		<constructor-arg ref="localTxUserDao" />
-		<constructor-arg ref="bcryptPasswordEncoder"/>
+		<constructor-arg ref="delegatingPasswordEncoder"/>
 	</bean>
 
 	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -134,7 +134,7 @@
         class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="localTxUserDao"/>
         <constructor-arg ref="localTxSecurityService"/>
-        <constructor-arg ref="bcryptPasswordEncoder"/>
+        <constructor-arg ref="delegatingPasswordEncoder"/>
     </bean>
 
 
@@ -169,7 +169,8 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
-	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<bean id="delegatingPasswordEncoder"
+          class="org.springframework.security.crypto.factory.PasswordEncoderFactories" factory-method="createDelegatingPasswordEncoder"/>
 
     <bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
         <constructor-arg ref="authenticationProviderFactory" />
@@ -192,7 +193,7 @@
     <bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="userDao" />
         <constructor-arg ref="securityService" />
-        <constructor-arg ref="bcryptPasswordEncoder" />
+        <constructor-arg ref="delegatingPasswordEncoder" />
     </bean>
 
     <bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
