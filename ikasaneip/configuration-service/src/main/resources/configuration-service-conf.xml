@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
 	<bean id="componentConfigurationExportHelper"
 		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
@@ -52,9 +52,7 @@
 		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
 		<constructor-arg name="staticConfigurationDao" ref="configurationServiceDao"/>
 		<constructor-arg name="dynamicConfigurationDao" ref="xaConfigurationServiceDao"/>
-        <constructor-arg name="serialiserFactory" ref="ikasanSerialiserFactory"/>
-
-    </bean>
+	</bean>
 
 	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
 		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
@@ -64,26 +62,26 @@
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
-				<value>/org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
+				</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
 	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
-     	<property name="sessionFactory" ref="configurationServiceSessionFactory"/>
-   </bean>
+		<property name="sessionFactory" ref="configurationServiceSessionFactory"/>
+	</bean>
 
 	<bean id="configurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.ds" />
-
+		<property name="dataSource" ref="ikasan.ds" />
 		<property name="mappingResources">
 			<list>
-				<value>/org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
+				</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
-
 
 </beans>

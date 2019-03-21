@@ -40,13 +40,13 @@
  */
 package org.ikasan.configurationService.dao;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.Configuration;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
-import java.util.List;
 
 /**
  * Implementation of the ConfigurationDao interface providing
@@ -57,7 +57,6 @@ import java.util.List;
 public class ConfigurationHibernateImpl extends HibernateDaoSupport 
     implements ConfigurationDao<List<ConfigurationParameter>>
 {
-
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
@@ -66,15 +65,13 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
         criteria.add(Restrictions.eq("configurationId", configurationId));
 
-        List<Configuration<List<ConfigurationParameter>>> configurations = (List<Configuration<List<ConfigurationParameter>>>) getHibernateTemplate().findByCriteria(criteria);
-        if(configurations == null || configurations.size() == 0)
+        List<Configuration> configuration = (List<Configuration>) getHibernateTemplate().findByCriteria(criteria);
+        if(configuration == null || configuration.size() == 0)
         {
             return null;
         }
 
-        Configuration<List<ConfigurationParameter>> configuration = configurations.get(0);
-
-        return configuration;
+        return configuration.get(0);
     }
 
     /* (non-Javadoc)
@@ -82,8 +79,6 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
-
-
         // work-around for Sybase issue where it converts empty strings to single spaces.
         // See http://open.jira.com/browse/IKASAN-520
         // Where we would have persisted "" change this to a null to stop Sybase
@@ -92,25 +87,20 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         {
             configuration.setDescription(null);
         }
-
-        configuration.getParameters().forEach(configurationParameter->
+        for(ConfigurationParameter configurationParameter:configuration.getParameters())
         {
             if("".equals(configurationParameter.getValue()))
             {
                 configurationParameter.setValue(null);
             }
 
-
             if("".equals(configurationParameter.getDescription()))
             {
                 configurationParameter.setDescription(null);
             }
-        });
-
-        // hibernate mutates the object and amends configurations Params with Id
+        }
+        
         getHibernateTemplate().saveOrUpdate(configuration);
-
-
     }
 
     /* (non-Javadoc)
