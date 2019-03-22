@@ -60,6 +60,16 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -70,11 +80,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-management</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -162,25 +168,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Test Dependencies -->

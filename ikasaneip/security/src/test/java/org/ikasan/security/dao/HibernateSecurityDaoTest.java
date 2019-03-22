@@ -47,6 +47,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
@@ -56,6 +58,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -70,12 +73,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/security-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
+@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
 public class HibernateSecurityDaoTest
 {
     /** Object being tested */
