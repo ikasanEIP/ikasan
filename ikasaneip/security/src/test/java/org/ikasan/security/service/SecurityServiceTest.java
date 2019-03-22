@@ -47,6 +47,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -59,14 +61,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-
-
 
 /**
  * Unit test for {@link SecurityService}
@@ -76,12 +75,7 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/security-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
+@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
 public class SecurityServiceTest
 {
     /** Mockery for objects */
