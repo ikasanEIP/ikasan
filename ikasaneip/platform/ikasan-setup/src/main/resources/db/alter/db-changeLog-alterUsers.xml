@@ -51,28 +51,25 @@
 
         <preConditions onFail="MARK_RAN">
         <not><columnExists tableName="Users" columnName="NewPassword"/></not>
-        <!--<not><columnExists tableName="ErrorOccurrence" columnName="ActionedBy"/></not>-->
-        <!--<not><columnExists tableName="ErrorOccurrence" columnName="UserActionTimestamp"/></not>-->
         </preConditions>
 
 
         <addColumn tableName="Users">
-            <column name="NewPassword" type="VARCHAR(255)" defaultValue="">
+            <column name="NewPassword" type="VARCHAR(255)" >
                 <constraints nullable="true"/>
             </column>
         </addColumn>
 
+        <addDefaultValue columnName="Password"  tableName="Users"  defaultValue="2665f9cd19cc9946cf921623d4cab834b221e4" />
 
         <!-- Update 'SHA-1'
-
         UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password);
         ALTER TABLE Users ADD NewPassword  VARCHAR(255);
+        ALTER TABLE Users ALTER Password SET DEFAULT '2665f9cd19cc9946cf921623d4cab834b221e4'
         -->
 
         <!--<sql>UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password)</sql>-->
         <sql >UPDATE Users SET NewPassword = CONCAT('{SHA-1}',Password)</sql>
-
-
 
     </changeSet>
 
