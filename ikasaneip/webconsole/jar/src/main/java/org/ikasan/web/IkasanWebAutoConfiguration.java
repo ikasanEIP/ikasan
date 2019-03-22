@@ -59,6 +59,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -132,9 +134,9 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     }
 
 
-    @Bean public BCryptPasswordEncoder passwordEncoder()
+    @Bean public PasswordEncoder passwordEncoder()
     {
-        return new BCryptPasswordEncoder(4);
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
