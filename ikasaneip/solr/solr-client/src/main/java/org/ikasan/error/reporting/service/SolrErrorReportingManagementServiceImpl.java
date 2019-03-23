@@ -6,6 +6,7 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -79,6 +80,12 @@ public class SolrErrorReportingManagementServiceImpl extends SolrServiceBase imp
         this.errorReportingServiceDao.setSolrUsername(this.solrUsername);
         this.errorReportingServiceDao.setSolrPassword(this.solrPassword);
         return this.find(moduleName, flowName, flowElementname, startDate, endDate, action, exceptionClass, size);
+    }
+
+    @Override public PagedSearchResult<ErrorOccurrence> find(int pageNo, int pageSize, String orderBy,
+        boolean orderAscending, String moduleName, String flowName, String componentName, Date fromDate, Date untilDate)
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override

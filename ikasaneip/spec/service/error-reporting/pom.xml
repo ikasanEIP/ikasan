@@ -56,4 +56,11 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Event Error Reporting Contracts</name>
     <description>The specification management contracts for the Ikasan Enterprise Integration Platform event error reporting</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-search</artifactId>
+        </dependency>
+    </dependencies>
 </project>

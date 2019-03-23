@@ -53,7 +53,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
+import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;

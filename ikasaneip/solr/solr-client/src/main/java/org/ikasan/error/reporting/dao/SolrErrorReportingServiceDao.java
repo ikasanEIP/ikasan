@@ -9,6 +9,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
@@ -108,6 +109,12 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
 
     @Override
     public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname, Date startDate, Date endDate, String action, String exceptionClass, int size)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override public PagedSearchResult<ErrorOccurrence> find(int pageNo, int pageSize, String orderBy,
+        boolean orderAscending, String moduleName, String flowName, String componentName, Date fromDate, Date untilDate)
     {
         throw new UnsupportedOperationException();
     }
