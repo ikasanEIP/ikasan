@@ -41,6 +41,8 @@
 
 package org.ikasan.spec.error.reporting;
 
+import org.ikasan.spec.search.PagedSearchResult;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +106,25 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
     public List<ERROR_REPORTING_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
     		Date startDate, Date endDate, String action, String exceptionClass, int size);
 
-    
+    /**
+     * Perform a paged search for <code>ErrorOccurrence</code>s
+     *
+     * @param pageNo - The page number to retrieve
+     * @param pageSize - The size of the page
+     * @param orderBy - order by field
+     * @param orderAscending - ascending flag
+     * @param moduleName - The module name
+     * @param flowName - The name of Flow internal to the Module
+     * @param componentName - The component name
+     * @param fromDate - The from date
+     * @param untilDate - The to date
+     *
+     * @return PagedSearchResult
+     */
+    public PagedSearchResult<ERROR_REPORTING_EVENT> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+        final String moduleName, final String flowName, final String componentName,  final Date fromDate, final Date untilDate);
+
+
     /**
      * Logs an Error where there is an inflight Event involved in a Flow
      * 

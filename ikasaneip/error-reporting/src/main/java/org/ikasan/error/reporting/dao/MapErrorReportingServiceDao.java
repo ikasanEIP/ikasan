@@ -42,6 +42,7 @@ package org.ikasan.error.reporting.dao;
 
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
@@ -157,6 +158,12 @@ public class MapErrorReportingServiceDao<T>
                                           int size)
     {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override public PagedSearchResult<ErrorOccurrence> find(int pageNo, int pageSize, String orderBy,
+        boolean orderAscending, String moduleName, String flowName, String componentName, Date fromDate, Date untilDate)
+    {
         return null;
     }
 }

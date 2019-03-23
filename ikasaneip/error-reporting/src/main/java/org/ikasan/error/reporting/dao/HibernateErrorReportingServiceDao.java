@@ -45,13 +45,12 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
@@ -148,6 +147,87 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 
         return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(int, int, java.lang.String, boolean, java.lang.String, java.lang.String, java.lang.String, java.util.Data, java.util.Data)
+     */
+    @Override
+    public PagedSearchResult<ErrorOccurrence> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+        final String moduleName, final String flowName, final String componentName,  final Date fromDate, final Date untilDate)
+    {
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria dataCriteria = getCriteria(session);
+                dataCriteria.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                dataCriteria.setFirstResult(firstResult);
+                if (orderBy != null)
+                {
+                    if (orderAscending)
+                    {
+                        dataCriteria.addOrder(Order.asc(orderBy));
+                    }
+                    else
+                    {
+                        dataCriteria.addOrder(Order.desc(orderBy));
+                    }
+                } else {
+                    dataCriteria.addOrder(Order.desc("timestamp"));
+
+                }
+                List<ErrorOccurrence> results = dataCriteria.list();
+
+                Criteria metaDataCriteria = getCriteria(session);
+                metaDataCriteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = metaDataCriteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+
+                return new ArrayListPagedSearchResult<ErrorOccurrence>(results, firstResult, rowCount);
+            }
+
+            /**
+             * Create a criteria instance for each invocation of data or metadata queries.
+             * @param session
+             * @return
+             */
+            private Criteria getCriteria(Session session)
+            {
+                Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+
+                if (moduleName != null)
+                {
+                    criteria.add(Restrictions.eq("moduleName", moduleName));
+                }
+                if (flowName != null)
+                {
+                    criteria.add(Restrictions.eq("flowName", flowName));
+                }
+                if (componentName!=null)
+                {
+                    criteria.add(Restrictions.eq("componentName", componentName));
+                }
+
+                if (fromDate!=null)
+                {
+                    criteria.add(Restrictions.gt("timestamp", fromDate.getTime()));
+                }
+                if (untilDate!=null)
+                {
+                    criteria.add(Restrictions.lt("timestamp", untilDate.getTime()));
+                }
+
+                criteria.add(Restrictions.isNull("userAction"));
+
+                return criteria;
+            }
+        });
+    }
     
     @Override
     public void save(ErrorOccurrence errorOccurrence)
