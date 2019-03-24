@@ -40,11 +40,11 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command.util;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Simple handle class for providing lightweight access to files.

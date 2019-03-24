@@ -41,7 +41,6 @@
 package org.ikasan.monitor.notifier;
 
 import org.springframework.http.*;
-import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -53,6 +52,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * Ikasan default dashboard notifier implementation.
@@ -196,8 +196,8 @@ public class DashboardNotifier implements Notifier<String>
         if (user != null && password != null)
         {
             String credentials = user + ":" + password;
-            String encodedCridentials = new String(Base64.encodeBase64(credentials.getBytes()));
-            headers.set(HttpHeaders.AUTHORIZATION, "Basic " + encodedCridentials);
+            String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+            headers.set(HttpHeaders.AUTHORIZATION, "Basic " + encodedCredentials);
         }
         headers.set(HttpHeaders.USER_AGENT, module);
         headers.set(HttpHeaders.CONTENT_TYPE,"application/json");

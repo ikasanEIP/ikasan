@@ -57,8 +57,8 @@ import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayAuditDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>UserDao</code>

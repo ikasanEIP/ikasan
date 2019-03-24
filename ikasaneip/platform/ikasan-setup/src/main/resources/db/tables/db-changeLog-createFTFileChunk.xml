@@ -56,7 +56,7 @@
         <createTable tableName="FTFileChunk">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTFileChunk01u"/>
             </column>
             <column name="Content" type="IMAGE">
                 <constraints nullable="false"/>

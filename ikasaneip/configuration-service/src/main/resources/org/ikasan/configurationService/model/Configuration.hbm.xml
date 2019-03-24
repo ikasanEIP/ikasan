@@ -50,10 +50,10 @@
 
 <hibernate-mapping>
 
-	<typedef name="encryptedString" class="org.jasypt.hibernate4.type.EncryptedStringType">  
-	      <param name="algorithm">PBEWithMD5AndDES</param>  
-	      <param name="password">ikasanIsBest!</param>  
-	      <param name="keyObtentionIterations">1000</param>  
+	<typedef name="encryptedString" class="org.jasypt.hibernate5.type.EncryptedStringType">
+	      <param name="algorithm">PBEWithMD5AndDES</param>
+	      <param name="password">ikasanIsBest!</param>
+	      <param name="keyObtentionIterations">1000</param>
 	</typedef>
   
     <class name="org.ikasan.configurationService.model.DefaultConfiguration" table="Configuration">
@@ -185,6 +185,7 @@
                       column="Description"  not-null="false" />
 
         </joined-subclass>
+
     </class>
 
 </hibernate-mapping>

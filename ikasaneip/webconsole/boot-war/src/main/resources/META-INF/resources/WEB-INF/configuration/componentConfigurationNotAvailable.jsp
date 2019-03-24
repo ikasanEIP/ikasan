@@ -49,7 +49,7 @@
 <c:out value="${moduleName}" /> -> <c:out value="${flowName}" />
 <h2>Configured Component :: <c:out value="${flowElementName}" /></h2>
 
-<form:form id="configurationForm" commandName="specifyConfiguration" method="post" cssClass="dataform fancydataform">
+<form:form id="configurationForm" modelAttribute="configuration" method="post" cssClass="dataform fancydataform">
     <fieldset>
        <legend>Configuration</legend>
     
