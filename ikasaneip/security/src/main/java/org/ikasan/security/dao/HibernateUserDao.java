@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.security.model.User;
 import org.ikasan.security.model.UserLite;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>UserDao</code>

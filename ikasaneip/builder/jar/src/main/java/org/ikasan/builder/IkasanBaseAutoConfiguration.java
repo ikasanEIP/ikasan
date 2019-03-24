@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
+import org.ikasan.web.WebSecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -74,7 +75,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:springapp-servlet-boot.xml",
 
 } )
-@Import({IkasanWebAutoConfiguration.class,IkasanRestAutoConfiguration.class})
+@Import({IkasanWebAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 

@@ -40,21 +40,36 @@
  */
 package org.ikasan.web;
 
-import org.ikasan.security.service.UserService;
+import org.ikasan.security.dao.HibernateSecurityDao;
+import org.ikasan.security.dao.HibernateUserDao;
+import org.ikasan.security.service.*;
+import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
+import org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl;
+import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.web.controller.*;
 import org.quartz.Scheduler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
@@ -74,9 +89,14 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
     @Resource SystemEventService systemEventService;
 
-    @Resource UserService userService;
-
     @Resource WiretapService wiretapService;
+
+    @Resource Map platformHibernateProperties;
+    @Autowired
+    @Qualifier("ikasan.ds")
+    DataSource ikasands;
+
+
 
     @Bean public AdminController adminController()
     {
@@ -105,12 +125,64 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
     @Bean public UsersController usersController()
     {
-        return new UsersController(userService);
+        return new UsersController(userService());
     }
 
     @Bean public WiretapEventsSearchFormController wiretapEventsSearchFormController()
     {
         return new WiretapEventsSearchFormController(wiretapService,moduleService);
     }
+
+
+    @Bean public PasswordEncoder passwordEncoder()
+    {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityService securityService()
+    {
+        HibernateSecurityDao securityDao = new HibernateSecurityDao();
+        securityDao.setSessionFactory(securitySessionFactory().getObject());
+        return new SecurityServiceImpl(securityDao);
+    }
+
+    @Bean
+    public UserService userService()
+    {
+        HibernateUserDao userDao = new HibernateUserDao();
+        userDao.setSessionFactory(securitySessionFactory().getObject());
+        return new UserServiceImpl(userDao, securityService(), passwordEncoder());
+    }
+
+
+    @Bean
+    public LocalSessionFactoryBean securitySessionFactory(
+    )
+    {
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+        sessionFactoryBean.setDataSource(ikasands);
+        sessionFactoryBean.setMappingResources("/org/ikasan/security/model/Principal.hbm.xml",
+            "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
+            "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
+            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
+        Properties properties = new Properties();
+        properties.putAll(platformHibernateProperties);
+        sessionFactoryBean.setHibernateProperties(properties);
+
+        return sessionFactoryBean;
+    }
+
+
+    @Bean
+    public AuthenticationProvider ikasanAuthenticationProvider(){
+
+        AuthenticationProviderFactory authenticationProviderFactory = new AuthenticationProviderFactoryImpl(userService(),securityService());
+        AuthenticationService authenticationService = new AuthenticationServiceImpl(authenticationProviderFactory,securityService());
+        return new CustomAuthenticationProvider(authenticationService);
+
+    }
+
 }
 

@@ -1,10 +1,10 @@
-      MERGE INTO Users ( Username, Password, Enabled, FirstName, Surname,PreviousAccess )
+      MERGE INTO Users ( Username, NewPassword, Enabled, FirstName, Surname,PreviousAccess )
 			KEY (Username)
-					VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User',10);
+					VALUES ('admin', '{bcrypt}$2a$10$Po0oMTs6c8vK/H9TvH4J2eLFdK8jrlhz0SU8icsNV/jfaPSvk7yDm', 1 , 'Admin', 'User',10);
 
-      MERGE INTO Users ( Username, Password, Enabled, FirstName, Surname,PreviousAccess )
+      MERGE INTO Users ( Username, NewPassword , Enabled, FirstName, Surname,PreviousAccess )
 			KEY (Username)
-							VALUES ('api', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'API', 'API',10);
+							VALUES ('api','{bcrypt}$2a$10$Po0oMTs6c8vK/H9TvH4J2eLFdK8jrlhz0SU8icsNV/jfaPSvk7yDm', 1 , 'API', 'API',10);
 
       MERGE INTO SecurityPrincipal (Name , PrincipalType, Description, CreatedDateTime ,UpdatedDateTime)
       KEY (Name)

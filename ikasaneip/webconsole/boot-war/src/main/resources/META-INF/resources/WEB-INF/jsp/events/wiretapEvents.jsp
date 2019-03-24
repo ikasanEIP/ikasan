@@ -72,7 +72,7 @@
 </form>
 
 <h3>Search</h3>
-<form:form id="wiretapSearchForm" commandName="searchCriteria" cssClass="dataform fancydataform">
+<form:form id="wiretapSearchForm" modelAttribute="searchCriteria" cssClass="dataform fancydataform">
 
 <form:errors path="*" cssClass="errorMessages"/>
 

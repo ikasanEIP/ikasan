@@ -87,4 +87,14 @@ public class ConfigurationParameterMapImpl  extends AbstractComponentParameter<M
     {
         // required by ORM
     }
+
+    @Override public Map<String, String> getValue()
+    {
+        return super.getValue();
+    }
+
+    @Override public void setValue(Map<String, String> value)
+    {
+        super.setValue(value);
+    }
 }

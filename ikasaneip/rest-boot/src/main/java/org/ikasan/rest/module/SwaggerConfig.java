@@ -1,6 +1,5 @@
 package org.ikasan.rest.module;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;

@@ -91,4 +91,14 @@ public class ConfigurationParameterListImpl extends AbstractComponentParameter<L
     {
         // required by ORM
     }
+
+    @Override public List<String> getValue()
+    {
+        return super.getValue();
+    }
+
+    @Override public void setValue(List<String> value)
+    {
+        super.setValue(value);
+    }
 }

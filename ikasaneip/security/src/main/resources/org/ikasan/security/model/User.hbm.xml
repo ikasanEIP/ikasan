@@ -54,7 +54,7 @@
         <generator class="identity" />
     </id>
     <property name="username" type="java.lang.String" column="Username" unique="true"/>
-    <property name="password" column="Password" type="java.lang.String" not-null="true"/>
+    <property name="password" column="NewPassword" type="java.lang.String" not-null="true"/>
     <property name="email" column="Email" type="java.lang.String" not-null="false"/>
     <property name="surname" column="Surname" type="java.lang.String" not-null="false"/>
     <property name="firstName" column="FirstName" type="java.lang.String" not-null="false"/>

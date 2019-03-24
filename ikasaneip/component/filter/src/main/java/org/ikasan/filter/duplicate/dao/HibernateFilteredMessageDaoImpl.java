@@ -48,8 +48,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of {@link FilteredMessageDao}

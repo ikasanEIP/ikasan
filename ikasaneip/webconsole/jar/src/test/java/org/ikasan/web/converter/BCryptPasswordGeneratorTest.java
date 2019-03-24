@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
- /*
+/*
  * $Id$
  * $URL$
  *
@@ -40,36 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
--->
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-       
-       <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		    <property name="sessionFactory">
-		        <ref bean="systemEventHibernateSessionFactory"/>
-		    </property>
-		</bean>
-		
-		<aop:config>
-	        <aop:pointcut id="daoMethods"
-	                expression="execution(* org.ikasan.systemevent.dao.*.*(..))"/>
+package org.ikasan.web.converter;
 
-	                
-	        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.binding.convert.converters.Converter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-	    </aop:config>
-	
-	    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-	        <tx:attributes>
-	            <tx:method name="*" propagation="REQUIRED"/>
-	        </tx:attributes>
-	    </tx:advice>
+import java.util.Map;
 
-</beans>
+/**
+ * Unit test class supporting <class>SpringConverter</class>
+ * @author  Ikasan Developmnet Team
+ */
+public class BCryptPasswordGeneratorTest
+{
+    /**
+     * Test null to map.
+     */
+    @Test
+    public void test_map_converter_with_null_value() throws Exception
+    {
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode("admin");
+
+        System.out.println(hashedPassword);
+
+    }
+
+
+}
