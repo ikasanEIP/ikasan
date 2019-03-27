@@ -89,4 +89,9 @@ public class IkasanRestAutoConfiguration
     public ErrorApplication errorApplication(){
         return new ErrorApplication();
     }
+
+    @Bean
+    public ExclusionApplication exclusionApplication(){
+        return new ExclusionApplication();
+    }
 }
