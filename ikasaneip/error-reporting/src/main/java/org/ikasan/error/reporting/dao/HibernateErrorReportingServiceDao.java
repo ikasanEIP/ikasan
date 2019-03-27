@@ -243,15 +243,19 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 query.setFirstResult(firstResult);
                 List<ErrorOccurrence> results = query.getResultList();
 
-
-                Long rowCount = rowCount(session, builder, root, predicates);
+                Long rowCount = rowCount(session);
 
                 return new ArrayListPagedSearchResult<ErrorOccurrence>(results, firstResult, rowCount);
             }
 
-            private Long rowCount(Session session, CriteriaBuilder builder,Root<ErrorOccurrenceImpl> root, List<Predicate> predicates){
+            private Long rowCount(Session session){
 
+
+                CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+                Root<ErrorOccurrenceImpl> root = metaDataCriteriaQuery.from(ErrorOccurrenceImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
                 metaDataCriteriaQuery.select(builder.count(root))
                     .where(predicates.toArray(new Predicate[predicates.size()]));
 
