@@ -14,6 +14,10 @@
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
     </bean>
 
+    <bean id="exclusionSearchService" class="org.ikasan.exclusion.service.ExclusionSearchServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
+
     <bean id="exclusionServiceBlacklistDaoFactory" class="org.ikasan.exclusion.dao.BlackListDaoFactory">
         <constructor-arg value="1000"/>
     </bean>
