@@ -116,7 +116,12 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                ;
 
             Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
-            return query.getSingleResult();
+            List<ExclusionEvent> result = query.getResultList();
+            if(!result.isEmpty()){
+                return result.get(0);
+            }else {
+                return null;
+            }
         });
 
     }
@@ -403,7 +408,12 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             ;
 
             Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
-            return query.getSingleResult();
+            List<ExclusionEvent> result = query.getResultList();
+            if(!result.isEmpty()){
+                return result.get(0);
+            }else {
+                return null;
+            }
         });
 	}
 
