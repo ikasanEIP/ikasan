@@ -55,9 +55,9 @@ public interface WiretapDao
 {
 
     /**
-     * Save a wiretapFlowEvent entry.
+     * Save a wiretapEvent entry.
      * 
-     * @param wiretapFlowEvent - The wiretap event to save
+     * @param wiretapEvent - The wiretap event to save
      */
     public void save(WiretapEvent wiretapEvent);
 

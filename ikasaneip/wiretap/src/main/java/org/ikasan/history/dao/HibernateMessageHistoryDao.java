@@ -41,24 +41,26 @@
 package org.ikasan.history.dao;
 
 import com.google.common.collect.Lists;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.FlowInvocationMetricImpl;
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.FlowInvocationMetric;
-import org.ikasan.spec.history.ComponentInvocationMetric;
-import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.model.ArrayListPagedSearchResult;
+import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Hibernate implementation of the <code>MessageHistoryDao</code>
@@ -108,73 +110,107 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                                                                                  final String eventId, final String relatedEventId,
                                                                                  final Date fromDate, final Date toDate)
     {
-        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<ComponentInvocationMetric>>()
+
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
-            public PagedSearchResult<ComponentInvocationMetric> doInHibernate(Session session) throws HibernateException
+            public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria dataCriteria = getCriteria(session);
-                dataCriteria.setMaxResults(pageSize);
-                int firstResult = pageNo * pageSize;
-                dataCriteria.setFirstResult(firstResult);
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+
+                CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
+                Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
                 if (orderBy != null)
                 {
                     if (orderAscending)
                     {
-                        dataCriteria.addOrder(Order.asc(orderBy));
+                        criteriaQuery.orderBy(
+                            builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        dataCriteria.addOrder(Order.desc(orderBy));
+                        criteriaQuery.orderBy(
+                            builder.desc(root.get(orderBy)));
+
                     }
                 }
-                List<ComponentInvocationMetric> messageHistoryResults = dataCriteria.list();
 
-                Criteria metaDataCriteria = getCriteria(session);
-                metaDataCriteria.setProjection(Projections.rowCount());
-                Long rowCount = 0L;
-                List<Long> rowCountList = metaDataCriteria.list();
+                Query<ComponentInvocationMetric> query = session.createQuery(criteriaQuery);
+                query.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                query.setFirstResult(firstResult);
+                List<ComponentInvocationMetric> results = query.getResultList();
+
+                Long rowCount = rowCount(session);
+
+                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+            }
+
+            private Long rowCount(Session session){
+
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+                Root<ComponentInvocationMetricImpl> root = metaDataCriteriaQuery.from(ComponentInvocationMetricImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                metaDataCriteriaQuery.select(builder.count(root))
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
+                Query<Long> metaDataQuery = session.createQuery(metaDataCriteriaQuery);
+
+                List<Long> rowCountList = metaDataQuery.getResultList();
                 if (!rowCountList.isEmpty())
                 {
-                    rowCount = rowCountList.get(0);
+                    return rowCountList.get(0);
                 }
-
-                return new ArrayListPagedSearchResult<>(messageHistoryResults, firstResult, rowCount);
+                return new Long(0);
             }
 
             /**
              * Create a criteria instance for each invocation of data or metadata queries.
-             * @param session the hibernate Session
-             * @return a Criteria based on the provided search parameters
+             * @param builder
+             * @param root
+             * @return
              */
-            private Criteria getCriteria(Session session)
+            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<ComponentInvocationMetricImpl> root)
             {
-                Criteria criteria = session.createCriteria(ComponentInvocationMetric.class);
+
+                List<Predicate> predicates = new ArrayList<>();
 
                 if (restrictionExists(componentName))
                 {
-                    criteria.add(Restrictions.eq("componentName", componentName));
+                    predicates.add(builder.equal(root.get("componentName"),componentName));
                 }
                 if (restrictionExists(eventId))
                 {
-                    criteria.add(Restrictions.or(
-                                    Restrictions.eq("beforeEventIdentifier", eventId),
-                                    Restrictions.eq("afterEventIdentifier", eventId) ));
+                    predicates.add(builder.or(
+                        builder.equal(root.get("beforeEventIdentifier"),eventId),
+                        builder.equal(root.get("afterEventIdentifier"),eventId)
+                    ));
+
                 }
                 if (restrictionExists(relatedEventId))
                 {
-                    criteria.add(Restrictions.or(
-                                    Restrictions.eq("beforeRelatedEventIdentifier", relatedEventId),
-                                    Restrictions.eq("afterRelatedEventIdentifier", relatedEventId)));
+                    predicates.add(builder.or(
+                        builder.equal(root.get("beforeRelatedEventIdentifier"),relatedEventId),
+                        builder.equal(root.get("afterRelatedEventIdentifier"),relatedEventId)
+                    ));
+
                 }
                 if (restrictionExists(fromDate))
                 {
-                    criteria.add(Restrictions.ge("startTime", fromDate.getTime()));
+                    predicates.add( builder.greaterThan(root.get("startTime"),fromDate.getTime()));
                 }
                 if (restrictionExists(toDate))
                 {
-                    criteria.add(Restrictions.le("endTime", toDate.getTime()));
+                    predicates.add( builder.lessThan(root.get("endTime"),toDate.getTime()));
                 }
-                return criteria;
+
+                return predicates;
             }
         });
     }
@@ -183,61 +219,95 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(final int pageNo, final int pageSize, final String orderBy,
                                                                                final boolean orderAscending, final String eventId, final String relatedEventId)
     {
-        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<ComponentInvocationMetric>>()
+
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
-            public PagedSearchResult<ComponentInvocationMetric> doInHibernate(Session session) throws HibernateException
+            public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria dataCriteria = getCriteria(session);
-                dataCriteria.setMaxResults(pageSize);
-                int firstResult = pageNo * pageSize;
-                dataCriteria.setFirstResult(firstResult);
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+
+                CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
+                Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
                 if (orderBy != null)
                 {
                     if (orderAscending)
                     {
-                        dataCriteria.addOrder(Order.asc(orderBy));
+                        criteriaQuery.orderBy(
+                            builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        dataCriteria.addOrder(Order.desc(orderBy));
+                        criteriaQuery.orderBy(
+                            builder.desc(root.get(orderBy)));
+
                     }
                 }
-                List<ComponentInvocationMetric> messageHistoryResults = dataCriteria.list();
 
-                Criteria metaDataCriteria = getCriteria(session);
-                metaDataCriteria.setProjection(Projections.rowCount());
-                Long rowCount = 0L;
-                List<Long> rowCountList = metaDataCriteria.list();
+                Query<ComponentInvocationMetric> query = session.createQuery(criteriaQuery);
+                query.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                query.setFirstResult(firstResult);
+                List<ComponentInvocationMetric> results = query.getResultList();
+
+                Long rowCount = rowCount(session);
+
+                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+            }
+
+            private Long rowCount(Session session){
+
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+                Root<ComponentInvocationMetricImpl> root = metaDataCriteriaQuery.from(ComponentInvocationMetricImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                metaDataCriteriaQuery.select(builder.count(root))
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
+                Query<Long> metaDataQuery = session.createQuery(metaDataCriteriaQuery);
+
+                List<Long> rowCountList = metaDataQuery.getResultList();
                 if (!rowCountList.isEmpty())
                 {
-                    rowCount = rowCountList.get(0);
+                    return rowCountList.get(0);
                 }
-
-                return new ArrayListPagedSearchResult<>(messageHistoryResults, firstResult, rowCount);
+                return new Long(0);
             }
 
             /**
              * Create a criteria instance for each invocation of data or metadata queries.
-             * @param session the hibernate Session
-             * @return a Criteria based on the provided search parameters
+             * @param builder
+             * @param root
+             * @return
              */
-            private Criteria getCriteria(Session session)
+            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<ComponentInvocationMetricImpl> root)
             {
-                Criteria criteria = session.createCriteria(ComponentInvocationMetric.class);
+
+                List<Predicate> predicates = new ArrayList<>();
+
 
                 if (restrictionExists(eventId) && !restrictionExists(relatedEventId))
                 {
-                    criteria.add(Restrictions.eq("beforeEventIdentifier", eventId));
+                    predicates.add(builder.equal(root.get("beforeEventIdentifier"),eventId));
+
                 }
                 if (restrictionExists(relatedEventId))
                 {
-                    criteria.add(Restrictions.or(
-                            Restrictions.eq("beforeEventIdentifier", eventId),
-                            Restrictions.eq("beforeRelatedEventIdentifier", relatedEventId)));
+                    predicates.add(builder.or(
+                        builder.equal(root.get("beforeEventIdentifier"),eventId),
+                        builder.equal(root.get("beforeRelatedEventIdentifier"),relatedEventId)
+                    ));
                 }
-                return criteria;
+
+                return predicates;
             }
         });
+
     }
 
     @Override
@@ -298,46 +368,57 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     @SuppressWarnings("unchecked")
     public boolean housekeepablesExist()
     {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+            Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.lessThan(root.get("expiry"),System.currentTimeMillis()));
+            predicates.add(builder.equal(root.get("harvested"),true));
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<Long> query = session.createQuery(criteriaQuery);
+            List<Long> rowCountList = query.getResultList();
+            Long rowCount = new Long(0);
+            if (!rowCountList.isEmpty())
             {
-                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
-                criteria.add(Restrictions.le("expiry", System.currentTimeMillis()));
-                criteria.add(Restrictions.eq("harvested", true));
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = 0L;
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-                logger.info(rowCount+", FlowInvocation housekeepables exist");
-                return rowCount > 0;
+                rowCount = rowCountList.get(0);
             }
+
+            logger.info(rowCount+", FlowInvocation housekeepables exist");
+            return new Boolean(rowCount>0);
         });
     }
+
 
     @Override
     public boolean harvestableRecordsExist()
     {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
-                criteria.add(Restrictions.eq("harvested", false));
-                criteria.setProjection(Projections.rowCount());
 
-                Long rowCount = 0L;
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-                logger.info(rowCount+", FlowInvocation harvestable records exist");
-                return rowCount > 0;
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+            Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("harvested"),false));
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<Long> query = session.createQuery(criteriaQuery);
+            List<Long> rowCountList = query.getResultList();
+            Long rowCount = new Long(0);
+            if (!rowCountList.isEmpty())
+            {
+                rowCount = rowCountList.get(0);
             }
+
+            logger.info(rowCount+", FlowInvocation harvestable records exist");
+            return new Boolean(rowCount>0);
         });
     }
 
@@ -359,12 +440,18 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
-                criteria.add(Restrictions.eq("harvested", harvested));
-                criteria.setMaxResults(housekeepingBatchSize);
-                criteria.addOrder(Order.asc("invocationStartTime"));
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<FlowInvocationMetric> criteriaQuery = builder.createQuery(FlowInvocationMetric.class);
+                Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
 
-                List<FlowInvocationMetric> flowInvocationMetrics = criteria.list();
+                criteriaQuery.select(root)
+                    .where(builder.equal(root.get("harvested"),harvested))
+                    .orderBy(builder.asc(root.get("invocationStartTime")));;
+
+                Query<FlowInvocationMetric> query = session.createQuery(criteriaQuery);
+                query.setMaxResults(housekeepingBatchSize);
+                List<FlowInvocationMetric> flowInvocationMetrics = query.getResultList();
+
                 ArrayList<String> eventIds = new ArrayList<String>();
 
                 Set<ComponentInvocationMetric> messageHistoryEvents = new HashSet<ComponentInvocationMetric>();
@@ -415,25 +502,22 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
     protected Map<String, MetricEvent> getWiretapFlowEvents(final List<String> eventIds)
     {
-        return (Map<String, MetricEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Criteria criteria = session.createCriteria(MetricEvent.class);
-                criteria.add(Restrictions.in("eventId", eventIds));
+        return this.getHibernateTemplate().execute(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<MetricEvent> criteriaQuery = builder.createQuery(MetricEvent.class);
+            Root<MetricEvent> root = criteriaQuery.from(MetricEvent.class);
 
+            criteriaQuery.select(root)
+                .where(root.get("eventId").in(eventIds));
 
-                List<MetricEvent> wiretapEvents = criteria.list();
+            Query<MetricEvent> query = session.createQuery(criteriaQuery);
 
-                HashMap<String, MetricEvent> results = new HashMap<String, MetricEvent>();
-
-                for(MetricEvent event: wiretapEvents)
-                {
-                    results.put(event.getEventId()+event.getModuleName()+event.getFlowName()+event.getComponentName(), event);
-                }
-
-                return results;
-            }
+            Map<String, MetricEvent> results = query.getResultStream()
+                .collect(Collectors.toMap(
+                event -> event.getEventId() + event.getModuleName() + event.getFlowName() + event.getComponentName(),
+                event -> event, (eventold,eventnew) -> eventnew)
+                );
+            return results;
         });
     }
 
