@@ -86,13 +86,11 @@ public class HibernateSystemEventDaoTest
     }
 
     /**
-     * Putting an instance of StateModel into the StateModel store
+     * Putting an instance of SystemEvent into the db store
      * 
-     * @throws StateModelDaoException if error accessing state window store
      */
     @Test 
     @DirtiesContext
-//    @Ignore
     public void test_success_no_results()
     {
     	systemEventDao.setBatchHousekeepDelete(true);
@@ -123,5 +121,4 @@ public class HibernateSystemEventDaoTest
     	this.systemEventDao.deleteExpired();
     }
 
-    
 }
