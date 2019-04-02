@@ -45,7 +45,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <artifactId>ikasan-mysql-standalone-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
 
