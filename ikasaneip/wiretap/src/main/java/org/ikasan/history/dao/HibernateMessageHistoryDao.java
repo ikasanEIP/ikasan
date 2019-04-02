@@ -128,14 +128,11 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     if (orderAscending)
                     {
-                        criteriaQuery.orderBy(
-                            builder.asc(root.get(orderBy)));
+                        criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        criteriaQuery.orderBy(
-                            builder.desc(root.get(orderBy)));
-
+                        criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
                     }
                 }
 
@@ -237,14 +234,11 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     if (orderAscending)
                     {
-                        criteriaQuery.orderBy(
-                            builder.asc(root.get(orderBy)));
+                        criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        criteriaQuery.orderBy(
-                            builder.desc(root.get(orderBy)));
-
+                        criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
                     }
                 }
 
