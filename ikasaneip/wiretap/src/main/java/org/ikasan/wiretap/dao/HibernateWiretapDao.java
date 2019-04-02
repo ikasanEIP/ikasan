@@ -232,22 +232,18 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 {
                     if (orderAscending)
                     {
-                        criteriaQuery.orderBy(
-                            builder.asc(root.get(orderBy)));
+                        criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        criteriaQuery.orderBy(
-                            builder.desc(root.get(orderBy)));
-
+                        criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
                     }
                 } else {
-                    criteriaQuery.orderBy(
-                        builder.desc(root.get("timestamp")));
+                    criteriaQuery.orderBy(builder.desc(root.get("timestamp")));
                 }
 
 
-                org.hibernate.query.Query<WiretapEvent> query = session.createQuery(criteriaQuery);
+                Query<WiretapEvent> query = session.createQuery(criteriaQuery);
                 query.setMaxResults(pageSize);
                 int firstResult = pageNo * pageSize;
                 query.setFirstResult(firstResult);
