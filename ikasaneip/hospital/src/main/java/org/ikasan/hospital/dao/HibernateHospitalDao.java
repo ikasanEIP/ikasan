@@ -40,20 +40,21 @@
  */
 package org.ikasan.hospital.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.ikasan.hospital.model.ExclusionEventAction;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Hibernate implementation of <code>UserDao</code>
@@ -93,12 +94,28 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	public ExclusionEventAction getExclusionEventActionByErrorUri(
 			String errorUri)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
-        criteria.add(Restrictions.eq("errorUri", errorUri));
-        ExclusionEventAction excludedEventAction = (ExclusionEventAction) DataAccessUtils
-        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+		return getHibernateTemplate().execute((session) -> {
 
-        return excludedEventAction;
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+
+            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("errorUri"),errorUri));
+
+            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
+            List<ExclusionEventAction> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+
+            return results.get(0);
+
+        });
 	}
 
 	/* (non-Javadoc)
@@ -110,31 +127,45 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 			List<String> moduleName, List<String> flowName, Date startDate,
 			Date endDate, int size)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
-		
-		if(moduleName != null && moduleName.size() > 0)
-		{
-			criteria.add(Restrictions.in("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowName", flowName));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-       
-		criteria.addOrder(Order.desc("timestamp"));
-		
-		return (List<ExclusionEventAction>) this.getHibernateTemplate().findByCriteria(criteria, 0, size);
+		return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+
+            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.size() > 0)
+            {
+                predicates.add(root.get("moduleName").in(moduleName));
+            }
+
+            if(flowName != null && flowName.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowName));
+            }
+
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(builder.desc(root.get("timestamp")));
+
+            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
+            query.setFirstResult(0);
+            query.setMaxResults(size);
+            return query.getResultList();
+
+        });
 	}
 	
 	/* (non-Javadoc)
@@ -144,32 +175,49 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate)
 	{
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
-		
-		if(moduleName != null && moduleName.size() > 0)
-		{
-			criteria.add(Restrictions.in("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowName", flowName));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
+		return getHibernateTemplate().execute((session) -> {
 
-		criteria.setProjection(Projections.projectionList()
-                .add(Projections.count("moduleName")));
+            CriteriaBuilder builder = session.getCriteriaBuilder();
 
-		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+
+            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.size() > 0)
+            {
+                predicates.add(root.get("moduleName").in(moduleName));
+            }
+
+            if(flowName != null && flowName.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowName));
+            }
+
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            org.hibernate.query.Query<Long> query = session.createQuery(criteriaQuery);
+
+            List<Long> rowCountList = query.getResultList();
+            if (!rowCountList.isEmpty())
+            {
+                return rowCountList.get(0);
+            }
+            return new Long(0);
+
+        });
+
 	}
 
 	/* (non-Javadoc)
@@ -179,27 +227,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	public Long getNumberOfModuleActionedExclusions(String moduleName,
 			Date startDate, Date endDate)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
-		
-		if(moduleName != null)
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-		
-		criteria.setProjection(Projections.projectionList()
-		                    .add(Projections.count("moduleName")));
-		
-		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return actionedExclusionsRowCount(Arrays.asList(moduleName),null,startDate,endDate);
 	}
 
 	@Override
