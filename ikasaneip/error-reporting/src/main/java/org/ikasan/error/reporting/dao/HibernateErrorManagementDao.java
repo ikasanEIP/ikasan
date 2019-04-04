@@ -173,8 +173,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             criteriaQuery
                 .select(root)
                 .where(root.get("uri").in(errorUris))
-                .orderBy(
-                    builder.desc(root.get("timestamp")));
+                .orderBy(builder.desc(root.get("timestamp")));
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
             query.setFirstResult(0);
@@ -249,8 +248,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
             criteriaQuery.select(root)
                 .where(predicates.toArray(new Predicate[predicates.size()]))
-                .orderBy(
-                    builder.desc(root.get("userActionTimestamp")));
+                .orderBy(builder.desc(root.get("userActionTimestamp")));
 
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
@@ -374,8 +372,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
             criteriaQuery.select(builder.count(root))
                 .where(predicates.toArray(new Predicate[predicates.size()]))
-                .orderBy(
-                    builder.desc(root.get("userActionTimestamp")));
+                .orderBy(builder.desc(root.get("userActionTimestamp")));
 
             Query<Long> query = session.createQuery(criteriaQuery);
 
@@ -440,8 +437,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvested"),false))
-                .orderBy(
-                    builder.desc(root.get("timestamp")));
+                .orderBy(builder.desc(root.get("timestamp")));
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
             query.setMaxResults(harvestingBatchSize);

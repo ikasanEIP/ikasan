@@ -146,7 +146,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                                                   Date startDate, Date endDate, int size)
 	{
 
-        return getHibernateTemplate().execute((Session session) -> {
+        return getHibernateTemplate().execute((session) -> {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -184,15 +184,12 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 
             criteriaQuery.select(root)
                 .where(predicates.toArray(new Predicate[predicates.size()]))
-                .orderBy(
-                    builder.desc(root.get("timestamp")));
+                .orderBy(builder.desc(root.get("timestamp")));
 
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
             query.setMaxResults(size);
-            List<ErrorOccurrence> rowList = query.getResultList();
-
-            return rowList;
+            return query.getResultList();
 
         });
 
@@ -222,18 +219,15 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 {
                     if (orderAscending)
                     {
-                        criteriaQuery.orderBy(
-                            builder.asc(root.get(orderBy)));
+                        criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
                     }
                     else
                     {
-                        criteriaQuery.orderBy(
-                            builder.desc(root.get(orderBy)));
+                        criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
 
                     }
                 } else {
-                    criteriaQuery.orderBy(
-                        builder.desc(root.get("timestamp")));
+                    criteriaQuery.orderBy(builder.desc(root.get("timestamp")));
                 }
 
 
@@ -472,13 +466,11 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 predicates.add( builder.equal(root.get("action"),action));
             }
 
-
             predicates.add(root.get("userAction").isNull());
 
             criteriaQuery.select(root)
                 .where(predicates.toArray(new Predicate[predicates.size()]))
-                .orderBy(
-                    builder.desc(root.get("timestamp")));
+                .orderBy(builder.desc(root.get("timestamp")));
 
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
