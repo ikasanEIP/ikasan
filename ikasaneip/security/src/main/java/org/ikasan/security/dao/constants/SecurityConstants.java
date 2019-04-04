@@ -58,4 +58,16 @@ public interface SecurityConstants
             " User as u " +
             " where  u.id = up.userId" +
             " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
+
+    public static final String GET_POLICY_WITH_ROLE_QUERY = "select p from Policy as p " +
+        " LEFT JOIN p.roles r " +
+        " where  r.name = :name" ;
+
+    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = "select p from IkasanPrincipal as p " +
+        " LEFT JOIN p.roles r " +
+        " where  r.name = :name" ;
+
+    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = "select distinct(p) from IkasanPrincipal as p " +
+        " LEFT JOIN p.roles r " +
+        " where  r.name in (:name)" ;
 }

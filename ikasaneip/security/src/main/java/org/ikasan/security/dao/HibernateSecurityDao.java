@@ -40,22 +40,19 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author CMI2 Development Team
@@ -105,11 +102,28 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override 
     public IkasanPrincipal getPrincipalByName(String name)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
-        criteria.add(Restrictions.eq("name", name));
-        IkasanPrincipal principal = (IkasanPrincipal) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return getHibernateTemplate().execute((session) -> {
 
-        return principal;
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<IkasanPrincipal> criteriaQuery = builder.createQuery(IkasanPrincipal.class);
+
+            Root<IkasanPrincipal> root = criteriaQuery.from(IkasanPrincipal.class);
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+
+            org.hibernate.query.Query<IkasanPrincipal> query = session.createQuery(criteriaQuery);
+            List<IkasanPrincipal> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+
+            return results.get(0);
+
+        });
     }
 
     /*
@@ -120,9 +134,21 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public List<Policy> getAllPolicies()
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
+        return getHibernateTemplate().execute((session) -> {
 
-        return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Policy> criteriaQuery = builder.createQuery(Policy.class);
+
+            Root<Policy> root = criteriaQuery.from(Policy.class);
+
+            criteriaQuery.select(root);
+
+            Query<Policy> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
+
     }
 
     /*
@@ -133,9 +159,21 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public List<Role> getAllRoles()
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
+        return getHibernateTemplate().execute((session) -> {
 
-        return (List<Role>)this.getHibernateTemplate().findByCriteria(criteria);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Role> criteriaQuery = builder.createQuery(Role.class);
+
+            Root<Role> root = criteriaQuery.from(Role.class);
+
+            criteriaQuery.select(root);
+
+            Query<Role> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
+
     }
 
     /*
@@ -146,17 +184,40 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public List<IkasanPrincipal> getAllPrincipals()
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+        return getHibernateTemplate().execute((session) -> {
 
-        return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<IkasanPrincipal> criteriaQuery = builder.createQuery(IkasanPrincipal.class);
+
+            Root<IkasanPrincipal> root = criteriaQuery.from(IkasanPrincipal.class);
+
+            criteriaQuery.select(root);
+
+            org.hibernate.query.Query<IkasanPrincipal> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
     }
 
 	@Override
 	public List<IkasanPrincipalLite> getAllPrincipalLites()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipalLite.class);
+		return getHibernateTemplate().execute((session) -> {
 
-		return (List<IkasanPrincipalLite>)this.getHibernateTemplate().findByCriteria(criteria);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<IkasanPrincipalLite> criteriaQuery = builder.createQuery(IkasanPrincipalLite.class);
+
+            Root<IkasanPrincipalLite> root = criteriaQuery.from(IkasanPrincipalLite.class);
+
+            criteriaQuery.select(root);
+
+            org.hibernate.query.Query<IkasanPrincipalLite> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
+
 	}
 
 	/*
@@ -167,11 +228,28 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
     public Policy getPolicyByName(String name)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
-        criteria.add(Restrictions.eq("name", name));
-        Policy policy = (Policy) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return getHibernateTemplate().execute((session) -> {
 
-        return policy;
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Policy> criteriaQuery = builder.createQuery(Policy.class);
+
+            Root<Policy> root = criteriaQuery.from(Policy.class);
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+
+            org.hibernate.query.Query<Policy> query = session.createQuery(criteriaQuery);
+            List<Policy> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+
+            return results.get(0);
+
+        });
     }
 
     /*
@@ -182,11 +260,29 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
     public Role getRoleByName(String name)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
-        criteria.add(Restrictions.eq("name", name));
-        Role role = (Role) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 
-        return role;
+        return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Role> criteriaQuery = builder.createQuery(Role.class);
+
+            Root<Role> root = criteriaQuery.from(Role.class);
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+
+            Query<Role> query = session.createQuery(criteriaQuery);
+            List<Role> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+
+            return results.get(0);
+
+        });
     }
 
 	/*
@@ -197,10 +293,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public Role getRoleById(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
-		criteria.add(Restrictions.eq("id", id));
-		Role role = (Role) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-
+		Role role = this.getHibernateTemplate().get(Role.class, id);
 		return role;
 	}
 
@@ -212,10 +305,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public Policy getPolicyById(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
-		criteria.add(Restrictions.eq("id", id));
-		Policy policy = (Policy) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-
+        Policy policy = this.getHibernateTemplate().get(Policy.class,id);
 		return policy;
 	}
 
@@ -264,12 +354,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public AuthenticationMethod getAuthenticationMethod(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
-        criteria.add(Restrictions.eq("id", id));
-        @SuppressWarnings("unchecked")
-		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
-        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-
+		AuthenticationMethod authenticationMethod = this.getHibernateTemplate().get(AuthenticationMethod.class,id);
         return authenticationMethod;
 	}
 	
@@ -280,10 +365,21 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<AuthenticationMethod> getAuthenticationMethods()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
-		criteria.addOrder(Order.asc("order"));
-		
-		return (List<AuthenticationMethod>) this.getHibernateTemplate().findByCriteria(criteria);
+	    return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<AuthenticationMethod> criteriaQuery = builder.createQuery(AuthenticationMethod.class);
+
+            Root<AuthenticationMethod> root = criteriaQuery.from(AuthenticationMethod.class);
+
+            criteriaQuery.select(root)
+                .orderBy(builder.asc(root.get("order")));
+
+            Query<AuthenticationMethod> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
 	}
 
 	/* (non-Javadoc)
@@ -293,11 +389,13 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
 	{
-		 DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
-		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(SecurityConstants.GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY);
+            query.setParameter("name", roleName);
+            return (List<IkasanPrincipal>) query.list();
+        });
 
-	     return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
-	}
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getPrincipalsByName(java.util.List)
@@ -306,11 +404,12 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.createCriteria("roles").add(Restrictions.in("name", names));
 
-	    return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(SecurityConstants.GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY);
+            query.setParameter("name", names);
+            return (List<IkasanPrincipal>) query.list();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -332,9 +431,20 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<PolicyLinkType> getAllPolicyLinkTypes()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(PolicyLinkType.class);
+        return getHibernateTemplate().execute((session) -> {
 
-	    return (List<PolicyLinkType>)this.getHibernateTemplate().findByCriteria(criteria);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<PolicyLinkType> criteriaQuery = builder.createQuery(PolicyLinkType.class);
+
+            Root<PolicyLinkType> root = criteriaQuery.from(PolicyLinkType.class);
+
+            criteriaQuery.select(root);
+
+            Query<PolicyLinkType> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+
+        });
 	}
 
 	/* (non-Javadoc)
@@ -394,10 +504,12 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<Policy> getAllPoliciesWithRole(String roleName)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
-		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(SecurityConstants.GET_POLICY_WITH_ROLE_QUERY);
+            query.setParameter("name", roleName);
+            return (List<Policy>) query.list();
+        });
 
-	     return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
 	/* (non-Javadoc)
@@ -434,13 +546,26 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
-        criteria.add(Restrictions.eq("order", order));
-        @SuppressWarnings("unchecked")
-		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
-        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+		return getHibernateTemplate().execute((session) -> {
 
-        return authenticationMethod;
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<AuthenticationMethod> criteriaQuery = builder.createQuery(AuthenticationMethod.class);
+
+            Root<AuthenticationMethod> root = criteriaQuery.from(AuthenticationMethod.class);
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("order"),order));
+
+            Query<AuthenticationMethod> query = session.createQuery(criteriaQuery);
+            List<AuthenticationMethod> results = query.getResultList();
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+            return results.get(0);
+
+        });
 	}
 
 	/* (non-Javadoc)
@@ -449,18 +574,10 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public List<User> getUsersAssociatedWithPrincipal(final long principalId)
 	{
-		return (List<User>)this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-   
-                Query query = session.createQuery(SecurityConstants.GET_USERS_BY_PRINCIPAL_QUERY);
-                
-                query.setParameter(SecurityConstants.PRINCIPAL_ID, principalId);
-
-                return (List<User>)query.list();
-            }
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(SecurityConstants.GET_USERS_BY_PRINCIPAL_QUERY);
+            query.setParameter(SecurityConstants.PRINCIPAL_ID, principalId);
+            return (List<User>) query.list();
         });
 	}
 
