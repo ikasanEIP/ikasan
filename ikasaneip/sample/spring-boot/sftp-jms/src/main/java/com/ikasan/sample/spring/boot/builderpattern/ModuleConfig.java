@@ -21,7 +21,7 @@ import javax.jms.ConnectionFactory;
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:filetransfer-service-conf.xml",
-        "classpath:mysql-datasource-conf.xml"
+        "classpath:h2-datasource-conf.xml"
 
 } )
 public class ModuleConfig {
