@@ -47,8 +47,7 @@ than another development framework.
  * Flows are cohesive operations on a business artifact as a synchronous operation
  * Multiple flows can be chained to isolate concerns
  * Standard event container allows any data type to be transported
- <img src="ikasaneip/developer/docs/quickstart-images/flows.png" width="90%"> 
- ![Flows](ikasaneip/developer/docs/quickstart-images/flows.png) 
+ <img src="ikasaneip/developer/docs/quickstart-images/flows.png" width="90%">
 
 #  Components
 
@@ -64,12 +63,67 @@ than another development framework.
  
  ## Hospital Service
  <img src="ikasaneip/developer/docs/quickstart-images/hospital-service.png" width="200px" align="left"> 
- Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
- Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
- Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
- Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
- Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
- 
+The Ikasan Hospital Service provides Ikasan users with the ability to view and understand errors that have occurred on the Ikasan bus. Depending upon the categorisation of the error, the user is
+able to remediate the error by resubmitting messages that have been excluded. Error within Ikasan are broadly categorised into to two types of errors. Firstly, there are technical errors. Technical
+errors are considered to be transient, and as such when a technical error occurs, Ikasan will log the error to the error reporting component of the Hospital Service and then will rollback and retry
+processing the message which it was dealing with when the technical error was  encountered. Ikasan can be configured to retry n number of times or indefinitely. If configured to retry for a fixed
+number of times, Ikasan will stop processing flow, flag it into an error state, and notify the monitoring service of the error that has occurred.
+The second broad catagorisation of errors are those that are considered business errors. Business errors typically occur when Ikasan is unable to process a message it has received, perhaps dues to missing
+static data it is trying to retrieve from the mapping service, or an XML validation issue. Generally business errors are deemed to be repairable. With this in mind Ikasan excludes messages associated
+with business exceptions. These excluded messages can be viewed via the Ikasan Dashboard along with the error that caused the exclusion. Ikasan users are then able to resubmit the messages once the underlying
+business exception has been remediated or alternatively ignore the message.
+
+**An example of a JMSException configured to retry every 10 seconds, indefinitely.**
+```xml
+<bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
+    <constructor-arg>
+        <bean class="org.hamcrest.core.IsInstanceOf">
+            <constructor-arg value="javax.jms.JMSException"/>
+        </bean>
+    </constructor-arg>
+    <constructor-arg>
+        <bean class="org.ikasan.exceptionResolver.action.RetryAction">
+            <property name="delay" value="10000"/>
+        </bean>
+    </constructor-arg>
+</bean>
+```
+
+**An example of a FixSessionException configured to retry every 60 seconds, for a maximum of 60 times before stopping in error.**
+```xml
+<bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
+    <constructor-arg>
+        <bean class="org.ikasan.exceptionResolver.matcher.ThrowableCauseMatcher">
+            <constructor-arg>
+                <bean class="org.hamcrest.core.IsInstanceOf">
+                    <constructor-arg value="com.mizuho.api.fix.session.exception.FixSessionException"/>
+                </bean>
+            </constructor-arg>
+            <constructor-arg value="false"/>
+        </bean>
+    </constructor-arg>
+    <constructor-arg>
+        <bean class="org.ikasan.exceptionResolver.action.RetryAction">
+            <constructor-arg name="maxRetries" value="60"/>
+            <constructor-arg name="delay" value="60000"/>
+        </bean>
+    </constructor-arg>
+</bean>
+```
+
+**An example of a TransformationException configured to exclude the underlying message.**
+```xml
+<bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
+     <constructor-arg>
+         <bean class="org.hamcrest.core.IsInstanceOf">
+             <constructor-arg value="org.ikasan.spec.component.transformation.TransformationException"/>
+         </bean>
+     </constructor-arg>
+     <constructor-arg>
+         <bean class="org.ikasan.exceptionResolver.action.ExcludeEventAction"/>
+     </constructor-arg>
+ </bean>
+```
  <br/>
  
  ## Wiretap Service
@@ -80,7 +134,7 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 
-</br/>
+<br/>
 
 ## Mapping Service
 <img src="ikasaneip/developer/docs/quickstart-images/mapping-service.png" width="200px" align="left"> 
@@ -90,7 +144,7 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 
-</br/>
+<br/>
 
 ## Replay Service
 <img src="ikasaneip/developer/docs/quickstart-images/replay-service.png" width="200px" align="left"> 
@@ -100,7 +154,7 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 
-</br/>
+<br/>
 
 [Component Quick Start](ikasaneip/component/Readme.md)
 ======
