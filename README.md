@@ -67,12 +67,13 @@ The Ikasan Hospital Service provides Ikasan users with the ability to view and u
 able to remediate the error by resubmitting messages that have been excluded. Error within Ikasan are broadly categorised into to two types of errors. Firstly, there are technical errors. Technical
 errors are considered to be transient, and as such when a technical error occurs, Ikasan will log the error to the error reporting component of the Hospital Service and then will rollback and reattempt
 processing the message which it was dealing with when the technical error was  encountered. Ikasan can be configured to retry n number of times or indefinitely. If configured to retry for a fixed
-number of times, Ikasan will stop the processing flow, flag it into an error state, and notify the monitoring service of the error that has occurred.
+number of times, Ikasan will stop the processing flow, flag it into an error state, and notify the monitoring service of the error that has occurred.<br/>
 The second broad categorisation of errors are those that are considered business errors. Business errors typically occur when Ikasan is unable to process a message it has received, perhaps dues to missing
 static data it is trying to retrieve from the mapping service, or an XML validation issue. Generally business errors are deemed to be repairable. With this in mind Ikasan excludes messages associated
 with business exceptions. These excluded messages can be viewed via the Ikasan Dashboard along with the error that caused the exclusion. Ikasan users are then able to resubmit the messages once the underlying
 business exception has been remediated or alternatively ignore the message.
-
+<br/>
+<br/>
 **An example of a JMSException configured to retry every 10 seconds, indefinitely.**
 ```xml
 <bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
@@ -124,7 +125,7 @@ business exception has been remediated or alternatively ignore the message.
      </constructor-arg>
  </bean>
 ```
- <br/>
+<br/>
  
  ## Wiretap Service
 <img src="ikasaneip/developer/docs/quickstart-images/wiretap-service.png" width="200px" align="left"> 
