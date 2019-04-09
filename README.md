@@ -74,6 +74,7 @@ with business exceptions. These excluded messages can be viewed via the Ikasan D
 business exception has been remediated or alternatively ignore the message.
 <br/>
 <br/>
+
 **An example of a JMSException configured to retry every 10 seconds, indefinitely.**
 ```xml
 <bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
