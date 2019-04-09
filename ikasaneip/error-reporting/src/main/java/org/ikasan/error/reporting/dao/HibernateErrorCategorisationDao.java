@@ -49,9 +49,6 @@ import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -175,16 +172,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisation> findAll()
 	{
-		return getHibernateTemplate().execute((session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<ErrorCategorisation> criteriaQuery = builder.createQuery(ErrorCategorisation.class);
-            Root<ErrorCategorisation> root = criteriaQuery.from(ErrorCategorisation.class);
-
-            criteriaQuery.select(root);
-
-            Query<ErrorCategorisation> query = session.createQuery(criteriaQuery);
-            return query.getResultList();
-        });
+        return getHibernateTemplate().loadAll(ErrorCategorisation.class);
 	}
 	
 	/* (non-Javadoc)
@@ -193,16 +181,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks()
 	{
-		return getHibernateTemplate().execute((session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<ErrorCategorisationLink> criteriaQuery = builder.createQuery(ErrorCategorisationLink.class);
-            Root<ErrorCategorisationLink> root = criteriaQuery.from(ErrorCategorisationLink.class);
-
-            criteriaQuery.select(root);
-
-            Query<ErrorCategorisationLink> query = session.createQuery(criteriaQuery);
-            return query.getResultList();
-        });
+        return getHibernateTemplate().loadAll(ErrorCategorisationLink.class);
 	}
 
 	/* (non-Javadoc)
