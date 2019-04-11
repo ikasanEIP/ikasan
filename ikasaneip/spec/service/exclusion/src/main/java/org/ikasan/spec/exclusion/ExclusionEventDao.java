@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.exclusion;
 
+import org.ikasan.spec.search.PagedSearchResult;
+
 import java.util.Date;
 import java.util.List;
 
@@ -101,7 +103,27 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public List<EVENT> findAll();
-    
+
+    /**
+     * Perform a paged search for <code>ExclusionEvent</code>s
+     *
+     * @param pageNo - The page number to retrieve
+     * @param pageSize - The size of the page
+     * @param orderBy - order by field
+     * @param orderAscending - ascending flag
+     * @param moduleName - The module name
+     * @param flowName - The name of Flow internal to the Module
+     * @param componentName - The component name
+     * @param fromDate - The from date
+     * @param untilDate - The to date
+     *
+     * @return PagedSearchResult
+     */
+    public PagedSearchResult<EVENT> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+        final String moduleName, final String flowName, final String componentName, final IDENTIFIER identifier,
+        final Date fromDate, final Date untilDate);
+
+
     /**
      * Find a list of event entities based on criteria.
      * 

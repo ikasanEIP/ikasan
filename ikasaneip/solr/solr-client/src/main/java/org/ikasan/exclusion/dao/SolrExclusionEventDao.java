@@ -9,6 +9,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.exclusion.model.SolrExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.ikasan.wiretap.model.SolrWiretapEvent;
@@ -150,6 +151,13 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
 
     @Override
     public List<ExclusionEvent> findAll()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override public PagedSearchResult<ExclusionEvent> find(int pageNo, int pageSize, String orderBy,
+        boolean orderAscending, String moduleName, String flowName, String componentName, String s, Date fromDate,
+        Date untilDate)
     {
         throw new UnsupportedOperationException();
     }

@@ -84,4 +84,14 @@ public class IkasanRestAutoConfiguration
     public WiretapApplication wiretapApplication(){
         return new WiretapApplication();
     }
+
+    @Bean
+    public ErrorApplication errorApplication(){
+        return new ErrorApplication();
+    }
+
+    @Bean
+    public ExclusionApplication exclusionApplication(){
+        return new ExclusionApplication();
+    }
 }

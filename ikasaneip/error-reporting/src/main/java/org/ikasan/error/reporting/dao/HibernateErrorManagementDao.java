@@ -41,23 +41,21 @@
 package org.ikasan.error.reporting.dao;
 
 import com.google.common.collect.Lists;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.ikasan.error.reporting.dao.constants.ErrorManagementDaoConstants;
 import org.ikasan.error.reporting.model.*;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -168,13 +166,21 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
-        if (errorUris != null && errorUris.size() > 0)
-        {
-            criteria.add(Restrictions.in("uri", errorUris));
-        }
-        criteria.addOrder(Order.desc("timestamp"));
-        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return getHibernateTemplate().execute((Session session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ErrorOccurrence> criteriaQuery = builder.createQuery(ErrorOccurrence.class);
+            Root<ErrorOccurrenceImpl> root = criteriaQuery.from(ErrorOccurrenceImpl.class);
+            criteriaQuery
+                .select(root)
+                .where(root.get("uri").in(errorUris))
+                .orderBy(builder.desc(root.get("timestamp")));
+
+            Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
+            query.setFirstResult(0);
+            query.setMaxResults(2000);
+            return query.getResultList();
+
+        });
     }
 
     /* (non-Javadoc)
@@ -204,30 +210,55 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             List<String> moduleName, List<String> flowName,
             List<String> flowElementname, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
-        if (moduleName != null && moduleName.size() > 0)
-        {
-            criteria.add(Restrictions.in("moduleName", moduleName));
-        }
-        if (flowName != null && flowName.size() > 0)
-        {
-            criteria.add(Restrictions.in("flowName", flowName));
-        }
-        if (flowElementname != null && flowElementname.size() > 0)
-        {
-            criteria.add(Restrictions.in("flowElementName", flowElementname));
-        }
-        if (startDate != null)
-        {
-            criteria.add(Restrictions.gt("userActionTimestamp", startDate.getTime()));
-        }
-        if (endDate != null)
-        {
-            criteria.add(Restrictions.lt("userActionTimestamp", endDate.getTime()));
-        }
-        criteria.add(Restrictions.isNotNull("userAction"));
-        criteria.addOrder(Order.desc("userActionTimestamp"));
-        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return getHibernateTemplate().execute((Session session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<ErrorOccurrence> criteriaQuery = builder.createQuery(ErrorOccurrence.class);
+
+            Root<ErrorOccurrenceImpl> root = criteriaQuery.from(ErrorOccurrenceImpl.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.size() > 0)
+            {
+                predicates.add(root.get("moduleName").in(moduleName));
+            }
+
+            if(flowName != null && flowName.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowName));
+            }
+
+            if(flowElementname != null && flowElementname.size() > 0)
+            {
+                predicates.add(root.get("flowElementName").in(flowElementname));
+            }
+
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("userActionTimestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("userActionTimestamp"),endDate.getTime()));
+            }
+
+            predicates.add(root.get("userAction").isNotNull());
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(builder.desc(root.get("userActionTimestamp")));
+
+
+            Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
+            query.setFirstResult(0);
+            query.setMaxResults(2000);
+            List<ErrorOccurrence> rowList = query.getResultList();
+
+            return rowList;
+
+        });
     }
 
     /* (non-Javadoc)
@@ -236,7 +267,6 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -307,34 +337,53 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     @Override
     public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceImpl.class);
-        if (moduleName != null)
-        {
-            criteria.add(Restrictions.eq("moduleName", moduleName));
-        }
-        if (startDate != null)
-        {
-            criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-        }
-        if (endDate != null)
-        {
-            criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-        }
-        if (excluded)
-        {
-            criteria.add(Restrictions.eq("action", "ExcludeEvent"));
-        }
-        if (actioned)
-        {
-            criteria.add(Restrictions.isNotNull("userAction"));
-        }
-        else
-        {
-            criteria.add(Restrictions.isNull("userAction"));
-        }
-        criteria.setProjection(Projections.projectionList()
-                .add(Projections.count("moduleName")));
-        return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return getHibernateTemplate().execute((Session session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+
+            Root<ErrorOccurrenceImpl> root = criteriaQuery.from(ErrorOccurrenceImpl.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null)
+            {
+                predicates.add(builder.equal(root.get("moduleName"),moduleName));
+            }
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+            if(excluded)
+            {
+                predicates.add(builder.equal(root.get("action"),"ExcludeEvent"));
+            }
+            if (actioned)
+            {
+                predicates.add(root.get("userAction").isNotNull());
+            }
+            else{
+                predicates.add(root.get("userAction").isNull());
+            }
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(builder.desc(root.get("userActionTimestamp")));
+
+            Query<Long> query = session.createQuery(criteriaQuery);
+
+            List<Long> rowCountList = query.getResultList();
+            if (!rowCountList.isEmpty())
+            {
+                return rowCountList.get(0);
+            }
+            return new Long(0);
+
+        });
     }
 
 	@Override
@@ -381,20 +430,19 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 	@Override
 	public List<ErrorOccurrence> getHarvestableRecords(final int harvestingBatchSize)
 	{
-		return (List<ErrorOccurrence>) this.getHibernateTemplate().execute(new HibernateCallback()
-		{
-			public Object doInHibernate(Session session) throws HibernateException
-			{
-				Criteria criteria = session.createCriteria(ErrorOccurrenceImpl.class);
-				criteria.add(Restrictions.eq("harvested", false));
-				criteria.setMaxResults(harvestingBatchSize);
-				criteria.addOrder(Order.asc("timestamp"));
+	    return getHibernateTemplate().execute((Session session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ErrorOccurrence> criteriaQuery = builder.createQuery(ErrorOccurrence.class);
+            Root<ErrorOccurrenceImpl> root = criteriaQuery.from(ErrorOccurrenceImpl.class);
 
-				List<ErrorOccurrenceImpl> flowInvocationMetrics = criteria.list();
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("harvested"),false))
+                .orderBy(builder.desc(root.get("timestamp")));
 
-				return flowInvocationMetrics;
-			}
-		});
+            Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
+            query.setMaxResults(harvestingBatchSize);
+            return query.getResultList();
+        });
 	}
 
     public void updateAsHarvested(List<ErrorOccurrence> events)
