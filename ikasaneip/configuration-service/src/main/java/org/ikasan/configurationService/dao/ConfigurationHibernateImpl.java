@@ -40,13 +40,16 @@
  */
 package org.ikasan.configurationService.dao;
 
-import java.util.List;
-
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 /**
  * Implementation of the ConfigurationDao interface providing
@@ -62,18 +65,24 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public Configuration findByConfigurationId(String configurationId)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
-        criteria.add(Restrictions.eq("configurationId", configurationId));
 
-        List<Configuration<List<ConfigurationParameter>>> configurations = (List<Configuration<List<ConfigurationParameter>>>) getHibernateTemplate().findByCriteria(criteria);
-        if(configurations == null || configurations.size() == 0)
-        {
+        return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Configuration> criteriaQuery = builder.createQuery(Configuration.class);
+            Root<DefaultConfiguration> root = criteriaQuery.from(DefaultConfiguration.class);
+
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("configurationId"),configurationId));
+
+            Query<Configuration> query = session.createQuery(criteriaQuery);
+            List<Configuration> list = query.getResultList();
+            if(list!=null && !list.isEmpty()){
+                return list.get(0);
+            }
             return null;
-        }
-
-        Configuration<List<ConfigurationParameter>> configuration = configurations.get(0);
-
-        return configuration;
+        });
     }
 
     /* (non-Javadoc)

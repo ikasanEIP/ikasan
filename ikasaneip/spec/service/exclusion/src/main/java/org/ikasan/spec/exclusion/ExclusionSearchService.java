@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,36 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao.constants;
+package org.ikasan.spec.exclusion;
+
+import org.ikasan.spec.search.PagedSearchResult;
+
+import java.util.Date;
 
 /**
- * @author CMI2 Development Team
- *
+ * ExclusionService contract.
+ * 
+ * @author Ikasan Development Team
  */
-public interface SecurityConstants
+public interface ExclusionSearchService<EVENT,IDENTIFIER>
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = new Long(1);
-	
-	public static final String PRINCIPAL_ID = "principalId";
-	
-	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
-            " User as u " +
-            " where  u.id = up.userId" +
-            " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
+    /**
+     * Perform a paged search for <code>ExclusionEvent</code>s
+     *
+     * @param pageNo - The page number to retrieve
+     * @param pageSize - The size of the page
+     * @param orderBy - order by field
+     * @param orderAscending - ascending flag
+     * @param moduleName - The module name
+     * @param flowName - The name of Flow internal to the Module
+     * @param componentName - The component name
+     * @param identifier - The exclusion identifier
+     * @param fromDate - The from date
+     * @param untilDate - The to date
+     *
+     * @return PagedSearchResult
+     */
+    public PagedSearchResult<EVENT> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+        final String moduleName, final String flowName, final String componentName, IDENTIFIER identifier,
+        final Date fromDate, final Date untilDate);
 
-    public static final String GET_POLICY_WITH_ROLE_QUERY = "select p from Policy as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
-
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = "select p from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
-
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = "select distinct(p) from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name in (:name)" ;
 }

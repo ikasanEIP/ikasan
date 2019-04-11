@@ -40,12 +40,17 @@
  */
 package org.ikasan.trigger.dao;
 
-import java.util.List;
-
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.ikasan.trigger.model.Trigger;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Hibernate implementation for the <code>TriggerDao</code> interface
@@ -94,23 +99,39 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
 	public List<Trigger> findTriggers(String moduleName, String flowName,
 			String flowElementName)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Trigger.class);
-		
-		if(moduleName != null && moduleName.length() > 0);
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.length() > 0);
-		{
-			criteria.add(Restrictions.eq("flowName", flowName));
-		}
-		
-		if(flowElementName != null && flowElementName.length() > 0);
-		{
-			criteria.add(Restrictions.eq("flowElementName", flowElementName));
-		}
-        
-        return (List<Trigger>)this.getHibernateTemplate().findByCriteria(criteria);
+		return getHibernateTemplate().execute((Session session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Trigger> criteriaQuery = builder.createQuery(Trigger.class);
+
+            Root<Trigger> root = criteriaQuery.from(Trigger.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.length() > 0)
+            {
+                predicates.add(builder.equal(root.get("moduleName"),moduleName));
+            }
+
+            if(flowName != null && flowName.length() > 0)
+            {
+                predicates.add(builder.equal(root.get("flowName"),flowName));
+            }
+
+            if(flowElementName != null && flowElementName.length() > 0)
+            {
+                predicates.add(builder.equal(root.get("flowElementName"),flowElementName));
+            }
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<Trigger> query = session.createQuery(criteriaQuery);
+            List<Trigger> rowList = query.getResultList();
+
+            return rowList;
+
+        });
+
 	}
 }

@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.systemevent.model;
+package org.ikasan.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -86,7 +86,7 @@ public class ArrayListPagedSearchResult<T> implements PagedSearchResult<T>, Seri
      * 
      * @param pagedResults - search results comprising a single page of results
      *            from a larger super set
-     * @param firstResult - index of the first result shown here into the larger
+     * @param firstResultIndex - index of the first result shown here into the larger
      *            super set of results
      * @param resultSize - size of the larger super set of results
      */
@@ -106,10 +106,14 @@ public class ArrayListPagedSearchResult<T> implements PagedSearchResult<T>, Seri
     public int getFirstResultIndex()
     {
         return firstResultIndex;
+// FIXME        return firstResultIndex+1;
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.search.PagedSearchResult#getLastResultIndex()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.management.search.PagedSearchResult#getLastResultIndex()
      */
     public long getLastResultIndex()
     {

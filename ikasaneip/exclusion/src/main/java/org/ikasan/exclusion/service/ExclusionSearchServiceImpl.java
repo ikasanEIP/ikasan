@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,36 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao.constants;
+package org.ikasan.exclusion.service;
+
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionSearchService;
+import org.ikasan.spec.search.PagedSearchResult;
+
+import java.util.Date;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public interface SecurityConstants
+public class ExclusionSearchServiceImpl
+    implements ExclusionSearchService<ExclusionEvent, String>
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = new Long(1);
-	
-	public static final String PRINCIPAL_ID = "principalId";
-	
-	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
-            " User as u " +
-            " where  u.id = up.userId" +
-            " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
+	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
-    public static final String GET_POLICY_WITH_ROLE_QUERY = "select p from Policy as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
+	public ExclusionSearchServiceImpl(ExclusionEventDao<String,ExclusionEvent> exclusionEventDao)
+	{
+		this.exclusionEventDao = exclusionEventDao;
+		if(this.exclusionEventDao == null)
+		{
+			throw new IllegalArgumentException("exclusionEventDao cannot be null!");
+		}
+	}
 
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = "select p from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
-
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = "select distinct(p) from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name in (:name)" ;
+    @Override
+    public PagedSearchResult<ExclusionEvent> find(int pageNo, int pageSize, String orderBy,
+        boolean orderAscending, String moduleName, String flowName, String componentName,
+        String identifier, Date fromDate, Date untilDate)
+    {
+        return exclusionEventDao.find(pageNo,pageSize,orderBy,orderAscending,moduleName,flowName,componentName,identifier,fromDate,untilDate);
+    }
 }
+ 
