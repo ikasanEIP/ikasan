@@ -134,7 +134,7 @@ to problem management systems.
 The Wiretap Service allows for data on the wire to be collected and inspected. This service is an invaluable tool allowing for end to end tracking of data events throughout the Ikasan service bus. Wiretap jobs
 are configured on a component at runtime and record all data events that are received by the component. The wiretap events can be written to the underlying persistent data store or alternatively
 written to the log file. Wiretap events are also written to a text index in order to facilitate a fast and efficient context based search facility. This service provides a high level of visibility on
-all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been received by all of the intended endpoints.
+all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been delivered to all of the intended endpoints.
 
 <br/>
 
