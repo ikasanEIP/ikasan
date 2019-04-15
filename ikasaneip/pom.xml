@@ -440,6 +440,7 @@
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.solr>7.1.0</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
+        <version.vtd.xml>2.13.4</version.vtd.xml>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -1431,6 +1432,14 @@
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>kryo</artifactId>
                 <version>${version.kryo}</version>
+            </dependency>
+
+            <!-- used in component filter to support XML -->
+            <!-- TODO Review whether we want this dependency on an XML implementation -->
+            <dependency>
+                <groupId>com.ximpleware</groupId>
+                <artifactId>vtd-xml</artifactId>
+                <version>${version.vtd.xml}</version>
             </dependency>
 
             <dependency>
