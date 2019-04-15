@@ -1,5 +1,6 @@
 package org.ikasan.rest.module;
 
+import org.ikasan.spec.module.ModuleService;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Configuration application implementing the REST contract
@@ -33,11 +37,17 @@ public class ConfigurationApplication {
     @Autowired
     private ModuleContainer moduleContainer;
 
+    @Autowired
+    /** The module service */
+    private ModuleService moduleService;
+
+
     /**
      * TODO: work out how to get annotation security working.
      *
      * @param moduleName
      * @param flowName
+     * @param componentName
      * @return
      */
     @RequestMapping(method = RequestMethod.GET,
@@ -73,6 +83,19 @@ public class ConfigurationApplication {
 
         return new ResponseEntity("Configuration created!", HttpStatus.OK);
     }
+
+    private Configuration convert(ConfiguredResource configuredResource){
+
+        Configuration configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+
+        if (configuration == null) {
+            configuration = this.configurationManagement.createConfiguration(configuredResource);
+        }
+
+        return configuration;
+
+    }
+
 
     /**
      * TODO: work out how to get annotation security working.
@@ -161,6 +184,23 @@ public class ConfigurationApplication {
 
     }
 
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/flows",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getFlowsConfiguration() {
+
+        Module<Flow> module = moduleService.getModules().get(0);
+
+        List<Configuration> configuredResources = module.getFlows().stream()
+            .filter( flow -> flow instanceof ConfiguredResource )
+            .map(flow -> convert((ConfiguredResource) flow))
+            .collect(Collectors.toList());
+
+        return new ResponseEntity(configuredResources,HttpStatus.OK);
+    }
+
+
     /**
      * TODO: work out how to get annotation security working.
      *
@@ -200,5 +240,24 @@ public class ConfigurationApplication {
         }
 
         return new ResponseEntity("Configuration created!", HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/invokers",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getInvokersConfigurtion() {
+
+        Module<Flow> module = moduleService.getModules().get(0);
+
+        List<Configuration> configuredResources = module.getFlows().stream()
+            .map(flow -> flow.getFlowElements())
+            .flatMap(Collection::stream)
+            .map(flowElement -> flowElement.getFlowElementInvoker())
+            .filter( flowElementInvoker -> flowElementInvoker instanceof ConfiguredResource )
+            .map(flowElementInvoker -> convert((ConfiguredResource) flowElementInvoker))
+            .collect(Collectors.toList());
+
+        return new ResponseEntity(configuredResources,HttpStatus.OK);
     }
 }
