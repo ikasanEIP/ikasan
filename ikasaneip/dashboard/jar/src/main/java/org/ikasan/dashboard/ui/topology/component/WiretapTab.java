@@ -264,19 +264,6 @@ public class WiretapTab extends TopologyTab
 	            		componentNames.add("after " + ((Component)component).getName());
 	            	}
             	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-            		
-            		modulesNames = new HashSet<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
 
 				String solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
 

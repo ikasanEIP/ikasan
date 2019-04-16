@@ -390,19 +390,6 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
         	}
     	}
     	
-    	if(modulesNames == null && flowNames == null && componentNames == null
-    			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-    	{
-    		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-    		
-    		modulesNames = new ArrayList<String>();
-    		
-    		for(BusinessStreamFlow flow: businessStream.getFlows())
-    		{
-    			modulesNames.add(flow.getFlow().getModule().getName());
-    		}
-    	}
-    	
 		List<ErrorOccurrence> errorOccurrences = errorReportingManagementService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	

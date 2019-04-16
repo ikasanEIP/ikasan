@@ -996,159 +996,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		            this.moduleTree.setParent(module, server);
 		            this.moduleTree.setChildrenAllowed(module, true);
 		            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-
-		            Set<Flow> flows = module.getFlows();
-
-		            for(Flow flow: flows)
-		            {
-		                this.moduleTree.addItem(flow);
-		                this.moduleTree.setItemCaption(flow, flow.getName());
-	                    this.moduleTree.setParent(flow, module);
-		                this.moduleTree.setChildrenAllowed(flow, true);
-
-                        if(flow.isConfigurable())
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
-                        }
-                        else
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
-                        }
-
-		                Set<Component> components = flow.getComponents();
-
-		                for(Component component: components)
-		                {
-		                	this.moduleTree.addItem(component);
-		                	this.moduleTree.setParent(component, flow);
-		                	this.moduleTree.setItemCaption(component, component.getName());
-		                	this.moduleTree.setChildrenAllowed(component, false);
-
-		                	if(component.isConfigurable())
-    	                	{
-    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
-    	                	}
-    	                	else
-    	                	{
-    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
-    	                	}
-		                }
-		            }
 		        }
 			}
-
-			List<BusinessStream> businessStreams = this.topologyService.getAllBusinessStreams();
-
-			if(this.businessStreamCombo != null)
-			{
-				this.businessStreamCombo.removeAllItems();
-
-				for(BusinessStream businessStream: businessStreams)
-				{
-					this.businessStreamCombo.addItem(businessStream);
-					this.businessStreamCombo.setItemCaption(businessStream, businessStream.getName());
-				}
-			}
-
-			this.treeViewBusinessStreamCombo.removeAllItems();
-
-			BusinessStream businessStreamAll = new BusinessStream();
-			businessStreamAll.setName("All");
-
-			this.treeViewBusinessStreamCombo.addItem(businessStreamAll);
-			this.treeViewBusinessStreamCombo.setItemCaption(businessStreamAll, businessStreamAll.getName());
-
-			for(BusinessStream businessStream: businessStreams)
-			{
-				this.treeViewBusinessStreamCombo.addItem(businessStream);
-				this.treeViewBusinessStreamCombo.setItemCaption(businessStream, businessStream.getName());
-			}
-
-			this.treeViewBusinessStreamCombo.setValue(businessStreamAll);
     	}
-		else
-		{
-			List<BusinessStream> businessStreams = this.topologyService.getAllBusinessStreams();
 
-			if(this.businessStreamCombo != null)
-			{
-				this.businessStreamCombo.removeAllItems();
-			}
-
-			this.treeViewBusinessStreamCombo.removeAllItems();
-
-			BusinessStream businessStreamAll = new BusinessStream();
-			businessStreamAll.setName("All");
-
-			this.treeViewBusinessStreamCombo.addItem(businessStreamAll);
-			this.treeViewBusinessStreamCombo.setItemCaption(businessStreamAll, businessStreamAll.getName());
-			this.treeViewBusinessStreamCombo.setValue(businessStreamAll);
-
-			for(BusinessStream businessStream: businessStreams)
-			{
-				if(authentication.canAccessLinkedItem(PolicyLinkTypeConstants.BUSINESS_STREAM_LINK_TYPE, businessStream.getId()))
-				{
-					for(BusinessStreamFlow bsFlow: businessStream.getFlows())
-		        	{
-		        		Server server = bsFlow.getFlow().getModule().getServer();
-		        		Module module = bsFlow.getFlow().getModule();
-		        		Flow flow = bsFlow.getFlow();
-
-		        		if(!moduleTree.containsId(server))
-		        		{
-		            		moduleTree.addItem(server);
-		                    moduleTree.setItemCaption(server, server.getName());
-		                    moduleTree.setChildrenAllowed(server, true);
-		                    		        		}
-
-		                moduleTree.addItem(module);
-		                moduleTree.setItemCaption(module, module.getName());
-		                moduleTree.setParent(module, server);
-		                moduleTree.setChildrenAllowed(module, true);
-		                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-
-		                moduleTree.addItem(flow);
-		                moduleTree.setItemCaption(flow, flow.getName());
-		                moduleTree.setParent(flow, module);
-		                moduleTree.setChildrenAllowed(flow, true);
-
-                        if(flow.isConfigurable())
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
-                        }
-                        else
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
-                        }
-
-		                Set<Component> components = flow.getComponents();
-
-		                for(Component component: components)
-		                {
-		                	moduleTree.addItem(component);
-		                	moduleTree.setParent(component, flow);
-		                	moduleTree.setItemCaption(component, component.getName());
-		                	moduleTree.setChildrenAllowed(component, false);
-
-		                	if(component.isConfigurable())
-    	                	{
-    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
-    	                	}
-    	                	else
-    	                	{
-    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
-    	                	}
-		                }
-
-		                this.businessStreamCombo.addItem(businessStream);
-		    			this.businessStreamCombo.setItemCaption(businessStream, businessStream.getName());
-
-		    			this.treeViewBusinessStreamCombo.addItem(businessStream);
-		    			this.treeViewBusinessStreamCombo.setItemCaption(businessStream, businessStream.getName());
-		        	}
-	        	}
-        	}
-		}
 
 		for (Iterator<?> it = this.moduleTree.rootItemIds().iterator(); it.hasNext();)
 		{
@@ -1163,6 +1014,52 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				this.moduleTree.collapseItemsRecursively(nextItem);
 			}
 		}
+
+        this.moduleTree.addExpandListener(new Tree.ExpandListener() {
+            public void nodeExpand(Tree.ExpandEvent event)
+            {
+                if(event.getItemId() instanceof Module)
+                {
+                    Set<Flow> flows = ((Module) event.getItemId()).getFlows();
+
+                    for(Flow flow: flows)
+                    {
+                        moduleTree.addItem(flow);
+                        moduleTree.setItemCaption(flow, flow.getName());
+                        moduleTree.setParent(flow, (Module) event.getItemId());
+                        moduleTree.setChildrenAllowed(flow, true);
+
+                        if(flow.isConfigurable())
+                        {
+                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+                        }
+                        else
+                        {
+                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+                        }
+
+                        Set<Component> components = flow.getComponents();
+
+                        for(Component component: components)
+                        {
+                            moduleTree.addItem(component);
+                            moduleTree.setParent(component, flow);
+                            moduleTree.setItemCaption(component, component.getName());
+                            moduleTree.setChildrenAllowed(component, false);
+
+                            if(component.isConfigurable())
+                            {
+                                TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+                            }
+                            else
+                            {
+                                TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 	}
 
 	protected boolean actionFlow(Flow flow, String action)
