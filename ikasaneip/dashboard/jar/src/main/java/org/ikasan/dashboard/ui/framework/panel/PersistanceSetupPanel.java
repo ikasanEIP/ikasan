@@ -498,10 +498,20 @@ public class PersistanceSetupPanel extends Panel implements View
     protected void initPersistanceStoreTypeCombo()
     {
     	persistanceStoreTypeCombo.removeAllItems();
-    	
-    	persistanceStoreTypeCombo.addItem("Full Installation");
-    	persistanceStoreTypeCombo.addItem("Upgrade");
-    	persistanceStoreTypeCombo.addItem("Provision File Transfer");
+
+        if(this.baselinePersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Full Installation");
+        }   
+        else if(this.postBaselinePersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Upgrade");
+        }
+
+        if(this.fileTransferPersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Provision File Transfer");
+        }
     }
 
     /* (non-Javadoc)
