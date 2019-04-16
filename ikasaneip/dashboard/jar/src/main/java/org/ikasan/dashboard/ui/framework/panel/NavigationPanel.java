@@ -139,7 +139,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		this.systemEventService = systemEventService;
 		this.userService = userService;
 		this.topologyService = topologyService;
-		
+
 		init();
 	}
 
@@ -276,6 +276,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		
 		if(this.menu != null)
 		{
+		    this.menu.buildMenu();
 			this.menu.setLoggedIn();
 			menu.setVisible(true);
 		}

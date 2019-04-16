@@ -102,11 +102,9 @@ public class Menu extends CssLayout
 		this.views = views;
 		this.menuLayout = menuLayout;
         this.platformConfigurationService = platformConfigurationService;
-		
-		buildMenu();
 	}
 	
-	protected void buildMenu() 
+	public void buildMenu()
     {
         menuItemsLayout.setPrimaryStyleName("valo-menuitems");
         menuItemsLayout.setResponsive(true);

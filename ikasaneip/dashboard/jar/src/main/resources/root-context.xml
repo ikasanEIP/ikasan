@@ -338,7 +338,7 @@
     </bean>
     
     <bean id="bannerImageResource" class="com.vaadin.server.ThemeResource" scope="session">
-        <constructor-arg value="images/Ikasan_Logo_Transp.png"/>
+        <constructor-arg value="images/transparent_lettering_logo.png"/>
     </bean>
     
     <bean id="bannerLabel" class="com.vaadin.ui.Label" scope="session">
