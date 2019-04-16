@@ -38,12 +38,14 @@ public class IkasanSybaseASE157LimitHandler extends AbstractLimitHandler
         return true;
     }
 
-    public int bindLimitParametersAtStartOfQuery(PreparedStatement statement, int index) throws SQLException
+    @Override
+    public int bindLimitParametersAtStartOfQuery(RowSelection selection, PreparedStatement statement, int index) throws SQLException
     {
         return 0;
     }
 
-    public int bindLimitParametersAtEndOfQuery(PreparedStatement statement, int index) throws SQLException {
+    @Override
+    public int bindLimitParametersAtEndOfQuery(RowSelection selection, PreparedStatement statement, int index) throws SQLException {
         return 0;
     }
 

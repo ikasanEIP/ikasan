@@ -613,20 +613,6 @@ public class ExclusionsTab extends TopologyTab
 			}
 		}
 
-
-		if(modulesNames == null && flowNames == null
-				&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-		{
-			BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-
-			modulesNames = new ArrayList<String>();
-
-			for(BusinessStreamFlow flow: businessStream.getFlows())
-			{
-				modulesNames.add(flow.getFlow().getModule().getName());
-			}
-		}
-
 		List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
 				flowNames, fromDate.getValue(),  toDate.getValue(), null, platformConfigurationService.getSearchResultSetSize());
 
