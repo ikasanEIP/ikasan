@@ -211,7 +211,7 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
 					"baseline changes are required!", e);
 		}
 		
@@ -242,7 +242,7 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
 					"baseline changes are required!", e);
 		}
 		
@@ -273,7 +273,7 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
 					"baseline changes are required!", e);
 		}
 		

@@ -77,6 +77,7 @@ public class LoginPanel extends Panel implements View
     	Panel panel = new Panel();
     	panel.setWidth(600, Unit.PIXELS);
     	panel.setHeight(400, Unit.PIXELS);
+        panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
     	bannerLabel.setStyleName("ikasan-maroon");
         bannerLabel.setHeight("100%");

@@ -338,7 +338,6 @@ public class TopologyServiceImpl implements TopologyService
 		Set<Flow> flowSet = discoverFlows(serverId, module, flows);
 
 		module.addFlows(flowSet);
-		//module.setFlows(flowSet);
 
 		this.topologyDao.save(module);
 

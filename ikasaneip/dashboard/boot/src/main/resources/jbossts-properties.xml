@@ -1,0 +1,6 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+    <entry name="com.arjuna.ats.arjuna.coordinator.transactionStatusManagerEnable">NO</entry>
+    <entry name="com.arjuna.ats.arjuna.recovery.recoveryListener">NO</entry>
+</properties>
