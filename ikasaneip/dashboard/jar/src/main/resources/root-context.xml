@@ -254,14 +254,28 @@
     <bean id="menuLayout" class="org.ikasan.dashboard.ui.framework.navigation.MenuLayout" scope="session"/>
     
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
-    	<constructor-arg ref="eventExclusionsTable"/>
-    	<constructor-arg ref="flowStateTable"/>
-    	<constructor-arg ref="errorReportingManagementService"/>
-    	<constructor-arg ref="topologyService"/>
-    	<constructor-arg ref="hospitalManagementService"/>
-    	<!-- constructor-arg ref="graphCache"/ -->
+        <constructor-arg ref="titleImage"/>
+        <constructor-arg ref="landingPageImage"/>
     </bean>
-    
+
+    <bean id="titleImage" class="com.vaadin.ui.Image" scope="session">
+        <constructor-arg value=""/>
+        <constructor-arg ref="titleImageResource"/>
+    </bean>
+
+    <bean id="titleImageResource" class="com.vaadin.server.ThemeResource" scope="session">
+        <constructor-arg value="images/ikasan_title_transparent.png"/>
+    </bean>
+
+    <bean id="landingPageImage" class="com.vaadin.ui.Image" scope="session">
+        <constructor-arg value=""/>
+        <constructor-arg ref="landingPageImageResource"/>
+    </bean>
+
+    <bean id="landingPageImageResource" class="com.vaadin.server.ThemeResource" scope="session">
+        <constructor-arg value="images/solution.png"/>
+    </bean>
+
     <bean id="loginPanel" class="org.ikasan.dashboard.ui.framework.panel.LoginPanel" scope="session">
     	<constructor-arg ref="authenticationService"/>
 		<constructor-arg ref="adminUserVisibilityGroup"/>
@@ -270,10 +284,6 @@
 		<constructor-arg ref="bannerImageLogin"/>
 		<constructor-arg ref="bannerLabelLogin"/>
     </bean>
-    
-    <!-- bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
-    	<constructor-arg ref="errorReportingService"/>
-    </bean -->
     
     <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
     	<constructor-arg value="Event Exclusions"/>
@@ -332,13 +342,13 @@
         <constructor-arg ref="bannerImageResource"/>
     </bean>
     
-     <bean id="bannerImageLogin" class="com.vaadin.ui.Image" scope="session">
+    <bean id="bannerImageLogin" class="com.vaadin.ui.Image" scope="session">
     	<constructor-arg value=""/>
         <constructor-arg ref="bannerImageResource"/>
     </bean>
     
     <bean id="bannerImageResource" class="com.vaadin.server.ThemeResource" scope="session">
-        <constructor-arg value="images/transparent_lettering_logo.png"/>
+        <constructor-arg value="images/mr_squid_titling_dashboard.png"/>
     </bean>
     
     <bean id="bannerLabel" class="com.vaadin.ui.Label" scope="session">

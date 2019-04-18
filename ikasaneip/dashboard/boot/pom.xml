@@ -43,6 +43,10 @@
 					<groupId>org.ikasan</groupId>
 					<artifactId>ikasan-rest-boot</artifactId>
 				</exclusion>
+                <!--<exclusion>-->
+                    <!--<groupId>org.ikasan</groupId>-->
+                    <!--<artifactId>ikasan-transaction-arjuna</artifactId>-->
+                <!--</exclusion>-->
 			</exclusions>
         </dependency>
 

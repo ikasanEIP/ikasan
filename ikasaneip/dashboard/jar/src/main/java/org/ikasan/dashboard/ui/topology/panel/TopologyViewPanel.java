@@ -57,6 +57,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.data.util.filter.SimpleStringFilter;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -982,84 +985,59 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			{
 				Set<Module> modules = server.getModules();
 
-				this.moduleTree.addItem(server);
-
-				this.moduleTree.setItemCaption(server, server.getName());
-				this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
-				this.moduleTree.setChildrenAllowed(server, true);
-
-
 		        for(Module module: modules)
 		        {
 		            this.moduleTree.addItem(module);
 		            this.moduleTree.setItemCaption(module, module.getName());
-		            this.moduleTree.setParent(module, server);
 		            this.moduleTree.setChildrenAllowed(module, true);
 		            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 		        }
 			}
     	}
 
-
-		for (Iterator<?> it = this.moduleTree.rootItemIds().iterator(); it.hasNext();)
-		{
-			this.moduleTree.expandItemsRecursively(it.next());
-		}
-
-		for (Iterator<?> it = this.moduleTree.getItemIds().iterator(); it.hasNext();)
-		{
-			Object nextItem = it.next();
-			if(nextItem instanceof Module)
+        this.moduleTree.addExpandListener(event ->
+        {
+			if(event.getItemId() instanceof Module)
 			{
-				this.moduleTree.collapseItemsRecursively(nextItem);
+				Set<Flow> flows = ((Module) event.getItemId()).getFlows();
+
+				for(Flow flow: flows)
+				{
+					moduleTree.addItem(flow);
+					moduleTree.setItemCaption(flow, flow.getName());
+					moduleTree.setParent(flow, (Module) event.getItemId());
+					moduleTree.setChildrenAllowed(flow, true);
+
+					if(flow.isConfigurable())
+					{
+						TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+					}
+					else
+					{
+						TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+					}
+
+					Set<Component> components = flow.getComponents();
+
+					for(Component component: components)
+					{
+						moduleTree.addItem(component);
+						moduleTree.setParent(component, flow);
+						moduleTree.setItemCaption(component, component.getName());
+						moduleTree.setChildrenAllowed(component, false);
+
+						if(component.isConfigurable())
+						{
+							TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+						}
+						else
+						{
+							TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+						}
+					}
+				}
 			}
-		}
-
-        this.moduleTree.addExpandListener(new Tree.ExpandListener() {
-            public void nodeExpand(Tree.ExpandEvent event)
-            {
-                if(event.getItemId() instanceof Module)
-                {
-                    Set<Flow> flows = ((Module) event.getItemId()).getFlows();
-
-                    for(Flow flow: flows)
-                    {
-                        moduleTree.addItem(flow);
-                        moduleTree.setItemCaption(flow, flow.getName());
-                        moduleTree.setParent(flow, (Module) event.getItemId());
-                        moduleTree.setChildrenAllowed(flow, true);
-
-                        if(flow.isConfigurable())
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
-                        }
-                        else
-                        {
-                            TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
-                        }
-
-                        Set<Component> components = flow.getComponents();
-
-                        for(Component component: components)
-                        {
-                            moduleTree.addItem(component);
-                            moduleTree.setParent(component, flow);
-                            moduleTree.setItemCaption(component, component.getName());
-                            moduleTree.setChildrenAllowed(component, false);
-
-                            if(component.isConfigurable())
-                            {
-                                TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
-                            }
-                            else
-                            {
-                                TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
-                            }
-                        }
-                    }
-                }
-            }
-        });
+		});
 	}
 
 	protected boolean actionFlow(Flow flow, String action)
