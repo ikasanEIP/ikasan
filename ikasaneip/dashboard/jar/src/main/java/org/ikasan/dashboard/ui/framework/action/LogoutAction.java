@@ -122,6 +122,7 @@ public class LogoutAction implements Action
         WrappedSession httpSession = vSession.getSession();
         
         this.navigationPanel.reset();
+        this.navigationPanel.setVisible(false);
         
        //Invalidate HttpSession
         httpSession.invalidate();

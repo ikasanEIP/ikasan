@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.boot;
 
+import com.vaadin.ui.UI;
 import org.ikasan.dashboard.ui.WebAppStartStopListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * Created by amajewski on 24/04/2017.
  */
-
 @Configuration
 public class WebContextInitializer implements ServletContextInitializer
 {
@@ -97,7 +97,6 @@ public class WebContextInitializer implements ServletContextInitializer
         @Override
         public void sessionDestroyed(HttpSessionEvent event)
         {
-            System.out.println("session destroyed");
         }
     }
 

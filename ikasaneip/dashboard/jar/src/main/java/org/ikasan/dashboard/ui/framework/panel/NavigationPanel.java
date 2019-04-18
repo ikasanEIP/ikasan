@@ -104,7 +104,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	private Component toggleButton = new Button();
 	private Menu menu;
 	private SystemEventService systemEventService;
-	private UserService userService; 
+	private UserService userService;
 	private TopologyService topologyService;
 
 	/**
@@ -151,7 +151,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
-		this.setHeight(30, Unit.PIXELS);
+		this.setHeight(300, Unit.PIXELS);
 		this.setStyleName("navigation");
 		
 		this.layout.setWidth(97, Unit.PERCENTAGE);
@@ -229,6 +229,8 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		});
 
 		this.setContent(layout);
+
+        this.setVisible(false);
 	}
 
 	/**
@@ -254,7 +256,6 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	 */
 	public void postCommit() throws CommitException
 	{
-		this.layout.removeComponent(this.loginButton);
 		this.layout.removeComponent(this.setupButton);
 		IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
         	.getAttribute(DashboardSessionValueConstants.USER);
@@ -314,6 +315,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	        UI.getCurrent().getNavigator().navigateTo("landingView");
 		}
 
+		this.setVisible(true);
 	}
 
 	/**
@@ -344,6 +346,14 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	@Override
 	public void setVisible(boolean visible)
 	{
+	    if(visible == false)
+        {
+            this.setHeight(0, Unit.PIXELS);
+        }
+        else
+        {
+            this.setHeight(30, Unit.PIXELS);
+        }
 		this.layout.setVisible(visible);
 		
 		if(this.visibilityGroup != null)
