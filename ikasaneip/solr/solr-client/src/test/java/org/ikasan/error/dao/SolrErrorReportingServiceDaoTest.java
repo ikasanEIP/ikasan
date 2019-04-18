@@ -64,13 +64,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
@@ -114,13 +107,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
@@ -154,13 +140,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);
@@ -222,13 +201,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
@@ -288,13 +260,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);
@@ -358,13 +323,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
             dao.setSolrClient(server);

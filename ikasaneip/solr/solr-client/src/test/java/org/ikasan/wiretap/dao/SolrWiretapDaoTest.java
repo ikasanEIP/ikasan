@@ -61,13 +61,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -110,13 +103,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
@@ -186,13 +172,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -260,13 +239,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
@@ -339,13 +311,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -417,13 +382,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -484,13 +442,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -550,13 +501,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
@@ -626,13 +570,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -698,13 +635,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
             solrCloudBase.setDaysToKeep(0);
@@ -769,13 +699,6 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
 
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);

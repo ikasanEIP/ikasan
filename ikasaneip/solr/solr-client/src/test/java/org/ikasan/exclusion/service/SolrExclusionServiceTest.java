@@ -47,13 +47,6 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
-            HashMap<String, Object> fields = new HashMap<>();
-            fields.put("id", new Integer(1));
-
-            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
-            server.request(schemaRequest);
-
-
             SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
