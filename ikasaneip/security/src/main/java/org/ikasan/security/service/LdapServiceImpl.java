@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.service;
 
+import org.apache.commons.lang.CharEncoding;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -62,6 +63,8 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -127,7 +130,7 @@ public class LdapServiceImpl implements LdapService
 				authenticationMethod.getLdapUserSearchBaseDn(), "CN={0}",
 				contextSource);
 		
-		DirContextOperations dir = null;
+                DirContextOperations dir = null;
 		try
 		{
 			dir = userSearch.searchForUser(userName);
@@ -372,79 +375,92 @@ public class LdapServiceImpl implements LdapService
 
 		for (String username : users)
 		{
-			LdapUser ldapUser = getLdapUser(username);
-			
-			if (ldapUser == null)
-			{
-				continue;
-			}
-			
-			List<IkasanPrincipal> ikasanPrincipals = new ArrayList<IkasanPrincipal>();
-			User user = userDao.getUser(ldapUser.accountName);
-			
-			if(user == null)
-			{
-				// Setting a default password. Need to think about forcing the user to change it,
-				String encodedPassword = passwordEncoder.encode("pa55word");
-				
-				user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
-				user.setDepartment(ldapUser.department);
-				user.setFirstName(ldapUser.firstName);
-				user.setSurname(ldapUser.surname);
-				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
-				
-				this.userDao.save(user);
-				
-				user = userDao.getUser(ldapUser.accountName);
-			} 
-				
-			IkasanPrincipal principal = securityDao
-					.getPrincipalByName(ldapUser.accountName);
-			if (principal == null)
-			{
-				principal = new IkasanPrincipal();
-				principal.setName(ldapUser.accountName);
-				principal.setType("user");
-				if(ldapUser.description == null)
-				{
-					principal.setDescription("No description");
-				}
-				else
-				{
-					principal.setDescription(ldapUser.description);
-				}
+            LdapUser ldapUser = null;
+		    try
+            {
+                ldapUser = getLdapUser(username);
 
-				securityDao.saveOrUpdatePrincipal(principal);
-			}
+                if (ldapUser == null)
+                {
+                    continue;
+                }
 
-			ikasanPrincipals.add(principal);
-			
-			if(ldapUser.memberOf != null)
-			{
-				for(String name: ldapUser.memberOf)
-				{
-					if(name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
-					{
-						DistinguishedName dn = new DistinguishedName(name);
-						String cn = dn.getValue("cn");
-						
-						principal = this.securityDao.getPrincipalByName(cn);
-						
-						if(principal != null)
-						{
-							ikasanPrincipals.add(principal);
-						}
-					}
-				}
-			}
+                if(!Charset.forName(CharEncoding.ISO_8859_1).newEncoder().canEncode(ldapUser.accountName))
+                {
+                    logger.warn(String.format("User[%s] contains an unsupported character encoding.", ldapUser));
+                    continue;
+                }
 
-			user.setEmail(ldapUser.email);
-			user.setFirstName(ldapUser.firstName);
-			user.setSurname(ldapUser.surname);
-			user.setDepartment(ldapUser.department);
-			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
+                List<IkasanPrincipal> ikasanPrincipals = new ArrayList<IkasanPrincipal>();
+                User user = userDao.getUser(ldapUser.accountName);
 
-			this.userDao.save(user);				
+                if (user == null)
+                {
+                    // Setting a default password. Need to think about forcing the user to change it,
+                    String encodedPassword = passwordEncoder.encode("pa55word");
+
+                    user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
+                    user.setDepartment(ldapUser.department);
+                    user.setFirstName(ldapUser.firstName);
+                    user.setSurname(ldapUser.surname);
+                    user.setPrincipals(new HashSet<>(ikasanPrincipals));
+
+                    this.userDao.save(user);
+
+                    user = userDao.getUser(ldapUser.accountName);
+                }
+
+                IkasanPrincipal principal = securityDao
+                    .getPrincipalByName(ldapUser.accountName);
+                if (principal == null)
+                {
+                    principal = new IkasanPrincipal();
+                    principal.setName(ldapUser.accountName);
+                    principal.setType("user");
+                    if (ldapUser.description == null)
+                    {
+                        principal.setDescription("No description");
+                    } else
+                    {
+                        principal.setDescription(ldapUser.description);
+                    }
+
+                    securityDao.saveOrUpdatePrincipal(principal);
+                }
+
+                ikasanPrincipals.add(principal);
+
+                if (ldapUser.memberOf != null)
+                {
+                    for (String name : ldapUser.memberOf)
+                    {
+                        if (name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
+                        {
+                            DistinguishedName dn = new DistinguishedName(name);
+                            String cn = dn.getValue("cn");
+
+                            principal = this.securityDao.getPrincipalByName(cn);
+
+                            if (principal != null)
+                            {
+                                ikasanPrincipals.add(principal);
+                            }
+                        }
+                    }
+                }
+
+                user.setEmail(ldapUser.email);
+                user.setFirstName(ldapUser.firstName);
+                user.setSurname(ldapUser.surname);
+                user.setDepartment(ldapUser.department);
+                user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
+
+                this.userDao.save(user);
+            }
+            catch (Exception e)
+            {
+                logger.warn(String.format("An error has occurred attempting to synchronise user[%s] , with error message[%s]", ldapUser, e.getMessage()), e);
+            }
 		}
 	}
 

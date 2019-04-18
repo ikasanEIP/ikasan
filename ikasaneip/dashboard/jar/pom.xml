@@ -238,13 +238,76 @@
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-builder-spring</artifactId>
+			<artifactId>ikasan-topology</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-transaction-arjuna</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-transaction-arjuna</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-system-event</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-scheduler</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-replay</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-transaction-arjuna</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-error-reporting-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-hospital</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-solr</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
@@ -255,12 +318,17 @@
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-setup</artifactId>
 		</dependency>
-		
-
+        
  		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-monitor</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
