@@ -41,13 +41,10 @@
 package org.ikasan.topology.service;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
@@ -338,7 +335,6 @@ public class TopologyServiceImpl implements TopologyService
 		Set<Flow> flowSet = discoverFlows(serverId, module, flows);
 
 		module.addFlows(flowSet);
-		//module.setFlows(flowSet);
 
 		this.topologyDao.save(module);
 
@@ -357,7 +353,7 @@ public class TopologyServiceImpl implements TopologyService
         {
             List<String> discoveredComponentNames = discoveredComponentNames(flow);
 
-            Set<Component> components = flow.getComponents();
+            List<Component> components = distinctComponents(flow.getName(), flow.getComponents());
             logger.debug("Loading dbFlow using: serverId= " + serverId + " moduleId = " + module.getId()
                     + " flow name = " + flow.getName());
 
@@ -402,13 +398,29 @@ public class TopologyServiceImpl implements TopologyService
 		return flowSet;
 	}
 
-	private List<String> discoveredFlowNames(List<Flow> flows){
+	private List<String> discoveredFlowNames(List<Flow> flows)
+    {
 		return flows.stream().map(flow -> flow.getName()).collect(Collectors.toList());
 	}
 
-	private List<String> discoveredComponentNames(Flow flow){
-		return flow.getComponents().stream().map(component -> component.getName()).collect(Collectors.toList());
+	private List<String> discoveredComponentNames(Flow flow)
+    {
+		return flow.getComponents().stream().map(component -> component.getName()).distinct().collect(Collectors.toList());
 	}
+
+    private List<Component> distinctComponents(String flowName, Set<Component> components)
+    {
+        logger.info(String.format("Filtering distinct components for flow[%s]. Before:[%s].", flowName, components.size()));
+        List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
+        logger.info(String.format("After: [%s]", filtered.size()));
+        return filtered;
+    }
+
+    private <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
+    {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
 
     protected void cleanup(){
         this.cleanUpComponents();
