@@ -41,6 +41,7 @@
 package org.ikasan.module.service;
 
 import org.ikasan.module.converter.ModuleConverter;
+import org.ikasan.topology.model.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -68,11 +69,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 /**
@@ -484,7 +485,13 @@ public class ModuleInitialisationServiceImpl
             module.getFlows().forEach(topologyFlow ->
             {
                 topologyFlow.setModule(moduleDB);
+
+                // We only want to add distinct components per flow. The convenience API repeats components
+                // if they appear in multiple routes in a Flow.
+                topologyFlow.setComponents(new HashSet<>(distinctComponents(topologyFlow.getName(), topologyFlow.getComponents())));
+
                 topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
+
                 topologyService.save(topologyFlow);
                 logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
             });
@@ -493,6 +500,20 @@ public class ModuleInitialisationServiceImpl
         {
             logger.warn("Error encountered while performing local discovery.", e);
         }
+    }
+
+    private List<Component> distinctComponents(String flowName, Set<Component> components)
+    {
+        logger.info(String.format("Filtering distinct components for flow[%s]. Before:[%s].", flowName, components.size()));
+        List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
+        logger.info(String.format("After: [%s]", filtered.size()));
+        return filtered;
+    }
+
+    private <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
+    {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     /**
