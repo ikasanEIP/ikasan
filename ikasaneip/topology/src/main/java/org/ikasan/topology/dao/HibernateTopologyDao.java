@@ -409,7 +409,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
             }
             if (flowName != null)
             {
-                queryBuffer.append(" and name not in (:flowName) ");
+                queryBuffer.append(" and f.name not in (:flowName) ");
             }
 
             Query query = session.createQuery(queryBuffer.toString());
@@ -454,7 +454,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
                 queryBuffer.append(" and m.id = :moduleId ");
 
                 queryBuffer.append(" and s.id = :serverId ");
-                queryBuffer.append(" and name not in (:componentNames) ");
+                queryBuffer.append(" and c.name not in (:componentNames) ");
             }
 
             Query query = session.createQuery(queryBuffer.toString());
