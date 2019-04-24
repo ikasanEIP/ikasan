@@ -410,9 +410,9 @@ public class TopologyServiceImpl implements TopologyService
 
     private List<Component> distinctComponents(String flowName, Set<Component> components)
     {
-        logger.info(String.format("Filtering distinct components for flow[%s]. Before:[%s].", flowName, components.size()));
+        logger.info("Filtering distinct components for flow[{}]. Before:[{}].", flowName, components.size());
         List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
-        logger.info(String.format("After: [%s]", filtered.size()));
+        logger.info("After: [{}]", filtered.size());
         return filtered;
     }
 
