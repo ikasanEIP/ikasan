@@ -134,7 +134,6 @@
         <dependency>
             <groupId>com.ximpleware</groupId>
             <artifactId>vtd-xml</artifactId>
-            <version>2.13</version>
         </dependency>
 
         <dependency>

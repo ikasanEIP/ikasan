@@ -197,7 +197,7 @@ public class PersistenceServiceImpl implements PersistenceService
 		try
 		{
 			Contexts contexts 
-				= new Contexts(BASELINE, POST_BASELINE);
+				= new Contexts(BASELINE);
 			
 			List<ChangeSetStatus> statuses = this.generalLiquibase.getChangeSetStatuses(contexts, null);
 			

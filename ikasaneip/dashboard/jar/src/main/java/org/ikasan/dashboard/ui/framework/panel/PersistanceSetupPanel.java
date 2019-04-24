@@ -322,22 +322,7 @@ public class PersistanceSetupPanel extends Panel implements View
             				return;
             			}
 
-            			final LoginDialogLite dialog = new LoginDialogLite(authenticationService);
-
-                		UI.getCurrent().addWindow(dialog);
-                		
-                		dialog.addCloseListener(new Window.CloseListener() 
-                		{
-                            public void windowClose(CloseEvent e) 
-                            {
-                            	ikasanAuthentication = dialog.getIkasanAuthentication();
-                            	
-                            	if(ikasanAuthentication != null)
-                            	{
-                            		createFull();
-                            	}
-                            }
-                        });
+                        createFull();
             		}
             		else
             		{
@@ -353,23 +338,8 @@ public class PersistanceSetupPanel extends Panel implements View
          		            
             			 return;        			
         			}
-            		
-            		final LoginDialogLite dialog = new LoginDialogLite(authenticationService);
 
-            		UI.getCurrent().addWindow(dialog);
-            		
-            		dialog.addCloseListener(new Window.CloseListener() 
-            		{
-                        public void windowClose(CloseEvent e) 
-                        {
-                        	ikasanAuthentication = dialog.getIkasanAuthentication();
-                        	
-                        	if(ikasanAuthentication != null)
-                        	{
-                        		upgrade();
-                        	}
-                        }
-                    });
+                    upgrade();
             	}
             	else if(persistanceStoreTypeCombo.getValue().equals("Provision File Transfer"))
             	{
@@ -380,23 +350,8 @@ public class PersistanceSetupPanel extends Panel implements View
         		            
             			return;      			
         			}
-            		
-            		final LoginDialogLite dialog = new LoginDialogLite(authenticationService);
 
-            		UI.getCurrent().addWindow(dialog);
-            		
-            		dialog.addCloseListener(new Window.CloseListener() 
-            		{
-                        public void windowClose(CloseEvent e) 
-                        {
-                        	ikasanAuthentication = dialog.getIkasanAuthentication();
-                        	
-                        	if(ikasanAuthentication != null)
-                        	{
-                        		installFileTransfer();
-                        	}
-                        }
-                    });
+                    installFileTransfer();
             	}
             	
             	ikasanAuthentication = null;
@@ -543,10 +498,20 @@ public class PersistanceSetupPanel extends Panel implements View
     protected void initPersistanceStoreTypeCombo()
     {
     	persistanceStoreTypeCombo.removeAllItems();
-    	
-    	persistanceStoreTypeCombo.addItem("Full Installation");
-    	persistanceStoreTypeCombo.addItem("Upgrade");
-    	persistanceStoreTypeCombo.addItem("Provision File Transfer");
+
+        if(this.baselinePersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Full Installation");
+        }   
+        else if(this.postBaselinePersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Upgrade");
+        }
+
+        if(this.fileTransferPersistenceChangesRequired())
+        {
+            persistanceStoreTypeCombo.addItem("Provision File Transfer");
+        }
     }
 
     /* (non-Javadoc)
