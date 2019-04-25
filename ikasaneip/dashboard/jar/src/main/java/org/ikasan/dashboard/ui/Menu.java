@@ -192,7 +192,7 @@ public class Menu extends CssLayout
 
         moduleControlMenuItem.setHtmlContentAllowed(true);
         moduleControlMenuItem.setPrimaryStyleName("valo-menu-item");
-        moduleControlMenuItem.setIcon(VaadinIcons.CONNECT_O);
+        moduleControlMenuItem.setIcon(VaadinIcons.START_COG);
         menuItemsLayout.addComponent(moduleControlMenuItem);
         this.menuComponents.put(moduleControlMenuItem, SecurityConstants.TOPOLOGY_VIEW_PERMISSIONS);
 
