@@ -62,14 +62,8 @@
 
         <addDefaultValue columnName="Password"  tableName="Users"  defaultValue="2665f9cd19cc9946cf921623d4cab834b221e4" />
 
-        <!-- Update 'SHA-1'
-        UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password);
-        ALTER TABLE Users ADD NewPassword  VARCHAR(255);
-        ALTER TABLE Users ALTER Password SET DEFAULT '2665f9cd19cc9946cf921623d4cab834b221e4'
-        -->
-
-        <!--<sql>UPDATE Users SET NewPassword = CONCAT("{SHA-1}",Password)</sql>-->
-        <sql >UPDATE Users SET NewPassword = CONCAT('{SHA-1}',Password)</sql>
+        <sql dbms="mysql,h2,mssql">UPDATE Users SET NewPassword = CONCAT('{SHA-1}',Password)</sql>
+        <sql dbms="sybase">UPDATE Users SET NewPassword = '{SHA-1}'+Password</sql>
 
     </changeSet>
 
