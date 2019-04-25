@@ -15,7 +15,6 @@
         <entry key="hibernate.transaction.coordinator_class" value="jta" />
         <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
         <entry key="hibernate.enable_lazy_load_no_trans" value="true" />
-        <!--<entry key="hibernate.transaction.coordinator_class" value="jdbc"/>-->
     </util:map>
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
