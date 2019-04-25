@@ -60,6 +60,7 @@ import javax.ws.rs.core.Response;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.event.FieldEvents;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -378,7 +379,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		leftLayout.setMargin(true);
 		leftLayout.addComponent(this.topologyTreePanel);
 		hsplit.setFirstComponent(leftLayout);
-		HorizontalLayout rightLayout = new HorizontalLayout();
+		VerticalLayout rightLayout = new VerticalLayout();
 		rightLayout.setSizeFull();
 		rightLayout.setMargin(true);
 		rightLayout.addComponent(this.tabsheetPanel);

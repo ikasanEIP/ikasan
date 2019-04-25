@@ -176,58 +176,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 				manageLogout();
 			}
 		});
-		
-		this.setupButton = new Button("Setup");
-		this.setupButton.setPrimaryStyleName("valo-menu-item");
-		this.setupButton.setHtmlContentAllowed(true);
-		this.setupButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				UI.getCurrent().getNavigator().navigateTo("persistanceSetupView");
-			}
-		});
-		this.layout.addComponent(this.setupButton, 3, 0);
-		this.layout.setComponentAlignment(this.setupButton,
-				Alignment.MIDDLE_RIGHT);
-
-		this.collapseButton = new Button("^");
-		this.collapseButton.setPrimaryStyleName("valo-menu-item");
-		this.collapseButton.setHtmlContentAllowed(true);
-		this.collapseButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				imagePanelLayout.setVisible(false);
-				layout.removeComponent(collapseButton);
-				layout.addComponent(expandButton, 4, 0);
-				layout.setComponentAlignment(expandButton,
-						Alignment.MIDDLE_RIGHT);
-			}
-		});
-
-		this.expandButton = new Button("+");
-		this.expandButton.setPrimaryStyleName("valo-menu-item");
-		this.expandButton.setHtmlContentAllowed(true);
-		this.layout.addComponent(this.expandButton, 4, 0);
-		this.layout.setComponentAlignment(this.expandButton,
-				Alignment.MIDDLE_RIGHT);
-		imagePanelLayout.setVisible(false);
-		this.expandButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				imagePanelLayout.setVisible(true);
-				layout.removeComponent(expandButton);
-				layout.addComponent(collapseButton, 4, 0);
-				layout.setComponentAlignment(collapseButton,
-						Alignment.MIDDLE_RIGHT);
-			}
-		});
-
+        
 		this.setContent(layout);
 
         this.setVisible(false);
@@ -312,7 +261,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		if(UI.getCurrent().getNavigator() != null)
 		{
 			UI.getCurrent().getNavigator().navigateTo("emptyPanel");
-	        UI.getCurrent().getNavigator().navigateTo("landingView");
+	        UI.getCurrent().getNavigator().navigateTo("topologyView");
 		}
 
 		this.setVisible(true);

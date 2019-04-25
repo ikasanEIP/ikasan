@@ -45,6 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
@@ -61,13 +63,8 @@ import org.vaadin.teemu.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 
 /**
  * 
@@ -108,75 +105,75 @@ public class Menu extends CssLayout
     {
         menuItemsLayout.setPrimaryStyleName("valo-menuitems");
         menuItemsLayout.setResponsive(true);
-        this.addComponent(menuItemsLayout);  
-        
-		lastLoginTimeLabel.setPrimaryStyleName("valo-menu-item");
-		lastLoginTimeLabel.setVisible(false);
-		
-		menuItemsLayout.addComponent(lastLoginTimeLabel);
-		
-		
+        this.addComponent(menuItemsLayout);
+
+        lastLoginTimeLabel.setPrimaryStyleName("valo-menu-item");
+        lastLoginTimeLabel.setVisible(false);
+
+        menuItemsLayout.addComponent(lastLoginTimeLabel);
+
+
         Label label = null;
-        
+
         label = new Label("General", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
-        
+
         userItem.setPrimaryStyleName("valo-menu-item");
-		userItem.setIcon(VaadinIcons.USER);
-		userItem.setVisible(false);
-		userItem.setHtmlContentAllowed(true);
+        userItem.setIcon(VaadinIcons.USER);
+        userItem.setVisible(false);
+        userItem.setHtmlContentAllowed(true);
         menuItemsLayout.addComponent(userItem);
-        
-        userItem.addClickListener(new ClickListener() 
+
+        userItem.addClickListener(new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("profilePanel");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("profilePanel");
             }
         });
-        
-        
-        final Button dashboardMenuItem = new Button("Dashboard", new ClickListener() 
+
+
+        final Button dashboardMenuItem = new Button("Dashboard", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("landingView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("landingView");
             }
         });
-                
+
         dashboardMenuItem.setHtmlContentAllowed(true);
         dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
         dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
         menuItemsLayout.addComponent(dashboardMenuItem);
-        
-        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
- 	        	.getAttribute(DashboardSessionValueConstants.USER);
-    	
+
+        final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+            .getAttribute(DashboardSessionValueConstants.USER);
+
         label = new Label("Services", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
-        
+
         this.menuComponents.put(label, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
-        
-        final Button topologyMenuItem = new Button("Topology", new ClickListener() 
+
+        final Button topologyMenuItem = new Button("Topology", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("topologyView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("topologyView");
             }
         });
-        
+
         topologyMenuItem.setHtmlContentAllowed(true);
         topologyMenuItem.setPrimaryStyleName("valo-menu-item");
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
@@ -204,14 +201,13 @@ public class Menu extends CssLayout
         try
         {
             solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             logger.info("Cannot access underlying database. It is most likely that the dashboard is being" +
-                    " bootstrapped for the first time.", e);
+                " bootstrapped for the first time.", e);
         }
 
-        if(solrEnabled != null && solrEnabled.equals("true"))
+        if (solrEnabled != null && solrEnabled.equals("true"))
         {
             final Button searchMenuItem = new Button("Search", new ClickListener()
             {
@@ -233,47 +229,47 @@ public class Menu extends CssLayout
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("mappingView");
-            	
-            	loadNavigator("mapping");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("mappingView");
+
+                loadNavigator("mapping");
             }
         });
-        
+
         mappingMenuItem.setHtmlContentAllowed(true);
         mappingMenuItem.setPrimaryStyleName("valo-menu-item");
         mappingMenuItem.setIcon(VaadinIcons.COPY_O);
         menuItemsLayout.addComponent(mappingMenuItem);
         this.menuComponents.put(mappingMenuItem, SecurityConstants.MAPPING_VIEW_PERMISSIONS);
-        
-        final Button monitoringMenuItem = new Button("Monitoring", new ClickListener() 
+
+        final Button monitoringMenuItem = new Button("Monitoring", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("monitorView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("monitorView");
             }
         });
-        
+
         monitoringMenuItem.setHtmlContentAllowed(true);
         monitoringMenuItem.setPrimaryStyleName("valo-menu-item");
         monitoringMenuItem.setIcon(VaadinIcons.DESKTOP);
         menuItemsLayout.addComponent(monitoringMenuItem);
         this.menuComponents.put(monitoringMenuItem, SecurityConstants.MONITORING_VIEW_PERMISSIONS);
-        
-        final Button replayMenuItem = new Button("Replay", new ClickListener() 
+
+        final Button replayMenuItem = new Button("Replay", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("replayView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("replayView");
             }
         });
-        
+
         replayMenuItem.setHtmlContentAllowed(true);
         replayMenuItem.setPrimaryStyleName("valo-menu-item");
         replayMenuItem.setIcon(VaadinIcons.RECYCLE);
@@ -311,134 +307,133 @@ public class Menu extends CssLayout
         harvestingMenuItem.setIcon(VaadinIcons.TRUCK);
         menuItemsLayout.addComponent(harvestingMenuItem);
         this.menuComponents.put(harvestingMenuItem, SecurityConstants.HARVESTING_VIEW_PERMISSIONS);
-        
+
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
-        
+
         this.menuComponents.put(label, SecurityConstants.ADMINISTRATION_VIEW_PERMISSIONS);
-        
-        final Button usersItem = new Button("Users", new ClickListener() 
+
+        final Button usersItem = new Button("Users", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("userPanel");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("userPanel");
             }
         });
-        
+
         usersItem.setHtmlContentAllowed(true);
         usersItem.setPrimaryStyleName("valo-menu-item");
         usersItem.setIcon(VaadinIcons.USERS);
         menuItemsLayout.addComponent(usersItem);
-        
+
         this.menuComponents.put(usersItem, SecurityConstants.USER_ADMINISTRATION_VIEW_PERMISSIONS);
-        
-        final Button groupsItem = new Button("Groups", new ClickListener() 
+
+        final Button groupsItem = new Button("Groups", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
             }
         });
-        
+
         groupsItem.setHtmlContentAllowed(true);
         groupsItem.setPrimaryStyleName("valo-menu-item");
         groupsItem.setIcon(VaadinIcons.GROUP);
         menuItemsLayout.addComponent(groupsItem);
-        
+
         this.menuComponents.put(groupsItem, SecurityConstants.GROUP_ADMINISTRATION_VIEW_PERMISSIONS);
-        
-        final Button rolesItem = new Button("Roles", new ClickListener() 
+
+        final Button rolesItem = new Button("Roles", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
             }
         });
-        
+
         rolesItem.setHtmlContentAllowed(true);
         rolesItem.setPrimaryStyleName("valo-menu-item");
         rolesItem.setIcon(VaadinIcons.SPECIALIST);
         menuItemsLayout.addComponent(rolesItem);
-        
+
         this.menuComponents.put(rolesItem, SecurityConstants.ROLE_ADMINISTRATION_VIEW_PERMISSIONS);
-        
-        final Button policyItem = new Button("Policies", new ClickListener() 
+
+        final Button policyItem = new Button("Policies", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("policyManagementPanel");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("policyManagementPanel");
             }
         });
-        
+
         policyItem.setHtmlContentAllowed(true);
         policyItem.setPrimaryStyleName("valo-menu-item");
         policyItem.setIcon(VaadinIcons.SAFE);
         menuItemsLayout.addComponent(policyItem);
-        
+
         this.menuComponents.put(policyItem, SecurityConstants.POLICY_ADMINISTRATION_VIEW_PERMISSIONS);
-        
-        final Button authItem = new Button("User Directories", new ClickListener() 
+
+        final Button authItem = new Button("User Directories", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
             }
         });
-        
+
         authItem.setHtmlContentAllowed(true);
         authItem.setPrimaryStyleName("valo-menu-item");
         authItem.setIcon(VaadinIcons.COG);
         menuItemsLayout.addComponent(authItem);
-        
+
         this.menuComponents.put(authItem, SecurityConstants.USER_DIRECTORY_VIEW_PERMISSIONS);
-        
-        final Button platformConfigItem = new Button("Platform Configuration", new ClickListener() 
+
+        final Button platformConfigItem = new Button("Platform Configuration", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("platformConfigurationView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("platformConfigurationView");
             }
         });
-        
+
         platformConfigItem.setHtmlContentAllowed(true);
         platformConfigItem.setPrimaryStyleName("valo-menu-item");
         platformConfigItem.setIcon(VaadinIcons.LIST);
         menuItemsLayout.addComponent(platformConfigItem);
-        
+
         this.menuComponents.put(platformConfigItem, SecurityConstants.PLATFORM_CONFIGURATION_VIEW_PERMISSIONS);
-        
-        final Button notificationItem = new Button("Notifications", new ClickListener() 
+
+        final Button notificationItem = new Button("Notifications", new ClickListener()
         {
             @Override
-            public void buttonClick(final ClickEvent event) 
+            public void buttonClick(final ClickEvent event)
             {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("notificationView");
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("notificationView");
             }
         });
-        
+
         notificationItem.setHtmlContentAllowed(true);
         notificationItem.setPrimaryStyleName("valo-menu-item");
         notificationItem.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
         menuItemsLayout.addComponent(notificationItem);
-        
-        this.menuComponents.put(notificationItem, SecurityConstants.NOTIFICATION_VIEW_PERMISSIONS);
 
+        this.menuComponents.put(notificationItem, SecurityConstants.NOTIFICATION_VIEW_PERMISSIONS);
     }
 	
 	public void loadTopLevelNavigator()

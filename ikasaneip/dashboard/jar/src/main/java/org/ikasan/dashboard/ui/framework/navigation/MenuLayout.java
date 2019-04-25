@@ -40,16 +40,13 @@
  */
 package org.ikasan.dashboard.ui.framework.navigation;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.*;
 
 
 public class MenuLayout extends HorizontalLayout {
 
     private CssLayout contentArea = new CssLayout();
-
     private CssLayout menuArea = new CssLayout();
 
     public MenuLayout() 
@@ -62,6 +59,7 @@ public class MenuLayout extends HorizontalLayout {
         contentArea.addStyleName("v-scrollable");
         contentArea.setSizeFull();
 
+
         addComponents(menuArea, contentArea);
         setExpandRatio(contentArea, 1);
     }
@@ -71,7 +69,8 @@ public class MenuLayout extends HorizontalLayout {
         return contentArea;
     }
 
-    public void addMenu(Component menu) {
+    public void addMenu(Component menu)
+    {
         menu.addStyleName("valo-menu-part");
         menuArea.addComponent(menu);
     }
