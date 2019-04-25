@@ -150,7 +150,7 @@ public class ReplayTab extends TopologyTab
 	
 	public void createLayout()
 	{
-        this.useDbCheckbox = new CheckBox("Use RMDBS for search");
+        this.useDbCheckbox = new CheckBox("Use RDMBS for search");
         this.useDbCheckbox.setValue(false);
 
 	    this.replayEventsTable = new FilterTable();
@@ -236,7 +236,7 @@ public class ReplayTab extends TopologyTab
 				}
 				else
 				{
-					logger.info("Performing replay search via RMDBS.");
+					logger.info("Performing replay search via RDMBS.");
 					replayEvents = replayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
 									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
