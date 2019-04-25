@@ -40,13 +40,16 @@
  */
 package org.ikasan.dashboard.ui.framework.display;
 
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.VerticalLayout;
 
-/**
+ /**
  * @author Ikasan Development Team
  *
  */
-public class ViewComponentContainer extends HorizontalLayout
+public class ViewComponentContainer extends VerticalLayout
 {
     private static final long serialVersionUID = 3354917230638979229L;
 
