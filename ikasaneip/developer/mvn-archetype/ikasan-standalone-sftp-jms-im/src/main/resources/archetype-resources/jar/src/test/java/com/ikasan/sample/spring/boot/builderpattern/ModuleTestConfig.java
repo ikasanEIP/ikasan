@@ -16,8 +16,6 @@ public class ModuleTestConfig
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource JmsListenerEndpointRegistry registry;
-
     @Bean JmsTemplate jmsTemplate()
     {
         JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));

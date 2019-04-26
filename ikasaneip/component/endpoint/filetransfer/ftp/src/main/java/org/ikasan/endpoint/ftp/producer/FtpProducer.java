@@ -40,14 +40,6 @@
  */
 package org.ikasan.endpoint.ftp.producer;
 
-
-import java.io.ByteArrayInputStream;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
@@ -55,6 +47,8 @@ import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
+import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -62,15 +56,22 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.resource.ResourceException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * FTP Implementation of a producer based on the JCA specification.
  *
  * @author Middleware Team
  */
-public class FtpProducer implements Producer<Payload>,
-        ManagedResource, ConfiguredResource<FtpProducerConfiguration>, TransactionCommitFailureListener {
+public class FtpProducer implements Producer<Payload>, ManagedResource, ConfiguredResource<FtpProducerConfiguration>,
+    TransactionCommitFailureListener
+{
     /**
      * class logger
      */
@@ -85,7 +86,6 @@ public class FtpProducer implements Producer<Payload>,
      * Configuration - default to vanilla instance
      */
     protected FtpProducerConfiguration configuration = new FtpProducerConfiguration();
-
 
     /**
      * Currently active connection template
@@ -117,28 +117,36 @@ public class FtpProducer implements Producer<Payload>,
 
     private JtaTransactionManager transactionManager;
 
+    private FileBasedPasswordHelper fileBasedPasswordHelper;
+
     public FtpProducer(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
-            FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+        FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+        FileBasedPasswordHelper fileBasedPasswordHelper)
     {
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+        this.fileBasedPasswordHelper = fileBasedPasswordHelper;
     }
 
-    public FtpProducerConfiguration getConfiguration() {
+    public FtpProducerConfiguration getConfiguration()
+    {
         return this.configuration;
     }
 
-    public String getConfiguredResourceId() {
+    public String getConfiguredResourceId()
+    {
         return this.configuredResourceId;
     }
 
-    public void setConfiguration(FtpProducerConfiguration configuration) {
+    public void setConfiguration(FtpProducerConfiguration configuration)
+    {
         this.configuration = configuration;
     }
 
-    public void setConfiguredResourceId(String configuredResourceId) {
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
         this.configuredResourceId = configuredResourceId;
     }
 
@@ -148,11 +156,15 @@ public class FtpProducer implements Producer<Payload>,
         {
             if (activeFileTransferConnectionTemplate != null)
             {
-                activeFileTransferConnectionTemplate.deliverInputStream(new ByteArrayInputStream(payload.getContent()),
-                    payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), configuration.getOutputDirectory(),
-                    configuration.getOverwrite(), configuration.getRenameExtension(),
-                    configuration.getChecksumDelivered(), configuration.getUnzip(),
-                    configuration.getCreateParentDirectory(), configuration.getTempFileName());
+                try (InputStream inputStream = payload.getInputStream())
+                {
+                    activeFileTransferConnectionTemplate
+                        .deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME),
+                            configuration.getOutputDirectory(), configuration.getOverwrite(),
+                            configuration.getRenameExtension(), configuration.getChecksumDelivered(),
+                            configuration.getUnzip(), configuration.getCreateParentDirectory(),
+                            configuration.getTempFileName());
+                }
             }
             else
             {
@@ -165,51 +177,60 @@ public class FtpProducer implements Producer<Payload>,
             this.switchActiveConnection();
             throw new EndpointException(e);
         }
+        catch (IOException e)
+        {
+            throw new EndpointException(e);
+        }
     }
 
     /**
      * Switch the active connection to the other connection template.
      */
-    protected void switchActiveConnection() {
-        if (this.alternateFileTransferConnectionTemplate != null) {
-            if (this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate) {
+    protected void switchActiveConnection()
+    {
+        if (this.alternateFileTransferConnectionTemplate != null)
+        {
+            if (this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
+            {
                 this.activeFileTransferConnectionTemplate = this.alternateFileTransferConnectionTemplate;
-            } else {
+            }
+            else
+            {
                 this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
             }
         }
     }
 
     /* (non-Javadoc)
-    * @see org.ikasan.spec.management.ManagedResource#startManagedResource()
-    */
-    @Override
-    public void startManagedResource() {
-
+     * @see org.ikasan.spec.management.ManagedResource#startManagedResource()
+     */
+    @Override public void startManagedResource()
+    {
         configuration.validate();
-
         FTPConnectionSpec spec = createSpec(configuration);
         FTPConnectionSpec alternateSpec = createSpec(configuration);
-
         getEndpoint(spec, alternateSpec);
-
     }
 
     /* (non-Javadoc)
      * @see org.ikasan.spec.management.ManagedResource#stopManagedResource()
      */
-    public void stopManagedResource() {
+    public void stopManagedResource()
+    {
     }
 
-    public boolean isCriticalOnStartup() {
+    public boolean isCriticalOnStartup()
+    {
         return this.isCriticalOnStartup;
     }
 
-    public void setCriticalOnStartup(boolean isCriticalOnStartup) {
+    public void setCriticalOnStartup(boolean isCriticalOnStartup)
+    {
         this.isCriticalOnStartup = isCriticalOnStartup;
     }
 
-    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
         this.managedResourceRecoveryManager = managedResourceRecoveryManager;
     }
 
@@ -218,15 +239,16 @@ public class FtpProducer implements Producer<Payload>,
      *
      * @return
      */
-    protected FTPConnectionSpec getConnectionSpec() {
+    protected FTPConnectionSpec getConnectionSpec()
+    {
         return new FTPConnectionSpec();
     }
 
     /* (non-Jsdoc)
-    * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
-    */
-    private FTPConnectionSpec createSpec(FtpProducerConfiguration configuration) {
-
+     * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
+     */
+    private FTPConnectionSpec createSpec(FtpProducerConfiguration configuration)
+    {
         FTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(configuration.getClientID());
         spec.setRemoteHostname(configuration.getRemoteHost());
@@ -236,17 +258,39 @@ public class FtpProducer implements Producer<Payload>,
         spec.setUsername(configuration.getUsername());
         spec.setCleanupJournalOnComplete(configuration.getCleanupJournalOnComplete());
         spec.setActive(configuration.getActive());
-        spec.setPassword(configuration.getPassword());
         spec.setDataTimeout(configuration.getDataTimeout());
         spec.setSocketTimeout(configuration.getSocketTimeout());
         spec.setSystemKey(configuration.getSystemKey());
-
+        // We get the password from a file if it is so configured.
+        if (configuration.getPasswordFilePath() != null && configuration.getPasswordFilePath().length() > 0)
+        {
+            try
+            {
+                spec.setPassword(fileBasedPasswordHelper.getPasswordFromFile(configuration.getPasswordFilePath()));
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+        {
+            spec.setPassword(configuration.getPassword());
+        }
+        spec.setFTPS(configuration.getFTPS());
+        spec.setFtpsProtocol(configuration.getFtpsProtocol());
+        spec.setFtpsPort(configuration.getFtpsPort());
+        spec.setFtpsIsImplicit(configuration.getFtpsIsImplicit());
+        spec.setFtpsKeyStoreFilePath(configuration.getFtpsKeyStoreFilePath());
+        spec.setFtpsKeyStoreFilePassword(configuration.getFtpsKeyStoreFilePassword());
         return spec;
     }
-    private FTPConnectionSpec createAlternateSpec(FtpProducerConfiguration configuration) {
 
+    private FTPConnectionSpec createAlternateSpec(FtpProducerConfiguration configuration)
+    {
         FTPConnectionSpec alternateSpec = null;
-        if (configuration instanceof FtpProducerAlternateConfiguration) {
+        if (configuration instanceof FtpProducerAlternateConfiguration)
+        {
             FtpProducerAlternateConfiguration alternteConfig = (FtpProducerAlternateConfiguration) configuration;
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternteConfig.getClientID());
@@ -262,10 +306,8 @@ public class FtpProducer implements Producer<Payload>,
             alternateSpec.setSocketTimeout(alternteConfig.getAlternateSocketTimeout());
             alternateSpec.setSystemKey(alternteConfig.getAlternateSystemKey());
         }
-
-       return alternateSpec;
+        return alternateSpec;
     }
-
 
     /**
      * Internal endpoint creation method allows for easier overriding of the actual endpoint creation and simpler testing.
@@ -274,26 +316,28 @@ public class FtpProducer implements Producer<Payload>,
      * @param alternateSpec
      * @return
      */
-    private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec) {
+    private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec)
+    {
         try
         {
-            activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,transactionalResourceCommandDAO,fileChunkDao,
-                    baseFileTransferDao,transactionManager);
+            activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
+                transactionalResourceCommandDAO, fileChunkDao, baseFileTransferDao, transactionManager);
             activeFileTransferConnectionTemplate.addListener(this);
-
-            if (alternateSpec != null) {
-                alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,transactionalResourceCommandDAO,fileChunkDao,
-                        baseFileTransferDao,transactionManager);
+            if (alternateSpec != null)
+            {
+                alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,
+                    transactionalResourceCommandDAO, fileChunkDao, baseFileTransferDao, transactionManager);
                 alternateFileTransferConnectionTemplate.addListener(this);
-
             }
-        } catch (ResourceException e) {
+        }
+        catch (ResourceException e)
+        {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void commitFailureOccurred(TransactionCommitEvent event) {
+    @Override public void commitFailureOccurred(TransactionCommitEvent event)
+    {
         logger.info("Logging error: " + event.getException().getMessage());
         this.managedResourceRecoveryManager.recover(event.getException());
     }

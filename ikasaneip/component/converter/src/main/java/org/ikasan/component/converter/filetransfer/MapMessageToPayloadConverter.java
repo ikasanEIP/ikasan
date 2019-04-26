@@ -24,29 +24,39 @@ public class MapMessageToPayloadConverter
         Payload payload = null;
         try
         {
-            String content = message.getString(configuration.getContentAttributeName());
             String id = message.getString(configuration.getIdAttributeName());
-            payload = new DefaultPayload(id, content.getBytes());
+            Object contentObject = message.getObject(configuration.getContentAttributeName());
+            if (contentObject != null)
+            {
+                if (contentObject instanceof String)
+                {
+                    payload = new DefaultPayload(id, ((String) contentObject).getBytes());
+                }
+                else if (contentObject instanceof byte[])
+                {
+                    payload = new DefaultPayload(id, (byte[]) contentObject);
+                }
+                else
+                {
+                    throw new TransformationException(
+                        "Message property [" + configuration.getContentAttributeName() + "] type is not supported.");
+                }
+            }
+            else
+            {
+                throw new TransformationException(
+                    "Message property [" + configuration.getContentAttributeName() + "] is empty.");
+            }
         }
         catch (JMSException e)
         {
-            try
-            {
-                byte[] content = message.getBytes(configuration.getContentAttributeName());
-                String id = message.getString(configuration.getIdAttributeName());
-                payload = new DefaultPayload(id, content);
-            }
-            catch (JMSException ei)
-            {
-                throw new TransformationException(
-                    "Error encountered when processing JMS message. Unable to extract file contents.",ei);
-            }
+            throw new TransformationException(
+                "Error encountered when processing JMS message. Unable to extract file contents.", e);
         }
-
         try
         {
             String fileName = message.getString(configuration.getFileNameAttributeName());
-            payload.setAttribute("fileName",fileName);
+            payload.setAttribute("fileName", fileName);
             return payload;
         }
         catch (JMSException e)

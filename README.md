@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=master)](https://travis-ci.org/ikasanEIP/ikasan)
 
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Ikasan-title-transparent.png)
-======
 
 Open Source Enterprise Integration Platform
 
@@ -168,14 +167,13 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 
 <br/>
 
-[Component Quick Start](ikasaneip/component/Readme.md)
-======
-
-[Dashboard Guide](ikasaneip/dashboard/Readme.md)
-======
-
-[Getting Started Guide](ikasaneip/developer/docs/Readme.md)
-======
+# Documentation
+## Getting Started
+* [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
+* [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
+* [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
+* [Component Quick Start](ikasaneip/component/Readme.md)
+* [Dashboard Guide](ikasaneip/dashboard/Readme.md)
 
 
 | Samples overview |
@@ -183,9 +181,7 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 |  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
 |  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
 |  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
-|  [spring-boot-ftp](ikasaneip/sample/spring-boot/ftp/README.md) |
 |  [spring-boot-ftp-jms](ikasaneip/sample/spring-boot/ftp-jms/README.md) |
-|  [spring-boot-sftp](ikasaneip/sample/spring-boot/sftp/README.md) |
 |  [spring-boot-sftp-jms](ikasaneip/sample/spring-boot/sftp-jms/README.md) |
 ---------------------
 

@@ -49,7 +49,7 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import java.util.*;
 
@@ -125,6 +125,59 @@ public class TopologyServiceImplTest
 
 	}
 
+    @Test
+    public void discoveryWhenServerIsNullAndModuleHasDuplicatedComponentsAndModuleIsNew() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+
+        Flow flow = new Flow("Flow Test", "I am flow Test", module);
+
+        Component component = new Component();
+        component.setName("duplicateComponent");
+        component.setDescription("description1");
+        component.setOrder(0);
+        component.setConfigurable(false);
+        component.setFlow(flow);
+
+        flow.addComponent(component);
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+        component2.setFlow(flow);
+
+        flow.addComponent(component2);
+
+        mockery.checking(new Expectations() {{
+
+            exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, null,"Flow Test" );
+            will(returnValue(null));
+
+            exactly(2).of(topologyDao).save(flow);
+
+            exactly(1).of(topologyDao).save(component);
+
+            exactly(1).of(topologyDao).getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(null, null,"Flow Test", Arrays.asList("duplicateComponent") );
+            will(returnValue(Arrays.asList()));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+
+            exactly(1).of(topologyDao).getFlowsByServerIdAndModuleId(null, null );
+            will(returnValue(Arrays.asList()));
+
+        }});
+
+        //do test
+        uut.discover(null,module, Arrays.asList(flow));
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
+
 	@Test
 	public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponents() throws DiscoveryException
 	{
@@ -186,6 +239,75 @@ public class TopologyServiceImplTest
 		mockery.assertIsSatisfied();
 
 	}
+
+    @Test
+    public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponentsWithDuplicate() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+        module.setId(1l);
+
+        Component component1 = new Component();
+        component1.setName("duplicateComponent");
+        component1.setDescription("description1");
+        component1.setOrder(0);
+        component1.setConfigurable(false);
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+        component1.setFlow(flow);
+        flow.addComponent(component1);
+        flow.addComponent(component2);
+
+        Flow oldFlow = new Flow("Flow Test", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        mockery.checking(new Expectations() {{
+
+            exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, 1l,"Flow Test" );
+            will(returnValue(oldFlow));
+
+            exactly(2).of(topologyDao).save(oldFlow);
+
+            exactly(1).of(topologyDao).save(component1);
+
+            exactly(1).of(topologyDao).getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(null, 1l,"Flow Test", Arrays.asList("duplicateComponent") );
+            will(returnValue(Arrays.asList(oldComponent)));
+
+            exactly(1).of(topologyDao).deleteFilterComponentsByComponentId( 3l );
+
+            exactly(1).of(topologyDao).delete(oldComponent);
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+
+            exactly(1).of(topologyDao).getFlowsByServerIdAndModuleId(null, 1l );
+            will(returnValue(Arrays.asList(oldFlow)));
+
+        }});
+
+
+        //do test
+        uut.discover(null,module, Arrays.asList(flow));
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
 
 	@Test
 	public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentFlows() throws DiscoveryException
@@ -254,6 +376,82 @@ public class TopologyServiceImplTest
 		mockery.assertIsSatisfied();
 
 	}
+
+    @Test
+    public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentFlowsWithDuplicateComponent() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+        module.setId(1l);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+
+        Component component1 = new Component();
+        component1.setName("duplicateComponent");
+        component1.setDescription("description1");
+        component1.setOrder(0);
+        component1.setConfigurable(false);
+        component1.setFlow(flow);
+        flow.addComponent(component1);
+
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+        component2.setFlow(flow);
+        flow.addComponent(component2);
+
+        Flow oldFlow = new Flow("Old Test Flow", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        mockery.checking(new Expectations() {{
+
+            exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, 1l,"Flow Test" );
+            will(returnValue(null));
+
+            exactly(2).of(topologyDao).save(flow);
+
+            exactly(1).of(topologyDao).save(component1);
+
+            exactly(1).of(topologyDao).getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(null, 1l,"Flow Test", Arrays.asList("duplicateComponent") );
+            will(returnValue(Arrays.asList()));
+
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+
+            // flow clean up
+            exactly(1).of(topologyDao).getFlowsByServerIdAndModuleId(null, 1l );
+            will(returnValue(Arrays.asList(oldFlow)));
+
+            exactly(1).of(topologyDao).delete(oldComponent);
+
+            exactly(1).of(topologyDao).deleteBusinessStreamFlowByFlowId( 2l );
+
+            exactly(1).of(topologyDao).delete(oldFlow);
+
+
+        }});
+
+
+        //do test
+        uut.discover(null,module, Arrays.asList(flow));
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
 
 
 }

@@ -56,6 +56,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
@@ -213,7 +215,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService;
 	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService;
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
+    private SolrReplayServiceImpl solrReplayManagementService;
 
 	private boolean initialised = false;
 	
@@ -226,9 +228,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 						   SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
 						   TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
 						   PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-						   ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
-						   FlowConfigurationWindow flowConfigurationWindow)
+                           HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
+                           ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+                           SolrReplayServiceImpl solrReplayManagementService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -346,7 +348,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     	{
     		
     		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService,
-					this.solrReplayManagementService, this.platformConfigurationService);
+					this.solrReplayManagementService, this.platformConfigurationService, topologyService);
 
     		replayTab.createLayout();
 			
@@ -438,9 +440,6 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		this.topologyTreePanel.setContent(layout);
 	}
 	
-	
-
-	
 
 	/* (non-Javadoc)
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
@@ -484,144 +483,66 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		logger.debug("Trying to load tree for " + servers.size());
 		
 		for(Server server: servers)
-		{	
-			Set<Module> modules = server.getModules();
-
-			this.moduleTree.addItem(server);
-        	
-            this.moduleTree.setItemCaption(server, server.getName());
-            this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
-            this.moduleTree.setChildrenAllowed(server, true);
-        	
+		{
+            Set<Module> modules = server.getModules();
 
 	        for(Module module: modules)
 	        {	        	
 	            this.moduleTree.addItem(module);
 	            this.moduleTree.setItemCaption(module, module.getName());
-	            this.moduleTree.setParent(module, server);
 	            this.moduleTree.setChildrenAllowed(module, true);
 	            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-	            
-	            Set<Flow> flows = module.getFlows();
-	
-	            for(Flow flow: flows)
-	            {
-	                this.moduleTree.addItem(flow);
-	                this.moduleTree.setItemCaption(flow, flow.getName());
-                    this.moduleTree.setParent(flow, module);
-	                this.moduleTree.setChildrenAllowed(flow, true);
-	    			
-	                if(flow.isConfigurable())
-                	{
-	            		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
-                	}
-                	else
-                	{
-                		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
-                	}
-	                
-	                Set<Component> components = flow.getComponents();
-	                
-	                for(Component component: components)
-	                {
-	                	this.moduleTree.addItem(component);
-	                	this.moduleTree.setParent(component, flow);
-	                	this.moduleTree.setItemCaption(component, component.getName());
-	                	this.moduleTree.setChildrenAllowed(component, false);
-	                	
-	                	if(component.isConfigurable())
-	                	{
-	                		ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
-	                	}
-	                	else
-	                	{
-	                		ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
-	                	}
-	                }
-	            }
 	        }
 		}
-			
-				
-		for (Iterator<?> it = this.moduleTree.rootItemIds().iterator(); it.hasNext();) 
-		{
-			this.moduleTree.expandItemsRecursively(it.next());
-		}
-		
-		for (Iterator<?> it = this.moduleTree.getItemIds().iterator(); it.hasNext();) 
-		{
-			Object nextItem = it.next();
-			if(nextItem instanceof Module)
+
+        this.moduleTree.addExpandListener(event ->
+        {
+			if(event.getItemId() instanceof Module)
 			{
-				this.moduleTree.collapseItemsRecursively(nextItem);
+				Set<Flow> flows = ((Module) event.getItemId()).getFlows();
+
+				for(Flow flow: flows)
+				{
+					moduleTree.addItem(flow);
+					moduleTree.setItemCaption(flow, flow.getName());
+					moduleTree.setParent(flow, (Module) event.getItemId());
+					moduleTree.setChildrenAllowed(flow, true);
+
+					if(flow.isConfigurable())
+					{
+						ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+					}
+					else
+					{
+						ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+					}
+
+					Set<Component> components = flow.getComponents();
+
+					for(Component component: components)
+					{
+						moduleTree.addItem(component);
+						moduleTree.setParent(component, flow);
+						moduleTree.setItemCaption(component, component.getName());
+						moduleTree.setChildrenAllowed(component, false);
+
+						if(component.isConfigurable())
+						{
+							ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+						}
+						else
+						{
+							ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+						}
+					}
+				}
 			}
-		}
+		});
 	}
-
-	protected boolean actionFlow(Flow flow, String action)
-	{		
-		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-    	
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-		
-    	String url = flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
-				+ flow.getModule().getContextRoot() 
-				+ "/rest/moduleControl/controlFlowState/"
-				+ flow.getModule().getName() 
-	    		+ "/"
-	    		+ flow.getName();
-    	
-	    WebTarget webTarget = client.target(url);
-	    Response response = webTarget.request().put(Entity.entity(action, MediaType.APPLICATION_OCTET_STREAM));
-	    
-	    if(response.getStatus()  == 200)
-	    {
-	    	Notification.show(flow.getName() + " flow " + action + "!");
-	    }  
-	    else
-	    {
-	    	response.bufferEntity();
-	        
-	        String responseMessage = response.readEntity(String.class);
-	        
-	    	Notification.show(responseMessage, Type.ERROR_MESSAGE);
-	    	return false;
-	    }
-	    
-	    return true;
-	}
-
+    
 	@Override
 	public Action[] getActions(Object target, Object sender)
 	{
-		if(target instanceof Server)
-		{
-			return this.topologyTreeActionHelper.getServerActions();
-		}
-		else if(target instanceof Module)
-		{
-			return this.topologyTreeActionHelper.getModuleActions();
-		}
-		else if(target instanceof Flow)
-		{
-			Flow flow = ((Flow)target);
-
-			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
-
-			return this.topologyTreeActionHelper.getFlowActions(state, flow.isConfigurable());
-		}
-		else if(target instanceof Component)
-		{
-			return this.topologyTreeActionHelper.getComponentActions(((Component)target).isConfigurable()
-					, ((Component)target).getFlow().isConfigurable(), ((Component)target).isInvokerConfigurable());
-		}
-
 		return this.topologyTreeActionHelper.getActionsEmpty();
 	}
 
@@ -630,109 +551,8 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public void handleAction(Action action, Object sender, Object target)
-	{	
-		IkasanAuthentication authentication = null;
+	{
 		
-		if(VaadinService.getCurrentRequest() != null
-				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
-		{
-			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-		        	.getAttribute(DashboardSessionValueConstants.USER);
-		}
-		
-		if(authentication == null 
-    			|| (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
-		{
-			return;
-		}
-		
-        if(target != null && target instanceof Component)
-        {
-        	if(action.equals(CONFIGURE))
-        	{
-        		this.componentConfigurationWindow.populate(((Component)target));
-        		UI.getCurrent().addWindow(this.componentConfigurationWindow);
-        	}
-        	else if(action.equals(WIRETAP))
-        	{
-        		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
-        			, triggerManagementService));
-        	}
-        	else if(action.equals(ERROR_CATEGORISATION))
-        	{
-        		Component component = (Component)target;
-        		
-        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(component.getFlow().getModule().getServer(),
-        				component.getFlow().getModule(), component.getFlow(), component, errorCategorisationService));
-        	}
-        }
-        else if(target != null && target instanceof Flow)
-        {
-        	Flow flow = ((Flow)target);
-        	
-        	if(action.equals(CONFIGURE))
-        	{
-        		this.flowConfigurationWindow.populate(flow);
-        		UI.getCurrent().addWindow(this.flowConfigurationWindow);
-        	}
-        	else if(action.equals(START))
-	        {
-        		this.actionFlow(flow, "start");
-	        }
-	        else if(action.equals(STOP))
-	        {
-	        	this.actionFlow(flow, "stop");
-	        }
-	        else if(action.equals(PAUSE))
-	        {
-	        	this.actionFlow(flow, "pause");
-	        }
-	        else if(action.equals(RESUME))
-	        {
-	        	this.actionFlow(flow, "resume");
-	        }
-	        else if(action.equals(START_PAUSE))
-	        {   
-	        	this.actionFlow(flow, "startPause");
-	        }
-	        else if(action.equals(STARTUP_CONTROL))
-	        {       	
-	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow(this.startupControlService, flow));
-	        }
-	        else if(action.equals(ERROR_CATEGORISATION))
-        	{
-        		
-        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(flow.getModule().getServer(),
-        				flow.getModule(), flow, null, errorCategorisationService));
-        	}
-	        
-        }
-        else if(target != null && target instanceof Module)
-        {
-        	if(action.equals(ERROR_CATEGORISATION))
-        	{
-        		Module module = (Module)target;
-        		
-        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(module.getServer(),
-        				module, null, null, errorCategorisationService));
-        	}
-        }
-        else if(target != null && target instanceof Server)
-        {
-        	if(action.equals(ERROR_CATEGORISATION))
-        	{
-        		Server server = (Server)target;
-        		
-        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(server,
-        				null, null, null, errorCategorisationService));
-        	}
-        	else if(action.equals(EDIT))
-        	{
-        		Server server = (Server)target;
-        		
-        		UI.getCurrent().addWindow(new ServerWindow(topologyService, server));
-        	}
-        }
 	}
 	
 	protected Date getMidnightToday()

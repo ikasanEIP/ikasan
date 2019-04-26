@@ -1,6 +1,8 @@
 package org.ikasan.dashboard.boot;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jta.narayana.NarayanaProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,6 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @ImportResource( {
-
 
         "classpath:root-context.xml",
         "classpath:error-context.xml",
@@ -29,11 +30,8 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:housekeeping-context.xml",
 
         "classpath:discovery-context.xml",
-        "classpath:platform-service-conf.xml",
         "classpath:serialiser-service-conf.xml",
-        "classpath:systemevent-service-conf.xml",
         "classpath:providers-conf.xml",
-        "classpath:module-service-conf.xml",
         "classpath:scheduler-service-conf.xml",
         "classpath:solr-harvesting-context.xml",
         "classpath:search-context.xml",
@@ -58,11 +56,26 @@ import org.springframework.context.annotation.ImportResource;
         "org.ikasan.dashboard.boot.*"
 })
 public class ConfigClass {
+
+    @Autowired
+    private ApplicationContext context;
+
     @Bean("narayanaProperties")
     public NarayanaProperties getNarayanaProperties(){
         NarayanaProperties narayanaProperties =  new NarayanaProperties();
         return narayanaProperties;
     }
 
+    @Bean
+    public Object object()
+    {
+        String[] beans = this.context.getBeanDefinitionNames();
 
+        for(String bean: beans)
+        {
+            System.out.println(bean);
+        }
+
+        return new Object();
+    }
 }

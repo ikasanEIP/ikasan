@@ -40,16 +40,19 @@
  */
 package org.ikasan.dashboard.ui.replay.component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
+import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
@@ -63,6 +66,7 @@ import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.ReplayResponse;
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -70,33 +74,14 @@ import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
-import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -111,7 +96,7 @@ public class ReplayTab extends TopologyTab
 	
 	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  replayManagementService;
 	private ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>  replayService;
-	private ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent>  solrReplayManagementService;
+    private SolrReplayServiceImpl solrReplayManagementService;
 
 
 	private PopupDateField fromDate;
@@ -122,6 +107,8 @@ public class ReplayTab extends TopologyTab
 	
 	private float splitPosition;
 	private Unit splitUnit;
+
+    private CheckBox useDbCheckbox;
 	
 	private IndexedContainer tableContainer;
 	
@@ -130,16 +117,19 @@ public class ReplayTab extends TopologyTab
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	private PlatformConfigurationService platformConfigurationService;
+
+    private TopologyService topologyService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> replayManagementService,
-					 ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-					 ReplayManagementService<ReplayEvent, HibernateReplayAudit, HibernateReplayAuditEvent> solrReplayManagementService,
-					 PlatformConfigurationService platformConfigurationService)
+                     ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
+                     SolrReplayServiceImpl solrReplayManagementService, PlatformConfigurationService platformConfigurationService,
+                     TopologyService topologyService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
 		this.solrReplayManagementService = solrReplayManagementService;
 		this.platformConfigurationService = platformConfigurationService;
+        this.topologyService = topologyService;
 		
 		tableContainer = this.buildContainer();
 	}
@@ -159,8 +149,11 @@ public class ReplayTab extends TopologyTab
     }
 	
 	public void createLayout()
-	{	
-		this.replayEventsTable = new FilterTable();
+	{
+        this.useDbCheckbox = new CheckBox("Use RMDBS for search");
+        this.useDbCheckbox.setValue(false);
+
+	    this.replayEventsTable = new FilterTable();
 		this.replayEventsTable.setFilterBarVisible(true);
 		this.replayEventsTable.setSizeFull();
 		this.replayEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -187,7 +180,7 @@ public class ReplayTab extends TopologyTab
 		    	{
 					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
-			    			, replayService, platformConfigurationService);
+			    			, replayService, platformConfigurationService, topologyService);
 			    
 			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
@@ -231,19 +224,22 @@ public class ReplayTab extends TopologyTab
 
 				List<ReplayEvent> replayEvents = null;
 
-				if(solrEnabled != null && solrEnabled.equals("true"))
+				if(solrEnabled != null && solrEnabled.equals("true") && ReplayTab.this.useDbCheckbox.getValue() == false)
 				{
 					logger.info("Performing replay search via Solr Index.");
+
+                    solrReplayManagementService.setSolrUsername(platformConfigurationService.getSolrUsername());
+                    solrReplayManagementService.setSolrPassword(platformConfigurationService.getSolrPassword());
 					replayEvents = solrReplayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
-									fromDate.getValue(), toDate.getValue());
+									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
 				}
 				else
 				{
 					logger.info("Performing replay search via RMDBS.");
 					replayEvents = replayManagementService
 							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
-									fromDate.getValue(), toDate.getValue());
+									fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
 				}
             	
             	if(replayEvents == null || replayEvents.size() == 0)
@@ -310,7 +306,10 @@ public class ReplayTab extends TopologyTab
         	    	{
         	            public void buttonClick(ClickEvent event) 
         	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+                            VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
         	            }
         	        });
         	        
@@ -436,6 +435,18 @@ public class ReplayTab extends TopologyTab
 		filterButtonLayout.setHeight(25, Unit.PIXELS);
 		filterButtonLayout.addComponent(hideFilterButton, 0, 0);
 		filterButtonLayout.addComponent(showFilterButton, 1, 0);
+
+        String solrEnabled = this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+            .getAttribute(DashboardSessionValueConstants.USER);
+
+        if(solrEnabled != null && solrEnabled.equals("true")
+            && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+            || authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)))
+        {
+            layout.addComponent(useDbCheckbox);
+        }
 		
 		Label filterHintLabel = new Label();
 		filterHintLabel.setCaptionAsHtml(true);
@@ -526,12 +537,11 @@ public class ReplayTab extends TopologyTab
             	 // todo add replay events            	 
             	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", getReplayEvents());
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService",topologyService );
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
             }
         });
-
-		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-				.getAttribute(DashboardSessionValueConstants.USER);
+        
 
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)

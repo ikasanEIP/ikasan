@@ -97,5 +97,17 @@ public interface FtpProducerBuilder extends Builder<Producer>
     FtpProducerBuilder setSocketTimeout(Integer socketTimeout);
 
     FtpProducerBuilder setDataTimeout(Integer dataTimeout);
+
+    FtpProducerBuilder setFTPS(Boolean FTPS);
+
+    FtpProducerBuilder setFtpsPort(Integer ftpsPort);
+
+    FtpProducerBuilder setFtpsProtocol(String ftpsProtocol);
+
+    FtpProducerBuilder setFtpsIsImplicit(Boolean ftpsIsImplicit);
+
+    FtpProducerBuilder setFtpsKeyStoreFilePath(String ftpsKeyStoreFilePath);
+
+    FtpProducerBuilder setFtpsKeyStoreFilePassword(String ftpsKeyStoreFilePassword);
 }
 

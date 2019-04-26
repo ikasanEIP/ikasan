@@ -47,7 +47,7 @@ package org.ikasan.flow.visitorPattern.invoker;
  * @author Ikasan Development Team
  *
  */
-public class SplitterInvokerConfiguration
+public class SplitterInvokerConfiguration extends InvokerConfiguration
 {
     // whether to send the splits as a single payload or individual events
     private boolean sendSplitsAsSinglePayload = false;

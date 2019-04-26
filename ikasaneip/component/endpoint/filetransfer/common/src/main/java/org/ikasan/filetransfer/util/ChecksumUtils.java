@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ChecksumUtils
 {
-    
+
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(ChecksumUtils.class);
    
@@ -67,7 +67,7 @@ public class ChecksumUtils
     private static final String defaultAlgorithm = "MD5"; //$NON-NLS-1$
     
     /**
-     * Get the checksum given an ImputStream and an algorithm
+     * Get the checksum given an InputStream and an algorithm
      * 
      * @param stream The stream for which to calculate the checksum
      * @param algorithm 
@@ -184,27 +184,17 @@ public class ChecksumUtils
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
         return getChecksum(stream, algorithm);
     }
-    
+
     /**
-     * Compare the two checksums as a straight String comparison throw a 
-     * SFTPChecksumFailedException if they don't match, else do nothing
-     * 
+     * Compare the two checksums as a straight String comparison
+     *
      * @param checksum1 The first checksum
      * @param checksum2 The second checksum
      * @return true if checksums match, else false
      */
     public static boolean checksumMatch(String checksum1, String checksum2)
     {
-        logger.debug("Checksum 1: [" + checksum1 + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        logger.debug("Checksum 2: [" + checksum2 + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (checksum1.equals(checksum2))
-        {
-            logger.info("Checksums match."); //$NON-NLS-1$
-            return true;
-        }
-        // Default else
-        logger.warn("Checksums do not match."); //$NON-NLS-1$
-        return false;
+        return checksum1.equals(checksum2);
     }
 
 }

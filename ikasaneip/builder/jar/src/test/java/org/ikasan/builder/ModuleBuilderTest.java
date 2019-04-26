@@ -55,6 +55,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.SocketUtils;
 
 /**
  * This test class supports the <code>ModuleBuilder</code> class.
@@ -93,6 +94,7 @@ public class ModuleBuilderTest
     @Before
     public void setup()
     {
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -107,7 +109,13 @@ public class ModuleBuilderTest
             }
         });
 
-        ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
+        };
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
     }
 
     @After

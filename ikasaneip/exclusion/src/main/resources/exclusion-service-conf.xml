@@ -14,6 +14,10 @@
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
     </bean>
 
+    <bean id="exclusionSearchService" class="org.ikasan.exclusion.service.ExclusionSearchServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
+
     <bean id="exclusionServiceBlacklistDaoFactory" class="org.ikasan.exclusion.dao.BlackListDaoFactory">
         <constructor-arg value="1000"/>
     </bean>
@@ -22,7 +26,7 @@
         <property name="sessionFactory" ref="exclusionEventHibernateSessionFactory"/>
     </bean>
 
-    <bean id="exclusionEventHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="exclusionEventHibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>

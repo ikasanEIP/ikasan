@@ -40,15 +40,23 @@
  */
 package org.ikasan.rest.module;
 
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Module application implementing the REST contract
@@ -56,8 +64,17 @@ import java.util.HashMap;
 @RequestMapping("/rest/wiretap")
 @RestController
 public class WiretapApplication {
+
     @Autowired
     private JobAwareFlowEventListener jobAwareFlowEventListener;
+
+    @Autowired
+    /** The wiretap service */
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
+
+    @Autowired
+    /** The module container (effectively holds the DTO) */
+    private ModuleService moduleService;
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
@@ -100,6 +117,33 @@ public class WiretapApplication {
         }
 
         return new ResponseEntity("Trigger successfully deleted!", HttpStatus.OK);
+
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity get(
+        @RequestParam(value = "pageNumber",defaultValue = "0") int pageNumber,
+        @RequestParam(value = "pageSize",defaultValue = "20") int pageSize,
+        @RequestParam(value = "orderBy",defaultValue = "identifier") String orderBy,
+        @RequestParam(value = "orderAscending",defaultValue = "true") boolean orderAscending,
+        @RequestParam(value = "flow",required = false) String flow,
+        @RequestParam(value = "componentName",required = false) String componentName,
+        @RequestParam(value = "payloadId",required = false) String payloadId,
+        @RequestParam(value = "eventId",required = false) String eventId,
+        @RequestParam(value = "payloadContent",required = false) String payloadContent,
+        @RequestParam(value= "fromDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date fromDateTime,
+        @RequestParam(value= "untilDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date untilDateTime
+        ) {
+
+        String moduleName = moduleService.getModules().get(0).getName();
+        PagedSearchResult<WiretapEvent> pagedResult = wiretapService.findWiretapEvents(
+            pageNumber, pageSize, orderBy, orderAscending, new HashSet(){{add(moduleName);}},
+            flow, componentName, eventId, payloadId,
+            fromDateTime, untilDateTime, payloadContent);
+
+        return new ResponseEntity(pagedResult, HttpStatus.OK);
 
     }
 

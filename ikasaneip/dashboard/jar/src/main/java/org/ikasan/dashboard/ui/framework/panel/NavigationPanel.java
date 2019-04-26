@@ -104,7 +104,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	private Component toggleButton = new Button();
 	private Menu menu;
 	private SystemEventService systemEventService;
-	private UserService userService; 
+	private UserService userService;
 	private TopologyService topologyService;
 
 	/**
@@ -139,7 +139,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		this.systemEventService = systemEventService;
 		this.userService = userService;
 		this.topologyService = topologyService;
-		
+
 		init();
 	}
 
@@ -151,7 +151,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
-		this.setHeight(30, Unit.PIXELS);
+		this.setHeight(300, Unit.PIXELS);
 		this.setStyleName("navigation");
 		
 		this.layout.setWidth(97, Unit.PERCENTAGE);
@@ -176,59 +176,10 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 				manageLogout();
 			}
 		});
-		
-		this.setupButton = new Button("Setup");
-		this.setupButton.setPrimaryStyleName("valo-menu-item");
-		this.setupButton.setHtmlContentAllowed(true);
-		this.setupButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				UI.getCurrent().getNavigator().navigateTo("persistanceSetupView");
-			}
-		});
-		this.layout.addComponent(this.setupButton, 3, 0);
-		this.layout.setComponentAlignment(this.setupButton,
-				Alignment.MIDDLE_RIGHT);
-
-		this.collapseButton = new Button("^");
-		this.collapseButton.setPrimaryStyleName("valo-menu-item");
-		this.collapseButton.setHtmlContentAllowed(true);
-		this.collapseButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				imagePanelLayout.setVisible(false);
-				layout.removeComponent(collapseButton);
-				layout.addComponent(expandButton, 4, 0);
-				layout.setComponentAlignment(expandButton,
-						Alignment.MIDDLE_RIGHT);
-			}
-		});
-
-		this.expandButton = new Button("+");
-		this.expandButton.setPrimaryStyleName("valo-menu-item");
-		this.expandButton.setHtmlContentAllowed(true);
-		this.layout.addComponent(this.expandButton, 4, 0);
-		this.layout.setComponentAlignment(this.expandButton,
-				Alignment.MIDDLE_RIGHT);
-		imagePanelLayout.setVisible(false);
-		this.expandButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				imagePanelLayout.setVisible(true);
-				layout.removeComponent(expandButton);
-				layout.addComponent(collapseButton, 4, 0);
-				layout.setComponentAlignment(collapseButton,
-						Alignment.MIDDLE_RIGHT);
-			}
-		});
-
+        
 		this.setContent(layout);
+
+        this.setVisible(false);
 	}
 
 	/**
@@ -254,7 +205,6 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	 */
 	public void postCommit() throws CommitException
 	{
-		this.layout.removeComponent(this.loginButton);
 		this.layout.removeComponent(this.setupButton);
 		IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
         	.getAttribute(DashboardSessionValueConstants.USER);
@@ -276,6 +226,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		
 		if(this.menu != null)
 		{
+		    this.menu.buildMenu();
 			this.menu.setLoggedIn();
 			menu.setVisible(true);
 		}
@@ -310,9 +261,10 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		if(UI.getCurrent().getNavigator() != null)
 		{
 			UI.getCurrent().getNavigator().navigateTo("emptyPanel");
-	        UI.getCurrent().getNavigator().navigateTo("landingView");
+	        UI.getCurrent().getNavigator().navigateTo("topologyView");
 		}
 
+		this.setVisible(true);
 	}
 
 	/**
@@ -343,6 +295,14 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	@Override
 	public void setVisible(boolean visible)
 	{
+	    if(visible == false)
+        {
+            this.setHeight(0, Unit.PIXELS);
+        }
+        else
+        {
+            this.setHeight(30, Unit.PIXELS);
+        }
 		this.layout.setVisible(visible);
 		
 		if(this.visibilityGroup != null)

@@ -41,7 +41,6 @@
 package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
@@ -63,9 +62,10 @@ public interface ExclusionFlowConfiguration
     public FlowElement<?> getLeadFlowElement();
 
     public List<FlowElement<?>> getFlowElements();
+    public List<FlowElement<?>> getFlowElementInvokerConfiguredResources();
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
-    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
+    public List<FlowElement<ConfiguredResource>> getDynamicConfiguredResourceFlowElements();
     public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
     public ResubmissionService getResubmissionService();
 }

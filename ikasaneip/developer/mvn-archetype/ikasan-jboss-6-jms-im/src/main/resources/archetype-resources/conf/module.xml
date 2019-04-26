@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module xmlns = "urn:jboss:module:1.1" name = "${groupId}.${artifactId}.${dashed.project.version}.conf">
-    <dependencies>
-        <module name = "javax.api"/>
-    </dependencies>
-    <resources>
-        <resource-root path = "."/>
-    </resources>
-</module>

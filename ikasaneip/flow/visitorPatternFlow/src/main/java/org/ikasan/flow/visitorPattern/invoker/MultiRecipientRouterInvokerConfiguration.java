@@ -45,7 +45,7 @@ package org.ikasan.flow.visitorPattern.invoker;
  *
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfiguration
+public class MultiRecipientRouterInvokerConfiguration extends InvokerConfiguration
 {
     /** default behaviour is to clone the event for each route invoked by the MRR */
     boolean cloneEventPerRoute = true;

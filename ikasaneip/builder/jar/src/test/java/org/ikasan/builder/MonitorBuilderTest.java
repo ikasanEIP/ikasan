@@ -41,8 +41,10 @@
 package org.ikasan.builder;
 
 import org.ikasan.monitor.MonitorFactory;
+import org.ikasan.monitor.notifier.DashboardNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.monitor.notifier.NotifierFactory;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
@@ -84,8 +86,14 @@ public class MonitorBuilderTest
     /** Mock NotifierFactory */
     final NotifierFactory notifierFactory = mockery.mock(NotifierFactory.class, "mockNotifierFactory");
 
+    /** Mock NotifierFactory */
+    final PlatformConfigurationService platformConfigurationService = mockery.mock(PlatformConfigurationService.class, "mockPlatformConfigurationService");
+
     /** Mock Notifier */
     final Notifier notifier = mockery.mock(Notifier.class, "mockNotifier");
+
+    /** DashboardNotifier */
+    final DashboardNotifier dashboardNotifier = mockery.mock(DashboardNotifier.class, "mockDashboardNotifier");
 
     /**
      * Test failed constructor.
@@ -93,7 +101,7 @@ public class MonitorBuilderTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_no_monitorFactory()
     {
-        new MonitorBuilder(null, null);
+        new MonitorBuilder(null, null, null);
     }
 
     /**
@@ -102,7 +110,16 @@ public class MonitorBuilderTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_no_notifierFactory()
     {
-        new MonitorBuilder(monitorFactory, null);
+        new MonitorBuilder(monitorFactory, null, null);
+    }
+
+    /**
+     * Test failed constructor.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructor_no_platform_configuration()
+    {
+        new MonitorBuilder(monitorFactory, notifierFactory, null);
     }
 
     /**
@@ -112,7 +129,7 @@ public class MonitorBuilderTest
     public void test_successful_flowStateChangeMonitor_withDashboardNotifier()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
-        notifiers.add(notifier);
+        notifiers.add(dashboardNotifier);
 
         // expectations
         mockery.checking(new Expectations()
@@ -122,11 +139,14 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitorFactory).getMonitor();
                 will(returnValue(monitor));
                 exactly(1).of(notifierFactory).getDashboardNotifier();
-                will(returnValue(notifier));
+                will(returnValue(dashboardNotifier));
+                exactly(1).of(dashboardNotifier).setPlatformConfigurationService(platformConfigurationService);
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
         });
@@ -157,6 +177,8 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitorFactory).getMonitor();
                 will(returnValue(monitor));
@@ -184,7 +206,7 @@ public class MonitorBuilderTest
     public void test_successful_flowStateChangeMonitor_multipleNotifiers()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
-        notifiers.add(notifier);
+        notifiers.add(dashboardNotifier);
         notifiers.add(notifier);
 
         // expectations
@@ -195,13 +217,16 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitorFactory).getMonitor();
                 will(returnValue(monitor));
                 exactly(1).of(notifierFactory).getEmailNotifier();
                 will(returnValue(notifier));
                 exactly(1).of(notifierFactory).getDashboardNotifier();
-                will(returnValue(notifier));
+                will(returnValue(dashboardNotifier));
+                exactly(1).of(dashboardNotifier).setPlatformConfigurationService(platformConfigurationService);
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
         });
@@ -234,6 +259,8 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitorFactory).getMonitor();
                 will(returnValue(monitor));
@@ -267,6 +294,8 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitorFactory).getMonitor();
                 will(returnValue(monitor));
@@ -302,6 +331,8 @@ public class MonitorBuilderTest
                 will(returnValue(monitorFactory));
                 exactly(1).of(applicationContext).getBean(NotifierFactory.class);
                 will(returnValue(notifierFactory));
+                exactly(1).of(applicationContext).getBean(PlatformConfigurationService.class);
+                will(returnValue(platformConfigurationService));
 
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }

@@ -44,36 +44,76 @@ import org.ikasan.exceptionResolver.action.*;
 
 /**
  * Helper for Exception Actions.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class OnException
 {
+    /**
+     * Stop the flow in error
+     * @return
+     */
     public static ExceptionAction stop()
     {
         return StopAction.instance();
     }
 
+    /**
+     * Ignore the exception and continue
+     * @return
+     */
     public static ExceptionAction ignoreException()
     {
         return IgnoreAction.instance();
     }
 
+    /**
+     * Rollback any actions resulting from this inflight event and exclude it
+     * @return
+     */
     public static ExceptionAction excludeEvent()
     {
         return ExcludeEventAction.instance();
     }
 
+    /**
+     * Continually retry with a delay period specified in millis
+     * @param delay period to wait between retries
+     * @return
+     */
+    public static ExceptionAction retryIndefinitely(long delay)
+    {
+        RetryAction retryAction = new RetryAction();
+        retryAction.setDelay(delay);
+        return retryAction;
+    }
+
+    /**
+     * Continually retry with a default delay period of 5 seconds
+     * @return
+     */
     public static ExceptionAction retryIndefinitely()
     {
         return new RetryAction();
     }
 
+    /**
+     * Retry up to a maximum number of attempts based on the specified delay between attempts.
+     * @param delay period to wait between retries
+     * @param maxRetries limit the number of continuous retries for the same exception
+     * @return
+     */
     public static ExceptionAction retry(long delay, int maxRetries)
     {
         return new RetryAction(delay, maxRetries);
     }
 
+    /**
+     * Retry based on a given cron expression up to a maximum number of attempts
+     * @param cronExpression
+     * @param maxRetries
+     * @return
+     */
     public static ExceptionAction scheduledCronRetry(String cronExpression, int maxRetries)
     {
         return new ScheduledRetryAction(cronExpression, maxRetries);

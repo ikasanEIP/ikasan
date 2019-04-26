@@ -116,7 +116,13 @@ public class FtpProducerBuilderTest
                 .setSystemKey("testSystemKey")
                 .setSocketTimeout(300)
                 .setDataTimeout(300)
-                .setConfiguredResourceId("testConfigId")
+                .setFTPS(true)
+                .setFtpsIsImplicit(true)
+                .setFtpsIsImplicit(true)
+                .setFtpsKeyStoreFilePath("testFtpsKeyStoreFilePath")
+                .setFtpsKeyStoreFilePassword("testFtpsKeyStoreFilePassword")
+                .setFtpsProtocol("FTPS")
+                .setFtpsPort(21)
                 .build();
 
         assertTrue("instance should be a SftpProducer", ftpProducer instanceof FtpProducer);
@@ -140,7 +146,14 @@ public class FtpProducerBuilderTest
         assertEquals("connectionTimeout should be '300'",300, configuration.getConnectionTimeout().intValue());
         assertEquals("systemKey should be 'testSystemKey'","testSystemKey", configuration.getSystemKey());
         assertEquals("socketTimeout should be '300'",300, configuration.getSocketTimeout().intValue());
-        assertEquals("dataTimeout should be '300'",300, configuration.getSocketTimeout().intValue());
+        assertEquals("dataTimeout should be '300'",300, configuration.getDataTimeout().intValue());
+
+        assertTrue("Ftps should be 'true'", configuration.getFTPS());
+        assertTrue("FtpsIsImplicit should be 'false'", configuration.getFtpsIsImplicit());
+        assertEquals("ftpsKeyStoreFilePath should be 'testFtpsKeyStoreFilePath'","testFtpsKeyStoreFilePath", configuration.getFtpsKeyStoreFilePath());
+        assertEquals("ftpsKeyStoreFilePassword should be 'testFtpsKeyStoreFilePassword'","testFtpsKeyStoreFilePassword", configuration.getFtpsKeyStoreFilePassword());
+        assertEquals("ftpsProtocol should be 'FTPS'","FTPS", configuration.getFtpsProtocol());
+        assertEquals("ftpsPort should be '21'",21, configuration.getFtpsPort().intValue());
 
         mockery.assertIsSatisfied();
     }

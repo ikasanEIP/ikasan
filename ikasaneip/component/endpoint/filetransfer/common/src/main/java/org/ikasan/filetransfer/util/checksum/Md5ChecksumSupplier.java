@@ -43,6 +43,10 @@ package org.ikasan.filetransfer.util.checksum;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,25 +87,22 @@ public class Md5ChecksumSupplier implements ChecksumSupplier
         String result = null;
         
         // Read in the raw content from the checksum file
-        InputStreamReader reader = new InputStreamReader(checksumFile,
-            "UTF-8");
+        InputStreamReader reader = new InputStreamReader(checksumFile, StandardCharsets.UTF_8);
         StringBuffer stringBuffer = new StringBuffer();
         
         // Different OS's generate the checksum in a different place in the file 
         // so we need to be a bit cunning and use regular expressions to go and find it.
         
-        int length = 0;
         int character;
         logger.debug("Reading in checksum file..."); //$NON-NLS-1$
         while ((character = reader.read()) != -1)
         {
-            length++;
             stringBuffer.append((char) character);
         }
         logger.debug("Checksum file read: [" + stringBuffer.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         Pattern pattern = Pattern.compile(MD5_PATTERN);
-        logger.info("Extracting Checksum usign regular expression pattern [" + pattern.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.info("Extracting Checksum using regular expression pattern [" + pattern.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         Matcher matcher = pattern.matcher(stringBuffer);
         if (matcher.find())
         {
@@ -128,24 +129,21 @@ public class Md5ChecksumSupplier implements ChecksumSupplier
         return digestChecksum.digestToString();
     }
 
+    @Override
+    public String calculateChecksumString(InputStream inputStream) throws IOException {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(algorithmName);
+            DigestInputStream digestInputStream = new DigestInputStream(inputStream, digest);
+            while (digestInputStream.read() != 1) ;
+            return new String(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Algorithm not supported", e);
+        }
+    }
+
     public String getAlgorithmName()
     {
         return algorithmName;
     }
-    
-    /**
-     * TODO Unit Test
-     * @param args
-     * @throws IOException
-     */
-    /*
-    public static void main(String[] args) throws IOException
-    {
-    	File file = new File(args[0]);
-    	FileInputStream fis = new FileInputStream(file);
-    	Md5ChecksumSupplier supplier = new Md5ChecksumSupplier(); 
-    	supplier.extractChecksumFromChecksumFile(fis);
-    }
-    */
-    
+
 }

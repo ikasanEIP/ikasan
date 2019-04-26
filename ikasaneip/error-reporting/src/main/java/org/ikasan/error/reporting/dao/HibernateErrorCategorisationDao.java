@@ -43,13 +43,11 @@ package org.ikasan.error.reporting.dao;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -75,8 +73,17 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 			"or (l.ModuleName = e.ModuleName) " +
 			"and e.Timestamp <= :" + END_DATE + " " +
 			"and e.Timestamp >= :" + START_DATE + " " +
-			"and e.UserAction is NULL ";
-	
+			"and e.UserAction is NULL " ;
+
+	public static final String ERROR_CATERORISED_LINK_FIND_ALL_SQL = "select l from ErrorCategorisationLink as l "
+        + " where l.moduleNAme = :moduleName and l.flowName = :flowName and l.flowElementName = :flowElementName ";
+
+	public static final String ERROR_CATERORISED_LINK_FIND_ONE_SQL = "select l from ErrorCategorisationLink as l "
+        + " where l.moduleName = :moduleName "
+        + " and l.flowName = :flowName "
+        + " and l.flowElementName = :flowElementName "
+        + " and l.action = :action " ;
+
 	public final String MODULE_NAMES_CLAUSE = "and e.ModuleName in(:" + MODULE_NAMES +") ";
 	public final String FLOW_NAMES_CLAUSE = "and e.FlowName in (:" + FLOW_NAMES + ") ";
 	public final String COMPONENT_NAMES_CLAUSE =  "and e.FlowElementName in (:" + COMPONENT_NAMES + ") ";
@@ -116,17 +123,15 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	public List<ErrorCategorisationLink> find(String moduleName, String flowName,
 			String flowElementName)
 	{
-		if(moduleName == null || flowName == null || flowElementName == null)
-		{
-			return null;
-		}
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorCategorisationLink.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("flowElementName", flowElementName));
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(ERROR_CATERORISED_LINK_FIND_ALL_SQL);
+            query.setParameter("moduleName", moduleName);
+            query.setParameter("flowName", flowName);
+            query.setParameter("flowElementName", flowElementName);
+            return (List<ErrorCategorisationLink>) query.list();
+        });
 
-        return (List<ErrorCategorisationLink>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 	
 	/* (non-Javadoc)
@@ -136,21 +141,20 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	public ErrorCategorisationLink find(String moduleName, String flowName,
 			String flowElementName, String action)
 	{
-		if(moduleName == null || flowName == null || flowElementName == null || action == null)
-		{
-			return null;
-		}
-		
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorCategorisationLink.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("flowElementName", flowElementName));
-        criteria.add(Restrictions.eq("action", action));
-        
-        ErrorCategorisationLink errorCategorisationLink = (ErrorCategorisationLink) DataAccessUtils
-        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 
-        return errorCategorisationLink;
+        return this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(ERROR_CATERORISED_LINK_FIND_ONE_SQL);
+            query.setParameter("moduleName", moduleName);
+            query.setParameter("flowName", flowName);
+            query.setParameter("flowElementName", flowElementName);
+            query.setParameter("action", action);
+            List<ErrorCategorisationLink> list = query.getResultList();
+            if(list!=null && !list.isEmpty()){
+                return list.get(0);
+            }
+            return null;
+        });
+
 	}
 
 	/* (non-Javadoc)
@@ -168,9 +172,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisation> findAll()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorCategorisation.class);
-        
-        return (List<ErrorCategorisation>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().loadAll(ErrorCategorisation.class);
 	}
 	
 	/* (non-Javadoc)
@@ -179,9 +181,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorCategorisationLink.class);
-        
-        return (List<ErrorCategorisationLink>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().loadAll(ErrorCategorisationLink.class);
 	}
 
 	/* (non-Javadoc)

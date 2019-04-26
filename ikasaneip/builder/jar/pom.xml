@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-builder-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-builder</artifactId>
@@ -52,6 +52,14 @@
     <name>Ikasan Enterprise Integration builder</name>
 
     <build>
+        <!-- used to get maven properties into pom.properties for use at runtime -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
               <plugin>
                      <groupId>org.apache.maven.plugins</groupId>
@@ -88,67 +96,56 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spring-resource</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-recovery-manager</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-serialiser</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-error-reporting-service</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -165,57 +162,66 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-converter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-component-splitter</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-configuration-service</artifactId>
+            <artifactId>ikasan-test-endpoint</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-replay</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-boot</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-hospital</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${version.org.hibernate-validator}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- web console -->
@@ -241,7 +247,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Hibernate dependency -->
@@ -255,13 +260,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -273,19 +276,16 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-quartz-endpoint</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -296,15 +296,18 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring-arjuna</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
         </dependency>
 
         <dependency>
@@ -339,19 +342,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <version>${version.org.springboot}</version>
         </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${version.com.h2database}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
 
         <dependency>
@@ -363,7 +359,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>${version.org.hamcrest.hamcrest-all}</version>
         </dependency>
 
         <dependency>
@@ -382,6 +377,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-standalone-persistence</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

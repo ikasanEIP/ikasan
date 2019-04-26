@@ -1,5 +1,5 @@
 package org.ikasan.setup.persistence.service.custom;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /*
  * $Id$  

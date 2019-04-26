@@ -40,25 +40,24 @@
  */
 package org.ikasan.replay.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.hibernate.Criteria;
+import com.google.common.collect.Lists;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.*;
+import org.hibernate.query.Query;
 import org.ikasan.replay.model.HibernateReplayAudit;
 import org.ikasan.replay.model.HibernateReplayAuditEvent;
 import org.ikasan.replay.model.HibernateReplayEvent;
-import com.google.common.collect.Lists;
-import org.ikasan.spec.replay.ReplayDao;
+import org.ikasan.replay.model.ReplayAuditEventKey;
 import org.ikasan.spec.replay.ReplayAuditDao;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Hibernate implementation of <code>UserDao</code>
@@ -185,7 +184,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     				query.setParameter(EVENT_ID, eventId);
     		    }
 
-
                 return (List<HibernateReplayAudit>)query.list();
             }
         });
@@ -205,34 +203,52 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 */
 	@Override
 	public List<ReplayEvent> getReplayEvents(String moduleName,
-                                                      String flowName, Date startDate, Date endDate)
+                                                      String flowName, Date startDate, Date endDate, int resultSize)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
-		
-		if(moduleName != null && moduleName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("flowName", flowName));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-		
-		criteria.addOrder(Order.desc("timestamp"));
 
-		
-		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+		return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<ReplayEvent> criteriaQuery = builder.createQuery(ReplayEvent.class);
+
+            Root<HibernateReplayEvent> root = criteriaQuery.from(HibernateReplayEvent.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null)
+            {
+                predicates.add( builder.equal(root.get("moduleName"),moduleName));
+            }
+
+            if(flowName != null)
+            {
+                predicates.add( builder.equal(root.get("flowName"),flowName));
+            }
+
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
+
+
+            Query<ReplayEvent> query = session.createQuery(criteriaQuery);
+            query.setFirstResult(0);
+            query.setMaxResults(resultSize);
+            List<ReplayEvent> rowList = query.getResultList();
+
+            return rowList;
+        });
 	}
 	
 	
@@ -243,54 +259,67 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
                                                       List<String> flowNames, String eventId,
-                                                      String payloadContent, Date fromDate, Date toDate)
+                                                      String payloadContent, Date startDate, Date endDate, int resultSize)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
-		
-		if(moduleNames != null && moduleNames.size() > 0)
-		{
-			criteria.add(Restrictions.in("moduleName", moduleNames));
-		}
-		
-		if(flowNames != null && flowNames.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowName", flowNames));
-		}
-		
-		if(fromDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", fromDate.getTime()));
-		}
-		
-		if(toDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", toDate.getTime()));
-		}
-		
-		if (eventId != null && eventId.length() > 0)
-	    {
-	       criteria.add(Restrictions.eq("eventId", eventId));
-	    }
+	    return getHibernateTemplate().execute((session) -> {
 
-		if (payloadContent != null && payloadContent.length() > 0)
-		{
-			criteria.add(Restrictions.like("eventAsString", payloadContent, MatchMode.ANYWHERE));
-		}
-		 
-		
-		criteria.addOrder(Order.desc("timestamp"));	
-		
-		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            CriteriaQuery<ReplayEvent> criteriaQuery = builder.createQuery(ReplayEvent.class);
+
+            Root<HibernateReplayEvent> root = criteriaQuery.from(HibernateReplayEvent.class);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleNames != null && moduleNames.size() > 0)
+            {
+                predicates.add(root.get("moduleName").in(moduleNames));
+            }
+
+            if(flowNames != null && flowNames.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowNames));
+            }
+
+            if(startDate != null)
+            {
+                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+            if (eventId != null && eventId.length() > 0)
+            {
+                predicates.add( builder.equal(root.get("eventId"),eventId));
+            }
+
+            if (payloadContent != null && payloadContent.length() > 0)
+            {
+                //criteria.add(Restrictions.like("eventAsString", payloadContent, MatchMode.ANYWHERE));
+                predicates.add( builder.like(root.get("eventAsString"),payloadContent));
+            }
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
+
+
+            Query<ReplayEvent> query = session.createQuery(criteriaQuery);
+            query.setFirstResult(0);
+            query.setMaxResults(resultSize);
+            List<ReplayEvent> rowList = query.getResultList();
+
+            return rowList;
+        });
 	}
 
 	@Override
 	public ReplayEvent getReplayEventById(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
-
-		criteria.add(Restrictions.eq("id", id));
-
-		return (ReplayEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return this.getHibernateTemplate().get(HibernateReplayEvent.class,id);
 	}
 
 	/* (non-Javadoc)
@@ -317,11 +346,8 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	@Override
 	public HibernateReplayAudit getReplayAuditById(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayAudit.class);
-		
-		criteria.add(Restrictions.eq("id", id));
-		
-		return (HibernateReplayAudit)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return this.getHibernateTemplate().get(HibernateReplayAudit.class,id);
+
 	}
 
 	/* (non-Javadoc)
@@ -330,12 +356,22 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	@Override
 	public List<HibernateReplayAuditEvent> getReplayAuditEventsByAuditId(Long id)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayAuditEvent.class);
+        return getHibernateTemplate().execute(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<HibernateReplayAuditEvent> criteriaQuery = builder.createQuery(HibernateReplayAuditEvent.class);
 
-		criteria.add(Restrictions.eq("id.replayAuditId", id));
-		
-		
-		return (List<HibernateReplayAuditEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+            Root<HibernateReplayAuditEvent> root = criteriaQuery.from(HibernateReplayAuditEvent.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+//            predicates.add(builder.equal(root.get("replayAuditId"), id));
+            predicates.add(builder.equal(root.get("id").get("replayAuditId"),id));
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<HibernateReplayAuditEvent> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -344,23 +380,25 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	@Override
 	public Long getNumberReplayAuditEventsByAuditId(final Long id) 
 	{
-		return (Long) getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
+        return getHibernateTemplate().execute(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+
+            Root<HibernateReplayAuditEvent> root = criteriaQuery.from(HibernateReplayAuditEvent.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("id").get("replayAuditId"),id));
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<Long> query = session.createQuery(criteriaQuery);
+            List<Long> rowCountList = query.getResultList();
+            if (!rowCountList.isEmpty())
             {
-                Criteria criteria = session.createCriteria(HibernateReplayAuditEvent.class);
-                criteria.add(Restrictions.eq("id.replayAuditId", id));
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = new Long(0);
-                List<Long> rowCountList = criteria.list();
-
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-
-                return rowCount;
+                return rowCountList.get(0);
             }
+            return new Long(0);
         });
 	}
 
@@ -416,20 +454,20 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 
 	public List<ReplayEvent> getHarvestableRecords(final int housekeepingBatchSize)
 	{
-		return (List<ReplayEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
-		{
-			public Object doInHibernate(Session session) throws HibernateException
-			{
-				Criteria criteria = session.createCriteria(HibernateReplayEvent.class);
-				criteria.add(Restrictions.eq("harvested", false));
-				criteria.setMaxResults(housekeepingBatchSize);
-				criteria.addOrder(Order.asc("timestamp"));
+		return getHibernateTemplate().execute((Session session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ReplayEvent> criteriaQuery = builder.createQuery(ReplayEvent.class);
+            Root<HibernateReplayEvent> root = criteriaQuery.from(HibernateReplayEvent.class);
 
-				List<HibernateReplayEvent> flowInvocationMetrics = criteria.list();
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("harvested"),false))
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
 
-				return flowInvocationMetrics;
-			}
-		});
+            Query<ReplayEvent> query = session.createQuery(criteriaQuery);
+            query.setMaxResults(housekeepingBatchSize);
+            return query.getResultList();
+        });
 	}
 
     @Override

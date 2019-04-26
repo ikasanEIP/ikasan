@@ -45,11 +45,11 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
@@ -116,31 +116,12 @@ public class VisitingInvokerFlowTest
     /** Mock managedResourceRecoveryManager */
     private final ManagedResourceRecoveryManager exclusionManagedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class, "mockExclusionManagedResourceRecoveryManager");
 
-
-    /** Mock list of configured resource flow elements */
-    private final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
-            = mockery.mock(List.class, "mockFlowElementConfiguredResources");
-
-    private final Map<String,ConfiguredResource> configuredResourceFlowInvokers
-            = mockery.mock(Map.class, "mockConfiguredResourceFlowInvokers");
-
-    /** Mock list of configured resource flow elements */
-    private final List<FlowElement<?>> flowElements
-            = mockery.mock(List.class, "mockFlowElements");
-
     /** Mock configured resource flow elements */
     private final FlowElement<ConfiguredResource> configuredResourceFlowElement
             = mockery.mock(FlowElement.class, "mockFlowElementConfiguredResource");
 
-    private final FlowElementInvoker configuredResourceFlowElementInvoker
-            = mockery.mock(FlowElementInvoker.class, "mockFlowElementInvokerCR");
-
-    /** Mock list of dynamic configured resource flow elements */
-    private final List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredResourceFlowElements
-            = mockery.mock(List.class, "mockFlowElementDynamicConfiguredResources");
-
     /** Mock dynamic configured resource flow elements */
-    private final FlowElement<DynamicConfiguredResource> dynamicConfiguredResourceFlowElement
+    private final FlowElement<ConfiguredResource> dynamicConfiguredResourceFlowElement
             = mockery.mock(FlowElement.class, "mockFlowElementDynamicConfiguredResource");
 
     /** Mock managed resource flow element 1 */
@@ -176,7 +157,7 @@ public class VisitingInvokerFlowTest
     private final ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockConfiguredResource");
 
     /** mock managed resource */
-    private final DynamicConfiguredResource dynamicConfiguredResource = mockery.mock(DynamicConfiguredResource.class, "mockDynamicConfiguredResource");
+    private final ConfiguredResource dynamicConfiguredResource = mockery.mock(ConfiguredResource.class, "mockDynamicConfiguredResource");
 
     /** Mock consumer flowElement */
     private final FlowElement<Consumer<EventListener<FlowEvent<?,?>>,EventFactory>> consumerFlowElement
@@ -207,21 +188,22 @@ public class VisitingInvokerFlowTest
     private final List<FlowInvocationContextListener> flowInvocationContextListeners = Collections.singletonList(flowInvocationContextListener);
 
     /** is recovering status */
-    private boolean isRecovering = false;
+    private final boolean isRecovering = true;
+    private final boolean isNotRecovering = false;
 
     /** is running status */
-    private boolean isRunning = false;
+    private final boolean isNotRunning = false;
+    private final boolean isRunning = true;
 
     /** is unrecoverable status */
-    private boolean isUnrecoverable = false;
+    private final boolean isUnrecoverable = true;
+    private final boolean isNotUnrecoverable = false;
 
 
     @Before
     public void setup()
     {
-        isRecovering = false;
-        isRunning = false;
-        isUnrecoverable = false;
+        // nothing to setup
     }
 
     /**
@@ -314,7 +296,15 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        final List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
 
         // expectations
         mockery.checking(new Expectations()
@@ -323,8 +313,10 @@ public class VisitingInvokerFlowTest
                 // get the two flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // get any dynamic resources
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
 
                 // load monitor configuration and notifiers
                 oneOf(monitor).getNotifiers();
@@ -339,6 +331,10 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+
                 // flow invoker configuration
                 oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
                 will(returnValue(configuredResourceInvokers));
@@ -346,8 +342,6 @@ public class VisitingInvokerFlowTest
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -363,8 +357,6 @@ public class VisitingInvokerFlowTest
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
 
-                oneOf(flowElements).iterator();
-
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -373,8 +365,6 @@ public class VisitingInvokerFlowTest
                 will(returnValue(errorReportingServiceAwareComponent));
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -462,17 +452,13 @@ public class VisitingInvokerFlowTest
         });
 
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
         // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -505,7 +491,15 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        final List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
 
         // expectations
         mockery.checking(new Expectations()
@@ -514,8 +508,6 @@ public class VisitingInvokerFlowTest
                 // get the two flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
                 oneOf(monitor).getNotifiers();
@@ -530,16 +522,20 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // flow invoker configuration
                 oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
                 will(returnValue(configuredResourceInvokers));
-
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -555,8 +551,6 @@ public class VisitingInvokerFlowTest
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
 
-                oneOf(flowElements).iterator();
-
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -566,8 +560,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
-                oneOf(flowElements).iterator();
-
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -576,7 +568,6 @@ public class VisitingInvokerFlowTest
                 will(returnValue(errorReportingServiceAwareComponent));
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
 
                 // get the three flow element managed resources
                 oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
@@ -655,18 +646,16 @@ public class VisitingInvokerFlowTest
         });
 
         // set the monitor and receive initial state callback
-        isUnrecoverable = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
         // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
 
         // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -686,16 +675,15 @@ public class VisitingInvokerFlowTest
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         // set the monitor and receive initial state callback
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
         flow.setMonitor(monitor);
 
         // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
 
         // monitor state updated after start invoked
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
 
         // start will bail out due to flow already running
@@ -716,16 +704,15 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor and receive initial state callback
-        isRecovering = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("recovering");
         flow.setMonitor(monitor);
 
         // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isNotUnrecoverable);
 
         // monitor state updated after start invoked
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("recovering");
 
         // start will bail out due to flow already running in recovery
@@ -755,7 +742,16 @@ public class VisitingInvokerFlowTest
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        final List<FlowElement<ConfiguredResource>> multipleConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        multipleConfiguredResourceFlowElements.add(configuredResourceFlowElement);
+        multipleConfiguredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -772,6 +768,17 @@ public class VisitingInvokerFlowTest
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
 
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+
+                // get dynamic configured resources
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+
                 // flow invoker configuration
                 oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
                 will(returnValue(configuredResourceInvokers));
@@ -779,8 +786,6 @@ public class VisitingInvokerFlowTest
                 // get the flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
                 oneOf(monitor).getNotifiers();
@@ -788,9 +793,10 @@ public class VisitingInvokerFlowTest
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+                will(returnValue(multipleConfiguredResourceFlowElements));
+
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(multipleConfiguredResourceFlowElements));
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -800,39 +806,18 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                // inject errorReportingService to those needing it on the exclusion flow
-                oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                oneOf(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                oneOf(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
             }
         });
 
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
         // this start will result in the monitor being updated to unrecoverable
-        setGetStateExpectations(isRecovering, isRunning);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
         flow.start();
 
@@ -853,103 +838,27 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
-        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
+        final List<FlowElement<?>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
         errorReportingServiceAwareFlowElements.add(errorReportingServiceAwareFlowElement1);
 
-        final List<FlowElement<ManagedResource>> managedResourceExclusionFlowElements = new ArrayList<>();
-
-        final List<Notifier> notifiers = new ArrayList<>();
-
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements, managedResourceFlowElements);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // clear recovery manager states
-                oneOf(recoveryManager).initialise();
-                // pass any managed resources to the recovery manager
-                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
-
-                // load monitor configuration and notifiers
-                oneOf(monitor).getNotifiers();
-                will(returnValue(notifiers));
-
-                // get the two flow element configured resources
-                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-                // configure business flow
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                // load configuration
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                // get the two exclusion flow element configured resources
-                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-
-                // load exclusion flow configuration
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                // flow invoker configuration
-                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
-                will(returnValue(configuredResourceInvokers));
-
-
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                oneOf(flowConfiguration).configure(flow);
-
-                oneOf(flowConfiguration).getFlowElements();
-                will(returnValue(flowElements));
-
-                oneOf(flowElements).iterator();
-
-                // inject errorReportingService to those needing it
-                oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                oneOf(flowElements).iterator();
-
-
-                // inject errorReportingService to those needing it on the exclusion flow
-                oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                // get the the flow element managed resource
-                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceExclusionFlowElements));
-
-                // get the the flow element managed resource
-                oneOf(flowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceFlowElements));
-
+                // handle managed resources on the normal flow
                 // set the managed resource recovery manager instance on each managed resource
                 oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
@@ -970,37 +879,15 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("managedResourceFlowElementName"));
                 inSequence(reverseOrder);
-
-                // get the consumer
-                oneOf(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                oneOf(consumerFlowElement).getFlowComponent();
-                will(returnValue(consumer));
-
-                // set listener for tech callbacks
-                oneOf(consumer).setListener(flow);
-
-                // check eventFactory for consumer
-                oneOf(consumer).getEventFactory();
-                will(returnValue(flowEventFactory));
-
-                // start the consumer
-                oneOf(consumer).start();
             }
         });
 
-        // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+         // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
-        flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
-
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
-        // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        flow.setMonitor(monitor);
+        setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -1024,6 +911,10 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -1034,8 +925,6 @@ public class VisitingInvokerFlowTest
                 // get the two flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load dao
                 exactly(2).of(flowConfiguration).configure(configuredResource);
@@ -1068,16 +957,15 @@ public class VisitingInvokerFlowTest
         });
 
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
 
         // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -1096,188 +984,14 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
-        final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
-        errorReportingServiceAwareFlowElements.add(errorReportingServiceAwareFlowElement1);
-
-        final List<FlowElement<ManagedResource>> managedResourceExclusionFlowElements = new ArrayList<>();
-
-        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
-        managedResourceFlowElements.add(managedResourceFlowElement1);
-        managedResourceFlowElements.add(managedResourceFlowElement2);
-        managedResourceFlowElements.add(managedResourceFlowElement3);
-
-        final RuntimeException exception = new RuntimeException("test consumer failing to start");
-
-        final List<Notifier> notifiers = new ArrayList<>();
-
-        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
-
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // clear recovery manager states
-                oneOf(recoveryManager).initialise();
-                // pass any managed resources to the recovery manager
-                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
-
-                // get the two flow element configured resources
-                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-
-                // load monitor dao and notifiers
-                oneOf(monitor).getNotifiers();
-                will(returnValue(notifiers));
-
-                // load dao
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                // flow invoker configuration
-                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
-                will(returnValue(configuredResourceInvokers));
-
-                // get the two exclusion flow element configured resources
-                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-
-                // load exclusion flow configuration
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                oneOf(flowConfiguration).configure(flow);
-
-                oneOf(flowConfiguration).getFlowElements();
-                will(returnValue(flowElements));
-
-                oneOf(flowElements).iterator();
-
-
-                // inject errorReportingService to those needing it
-                oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                oneOf(flowElements).iterator();
-
-                // inject errorReportingService to those needing it on the exclusion flow
-                oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                // get the exclusion flow element managed resources
-                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceExclusionFlowElements));
-
-                // get the three flow element managed resources
-                oneOf(flowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceFlowElements));
-
-                // set the managed resource recovery manager instance on each managed resource
-                oneOf(managedResourceFlowElement3).getFlowComponent();
-                will(returnValue(managedResource));
-                oneOf(managedResourceFlowElement3).getComponentName();
-                will(returnValue("component name"));
-                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
-                will(returnValue(managedResourceRecoveryManager));
-                oneOf(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-
-                // start each managed resource from right to left (reverse order) in flow order
-                inSequence(reverseOrder);
-                oneOf(managedResource).startManagedResource();
-                exactly(2).of(managedResourceFlowElement3).getComponentName();
-                will(returnValue("component name"));
-
-                // set the managed resource recovery manager instance on each managed resource
-                oneOf(managedResourceFlowElement2).getFlowComponent();
-                will(returnValue(managedResource));
-                oneOf(managedResourceFlowElement2).getComponentName();
-                will(returnValue("component name"));
-                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
-                will(returnValue(managedResourceRecoveryManager));
-                oneOf(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-
-                // start each managed resource from right to left (reverse order) in flow order
-                inSequence(reverseOrder);
-                oneOf(managedResource).startManagedResource();
-                exactly(2).of(managedResourceFlowElement2).getComponentName();
-                will(returnValue("component name"));
-
-                // set the managed resource recovery manager instance on each managed resource
-                oneOf(managedResourceFlowElement1).getFlowComponent();
-                will(returnValue(managedResource));
-                oneOf(managedResourceFlowElement1).getComponentName();
-                will(returnValue("component name"));
-                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
-                will(returnValue(managedResourceRecoveryManager));
-                oneOf(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-
-                // start each managed resource from right to left (reverse order) in flow order
-                inSequence(reverseOrder);
-                oneOf(managedResource).startManagedResource();
-                exactly(2).of(managedResourceFlowElement1).getComponentName();
-                will(returnValue("component name"));
-
-                // get the consumer
-                oneOf(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                oneOf(consumerFlowElement).getFlowComponent();
-                will(returnValue(consumer));
-
-                // set listener for tech callbacks
-                oneOf(consumer).setListener(flow);
-
-                // check eventFactory for consumer
-                oneOf(consumer).getEventFactory();
-                will(returnValue(flowEventFactory));
-
-                // start the consumer
-                oneOf(consumer).start();
-                will(throwException(exception));
-
-                // recovery manager invocation
-                oneOf(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                oneOf(recoveryManager).recover("consumerName", exception);
-            }
-        });
-
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
         // this start will result in the monitor being updated to unrecoverable
-        isRecovering = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("recovering");
         flow.start();
 
@@ -1312,7 +1026,15 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        final List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
 
         // expectations
         mockery.checking(new Expectations()
@@ -1326,14 +1048,14 @@ public class VisitingInvokerFlowTest
                 // get the two flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -1349,8 +1071,6 @@ public class VisitingInvokerFlowTest
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
 
-                oneOf(flowElements).iterator();
-
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -1360,13 +1080,9 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
-                oneOf(flowElements).iterator();
-
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
-
-
 
                 oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
                 will(returnValue(errorReportingServiceAwareComponent));
@@ -1389,6 +1105,10 @@ public class VisitingInvokerFlowTest
                 // flow invoker configuration
                 oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
                 will(returnValue(configuredResourceInvokers));
+
+                // get any dynamic resources
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
 
                 // get the exclusion flow element managed resources
                 oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
@@ -1468,17 +1188,13 @@ public class VisitingInvokerFlowTest
         });
 
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
         // this start will result in the monitor being updated to unrecoverable
-        isUnrecoverable = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
         flow.start();
 
@@ -1496,6 +1212,13 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
@@ -1605,15 +1328,13 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
-        // set the monitor
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(1, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.stop();
 
@@ -1741,14 +1462,12 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
         flow.setMonitor(monitor);
 
         // run test
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.stop();
 
@@ -1877,12 +1596,12 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.stop();
 
@@ -2014,14 +1733,13 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
-        isUnrecoverable = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("stoppedInError");
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("stoppedInError");
+        setGetStateExpectations(isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.stop();
 
         // test assertions
@@ -2034,6 +1752,12 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_flow_invoke_with_flowEvent()
     {
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2044,13 +1768,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
@@ -2068,7 +1785,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
@@ -2085,11 +1802,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
-
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
@@ -2112,15 +1824,20 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
+        setMonitorExpectations("running");
+        flow.start();
         flow.invoke(flowEvent);
 
         // test assertions
@@ -2133,6 +1850,13 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_flow_invoke_with_flowEvent_with_contextListener()
     {
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2143,13 +1867,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
@@ -2188,11 +1905,6 @@ public class VisitingInvokerFlowTest
                 oneOf(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
@@ -2218,19 +1930,126 @@ public class VisitingInvokerFlowTest
         flow.getConfiguration().setInvokeContextListeners(true);
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
+        setMonitorExpectations("running");
+        flow.start();
         flow.invoke(flowEvent);
 
         // test assertions
         mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Set all expectations for a standard start()
+     */
+    public void setStartExpectations(VisitingInvokerFlow flow,
+                                     final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements,
+                                     final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements)
+    {
+        final List<FlowElement<?>> managedResourceFlowElements = new ArrayList<FlowElement<?>>();
+        final List<FlowElement<?>> managedResourceExclusionFlowElements = new ArrayList<FlowElement<?>>();
+        setStartExpectations(flow, dynamicConfiguredResourceFlowElements, configuredResourceFlowElements,
+                managedResourceFlowElements, managedResourceExclusionFlowElements);
+    }
+
+    /**
+     * Set all expectations for a standard start()
+     */
+    public void setStartExpectations(VisitingInvokerFlow flow,
+                                     final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements,
+                                     final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements,
+                                     final List<FlowElement<?>> managedResourceFlowElements)
+    {
+        final List<FlowElement<?>> managedResourceExclusionFlowElements = new ArrayList<FlowElement<?>>();
+        setStartExpectations(flow, dynamicConfiguredResourceFlowElements, configuredResourceFlowElements,
+                managedResourceFlowElements, managedResourceExclusionFlowElements);
+    }
+
+    /**
+     * Set all expectations for a standard start()
+     */
+    public void setStartExpectations(VisitingInvokerFlow flow,
+                                     final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements,
+                                     final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements,
+                                     final List<FlowElement<?>> managedResourceFlowElements,
+                                     final List<FlowElement<?>> managedResourceExclusionFlowElements)
+    {
+        final List<Notifier> notifiers = new ArrayList<>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+        final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // init recovery manager
+                oneOf(recoveryManager).initialise();
+                // load monitor configuration and notifiers
+                oneOf(monitor).getNotifiers();
+                will(returnValue(notifiers));
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                exactly(1).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("id"));
+                exactly(1).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                exactly(1).of(flowConfiguration).configure(configuredResource);
+                oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
+                will(returnValue(errorReportingServiceAwareFlowElements));
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("id"));
+                exactly(1).of(flowConfiguration).configure(configuredResource);
+                exactly(1).of(flowConfiguration).getFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                exactly(1).of(configuredResourceFlowElement).getConfiguredResourceId();
+                will(returnValue("id"));
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(flow);
+                oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
+                will(returnValue(errorReportingServiceAwareFlowElements));
+                exactly(1).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                // exclusion flow element flow managed resource flow elements
+                exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceExclusionFlowElements));
+                // normal flow element flow managed resource flow elements
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                exactly(1).of(recoveryManager).setManagedResources(managedResourceFlowElements);
+                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                exactly(1).of(consumer).setListener(flow);
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
+                exactly(1).of(consumer).start();
+            }
+        });
     }
 
     /**
@@ -2239,6 +2058,16 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_flow_invoke_with_flowEvent_with_contextListener_disabled()
     {
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2247,13 +2076,11 @@ public class VisitingInvokerFlowTest
                 oneOf(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                //
+                // expectations from invoke
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
@@ -2288,11 +2115,6 @@ public class VisitingInvokerFlowTest
                 oneOf(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
@@ -2308,21 +2130,23 @@ public class VisitingInvokerFlowTest
             }
         });
 
-        // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
-                flowConfiguration, recoveryManager, exclusionService);
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
         flow.stopContextListeners();
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
+        setMonitorExpectations("running");
+        flow.start();
         flow.invoke(flowEvent);
 
         // test assertions
@@ -2335,6 +2159,12 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_flow_invoke_with_flowEvent_with_contextListener_enabled()
     {
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2345,13 +2175,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
@@ -2388,11 +2211,6 @@ public class VisitingInvokerFlowTest
                 oneOf(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
@@ -2420,15 +2238,21 @@ public class VisitingInvokerFlowTest
         flow.stopContextListeners();
         flow.startContextListeners();
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
+        flow.start();
+
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
         flow.invoke(flowEvent);
 
         // test assertions
@@ -2439,10 +2263,21 @@ public class VisitingInvokerFlowTest
     /**
      * Test failed flow invoke with a flow event, but dynamic dao failing.
      */
-    @Test
+    @Test(expected = ForceTransactionRollbackException.class)
     public void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
     {
         final RuntimeException exception = new RuntimeException("test failed dynamic dao");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2454,12 +2289,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
@@ -2472,6 +2301,7 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+                will(throwException(new ForceTransactionRollbackException("")));
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -2482,33 +2312,46 @@ public class VisitingInvokerFlowTest
             }
         });
 
-        // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
-                flowConfiguration, recoveryManager, exclusionService);
-
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set state as stopped when setting monitor
+        setGetStateExpectations(1, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
-        // run test
-        isUnrecoverable = true;
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("stoppedInError");
-        flow.invoke(flowEvent);
+        try
+        {
+            // state on entry to start
+            setGetStateExpectations(1, isNotRecovering, isNotRunning, isNotUnrecoverable);
 
-        // test assertions
-        mockery.assertIsSatisfied();
+            // state on exit from start
+            setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+            setMonitorExpectations("running");
+            flow.start();
+
+            // run invoke
+            setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
+            setMonitorExpectations("stoppedInError");
+            flow.invoke(flowEvent);
+        }
+        catch(ForceTransactionRollbackException e)
+        {
+            // test assertions
+            mockery.assertIsSatisfied();
+            throw e;
+        }
+
     }
 
     /**
      * Test failed flow invoke with a flow event with the resulting outcome being stoppedInError.
      */
-    @Test
+    @Test(expected = ForceTransactionRollbackException.class)
     public void test_failed_flow_invoke_with_flowEvent_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2520,12 +2363,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
@@ -2547,7 +2384,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
@@ -2564,6 +2401,7 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+                will(throwException(new ForceTransactionRollbackException("")));
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -2577,30 +2415,149 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
+        setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
+
         // run test
-        isUnrecoverable = true;
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
         flow.setFlowListener(flowEventListener);
-        flow.invoke(flowEvent);
 
-        // test assertions
-        mockery.assertIsSatisfied();
+        try
+        {
+            flow.invoke(flowEvent);
+        }
+        catch(ForceTransactionRollbackException e)
+        {
+            // test assertions
+            mockery.assertIsSatisfied();
+            throw e;
+        }
+
+    }
+
+    /**
+     * Test failed flow invoke with a flow event with the resulting outcome being recovering.
+     */
+    @Test(expected = ForceTransactionRollbackException.class)
+    public void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
+    {
+        final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always get the original exceptionLifeIdentifier
+                oneOf(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
+                oneOf(flowInvocationContext).startFlowInvocation();
+                oneOf(flowInvocationContext).endFlowInvocation();
+
+                oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                oneOf(flowConfiguration).configure(configuredResource);
+
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
+
+                oneOf(exclusionService).isBlackListed("identifier");
+                will(returnValue(false));
+
+                // invoke the flow elements
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
+                oneOf(consumerFlowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(consumerFlowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+                oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
+
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                will(throwException(exception));
+
+                // pass the exception to the recovery manager
+                oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+                will(throwException(new ForceTransactionRollbackException("")));
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        try
+        {
+            // state is stopped when setting monitor and on init of start()
+            setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+            setMonitorExpectations("stopped");
+            flow.setMonitor(monitor);
+            setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+            setMonitorExpectations("running");
+            flow.start();
+
+            // run test
+            flow.setFlowListener(flowEventListener);
+            setGetStateExpectations(isRecovering, isRunning, isNotUnrecoverable);
+            setMonitorExpectations("recovering");
+            flow.invoke(flowEvent);
+        }
+        catch(ForceTransactionRollbackException e)
+        {
+            // test assertions
+            mockery.assertIsSatisfied();
+
+            throw e;
+        }
+
     }
 
     /**
      * Test failed flow invoke with a flow event with the resulting outcome being recovering.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
+    public void test_failed_flow_invoke_with_flowEvent_resulting_in_ignore()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2612,12 +2569,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
@@ -2639,7 +2590,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
@@ -2656,12 +2607,18 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+                // ignore doesnt throw exception
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getComponentName();
                 will(returnValue("consumer"));
                 oneOf(flowInvocationContext).setLastComponentName("consumer");
+
+                oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                oneOf(flowConfiguration).update(dynamicConfiguredResource);
             }
         });
 
@@ -2669,17 +2626,22 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        isRecovering = true;
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("recovering");
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
+        flow.start();
+
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
         flow.invoke(flowEvent);
 
         // test assertions
@@ -2694,6 +2656,10 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_flowEvent_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2705,12 +2671,6 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContext).startFlowInvocation();
                 oneOf(flowInvocationContext).endFlowInvocation();
-
-                // reload any marked dynamic dao
-                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
-                will(returnValue(dynamicConfiguredResourceFlowElements));
-                oneOf(dynamicConfiguredResourceFlowElements).iterator();
-                will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
@@ -2732,7 +2692,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
@@ -2749,12 +2709,18 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+                // no exceptions thrown to rollback
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getComponentName();
                 will(returnValue("consumer"));
                 oneOf(flowInvocationContext).setLastComponentName("consumer");
+
+                oneOf(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                oneOf(flowConfiguration).update(dynamicConfiguredResource);
             }
         });
 
@@ -2762,14 +2728,19 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
+        setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
 
         // run test
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isUnrecoverable);
         setMonitorExpectations("running");
         flow.setFlowListener(flowEventListener);
         flow.invoke(flowEvent);
@@ -2786,6 +2757,9 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2806,15 +2780,20 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
+        flow.setFlowListener(flowEventListener);
+        setMonitorExpectations("running");
+        flow.start();
         flow.invoke(exception);
 
         // test assertions
@@ -2829,6 +2808,9 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_recovery()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2849,15 +2831,18 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
+        setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
 
         // run test
-        isRecovering = true;
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("recovering");
         flow.invoke(exception);
 
@@ -2873,6 +2858,10 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
         // expectations
         mockery.checking(new Expectations()
@@ -2893,16 +2882,21 @@ public class VisitingInvokerFlowTest
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
 
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-        setMonitorExpectations("running");
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements);
+
+        // state is stopped when setting monitor and on init of start()
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
         // run test
-        isUnrecoverable = true;
-        isRunning = false;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(1, isNotRecovering, isRunning, isNotUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setFlowListener(flowEventListener);
+        setGetStateExpectations(1, isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
+        flow.start();
         flow.invoke(exception);
 
         // test assertions
@@ -2915,6 +2909,8 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_accessor_for_named_flow_elements()
     {
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2946,161 +2942,68 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
-        final List<FlowElement<ManagedResource>> managedResourceExclusionFlowElements = new ArrayList<>();
+        final List<FlowElement<?>> managedResourceExclusionFlowElements = new ArrayList<>();
         managedResourceExclusionFlowElements.add(managedResourceFlowElementExclusion1);
 
-        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
+        final List<FlowElement<?>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
         errorReportingServiceAwareFlowElements.add(errorReportingServiceAwareFlowElement1);
 
-        final List<Notifier> notifiers = new ArrayList<>();
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
 
-        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        // set start invocation expectations
+        setStartExpectations(flow,dynamicConfiguredResourceFlowElements,configuredResourceFlowElements,
+                managedResourceFlowElements, managedResourceExclusionFlowElements);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // get the two flow element configured resources
-                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-
-                // load monitor configuration and notifiers
-                oneOf(monitor).getNotifiers();
-                will(returnValue(notifiers));
-
-                // load configuration
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                // flow invoker configuration
-                oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
-                will(returnValue(configuredResourceInvokers));
-
-                // get the two exclusion flow element configured resources
-                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
-                will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
-
-                // load exclusion flow configuration
-                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
-
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-
-                exactly(2).of(flowConfiguration).configure(configuredResource);
-
-                oneOf(flowConfiguration).configure(flow);
-
-                oneOf(flowConfiguration).getFlowElements();
-                will(returnValue(flowElements));
-
-                oneOf(flowElements).iterator();
-
-                // inject errorReportingService to those needing it
-                oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                oneOf(flowElements).iterator();
-
-                // inject errorReportingService to those needing it on the exclusion flow
-                oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
-                will(returnValue(errorReportingServiceAwareFlowElements));
-
-                oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
-                will(returnValue(errorReportingServiceAwareComponent));
-
-                oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                // get the three flow element managed resources
-                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceExclusionFlowElements));
-
+                // handle managed resources on the exclusion flow
                 // set the managed resource recovery manager instance on each managed resource
                 oneOf(managedResourceFlowElementExclusion1).getFlowComponent();
-                will(returnValue(exclusionManagedResource));
-                exactly(3).of(managedResourceFlowElementExclusion1).getComponentName();
-                will(returnValue("exclusion component name1"));
-                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("exclusion component name1");
-                will(returnValue(exclusionManagedResourceRecoveryManager));
-                oneOf(exclusionManagedResource).setManagedResourceRecoveryManager(exclusionManagedResourceRecoveryManager);
-
-                // start each managed resource from right to left (reverse order) in flow order
-                inSequence(reverseOrder);
-                oneOf(exclusionManagedResource).startManagedResource();
-
-                // get the three flow element managed resources
-                oneOf(flowConfiguration).getManagedResourceFlowElements();
-                will(returnValue(managedResourceFlowElements));
-
-                // clear recovery manager states
-                oneOf(recoveryManager).initialise();
-                // pass any managed resources to the recovery manager
-                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
-
-                // set the managed resource recovery manager instance on each managed resource
-                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
-                oneOf(managedResourceFlowElement1).getComponentName();
-                will(returnValue("component name2"));
-                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name2");
+                oneOf(managedResourceFlowElementExclusion1).getComponentName();
+                will(returnValue("component name"));
+                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
                 will(returnValue(managedResourceRecoveryManager));
                 oneOf(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
 
                 // start each managed resource from right to left (reverse order) in flow order
-                inSequence(reverseOrder);
+                oneOf(managedResource).startManagedResource();
+                exactly(2).of(managedResourceFlowElementExclusion1).getComponentName();
+                will(returnValue("component name"));
+
+                // handle managed resources on the normal flow
+                // set the managed resource recovery manager instance on each managed resource
+                oneOf(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                oneOf(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                oneOf(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                oneOf(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
-                will(returnValue("component name2"));
-
-                // get the consumer
-                oneOf(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                oneOf(consumerFlowElement).getFlowComponent();
-                will(returnValue(consumer));
-
-                // set listener for tech callbacks
-                oneOf(consumer).setListener(flow);
-
-                // check eventFactory for consumer
-                oneOf(consumer).getEventFactory();
-                will(returnValue(flowEventFactory));
-
-                // start the consumer
-                oneOf(consumer).start();
+                will(returnValue("managedResourceFlowElementName"));
             }
         });
 
         // set the monitor and receive initial state callback
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(2, isNotRecovering, isNotRunning, isNotUnrecoverable);
         setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
-        // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
-
         // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -3133,7 +3036,17 @@ public class VisitingInvokerFlowTest
 
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        final Map<String,ConfiguredResource> configuredResourceInvokers = new HashMap<String,ConfiguredResource>();
+        final List<FlowElement<?>> configuredResourceInvokers = new ArrayList<FlowElement<?>>();
+
+        final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+        configuredResourceFlowElements.add(configuredResourceFlowElement);
+
+        final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+        dynamicConfiguredResourceFlowElements.add(dynamicConfiguredResourceFlowElement);
+
+        final List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
 
         // expectations
         mockery.checking(new Expectations()
@@ -3146,8 +3059,6 @@ public class VisitingInvokerFlowTest
                 // get the two flow element configured resources
                 oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -3161,8 +3072,6 @@ public class VisitingInvokerFlowTest
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                oneOf(configuredResourceFlowElements).iterator();
-                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
@@ -3175,14 +3084,20 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowConfiguration).configure(flow);
 
+                // flow dynamic configuration
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+
                 // flow invoker configuration
                 oneOf(flowConfiguration).getFlowElementInvokerConfiguredResources();
                 will(returnValue(configuredResourceInvokers));
 
+                // exclusion flow invoker configuration
+                oneOf(exclusionFlowConfiguration).getFlowElementInvokerConfiguredResources();
+                will(returnValue(configuredResourceInvokers));
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-
-                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it on the business flow
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -3192,8 +3107,6 @@ public class VisitingInvokerFlowTest
                 will(returnValue(errorReportingServiceAwareComponent));
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
-
-                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -3267,18 +3180,16 @@ public class VisitingInvokerFlowTest
         });
 
         // set the monitor and receive initial state callback
-        isUnrecoverable = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
         setMonitorExpectations("stoppedInError");
         flow.setMonitor(monitor);
         flow.setErrorReportingService(errorReportingService);
 
         // check state before proceeding with start
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isNotRunning, isUnrecoverable);
 
         // start will result in the monitor being updated to running
-        isRunning = true;
-        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isNotRecovering, isRunning, isNotUnrecoverable);
         setMonitorExpectations("running");
         flow.start();
 
@@ -3286,64 +3197,44 @@ public class VisitingInvokerFlowTest
         mockery.assertIsSatisfied();
     }
 
-    /**
-     * Set the getState expectations based on the incoming parameters.
-     * @param isRecovering
-     * @param isRunning
-     * @param isUnrecoverable
-     */
-    private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning, final boolean isUnrecoverable)
+    private void setGetStateExpectations(final boolean recovering, final boolean running, final boolean unrecoverable)
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // set expectations for establishing state
-                oneOf(recoveryManager).isRecovering();
-                will(returnValue(isRecovering));
-
-                if(!isRecovering)
-                {
-                    oneOf(flowConfiguration).getConsumerFlowElement();
-                    will(returnValue(consumerFlowElement));
-                    oneOf(consumerFlowElement).getFlowComponent();
-                    will(returnValue(consumer));
-                    oneOf(consumer).isRunning();
-                    will(returnValue(isRunning));
-                }
-
-                if(!isRecovering && !isRunning)
-                {
-                    oneOf(recoveryManager).isUnrecoverable();
-                    will(returnValue(isUnrecoverable));
-                }
-            }
-        });
+        setGetStateExpectations(1, recovering, running, unrecoverable);
     }
 
-    /**
-     * Set the getState expectations based on the incoming parameters.
-     * @param isRecovering
-     * @param isRunning
-     */
-    private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning)
+        /**
+         * Set the getState expectations based on the incoming parameters.
+         * @param recovering
+         * @param running
+         * @param unrecoverable
+         */
+    private void setGetStateExpectations(final int iteration, boolean recovering, boolean running, boolean unrecoverable)
     {
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // set expectations for establishing state
-                oneOf(recoveryManager).isRecovering();
-                will(returnValue(isRecovering));
-
-                if(!isRecovering)
+                for(int it = 0; it < iteration; it++)
                 {
-                    oneOf(flowConfiguration).getConsumerFlowElement();
-                    will(returnValue(consumerFlowElement));
-                    oneOf(consumerFlowElement).getFlowComponent();
-                    will(returnValue(consumer));
-                    oneOf(consumer).isRunning();
-                    will(returnValue(isRunning));
+                    // set expectations for establishing state
+                    oneOf(recoveryManager).isRecovering();
+                    will(returnValue(recovering));
+
+                    if(!recovering)
+                    {
+                        oneOf(flowConfiguration).getConsumerFlowElement();
+                        will(returnValue(consumerFlowElement));
+                        oneOf(consumerFlowElement).getFlowComponent();
+                        will(returnValue(consumer));
+                        oneOf(consumer).isRunning();
+                        will(returnValue(running));
+                    }
+
+                    if(!recovering && !running)
+                    {
+                        oneOf(recoveryManager).isUnrecoverable();
+                        will(returnValue(unrecoverable));
+                    }
                 }
             }
         });
@@ -3374,7 +3265,8 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                                           RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ?> recoveryManager, ExclusionService exclusionService)
+                                           RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ?> recoveryManager,
+                                           ExclusionService exclusionService)
         {
             super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         }

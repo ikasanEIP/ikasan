@@ -41,15 +41,17 @@
 
 package org.ikasan.filter.duplicate.dao;
 
-import java.util.List;
-
-import org.hibernate.*;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Hibernate implementation of {@link FilteredMessageDao}
@@ -69,6 +71,12 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     public static final String MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY = "select id from DefaultFilterEntry se " +
             " where se.expiry < :" + NOW;
 
+    public static final String MESSAGE_FILTER_ENTRIES_TO_SELECT_ONE_QUERY = "select se from DefaultFilterEntry se " +
+        " where se.clientId = :" + FilterEntry.CLIENT_ID_PROP_KEY + " and se.criteria = :" +FilterEntry.CRITERIA_PROP_KEY;
+
+    public static final String MESSAGE_FILTER_ENTRIES_TO_SELECT_BY_CLIENTID_QUERY = "select se from DefaultFilterEntry se " +
+        " where se.clientId = :" + FilterEntry.CLIENT_ID_PROP_KEY ;
+
     public static final String MESSAGE_FILTER_ENTRIES_DELETE_QUERY = "delete DefaultFilterEntry se " +
             " where se.id in(:" + EVENT_IDS + ")";
 
@@ -87,9 +95,20 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @Override
     public List<FilterEntry> findMessages(String clientId)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
-        criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
-        return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_BY_CLIENTID_QUERY);
+            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
+
+            List<FilterEntry> result = query.getResultList();
+            if (!result.isEmpty())
+            {
+                return result;
+            }else{
+                return null;
+            }
+
+        });
+
     }
 
     /*
@@ -99,18 +118,22 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
-        criteria.add(Restrictions.eq(FilterEntry.CRITERIA_PROP_KEY, message.getCriteria()));
-        criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, message.getClientId()));
-        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
-        if (foundMessages == null || foundMessages.isEmpty())
-        {
-            return null;
-        }
-        else
-        {
-            return foundMessages.get(0);
-        }
+        return getHibernateTemplate().execute((session) -> {
+
+            Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_ONE_QUERY);
+            query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  message.getCriteria());
+            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  message.getClientId());
+
+            List<FilterEntry> result = query.getResultList();
+            if (!result.isEmpty())
+            {
+                return result.get(0);
+            }else{
+                return null;
+            }
+
+        });
+
     }
 
     @Override
@@ -136,16 +159,11 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     {
         if (!this.batchHousekeepDelete)
         {
-            getHibernateTemplate().execute(new HibernateCallback<Object>()
-            {
-                public Object doInHibernate(Session session) throws HibernateException
-                {
-
-                    Query query = session.createQuery(HOUSEKEEP_QUERY);
-                    query.setParameter(EXPIRY, System.currentTimeMillis());
-                    query.executeUpdate();
-                    return null;
-                }
+            getHibernateTemplate().execute(session -> {
+                Query query = session.createQuery(HOUSEKEEP_QUERY);
+                query.setParameter(EXPIRY, System.currentTimeMillis());
+                query.executeUpdate();
+                return null;
             });
         }
         else
@@ -166,27 +184,20 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
         {
             numberDeleted += this.housekeepingBatchSize;
+            getHibernateTemplate().execute(session -> {
+                Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY);
+                query.setParameter(NOW, System.currentTimeMillis());
+                query.setMaxResults(housekeepingBatchSize);
 
-            getHibernateTemplate().execute(new HibernateCallback<Object>()
-            {
-                public Object doInHibernate(Session session) throws HibernateException
+                List<Long> filterIds = (List<Long>) query.list();
+                if (filterIds.size() > 0)
                 {
-
-                    Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY);
-                    query.setParameter(NOW, System.currentTimeMillis());
-                    query.setMaxResults(housekeepingBatchSize);
-
-                    List<Long> wiretapEventIds = (List<Long>)query.list();
-
-                    if(wiretapEventIds.size() > 0)
-                    {
-                        query = session.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
-                        query.setParameterList(EVENT_IDS, wiretapEventIds);
-                        query.executeUpdate();
-                    }
-
-                    return null;
+                    query = session.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
+                    query.setParameterList(EVENT_IDS, filterIds);
+                    query.executeUpdate();
                 }
+
+                return null;
             });
         }
     }
@@ -198,26 +209,25 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     public List<FilterEntry> findExpiredMessages()
     {
-        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().execute( new HibernateCallback<Object>()
-        {
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<FilterEntry> criteriaQuery = builder.createQuery(FilterEntry.class);
+            Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
 
-            public Object doInHibernate(Session session) throws HibernateException
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
+            criteriaQuery.select(root).where(predicates.toArray(new Predicate[predicates.size()]));
+            Query<FilterEntry> query = session.createQuery(criteriaQuery);
+            query.setMaxResults(housekeepingBatchSize);
+            List<FilterEntry> result = query.getResultList();
+            if (!result.isEmpty())
             {
-                Criteria criteria = session.createCriteria(FilterEntry.class);
-                criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, System.currentTimeMillis()));
-                criteria.setMaxResults(housekeepingBatchSize);
-                return criteria.list();
+                return result;
+            }else{
+                return null;
             }
-        });
 
-        if (foundMessages == null || foundMessages.isEmpty())
-        {
-            return null;
-        }
-        else
-        {
-            return foundMessages;
-        }
+        });
     }
 
     /**
@@ -227,22 +237,22 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      */
     public boolean housekeepablesExist()
     {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+            Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
+            criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
+            org.hibernate.query.Query<Long> query = session.createQuery(criteriaQuery);
+            List<Long> rowCountList = query.getResultList();
+            Long rowCount = new Long(0);
+            if (!rowCountList.isEmpty())
             {
-                Criteria criteria = session.createCriteria(FilterEntry.class);
-                criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = 0L;
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-                logger.info(rowCount+", MessageFilter housekeepables exist");
-                return new Boolean(rowCount>0);
+                rowCount = rowCountList.get(0);
             }
+            logger.info(rowCount+", MessageFilter housekeepables exist");
+            return new Boolean(rowCount > 0);
         });
     }
 

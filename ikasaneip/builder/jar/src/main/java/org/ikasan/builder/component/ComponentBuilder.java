@@ -40,27 +40,39 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.converter.ObjectToXmlStringConverterBuilder;
+import org.ikasan.builder.component.converter.ObjectToXmlStringConverterBuilderImpl;
+import org.ikasan.builder.component.converter.XmlStringToObjectConverterBuilder;
+import org.ikasan.builder.component.converter.XmlStringToObjectConverterBuilderImpl;
 import org.ikasan.builder.component.endpoint.*;
 import org.ikasan.builder.component.filter.MessageFilterBuilder;
 import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
-import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.component.converter.xml.XmlConfiguration;
+import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
+import org.ikasan.component.endpoint.db.messageprovider.DbMessageProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
-import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.transaction.TransactionManager;
+import java.util.ArrayList;
 
 /**
  * A simple Component builder.
@@ -69,6 +81,9 @@ import javax.transaction.TransactionManager;
  */
 public class ComponentBuilder
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ComponentBuilder.class);
+
     /** handle to spring context */
     ApplicationContext applicationContext;
 
@@ -90,6 +105,21 @@ public class ComponentBuilder
         ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer,
                 this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class));
+        return scheduledConsumerBuilder;
+    }
+
+    /**
+     * Get an instance of an Ikasan default scheduledConsumer using scheduledJobName and defaulted job group based on the scheduled job name
+     * @param scheduledJobName
+     * @return scheduledConsumerBuilder
+     */
+    public ScheduledConsumerBuilder scheduledConsumer(String scheduledJobName)
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer,
+                this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class));
+        scheduledConsumerBuilder.setScheduledJobName(scheduledJobName);
+        scheduledConsumerBuilder.setScheduledJobGroupName(scheduledJobName + "_group");
         return scheduledConsumerBuilder;
     }
 
@@ -204,18 +234,111 @@ public class ComponentBuilder
         return jmsProducerBuilder;
     }
 
+    /**
+     * Get an instance of an Ikasan logProducerBuilder
+     * @return LogProducerBuilder
+     */
+    public LogProducerBuilder logProducer()
+    {
+        return new LogProducerBuilderImpl( new LogProducer() );
+    }
 
+    /**
+     * Get an instance of an Ikasan devNullProducerBuilder
+     * @return Builder<Producer>
+     */
+    public Builder<Producer<?>> devNullProducer()
+    {
+        return new DevNullProducerBuilderImpl();
+    }
 
+    /**
+     * Get an instance of an Ikasan listSplitterBuilder
+     * @return Builder<Splitter>
+     */
     public Builder<Splitter> listSplitter()
     {
         return new ListSplitterBuilderImpl( new DefaultListSplitter() );
     }
 
+    /**
+     * Get an instance of an Ikasan messageFilterBuilder
+     * @return MessageFilterBuilder
+     */
     public MessageFilterBuilder messageFilter()
     {
-       return new MessageFilterBuilderImpl(this.applicationContext.getBean(DuplicateFilterService.class));
+        return new MessageFilterBuilderImpl(this.applicationContext.getBean(DuplicateFilterService.class));
     }
 
+    /**
+     * Get an instance of an Ikasan messageFilterBuilder
+     * @return MessageFilterBuilder
+     */
+    public DbConsumerBuilder dbConsumer()
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        return new DbConsumerBuilderImpl(scheduledConsumer, this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class), new DbMessageProvider());
+    }
+
+    /**
+     * Get an instance of an Ikasan EventGeneratingConsumerBuilder
+     * @return EventGeneratingConsumerBuilder
+     */
+    public EventGeneratingConsumerBuilder eventGeneratingConsumer()
+    {
+        try
+        {
+            return new EventGeneratingConsumerBuilderImpl(this.applicationContext.getBean(AopProxyProvider.class) );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-test-component</artifactId>\n"
+                    + "</dependency>\n", e);
+        }
+    }
+
+    /**
+     * New instance of an Ikasan ObjectToXmlStringConverterBuilder
+     * @return ObjectToXmlStringConverterBuilderImpl
+     */
+    public ObjectToXmlStringConverterBuilder objectToXmlStringConverter()
+    {
+        try
+        {
+            return new ObjectToXmlStringConverterBuilderImpl( new ArrayList<Class>(), new XmlConfiguration() );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
+                    + "</dependency>\n", e);
+        }
+    }
+
+    /**
+     * New instance of an Ikasan XmlStringToObjectConverterBuilder
+     * @return XmlStringToObjectConverterBuilder
+     */
+    public XmlStringToObjectConverterBuilder xmlStringToObjectConverter()
+    {
+        try
+        {
+            return new XmlStringToObjectConverterBuilderImpl( new XmlStringToObjectConfiguration() );
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                    + "<dependency>\n"
+                    + "  <groupId>org.ikasan</groupId>\n"
+                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
+                    + "</dependency>\n", e);
+        }
+    }
 }
 
 

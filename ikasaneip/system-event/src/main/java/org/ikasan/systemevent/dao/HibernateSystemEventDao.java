@@ -40,20 +40,24 @@
  */
 package org.ikasan.systemevent.dao;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.ikasan.model.ArrayListPagedSearchResult;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.systemevent.model.SystemEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.hibernate.*;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.systemevent.model.ArrayListPagedSearchResult;
-import org.ikasan.systemevent.model.SystemEvent;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>SystemFlowEventDao</code>
@@ -140,58 +144,83 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             final Date timestampFrom, final Date timestampTo, final String actor)
     {
 
-        return (PagedSearchResult<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria resultCriteria = getCriteria(session);
-                resultCriteria.setMaxResults(pageSize);
-                int firstResult = (pageNo * pageSize);
-                resultCriteria.setFirstResult(firstResult);
-                resultCriteria.addOrder(Order.desc("id"));
-                List<SystemEvent> systemEventResults = resultCriteria.list();
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<SystemEvent> criteriaQuery = builder.createQuery(SystemEvent.class);
+                Root<SystemEvent> root = criteriaQuery.from(SystemEvent.class);
+                List<Predicate> predicates = getCriteria(builder,root);
 
-                Criteria metaDataCriteria = getCriteria(session);
-                metaDataCriteria.setProjection(Projections.rowCount());
-                Long rowCount = new Long(0);
-                List<Long> rowCountList = metaDataCriteria.list();
+                criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[predicates.size()]))
+                    .orderBy(builder.asc(root.get("id")));
+
+                Query<SystemEvent> query = session.createQuery(criteriaQuery);
+                query.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                query.setFirstResult(firstResult);
+                List<SystemEvent> results = query.getResultList();
+
+                Long rowCount = rowCount(session);
+
+                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+            }
+
+            private Long rowCount(Session session){
+
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+                Root<SystemEvent> root = metaDataCriteriaQuery.from(SystemEvent.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                metaDataCriteriaQuery.select(builder.count(root))
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
+                org.hibernate.query.Query<Long> metaDataQuery = session.createQuery(metaDataCriteriaQuery);
+
+                List<Long> rowCountList = metaDataQuery.getResultList();
                 if (!rowCountList.isEmpty())
                 {
-                    rowCount = rowCountList.get(0);
+                    return rowCountList.get(0);
                 }
-                return new ArrayListPagedSearchResult<SystemEvent>(systemEventResults, firstResult, rowCount);
+                return new Long(0);
             }
 
             /**
-             * Create a consistent criteria instance for both result and metadata
-             * @param session
+             * Create a criteria instance for each invocation of data or metadata queries.
+             * @param builder
+             * @param root
              * @return
              */
-            private Criteria getCriteria(Session session)
+            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<SystemEvent> root)
             {
-                Criteria criteria = session.createCriteria(SystemEvent.class, "event");
+
+                List<Predicate> predicates = new ArrayList<>();
+
                 if (restrictionExists(subject))
                 {
-                    criteria.add(Restrictions.eq("subject", subject));
+                    predicates.add(builder.equal(root.get("subject"),subject));
                 }
                 if (restrictionExists(action))
                 {
-                    criteria.add(Restrictions.eq("action", action));
+                    predicates.add(builder.equal(root.get("action"),action));
                 }
                 if (restrictionExists(actor))
                 {
-                    criteria.add(Restrictions.eq("actor", actor));
+                    predicates.add(builder.equal(root.get("actor"),actor));
                 }
                 if (restrictionExists(timestampFrom))
                 {
-                    criteria.add(Restrictions.gt("timestamp", timestampFrom));
+                    predicates.add( builder.greaterThan(root.get("timestamp"),timestampFrom));
                 }
                 if (restrictionExists(timestampTo))
                 {
-                    criteria.add(Restrictions.lt("timestamp", timestampTo));
+                    predicates.add( builder.lessThan(root.get("timestamp"),timestampTo));
                 }
-                return criteria;
 
+                return predicates;
             }
         });
 
@@ -208,40 +237,51 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria resultCriteria = getCriteria(session);
-                resultCriteria.addOrder(Order.desc("id"));
+               CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<SystemEvent> criteriaQuery = builder.createQuery(SystemEvent.class);
+                Root<SystemEvent> root = criteriaQuery.from(SystemEvent.class);
+                List<Predicate> predicates = getCriteria(builder,root);
 
-                List<SystemEvent> systemEventResults = resultCriteria.list();
+                criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[predicates.size()]))
+                    .orderBy(builder.asc(root.get("id")));
 
-                return systemEventResults;
+                Query<SystemEvent> query = session.createQuery(criteriaQuery);
+                List<SystemEvent> results = query.getResultList();
+                return results;
+
             }
+
 
             /**
              * Create a consistent criteria instance for both result and metadata
-             * @param session
+             * @param builder
+             * @param root
              * @return
              */
-            private Criteria getCriteria(Session session)
+            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<SystemEvent> root)
             {
-                Criteria criteria = session.createCriteria(SystemEvent.class, "event");
+
+                List<Predicate> predicates = new ArrayList<>();
+
                 if (restrictionExists(subjects))
                 {
-                    criteria.add(Restrictions.in("subject", subjects));
+                    predicates.add(root.get("subject").in(subjects));
                 }
                 if (restrictionExists(actor))
                 {
-                    criteria.add(Restrictions.eq("actor", actor));
+                    predicates.add(builder.equal(root.get("actor"),actor));
                 }
                 if (restrictionExists(timestampFrom))
                 {
-                    criteria.add(Restrictions.gt("timestamp", timestampFrom));
+                    predicates.add( builder.greaterThan(root.get("timestamp"),timestampFrom));
                 }
                 if (restrictionExists(timestampTo))
                 {
-                    criteria.add(Restrictions.lt("timestamp", timestampTo));
+                    predicates.add( builder.lessThan(root.get("timestamp"),timestampTo));
                 }
-                return criteria;
 
+                return predicates;
             }
         });
     }
@@ -345,17 +385,25 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(SystemEvent.class);
-                criteria.add(Restrictions.lt("expiry", new Date()));
-                criteria.setProjection(Projections.rowCount());
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+                Root<SystemEvent> root = criteriaQuery.from(SystemEvent.class);
+
+                criteriaQuery.select(builder.count(root))
+                    .where(builder.lessThan(root.get("expiry"),new Date()));
+
+
+                Query<Long> query = session.createQuery(criteriaQuery);
+                List<Long> rowCountList = query.getResultList();
                 Long rowCount = new Long(0);
-                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);
                 }
-                logger.debug(rowCount + ", SystemEvent housekeepables exist");
-                return new Boolean(rowCount > 0);
+
+                logger.info(rowCount+", SystemEvent housekeepables exist");
+                return new Boolean(rowCount>0);
+
             }
         });
 

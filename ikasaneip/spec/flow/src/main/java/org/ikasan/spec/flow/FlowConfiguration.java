@@ -45,7 +45,6 @@ import java.util.Map;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedService;
@@ -71,9 +70,9 @@ public interface FlowConfiguration
      */
     public List<ManagedService> getManagedServices();
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
-    public Map<String,ConfiguredResource> getFlowElementInvokerConfiguredResources();
+    public List<FlowElement<?>> getFlowElementInvokerConfiguredResources();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
-    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
+    public List<FlowElement<ConfiguredResource>> getDynamicConfiguredResourceFlowElements();
     public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
     public ResubmissionService getResubmissionService();
     public ReplayRecordService getReplayRecordService();
@@ -86,8 +85,8 @@ public interface FlowConfiguration
     
     /**
      * Allow for the saving of a DynamicConfiguredResources changed configuration
-     * 
+     *
      * @param dynamicConfiguredResource
      */
-    public void update(DynamicConfiguredResource dynamicConfiguredResource);
+    public void update(ConfiguredResource dynamicConfiguredResource);
 }

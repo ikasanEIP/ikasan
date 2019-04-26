@@ -45,15 +45,12 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.apache.commons.io.IOUtils;
-import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
+import org.apache.sshd.server.scp.ScpCommandFactory;
+import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,33 +111,17 @@ public class SftpRule extends ExternalResource
         sshd.setPort(this.port);
 
 
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("target/hostkey.ser"));
-        sshd.setPasswordAuthenticator(new PasswordAuthenticator()
-        {
-            @Override public boolean authenticate(String s, String s1, ServerSession serverSession)
-            {
-                return true;
-            }
-        });
-        CommandFactory myCommandFactory = new CommandFactory()
-        {
-            public Command createCommand(String command)
-            {
-                System.out.println("Command: " + command);
-                return null;
-            }
-        };
-        sshd.setCommandFactory(new ScpCommandFactory(myCommandFactory));
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>();
-        namedFactoryList.add(new SftpSubsystem.Factory());
+        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("target/hostkey.ser")));
+        sshd.setPasswordAuthenticator((s, s1, serverSession) -> true);
+        sshd.setCommandFactory(new ScpCommandFactory());
+        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
     }
 
     public SftpRule()
     {
         this("test", "test", null, SocketUtils.findAvailableTcpPort(8000, 9000));
-
-
     }
 
     public void putFile(String fileName, final String content) throws Exception
@@ -255,12 +236,9 @@ public class SftpRule extends ExternalResource
                     }
                 );
             sshd.stop();
-        }
-        catch (InterruptedException e)
-        {
+        } catch (IOException e) {
             log.error("Unable to stop ssdh.", e);
         }
-
     }
 
     private void deletePathRecursivly(Path directory ) throws IOException

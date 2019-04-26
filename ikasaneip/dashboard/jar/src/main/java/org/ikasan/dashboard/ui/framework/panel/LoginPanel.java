@@ -75,8 +75,9 @@ public class LoginPanel extends Panel implements View
     	this.setContent(layout);
     	
     	Panel panel = new Panel();
-    	panel.setWidth(400, Unit.PIXELS);
-    	panel.setHeight(210, Unit.PIXELS);
+    	panel.setWidth(600, Unit.PIXELS);
+    	panel.setHeight(400, Unit.PIXELS);
+        panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
     	bannerLabel.setStyleName("ikasan-maroon");
         bannerLabel.setHeight("100%");
@@ -89,26 +90,21 @@ public class LoginPanel extends Panel implements View
         item.addItemProperty(LoginFieldGroup.PASSWORD, new ObjectProperty<String>(""));
         
        
-        GridLayout form = new GridLayout(3, 5);
-        form.setColumnExpandRatio(0, .50f);
-        form.setColumnExpandRatio(1, .15f);
-        form.setColumnExpandRatio(2, .35f);
-        form.setWidth(100, Unit.PERCENTAGE);
+        GridLayout form = new GridLayout(2, 5);
+        form.setColumnExpandRatio(0, .20f);
+        form.setColumnExpandRatio(1, .80f);
+        form.setWidth(80, Unit.PERCENTAGE);
         form.setMargin(true);
         form.setSpacing(true);
         
-        form.addComponent(bannerLabel, 0, 0, 2, 0);
-        bannerLabel.setSizeUndefined();
-        form.setComponentAlignment(bannerLabel, Alignment.TOP_CENTER);
-        
-        bannerImage.setHeight("50%");
-        bannerImage.setWidth("100%");
-        form.addComponent(bannerImage, 0, 1, 0, 4);
+        form.addComponent(bannerImage, 0, 0, 1, 0);
+        bannerImage.setWidth("90%");
         form.setComponentAlignment(bannerImage, Alignment.TOP_CENTER);
+
 
 		Label usernameLabel = new Label("Username:");
 		usernameLabel.setSizeUndefined();
-		form.addComponent(usernameLabel, 1, 2);
+		form.addComponent(usernameLabel, 0, 2);
 		form.setComponentAlignment(usernameLabel, Alignment.MIDDLE_RIGHT);
 		
         final TextField userNameField = new TextField();
@@ -117,11 +113,12 @@ public class LoginPanel extends Panel implements View
             1, null, true));
         userNameField.setValidationVisible(false);
         userNameField.setStyleName("ikasan");
-        form.addComponent(userNameField, 2, 2);
+        userNameField.setWidth("70%");
+        form.addComponent(userNameField, 1, 2);
 
         Label passwordLabel = new Label("Password:");
         passwordLabel.setSizeUndefined();
-		form.addComponent(passwordLabel, 1, 3);
+		form.addComponent(passwordLabel, 0, 3);
 		form.setComponentAlignment(passwordLabel, Alignment.MIDDLE_RIGHT);
 		
         final PasswordField passwordField = new PasswordField();
@@ -130,7 +127,8 @@ public class LoginPanel extends Panel implements View
             "The password must not be empty",
             1, null, true));
         passwordField.setValidationVisible(false);
-        form.addComponent(passwordField, 2, 3);
+        passwordField.setWidth("70%");
+        form.addComponent(passwordField, 1, 3);
 
         final LoginFieldGroup binder = new LoginFieldGroup(item, visibilityGroup
             , authenticationService, userService);
@@ -174,7 +172,7 @@ public class LoginPanel extends Panel implements View
         });
         buttons.addComponent(loginButton);
 
-        form.addComponent(buttons, 1, 4, 2, 4);
+        form.addComponent(buttons, 0, 4, 1, 4);
         form.setComponentAlignment(buttons, Alignment.MIDDLE_CENTER);
         
         HorizontalLayout wrapper = new HorizontalLayout();

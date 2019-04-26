@@ -44,8 +44,6 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.spec.component.transformation.Translator;
-
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
@@ -72,7 +70,8 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
  */
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-quartz.xml"
+        "classpath:ikasan-transaction-pointcut-quartz.xml",
+        "classpath:h2-datasource-conf.xml"
 } )
 public class ComponentFactory
 {

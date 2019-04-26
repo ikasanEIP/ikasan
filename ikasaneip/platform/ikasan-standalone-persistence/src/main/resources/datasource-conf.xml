@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       ">
+
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="${datasource.dialect}"/>
+        <entry key="hibernate.show_sql" value="${datasource.show-sql}"/>
+        <entry key="hibernate.hbm2ddl.auto" value="${datasource.hbm2ddl.auto}"/>
+        <entry key="hibernate.transaction.coordinator_class" value="jta" />
+        <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
+    </util:map>
+
+    <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${datasource.driver-class-name}"/>
+        <property name="url" value="${datasource.url}" />
+        <property name="username" value="${datasource.username}" />
+        <property name="password" value="${datasource.password}" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
+    </bean>
+
+    <bean id="ikasanXADatasource" name="ikasan.xads" primary="true" class="org.apache.commons.dbcp.managed.BasicManagedDataSource">
+        <property name="driverClassName" value="${datasource.xadriver-class-name}"/>
+        <property name="url" value="${datasource.url}" />
+        <property name="username" value="${datasource.username}" />
+        <property name="password" value="${datasource.password}" />
+        <property name="xaDataSourceInstance" ref="ikasanXaDataSourceInstance" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="defaultAutoCommit" value="false" />
+        <property name="transactionManager">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="transactionManager" />
+                <property name="targetMethod" value="getTransactionManager" />
+            </bean>
+        </property>
+    </bean>
+
+</beans>

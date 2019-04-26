@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-configuration-service</artifactId>
@@ -109,6 +109,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
@@ -152,12 +157,19 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>org.jasypt</groupId>-->
+            <!--<artifactId>jasypt-hibernate4</artifactId>-->
+            <!--<version>1.9.2</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/de.qaware.jasypt/jasypt-hibernate5 -->
         <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt-hibernate4</artifactId>
+            <groupId>de.qaware.jasypt</groupId>
+            <artifactId>jasypt-hibernate5</artifactId>
             <version>1.9.2</version>
-            <scope>compile</scope>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -166,11 +178,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- Test -->
 
         <dependency>
             <groupId>org.jmock</groupId>

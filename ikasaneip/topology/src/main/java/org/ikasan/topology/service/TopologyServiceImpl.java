@@ -41,13 +41,10 @@
 package org.ikasan.topology.service;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
@@ -255,89 +252,78 @@ public class TopologyServiceImpl implements TopologyService
 			
 			for(Module module: modules)
 			{	
-				List<String> discoveredFlowNames = new ArrayList<String>();
-				
-				String url = server.getUrl() + ":" + server.getPort() 
-						+ module.getContextRoot() 
+
+				String url = server.getUrl() + ":" + server.getPort()
+						+ module.getContextRoot().replace(" ", "%20")
 						+ "/rest/discovery/flows/"
-						+ module.getName();
+						+ module.getName().replace(" ", "%20");
 
 				try
 				{
 					logger.info("REST ["+url+"]");
 
-					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials()
-					);
+					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials());
 					ResponseEntity<List<Flow>> flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET,request,new ParameterizedTypeReference<List<Flow>>() {});
 
+                    logger.info("Successfully discovered module using URL: " + url
+                        + ". Server =  " + server);
+
+                    module.setServer(server);
+
+                    moduleSet.add(module);
+
+                    server.setModules(moduleSet);
+
+                    this.topologyDao.save(server);
 			    }
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
 			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
-			    	continue;
 			    }
-			    
-			    logger.info("Successfully discovered module using URL: " + url
-		    			+ ". Server =  " + server);
-			    
-			    module.setServer(server);
 
-			    moduleSet.add(module);
-			    
-			    server.setModules(moduleSet);
-			    
-			    this.topologyDao.save(server);
 			}
 		}
 		
 		// Now sort out the flows on servers
-		for(Server server: servers)
-		{
-			List<Module> modules = this.topologyDao.getAllModules();	
-			
-			Set<Module> moduleSet = new HashSet<Module>();
-			
-			for(Module module: modules)
-			{	
-
-				String url = server.getUrl() + ":" + server.getPort() 
-						+ module.getContextRoot() 
-						+ "/rest/discovery/flows/"
-						+ module.getName();
-
-                ResponseEntity<List<Flow>> flowResponse;
-			    try
-			    {
-					logger.info("REST ["+url+"]");
-					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials()
-					);
-					flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET,request,new ParameterizedTypeReference<List<Flow>>() {});
-
-
-			    }
-			    catch(Exception e)
-			    {
-			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
-			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
-			    	continue;
-			    }
-			    
-			    logger.info("Successfully discovered flows using URL: " + url
-		    			+ ". Server =  " + server);
-
-				discover(server, module, flowResponse.getBody());
-			    
-
-			}
-		}
-
-		this.cleanUpComponents();
-		this.cleanUpFlows();
-		this.cleanUpModules();
+		servers.forEach(server ->
+            this.topologyDao.getAllModules().forEach(module -> discoverOverRest(authentication,server,module))
+        );
+		this.cleanup();
 	}
+
+    /**
+     * Gets Flow and component information over REST from given module on given server using provider authentication
+     *
+     * @param authentication credentials to be used by REST
+     * @param server server details
+     * @param module module information
+     */
+	private void discoverOverRest(IkasanAuthentication authentication, Server server, Module module)
+    {
+        String url = server.getUrl() + ":" + server.getPort()
+            + module.getContextRoot().replace(" ", "%20")
+            + "/rest/discovery/flows/"
+            + module.getName().replace(" ", "%20");
+        ResponseEntity<List<Flow>> flowResponse;
+        try
+        {
+            logger.info("REST [" + url + "]");
+            HttpEntity request = initRequest(authentication.getName(), (String) authentication.getCredentials());
+            flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET, request, new ParameterizedTypeReference<List<Flow>>()
+            {
+            });
+            logger.info("Successfully discovered flows using URL: " + url + ". Server =  " + server);
+            discover(server, module, flowResponse.getBody());
+        }
+        catch (Exception e)
+        {
+            // We may not find the module on the server so just move on to the next module.
+            logger.debug("Caught exception attempting to discover module with the following URL: " + url
+                + ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+        }
+    }
 
 	@Override
 	public void discover(Server server, Module module, List<Flow> flows) throws DiscoveryException
@@ -349,7 +335,6 @@ public class TopologyServiceImpl implements TopologyService
 		Set<Flow> flowSet = discoverFlows(serverId, module, flows);
 
 		module.addFlows(flowSet);
-		//module.setFlows(flowSet);
 
 		this.topologyDao.save(module);
 
@@ -368,7 +353,7 @@ public class TopologyServiceImpl implements TopologyService
         {
             List<String> discoveredComponentNames = discoveredComponentNames(flow);
 
-            Set<Component> components = flow.getComponents();
+            List<Component> components = distinctComponents(flow.getName(), flow.getComponents());
             logger.debug("Loading dbFlow using: serverId= " + serverId + " moduleId = " + module.getId()
                     + " flow name = " + flow.getName());
 
@@ -413,14 +398,35 @@ public class TopologyServiceImpl implements TopologyService
 		return flowSet;
 	}
 
-	private List<String> discoveredFlowNames(List<Flow> flows){
+	private List<String> discoveredFlowNames(List<Flow> flows)
+    {
 		return flows.stream().map(flow -> flow.getName()).collect(Collectors.toList());
 	}
 
-	private List<String> discoveredComponentNames(Flow flow){
-		return flow.getComponents().stream().map(component -> component.getName()).collect(Collectors.toList());
+	private List<String> discoveredComponentNames(Flow flow)
+    {
+		return flow.getComponents().stream().map(component -> component.getName()).distinct().collect(Collectors.toList());
 	}
 
+    private List<Component> distinctComponents(String flowName, Set<Component> components)
+    {
+        logger.info("Filtering distinct components for flow[{}]. Before:[{}].", flowName, components.size());
+        List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
+        logger.info("After: [{}]", filtered.size());
+        return filtered;
+    }
+
+    private <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
+    {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    protected void cleanup(){
+        this.cleanUpComponents();
+        this.cleanUpFlows();
+        this.cleanUpModules();
+    }
 
 	protected void cleanUpModules()
 	{

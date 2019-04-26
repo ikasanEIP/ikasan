@@ -40,68 +40,86 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.ikasan.builder.IkasanApplication;
-import org.ikasan.testharness.flow.rule.IkasanStandaloneFlowTestRule;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  * 
  * @author Ikasan Development Team
  */
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {MyApplication.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsFlowTest
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(JmsFlowTest.class);
 
-    IkasanApplication ikasanApplication;
+    @Resource
+    private Module<Flow> moduleUnderTest;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    @Resource
+    private JmsTemplate jmsTemplate;
+
+    @Resource
+    private JmsListenerEndpointRegistry registry;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    public IkasanStandaloneFlowTestRule flowTestRule;
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
+    private  MessageListenerVerifier messageListenerVerifier;
 
     @Before
-    public  void setup(){
-        broker = new EmbeddedActiveMQBroker();
-        broker.start();
+    public void setup(){
 
-        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
 
-        MyApplication  myApplication = new MyApplication();
-        ikasanApplication = myApplication.executeIM(args);
+        messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
 
-        flowTestRule = new IkasanStandaloneFlowTestRule("Jms Flow",ikasanApplication);
     }
 
     @After
     public void shutdown(){
+        flowTestRule.stopFlow();
+        messageListenerVerifier.stop();
+        flowTestRule.sleep(500L);
 
-        ikasanApplication.close();
-        broker.stop();
     }
+
     @Test
-    public void test_Jms_Flow() throws Exception
+    public void test_Jms_Flow()
     {
 
         // Prepare test data
-        JmsTemplate jmsTemplate = flowTestRule.getIkasanApplication().getBean(JmsTemplate.class);
+        messageListenerVerifier.start();
+
         String message = SAMPLE_MESSAGE;
-        System.out.println("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
 
         //Setup component expectations
-
         flowTestRule.consumer("consumer")
             .producer("producer");
 
@@ -109,9 +127,11 @@ public class JmsFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
+        flowTestRule.sleep(2000L);
 
-        flowTestRule.assertFlowComponentExecution();
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(1,messageListenerVerifier.getCaptureResults().size());
 
     }
 

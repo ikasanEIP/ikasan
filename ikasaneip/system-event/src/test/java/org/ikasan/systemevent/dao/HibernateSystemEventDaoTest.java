@@ -49,7 +49,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -86,13 +86,11 @@ public class HibernateSystemEventDaoTest
     }
 
     /**
-     * Putting an instance of StateModel into the StateModel store
+     * Putting an instance of SystemEvent into the db store
      * 
-     * @throws StateModelDaoException if error accessing state window store
      */
     @Test 
     @DirtiesContext
-//    @Ignore
     public void test_success_no_results()
     {
     	systemEventDao.setBatchHousekeepDelete(true);
@@ -123,5 +121,4 @@ public class HibernateSystemEventDaoTest
     	this.systemEventDao.deleteExpired();
     }
 
-    
 }

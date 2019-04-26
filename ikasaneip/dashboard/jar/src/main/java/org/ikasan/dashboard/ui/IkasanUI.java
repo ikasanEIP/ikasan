@@ -182,13 +182,13 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.imagePanelLayout.setHeight("70px");
 
         this.mainLayout.removeAllComponents();
-        this.mainLayout.addComponent(imagePanelLayout, 0, 0);
-
+    
         this.imagePanelLayout.setStyleName("v-header");
 
         this.imagePanelLayout.addComponent(this.bannerImage);
         this.bannerImage.setHeight("150%");
         this.imagePanelLayout.setExpandRatio(this.bannerImage, 0.5f);
+
         
         this.bannerLabel.setStyleName("ikasan-maroon");
         this.bannerLabel.setHeight("100%");
@@ -231,7 +231,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             }
     	}
 
-        this.navigationPanel.setVisible(true);
+        this.navigationPanel.setVisible(false);
         this.navigationPanel.setMenu(menu);
     }
     

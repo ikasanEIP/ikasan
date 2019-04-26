@@ -53,7 +53,7 @@
 
 <c:choose>
 	<c:when test="${empty configuration}">
-        <form:form id="configurationForm" commandName="specifyConfiguration" method="post" modelAttribute="configuration" cssClass="dataform fancydataform">
+        <form:form id="configurationForm"  method="post" modelAttribute="configuration" cssClass="dataform fancydataform">
             <fieldset>
                <legend>Configuration</legend>
             
@@ -71,7 +71,7 @@
         </form:form>
 	</c:when>
 	<c:otherwise>
-		<form:form id="configurationForm" commandName="specifyConfiguration" method="post" modelAttribute="configuration" cssClass="dataform fancydataform">
+		<form:form id="configurationForm" method="post" modelAttribute="configuration" cssClass="dataform fancydataform">
 		    <fieldset>
 		       <legend>Configuration</legend>
 		    

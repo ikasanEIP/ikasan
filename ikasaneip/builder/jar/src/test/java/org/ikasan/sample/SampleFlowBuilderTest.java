@@ -63,6 +63,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.util.SocketUtils;
 
 import java.util.List;
 
@@ -134,7 +135,13 @@ public class SampleFlowBuilderTest
             }
         });
 
-		ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
+                + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
+        };
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 	}
 
 	@After
@@ -206,20 +213,23 @@ public class SampleFlowBuilderTest
 	/**
      * Test successful flow creation.
      */
-    @Ignore@Test
+    @Test
     public void test_successful_router_transitions()
     {
 		BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
 		Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
-            .consumer("consumer", consumer)
-    	    .converter("converter", converter)
-    	    .translator("translator", translator)
-			.singleRecipientRouter("routerName", singleRecipientRouter)
-				.when("a", builderFactory.getRouteBuilder().producer("end",producer) )
-				.when("b", builderFactory.getRouteBuilder().producer("end",producer) )
-				.otherwise(builderFactory.getRouteBuilder().producer("end",producer) )
-    	    .build();
+				.withFlowInvocationContextListener(flowInvocationContextListener)
+				.withFlowInvocationContextListener(flowInvocationContextListener)
+				.withExclusionServiceFactory(exclusionServiceFactory)
+				.consumer("consumer", consumer)
+    	    	.converter("converter", converter)
+    	    	.translator("translator", translator)
+				.singleRecipientRouter("routerName", singleRecipientRouter)
+					.when("a", builderFactory.getRouteBuilder().producer("end1",producer) )
+					.when("b", builderFactory.getRouteBuilder().producer("end2",producer) )
+					.otherwise(builderFactory.getRouteBuilder().producer("end3",producer) )
+    	    	.build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
     	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -247,13 +257,13 @@ public class SampleFlowBuilderTest
     	Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
        	
        	fe = flowElements.get(3);
-       	Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));       		
-    	Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
-        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
-    	Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+       	Assert.assertTrue("flow element name should be 'routerName'", "routerName".equals(fe.getComponentName()));
+    	Assert.assertTrue("flow element component should be an instance of SRR", fe.getFlowComponent() instanceof SingleRecipientRouter);
+        Assert.assertTrue("flow element invoker should be an instance of SingleRecipientRouterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SingleRecipientRouterFlowElementInvoker);
+    	Assert.assertTrue("flow element transitions should be to 3 routes", fe.getTransitions().size() == 3);
        	
        	fe = flowElements.get(4);
-       	Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));       		
+       	Assert.assertTrue("flow element name should be 'end1'", "end1".equals(fe.getComponentName()));
     	Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
     	Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);

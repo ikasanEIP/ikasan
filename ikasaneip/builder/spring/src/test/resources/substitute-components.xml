@@ -55,7 +55,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
        
        
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory">
             <ref bean="replaySessionFactory"/>
         </property>
@@ -92,7 +92,7 @@
     </bean>
 
     <bean id="messageHistoryXaHibernateSessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>

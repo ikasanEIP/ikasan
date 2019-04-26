@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-developer</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-mvn-archetype</artifactId>
@@ -52,19 +52,13 @@
     <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
 
     <modules>
-        <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6-filesystem-im</module>
-        <module>ikasan-jboss-6-jms-im</module>
-        <module>ikasan-jboss-6-db-im</module>
-        <module>ikasan-jboss-6-sftp-im</module>
-        <module>jboss-6-module-activemq</module>
-        <module>ikasan-jboss-6-activemq-im</module>
-        <module>ikasan-rt-conf-jboss-6</module>
         <module>ikasan-standalone-filesystem-im</module>
         <module>ikasan-standalone-jms-im</module>
         <module>ikasan-standalone-ftp-jms-im</module>
         <module>ikasan-standalone-sftp-jms-im</module>
         <module>ikasan-standalone-vanilla-im</module>
+        <module>ikasan-standalone-db-jms-im</module>
+        <module>ikasan-standalone-hibernate-jms-im</module>
     </modules>
 
 </project>

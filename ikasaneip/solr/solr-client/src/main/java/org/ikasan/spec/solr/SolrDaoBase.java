@@ -5,6 +5,7 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,7 +211,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
         if(payloadContent != null && !payloadContent.trim().isEmpty())
         {
-            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(payloadContent).append("\"");
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(SolrSpecialCharacterEscapeUtil.escape(payloadContent)).append("\"");
 
         }
 
@@ -354,6 +355,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
             req.deleteByQuery(query.toString());
 
+            if(this.solrClient == null)
+            {
+                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
+                return;
+            }
+
             UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
             req.commit(solrClient, SolrConstants.CORE);
 
@@ -381,6 +388,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             req = req.deleteByQuery(query.toString());
 
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            if(this.solrClient == null)
+            {
+                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
+                return;
+            }
 
             UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
             req.commit(solrClient, SolrConstants.CORE);

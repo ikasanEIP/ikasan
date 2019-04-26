@@ -11,13 +11,9 @@ import java.sql.SQLException;
  */
 public class IkasanSybaseASE157LimitHandler extends AbstractLimitHandler
 {
-    public IkasanSybaseASE157LimitHandler(String sql, RowSelection selection)
-    {
-        super(sql, selection);
-    }
 
     @Override
-    public String getProcessedSql()
+    public String processSql(String sql, RowSelection selection)
     {
         String select = sql.substring(0, sql.indexOf("select") + "select".length());
         String statement = sql.substring(sql.indexOf("select") + "select".length(), sql.length());
@@ -42,12 +38,14 @@ public class IkasanSybaseASE157LimitHandler extends AbstractLimitHandler
         return true;
     }
 
-    public int bindLimitParametersAtStartOfQuery(PreparedStatement statement, int index) throws SQLException
+    @Override
+    public int bindLimitParametersAtStartOfQuery(RowSelection selection, PreparedStatement statement, int index) throws SQLException
     {
         return 0;
     }
 
-    public int bindLimitParametersAtEndOfQuery(PreparedStatement statement, int index) throws SQLException {
+    @Override
+    public int bindLimitParametersAtEndOfQuery(RowSelection selection, PreparedStatement statement, int index) throws SQLException {
         return 0;
     }
 

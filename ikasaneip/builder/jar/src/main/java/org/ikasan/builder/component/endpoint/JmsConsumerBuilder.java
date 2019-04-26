@@ -125,5 +125,10 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
     JmsConsumerBuilder setSessionTransacted(Boolean sessionTransacted);
 
     JmsConsumerBuilder setSessionAcknowledgeMode(Integer sessionAcknowledgeMode);
+
+    JmsConsumerBuilder setConnectionUsername(String username);
+
+    JmsConsumerBuilder setConnectionPassword(String password);
+
 }
 

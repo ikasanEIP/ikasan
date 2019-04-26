@@ -41,24 +41,25 @@
 package org.ikasan.exclusion.dao;
 
 import com.google.common.collect.Lists;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.ikasan.exclusion.model.ExclusionEventImpl;
+import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Hibernate implementation of the ExclusionEventDao.
@@ -86,36 +87,43 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     @Override
     public void delete(final String moduleName, final String flowName, final String identifier)
     {
-        getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-
-                Query query = session.createQuery(DELETE_QUERY);
-                query.setParameter("moduleName", moduleName);
-                query.setParameter("flowName", flowName);
-                query.setParameter("identifier", identifier);
-                query.executeUpdate();
-                return null;
-        }
+        getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(DELETE_QUERY);
+            query.setParameter("moduleName", moduleName);
+            query.setParameter("flowName", flowName);
+            query.setParameter("identifier", identifier);
+            query.executeUpdate();
+            return null;
         });
     }
 
     @Override
     public ExclusionEvent find(String moduleName, String flowName, String identifier)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("identifier", identifier));
 
-        List<ExclusionEvent> results = (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
-        if(results == null || results.size() == 0)
-        {
-            return null;
-        }
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
 
-        return results.get(0);
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("moduleName"),moduleName));
+            predicates.add(builder.equal(root.get("flowName"),flowName));
+            predicates.add(builder.equal(root.get("identifier"),identifier));
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+               ;
+
+            Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+            List<ExclusionEvent> result = query.getResultList();
+            if(!result.isEmpty()){
+                return result.get(0);
+            }else {
+                return null;
+            }
+        });
+
     }
 
 	/* (non-Javadoc)
@@ -124,28 +132,149 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	@Override
 	public List<ExclusionEvent> findAll()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
-		criteria.addOrder(Order.desc("timestamp"));		
-		
-        return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+		return getHibernateTemplate().execute((Session session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
+
+            criteriaQuery.select(root)
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
+
+            Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+
+            return query.getResultList();
+        });
 	}
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(int, int, java.lang.String, boolean, java.lang.String, java.lang.String, java.lang.String, java.util.Data, java.util.Data)
+     */
+    @Override
+    public PagedSearchResult<ExclusionEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+        final String moduleName, final String flowName, final String componentName, final String identifier, final Date fromDate, final Date untilDate)
+    {
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+
+                CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+                Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
+                if (orderBy != null)
+                {
+                    if (orderAscending)
+                    {
+                        criteriaQuery.orderBy(
+                            builder.asc(root.get(orderBy)));
+                    }
+                    else
+                    {
+                        criteriaQuery.orderBy(
+                            builder.desc(root.get(orderBy)));
+
+                    }
+                } else {
+                    criteriaQuery.orderBy(
+                        builder.desc(root.get("timestamp")));
+                }
+
+
+                Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+                query.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                query.setFirstResult(firstResult);
+                List<ExclusionEvent> results = query.getResultList();
+
+                Long rowCount = rowCount(session);
+
+                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+            }
+
+            private Long rowCount(Session session){
+
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+
+                Root<ExclusionEventImpl> root = metaDataCriteriaQuery.from(ExclusionEventImpl.class);
+                List<Predicate> predicates = getCriteria(builder,root);
+
+                metaDataCriteriaQuery.select(builder.count(root))
+                    .where(predicates.toArray(new Predicate[predicates.size()]));
+
+                Query<Long> metaDataQuery = session.createQuery(metaDataCriteriaQuery);
+
+                List<Long> rowCountList = metaDataQuery.getResultList();
+                if (!rowCountList.isEmpty())
+                {
+                    return rowCountList.get(0);
+                }
+                return new Long(0);
+            }
+
+            /**
+             * Create a criteria instance for each invocation of data or metadata queries.
+             * @param builder
+             * @param root
+             * @return
+             */
+            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<ExclusionEventImpl> root)
+            {
+
+                List<Predicate> predicates = new ArrayList<>();
+
+                if(moduleName != null)
+                {
+                    predicates.add(builder.equal(root.get("moduleName"),moduleName));
+                }
+
+                if(flowName != null )
+                {
+                    predicates.add(builder.equal(root.get("flowName"),flowName));
+                }
+
+                if(componentName != null )
+                {
+                    predicates.add(builder.equal(root.get("flowElementName"),componentName));
+                }
+
+                if(identifier != null )
+                {
+                    predicates.add(builder.equal(root.get("identifier"),identifier));
+                }
+
+                if(fromDate != null)
+                {
+                    predicates.add( builder.greaterThan(root.get("timestamp"),fromDate.getTime()));
+                }
+
+                if(untilDate != null)
+                {
+                    predicates.add( builder.lessThan(root.get("timestamp"),untilDate.getTime()));
+                }
+
+                return predicates;
+            }
+        });
+    }
+
+    /* (non-Javadoc)
 	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#delete(java.lang.String)
 	 */
 	@Override
 	public void delete(final String errorUri)
 	{
-		getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-
-                Query query = session.createQuery(DELETE_QUERY_BY_ERROR_URI);
-                query.setParameter("errorUri", errorUri);
-                query.executeUpdate();
-                return null;
-        }
+        getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(DELETE_QUERY_BY_ERROR_URI);
+            query.setParameter("errorUri", errorUri);
+            query.executeUpdate();
+            return null;
         });
 	}
 
@@ -157,43 +286,50 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 			List<String> flowName, Date startDate, Date endDate,
 			String identifier, int size)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
-		
-		if(moduleName != null && moduleName.size() > 0)
-		{
-			criteria.add(Restrictions.in("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowName", flowName));
-		}
-		
-		if(identifier != null && identifier.length() > 0)
-		{
-			criteria.add(Restrictions.eq("identifier", identifier));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-		
-		criteria.addOrder(Order.desc("timestamp"));
+	    return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
 
-		if(size > 0)
-        {
-            return (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria, 0, size);
-        }
-        else
-        {
-            return (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria);
-        }
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.size() > 0)
+            {
+                predicates.add(root.get("moduleName").in(moduleName));
+            }
+
+            if(flowName != null && flowName.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowName));
+            }
+            if(identifier != null && identifier.length() > 0)
+            {
+                predicates.add(builder.equal(root.get("identifier"),identifier));
+            }
+            if(startDate != null)
+            {
+                predicates.add(builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add(builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
+
+            Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+            if(size > 0)
+            {
+                query.setFirstResult(0);
+                query.setMaxResults(size);
+
+            }
+            return query.getResultList();
+        });
 	}
 
     /* (non-Javadoc)
@@ -205,49 +341,52 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                          final List<String> flowName, final Date startDate, final Date endDate,
                          final String identifier)
     {
-        return (Long) getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
+        return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if(moduleName != null && moduleName.size() > 0)
             {
-
-                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
-
-                if(moduleName != null && moduleName.size() > 0)
-                {
-                    criteria.add(Restrictions.in("moduleName", moduleName));
-                }
-
-                if(flowName != null && flowName.size() > 0)
-                {
-                    criteria.add(Restrictions.in("flowName", flowName));
-                }
-
-                if(identifier != null && identifier.length() > 0)
-                {
-                    criteria.add(Restrictions.eq("identifier", identifier));
-                }
-
-                if(startDate != null)
-                {
-                    criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-                }
-
-                if(endDate != null)
-                {
-                    criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-                }
-                
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = new Long(0);
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-
-                return rowCount;
+                predicates.add(root.get("moduleName").in(moduleName));
             }
+
+            if(flowName != null && flowName.size() > 0)
+            {
+                predicates.add(root.get("flowName").in(flowName));
+            }
+            if(identifier != null && identifier.length() > 0)
+            {
+                predicates.add(builder.equal(root.get("identifier"),identifier));
+            }
+            if(startDate != null)
+            {
+                predicates.add(builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+            }
+
+            if(endDate != null)
+            {
+                predicates.add(builder.lessThan(root.get("timestamp"),endDate.getTime()));
+            }
+
+            criteriaQuery.select(builder.count(root))
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<Long> query = session.createQuery(criteriaQuery);
+
+            List<Long> rowCountList = query.getResultList();
+            if (!rowCountList.isEmpty())
+            {
+                return rowCountList.get(0);
+            }else{
+                return new Long(0);
+            }
+
+
         });
+
     }
 
 	/* (non-Javadoc)
@@ -256,27 +395,43 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	@Override
 	public ExclusionEvent find(String errorUri)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventImpl.class);
-        criteria.add(Restrictions.eq("errorUri", errorUri));
+	    return getHibernateTemplate().execute((session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
 
-        return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("errorUri"),errorUri));
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]))
+            ;
+
+            Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+            List<ExclusionEvent> result = query.getResultList();
+            if(!result.isEmpty()){
+                return result.get(0);
+            }else {
+                return null;
+            }
+        });
 	}
 
     public List<ExclusionEvent> getHarvestableRecords(final int housekeepingBatchSize)
     {
-        return (List<ExclusionEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Criteria criteria = session.createCriteria(ExclusionEventImpl.class);
-                criteria.add(Restrictions.eq("harvested", false));
-                criteria.setMaxResults(housekeepingBatchSize);
-                criteria.addOrder(Order.asc("timestamp"));
+        return getHibernateTemplate().execute((Session session) -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<ExclusionEvent> criteriaQuery = builder.createQuery(ExclusionEvent.class);
+            Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
 
-                List<ExclusionEvent> exclusionEvents = criteria.list();
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("harvested"),false))
+                .orderBy(
+                    builder.desc(root.get("timestamp")));
 
-                return exclusionEvents;
-            }
+            Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
+            query.setMaxResults(housekeepingBatchSize);
+            return query.getResultList();
         });
     }
 
@@ -289,29 +444,19 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     @Override
     public void updateAsHarvested(List<ExclusionEvent> events)
     {
-        getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
+        getHibernateTemplate().execute((session) -> {
+            List<Long> exclusionEventIds = events.stream()
+                .map(e -> e.getId())
+                .collect(Collectors.toList());
+
+            List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);
+            for (List<Long> eventIds : partitionedIds)
             {
-
-                List<Long> exclusionEventIds = new ArrayList<Long>();
-
-                for(ExclusionEvent event: events)
-                {
-                    exclusionEventIds.add(event.getId());
-                }
-
-                List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);
-
-                for(List<Long> eventIds: partitionedIds)
-                {
-                    Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
-                    query.setParameterList(EVENT_IDS, eventIds);
-                    query.executeUpdate();
-                }
-
-                return null;
+                Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                query.setParameterList(EVENT_IDS, eventIds);
+                query.executeUpdate();
             }
+            return null;
         });
     }
 }

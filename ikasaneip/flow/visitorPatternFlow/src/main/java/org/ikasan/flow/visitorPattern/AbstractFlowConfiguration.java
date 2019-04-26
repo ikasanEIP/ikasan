@@ -41,19 +41,19 @@
 package org.ikasan.flow.visitorPattern;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a flow configuration
@@ -62,6 +62,9 @@ import org.ikasan.spec.resubmission.ResubmissionService;
  */
 public abstract class AbstractFlowConfiguration
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(AbstractFlowConfiguration.class);
+
     /** handle on the lead flow element */
     protected FlowElement leadFlowElement;
 
@@ -73,16 +76,12 @@ public abstract class AbstractFlowConfiguration
     protected List<ManagedService> managedServices = new ArrayList<ManagedService>();
 
     /** configured resources within the Ikasan framework space */
-    protected Map<String,ConfiguredResource> flowElementInvokerConfiguredResources =
-            new HashMap<String,ConfiguredResource>();
+    protected List<FlowElement<?>> flowElementInvokerConfiguredResources =
+            new ArrayList<FlowElement<?>>();
 
     /** configured resources within the flow as depicted by the developer */
     protected List<FlowElement<ConfiguredResource>> configuredReourceFlowElements =
         new ArrayList<FlowElement<ConfiguredResource>>();
-
-    /** dynamically configured resources within the flow */
-    protected List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements =
-        new ArrayList<FlowElement<DynamicConfiguredResource>>();
 
     /** errorReportingServiceAware resources within the flow */
     protected List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements =
@@ -134,7 +133,7 @@ public abstract class AbstractFlowConfiguration
 
             if(flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
             {
-                this.flowElementInvokerConfiguredResources.put(flowElement.getComponentName(), (ConfiguredResource)flowElement.getFlowElementInvoker());
+                this.flowElementInvokerConfiguredResources.add(flowElement);
             }
 
             Object flowComponent = flowElement.getFlowComponent();
@@ -145,10 +144,6 @@ public abstract class AbstractFlowConfiguration
             if(flowComponent instanceof ConfiguredResource)
             {
                 this.configuredReourceFlowElements.add(flowElement);
-            }
-            if(flowComponent instanceof DynamicConfiguredResource)
-            {
-                this.dynamicConfiguredReourceFlowElements.add(flowElement);
             }
             if(flowComponent instanceof IsErrorReportingServiceAware)
             {
@@ -162,7 +157,7 @@ public abstract class AbstractFlowConfiguration
         return this.configuredReourceFlowElements;
     }
 
-    public Map<String,ConfiguredResource> getFlowElementInvokerConfiguredResources()
+    public List<FlowElement<?>> getFlowElementInvokerConfiguredResources()
     {
         return this.flowElementInvokerConfiguredResources;
     }
@@ -172,9 +167,32 @@ public abstract class AbstractFlowConfiguration
         return this.managedServices;
     }
 
-    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements()
+    public List<FlowElement<ConfiguredResource>> getDynamicConfiguredResourceFlowElements()
     {
-        return this.dynamicConfiguredReourceFlowElements;
+        List<FlowElement<ConfiguredResource>> flowElements = new ArrayList<FlowElement<ConfiguredResource>>();
+
+        for(FlowElement flowElement:flowElementInvokerConfiguredResources)
+        {
+            try
+            {
+                // read from persistence and configure if available
+                ConfiguredResource configuredResource = (ConfiguredResource)flowElement.getFlowElementInvoker();
+                this.configure(configuredResource);
+
+                // is this dynamically configured
+                if( ((ConfiguredResource<InvokerConfiguration>)flowElement.getFlowElementInvoker()).getConfiguration().isDynamicConfiguration() )
+                {
+                    flowElements.add(flowElement);
+                }
+            }
+            catch(RuntimeException e)
+            {
+                logger.error("Unable to determine if ConfiguredResource has DynamicConfiguration.", e);
+            }
+
+        }
+
+        return flowElements;
     }
 
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements()
@@ -193,7 +211,7 @@ public abstract class AbstractFlowConfiguration
     }
     
   
-    public void update(DynamicConfiguredResource configuredResource)
+    public void update(ConfiguredResource configuredResource)
     {
         this.configurationService.update(configuredResource);
     }

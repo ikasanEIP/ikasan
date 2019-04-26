@@ -64,7 +64,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
      */
     public ConsumerFlowElementInvoker() 
     {
-		super();
+		super( new InvokerConfiguration() );
 	}
 
     @Override

@@ -51,7 +51,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>2.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ikasan-test</artifactId>
@@ -131,7 +131,7 @@
 
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-all</artifactId>
+			<artifactId>activemq-broker</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -150,7 +150,18 @@
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
-            <!--<version>${version.org.apache.sshd}</version>-->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-sftp</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-scp</artifactId>
             <scope>provided</scope>
         </dependency>
 

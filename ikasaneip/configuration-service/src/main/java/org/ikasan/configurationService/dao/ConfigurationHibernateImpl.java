@@ -40,13 +40,16 @@
  */
 package org.ikasan.configurationService.dao;
 
-import java.util.List;
-
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.hibernate.query.Query;
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 /**
  * Implementation of the ConfigurationDao interface providing
@@ -62,16 +65,24 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public Configuration findByConfigurationId(String configurationId)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
-        criteria.add(Restrictions.eq("configurationId", configurationId));
 
-        List<Configuration> configuration = (List<Configuration>) getHibernateTemplate().findByCriteria(criteria);
-        if(configuration == null || configuration.size() == 0)
-        {
+        return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Configuration> criteriaQuery = builder.createQuery(Configuration.class);
+            Root<DefaultConfiguration> root = criteriaQuery.from(DefaultConfiguration.class);
+
+
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("configurationId"),configurationId));
+
+            Query<Configuration> query = session.createQuery(criteriaQuery);
+            List<Configuration> list = query.getResultList();
+            if(list!=null && !list.isEmpty()){
+                return list.get(0);
+            }
             return null;
-        }
-
-        return configuration.get(0);
+        });
     }
 
     /* (non-Javadoc)
@@ -87,20 +98,25 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         {
             configuration.setDescription(null);
         }
-        for(ConfigurationParameter configurationParameter:configuration.getParameters())
+
+        configuration.getParameters().forEach(configurationParameter->
         {
             if("".equals(configurationParameter.getValue()))
             {
                 configurationParameter.setValue(null);
             }
 
+
             if("".equals(configurationParameter.getDescription()))
             {
                 configurationParameter.setDescription(null);
             }
-        }
-        
+        });
+
+        // hibernate mutates the object and amends configurations Params with Id
         getHibernateTemplate().saveOrUpdate(configuration);
+
+
     }
 
     /* (non-Javadoc)

@@ -47,7 +47,7 @@ package org.ikasan.flow.visitorPattern.invoker;
  * @author Ikasan Development Team
  *
  */
-public class FilterInvokerConfiguration
+public class FilterInvokerConfiguration extends InvokerConfiguration
 {
     /** allow filter to be turned on or off - default on */
     private boolean applyFilter = true;
@@ -80,4 +80,5 @@ public class FilterInvokerConfiguration
     public void setLogFiltered(boolean logFiltered) {
         this.logFiltered = logFiltered;
     }
+
 }

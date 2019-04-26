@@ -41,14 +41,13 @@
 package org.ikasan.dashboard.ui.replay.panel;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.vaadin.ui.*;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
@@ -106,10 +105,12 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	private ComboBox targetServerComboBox;
 	
 	private IkasanAuthentication authentication;
+
+    private TopologyService topologyService;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
 			ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse> replayService,
-			PlatformConfigurationService platformConfigurationService) 
+			PlatformConfigurationService platformConfigurationService, TopologyService topologyService)
 	{
 		super();
 		
@@ -129,6 +130,11 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		{
 			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
 		}
+		this.topologyService = topologyService;
+        if(this.topologyService == null)
+        {
+            throw new IllegalArgumentException("topologyService cannot be null!");
+        }
 		
 		init();
 	}
@@ -291,7 +297,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    				public void run() 
 	    				{	    					
 	    					BulkReplayResponse bulkReplayResponse = replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(),
-	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue());
+	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue(), getModuleContextMappings());
 	    					
 	    					logger.info("Finished replaying events!");
 	    					
@@ -396,7 +402,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 		    	{
 					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
-			    			, replayService, platformConfigurationService);
+			    			, replayService, platformConfigurationService, topologyService);
 			    
 			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
@@ -430,7 +436,10 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 	    	{
 	            public void buttonClick(ClickEvent event) 
 	            {
-	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+                    VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
 	            }
 	        });
 	        
@@ -467,6 +476,20 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
 			return new ArrayList<String>();
 		}
 	}
+
+    private Map<String, String> getModuleContextMappings()
+    {
+        HashMap<String, String> moduleContextMappings = new HashMap<>();
+
+        List<Module> modules = this.topologyService.getAllModules();
+
+        for(Module module: modules)
+        {
+            moduleContextMappings.put(module.getName(), module.getContextRoot());
+        }
+
+        return moduleContextMappings;
+    }
 	
 	private void initialiseTargetServerCombo()
 	{
@@ -499,31 +522,33 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<Hibernate
             	VaadinSession.getCurrent().getLockInstance().lock();
         		try 
         		{
-        			Item item = tableContainer.getItem(auditEvent.getId().getReplayEventId());
-        			
-        			if(item != null)
-        			{
-	        			if(auditEvent.isSuccess())
-	        			{
-	        				Property property = item.getItemProperty(" ");
-	        				
-	        				if(property != null)
-	        				{
-	        					property.setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
-	        				}
-	        			}
-	        			else
-	        			{
-	        				Property property = item.getItemProperty(" ");
-	        				
-	        				if(property != null)
-	        				{
-	        					property.setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
-	        				}
-	        			}
-	        			
-	        			item.getItemProperty("Message").setValue(auditEvent.getResultMessage());     	
-        			}
+        		    if(auditEvent != null && auditEvent.getId() != null)
+                    {
+                        Item item = tableContainer.getItem(auditEvent.getId().getReplayEventId());
+
+                        if (item != null)
+                        {
+                            if (auditEvent.isSuccess())
+                            {
+                                Property property = item.getItemProperty(" ");
+
+                                if (property != null)
+                                {
+                                    property.setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
+                                }
+                            } else
+                            {
+                                Property property = item.getItemProperty(" ");
+
+                                if (property != null)
+                                {
+                                    property.setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
+                                }
+                            }
+
+                            item.getItemProperty("Message").setValue(auditEvent.getResultMessage());
+                        }
+                    }
         		} 
         		finally 
         		{

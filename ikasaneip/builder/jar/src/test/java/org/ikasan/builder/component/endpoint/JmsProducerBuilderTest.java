@@ -49,6 +49,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 
@@ -80,6 +81,7 @@ public class JmsProducerBuilderTest {
     final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
     final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
     final TransactionManager transactionManager = mockery.mock(TransactionManager.class, "mockTransactionManager");
+    final UserCredentialsConnectionFactoryAdapter mockedUserCredentialsConnectionFactoryAdapter = mockery.mock(UserCredentialsConnectionFactoryAdapter.class, "mockUserCredentialsConnectionFactoryAdapter");
 
     @Test
     public void test_jmsproducerbuilder_build() {
@@ -87,6 +89,9 @@ public class JmsProducerBuilderTest {
         mockery.checking(new Expectations()
         {{
             oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
+            oneOf(mockIkasanJmsTemplate).getConnectionFactory();
+            will(returnValue(connectionFactory));
+            oneOf(mockIkasanJmsTemplate).setConnectionFactory(connectionFactory);
         }});
 
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate, transactionManager);
@@ -155,6 +160,88 @@ public class JmsProducerBuilderTest {
         this.mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_jmsproducerbuilder_with_connection_credentials_build() {
+
+        mockery.checking(new Expectations()
+        {{
+            oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
+            oneOf(mockIkasanJmsTemplate).getConnectionFactory();
+            will(returnValue(connectionFactory));
+            oneOf(mockIkasanJmsTemplate).setConnectionFactory(with(any(UserCredentialsConnectionFactoryAdapter.class)));
+            oneOf(mockedUserCredentialsConnectionFactoryAdapter).setTargetConnectionFactory(connectionFactory);
+            oneOf(mockedUserCredentialsConnectionFactoryAdapter).setUsername("username");
+            oneOf(mockedUserCredentialsConnectionFactoryAdapter).setPassword("password");
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new ExtendedJmsProducerBuilderImpl(mockIkasanJmsTemplate, transactionManager);
+
+        Producer jmsProducer = jmsProducerBuilder
+                .setConfiguredResourceId("crid")
+                .setDestinationJndiName("jms.queue.test")
+                .setConnectionFactoryName("TestConnectionFactory")
+                .setConnectionFactoryUsername("TestUsername")
+                .setConnectionFactoryPassword("TestPassword")
+                .setSessionAcknowledgeMode(2)
+                .setSessionAcknowledgeModeName("TRANSACTED")
+                .setSessionTransacted(true)
+                .setPubSubDomain(true)
+                .setDeliveryPersistent(true)
+                .setDeliveryMode(2)
+                .setPriority(2)
+                .setExplicitQosEnabled(true)
+                .setMessageIdEnabled(true)
+                .setMessageTimestampEnabled(true)
+                .setPubSubNoLocal(true)
+                .setReceiveTimeout(2000l)
+                .setTimeToLive(2000l)
+                .setConnectionUsername("username")
+                .setConnectionPassword("password")
+                .setPostProcessor(postProcessor)
+                .build();
+
+        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        SpringMessageProducerConfiguration configuration = (
+                (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
+        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
+                configuration.getDestinationJndiName());
+        assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
+                configuration.getConnectionFactoryName());
+        assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
+                configuration.getConnectionFactoryUsername());
+        assertEquals("ConnectionFactoryPassword should be 'TestPassword'", "TestPassword",
+                configuration.getConnectionFactoryPassword());
+        assertEquals("SessionAcknowledgeMode should be '2'", 2,
+                configuration.getSessionAcknowledgeMode().intValue());
+        assertEquals("SessionAcknowledgeModeName should be 'TRANSACTED'", "TRANSACTED",
+                configuration.getSessionAcknowledgeModeName());
+        assertTrue("SessionTransacted should be 'true'",
+                configuration.getSessionTransacted());
+        assertTrue("PubSubDomain should be 'true'",
+                configuration.getPubSubDomain());
+        assertTrue("DeliveryPersistent should be 'true'",
+                configuration.getDeliveryPersistent());
+        assertEquals("DeliveryMode should be 'true'",2,
+                configuration.getDeliveryMode().intValue());
+        assertEquals("DeliveryMode should be 'true'",2,
+                configuration.getDeliveryMode().intValue());
+        assertEquals("Priority should be 'true'",2,
+                configuration.getPriority().intValue());
+        assertTrue("ExplicitQosEnabled should be 'true'",
+                configuration.getExplicitQosEnabled());
+        assertTrue("MessageIdEnabled should be 'true'",
+                configuration.getMessageIdEnabled());
+        assertTrue("MessageTimestampEnabled should be 'true'",
+                configuration.getMessageTimestampEnabled());
+        assertTrue("PubSubNoLocal should be 'true'",
+                configuration.getPubSubNoLocal());
+        assertEquals("ReceiveTimeout should be 'true'",2000l,
+                configuration.getReceiveTimeout().longValue());
+        assertEquals("TimeToLive should be 'true'",2000l,
+                configuration.getTimeToLive().longValue());
+
+        this.mockery.assertIsSatisfied();
+    }
 
     @Test
     public void test_jmsproducerbuilder_build_verify_properties()
@@ -235,5 +322,25 @@ public class JmsProducerBuilderTest {
             .build();
 
         assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+    }
+
+    class ExtendedJmsProducerBuilderImpl extends JmsProducerBuilderImpl
+    {
+
+        /**
+         * Constructor
+         *
+         * @param ikasanJmsTemplate
+         * @param arjunaTransactionManager
+         */
+        public ExtendedJmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, TransactionManager arjunaTransactionManager) {
+            super(ikasanJmsTemplate, arjunaTransactionManager);
+        }
+
+        @Override
+        protected UserCredentialsConnectionFactoryAdapter getUserCredentialsConnectionFactoryAdapter()
+        {
+            return mockedUserCredentialsConnectionFactoryAdapter;
+        }
     }
 }

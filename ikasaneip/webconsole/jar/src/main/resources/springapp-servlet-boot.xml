@@ -70,6 +70,7 @@
 		</property>
 	</bean>
 
+	<!--context:property-placeholder location="classpath:webconsole.properties"/-->
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -80,6 +81,7 @@
 			</list>
 		</property>
 	</bean>
+
 
 <!-- ************************ -->
 <!-- Webflow integraion below -->
@@ -111,7 +113,7 @@
 
     <bean id="iconversionService" class="org.ikasan.web.service.SpringConversionService">
         <property name="converter">
-            <bean class="org.ikasan.web.converter.SpringConverter" />
+            <bean class="org.ikasan.web.converter.JacksonMapStringConverter" />
         </property>
     </bean>
 

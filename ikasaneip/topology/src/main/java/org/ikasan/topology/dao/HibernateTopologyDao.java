@@ -40,29 +40,18 @@
  */
 package org.ikasan.topology.dao;
 
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.ikasan.topology.model.*;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Filter;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Notification;
-import org.ikasan.topology.model.RoleFilter;
-import org.ikasan.topology.model.Server;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
 
 /**
  * Hibernate implementation of <code>TopologyDao</code>
@@ -76,17 +65,34 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	private static final String DELETE_FILTER_COMPONENT_BY_FILTER_ID = "delete from FilterComponent where id.filterId = :filterId"; 
 	private static final String DELETE_FILTER_COMPONENT_BY_COMPONENT_ID = "delete from FilterComponent where id.componentId = :componentId";
 	private static final String DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID = "delete from BusinessStreamFlow where id.flowId = :flowId";
-	
-	/* (non-Javadoc)
+
+	private static final String GET_FLOWS_BY_SERVERID_AND_MODULEID_QUERY = "select distinct(f) from Flow as f " +
+        " LEFT JOIN f.module m LEFT JOIN m.server s " +
+        " where  "
+        + "" ;
+
+
+    private static final String GET_COMPONENTS_BY_SERVERID_AND_MODULEID_QUERY = "select distinct(c) from Component c " +
+        " LEFT JOIN c.flow f LEFT JOIN f.module m LEFT JOIN m.server s " +
+        " where  "
+        + "" ;
+
+    private static final String GET_ROLE_FILTER_BY_ROLEID_QUERY = "select r from RoleFilter r  " +
+        " where  "
+        + " id.roleId in (:roleIds)" ;
+
+    private static final String GET_ROLE_FILTER_FILTER_ID_QUERY = "select from RoleFilter  " +
+        " where  "
+        + " id.filterId = :filterId" ;
+
+    /* (non-Javadoc)
 	 * @see org.ikasan.topology.dao.TopologyDao#getAllServers()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Server> getAllServers()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Server.class);
-
-        return (List<Server>)this.getHibernateTemplate().findByCriteria(criteria);
+		return getHibernateTemplate().loadAll(Server.class);
 	}
 
 	/* (non-Javadoc)
@@ -106,9 +112,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Module> getAllModules()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Module.class);
-
-        return (List<Module>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().loadAll(Module.class);
 	}
 
 	/* (non-Javadoc)
@@ -134,17 +138,13 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Flow> getAllFlows()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
-
-        return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().loadAll(Flow.class);
 	}
 
 	@Override
 	public List<Component> getAllComponents()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Component.class);
-
-		return (List<Component>)this.getHibernateTemplate().findByCriteria(criteria);
+		return getHibernateTemplate().loadAll(Component.class);
 	}
 
 	/* (non-Javadoc)
@@ -164,9 +164,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<BusinessStream> getAllBusinessStreams()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(BusinessStream.class);
-
-        return (List<BusinessStream>)this.getHibernateTemplate().findByCriteria(criteria);
+		return getHibernateTemplate().loadAll(BusinessStream.class);
 	}
 
 	/* (non-Javadoc)
@@ -196,26 +194,42 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		if(serverId != null && moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
-				.createCriteria("server").add(Restrictions.eq("id", serverId));
-		}
-		else if(moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
-		}
-		else if(serverId != null)
-		{
-			criteria.createCriteria("module").createCriteria("server"
-					).add(Restrictions.eq("id", serverId));
-		}
-			
+        return getHibernateTemplate().execute((session) -> {
 
-        return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+            StringBuilder queryBuffer = new StringBuilder(GET_FLOWS_BY_SERVERID_AND_MODULEID_QUERY);
+            if (serverId != null && moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+                queryBuffer.append(" and s.id = :serverId ");
+            }
+            else if (moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+            }
+            else if (serverId != null)
+            {
+                queryBuffer.append(" s.id = :serverId ");
+            }
+
+            Query query = session.createQuery(queryBuffer.toString());
+
+
+            if (serverId != null && moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+                query.setParameter("serverId", serverId);
+            }
+            else if (moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+            }
+            else if (serverId != null)
+            {
+                query.setParameter("serverId", serverId);
+            }
+
+            return (List<Flow>) query.list();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -233,10 +247,22 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public Module getModuleByName(String name)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Module.class);
-		criteria.add(Restrictions.eq("name", name));
+	    return getHibernateTemplate().execute((Session session) -> {
 
-        return (Module)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Module> criteriaQuery = builder.createQuery(Module.class);
+            Root<Module> root = criteriaQuery.from(Module.class);
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+            Query<Module> query = session.createQuery(criteriaQuery);
+            List<Module> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+            return results.get(0);
+        });
 	}
 
 	/* (non-Javadoc)
@@ -245,10 +271,22 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(BusinessStream.class);
-		criteria.add(Restrictions.in("id", ids));
 
-        return (List<BusinessStream>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().execute((session) -> {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<BusinessStream> criteriaQuery = builder.createQuery(BusinessStream.class);
+            Root<BusinessStream> root = criteriaQuery.from(BusinessStream.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(root.get("id").in(ids));
+
+            criteriaQuery.select(root)
+                .where(predicates.toArray(new Predicate[predicates.size()]));
+
+            Query<BusinessStream> query = session.createQuery(criteriaQuery);
+            return query.getResultList();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -258,30 +296,55 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	public Flow getFlowByServerIdModuleIdAndFlowname(Long serverId,
 			Long moduleId, String flowName)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		if(serverId != null && moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
-				.createCriteria("server").add(Restrictions.eq("id", serverId));
-		}
-		else if(moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
-		}
-		else if(serverId != null)
-		{
-			criteria.createCriteria("module").createCriteria("server"
-					).add(Restrictions.eq("id", serverId));
-		}
-			
-		if(flowName != null)
-		{
-			criteria.add(Restrictions.eq("name", flowName));
-		}
 
-		return (Flow)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+		return getHibernateTemplate().execute((session) -> {
+
+            StringBuilder queryBuffer = new StringBuilder(GET_FLOWS_BY_SERVERID_AND_MODULEID_QUERY);
+            if (serverId != null && moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+                queryBuffer.append(" and s.id = :serverId ");
+            }
+            else if (moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+            }
+            else if (serverId != null)
+            {
+                queryBuffer.append(" s.id = :serverId ");
+            }
+            if (flowName != null)
+            {
+                queryBuffer.append(" and f.name = :flowName ");
+            }
+
+            Query query = session.createQuery(queryBuffer.toString());
+
+            if (serverId != null && moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+                query.setParameter("serverId", serverId);
+            }
+            else if (moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+            }
+            else if (serverId != null)
+            {
+                query.setParameter("serverId", serverId);
+            }
+            if (flowName != null)
+            {
+                query.setParameter("flowName", flowName);
+            }
+
+            List<Flow> result =  query.list();
+            if(result!=null && !result.isEmpty()){
+                return result.get(0);
+            }else{
+                return null;
+            }
+        });
 	}
 
 	/* (non-Javadoc)
@@ -328,30 +391,50 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	public List<Flow> getFlowsByServerIdModuleIdAndNotInFlownames(
 			Long serverId, Long moduleId, List<String> flowName)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		if(serverId != null && moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
-				.createCriteria("server").add(Restrictions.eq("id", serverId));
-		}
-		else if(moduleId != null)
-		{
-			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
-		}
-		else if(serverId != null)
-		{
-			criteria.createCriteria("module").createCriteria("server"
-					).add(Restrictions.eq("id", serverId));
-		}
-			
-		if(flowName != null)
-		{
-			criteria.add(Restrictions.not(Restrictions.in("name", flowName)));
-		}
+        return getHibernateTemplate().execute((session) -> {
 
-		return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+            StringBuilder queryBuffer = new StringBuilder(GET_FLOWS_BY_SERVERID_AND_MODULEID_QUERY);
+            if (serverId != null && moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+                queryBuffer.append(" and s.id = :serverId ");
+            }
+            else if (moduleId != null)
+            {
+                queryBuffer.append(" m.id = :moduleId ");
+            }
+            else if (serverId != null)
+            {
+                queryBuffer.append(" s.id = :serverId ");
+            }
+            if (flowName != null)
+            {
+                queryBuffer.append(" and f.name not in (:flowName) ");
+            }
+
+            Query query = session.createQuery(queryBuffer.toString());
+
+
+            if (serverId != null && moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+                query.setParameter("serverId", serverId);
+            }
+            else if (moduleId != null)
+            {
+                query.setParameter("moduleId", moduleId);
+            }
+            else if (serverId != null)
+            {
+                query.setParameter("serverId", serverId);
+            }
+            if (flowName != null)
+            {
+                query.setParameter("flowName", flowName);
+            }
+
+            return (List<Flow>) query.list();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -361,16 +444,32 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	public List<Component> getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(
 			Long serverId, Long moduleId, String flowName, List<String> componentNames)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Component.class);
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		criteria.createCriteria("flow").add(Restrictions.eq("name", flowName))
-			.createCriteria("module").add(Restrictions.eq("id", moduleId))
-				.createCriteria("server").add(Restrictions.eq("id", serverId));
 
-		criteria.add(Restrictions.not(Restrictions.in("name", componentNames)));
+        return getHibernateTemplate().execute((session) -> {
 
-		return (List<Component>)this.getHibernateTemplate().findByCriteria(criteria);
+            StringBuilder queryBuffer = new StringBuilder(GET_COMPONENTS_BY_SERVERID_AND_MODULEID_QUERY);
+            if (serverId != null && moduleId != null && flowName!=null && componentNames!=null)
+            {
+                queryBuffer.append(" f.name = :flowName ");
+                queryBuffer.append(" and m.id = :moduleId ");
+
+                queryBuffer.append(" and s.id = :serverId ");
+                queryBuffer.append(" and c.name not in (:componentNames) ");
+            }
+
+            Query query = session.createQuery(queryBuffer.toString());
+
+
+            if (serverId != null && moduleId != null)
+            {
+                query.setParameter("flowName", flowName);
+                query.setParameter("serverId", serverId);
+                query.setParameter("moduleId", moduleId);
+                query.setParameter("componentNames", componentNames);
+            }
+
+            return (List<Component>) query.list();
+        });
 	}
 
 	/* (non-Javadoc)
@@ -389,10 +488,22 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public Filter getFilterByName(String name)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Filter.class);
-		criteria.add(Restrictions.eq("name", name));
+		return getHibernateTemplate().execute((Session session) -> {
 
-        return (Filter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Filter> criteriaQuery = builder.createQuery(Filter.class);
+            Root<Filter> root = criteriaQuery.from(Filter.class);
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+            Query<Filter> query = session.createQuery(criteriaQuery);
+            List<Filter> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+            return results.get(0);
+        });
 	}
 
 	/* (non-Javadoc)
@@ -401,10 +512,9 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Filter> getAllFilters()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Filter.class);
+		return getHibernateTemplate().loadAll(Filter.class);
 
-        return (List<Filter>)this.getHibernateTemplate().findByCriteria(criteria);
-	}
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.topology.dao.TopologyDao#saveRoleFilter(org.ikasan.topology.window.RoleFilter)
@@ -426,10 +536,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 			return new ArrayList<RoleFilter>();
 		}
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
-		criteria.add(Restrictions.in("id.roleId", roleIds));
-
-        return (List<RoleFilter>)this.getHibernateTemplate().findByCriteria(criteria);
+        return getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(GET_ROLE_FILTER_BY_ROLEID_QUERY);
+            query.setParameter("roleIds", roleIds);
+            return (List<RoleFilter>) query.list();
+        });
 	}
 	
 	/* (non-Javadoc)
@@ -438,10 +549,15 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public RoleFilter getRoleFilterByFilterId(Long filterId)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
-		criteria.add(Restrictions.eq("id.filterId", filterId));
-
-        return (RoleFilter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(GET_ROLE_FILTER_FILTER_ID_QUERY);
+            query.setParameter("filterId", filterId);
+            List<RoleFilter> result = query.list();
+            if (result!=null && !result.isEmpty())
+                return result.get(0);
+            else
+                return null;
+        });
 	}
 
 	/* (non-Javadoc)
@@ -469,19 +585,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void deleteFilterComponentsByFilterId(final Long filterId)
 	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_FILTER_ID);
-                
-                query.setParameter("filterId", filterId);
-
-                query.executeUpdate();
-                
-                return null;
-            }
+        this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_FILTER_ID);
+            query.setParameter("filterId", filterId);
+            query.executeUpdate();
+            return null;
         });
 	}
 
@@ -491,19 +599,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void deleteFilterComponentsByComponentId(final Long componentId)
 	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_COMPONENT_ID);
-                
-                query.setParameter("componentId", componentId);
-
-                query.executeUpdate();
-                
-                return null;
-            }
+        this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_COMPONENT_ID);
+            query.setParameter("componentId", componentId);
+            query.executeUpdate();
+            return null;
         });
 	}
 
@@ -513,19 +613,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void deleteBusinessStreamFlowByFlowId(final Long flowId)
 	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID);
-                
-                query.setParameter("flowId", flowId);
-
-                query.executeUpdate();
-                
-                return null;
-            }
+        this.getHibernateTemplate().execute((session) -> {
+            Query query = session.createQuery(DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID);
+            query.setParameter("flowId", flowId);
+            query.executeUpdate();
+            return null;
         });
 	}
 
@@ -553,10 +645,22 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public Notification getNotificationByName(String name)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
-		criteria.add(Restrictions.eq("name", name));
+	    return getHibernateTemplate().execute((Session session) -> {
 
-        return (Notification)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Notification> criteriaQuery = builder.createQuery(Notification.class);
+            Root<Notification> root = criteriaQuery.from(Notification.class);
+            criteriaQuery.select(root)
+                .where(builder.equal(root.get("name"),name));
+            Query<Notification> query = session.createQuery(criteriaQuery);
+            List<Notification> results = query.getResultList();
+
+            if(results == null || results.size() == 0)
+            {
+                return null;
+            }
+            return results.get(0);
+        });
 	}
 
 	/* (non-Javadoc)
@@ -565,8 +669,10 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Notification> getAllNotifications()
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
+		 return getHibernateTemplate().loadAll(Notification.class);
+    }
 
-        return (List<Notification>)this.getHibernateTemplate().findByCriteria(criteria);
-	}
+
+
+
 }

@@ -45,6 +45,7 @@ import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
@@ -639,6 +640,12 @@ public class ScheduledRecoveryManagerIntegrationTest
     {
         @Override
         public Object find(String uri) {
+            return null;
+        }
+
+        @Override public PagedSearchResult find(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+            String moduleName, String flowName, String componentName, Date fromDate, Date untilDate)
+        {
             return null;
         }
 

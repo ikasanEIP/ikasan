@@ -55,6 +55,14 @@ import java.util.List;
 public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Sequencer>
 {
 
+    /**
+     * Constructor
+     */
+    public SequencerFlowElementInvoker()
+    {
+        super( new InvokerConfiguration() );
+    }
+
     @Override
     public String getInvokerType()
     {

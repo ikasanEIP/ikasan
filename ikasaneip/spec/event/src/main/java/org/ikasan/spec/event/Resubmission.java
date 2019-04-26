@@ -45,21 +45,7 @@ package org.ikasan.spec.event;
  * @author Ikasan Development Team
  *
  */
-public class Resubmission<EVENT>
+public interface Resubmission<EVENT>
 {
-	private EVENT event;
-
-	public Resubmission(EVENT event)
-	{
-		this.event = event;
-	}
-
-	/**
-	 * @return the event
-	 */
-	public EVENT getEvent()
-	{
-		return event;
-	}	
-	
+	public EVENT getEvent();
 }

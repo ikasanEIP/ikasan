@@ -93,9 +93,9 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
                                                       List<String> flowNames, String eventId,
-                                                      String payloadContent, Date fromDate, Date toDate)
+                                                      String payloadContent, Date fromDate, Date toDate, int resultSize)
 	{
-		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate);
+		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate, resultSize);
 	}
 
 	/* (non-Javadoc)

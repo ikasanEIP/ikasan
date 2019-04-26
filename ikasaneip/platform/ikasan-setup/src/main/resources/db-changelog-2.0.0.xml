@@ -13,6 +13,9 @@
 	<include file="db/alter/db-changeLog-alterReplayEventAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterReplayEventAddEventAsString.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterComponentAddInvokerConfiguration.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterReplayAuditEventAddEventDetails.xml" relativeToChangelogFile="true" />
+	<include file="db/modify/db-changeLog-modifySystemEventExtendSubjectLength.xml" relativeToChangelogFile="true" />
+
 
 	<!-- 2.0.x cardinality creation -->
 	<include file="db/cardinality/db-changeLog-modifyReplayAuditEventFk.xml" relativeToChangelogFile="true" />
@@ -21,9 +24,10 @@
 	<include file="db/data/db-changelog-policies-harvesting.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-search-policies.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-search-replay-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-removeRedundantSecurityRecords.xml" relativeToChangelogFile="true" />
 
-	
-	<!-- 2.0.x index creation -->
+
+    <!-- 2.0.x index creation -->
 
 	<!-- 2.0.x table drop -->
 	

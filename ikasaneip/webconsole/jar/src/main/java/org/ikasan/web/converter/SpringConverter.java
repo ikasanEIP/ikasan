@@ -49,7 +49,9 @@ import java.util.Map;
 /**
  * Custom converter for String into Map
  * @author Ikasan Development Team
+ * @deprecated Use <class>JacksonMapStringConverter</class>
  */
+@Deprecated
 public class SpringConverter implements Converter
 {
     /** Logger for this class */

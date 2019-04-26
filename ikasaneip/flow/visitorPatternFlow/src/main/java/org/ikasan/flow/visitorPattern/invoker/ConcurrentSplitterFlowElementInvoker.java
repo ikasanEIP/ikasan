@@ -41,7 +41,6 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import com.google.common.util.concurrent.*;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
@@ -67,19 +66,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>, ManagedService, ConfiguredResource<ConcurrentSplitterInvokerConfiguration>
+public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInvoker<ConcurrentSplitterInvokerConfiguration> implements FlowElementInvoker<Splitter>, ManagedService
 {
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(ConcurrentSplitterFlowElementInvoker.class);
 
     /** executor service for thread dispatching */
     private ListeningExecutorService executorService;
-
-    /** configured resource identifier */
-    private String configuredResourceId;
-
-    /** configuration */
-    private ConcurrentSplitterInvokerConfiguration configuration = new ConcurrentSplitterInvokerConfiguration();
 
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
@@ -90,13 +83,13 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     /** handle to the failed tasks flow invocation context */
     FlowInvocationContext failedTaskFlowInvocationContext;
 
-
     /**
      * Constructor
      * @param executorService the ExecutorService used to invoke the subFlow component(s)
      */
     public ConcurrentSplitterFlowElementInvoker(ExecutorService executorService)
     {
+        super( new ConcurrentSplitterInvokerConfiguration() );
         if(executorService == null)
         {
             throw new IllegalArgumentException("executorService cannot be 'null'");
@@ -337,29 +330,6 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
     {
         return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
-    }
-
-    @Override
-    public String getConfiguredResourceId() {
-        return configuredResourceId;
-    }
-
-    @Override
-    public void setConfiguredResourceId(String configuredResourceId)
-    {
-        this.configuredResourceId = configuredResourceId;
-    }
-
-    @Override
-    public ConcurrentSplitterInvokerConfiguration getConfiguration()
-    {
-        return configuration;
-    }
-
-    @Override
-    public void setConfiguration(ConcurrentSplitterInvokerConfiguration configuration)
-    {
-        this.configuration = configuration;
     }
 
     protected class SplitFlowCallback implements FutureCallback<SplitFlowElement>

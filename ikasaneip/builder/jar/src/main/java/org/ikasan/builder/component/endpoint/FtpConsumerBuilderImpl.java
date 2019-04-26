@@ -439,9 +439,9 @@ public class FtpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl impleme
     }
 
     @Override
-    public FtpConsumerBuilder setIsFTPS(Boolean isFTPS)
+    public FtpConsumerBuilder setFTPS(Boolean FTPS)
     {
-        getConfiguration().setIsFTPS(isFTPS);
+        getConfiguration().setFTPS(FTPS);
         return this;
     }
 

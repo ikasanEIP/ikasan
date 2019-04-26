@@ -19,11 +19,9 @@ import javax.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-
-        "classpath:monitor-service-conf.xml",
-        "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
-        "classpath:filetransfer-service-conf.xml"
+        "classpath:filetransfer-service-conf.xml",
+        "classpath:h2-datasource-conf.xml"
 
 } )
 public class ModuleConfig {
@@ -71,7 +69,7 @@ public class ModuleConfig {
     private Integer ftpProducerRemotePort;
 
     @Value("${ftp.producer.outputDirectory}")
-    private String ftpConsumerOutputDirectory;
+    private String ftpProducerOutputDirectory;
 
 
     @Value("${jms.provider.url}")
@@ -147,7 +145,7 @@ public class ModuleConfig {
             .setPassword(ftpProducerPassword)
             .setRemoteHost(ftpProducerRemoteHost)
             .setRemotePort(ftpProducerRemotePort)
-            .setOutputDirectory(ftpConsumerOutputDirectory)
+            .setOutputDirectory(ftpProducerOutputDirectory)
             .setOverwrite(true)
             .setConfiguredResourceId("ftpProducerConfiguration")
             .build();
