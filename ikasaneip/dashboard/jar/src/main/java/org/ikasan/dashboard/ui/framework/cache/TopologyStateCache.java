@@ -73,8 +73,7 @@ public class TopologyStateCache
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 	protected PlatformConfigurationService platformConfigurationService;
 	
-	
-	
+
 	/**
 	 * @param topologyService
 	 */
@@ -125,33 +124,21 @@ public class TopologyStateCache
 				
 		logger.debug("Synchronising topology state cache.");
 		
-		List<Server> servers;
-		try
-		{
-			servers = topologyService.getAllServers();
-		}
-		catch(Exception e)
-		{
-			logger.warn("An exception has occurred trying to update the topology state cache", e);
-			// Ignoring this exception, as it may be the case that the database is not yet setup.
-			return;
-		}
-		
 		String username = this.platformConfigurationService.getWebServiceUsername();
 		String password = this.platformConfigurationService.getWebServicePassword();
-		
-		logger.debug("Number of servers to synch: " + servers.size());
-		for(Server server: servers)
-		{
-			logger.debug("Synchronising server: " + server.getName());
-			for(Module module: server.getModules())
-			{
-				logger.debug("Synchronising module: " + module.getName());
-				GetFlowStatesRunnable getFlowStatesRunnable = new GetFlowStatesRunnable(module, username, password);
-				
-				executorService.execute(getFlowStatesRunnable);
-			}
-		}
+
+        List<Module> modules = this.topologyService.getAllModules();
+
+		logger.debug("Number of modules to synchronise: " + modules.size());
+
+        for(Module module: modules)
+        {
+            logger.debug("Synchronising module: " + module.getName());
+            GetFlowStatesRunnable getFlowStatesRunnable = new GetFlowStatesRunnable(module, username, password);
+
+            executorService.execute(getFlowStatesRunnable);
+        }
+
 
 		logger.debug("Broadcasting cache state.");
 		Broadcaster.broadcast(stateMap);
