@@ -226,8 +226,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private DiscoveryWindow discoveryWindow;
 
 	private Button discoverButton;
-	private Button newServerButton;
-	private Button refreshButton;
 
 	private TopologyTreeActionHelper topologyTreeActionHelper;
 
@@ -666,32 +664,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		this.treeViewBusinessStreamCombo.setWidth("250px");
 
-		refreshButton = new Button("Refresh");
-		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
-		refreshButton.addClickListener(new Button.ClickListener()
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event)
-            {
-				refreshTree();
-            }
-        });
-
-		newServerButton = new Button("New Server");
-		newServerButton.setStyleName(ValoTheme.BUTTON_SMALL);
-		newServerButton.addClickListener(new Button.ClickListener()
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event)
-            {
-				UI.getCurrent().addWindow(new ServerWindow(topologyService));
-            }
-        });
-
-
 		discoverButtonLayout.setSpacing(true);;
-		discoverButtonLayout.addComponent(refreshButton);
-		discoverButtonLayout.addComponent(newServerButton);
 
 		layout.addComponent(discoverButtonLayout);
 
@@ -899,25 +872,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)))
 		{
 			this.discoverButton.setVisible(true);
-			this.newServerButton.setVisible(true);
 		}
 		else
 		{
 			this.discoverButton.setVisible(false);
-			this.newServerButton.setVisible(false);
-		}
-
-		if(authentication != null
-				&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
-				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_READ)
-				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)))
-		{
-			this.refreshButton.setVisible(true);
-		}
-		else
-		{
-			this.refreshButton.setVisible(false);
 		}
 
 		logger.debug("createFilterPopupContent!");
@@ -978,22 +936,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
 					|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_READ)))
     	{
-			List<Server> servers = this.topologyService.getAllServers();
+			List<Module> modules = this.topologyService.getAllModules();
 
-			logger.debug("Trying to load tree for " + servers.size());
+			logger.debug("Trying to load tree for " + modules.size());
 
-			for(Server server: servers)
-			{
-				Set<Module> modules = server.getModules();
+            for(Module module: modules)
+            {
+                this.moduleTree.addItem(module);
+                this.moduleTree.setItemCaption(module, module.getName());
+                this.moduleTree.setChildrenAllowed(module, true);
+                this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
+            }
 
-		        for(Module module: modules)
-		        {
-		            this.moduleTree.addItem(module);
-		            this.moduleTree.setItemCaption(module, module.getName());
-		            this.moduleTree.setChildrenAllowed(module, true);
-		            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-		        }
-			}
     	}
 
         this.moduleTree.addExpandListener(event ->

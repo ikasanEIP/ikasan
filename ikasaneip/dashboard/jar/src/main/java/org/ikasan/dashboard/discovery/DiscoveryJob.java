@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.discovery;
 
 import org.ikasan.topology.exception.DiscoveryException;
+import org.ikasan.topology.model.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -10,6 +11,8 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import java.util.List;
 
 /**
  * Created by Ikasan Development Team on 09/08/2016.
@@ -26,6 +29,7 @@ public class DiscoveryJob implements Job
     private SystemEventService systemEventService;
     private Boolean isRunning = false;
     private IkasanAuthentication authentication;
+    private List<Server> servers;
 
 
     public DiscoveryJob(String jobName, TopologyService topologyService,
@@ -62,7 +66,7 @@ public class DiscoveryJob implements Job
 
             try
             {
-                topologyService.discover(authentication);
+                topologyService.discover(servers, authentication);
             }
             catch (DiscoveryException e)
             {
@@ -90,6 +94,11 @@ public class DiscoveryJob implements Job
     public void setAuthentication(IkasanAuthentication authentication)
     {
         this.authentication = authentication;
+    }
+
+    public void setServers(List<Server> servers)
+    {
+        this.servers = servers;
     }
 
     public String getJobName()

@@ -478,22 +478,18 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		this.topologyTreeActionHelper = new TopologyTreeActionHelper(authentication);
 
 		
-		List<Server> servers = this.topologyService.getAllServers();
+		List<Module> modules = this.topologyService.getAllModules();
 		
-		logger.debug("Trying to load tree for " + servers.size());
+		logger.debug("Trying to load tree for " + modules.size());
 		
-		for(Server server: servers)
-		{
-            Set<Module> modules = server.getModules();
+		for(Module module: modules)
+        {
+            this.moduleTree.addItem(module);
+            this.moduleTree.setItemCaption(module, module.getName());
+            this.moduleTree.setChildrenAllowed(module, true);
+            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
+        }
 
-	        for(Module module: modules)
-	        {	        	
-	            this.moduleTree.addItem(module);
-	            this.moduleTree.setItemCaption(module, module.getName());
-	            this.moduleTree.setChildrenAllowed(module, true);
-	            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-	        }
-		}
 
         this.moduleTree.addExpandListener(event ->
         {

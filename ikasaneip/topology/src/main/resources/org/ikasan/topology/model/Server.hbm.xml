@@ -83,7 +83,7 @@
                   not-null="true" 
                   unique="false"/>
          
-        <set name="modules" cascade="all" lazy="false" order-by="Id asc">
+        <set name="modules" cascade="all" lazy="true" order-by="Id asc">
          	<key column="ServerId"/>
          	<one-to-many class="org.ikasan.topology.model.Module"/>
       	</set>
