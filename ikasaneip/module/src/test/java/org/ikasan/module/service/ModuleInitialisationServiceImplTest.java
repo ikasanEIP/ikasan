@@ -112,7 +112,6 @@ public class ModuleInitialisationServiceImplTest {
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
-        ReflectionTestUtils.setField(uut,"innerContexts",innerContexts);
 
     }
     @Test(expected = IllegalArgumentException.class)

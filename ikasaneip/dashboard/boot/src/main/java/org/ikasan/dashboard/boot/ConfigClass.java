@@ -37,16 +37,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:search-context.xml",
         "classpath:datasource-conf.xml",
         "classpath:control-context.xml",
-        /**
 
-         /WEB-INF/discovery-context.xml,
-         classpath:platform-service-conf.xml,
-         classpath:serialiser-service-conf.xml,
-         classpath:systemevent-service-conf.xml,
-         classpath:providers-conf.xml,
-         classpath:module-service-conf.xml,
-         classpath:scheduler-service-conf.xml
-         */
 } )
 
 @ComponentScan({
