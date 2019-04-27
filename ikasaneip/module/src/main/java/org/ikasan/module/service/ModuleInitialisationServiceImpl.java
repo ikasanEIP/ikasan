@@ -100,11 +100,6 @@ public class ModuleInitialisationServiceImpl
     private ModuleActivator moduleActivator;
 
     /**
-     * loader configuration
-     */
-    private String loaderConfiguration;
-
-    /**
      * platform level application context to be used to parent each of the module's contexts
      */
     private ApplicationContext platformContext;
@@ -120,11 +115,6 @@ public class ModuleInitialisationServiceImpl
     private TopologyService topologyService;
 
     private ModuleConverter moduleConverter = new ModuleConverter();
-
-    /**
-     * Container for Spring application contexts loaded internally by this class
-     */
-    private List<AbstractApplicationContext> innerContexts;
 
     /**
      * Constructor
@@ -157,7 +147,6 @@ public class ModuleInitialisationServiceImpl
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
-        innerContexts = new LinkedList<>();
     }
 
     /*
@@ -169,11 +158,6 @@ public class ModuleInitialisationServiceImpl
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
         this.platformContext = applicationContext;
-    }
-
-    public void setLoaderConfiguration(String loaderConfiguration)
-    {
-        this.loaderConfiguration = loaderConfiguration;
     }
 
     public void register(Module module)
@@ -198,42 +182,12 @@ public class ModuleInitialisationServiceImpl
     {
         try
         {
-            // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
-            ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
-            Map<String, List> loaderResources = loaderContext.getBeansOfType(List.class);
-            for (List<String> loaderResource : loaderResources.values())
-            {
-                String[] resourcesArray = new String[loaderResource.size()];
-                loaderResource.toArray(resourcesArray);
-                AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray,
-                    platformContext);
-                innerContexts.add(applicationContext);
-                for (String beanName : applicationContext.getBeanDefinitionNames())
-                {
-                    try
-                    {
-                        if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
-                        {
-                            logger.info("Loader Spring context contains bean name [" + beanName + "] of type ["
-                                + applicationContext.getBean(beanName).getClass().getName() + "]");
-                        }
-                    }
-                    catch (RuntimeException e)
-                    {
-                        logger.warn("Failed to access " + beanName, e);
-                    }
-                }
-                loadModuleFromContext(applicationContext);
-            }
+            loadModuleFromContext(platformContext);
+
         }
         catch (BeanDefinitionStoreException e)
         {
-            if (e.getMessage().contains("IOException parsing XML document from class path resource [loader-conf.xml]"))
-            {
-                logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
-                loadModuleFromContext(platformContext);
-            }
-            else if (e.getMessage().contains("IOException parsing XML document from class path resource ["))
+            if (e.getMessage().contains("IOException parsing XML document from class path resource ["))
             {
                 throw new MissingConfigFileException("Failed loading one of config files. See exception details.", e);
             }
@@ -328,18 +282,8 @@ public class ModuleInitialisationServiceImpl
         {
             moduleContainer.remove(moduleToRemove);
         }
-        // TODO - find a more generic way of managing this for platform resources
         shutdownSchedulers(platformContext);
         shutdownMonitors(platformContext);
-        // close our inner loaded contexts
-        for (AbstractApplicationContext context : innerContexts)
-        {
-            logger.debug("closing and destroying inner context: " + context.getDisplayName());
-            shutdownSchedulers(context);
-            shutdownMonitors(context);
-            context.close();
-        }
-        innerContexts.clear();
     }
 
     private void shutdownSchedulers(ApplicationContext context)

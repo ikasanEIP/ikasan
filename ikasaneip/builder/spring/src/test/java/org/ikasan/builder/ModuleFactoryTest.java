@@ -40,8 +40,10 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,25 +59,7 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = { 
-        "/module-conf.xml", 
-        "/flow-conf.xml",
-        "/sample-component-conf.xml",
-        "/exclusion-service-conf.xml",
-        "/serialiser-service-conf.xml",
-        "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/recoveryManager-service-conf.xml",
-        "/scheduler-service-conf.xml", 
-        "/configuration-service-conf.xml",
-        "/systemevent-service-conf.xml",
-        "/module-service-conf.xml",
-        "/wiretap-service-conf.xml",
-        "/exception-conf.xml",
-        "/replay-service-conf.xml",
-        "/hsqldb-datasource-conf.xml"
-        })
+@ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class })
 public class ModuleFactoryTest
 {
     @Resource

@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
 import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -51,6 +52,7 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,25 +70,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = {
-        "/flow-conf.xml",
-        "/sample-component-conf.xml",
-        "/recoveryManager-service-conf.xml",
-        "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/exclusion-service-conf.xml",
-        "/serialiser-service-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/scheduler-service-conf.xml",
-        "/configuration-service-conf.xml",
-        "/systemevent-service-conf.xml",
-        "/module-service-conf.xml",
-        "/wiretap-service-conf.xml",
-        "/replay-service-conf.xml",
-        "/exception-conf.xml",
-        "/hsqldb-datasource-conf.xml"
-})
+@ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class })
 public class FlowFactoryTest
 {
     @Resource
