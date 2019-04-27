@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.discovery;
 
+import org.ikasan.topology.model.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -70,7 +71,7 @@ public class DiscoverySchedulerService
         }
     }
 
-    public void addJob(IkasanAuthentication authentication)
+    public void addJob(List<Server> servers, IkasanAuthentication authentication)
     {
         try
         {
@@ -80,6 +81,7 @@ public class DiscoverySchedulerService
             if(!this.scheduler.checkExists(this.jobDetail.getKey()))
             {
                 this.discoveryJob.setAuthentication(authentication);
+                this.discoveryJob.setServers(servers);
                 JobKey jobkey = jobDetail.getKey();
                 Trigger trigger = getTrigger(jobkey);
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);

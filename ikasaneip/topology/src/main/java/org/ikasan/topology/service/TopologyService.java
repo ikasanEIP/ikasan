@@ -178,15 +178,22 @@ public interface TopologyService
      */
     void deleteBusinessStream(BusinessStream businessStream);
 
-    /**
+	/**
      * Method to discovery and populate Ikasan topology
+     *
+     * @param authentication
+     * @throws DiscoveryException
      */
-    void discover(IkasanAuthentication authentication) throws DiscoveryException;
+    void discover(List<Server> servers, IkasanAuthentication authentication) throws DiscoveryException;
 
-    /**
+	/**
+     * Create a filter.
+     *
      * @param name
      * @param description
-     * @param flows
+     * @param createdBy
+     * @param components
+     * @return
      */
     Filter createFilter(String name, String description, String createdBy, Set<Component> components);
 

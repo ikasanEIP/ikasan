@@ -180,26 +180,24 @@ public class FlowStateTable extends DashboardTable
 		this.stateMap = stateMap;
 		this.removeAllItems();
 		
-		List<Server> servers = topologyService.getAllServers();
+		List<Module> modules = topologyService.getAllModules();
 		
-		for(Server server: servers)
-		{
-			for(Module module: server.getModules())
-			{
-				for(Flow flow: module.getFlows())
-				{
-					String state = stateMap.get(flow.getModule().getName() + "-" + flow.getName());
-					
-					if(state == null)
-					{
-						state = "unknown";
-					}
-					
-					this.addItem(new Object[] {flow.getModule().getName(),
-							flow.getName(), state}, flow);
-				}
-			}
-		}
+		for(Module module: modules)
+        {
+            for(Flow flow: module.getFlows())
+            {
+                String state = stateMap.get(flow.getModule().getName() + "-" + flow.getName());
+
+                if(state == null)
+                {
+                    state = "unknown";
+                }
+
+                this.addItem(new Object[] {flow.getModule().getName(),
+                        flow.getName(), state}, flow);
+            }
+        }
+
 	}
 	
 	@Subscribe

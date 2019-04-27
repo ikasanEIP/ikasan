@@ -182,7 +182,7 @@ public class WiretapTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 				.getAttribute(DashboardSessionValueConstants.USER);
 
-		this.useDbCheckbox = new CheckBox("Use RMDBS for search");
+		this.useDbCheckbox = new CheckBox("Use RDMBS for search");
 		this.useDbCheckbox.setValue(false);
 
 		this.wiretapTable = new FilterTable();
@@ -292,7 +292,7 @@ public class WiretapTab extends TopologyTab
 				}
             	else
 				{
-					logger.info("Performing wiretap search via RMDBS.");
+					logger.info("Performing wiretap search via RDMBS.");
 					events = wiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
 							, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 				}

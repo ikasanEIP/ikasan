@@ -114,8 +114,6 @@ public class LogoutAction implements Action
         this.editableGroup.setEditable(false);
 
         layout.removeComponent(this.logOutButton);
-        layout.addComponent(this.setupButton, 3, 0);
-        layout.setComponentAlignment(this.setupButton, Alignment.MIDDLE_RIGHT);
         this.layout.removeComponent(userLabel);
         
         VaadinSession vSession = VaadinSession.getCurrent();

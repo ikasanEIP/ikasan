@@ -239,10 +239,8 @@ public class TopologyServiceImpl implements TopologyService
 	 * @see org.ikasan.topology.service.TopologyService#discover()
 	 */
 	@Override
-	public void discover(IkasanAuthentication authentication) throws DiscoveryException
+	public void discover(List<Server> servers, IkasanAuthentication authentication) throws DiscoveryException
 	{
-		List<Server> servers =  this.topologyDao.getAllServers();
-
     	// Firstly sort out the server module relationships
 		for(Server server: servers)
 		{
@@ -260,7 +258,7 @@ public class TopologyServiceImpl implements TopologyService
 
 				try
 				{
-					logger.info("REST ["+url+"]");
+					logger.info("Module Discovery REST ["+url+"]");
 
 					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials());
 					ResponseEntity<List<Flow>> flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET,request,new ParameterizedTypeReference<List<Flow>>() {});
@@ -293,6 +291,8 @@ public class TopologyServiceImpl implements TopologyService
 		this.cleanup();
 	}
 
+
+
     /**
      * Gets Flow and component information over REST from given module on given server using provider authentication
      *
@@ -309,7 +309,7 @@ public class TopologyServiceImpl implements TopologyService
         ResponseEntity<List<Flow>> flowResponse;
         try
         {
-            logger.info("REST [" + url + "]");
+            logger.info("Flow Discovery REST [" + url + "]");
             HttpEntity request = initRequest(authentication.getName(), (String) authentication.getCredentials());
             flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET, request, new ParameterizedTypeReference<List<Flow>>()
             {

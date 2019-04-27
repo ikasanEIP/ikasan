@@ -130,8 +130,8 @@ public class TopologyServiceImplRestTest
 
 		mockery.checking(new Expectations() {{
 
-            exactly(1).of(topologyDao).getAllServers();
-            will(returnValue(servers));
+//            exactly(1).of(topologyDao).getAllServers();
+//            will(returnValue(servers));
 
             exactly(2).of(topologyDao).getAllModules();
             will(returnValue(modules));
@@ -147,7 +147,7 @@ public class TopologyServiceImplRestTest
         }});
 
 		//do test
-		uut.discover(ikasanAuthentication);
+		uut.discover(servers, ikasanAuthentication);
 
 		//assert dao calls
 		mockery.assertIsSatisfied();
@@ -184,8 +184,8 @@ public class TopologyServiceImplRestTest
 
 		mockery.checking(new Expectations() {{
 
-            exactly(1).of(topologyDao).getAllServers();
-            will(returnValue(servers));
+//            exactly(1).of(topologyDao).getAllServers();
+//            will(returnValue(servers));
 
             exactly(2).of(topologyDao).getAllModules();
             will(returnValue(modules));
@@ -201,7 +201,7 @@ public class TopologyServiceImplRestTest
         }});
 
 		//do test
-		uut.discover(ikasanAuthentication);
+		uut.discover(servers, ikasanAuthentication);
 
 		//assert dao calls
 		mockery.assertIsSatisfied();
@@ -227,8 +227,8 @@ public class TopologyServiceImplRestTest
 
         mockery.checking(new Expectations() {{
 
-            exactly(1).of(topologyDao).getAllServers();
-            will(returnValue(servers));
+//            exactly(1).of(topologyDao).getAllServers();
+//            will(returnValue(servers));
 
             exactly(2).of(topologyDao).getAllModules();
             will(returnValue(modules));
@@ -242,7 +242,7 @@ public class TopologyServiceImplRestTest
         }});
 
         //do test
-        uut.discover(ikasanAuthentication);
+        uut.discover(servers, ikasanAuthentication);
 
         //assert dao calls
         mockery.assertIsSatisfied();
@@ -268,8 +268,8 @@ public class TopologyServiceImplRestTest
 
         mockery.checking(new Expectations() {{
 
-            exactly(1).of(topologyDao).getAllServers();
-            will(returnValue(servers));
+//            exactly(1).of(topologyDao).getAllServers();
+//            will(returnValue(servers));
 
             exactly(2).of(topologyDao).getAllModules();
             will(returnValue(modules));
@@ -283,7 +283,7 @@ public class TopologyServiceImplRestTest
         }});
 
         //do test
-        uut.discover(ikasanAuthentication);
+        uut.discover(servers, ikasanAuthentication);
 
         //assert dao calls
         mockery.assertIsSatisfied();
@@ -309,8 +309,8 @@ public class TopologyServiceImplRestTest
 
         mockery.checking(new Expectations() {{
 
-            exactly(1).of(topologyDao).getAllServers();
-            will(returnValue(servers));
+//            exactly(1).of(topologyDao).getAllServers();
+//            will(returnValue(servers));
 
             exactly(2).of(topologyDao).getAllModules();
             will(returnValue(modules));
@@ -324,7 +324,7 @@ public class TopologyServiceImplRestTest
         }});
 
         //do test
-        uut.discover(ikasanAuthentication);
+        uut.discover(servers, ikasanAuthentication);
 
         //assert dao calls
         mockery.assertIsSatisfied();
