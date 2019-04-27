@@ -20,7 +20,7 @@ This is part of the documentation suite for the Ikasan Enterprise Integration Pl
 This guide is targeted at developers wishing to get started and undertake their first development projects with the Ikasan Enterprise Integration Platform.
 
 Although not mandatory to getting started familiarity with Java, XML, Spring, and general Application Server concepts around data sources and deployment packaging constructs i.e. jar, ear, war will be advantageous.
-
+ 
 ## How to Use This Guide
 
 This guide provides a quick and concise series of steps for getting started with the IkasanEIP platform. These steps should be followed sequentially. Points to note and other hints/tips are provided as additional information or best practices, however, full details on these aspects are beyond the scope of this document.
