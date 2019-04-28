@@ -55,9 +55,9 @@ datasource.db.name=Ikasan01
 datasource.port=50100
 datasource.host=hostname
 ```                          
-- Start dashboard with custome driver 
+- Start dashboard with custom driver 
 ```
-$JAVA_HOME/bin/java -Dloader.path=lib,config,ikasan-dashboard-boot-2.0.0-SNAPSHOT.jar -jar ikasan-dashboard-boot-2.0.0-SNAPSHOT.jar
+$JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.0.jar
 
 ```    
 
