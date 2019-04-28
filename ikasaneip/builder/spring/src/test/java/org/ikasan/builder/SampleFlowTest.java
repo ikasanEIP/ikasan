@@ -63,7 +63,7 @@ import javax.annotation.Resource;
         "/sample-component-conf.xml",
         "/substitute-components.xml",
         "/exception-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/h2-datasource-conf.xml"
         })
 public class SampleFlowTest extends IkasanEIPTest
 {

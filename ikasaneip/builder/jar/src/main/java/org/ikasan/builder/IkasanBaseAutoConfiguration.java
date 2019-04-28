@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
@@ -59,7 +60,6 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:error-reporting-service-conf.xml",
         "classpath:recoveryManager-service-conf.xml",
         "classpath:monitor-service-conf.xml",
-        "classpath:module-service-conf.xml",
         "classpath:filter-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
@@ -67,7 +67,6 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:wiretap-service-conf.xml",
         "classpath:hospital-conf.xml",
         "classpath:exclusion-service-conf.xml",
-        "classpath:ikasan-module-bootstrap-conf.xml",
         "classpath:topology-conf.xml",
         "classpath:topology-tx-conf.xml",
         "classpath:datasource-conf.xml",
@@ -75,7 +74,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:springapp-servlet-boot.xml",
 
 } )
-@Import({IkasanWebAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
+@Import({IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 
