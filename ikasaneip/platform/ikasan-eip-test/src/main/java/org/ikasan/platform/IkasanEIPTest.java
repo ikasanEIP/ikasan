@@ -61,7 +61,6 @@ import javax.annotation.Resource;
         "/scheduler-service-conf.xml",
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",
-        "/module-service-conf.xml",
         "/replay-service-conf.xml",
         "/ikasan-transaction-conf.xml",
         "/test-service-conf.xml"
