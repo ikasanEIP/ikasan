@@ -136,22 +136,7 @@ public class Menu extends CssLayout
                 UI.getCurrent().getNavigator().navigateTo("profilePanel");
             }
         });
-
-
-        final Button dashboardMenuItem = new Button("Dashboard", new ClickListener()
-        {
-            @Override
-            public void buttonClick(final ClickEvent event)
-            {
-                loadTopLevelNavigator();
-                UI.getCurrent().getNavigator().navigateTo("landingView");
-            }
-        });
-
-        dashboardMenuItem.setHtmlContentAllowed(true);
-        dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
-        dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
-        menuItemsLayout.addComponent(dashboardMenuItem);
+        
 
         final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
             .getAttribute(DashboardSessionValueConstants.USER);
