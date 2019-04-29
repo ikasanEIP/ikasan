@@ -38,19 +38,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${version.org.springboot}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
             <version>${project.version}</version>
@@ -61,8 +48,6 @@
             <artifactId>activemq-client</artifactId>
         </dependency>
 
-        <!-- activemq-all should be with scope test however for the sample purpose we
-      spin up the embedded broker as part of sample application.-->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>

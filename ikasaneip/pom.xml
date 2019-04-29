@@ -722,40 +722,6 @@
                     <rules><dependencyConvergence /></rules>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>regex-property</id>
-                        <goals>
-                            <goal>regex-property</goal>
-                        </goals>
-                        <configuration>
-                            <name>dashed.project.version</name>
-                            <value>${project.version}</value>
-                            <regex>^([0-9]+)\.([0-9]+)\.([0-9]+)(.*)?$</regex>
-                            <replacement>$1-$2-$3$4</replacement>
-                            <failIfNoMatch>true</failIfNoMatch>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>activamq-regex-property</id>
-                        <goals>
-                            <goal>regex-property</goal>
-                        </goals>
-                        <configuration>
-                            <name>dashed.version.activemq</name>
-                            <value>${version.activemq}</value>
-                            <regex>^([0-9]+)\.([0-9]+)\.([0-9]+)(.*)?$</regex>
-                            <replacement>$1-$2-$3$4</replacement>
-                            <failIfNoMatch>true</failIfNoMatch>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
 
         </plugins>
     </build>
