@@ -147,7 +147,7 @@ public class LoginFieldGroup extends FieldGroup
         {
         	logger.error(e.getMessage(), e);
         	throw new CommitException("It appears that the Ikasan database has not been setup. Please go to the" +
-        			" setup screen by clicking the link at the top right of this screen.", e);
+        			" setup screen to setup the database.", e);
         }
     }
 
