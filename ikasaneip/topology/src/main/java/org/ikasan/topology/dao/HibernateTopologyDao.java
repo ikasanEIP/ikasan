@@ -77,11 +77,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
         " where  "
         + "" ;
 
-    private static final String GET_ROLE_FILTER_BY_ROLEID_QUERY = "select r from RoleFilter r  " +
+    private static final String GET_ROLE_FILTER_BY_ROLEID_QUERY = "select r from RoleFilter r" +
         " where  "
         + " id.roleId in (:roleIds)" ;
 
-    private static final String GET_ROLE_FILTER_FILTER_ID_QUERY = "select from RoleFilter  " +
+    private static final String GET_ROLE_FILTER_FILTER_ID_QUERY = "select r from RoleFilter r" +
         " where  "
         + " id.filterId = :filterId" ;
 
