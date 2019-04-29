@@ -55,18 +55,5 @@ public class ConfigClass {
     public NarayanaProperties getNarayanaProperties(){
         NarayanaProperties narayanaProperties =  new NarayanaProperties();
         return narayanaProperties;
-    }
-
-    @Bean
-    public Object object()
-    {
-        String[] beans = this.context.getBeanDefinitionNames();
-
-        for(String bean: beans)
-        {
-            System.out.println(bean);
-        }
-
-        return new Object();
-    }
+    }           
 }
