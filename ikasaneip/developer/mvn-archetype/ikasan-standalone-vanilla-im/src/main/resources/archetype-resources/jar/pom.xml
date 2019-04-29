@@ -18,8 +18,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ikasan>${ikasanVersion}</version.ikasan>
-        <version.org.springboot>1.5.6.RELEASE</version.org.springboot>
-        <version.junit>4.12</version.junit>
     </properties>
 
     <dependencies>
@@ -40,20 +38,6 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
             <version>${version.ikasan}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>${version.junit}</version>
         </dependency>
 
     </dependencies>
