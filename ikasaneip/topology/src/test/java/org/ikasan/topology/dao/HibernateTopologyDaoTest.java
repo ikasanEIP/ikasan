@@ -380,6 +380,10 @@ public class HibernateTopologyDaoTest
 		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds) != null);
 		
 		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds).get(0).getFilter().getName().equals("testFilter"));
+
+        Assert.assertTrue(this.xaTopologyDao.getRoleFilterByFilterId(filter.getId()) != null);
+
+        Assert.assertTrue(this.xaTopologyDao.getRoleFilterByFilterId(filter.getId()).getFilter().getName().equals("testFilter"));
 	}
 	
 	@Test
