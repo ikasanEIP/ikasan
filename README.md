@@ -61,14 +61,14 @@ than another development framework.
  #  Services
  
  ## Hospital Service
- <img src="ikasaneip/developer/docs/quickstart-images/hospital-service.png" width="200px" align="left"> 
-The Ikasan Hospital Service provides Ikasan users with the ability to view and understand errors that have occurred on the Ikasan bus. Depending upon the categorisation of the error, the user is
+ <img src="ikasaneip/developer/docs/quickstart-images/hospital.gif" width="200px" align="left"> 
+The Ikasan Hospital Service provides Ikasan users with the ability to view and understand errors that have occurred on the Ikasan service bus. Depending upon the categorisation of the error, the user is
 able to remediate the error by resubmitting messages that have been excluded. Error within Ikasan are broadly categorised into to two types of errors. Firstly, there are technical errors. Technical
 errors are considered to be transient, and as such when one occurs, Ikasan will log the error to the error reporting component of the Hospital Service and then will rollback and attempt
-process the message again. Ikasan can be configured to retry n number of times or indefinitely. If configured to retry for a fixed
-number of times, Ikasan will stop the processing flow, flag it into an error state, and notify the monitoring service of the error that has occurred.<br/>
-The second broad categorisation of errors within Iksan, are those that are considered business errors. Business errors typically occur when Ikasan is unable to process a message that it has received, perhaps dues to missing
-static data it is trying to retrieve from the mapping service, or an XML validation issue. Generally business errors are deemed to be repairable. With this in mind Ikasan excludes messages associated
+process the message again. Ikasan can be configured to retry a fixed number of times or indefinitely. If configured to retry for a fixed
+number of times, Ikasan, upon exhausting the number of retries, will stop the processing flow, flag it into an error state, and notify the monitoring service of the error that has occurred.<br/>
+The second broad categorisation of errors within Ikasan, are those that are considered business errors. Business errors typically occur when an Ikasan module is unable to process a message that it has received, perhaps dues to missing
+static data it is trying to retrieve from the mapping service, or due to an XML validation issue. Generally business errors are deemed to be repairable. With this in mind Ikasan excludes messages associated
 with business exceptions. These excluded messages can be viewed via the Ikasan Dashboard along with the error that caused the exclusion. Ikasan users are then able to resubmit the excluded messages once the underlying
 business exception has been remediated. Alternatively users can choose to ignore excluded message. All details of the user actions are recorded in order to provide an audit trail of actions taken and can be linked back
 to problem management systems.
@@ -129,26 +129,86 @@ to problem management systems.
 <br/>
  
  ## Wiretap Service
-<img src="ikasaneip/developer/docs/quickstart-images/wiretap-service.png" width="200px" align="left"> 
-The Wiretap Service allows for data on the wire to be collected and inspected. This service is an invaluable tool allowing for end to end tracking of data events throughout the Ikasan service bus. Wiretap jobs
-are configured on a component at runtime and record all data events that are received by the component. The wiretap events can be written to the underlying persistent data store or alternatively
-written to the log file. Wiretap events are also written to a text index in order to facilitate a fast and efficient context based search facility. This service provides a high level of visibility on
-all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been delivered to all of the intended endpoints.
+<img src="ikasaneip/developer/docs/quickstart-images/wiretap.gif" width="200px" align="left"> 
+The Wiretap Service allows for data on the wire to be collected and inspected. On the wire being any data event that hits the Ikasan service bus. This service is an invaluable tool allowing for end to
+end tracking of data events throughout the Ikasan service bus. Wiretap jobs are configured on a component at runtime and record all data events that are received by the component. The wiretap events can
+be written to the underlying persistent data store or alternatively written to the log file. Wiretap events are also written to a text index in order to facilitate a fast and efficient context based search facility.
+This service provides a high level of visibility on all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been delivered
+to all of the intended endpoints.
 
 <br/>
 
 ## Mapping Service
 <img src="ikasaneip/developer/docs/quickstart-images/mapping.gif" width="200px" align="left">
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+The mapping service provides a unified and centralised approach for mapping values between source and target contexts. The service was desiged in order to 
+remove the need for each individial system or interface to provide their own mappings, and replace that with an enterprise wide and standard approach to
+context based mapping. The types of mappings that are supported are flexible as follows:
+
+- One to One   
+- One to Many
+- Many to Many
+- Many to One
+
+Mappings are uniquely defined by type Client, Type, Source Context and Target Context and are managed through the Ikasan Dashboard. Mappings
+can be imported and exported into an XML format as seen in the example below. 
+ 
+**An example of a mapping configuration file.**
+ ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mappingConfiguration
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="200">
+  <exportDateTime>30 April 2019 11:01:56 BST</exportDateTime>
+  <client>IkasanESB</client>
+  <type>ProductType</type>
+  <sourceContext>SourceSystem</sourceContext>
+  <targetContext>TargetSystem</targetContext>
+  <description>ProductType - SourceSystem to TargetSystem</description>
+  <isManyToMany>false</isManyToMany>
+  <isFixedParameterListSize>false</isFixedParameterListSize>
+  <numberOfSourceParams>1</numberOfSourceParams>
+  <numberOfTargetParams>0</numberOfTargetParams>
+  <mappingConfigurationValues>
+    <mappingConfigurationValue>
+      <sourceConfigurationValues>
+        <sourceConfigurationValue>Widget1</sourceConfigurationValue>
+      </sourceConfigurationValues>
+      <targetConfigurationValue>W1</targetConfigurationValue>
+    </mappingConfigurationValue>
+    <mappingConfigurationValue>
+      <sourceConfigurationValues>
+        <sourceConfigurationValue>Widget2</sourceConfigurationValue>
+      </sourceConfigurationValues>
+      <targetConfigurationValue>W2</targetConfigurationValue>
+    </mappingConfigurationValue>
+    <mappingConfigurationValue>
+      <sourceConfigurationValues>
+        <sourceConfigurationValue>Widget3</sourceConfigurationValue>
+      </sourceConfigurationValues>
+      <targetConfigurationValue>W3</targetConfigurationValue>
+    </mappingConfigurationValue>
+    <mappingConfigurationValue>
+      <sourceConfigurationValues>
+        <sourceConfigurationValue>Widget4</sourceConfigurationValue>
+      </sourceConfigurationValues>
+      <targetConfigurationValue>W4</targetConfigurationValue>
+    </mappingConfigurationValue>
+    <mappingConfigurationValue>
+      <sourceConfigurationValues>
+        <sourceConfigurationValue>Widget5</sourceConfigurationValue>
+      </sourceConfigurationValues>
+      <targetConfigurationValue>W5</targetConfigurationValue>
+    </mappingConfigurationValue>
+  </mappingConfigurationValues>
+</mappingConfiguration>
+```
+
+Ikasan provides a service interface [MappingService](ikasaneip/spec/service/mapping/src/main/java/org/ikasan/spec/mapping/MappingService.java) which provides access
+to a mapping via the relevant interface.
 
 <br/>
 
 ## Configuration Service
-<img src="ikasaneip/developer/docs/quickstart-images/mapping-service.png" width="200px" align="left">
+<img src="ikasaneip/developer/docs/quickstart-images/configuration.gif" width="200px" align="left">
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
@@ -158,7 +218,27 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 <br/>
 
 ## Replay Service
-<img src="ikasaneip/developer/docs/quickstart-images/replay-service.png" width="200px" align="left"> 
+<img src="ikasaneip/developer/docs/quickstart-images/replay.gif" width="200px" align="left"> 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+
+<br/>
+
+## Monitoring Service
+<img src="ikasaneip/developer/docs/quickstart-images/monitoring.gif" width="200px" align="left"> 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+
+<br/>
+
+## Management Service
+<img src="ikasaneip/developer/docs/quickstart-images/management.gif" width="200px" align="left"> 
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
 Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
