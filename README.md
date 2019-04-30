@@ -127,83 +127,32 @@ to problem management systems.
  </bean>
 ```
 <br/>
+
+## Replay Service
+<img src="ikasaneip/developer/docs/quickstart-images/replay.gif" width="200px" align="left"> 
+The Replay Service provides a mechanism for recording and replaying data events. Flows can be configured to record events as they are received by the consumer of the flow, prior to any
+mutations within the flow. Replay events are serialised and persisted to the underlying datastore as well as the text index if one is configured. Once data events have been recorded, they
+can then be replayed back into the flow from which they were recorded, in either the same environment that they were recorded, or into another environment in which the same module/flow is 
+deployed. This service provide 2 valuable features. Firstly in the unlikely event that data has not arrived at its intended destination, the data event can be replayed into the same flow
+, in the same environment, within which it was recorded, thus providing a fall back approach to the guaranteed delivery of data. The second feature allows for data recoded from one environment
+to be played into another environment. This is particularly useful when troubleshooting problems or providing quality assurance against new developments that require real data for the purpose 
+of testing.</br>
+
+
+
+<br/>
  
  ## Wiretap Service
 <img src="ikasaneip/developer/docs/quickstart-images/wiretap.gif" width="200px" align="left"> 
-The Wiretap Service allows for data on the wire to be collected and inspected. On the wire being any data event that hits the Ikasan service bus. This service is an invaluable tool allowing for end to
-end tracking of data events throughout the Ikasan service bus. Wiretap jobs are configured on a component at runtime and record all data events that are received by the component. The wiretap events can
+The Wiretap Service allows for data to be collected and inspected, as it flows through the Ikasan service bus. This Wiretap Service is an invaluable tool allowing for end to
+end tracking of data events, in real time, as data flows and mutates. Wiretap events are captured with a time stamp with millisecond precision along with the location of where the wiretap was triggered.
+They are also captured with a life identifier that remains immutable for the data event for its entire journey throughout the bus, even if the undelying data mutates. The correalting elements of the wiretap
+build a full chronolonogical picture of the flow of data which can then be queried via the Ikasan Dashboard.</br> 
+Wiretap jobs are configured on a component at runtime and record all data events that are received by the component. The Wiretap events can
 be written to the underlying persistent data store or alternatively written to the log file. Wiretap events are also written to a text index in order to facilitate a fast and efficient context based search facility.
 This service provides a high level of visibility on all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been delivered
-to all of the intended endpoints.
-
-<br/>
-
-## Mapping Service
-<img src="ikasaneip/developer/docs/quickstart-images/mapping.gif" width="200px" align="left">
-The mapping service provides a unified and centralised approach for mapping values between source and target contexts. The service was desiged in order to 
-remove the need for each individial system or interface to provide their own mappings, and replace that with an enterprise wide and standard approach to
-context based mapping. The types of mappings that are supported are flexible as follows:
-
-- One to One   
-- One to Many
-- Many to Many
-- Many to One
-
-Mappings are uniquely defined by type Client, Type, Source Context and Target Context and are managed through the Ikasan Dashboard. Mappings
-can be imported and exported into an XML format as seen in the example below. 
- 
-**An example of a mapping configuration file.**
- ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<mappingConfiguration
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="200">
-  <exportDateTime>30 April 2019 11:01:56 BST</exportDateTime>
-  <client>IkasanESB</client>
-  <type>ProductType</type>
-  <sourceContext>SourceSystem</sourceContext>
-  <targetContext>TargetSystem</targetContext>
-  <description>ProductType - SourceSystem to TargetSystem</description>
-  <isManyToMany>false</isManyToMany>
-  <isFixedParameterListSize>false</isFixedParameterListSize>
-  <numberOfSourceParams>1</numberOfSourceParams>
-  <numberOfTargetParams>0</numberOfTargetParams>
-  <mappingConfigurationValues>
-    <mappingConfigurationValue>
-      <sourceConfigurationValues>
-        <sourceConfigurationValue>Widget1</sourceConfigurationValue>
-      </sourceConfigurationValues>
-      <targetConfigurationValue>W1</targetConfigurationValue>
-    </mappingConfigurationValue>
-    <mappingConfigurationValue>
-      <sourceConfigurationValues>
-        <sourceConfigurationValue>Widget2</sourceConfigurationValue>
-      </sourceConfigurationValues>
-      <targetConfigurationValue>W2</targetConfigurationValue>
-    </mappingConfigurationValue>
-    <mappingConfigurationValue>
-      <sourceConfigurationValues>
-        <sourceConfigurationValue>Widget3</sourceConfigurationValue>
-      </sourceConfigurationValues>
-      <targetConfigurationValue>W3</targetConfigurationValue>
-    </mappingConfigurationValue>
-    <mappingConfigurationValue>
-      <sourceConfigurationValues>
-        <sourceConfigurationValue>Widget4</sourceConfigurationValue>
-      </sourceConfigurationValues>
-      <targetConfigurationValue>W4</targetConfigurationValue>
-    </mappingConfigurationValue>
-    <mappingConfigurationValue>
-      <sourceConfigurationValues>
-        <sourceConfigurationValue>Widget5</sourceConfigurationValue>
-      </sourceConfigurationValues>
-      <targetConfigurationValue>W5</targetConfigurationValue>
-    </mappingConfigurationValue>
-  </mappingConfigurationValues>
-</mappingConfiguration>
-```
-
-Ikasan provides a service interface [MappingService](ikasaneip/spec/service/mapping/src/main/java/org/ikasan/spec/mapping/MappingService.java) which provides access
-to a mapping via the relevant interface.
+to all of the intended endpoints.</br>
+The Wiretap Service works out of the box and requires no coding. See the Dashboard documentation for details on how to set up wiretaps on a component.
 
 <br/>
 
@@ -217,13 +166,77 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 
 <br/>
 
-## Replay Service
-<img src="ikasaneip/developer/docs/quickstart-images/replay.gif" width="200px" align="left"> 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
+## Mapping Service
+<img src="ikasaneip/developer/docs/quickstart-images/mapping.gif" width="200px" align="left">
+The mapping service provides a unified and centralised approach for mapping values between source and target contexts. The service was desiged in order to 
+remove the need for each individial system or interface to provide their own mappings, and replace that with an enterprise wide and standardised approach to
+context based mapping. The types of mappings that are supported are flexible as follows: One to One, One to Many, Many to Many and Many to One.<br/>
+Mappings are uniquely defined by type Client, Type, Source Context and Target Context and are managed through the Ikasan Dashboard. Mappings
+can be imported and exported into an XML format as seen in the example below. 
+<br/>
+<br/>
+
+**An example of a mapping configuration file.**
+
+ ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mappingConfiguration
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="200">
+    <exportDateTime>30 April 2019 11:01:56 BST</exportDateTime>
+    <client>IkasanESB</client>
+    <type>ProductType</type>
+    <sourceContext>SourceSystem</sourceContext>
+    <targetContext>TargetSystem</targetContext>
+    <description>ProductType - SourceSystem to TargetSystem</description>
+    <isManyToMany>false</isManyToMany>
+    <isFixedParameterListSize>false</isFixedParameterListSize>
+    <numberOfSourceParams>1</numberOfSourceParams>
+    <numberOfTargetParams>0</numberOfTargetParams>
+    <mappingConfigurationValues>
+        <mappingConfigurationValue>
+            <sourceConfigurationValues>
+                <sourceConfigurationValue>Widget1</sourceConfigurationValue>
+            </sourceConfigurationValues>
+            <targetConfigurationValue>W1</targetConfigurationValue>
+        </mappingConfigurationValue>
+        <mappingConfigurationValue>
+            <sourceConfigurationValues>
+                <sourceConfigurationValue>Widget2</sourceConfigurationValue>
+            </sourceConfigurationValues>
+            <targetConfigurationValue>W2</targetConfigurationValue>
+        </mappingConfigurationValue>
+        <mappingConfigurationValue>
+            <sourceConfigurationValues>
+                <sourceConfigurationValue>Widget3</sourceConfigurationValue>
+            </sourceConfigurationValues>
+            <targetConfigurationValue>W3</targetConfigurationValue>
+        </mappingConfigurationValue>
+        <mappingConfigurationValue>
+            <sourceConfigurationValues>
+                <sourceConfigurationValue>Widget4</sourceConfigurationValue>
+            </sourceConfigurationValues>
+            <targetConfigurationValue>W4</targetConfigurationValue>
+        </mappingConfigurationValue>
+        <mappingConfigurationValue>
+            <sourceConfigurationValues>
+                <sourceConfigurationValue>Widget5</sourceConfigurationValue>
+            </sourceConfigurationValues>
+            <targetConfigurationValue>W5</targetConfigurationValue>
+        </mappingConfigurationValue>
+    </mappingConfigurationValues>
+</mappingConfiguration>
+```
+
+Ikasan provides a service interface [MappingService](ikasaneip/spec/service/mapping/src/main/java/org/ikasan/spec/mapping/MappingService.java) in order to access
+to a mapping from within an Ikasan module. To include the mapping service libraries in an Imasan module include the following dependency in the pom.
+
+```xml
+<dependency>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-mapping</artifactId>
+    <version>${version.ikasan}</version>
+</dependency>
+```
 
 <br/>
 
