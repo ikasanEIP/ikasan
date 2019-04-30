@@ -7,8 +7,8 @@ Starting component of the flow for which only one consumer may exist in any give
 
 ### Purpose
 
-Consumers provide the &quot;glue&quot; between the entry into the flow and the underlying technology generating he event.
-In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java)
+Consumers provide the &quot;glue&quot; between the entry into the flow and the underlying technology generating the event.
+In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java).
 
 ### Types
 - [Scheduled Consumer](endpoint/quartz-schedule/Readme.md)
