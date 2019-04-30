@@ -1,4 +1,4 @@
-![IKASAN](../../..developer/docs/quickstart-images/Ikasan-title-transparent.png)
+![IKASAN](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Scheduled Consumer
 
 <img src="../../../developer/docs/quickstart-images/polling-consumer.png" width="200px" align="left">This is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule.
