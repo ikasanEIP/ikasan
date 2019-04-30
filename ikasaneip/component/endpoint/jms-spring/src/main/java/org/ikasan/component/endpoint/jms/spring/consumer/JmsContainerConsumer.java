@@ -77,7 +77,7 @@ public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
         ManagedIdentifierService<ManagedRelatedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>,
-		ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
+            ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
