@@ -1,4 +1,4 @@
-
+![Problem Domain](ikasaneip/developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Getting Started Guide
 
 # Introduction
