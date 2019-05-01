@@ -1,4 +1,4 @@
-![Problem Domain](./quickstart-images/Ikasan-title-transparent.png)
+![Problem Domain](../../docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Standalone Developer Guide
 
 # Introduction
