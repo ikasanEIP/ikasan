@@ -33,7 +33,7 @@ mvn archetype:generate
 |artifactId| artifactId for this new Integration Module|
 |version| version of this new Integration Module|
 
-####Example Usage
+#### Example Usage
 
 ```
 mvn archetype:generate     
