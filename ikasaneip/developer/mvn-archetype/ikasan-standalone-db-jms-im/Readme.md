@@ -1,17 +1,17 @@
 ![Problem Domain](../../docs/quickstart-images/Ikasan-title-transparent.png)
-# Local File System to JMS / JMS to Local File System Integration Module Archetype
+# DB (SQL) to JMS / JMS to DB (SQL) Integration Module Archetype
 
 This archetype creates a working integration module containing two flows,
 
-- **File System to JMS** – local file system files are consumed and published as JMS (ActiveMQ) events
-- **JMS to File System** – JMS (ActiveMQ) events are consumed and published to a local file system
+- **DB to JMS Flow** – Database (SQL) events are consumed and published as JMS (ActiveMQ Map Message) events as XML JmsText messages
+- **JMS to DB Flow** – JMS (ActiveMQ Map Message) Text message events containing Xml representation of an object events are consumed and published to a Database
 
 A Maven archetype to create this is available from Maven Central and can be invoked as follows,
 
 ```
 mvn archetype:generate     
     -DarchetypeGroupId=org.ikasan    
-    -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
+    -DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
     -DarchetypeVersion=<Ikasan Version>    
     -DgroupId=<Maven Group Id>     
     -DartifactId=<Module Name>     
@@ -20,13 +20,14 @@ mvn archetype:generate
     -DtargetFlowName=<Target Flow Name>
 ```
 
+
 ### Maven Archetype Coordinates
 
 |Coordinate    | Description |
 |--------------| ------------|
-- **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
-- **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-filesystem-im-maven-plugin**
-- **archetypeVersion** – details the version of the Ikasan archetype type to invoke  **2.0.0 and above**
+|archetypeGroupId|Is always **org.ikasan** for Ikasan based archetypes|
+|archetypeArtifactId| Details the archetype type to invoke **ikasan-standalone-db-jms-im-maven-plugin**|
+|archetypeVersion|Details the version of the Ikasan archetype type to invoke **2.1.0 and above**|
 
 ### Parameters Provided for the Integration Module POM Being Created
 
@@ -44,13 +45,13 @@ mvn archetype:generate
 ```
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
-    \-DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
-    \-DarchetypeVersion=2.0.4    
-    \-DgroupId=com.ikasan     
-    \-DartifactId=myIntegrationModule     
+    \-DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
+    \-DarchetypeVersion=2.1.0    
+    \-DgroupId=com.sample     
+    \-DartifactId=db-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
-    \-DsourceFlowName=fileSystemToJMSFlow     
-    \-DtargetFlowName=jmsToFileSystemFlow
+    \-DsourceFlowName="DB to JMS Flow" 
+    \-DtargetFlowName="JMS To DB Flow"
 ```
 
 (Accept defaults or update as required)
@@ -58,7 +59,7 @@ mvn archetype:generate
 This will create a standard integration module project structure. To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
 
 ```
-cd myIntegrationModule
+cd db-jms-im
 mvn clean package 
 ```
 
