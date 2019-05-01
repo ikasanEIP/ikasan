@@ -18,41 +18,7 @@ In order to create your own consumer you need to implement [Consumer Interface](
 - [MongoDB Client Consumer](endpoint/mongo-endpoint/Readme.md)
 - [FTP Consumer](endpoint/filetransfer/ftp/consumer.md)
 - [SFTP Consumer](endpoint/filetransfer/sftp/consumer.md)
-
-
-
-#### Event Generating Consumer
-
-Utility consumer for the generation of ad-hoc events for demonstration or test of flows.
-
-##### Configuration Options
-
-| Option | Type | Purpose |
-| --- | --- | --- |
-| identifier | String | Identifier to be set on the generated FlowEvent |
-| payload | String | Payload to be set on the generated FlowEvent |
-| eventGenerationInterval | long | Event generation inrerval in milliseconds.0 = immediate and continuous event generation. This is the default value. |
-| batchSize | int | Used in conjunction with the eventGenerationInterval to determine number of generated events per interval. |
-| eventLimit | String | Allow a limit to be set on the total number of events generated. Default -1 = unlimited. |
-
-##### Sample Usage
-
-
-
-## Translators
-
-### Purpose
-
-<img src="../developer/docs/quickstart-images/message-translator.png" width="200px" align="left">Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
-In order to create your own translator you need to implement [Translator Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Translator.java)
-<br/>
-<br/>
-<br/>
-<br/>
-### Pattern
-
-### Types
-
+    
 ## Converters
 
 ### Purpose
@@ -61,12 +27,21 @@ In order to create your own translator you need to implement [Translator Interfa
 Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
 In order to create your own converter you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
 <br/>
-<br/>
-<br/>
-<br/>
-### Pattern
 
 ### Types
+- [JSON to XML Converter](/converter/JsonToXmlConverter.md)
+- [Map Message to Object Converter](/converter/MapMessageToObjectConverter.md)
+- [Map Message to Payload Converter](/converter/MapMessageToPayloadConverter.md)
+- [Object Message to Object Converter](/converter/ObjectMessageToObjectConverter.md)
+- [Object to XML String Converter](/converter/ObjectToXmlStringConverter.md)
+- [Payload to XML Document Converter](/converter/PayloadToXmlDocumentConverter.md)
+- [Text Message to String Converter](/converter/TextMessageToStringConverter.md)
+- [Threadsafe XSLT Converter](/converter/ThreadSafeXsltConverter.md)
+- [XML Byte Array to Object Converter](/converter/XmlByteArrayToObjectConverter.md)
+- [XML String to Object Converter](/converter/XmlStringToObjectConverter.md)
+- [XML to JSON Converter](/converter/XmlToJsonConverter.md)
+- [XSLT Configuration Parameter Converter](/converter/XsltConfigurationParameterConverter.md)
+- [XSLT Converter](/converter/XsltConverter.md)
 
 ## Brokers
 
@@ -86,7 +61,6 @@ In order to create your own broker you need to implement [Converter Interface](.
 ## Splitters
 
 ### Purpose
-
 <img src="../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
 Read more about EIP [Sequencer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
 In order to create your own splitter you need to implement [Splitter Interface](../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java)
@@ -94,23 +68,20 @@ In order to create your own splitter you need to implement [Splitter Interface](
 <br/>
 <br/>
 <br/>
-### Pattern
 
 ### Types
+- [Splitter](./splitter/Readme.md)
 
 ## Filters
 
 ### Purpose
-
-<img src="../developer/docs/quickstart-images/message-filter.png" width="200px" align="left">Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
+Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
 In order to create your own filter you need to implement [Filter Interface](../spec/component/src/main/java/org/ikasan/spec/component/filter/Filter.java)
 <br/>
-<br/>
-<br/>
-<br/>
-### Pattern
 
 ### Types
+- [Duplicate Filter](./filter/Readme.md)
+- [Scheduled Consumer](./filter/Readme.md)
 
 ## Routers
 
