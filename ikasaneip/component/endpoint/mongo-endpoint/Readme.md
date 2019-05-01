@@ -1,7 +1,7 @@
 ![IKASAN](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # MongoDB Client Consumer
 
-This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by Mongo Message provider.
+<img src="../../../developer/docs/quickstart-images/mongo-consumer.png" width="200px" align="left">This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by Mongo Message provider.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 
 
