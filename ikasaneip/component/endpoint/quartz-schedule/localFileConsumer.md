@@ -1,7 +1,7 @@
 ![IKASAN](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Local File Consumer
 
-This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by Local File Message provider.
+<img src="../../../developer/docs/quickstart-images/local-file-consumer.png" width="200px" align="left">This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by Local File Message provider.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 
 

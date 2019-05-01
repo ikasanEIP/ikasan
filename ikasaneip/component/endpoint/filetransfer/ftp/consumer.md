@@ -1,7 +1,7 @@
 ![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # FTP Consumer
 
-This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by (S)FTP Message provider. The (S)FTP Message provider is under pined with persistent store which allow us to store meta information about the files we are processing.
+<img src="../../../../developer/docs/quickstart-images/ftp-consumer.png" width="200px" align="left">This consumer is variation of Scheduled Consumer which is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by (S)FTP Message provider. The (S)FTP Message provider is under pined with persistent store which allow us to store meta information about the files we are processing.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 
 ##### Configuration Options
