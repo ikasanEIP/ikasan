@@ -18,6 +18,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ikasan>${ikasanVersion}</version.ikasan>
+        <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
     </properties>
 
     <dependencies>
@@ -37,6 +38,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <scope>test</scope>
             <version>${version.ikasan}</version>
         </dependency>
 
