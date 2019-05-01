@@ -2,90 +2,21 @@
 
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-Open Source Enterprise Integration Platform
-
-The Ikasan Enterprise Integration Platform (EIP) addresses the problem 
-domain most commonly known as Enterprise Application Integration (EAI). 
-
-Enterprise application integration can be, and already has been, 
-approached a number of different ways by a number of projects/vendors, 
-both Open Source and closed commercial frameworks. 
-
-It is the intention of the Ikasan Enterprise Integration Platform 
-to address this domain as commoditised configurable solutions rather 
-than another development framework.
-
-
-# Problem Domain
-
-* System integration can be exponentially complex
-* It is commonly agreed that “spaghetti integration” is bad
-* Bleed out of APIs, data syntax and business semantics
-* Ripple effect of change is massive
-![Problem Domain](ikasaneip/developer/docs/quickstart-images/problem-domain.png) 
-
-
-# Solution
-
-* Use Standard Enterprise Application Integration (EAI) approach
-* Provision of an Event/Service backbone
-* Single point of integration for EIS business flow
-* Ripple effect of change is localised (assuming best practice)
-* Ikasan adopts the standard EAI approach and helps users solve integration problems by building applications constructed of modules/flows/components
-![Problem Domain](ikasaneip/developer/docs/quickstart-images/solution.png) 
-#  Integration Module
-
-* An Integration Module is a high level logical construct
-* Provides a logical grouping of business operations as a single integration point
-* Provide either a source, target, or bi-directional business flow
-![Integration Modules](ikasaneip/developer/docs/quickstart-images/integration-module.png) 
-
-#  Flows
-
- * Integration modules comprise of one or more related flows
- * Flows are cohesive operations on a business artifact as a synchronous operation
- * Multiple flows can be chained to isolate concerns
- * Standard event container allows any data type to be transported
- <img src="ikasaneip/developer/docs/quickstart-images/flows.png" width="90%">
-
-#  Components
-
- * Flows comprise of flow components which have implementation injected as POJOs
- * Components are individual operations acting on events within a flow
- * There are different types of components see the full list below
- * Consumer Component is a POJO with injected tech API for application integration to source events
- * Core services automatically bound to each flow
- * Service APIs support management of the flow, runtime status, resubmission, and replay
- ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png)
- 
- #  Services
- 
-- [Ikasan Hospital Service](ikasaneip/hospital/Readme.md)
-- [Replay Service](ikasaneip/replay/Readme.md)
-- [Wiretap Service](ikasaneip/wiretap/Readme.md)
-- [Configuration Service](ikasaneip/configuration-service/Readme.md)
-- [Mapping Service](ikasaneip/mapping/Readme.md)
-- [Monitoring Service](ikasaneip/monitor/Readme.md)
-
-
-## Management Service
-<img src="ikasaneip/developer/docs/quickstart-images/management.gif" width="200px" align="left"> 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. 
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image. Trying to get sime text to flow around the image.
-
-<br/>
-
-# Documentation
-## Getting Started
-* [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
-* [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
-* [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
-* [Component Quick Start](ikasaneip/component/Readme.md)
-* [Dashboard Guide](ikasaneip/dashboard/Readme.md)
-
+- Introduction
+    - [A Quick Overview](./QuickOverview.md)
+- Services
+    - [Ikasan Hospital Service](ikasaneip/hospital/Readme.md)
+    - [Replay Service](ikasaneip/replay/Readme.md)
+    - [Wiretap Service](ikasaneip/wiretap/Readme.md)
+    - [Configuration Service](ikasaneip/configuration-service/Readme.md)
+    - [Mapping Service](ikasaneip/mapping/Readme.md)
+    - [Monitoring Service](ikasaneip/monitor/Readme.md)
+- Developer
+    - [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
+    - [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
+    - [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
+    - [Component Quick Start](ikasaneip/component/Readme.md)
+    - [Dashboard Guide](ikasaneip/dashboard/Readme.md)
 
 | Samples overview |
 |-------------|
@@ -120,4 +51,12 @@ Using Eclipse
 7. Use import on the root pom.xml which will pull in all modules
 8. Wait (m2e takes awhile on initial import)
 
+# Document Info
+
+| Authors | Ikasan Development Team |
+| --- | --- |
+| Contributors | n/a |
+| Date | April 2019 |
+| Email | info@ikasan.org |
+| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
 

@@ -1,4 +1,4 @@
-
+[../](../../Readme.md)
 # Dashboard
  
 The Ikasan Dashboard provides a management web front end for searching and tracking events passing through Ikasan Integration Modules. Ikasan dashboard functionality covers:
