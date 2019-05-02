@@ -146,7 +146,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      * @return
      */
     public JmsConsumerBuilder setConfiguration(SpringMessageConsumerConfiguration jmsConsumerConfiguration) {
-        this.jmsConsumer.setConfiguration(jmsConsumerConfiguration);
+        this.configuration = jmsConsumerConfiguration;
         return this;
     }
 
