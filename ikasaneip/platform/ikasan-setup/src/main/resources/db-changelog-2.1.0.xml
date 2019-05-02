@@ -14,6 +14,7 @@
     <!-- 2.0.x data creation -->
 
     <!-- 2.0.x index creation -->
+    <include file="db/index/db-changeLog-createIndexMetricEventEventId.xml" relativeToChangelogFile="true" />
 
     <!-- 2.0.x table drop -->
 
