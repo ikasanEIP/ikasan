@@ -183,7 +183,7 @@ server.address=localhost
 server.servlet.context-path=/example-im
 
 # health probs and remote management (optional)
-management.security.enabled=false
+management.endpoints.web.expose=*
 management.server.servlet.context-path=/manage
 management.endpoint.shutdown.enabled=true
 
