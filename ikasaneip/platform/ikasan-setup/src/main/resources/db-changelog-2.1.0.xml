@@ -19,6 +19,7 @@
     <include file="db/index/db-changeLog-createIndexIkasanModuleServerId.xml" relativeToChangelogFile="true" />
     <include file="db/index/db-changeLog-createIndexMetricEventExpiry.xml" relativeToChangelogFile="true" />
     <include file="db/index/db-changeLog-createIndexFTTransactionalResourceCommandXid_Id.xml" relativeToChangelogFile="true" />
+    <include file="db/index/db-changeLog-createIndexMetricEventEventId.xml" relativeToChangelogFile="true" />
 
     <!-- 2.1.x table drop -->
 
