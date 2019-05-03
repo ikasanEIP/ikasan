@@ -33,4 +33,8 @@
 	<!-- File transfer cardinality creation -->   
 	<include file="db/cardinality/db-changeLog-createFTFileChunkFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml" relativeToChangelogFile="true" />
+
+    <!-- Index creation -->
+    <include file="db/index/db-changeLog-createIndexFTTransactionalResourceCommandXid_Id.xml" relativeToChangelogFile="true" />
+    
 </databaseChangeLog>
