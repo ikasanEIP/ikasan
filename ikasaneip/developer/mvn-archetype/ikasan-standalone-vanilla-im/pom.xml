@@ -56,6 +56,32 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <escapeString>\</escapeString>
+                    <resources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>false</filtering>
+                            <excludes>
+                                <exclude>archetype-resources/pom.xml</exclude>
+                                <exclude>archetype-resources/jar/pom.xml</exclude>
+                            </excludes>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <includes>
+                                <include>archetype-resources/pom.xml</include>
+                                <include>archetype-resources/jar/pom.xml</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
                     <goalPrefix>ikasan-standalone-vanilla-im</goalPrefix>
