@@ -96,7 +96,8 @@ Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-fi
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-archetype-plugin:2.4:generate (default-cli) on project standalone-pom: The desired archetype does not exist (org.ikasan:ikasan-standalone-filesystem-im-maven-plugin:2.0.0-SNAPSHOT) -> [Help 1]
 ```
 
-This can be resolved by making sure you referring oss mvn repo in you mvn setting.xml file. [Check instructions](#update-mvn-settings.xml) 
+This c
+erring oss mvn repo in you mvn setting.xml file. [Check instructions](#update-mvn-settings.xml) 
 
 # Document Info
 
