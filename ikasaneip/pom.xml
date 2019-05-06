@@ -407,7 +407,7 @@
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
-        <version.org.aspectj>1.7.4</version.org.aspectj>
+        <version.org.aspectj>1.8.13</version.org.aspectj>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.6</version.commons-lang3>
         <version.javax.servlet>3.1.0</version.javax.servlet>
@@ -718,9 +718,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules><dependencyConvergence /></rules>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <rules><dependencyConvergence /></rules>
                 </configuration>
+
             </plugin>
 
         </plugins>

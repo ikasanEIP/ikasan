@@ -40,7 +40,7 @@
 <archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
-                      name="ikasan-standalone-filesystem-im-maven-plugin" partial="true">
+                      name="ikasan-standalone-sftp-jms-im-maven-plugin" partial="true">
 
     <requiredProperties>
         <requiredProperty key="sourceFlowName">
@@ -48,9 +48,6 @@
         </requiredProperty>
         <requiredProperty key="targetFlowName">
             <defaultValue>Jms to Sftp Flow</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="ikasanVersion">
-            <defaultValue></defaultValue>
         </requiredProperty>
     </requiredProperties>
 

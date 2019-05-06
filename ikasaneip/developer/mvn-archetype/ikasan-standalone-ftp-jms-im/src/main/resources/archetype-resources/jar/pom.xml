@@ -3,25 +3,18 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>${groupId}</groupId>
-        <artifactId>${artifactId}-parent</artifactId>
-        <version>${version}</version>
+        <groupId>\${groupId}</groupId>
+        <artifactId>\${artifactId}-parent</artifactId>
+        <version>\${version}</version>
     </parent>
 
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
     <packaging>jar</packaging>
-    <version>${version}</version>
-    <name>${artifactId} Integration Module</name>
+    <version>\${version}</version>
+    <name>\${artifactId} Integration Module</name>
     <description>Describe the purpose of this Integration Module</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>${ikasanVersion}</version.ikasan>
-        <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
-        <version.activemq>5.15.8</version.activemq>
-        <version.org.mockftpserver>2.6</version.org.mockftpserver>
-    </properties>
 
     <dependencies>
 
@@ -55,7 +48,6 @@
             <version>${version.ikasan}</version>
         </dependency>
 
-
         <!-- junit should be with scope test however for the sample purpose we
         spin up the embedded broker as part of sample application.-->
 
@@ -70,20 +62,20 @@
         <dependency>
             <groupId>org.mockftpserver</groupId>
             <artifactId>MockFtpServer</artifactId>
-            <version>${version.org.mockftpserver}</version>
+            <version>\${version.org.mockftpserver}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
-            <version>${version.activemq}</version>
+            <version>\${version.activemq}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
-            <version>${version.activemq}</version>
+            <version>\${version.activemq}</version>
         </dependency>
 
     </dependencies>
@@ -94,7 +86,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${version.org.springboot}</version>
+                <version>\${version.org.springboot}</version>
                 <executions>
                     <execution>
                         <goals>
