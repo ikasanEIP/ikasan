@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test-component</artifactId>
+            <artifactId>ikasan-test-endpoint</artifactId>
             <version>${version.ikasan}</version>
         </dependency>
 
