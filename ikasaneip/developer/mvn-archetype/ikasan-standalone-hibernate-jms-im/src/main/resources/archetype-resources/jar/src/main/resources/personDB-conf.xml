@@ -16,7 +16,7 @@
 		<property name="sessionFactory" ref="xaPersonSessionFactory"/>
 	</bean>
 
-	<bean id="xaPersonSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="xaPersonSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="personDataSource"/>
 		<property name="mappingResources">
 			<list>
@@ -30,8 +30,8 @@
 		<entry key="hibernate.dialect" value="${person.db.dialect}"/>
 		<entry key="hibernate.show_sql" value="${person.db.show-sql}"/>
 		<entry key="hibernate.hbm2ddl.auto" value="${person.db.hbm2ddl.auto}"/>
-		<entry key="hibernate.transaction.jta.platform" value="JBossTS"/>
-		<entry key="hibernate.transaction.factory_class" value="org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory"/>
+        <entry key="hibernate.transaction.coordinator_class" value="jta" />
+        <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
 	</util:map>
 
 	<bean name="personDataSource" class="org.h2.jdbcx.JdbcDataSource">
