@@ -1,12 +1,18 @@
 [<< Component Quick Start](../Readme.md)
 ![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 ## Map Message to Object Converter
+[MapMessageToObjectConverter.java](src/main/java/org/ikasan/component/converter/jms/MapMessageToObjectConverter.java)
 
 ### Purpose
 
 <img src="../../developer/docs/quickstart-images/message-translator.png" width="200px" align="left">The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
-Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
-In order to create your own converter you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
+Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html).  
+
+The [Map Message to Object Converter](./src/main/java/org/ikasan/component/converter/jms/MapMessageToObjectConverter.java)
+is an implementation of the  [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java). 
+It provides a mechanism that translates a JMS [MapMessge](https://javaee.github.io/javaee-spec/javadocs/javax/jms/MapMessage.html)
+into an [Object](https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html), by retrieving the Object from the MapMessage using the 
+attribute name provided on the configuration. 
 <br/>
 ##### Configuration Options
 | Option | Type | Purpose |
@@ -65,7 +71,7 @@ public class ModuleConfig {
                   .setAutoContentConversion(true)
                   .build()
               )
-              .converter("JSON to XML", getConverter())
+              .converter("Map Message to Object", getConverter())
               .producer("producer", componentBuilder.jmsProducer()
                   .setConfiguredResourceId("crid")
                   .setDestinationJndiName(jmsTargetDestination)
@@ -83,6 +89,7 @@ public class ModuleConfig {
       {
           MapMessageToObjectConverterConfiguration converterConfiguration = new MapMessageToObjectConverterConfiguration();
           converterConfiguration.setAttributeName(mapMessageAttributeName);
+          
           MapMessageToObjectConverter converter =  new MapMessageToObjectConverter();
           converter.setConfiguration(converterConfiguration);
           converter.setConfiguredResourceId("mapMessageTpObjectConverterConfigId");
