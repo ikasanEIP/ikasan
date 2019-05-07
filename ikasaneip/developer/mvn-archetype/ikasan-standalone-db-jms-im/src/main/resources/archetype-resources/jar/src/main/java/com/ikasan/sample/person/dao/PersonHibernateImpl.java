@@ -43,7 +43,7 @@ package com.ikasan.sample.person.dao;
 import com.ikasan.sample.person.model.Person;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import java.util.List;
 
