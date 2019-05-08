@@ -26,6 +26,8 @@ There are a number of icons in the topology tree which represent the following:
 
 <img src="../developer/docs/sample-images/module.png" align="left">Represents an Ikasan module.
 
-•	   Represents a flow within an Ikasan module.
-•	  Represents a component within an Ikasan flow which can be configured.
-•	  Represents a component within an Ikasan flow which cannot be configured.
+<img src="../developer/docs/sample-images/flow.png" align="left">Represents a flow within an Ikasan module.
+
+<img src="../developer/docs/sample-images/component-configurable.png" align="left">Represents a component within an Ikasan flow which can be configured.
+
+<img src="../developer/docs/sample-images/component.png" align="left">Represents a component within an Ikasan flow which cannot be configured.
