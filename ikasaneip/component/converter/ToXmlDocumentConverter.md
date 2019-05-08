@@ -1,30 +1,24 @@
 [<< Component Quick Start](../Readme.md)
 ![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
-## XML Byte Array to Object Converter
-[XmlByteArrayToObjectConverter.java](src/main/java/org/ikasan/component/converter/xml/XmlByteArrayToObjectConverter.java)
+## To XML Document Converter
+[ToXmlDocumentConverter.java](src/main/java/org/ikasan/component/converter/xml/ToXmlDocumentConverter.java)
 
 ### Purpose
+
 <img src="../../developer/docs/quickstart-images/message-translator.png" width="200px" align="left">The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
 Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html).  
 
-The [XML Byte Array to Object Converter](./src/main/java/org/ikasan/component/converter/xml/XmlByteArrayToObjectConverter.java)
+The [To XML Document Converter](./src/main/java/org/ikasan/component/converter/xml/ToXmlDocumentConverter.java)
 is an implementation of the  [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java). 
-It provides a mechanism that translates a byte[] representation of an XML String and converts it to a
-[JAXB Object](https://docs.oracle.com/javase/tutorial/jaxb/intro/index.html) which is a materialised Java POJO
-that has been initialised with the contents of the XML. 
+It provides a mechanism that translates the following input source to an XML [Document](https://docs.oracle.com/javase/8/docs/api/org/w3c/dom/Document.html)
+- A primative byte array (byte[]).
+- A Java [String](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html)
+- A Java [File](https://docs.oracle.com/javase/8/docs/api/java/io/File.html) 
 <br/>
 
 
 ##### Configuration Options
-| Option | Type | Default |Purpose |
-| --- | --- | --- | --- |
-| classesToBeBound | Class<?>[] |  | |
-| contextPath | String |  | |
-| contextPaths | String[] |  | |
-| schema | String |  | |
-| unmarshallerProperties | Map<String, Object> |  |  |
-| marshallerProperties | Map<String, Object> |  |  |
-| validationEventHandler | [ValidationEventHandler](https://docs.oracle.com/javase/8/docs/api/javax/xml/bind/ValidationEventHandler.html) |  | Should we use namespace prefixes? |
+Not applicable as this is not a [Configured Resource](../../spec/service/configuration/src/main/java/org/ikasan/spec/configuration/ConfiguredResource.java).
 
 ##### Sample Usage
 ````java
@@ -77,7 +71,7 @@ public class ModuleConfig
                 .setAutoContentConversion(true)
                 .build()
             )
-            .converter("XML byte[] to JAXB Object", this.getConverter())
+            .converter("Object Message to Object", this.getConverter())
             .producer("producer", componentBuilder.jmsProducer()
                 .setConfiguredResourceId("crid")
                 .setDestinationJndiName(jmsTargetDestination)
@@ -93,20 +87,10 @@ public class ModuleConfig
 
     private Converter getConverter()
     {
-        XmlToObjectConverterConfiguration configuration = new XmlToObjectConverterConfiguration();
-        
-        Class[] classes = new Class[1];
-        classes[0] = MyJaxb.class;
-        
-        configuration.setClassesToBeBound(classes);
-
-        XmlByteArrayToObjectConverter converter =  new XmlByteArrayToObjectConverter();
-        converter.setConfiguredResourceId("id");
-        converter.setConfiguration(configuration);
-        
-        return converter;
+        return new ToXmlDocumentConverter();
     }
 }
+
 ````
 
 # Document Info

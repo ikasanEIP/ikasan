@@ -145,9 +145,5 @@ public class XmlStringToObjectConverter<SOURCE,TARGET> implements Converter<SOUR
             throw new TransformationException("Expected TARGET type on your Converter doesn't match actual return type.", e);
         }
     }
-    
-
-
-
 
 }
