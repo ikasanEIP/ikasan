@@ -2,25 +2,27 @@
 # Dashboard
  
 The Ikasan Dashboard provides a management web front end for searching and tracking events passing through Ikasan Integration Modules. Ikasan dashboard functionality covers:
-- Event Searching and Tracking
-- User Administration and Management
-- Ikasan Support and Resources
-- Security and access management
-- Data mapping
-- Error and event exclusion lifecycle
-- Business stream control
-- Monitoring
+- [Navigating the Dashboard](./MenuNavigation.md)
+- [Platform Setup and Maintenance](./PlatformSetup.md)
+- [Event Searching and Tracking](./Topology.md)
+- [User Administration and Management](./UserAdministration.md)
+- [Ikasan Support and Resources](./HousekeepingAndHarvesting.md)
+- [Security and Access Management](./SecurityAndAccessManagement.md)
+- [Data Mapping](./DataMapping.md)
+- [Error and Event Exclusion Lifecycle](./Topology.md)
+- [Module control](./TopologyTree.md)
+- [Monitoring](./Monitoring.md)
   
 
 ## Step-by-step guide how run ikasan-dashboard as standalone 
 
-Download ikasan-dashboard from offical mvn repo [ikasan-dashboard-boot/2.0.0-SNAPSHOT](https://oss.sonatype.org/service/local/repositories/snapshots/content/org/ikasan/ikasan-dashboard-boot/2.0.0-SNAPSHOT/)
+Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.0](https://oss.sonatype.org/service/local/repositories/snapshots/content/org/ikasan/ikasan-dashboard-boot/2.1.0/)
 
 Start Ikasan-dashboard with h2 in memory database.
 - Out of the box ikasan-dashboard is shipped with build in H2 driver which allows you to exlore the product.
 - Run           
 ```
-$JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.0.0-SNAPSHOT.jar
+$JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.0.jar
 ```           
 
 Start ikasan-dashboard with different DB driver              

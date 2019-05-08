@@ -8,8 +8,6 @@ ESB wide functionality:
 - Discover new modules.
 
 At the module level:
-- The ability to view details of the module. (Not currently implemented)
-- The ability to view the module diagram. (Not currently implemented)
 - The ability to categorise an error.
 
 At the flow level:
