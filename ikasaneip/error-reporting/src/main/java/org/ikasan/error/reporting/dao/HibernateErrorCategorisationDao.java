@@ -76,7 +76,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 			"and e.UserAction is NULL " ;
 
 	public static final String ERROR_CATERORISED_LINK_FIND_ALL_SQL = "select l from ErrorCategorisationLink as l "
-        + " where l.moduleNAme = :moduleName and l.flowName = :flowName and l.flowElementName = :flowElementName ";
+        + " where l.moduleName = :moduleName and l.flowName = :flowName and l.flowElementName = :flowElementName ";
 
 	public static final String ERROR_CATERORISED_LINK_FIND_ONE_SQL = "select l from ErrorCategorisationLink as l "
         + " where l.moduleName = :moduleName "
