@@ -108,7 +108,33 @@ public class ErrorCategorisationDaoTest
         
         Assert.assertEquals(link, foundErrorCategorisationLink);
     }
-    
+
+    /**
+     * Test save of errorOccurrence
+     */
+    @DirtiesContext
+    @Test
+    public void test_save_and_find_without_action()
+    {
+        ErrorCategorisationLink link = new ErrorCategorisationLink("moduleName", "flowName",
+            "flowElementName", "", "");
+
+        ErrorCategorisation errorCategorisation = new ErrorCategorisation(ErrorCategorisation.TRIVIAL, "This is the error message");
+
+        this.errorCategorisationDao.save(errorCategorisation);
+
+        link.setErrorCategorisation(errorCategorisation);
+
+        this.errorCategorisationDao.save(link);
+
+
+        ErrorCategorisationLink foundErrorCategorisationLink = this.errorCategorisationDao.find("moduleName", "flowName",
+            "flowElementName").get(0);
+
+        Assert.assertEquals(link, foundErrorCategorisationLink);
+    }
+
+
     @DirtiesContext
     @Test(expected=DataIntegrityViolationException.class)
     public void test_exception_add_duplicate()
