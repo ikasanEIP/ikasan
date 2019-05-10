@@ -155,7 +155,7 @@ public class MonitorBuilderTest
         builderFactory.setApplicationContext(applicationContext);
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor()
-                .withDashboardlNotifier().build();
+                .withDashboardNotifier().build();
         Assert.assertNotNull("monitor cannot be 'null'", monitor);
         mockery.assertIsSatisfied();
     }
@@ -237,7 +237,7 @@ public class MonitorBuilderTest
         builderFactory.setApplicationContext(applicationContext);
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor()
-                .withDashboardlNotifier().withEmailNotifier(emailNotifierConfiguration).build();
+                .withDashboardNotifier().withEmailNotifier(emailNotifierConfiguration).build();
         Assert.assertNotNull("monitor cannot be 'null'", monitor);
         mockery.assertIsSatisfied();
     }
