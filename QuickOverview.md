@@ -21,7 +21,7 @@ than another development framework.
 
 * System integration can be exponentially complex
 * It is commonly agreed that “spaghetti integration” is bad
-* Bleed out of APIs, data syntax and business semantics
+* It results in a bleed out of APIs; data syntax; and business semantics
 * Ripple effect of change is massive
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/problem-domain.png) 
 
