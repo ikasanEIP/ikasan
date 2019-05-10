@@ -17,14 +17,12 @@
     - [Application Server Developer Guide](ikasaneip/developer/docs/Readme.md)
     - [Component Quick Start](ikasaneip/component/Readme.md)
     - [Dashboard Guide](ikasaneip/dashboard/Readme.md)
-
-| Samples overview |
-|-------------|
-|  [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md) |
-|  [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md) |
-|  [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md) |
-|  [spring-boot-ftp-jms](ikasaneip/sample/spring-boot/ftp-jms/README.md) |
-|  [spring-boot-sftp-jms](ikasaneip/sample/spring-boot/sftp-jms/README.md) |
+ - Samples overview
+    - [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md)
+    - [spring-boot-file](ikasaneip/sample/spring-boot/file/README.md)
+    - [spring-boot-jms](ikasaneip/sample/spring-boot/jms/README.md)
+    - [spring-boot-ftp-jms](ikasaneip/sample/spring-boot/ftp-jms/README.md)
+    - [spring-boot-sftp-jms](ikasaneip/sample/spring-boot/sftp-jms/README.md)
 ---------------------
 
 
