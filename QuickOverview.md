@@ -3,7 +3,7 @@
 
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-Open Source Enterprise Integration Platform
+# Open Source Enterprise Integration Platform
 
 The Ikasan Enterprise Integration Platform (EIP) addresses the problem 
 domain most commonly known as Enterprise Application Integration (EAI). 
