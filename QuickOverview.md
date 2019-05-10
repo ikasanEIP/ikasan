@@ -30,8 +30,8 @@ than another development framework.
 
 * Use Standard Enterprise Application Integration (EAI) approach
 * Provision of an Event/Service backbone
-* Single point of integration for EIS business flow
-* Ripple effect of change is localised (assuming best practice)
+* Single point of integration for Enterprise Information System (EIS) business flows
+* Ripple effect of change is localised and well understood (assuming best practice)
 * Ikasan adopts the standard EAI approach and helps users solve integration problems by building applications constructed of modules/flows/components
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/solution.png) 
 #  Integration Module
