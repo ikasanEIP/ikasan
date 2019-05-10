@@ -54,16 +54,16 @@ than another development framework.
  * Flows comprise of flow components which have implementation injected as Plain Old Java objects (POJOs)
  * Components are individual operations acting on events within a flow
  * There are different types of components based on industry standard EAI Integration Patterns including,
- ** Consumers
- ** Converters
- ** Translators
- ** Splitters
- ** Aggregators
- ** Brokers
- ** Filters
- ** Sequencers
- ** Routers
- ** Producers
+   * Consumers
+   * Converters
+   * Translators
+   * Splitters
+   * Aggregators
+   * Brokers
+   * Filters
+   * Sequencers
+   * Routers
+   * Producers
  * Standard re-useable components are available within Ikasan as well as being able to simply develop your own custom components
  * Core services are automatically bound to each flow
  * Service APIs support management of the flow, runtime status, resubmission, and replay
