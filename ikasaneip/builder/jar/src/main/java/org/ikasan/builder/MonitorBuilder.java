@@ -175,7 +175,7 @@ public class MonitorBuilder
          * Get an instance of the default dashboard notifier.
          * @return
          */
-        public NotifierBuilder withDashboardlNotifier()
+        public NotifierBuilder withDashboardNotifier()
         {
             Notifier notifier = notifierFactory.getDashboardNotifier();
             ((DashboardNotifier)notifier).setPlatformConfigurationService(platformConfigurationService);
