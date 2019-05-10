@@ -115,9 +115,11 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     {
         if(configuration.isActive())
         {
+            String monitorName = (configuration.getMonitorName() != null ? configuration.getMonitorName() : "Module[" + moduleName + "] Flow[" + flowName + "]");
+
             if(this.notifiers == null || this.notifiers.size() == 0)
             {
-                logger.warn("Monitor [" + configuration.getMonitorName() + "] has no registered notifiers");
+                logger.warn("Monitor [" + monitorName + "] has no registered notifiers");
                 return;
             }
 
@@ -126,9 +128,7 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
                 logger.warn("Cannot invoke Monitor after destroy has been called - executorService is null or shutdown");
                 return;
             }
-            
-            String monitorName = "Module[" + moduleName + "] Flow[" + flowName + "]";
-            		
+
             boolean stateChanged = hasStateChanged(environment + monitorName, status);
 
             for(final Notifier notifier:notifiers)
