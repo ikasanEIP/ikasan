@@ -77,7 +77,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     @SuppressWarnings("unchecked")
     public List<User> getUsers()
     {
-        return getHibernateTemplate().loadAll(User.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from User").getResultList());
     }
 
     /* (non-Javadoc)
@@ -86,7 +86,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     @SuppressWarnings("unchecked")
     public List<UserLite> getUserLites()
     {
-        return getHibernateTemplate().loadAll(UserLite.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from UserLite").getResultList());
     }
 
     public void save(User user)

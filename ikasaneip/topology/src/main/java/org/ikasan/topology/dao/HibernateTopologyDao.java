@@ -92,7 +92,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Server> getAllServers()
 	{
-		return getHibernateTemplate().loadAll(Server.class);
+        return getHibernateTemplate().execute( session -> session.createQuery("from Server").getResultList());
 	}
 
 	/* (non-Javadoc)
@@ -112,8 +112,8 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Module> getAllModules()
 	{
-        return getHibernateTemplate().loadAll(Module.class);
-	}
+        return getHibernateTemplate().execute( session -> session.createQuery("from Module").getResultList());
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Module)
@@ -138,13 +138,13 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Flow> getAllFlows()
 	{
-        return getHibernateTemplate().loadAll(Flow.class);
+        return getHibernateTemplate().execute( session -> session.createQuery("from Flow").getResultList());
 	}
 
 	@Override
 	public List<Component> getAllComponents()
 	{
-		return getHibernateTemplate().loadAll(Component.class);
+		return getHibernateTemplate().execute( session -> session.createQuery("from Component").getResultList());
 	}
 
 	/* (non-Javadoc)
@@ -164,7 +164,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<BusinessStream> getAllBusinessStreams()
 	{
-		return getHibernateTemplate().loadAll(BusinessStream.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from BusinessStream").getResultList());
 	}
 
 	/* (non-Javadoc)
@@ -512,8 +512,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Filter> getAllFilters()
 	{
-		return getHibernateTemplate().loadAll(Filter.class);
-
+		return getHibernateTemplate().execute(session -> session.createQuery("from Filter").getResultList());
     }
 
 	/* (non-Javadoc)
@@ -669,7 +668,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<Notification> getAllNotifications()
 	{
-		 return getHibernateTemplate().loadAll(Notification.class);
+		 return getHibernateTemplate().execute(session -> session.createQuery("from Notification").getResultList());
     }
 
 

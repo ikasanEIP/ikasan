@@ -172,7 +172,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisation> findAll()
 	{
-        return getHibernateTemplate().loadAll(ErrorCategorisation.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from ErrorCategorisation").getResultList());
 	}
 	
 	/* (non-Javadoc)
@@ -181,7 +181,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks()
 	{
-        return getHibernateTemplate().loadAll(ErrorCategorisationLink.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from ErrorCategorisationLink").getResultList());
 	}
 
 	/* (non-Javadoc)

@@ -59,7 +59,7 @@ public class HibernateAuthorityDao extends HibernateDaoSupport implements Author
     @SuppressWarnings("unchecked")
     public List<Authority> getAuthorities()
     {
-        return getHibernateTemplate().loadAll(Authority.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from Authority").getResultList());
     }
 
     /* (non-Javadoc)
