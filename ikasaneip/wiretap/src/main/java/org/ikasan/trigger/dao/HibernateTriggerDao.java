@@ -73,7 +73,7 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
     @SuppressWarnings("unchecked")
     public List<Trigger> findAll()
     {
-        return getHibernateTemplate().loadAll(Trigger.class);
+        return getHibernateTemplate().execute(session -> session.createQuery("from Trigger").getResultList());
     }
 
     /* (non-Javadoc)
