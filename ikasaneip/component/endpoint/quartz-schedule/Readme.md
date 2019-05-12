@@ -12,28 +12,27 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 
 | Option | Type | Purpose |
 | --- | --- | --- |
-| cronExpression | String | Cron based expression dictating the callback schedule for this component. Example, \* \* \* \* ?? |
-| ignoreMisfire | boolean |   |
-| isEager | boolean |  Flag indicating whether if scheduled consumer should trigger(run) again, immediately after first(previous) timely run was successful   |
-| timezone | String | Timezone used by quartz scheduler |
+| cronExpression | String | Mandatory cron based expression dictating the callback schedule for this component. Example, \* \* \* \* ?? |
+| ignoreMisfire | boolean | Optional  |
+| isEager | boolean |  Optional flag indicating whether if scheduled consumer should trigger(run) again, immediately after first(previous) timely run was successful   |
+| timezone | String | Optional timezone used by quartz scheduler |
 
 ##### Sample Usage
 
-##### Sample Usage - builder pattern
+##### Java FluentAPI
 
 ```java
-public class ModuleConfig {
-
+public class ModuleConfig 
+{
   @Resource
   private BuilderFactory builderFactory;
+  String cronExpression = "*/5 * * * * ?";
 
-  public  Consumer getFileConsumer() {
+  public  Consumer getScheduledConsumer() 
+  {
       return builderFactory.getComponentBuilder().scheduledConsumer()
-              .setCronExpression(cronExpression)
-              .setScheduledJobGroupName(scheduledGroupName)
-              .setScheduledJobName(scheduledName)
-              .setConfiguredResourceId(scheduledConsumerConfiguredResourceId)
-              .build();
+                .setCronExpression(cronExpression)
+                .build();
   }
 }
 
