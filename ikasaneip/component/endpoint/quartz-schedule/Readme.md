@@ -17,9 +17,7 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 | isEager | boolean |  Optional flag indicating whether if scheduled consumer should trigger(run) again, immediately after first(previous) timely run was successful   |
 | timezone | String | Optional timezone used by quartz scheduler |
 
-##### Sample Usage
-
-##### Java FluentAPI
+##### Sample Usage - Ikasan Java FluentAPI
 
 ```java
 public class ModuleConfig 
