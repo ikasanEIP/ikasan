@@ -60,7 +60,11 @@ As Translators tend to be very specific to the requirement Ikasan does not provi
 
 ### Purpose
 
-<img src="../developer/docs/quickstart-images/broker.png" width="200px" align="left">Brokers enrich the contents of the existing message with additional data very often coming from synchronous calls to other systems. Very often a broker would be utilising REST calls or DB calls.
+<img src="../developer/docs/quickstart-images/broker.png" width="200px" align="left">Brokers enrich the contents of the existing message with additional data or structure in a number of different ways. 
+Request Response Brokers can make calls to other systems such as a database or HTTP(s) RESTful services.
+Aggregating Brokers consume all incoming messages until a condition is met ie aggregate every 10 messages.
+Re-Sequencing Brokers consume all incoming messages until a condition is met and then release them messages as a list of newly ordered events. This can provide a powerful function when combined with a Splitter as the next component.
+
 In order to create your own broker you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java)
 <br/>
 <br/>
@@ -70,6 +74,10 @@ In order to create your own broker you need to implement [Converter Interface](.
 ### Pattern
 
 ### Types
+- Request Response Broker
+- Aggregating Broker
+- Re-Sequencing Broker
+
 
 ## Splitters
 
