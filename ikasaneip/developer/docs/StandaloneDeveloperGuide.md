@@ -373,11 +373,9 @@ Go back to IntelliJ and create new MyModule class. This class will hold the defi
 ```java
 package com.ikasan.example;
 
-
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.OnException;
-import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
@@ -385,31 +383,33 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
-@Configuration("ModuleFactory")
+@Configuration("MyModuleFactory")
 public class MyModule
 {
-    @Resource
-    BuilderFactory builderFactory;
-    @Resource
-    ComponentFactory componentFactory;
+    @Resource BuilderFactory builderFactory;
+    @Resource ComponentFactory componentFactory;
 
     @Bean
     public Module myModule()
     {
-        // get the module builder
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("BNUrp Integration Module")
-                .withDescription("Vanilla Integration Module.");
 
-        Flow flow = moduleBuilder.getFlowBuilder("flow name")
-            .withDescription("Vanilla source flow")
-            .consumer("Event Generating Consumer", getConsumer())
-            .converter("Event Converter", componentFactory.getConverter())
-            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer().build()).build();
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
 
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+
+        // create a flow from the module builder and add required orchestration components
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                .producer("My Target Producer", componentBuilder.logProducer().build())
+                .build();
+
+        // Add the created flow to the module builder and create the module
         Module module = moduleBuilder
-            .addFlow(flow)
-            .build();
-
+                .addFlow(eventGeneratingFlow)
+                .build();
         return module;
     }
 }
@@ -418,7 +418,7 @@ public class MyModule
 
 Build and run the application again.
 
-From IntelliJ just right click on MyApplication and select run ```MyApplication.main()```
+From IntelliJ just right click on Application and select run ```Application.main()```
 
 Alternatively to run from the command line ensure you are in the project root directory i.e. MyIntegrationModule then run a Maven clean install
 ```
@@ -446,12 +446,13 @@ Lets go back to the code, specifically the ```MyModule``` class to understand wh
    public class MyModule
    {
        @Resource BuilderFactory builderFactory;
+       @Resource ComponentFactory componentFactory;
 ...
    }
 ```
-Firstly, we get a instance of a builderFactory from Spring context.
+Firstly, we get a instance of a builderFactory from Spring context. The builderFactory is the base factory class from which all Ikasan constructs can be created. We also use Spring to create our own custom componentFactory instance. We could have done this all in one class, but breaking it down like this makes it easier to read and to test.
 
-This builderFactory will provide all other builders required to create modules, flows, and components.
+So getting back to the builderFactory we can see this provides all other builders required to create modules, flows, and components.
 
 The first thing to create is a moduleBuilder from the builderFactory. When we create the moduleBuilder we provide the name we are going to assign to the module.
 We can also set other properties on the module through this moduleBuilder such as description.
@@ -461,14 +462,16 @@ We can also set other properties on the module through this moduleBuilder such a
    public class MyModule
    {
        @Resource BuilderFactory builderFactory;
-   
-       @Bean
-       public Module myModule()
-       {
-   
-           // Create a module builder from the builder factory
-           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                   .withDescription("My first integration module.");
+       @Resource ComponentFactory componentFactory;
+
+    @Bean
+    public Module myModule()
+    {
+
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+
        ...
        }
    
@@ -491,6 +494,7 @@ Next, get a componentBuilder instance from the builderFactory - we will be using
   
           // Create a component builder from the builder factory
           ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+          ...
       }
 ```
 
@@ -500,34 +504,40 @@ The components within the flow are then added as consumer and producer, both fro
 Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
 ```java
-   @Configuration("MyModuleFactory")
-   public class MyModule
-   {
-       @Resource BuilderFactory builderFactory;
-   
-       @Bean
-       public Module myModule()
-       {
-   
-           // Create a module builder from the builder factory
-           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                   .withDescription("My first integration module.");
-   
-           // Create a component builder from the builder factory
-           ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-   
-           // create a flow from the module builder and add required orchestration components
-           Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-                   .producer("My Target Producer", componentBuilder.logProducer().build())
-                   .build(); 
-       }
-   }
-```
+@Configuration("MyModuleFactory")
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
+    @Resource ComponentFactory componentFactory;
+
+    @Bean
+    public Module myModule()
+    {
+
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+
+        // create a flow from the module builder and add required orchestration components
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                .producer("My Target Producer", componentBuilder.logProducer())
+                .build();
+
+        // Add the created flow to the module builder and create the module
+        Module module = moduleBuilder
+                .addFlow(eventGeneratingFlow)
+                .build();
+        return module;
+    }
+}```
 So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
 ```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
 
-Each off-the-shelf component has ```build()``` called against it which tells the builder pattern to create this instance, as does the flow.
+Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
 ```java
    @Configuration("MyModuleFactory")
@@ -548,8 +558,8 @@ Each off-the-shelf component has ```build()``` called against it which tells the
    
            // create a flow from the module builder and add required orchestration components
            Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-                   .producer("My Target Producer", componentBuilder.logProducer().build())
+                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                   .producer("My Target Producer", componentBuilder.logProducer())
                    .build();
    
            // Add the created flow to the module builder and create the module
@@ -597,9 +607,9 @@ Simply update the flowBuilder lines to insert this new component called "My Conv
 ```java
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .converter("My Converter", new MyConverter())
-                .producer("My Target Producer", componentBuilder.logProducer().build())
+                .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 ```
 
@@ -674,9 +684,9 @@ that caused the exception.
                 .withExceptionResolver(builderFactory
                         .getExceptionResolverBuilder()
                         .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .converter("My Converter", new MyConverter())
-                .producer("My Target Producer", componentBuilder.logProducer().build())
+                .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 ```
 Build it, run it, and start the flow from the Browser.
