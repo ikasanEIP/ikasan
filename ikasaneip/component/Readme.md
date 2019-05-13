@@ -11,8 +11,6 @@ Starting component of the flow for which only one consumer may exist in any give
 Consumers provide the &quot;glue&quot; between the entry into the flow and the underlying technology generating the event.
 In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java).
 
-### Usage
-
 ### Types
 - [Scheduled Consumer](endpoint/quartz-schedule/Readme.md)
 - [Local File Consumer](endpoint/quartz-schedule/localFileConsumer.md)
@@ -21,12 +19,14 @@ In order to create your own consumer you need to implement [Consumer Interface](
 - [MongoDB Client Consumer](endpoint/mongo-endpoint/Readme.md)
 - [FTP Consumer](endpoint/filetransfer/ftp/consumer.md)
 - [SFTP Consumer](endpoint/filetransfer/sftp/consumer.md)
-    
+  
+  
 ## Converters
 
 ### Purpose
-The main responsibility of a converter is to convert from one POJO type to another. Coverter acts as an adapter between components requiring different input types.
-Read more about EIP [Translators](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageTranslator.html)
+Converters are used convert from one object type to another. Converters act as adapters between components requiring different input types.
+For instance, if you pass object A to a Converter the Converter may return the same object A or a completely different object as defined in the interface implementation.
+
 In order to create your own converter you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
 <br/>
 
@@ -45,11 +45,22 @@ In order to create your own converter you need to implement [Converter Interface
 - [XSLT Configuration Parameter Converter](converter/XsltConfigurationParameterConverter.md)
 - [XSLT Converter](converter/XsltConverter.md)
 
+## Translators
+
+### Purpose
+Translators receive and return the same object, but allow for the constituent parts of that object to be changed. For instance, if you pass object A to a Translator the Translator may change the content of Object A, but cannot return a new object.
+
+In order to create your own translator you need to implement [Translator Interface](../spec/component/src/main/java/org/ikasan/spec/component/transformation/Translator.java)
+<br/>
+
+### Types
+As Translators tend to be very specific to the requirement Ikasan does not provide any pre-built Translators.
+
 ## Brokers
 
 ### Purpose
 
-<img src="../developer/docs/quickstart-images/broker.png" width="200px" align="left">The main responsibility of a broker is enrich the contents of the existing message with additional data very often coming from synchronously calls to other systems. Very often broker would be utilising REST calls or DB calls.
+<img src="../developer/docs/quickstart-images/broker.png" width="200px" align="left">Brokers enrich the contents of the existing message with additional data very often coming from synchronous calls to other systems. Very often a broker would be utilising REST calls or DB calls.
 In order to create your own broker you need to implement [Converter Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java)
 <br/>
 <br/>
@@ -63,7 +74,7 @@ In order to create your own broker you need to implement [Converter Interface](.
 ## Splitters
 
 ### Purpose
-<img src="../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
+<img src="../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitters break up the incoming event in to many outgoing events. Ikasan will operate on the returned list of events and pass each event in the list independently to the next component for processing.
 Read more about EIP [Sequencer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
 In order to create your own splitter you need to implement [Splitter Interface](../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java)
 <br/>
@@ -77,7 +88,7 @@ In order to create your own splitter you need to implement [Splitter Interface](
 ## Filters
 
 ### Purpose
-Filter will allow given event to be past to next component or it will end the flow. You can think of filter as of an 'IF' statment in a programming language.
+A Filter will allow check to see if an incoming event matches a particular filter rule. If matched the event is dropped, if not matched then the event is passed to the next component. You can think of filter as of an 'IF' statment in a programming language.
 In order to create your own filter you need to implement [Filter Interface](../spec/component/src/main/java/org/ikasan/spec/component/filter/Filter.java)
 <br/>
 
@@ -88,7 +99,6 @@ In order to create your own filter you need to implement [Filter Interface](../s
 ## Routers
 
 ### Purpose
-
 
 <img src="../developer/docs/quickstart-images/message-router.png" width="200px" align="left">Read more about EIP [Message Router](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageRouter.html)
 In order to create your own router you need to implement  [SingleRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/SingleRecipientRouter.java) or [MultiRecipientRouter Interface](../spec/component/src/main/java/org/ikasan/spec/component/routing/MultiRecipientRouter.java)
@@ -104,7 +114,7 @@ In order to create your own router you need to implement  [SingleRecipientRouter
 
 ### Purpose
 
-<img src="../developer/docs/quickstart-images/message-endpoint.png" width="200px" align="left">Ending component of the flow, the only component in the flow which have no transition.
+<img src="../developer/docs/quickstart-images/message-endpoint.png" width="200px" align="left">Ending component of the flow, or a route in the flow.
 Read more about EIP [Message Endpoint](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageEndpoint.html)
 In order to create your own broker you need to implement [Producer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Producer.java)
 <br/>
@@ -120,7 +130,11 @@ In order to create your own broker you need to implement [Producer Interface](..
 
 This type of producer discards all data passed to it and does not perform any processing. 
 
-#### JMS Template Producer
+#### Logging Producer
+
+This type of producer logs all data passed to it. 
+
+#### JMS Producer
 
 <img src="../developer/docs/quickstart-images/channel-adapter.png" width="200px" align="left">The JMS producer is based on Spring template and is used to connect to any Vendor specific JMS Broker(ActiveMQ, HornetQ, IBM MQ etc). However one need to include the related vendor specific libraries in the IM.
 <br/>
