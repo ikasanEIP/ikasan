@@ -41,12 +41,3 @@ NOTE: All options specified below will override any associated options in the dr
 | threadsAllowedToBlockForConnectionMultiplier | Integer | multiplier for number of threads allowed to block waiting for a connection. |
 
 ##### Sample Usage
-
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

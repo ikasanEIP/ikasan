@@ -10,11 +10,3 @@ Trying to get sime text to flow around the image. Trying to get sime text to flo
 
 <br/>
 
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | February 2018 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

@@ -13,11 +13,3 @@ In order to create your own filter you need to implement [Filter Interface](../s
 
 ### Types
 
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

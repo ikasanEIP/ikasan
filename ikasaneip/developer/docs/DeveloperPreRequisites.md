@@ -218,11 +218,3 @@ If you using Snapshot versions, edit your settings.xml to ensure you refer to th
 Any Java IDE will suffice (even a text editor if you are feeling brave). 
 We recommend IntelliJ Community Edition Java IDE which can be downloaded from [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/).
  
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | January 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

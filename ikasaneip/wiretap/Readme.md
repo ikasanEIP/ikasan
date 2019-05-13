@@ -11,12 +11,3 @@ be written to the underlying persistent data store or alternatively written to t
 This service provides a high level of visibility on all data events, and coupled with the transactional, guaranteed data delivery features of Ikasan, provides support users assurance that data has been delivered
 to all of the intended endpoints.</br>
 The Wiretap Service works out of the box and requires no coding. See the Dashboard documentation for details on how to set up wiretaps on a component.
-
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
