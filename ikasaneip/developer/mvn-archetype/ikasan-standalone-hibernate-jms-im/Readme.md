@@ -98,12 +98,3 @@ Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-fi
 
 This can be resolved by making sure you referring oss mvn repo in you mvn setting.xml file. [Check instructions](#update-mvn-settings.xml) 
 
-
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

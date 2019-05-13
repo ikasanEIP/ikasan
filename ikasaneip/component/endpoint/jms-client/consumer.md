@@ -29,11 +29,3 @@ Read more about EIP [Event Driven Consumer](http://www.enterpriseintegrationpatt
 
 ##### Sample Usage
 
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

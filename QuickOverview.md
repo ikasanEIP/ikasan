@@ -69,13 +69,6 @@ than another development framework.
  * Service APIs support management of the flow, runtime status, resubmission, and replay
  ![Detail view](ikasaneip/developer/docs/quickstart-images/ikasan-anatomy-detail.png)
  
- # Document Info
- 
- | Authors | Ikasan Development Team |
- | --- | --- |
- | Contributors | n/a |
- | Date | April 2019 |
- | Email | info@ikasan.org |
- | WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
 
+ 
 

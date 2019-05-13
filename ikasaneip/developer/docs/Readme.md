@@ -931,12 +931,3 @@ Use the JBoss Administration Console to deploy the EAR to the Application Server
 ```
 ear/target/myIntegrationModule-<version>-ear.ear 
 ```
-
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | March 2018 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |

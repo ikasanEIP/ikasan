@@ -45,11 +45,3 @@ Not applicable as this is not a configurable resource.
 ##### Sample Usage
 ```java
 ````
-# Document Info
-
-| Authors | Ikasan Development Team |
-| --- | --- |
-| Contributors | n/a |
-| Date | April 2019 |
-| Email | info@ikasan.org |
-| WebSite | [http://www.ikasan.org](http://www.ikasan.org/) |
