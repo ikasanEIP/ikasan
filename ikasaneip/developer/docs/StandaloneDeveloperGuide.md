@@ -105,47 +105,136 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
        <version>1.0.0-SNAPSHOT</version>
        <packaging>jar</packaging>
    
-       <!-- Add project dependencies -->
-       <dependencies>
-       
-           <!-- Add IkasanESB core library dependency -->
-           <dependency>
-               <groupId>org.ikasan</groupId>
-               <artifactId>ikasan-eip-standalone</artifactId>
-               <version>2.0.4</version>
-           </dependency>
-           
-           <!-- Use Ikasan h2 persistence (Do not use in production) -->
-           <dependency>
-               <groupId>org.ikasan</groupId>
-               <artifactId>ikasan-h2-standalone-persistence</artifactId>
-               <version>2.0.4</version>
-           </dependency>
-                   
-       </dependencies>
-   
-       <!-- Add project build plugin -->
-       <build>
-           <plugins>
-               <plugin>
-                   <groupId>org.springframework.boot</groupId>
-                   <artifactId>spring-boot-maven-plugin</artifactId>
-                   <version>1.5.6.RELEASE</version>
-                   <executions>
-                       <execution>
-                           <goals>
-                               <goal>repackage</goal>
-                           </goals>
-                       </execution>
-                   </executions>
-               </plugin>
-           </plugins>
-       </build>
-       
-   </project>
+    <!-- Add project properties -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.ikasan>2.1.0-SNAPSHOT</version.ikasan>
+        <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
+    </properties>
+
+    <!-- Add project dependencies -->
+    <dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-standalone</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test-endpoint</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <scope>test</scope>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- Add project build plugins -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${version.org.springboot}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules><dependencyConvergence /></rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Add SCM URLS -->
+    <scm>
+        <developerConnection><!-- scm:svn: developer connection URL --></developerConnection>
+        <url><!-- SCM connection URL --></url>
+        <connection><!-- scm:svn: connection URL --></connection>
+    </scm>
+
+    <!-- Add project dependency management -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-eip-standalone-bom</artifactId>
+                <version>${version.ikasan}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
 ```
 
-Now create a class with a fully qualified name of ```com.ikasan.example.MyApplication``` which is entry point to Springboot Application.
+Now create a class with a fully qualified name of ```com.ikasan.example.Application``` - this is the entry point for Springboot.
 
 Copy and paste the entirety of the code below replacing the content of that class.
 ```java
@@ -153,34 +242,50 @@ package com.ikasan.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
-@ImportResource({ "classpath:h2-datasource-conf.xml" })
-public class MyApplication
+public class Application
 {
     public static void main(String[] args)
     {
-        // Start Springboot application 
-        SpringApplication.run(MyApplication.class, args);
-
+        SpringApplication.run(Application.class, args);
     }
-}  
+}
 ```
+Create a class for your Ikasan Module with a fully qualified name of ```com.ikasan.example.ComponentFactory```.
 
+Copy and paste the entirety of the code below replacing the content of that class.
+```java
+package com.ikasan.example;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+
+@Configuration
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+} )
+public class ComponentFactory
+{
+
+}   
+```
 
 Provide some configuration properties for the module by creating a resources/application.properties
 ```properties
 # Logging levels across packages (optional)
-logging.level.root=INFO
+logging.level.com.arjuna=INFO
+logging.level.org.springframework=INFO
 
 # Blue console servlet settings (optional)
 server.error.whitelabel.enabled=false
 
 # Web Bindings
-server.port=8090
+server.port=8080
 server.address=localhost
 server.servlet.context-path=/example-im
+server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
 
 # health probs and remote management (optional)
 management.endpoints.web.expose=*
@@ -194,7 +299,7 @@ datasource.driver-class-name=org.h2.Driver
 datasource.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
 datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
 datasource.dialect=org.hibernate.dialect.H2Dialect
-datasource.show-sql=true
+datasource.show-sql=false
 datasource.hbm2ddl.auto=create
 datasource.validationQuery=select 1
 ```
@@ -210,7 +315,7 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>2.0.4</version>
+            <version>${version.ikasan}</version>
         </dependency>
         
         *** ADD MySQL dependency ***
@@ -218,7 +323,7 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-mysql-standalone-persistence</artifactId>
-            <version>2.0.4</version>
+            <version>${version.ikasan}</version>
         </dependency>
 ```
 
@@ -241,7 +346,7 @@ datasource.validationQuery=select 1\
 The web binding section in ```application.properties``` is particularly important and you should ensure you choose a free server.port to bind to.
 
 Build and run the application.
-From IntelliJ just right click on MyApplication and select run ```MyApplication.main()```
+From IntelliJ just right click on Application and select run ```Application.main()```
 
 Alternatively to run from the command line ensure you are in the project root directory i.e. MyIntegrationModule then run a Maven clean install
 ```
@@ -268,9 +373,11 @@ Go back to IntelliJ and create new MyModule class. This class will hold the defi
 ```java
 package com.ikasan.example;
 
+
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.builder.OnException;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
@@ -278,35 +385,35 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
-@Configuration("MyModuleFactory")
+@Configuration("ModuleFactory")
 public class MyModule
 {
-    @Resource BuilderFactory builderFactory;
+    @Resource
+    BuilderFactory builderFactory;
+    @Resource
+    ComponentFactory componentFactory;
 
     @Bean
     public Module myModule()
     {
+        // get the module builder
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("BNUrp Integration Module")
+                .withDescription("Vanilla Integration Module.");
 
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
+        Flow flow = moduleBuilder.getFlowBuilder("flow name")
+            .withDescription("Vanilla source flow")
+            .consumer("Event Generating Consumer", getConsumer())
+            .converter("Event Converter", componentFactory.getConverter())
+            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer().build()).build();
 
-        // Create a component builder from the builder factory
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-        // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-                .producer("My Target Producer", componentBuilder.logProducer().build())
-                .build();
-
-        // Add the created flow to the module builder and create the module
         Module module = moduleBuilder
-                .addFlow(eventGeneratingFlow)
-                .build();
+            .addFlow(flow)
+            .build();
+
         return module;
     }
 }
+
 ```
 
 Build and run the application again.
