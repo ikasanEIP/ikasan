@@ -251,7 +251,7 @@ public class Application
     }
 }
 ```
-Create a class for your Ikasan Module with a fully qualified name of ```com.ikasan.example.ComponentFactory```.
+Create a class for your Ikasan Module with a fully qualified name of ```com.ikasan.example.MyModule```.
 
 Copy and paste the entirety of the code below replacing the content of that class.
 ```java
@@ -260,13 +260,12 @@ package com.ikasan.example;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-@Configuration
+@Configuration("ModuleFactory")
 @ImportResource( {
         "classpath:h2-datasource-conf.xml"
 } )
-public class ComponentFactory
+public class MyModule
 {
-
 }   
 ```
 
@@ -366,9 +365,9 @@ Logging in will give you the default home page.
 Selecting 'Modules' will show the Integration Module for this example, but as we haven't defined one you just see a fairly empty screen.
 ![Login](quickstart-images/new-project-embeddedConsole-screen7.png) 
  
-Lets define a module.
+Lets create a module.
 
-Go back to IntelliJ and create new MyModule class. This class will hold the definiton of Ikasan Integration Module. It is important to annotate method returning Module with @Bean annotation.  
+Go back to IntelliJ open the MyModule class. So far this class just loads the persistence configuration via the ImportResource, but we now want to use this class to define our Ikasan Integration Module. Replace the entirety of this class with the code below.  
 ```java
 package com.ikasan.example;
 
@@ -379,19 +378,21 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 
-@Configuration("MyModuleFactory")
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+} )
 public class MyModule
 {
     @Resource BuilderFactory builderFactory;
-    @Resource ComponentFactory componentFactory;
 
     @Bean
     public Module myModule()
     {
-
         // Create a module builder from the builder factory
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                 .withDescription("My first integration module.");
@@ -400,9 +401,9 @@ public class MyModule
         ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
 
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer().build())
-                .producer("My Target Producer", componentBuilder.logProducer().build())
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
         // Add the created flow to the module builder and create the module
@@ -444,24 +445,41 @@ Lets go back to the code, specifically the ```MyModule``` class to understand wh
    @Configuration("MyModuleFactory")
    public class MyModule
    {
-       @Resource BuilderFactory builderFactory;
-       @Resource ComponentFactory componentFactory;
-...
+      @Resource BuilderFactory builderFactory;
+      ...
    }
 ```
-Firstly, we get a instance of a builderFactory from Spring context. The builderFactory is the base factory class from which all Ikasan constructs can be created. We also use Spring to create our own custom componentFactory instance. We could have done this all in one class, but breaking it down like this makes it easier to read and to test.
+Firstly, we get a instance of a builderFactory from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
 
-So getting back to the builderFactory we can see this provides all other builders required to create modules, flows, and components.
-
-The first thing to create is a moduleBuilder from the builderFactory. When we create the moduleBuilder we provide the name we are going to assign to the module.
+Firstly we create a moduleBuilder from the builderFactory. When we create the moduleBuilder we provide the name we are going to assign to the module.
 We can also set other properties on the module through this moduleBuilder such as description.
 
 ```java
    @Configuration("MyModuleFactory")
    public class MyModule
    {
-       @Resource BuilderFactory builderFactory;
-       @Resource ComponentFactory componentFactory;
+      @Resource BuilderFactory builderFactory;
+
+     @Bean
+    public Module myModule()
+    {
+
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+       ...
+       }
+   
+```
+Next, get a componentBuilder instance from the builderFactory - we will be using this in the flowBuilder.
+```java
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+} )
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
 
     @Bean
     public Module myModule()
@@ -471,30 +489,11 @@ We can also set other properties on the module through this moduleBuilder such a
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                 .withDescription("My first integration module.");
 
-       ...
-       }
-   
-```
-Next, get a componentBuilder instance from the builderFactory - we will be using this in the flowBuilder.
-```java
-  @Configuration("MyModuleFactory")
-  public class MyModule
-  {
-      @Resource BuilderFactory builderFactory;
-  
-      @Bean
-      public Module myModule()
-  
-      {
-  
-          // Create a module builder from the builder factory
-          ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                  .withDescription("My first integration module.");
-  
-          // Create a component builder from the builder factory
-          ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-          ...
-      }
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+        ...
+    }
+}
 ```
 
 Now on to the interesting parts. 
@@ -503,11 +502,13 @@ The components within the flow are then added as consumer and producer, both fro
 Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
 ```java
-@Configuration("MyModuleFactory")
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+} )
 public class MyModule
 {
     @Resource BuilderFactory builderFactory;
-    @Resource ComponentFactory componentFactory;
 
     @Bean
     public Module myModule()
@@ -521,8 +522,8 @@ public class MyModule
         ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
 
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -532,6 +533,7 @@ public class MyModule
                 .build();
         return module;
     }
+}
 }```
 So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
 ```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
@@ -539,35 +541,38 @@ So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-s
 Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
 ```java
-   @Configuration("MyModuleFactory")
-   public class MyModule
-   {
-       @Resource BuilderFactory builderFactory;
-   
-       @Bean
-       public Module myModule()
-       {
-   
-           // Create a module builder from the builder factory
-           ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                   .withDescription("My first integration module.");
-   
-           // Create a component builder from the builder factory
-           ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-   
-           // create a flow from the module builder and add required orchestration components
-           Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                   .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
-                   .producer("My Target Producer", componentBuilder.logProducer())
-                   .build();
-   
-           // Add the created flow to the module builder and create the module
-           Module module = moduleBuilder
-                   .addFlow(eventGeneratingFlow)
-                   .build();
-           return module; 
-       }
-   }
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+} )
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
+
+    @Bean
+    public Module myModule()
+    {
+
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+
+        // create a flow from the module builder and add required orchestration components
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .producer("My Target Producer", componentBuilder.logProducer())
+                .build();
+
+        // Add the created flow to the module builder and create the module
+        Module module = moduleBuilder
+                .addFlow(eventGeneratingFlow)
+                .build();
+        return module;
+    }
+}
 ```
 Finally we have the flow we can add it to the moduleBuilder and ```build()``` the module.
  
