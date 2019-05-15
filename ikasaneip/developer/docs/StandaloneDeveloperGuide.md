@@ -443,6 +443,9 @@ Lets go back to the code, specifically the ```MyModule``` class to understand wh
 
 ```java
    @Configuration("MyModuleFactory")
+   @ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+   } )
    public class MyModule
    {
       @Resource BuilderFactory builderFactory;
@@ -456,6 +459,9 @@ We can also set other properties on the module through this moduleBuilder such a
 
 ```java
    @Configuration("MyModuleFactory")
+   @ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+   } )
    public class MyModule
    {
       @Resource BuilderFactory builderFactory;
