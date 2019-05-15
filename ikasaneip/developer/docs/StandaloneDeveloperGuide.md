@@ -435,7 +435,7 @@ Start the flow - you will see the state change from 'stopped' to 'running'.
 ![Login](quickstart-images/new-project-embeddedConsole-screen11.png)
 
 View the application logs (either in IntelliJ or the command line, depending on how the application was started).
-![Login](quickstart-images/new-project-embeddedConsole-screen12old.png)
+![Login](quickstart-images/new-project-embeddedConsole-screen12.png)
 
 Congratulations - your first working Ikasan Integration Module, but what is it doing...
 
