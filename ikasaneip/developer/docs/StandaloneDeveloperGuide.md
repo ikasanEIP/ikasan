@@ -541,7 +541,8 @@ public class MyModule
         return module;
     }
 }
-}```
+```
+
 So ```componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?")``` returns an off-the-shelf scheduled consumer component which will provide the functionality of that consumer named "My Source Consumer";
 ```componentBuilder.logProducer()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
 
