@@ -401,7 +401,7 @@ public class MyModule
         ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
 
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                 .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -522,7 +522,7 @@ public class MyModule
         ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
 
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                 .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -561,7 +561,7 @@ public class MyModule
         ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
 
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("My Scheduled Flow")
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                 .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -610,8 +610,8 @@ Now we need to add this new Converter operation to our flow.
 Simply update the flowBuilder lines to insert this new component called "My Converter".
 ```java
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .converter("My Converter", new MyConverter())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -684,11 +684,11 @@ a different exceptionResolver. In this case when we see a TransformationExceptio
 that caused the exception.
 ```java
         // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                 .withExceptionResolver(builderFactory
                         .getExceptionResolverBuilder()
                         .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .converter("My Converter", new MyConverter())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -844,7 +844,7 @@ Dynamic Configuration can be programmatically set via the FluentAPI builder patt
                 .withExceptionResolver(builderFactory
                         .getExceptionResolverBuilder()
                         .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .converter("My Converter", new MyConverter(), Configuration.converterInvoker().withDynamicConfiguration(true))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
