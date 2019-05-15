@@ -443,19 +443,25 @@ Lets go back to the code, specifically the ```MyModule``` class to understand wh
 
 ```java
    @Configuration("MyModuleFactory")
+   @ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+   } )
    public class MyModule
    {
       @Resource BuilderFactory builderFactory;
       ...
    }
 ```
-Firstly, we get a instance of a builderFactory from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
+Firstly, we get a instance of a ```builderFactory``` from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
 
-Firstly we create a moduleBuilder from the builderFactory. When we create the moduleBuilder we provide the name we are going to assign to the module.
-We can also set other properties on the module through this moduleBuilder such as description.
+Next we create a ```moduleBuilder``` from the ```builderFactory```. When we create the ```moduleBuilder``` we provide the name we are going to assign to the module.
+We can also set other properties on the module through this ```moduleBuilder``` such as description.
 
 ```java
    @Configuration("MyModuleFactory")
+   @ImportResource( {
+        "classpath:h2-datasource-conf.xml"
+   } )
    public class MyModule
    {
       @Resource BuilderFactory builderFactory;
@@ -471,7 +477,7 @@ We can also set other properties on the module through this moduleBuilder such a
        }
    
 ```
-Next, get a componentBuilder instance from the builderFactory - we will be using this in the flowBuilder.
+Next, get a ```componentBuilder``` instance from the ```builderFactory``` - we will be using this in the ```flowBuilder```.
 ```java
 @Configuration("ModuleFactory")
 @ImportResource( {
@@ -496,9 +502,10 @@ public class MyModule
 }
 ```
 
-Now on to the interesting parts. 
-We use the moduleBuilder to get a flowBuilder and provide the name of the flow.
-The components within the flow are then added as consumer and producer, both from the componentBuilder.
+Now on to the interesting parts.
+
+We use the ```moduleBuilder``` to get a ```flowBuilder``` and specify the name of the flow.
+The components within the flow are then added as ```consumer``` and ```producer```, both from the ```componentBuilder```.
 Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
 ```java
@@ -534,9 +541,12 @@ public class MyModule
         return module;
     }
 }
-}```
-So ```componentBuilder.eventGeneratingConsumer().build()``` returns an off-the-shelf eventGenerating consumer component which will provide the functionality of that consumer named "My Source Consumer";
-```componentBuilder.logProducer().build()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
+```
+
+So ```componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?")``` returns an off-the-shelf scheduled consumer component which will provide the functionality of that consumer named "My Source Consumer";
+```componentBuilder.logProducer()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
+
+So the consumer of this flow will execute every 5 seconds on a repeating schedule. The event from the consumer to the producer is a simple cron based object which is subsequently logged by the producer.
 
 Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
