@@ -168,6 +168,12 @@ public class TechEndpointMultipleEventProvidersImplTest
         {
             return new StringTechEventProviderImpl();
         }
+
+        @Override
+        public boolean isRepeatEventCycle()
+        {
+            return false;
+        }
     }
 
     class IntegerTechEventProviderImpl implements TechEndpointEventProvider<Integer>
@@ -211,6 +217,12 @@ public class TechEndpointMultipleEventProvidersImplTest
         public TechEndpointEventProvider clone()
         {
             return new IntegerTechEventProviderImpl();
+        }
+
+        @Override
+        public boolean isRepeatEventCycle()
+        {
+            return false;
         }
     }
 }
