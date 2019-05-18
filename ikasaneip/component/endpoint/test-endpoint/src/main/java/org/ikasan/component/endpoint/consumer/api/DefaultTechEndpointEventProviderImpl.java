@@ -74,6 +74,9 @@ public class DefaultTechEndpointEventProviderImpl<T extends APIEvent> implements
     /** did we rollback */
     boolean rollback;
 
+    // repeat event cycle indefinitely
+    boolean repeatEventCycle;
+
     /**
      * Constructor
      * @param techEndpointEventFactory
@@ -92,7 +95,8 @@ public class DefaultTechEndpointEventProviderImpl<T extends APIEvent> implements
      * @param techEndpointEventFactory
      * @param techEndpointEventProvider
      */
-    public DefaultTechEndpointEventProviderImpl(TechEndpointEventFactory<T> techEndpointEventFactory, TechEndpointEventProvider<APIEvent> techEndpointEventProvider)
+    public DefaultTechEndpointEventProviderImpl(TechEndpointEventFactory<T> techEndpointEventFactory,
+                                                TechEndpointEventProvider<APIEvent> techEndpointEventProvider)
     {
         this.techEndpointEventFactory = techEndpointEventFactory;
         if(techEndpointEventFactory == null)
@@ -104,6 +108,8 @@ public class DefaultTechEndpointEventProviderImpl<T extends APIEvent> implements
         {
             throw new IllegalArgumentException("techEndpointEventProvider cannot be 'null'");
         }
+
+        this.repeatEventCycle = techEndpointEventProvider.isRepeatEventCycle();
 
         // create new provider instance based on events in the incoming provider
         for(APIEvent apiEvent:techEndpointEventProvider.getEvents())
@@ -154,6 +160,12 @@ public class DefaultTechEndpointEventProviderImpl<T extends APIEvent> implements
         return new DefaultTechEndpointEventProviderImpl(techEndpointEventFactory, this);
     }
 
+    @Override
+    public boolean isRepeatEventCycle()
+    {
+        return repeatEventCycle;
+    }
+
     public <M> TechEndpointProviderBuilder messageEvent(M message)
     {
         this.events.add( techEndpointEventFactory.getMessageEvent(message) );
@@ -192,32 +204,50 @@ public class DefaultTechEndpointEventProviderImpl<T extends APIEvent> implements
     }
 
     @Override
+    public TechEndpointProviderBuilder repeatEventCycleForever()
+    {
+        this.repeatEventCycle = true;
+        return this;
+    }
+
+    @Override
     public T consumeEvent()
     {
         try
         {
-            if(rollback)
-            {
-                rollback = false;
-                return (T)apiEvent;
-            }
-
-            while( (apiEvent = this.events.get(index++)).isRepeatEvent())
-            {
-                apiEvent = apiEvent.getPayload();
-                if(apiEvent != null)
-                {
-                    index--;
-                    return (T)apiEvent;
-                }
-            }
-
-            return (T)apiEvent;
+            return getEvent();
         }
         catch(IndexOutOfBoundsException e)
         {
+            if(repeatEventCycle)
+            {
+                index = 0;
+                return getEvent();
+            }
+
             return null;
         }
+    }
+
+    private T getEvent()
+    {
+        if(rollback)
+        {
+            rollback = false;
+            return (T)apiEvent;
+        }
+
+        while( (apiEvent = this.events.get(index++)).isRepeatEvent())
+        {
+            apiEvent = apiEvent.getPayload();
+            if(apiEvent != null)
+            {
+                index--;
+                return (T)apiEvent;
+            }
+        }
+
+        return (T)apiEvent;
     }
 
     @Override

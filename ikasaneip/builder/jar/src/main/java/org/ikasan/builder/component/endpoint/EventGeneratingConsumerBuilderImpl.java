@@ -179,10 +179,19 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
 
     protected TechEndpointEventProvider getDefaultTechEndpointProvider()
     {
+        // default behaviour is to publish 10 messages, one every second, indefinitely
         return TechEndpointEventProvider.with()
-                .messageEvent("Test Message")
-                .repeatForever()
-                .interval(1000)
+                .messageEvent("Test Message 1").interval(1000)
+                .messageEvent("Test Message 2").interval(1000)
+                .messageEvent("Test Message 3").interval(1000)
+                .messageEvent("Test Message 4").interval(1000)
+                .messageEvent("Test Message 5").interval(1000)
+                .messageEvent("Test Message 6").interval(1000)
+                .messageEvent("Test Message 7").interval(1000)
+                .messageEvent("Test Message 8").interval(1000)
+                .messageEvent("Test Message 9").interval(1000)
+                .messageEvent("Test Message 10").interval(1000)
+                .repeatEventCycleForever()
                 .build();
     }
 }

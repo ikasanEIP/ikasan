@@ -61,6 +61,12 @@ public interface TechEndpointProviderBuilder extends With
     TechEndpointProviderBuilder repeatForever();
 
     /**
+     * Repeast cycles of all events indefinitely.
+     * @return
+     */
+    TechEndpointProviderBuilder repeatEventCycleForever();
+
+    /**
      * Return a built instance of the APIEventProvider
      * @return
      */
