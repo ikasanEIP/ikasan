@@ -327,8 +327,8 @@ For instance, to change to MySQL update the pom.xml to switch h2 to MySql
 
 Update the application datasource to load that for MySQL.
 ```java
-UPDATE --> @ImportResource({ "classpath:h2-datasource-conf.xml", "classpath:ikasan-transaction-pointcut-eventListener.xml" })
-TO --> @ImportResource({ "classpath:mysql-datasource-conf.xml", "classpath:ikasan-transaction-pointcut-eventListener.xml" })
+UPDATE --> @ImportResource({ "classpath:h2-datasource-conf.xml" })
+TO --> @ImportResource({ "classpath:mysql-datasource-conf.xml" })
 ```
 Upate connection properties to be specific to MySQL instance.
 ```properties
@@ -402,7 +402,8 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", 
+                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -530,7 +531,8 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", 
+                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -572,7 +574,8 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", 
+                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -604,7 +607,7 @@ package com.ikasan.example.converter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
-public class MyConverter implements Converter<String,Integer>
+public class MyConverter implements Converter<JobExecutionContext,Integer>
 {
     public Integer convert(String payload) throws TransformationException 
     {

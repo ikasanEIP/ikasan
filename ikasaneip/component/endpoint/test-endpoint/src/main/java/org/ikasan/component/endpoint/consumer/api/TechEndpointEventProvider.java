@@ -78,4 +78,10 @@ public interface TechEndpointEventProvider<E>
      * @return
      */
     TechEndpointEventProvider clone();
+
+    /**
+     * Do we need to repeast the event cycle.
+     * @return
+     */
+    boolean isRepeatEventCycle();
 }

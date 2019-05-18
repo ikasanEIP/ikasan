@@ -124,6 +124,13 @@ public class TechEndpointMultipleEventProvidersImpl<E> implements TechEndpointEv
 
         return new TechEndpointMultipleEventProvidersImpl(clonedTechEndpointEventProviders);
     }
+
+    @Override
+    public boolean isRepeatEventCycle()
+    {
+        // does't support it
+        return false;
+    }
 }
 
 
