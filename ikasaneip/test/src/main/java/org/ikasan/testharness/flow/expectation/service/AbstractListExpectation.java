@@ -197,10 +197,10 @@ public abstract class AbstractListExpectation implements FlowExpectation
             Iterator<Capture<?>> captureIterator = copyOfCaptures.iterator();
             while (captureIterator.hasNext())
             {
+                Capture<?> capture = captureIterator.next();
                 try
                 {
                     ExpectationComparator expectationComparator = expectation.getExpectationComparator();
-                    Capture<?> capture = captureIterator.next();
                     expectationComparator.compare(expectation.getExpectation(), capture.getActual());
                     captureIterator.remove();
                     expectationSatisfied = true;
@@ -209,6 +209,17 @@ public abstract class AbstractListExpectation implements FlowExpectation
                 catch (ComparisonFailure e)
                 {
                     // carry on
+                }
+                catch (ClassCastException e)
+                {
+                    String comparatorClassName = expectation.getExpectationComparator().getClass().getName();
+                    String expectationClassName = expectation.getExpectation().getClass().getName();
+                    String actualClassName = capture.getActual().getClass().getName();
+                    throw new RuntimeException(
+                        "FAILED - " + expectation.getDescription() + " when invoking Comparator.compare method["
+                            + comparatorClassName
+                            + "]. Could be comparator method parameters are of the wrong type for this expectation class["
+                            + expectationClassName + "] or actual class[" + actualClassName + "].", e);
                 }
             }
             if (!expectationSatisfied)
