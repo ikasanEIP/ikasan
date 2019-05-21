@@ -68,4 +68,10 @@ public class Capture<T>
     {
         return this.actual;
     }
+
+    @Override
+    public String toString()
+    {
+        return actual.toString();
+    }
 }
