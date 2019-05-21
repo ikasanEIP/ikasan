@@ -528,7 +528,7 @@ public class OrderedExpectationTest
      * expectation and a user specified comparator, but based on an incorrect
      * class comparator parameter type resulting in a ClassCastException.
      */
-    @Test(expected = ClassCastException.class)
+    @Test(expected = RuntimeException.class)
     public void test_failedDefaultOrderedExpectationWithClassCastException()
     {
         // expectations
