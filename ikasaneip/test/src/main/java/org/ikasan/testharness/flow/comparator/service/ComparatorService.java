@@ -52,5 +52,5 @@ public interface ComparatorService<K>
     /**
      * Retrieve a comparator for this specific expectation.
      */
-    public ExpectationComparator<?,?> getComparator(K comparatorKey);
+    ExpectationComparator<?,?> getComparator(K comparatorKey);
 }

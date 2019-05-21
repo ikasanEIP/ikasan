@@ -54,5 +54,5 @@ public interface ExpectationComparator<E,A>
      * @param expectation
      * @param actual
      */
-    public void compare(E expected, A actual);
+    void compare(E expected, A actual);
 }

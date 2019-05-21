@@ -40,23 +40,28 @@
  */
 package org.ikasan.testharness.flow.expectation.service;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
-import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static org.junit.Assert.fail;
 
 /**
  * Implementation of a FlowExpectation based on applying the expectations in
  * a strict given order.
  *
  * @author Ikasan Development Team
- *
  */
 public class OrderedExpectation extends AbstractListExpectation
 {
-    /** Logger instance */
+    /**
+     * Logger instance
+     */
     private static Logger logger = LoggerFactory.getLogger(OrderedExpectation.class);
 
     /**
@@ -69,6 +74,7 @@ public class OrderedExpectation extends AbstractListExpectation
 
     /**
      * Contructor allowing an alternate comparator service.
+     *
      * @param comparatorService
      */
     public OrderedExpectation(ComparatorService comparatorService)
@@ -76,41 +82,65 @@ public class OrderedExpectation extends AbstractListExpectation
         super(comparatorService);
     }
 
-
     /**
-     * Is this actual operation satisfied with a corresponding expectation
-     * @param actual
+     * Have all expectations been satisfied
+     *
+     * @param captures Ordered list of captured FlowElement invocations
+     * @throws AssertionError if all expected invocations not satisfied
      */
     @SuppressWarnings("unchecked")
-    public void isSatisfied(Capture<?> actual)
+    public void allSatisfied(List<Capture<?>> captures)
     {
-        Assert.assertFalse("FAILED - Not enough expectations specified. Actual behaviour reports next invocation of " +  actual.getActual().getClass().getName(),
-                expectations.isEmpty());
-
-        DefaultExpectation expectation = expectations.remove(0);
-        ExpectationComparator expectationComparator = expectation.getExpectationComparator();
-
-        try
+        ExpectationDifference diff = getExpectationDifference(expectations, captures);
+        if (!diff.differencesFound())
         {
-            expectationComparator.compare(expectation.getExpectation(), actual.getActual());
-            logger.info("PASSED - " + expectation.getDescription());
+            // actual and values have the same elements but are they in the same order ?
+            int i = 0;
+            for (Capture<?> capture : captures)
+            {
+                DefaultExpectation expectation = expectations.get(i);
+                try
+                {
+                    ExpectationComparator expectationComparator = expectation.getExpectationComparator();
+                    expectationComparator.compare(expectation.getExpectation(), capture.getActual());
+                }
+                catch (ComparisonFailure e)
+                {
+                    // @formatter:off
+                    String format = "%n" +
+                            "Expected FlowElement invocations in order:%n" +
+                            "  <%s>%n" +
+                            "Actual FlowElements invocations are in a different order:%n" +
+                            "  <%s>%n" +
+                            "Unexpected FlowElement invocation at index:%n" +
+                            "  <%s>%n" +
+                            "Expected FlowElement invocation:%n" +
+                            "  <%s>%n" +
+                            "FlowElement invoked:%n" +
+                            "  <%s>%n";
+                    // @formatter:on
+                    String message = String
+                        .format(format, formatList(expectations), formatList(captures), i, expectation, capture);
+                    fail(message);
+                }
+                i++;
+            }
+            return;
         }
-        catch(ComparisonFailure e)
-        {
-            logger.info("FAILED - " + expectation.getDescription());
-            throw e;
-        }
-        catch(ClassCastException e)
-        {
-            logger.info("FAILED - " + expectation.getDescription());
-            String comparatorClassName = expectationComparator.getClass().getName();
-            String expectationClassName = expectation.getExpectation().getClass().getName();
-            String actualClassName = actual.getActual().getClass().getName();
-            throw new RuntimeException("FAILED - " + expectation.getDescription()
-                    + " when invoking Comparator.compare method["
-                    + comparatorClassName
-                    + "]. Could be comparator method parameters are of the wrong type for this expectation class[" +
-                    expectationClassName + "] or actual class[" + actualClassName + "].",e);
-        }
+        // @formatter:off
+        String format = "%n" +
+                "Expected FlowElement invocations in order:%n" +
+                "  <%s>%n" +
+                "Actual FlowElement invocations:%n" +
+                "  <%s>%n" +
+                "FlowElements not invoked:%n" +
+                "  <%s>%n" +
+                "FlowElements invoked but not expected:%n" +
+                "  <%s>%n";
+        // @formatter:on
+        String message = String
+            .format(format, formatList(expectations), formatList(captures), diff.getUnsatisfiedExpectations(),
+                diff.getUnexpectedCaptures());
+        fail(message);
     }
 }
