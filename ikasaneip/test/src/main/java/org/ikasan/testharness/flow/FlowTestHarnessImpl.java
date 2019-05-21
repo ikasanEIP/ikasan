@@ -41,6 +41,7 @@
 package org.ikasan.testharness.flow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
@@ -52,18 +53,17 @@ import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
  * @author Ikasan Development Team
  *
  */
-public class FlowTestHarnessImpl
-    implements FlowObserver, FlowTestHarness
+public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
 {
     /** actual captured flow behaviour */
-    private List<Capture<?>> captures = new ArrayList<Capture<?>>();
+    private List<Capture<?>> captures = Collections.synchronizedList(new ArrayList<>());
     
     /** expectations of the flow behaviour */
     private FlowExpectation flowExpectation;
     
     /**
      * Constructor
-     * @param flowExpectations
+     * @param flowExpectation
      */
     public FlowTestHarnessImpl(FlowExpectation flowExpectation)
     {
@@ -72,7 +72,7 @@ public class FlowTestHarnessImpl
     
     /**
      * Notification of a behavior in the flow
-     * @param actualBehaviour
+     * @param actual
      */
     @SuppressWarnings("unchecked")
     public <T> void notify(T actual)
@@ -82,12 +82,7 @@ public class FlowTestHarnessImpl
 
     public void assertIsSatisfied()
     {
-        for(Capture<?> capture:captures)
-        {
-            flowExpectation.isSatisfied(capture);
-        }
-
-        flowExpectation.allSatisfied();
+        flowExpectation.allSatisfied(captures);
     }
 
 }
