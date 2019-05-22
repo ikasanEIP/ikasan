@@ -200,9 +200,17 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             final String payloadContent)
     {
 
+        Set<String> flowNames = null;
+        Set<String> componentNames = null;
+        if(restrictionExists(moduleFlow)){
+            flowNames = new HashSet<String>(Arrays.asList(moduleFlow));
+        }
+        if (restrictionExists(componentName)) {
+
+            componentNames = new HashSet<String>(Arrays.asList(componentName));
+        }
         return findWiretapEvents(pageNo,pageSize,orderBy,orderAscending,moduleNames,
-            new HashSet<String>(Arrays.asList(moduleFlow)),new HashSet<String>(Arrays.asList(componentName))
-            ,eventId,payloadId,fromDate,untilDate, payloadContent );
+            flowNames,componentNames,eventId,payloadId,fromDate,untilDate, payloadContent );
 
     }
 
@@ -330,9 +338,17 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     {
         // If the value passed in is not null and not an empty string then it
         // can have a restriction applied
-        if (restrictionValue != null && !"".equals(restrictionValue))
+        if (restrictionValue != null )
         {
-            return true;
+            if(restrictionValue instanceof Collection){
+                if (!((Collection)restrictionValue).isEmpty())
+                    return true;
+            }else{
+
+                if( !"".equals(restrictionValue))
+                    return true;
+            }
+
         }
         return false;
     }
