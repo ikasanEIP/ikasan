@@ -72,6 +72,8 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 {
     public static final String EVENT_IDS = "eventIds";
 
+    public static final String NOW = "now";
+
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = true;
 
@@ -81,7 +83,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     /** Batch size used when in a single transaction */
     private Integer transactionBatchSize = 2000;
 
-    public static final String UPDATE_HARVESTED_QUERY = "update FlowInvocationMetricImpl w set w.harvested = 1 " +
+    public static final String UPDATE_HARVESTED_QUERY = "update FlowInvocationMetricImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
 
@@ -319,15 +321,15 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 	            {
 	            	String deleteMetrics = "DELETE FROM CustomMetric WHERE CompInvocationMetricId in " +
 	            			"(SELECT Id FROM ComponentInvocationMetric WHERE FlowInvocationMetricId in (SELECT Id FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
-                            " AND Harvested = 1))";
+                            " AND HarvestedDateTime > 0))";
 	            	session.createSQLQuery(deleteMetrics).executeUpdate();
 	            	 
 	                String deleteMessageHistory = "DELETE FROM ComponentInvocationMetric WHERE FlowInvocationMetricId in (SELECT Id FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
-                            " AND Harvested = 1)";
+                            " AND HarvestedDateTime > 0)";
 	                session.createSQLQuery(deleteMessageHistory).executeUpdate();
 
                     String deleteFlowInvocation = "DELETE FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
-                            " AND Harvested = 1";
+                            " AND HarvestedDateTime > 0";
                     session.createSQLQuery(deleteFlowInvocation).executeUpdate();
 	                return null;
 	            }
@@ -369,7 +371,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(builder.lessThan(root.get("expiry"),System.currentTimeMillis()));
-            predicates.add(builder.equal(root.get("harvested"),true));
+            predicates.add(builder.greaterThan(root.get("harvestedDateTime"),0));
 
             criteriaQuery.select(builder.count(root))
                 .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -398,7 +400,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.equal(root.get("harvested"),false));
+            predicates.add(builder.equal(root.get("harvestedDateTime"),0));
 
             criteriaQuery.select(builder.count(root))
                 .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -438,9 +440,18 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 CriteriaQuery<FlowInvocationMetric> criteriaQuery = builder.createQuery(FlowInvocationMetric.class);
                 Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
 
-                criteriaQuery.select(root)
-                    .where(builder.equal(root.get("harvested"),harvested))
-                    .orderBy(builder.asc(root.get("invocationStartTime")));;
+                if(harvested)
+                {
+                    criteriaQuery.select(root)
+                        .where(builder.greaterThan(root.get("harvestedDateTime"), 0))
+                        .orderBy(builder.asc(root.get("invocationStartTime")));
+                }
+                else
+                {
+                    criteriaQuery.select(root)
+                        .where(builder.equal(root.get("harvestedDateTime"), 0))
+                        .orderBy(builder.asc(root.get("invocationStartTime")));
+                }
 
                 Query<FlowInvocationMetric> query = session.createQuery(criteriaQuery);
                 query.setMaxResults(housekeepingBatchSize);
@@ -560,6 +571,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 for(List<Long> eventIds: partitionedIds)
                 {
                     Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameter(NOW, System.currentTimeMillis());
                     query.setParameterList(EVENT_IDS, eventIds);
                     query.executeUpdate();
                 }

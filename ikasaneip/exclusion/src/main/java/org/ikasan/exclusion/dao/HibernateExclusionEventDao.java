@@ -70,11 +70,13 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 {
     public static final String EVENT_IDS = "eventIds";
 
+    public static final String NOW = "now";
+
     /** batch delete statement */
     private static final String DELETE_QUERY = "delete ExclusionEventImpl s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
     private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEventImpl s where s.errorUri = :errorUri";
 
-    public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvested = 1 " +
+    public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
 
@@ -425,7 +427,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             Root<ExclusionEventImpl> root = criteriaQuery.from(ExclusionEventImpl.class);
 
             criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvested"),false))
+                .where(builder.equal(root.get("harvestedDateTime"),0))
                 .orderBy(
                     builder.desc(root.get("timestamp")));
 
@@ -453,6 +455,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             for (List<Long> eventIds : partitionedIds)
             {
                 Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                query.setParameter(NOW, System.currentTimeMillis());
                 query.setParameterList(EVENT_IDS, eventIds);
                 query.executeUpdate();
             }

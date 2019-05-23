@@ -110,6 +110,7 @@ public class HibernateMessageHistoryDaoTest
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
         flowInvocationMetric.setHarvested(true);
+        flowInvocationMetric.setHarvestedDateTime(10000L);
 
 
         messageHistoryDao.save(flowInvocationMetric);
@@ -220,7 +221,11 @@ public class HibernateMessageHistoryDaoTest
         }
 
 
-    	PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+    	PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents
+            (0, 10, null, true, Collections.singleton("moduleName"), null
+                , null, null, null, null, null);
+
+        System.out.println("Number of records to delete: " + results.getResultSize());
 
         messageHistoryDao.deleteHarvestableRecords(events);
 
@@ -272,6 +277,7 @@ public class HibernateMessageHistoryDaoTest
         events =  messageHistoryDao.getHarvestedRecords(50);
         messageHistoryDao.deleteHarvestableRecords(events);
 
+
         System.out.println("Completed deleting records: " + System.currentTimeMillis());
 
     	results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
@@ -316,6 +322,7 @@ public class HibernateMessageHistoryDaoTest
                     System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
             flowInvocationMetric.setHarvested(true);
+            flowInvocationMetric.setHarvestedDateTime(1000L);
 
 
             messageHistoryDao.save(flowInvocationMetric);

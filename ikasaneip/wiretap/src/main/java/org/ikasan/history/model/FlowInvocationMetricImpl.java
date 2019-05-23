@@ -20,6 +20,8 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     private Boolean harvested = false;
     private long expiry;
     private String errorUri;
+    /** the time the record was harvested */
+    private long harvestedDateTime = 0L;
 
     /**
      * Constructor
@@ -162,5 +164,15 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     public void setErrorUri(String errorUri)
     {
         this.errorUri = errorUri;
+    }
+
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
     }
 }
