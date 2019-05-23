@@ -95,6 +95,11 @@
 				  type="boolean"
 				  column="Harvested"
 				  not-null="true" />
+
+        <property name="harvestedDateTime"
+                  type="long"
+                  column="HarvestedDateTime"
+                  not-null="true" />
 		
 	</class>
 </hibernate-mapping>

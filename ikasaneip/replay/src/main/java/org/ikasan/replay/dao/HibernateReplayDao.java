@@ -103,7 +103,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete HibernateReplayAuditEvent re " +
 			" where re.id.replayEventId in(:" + EVENT_IDS + ")";
 
-    public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvested = 1 " +
+    public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 	
 	/* (non-Javadoc)
@@ -363,7 +363,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
             Root<HibernateReplayAuditEvent> root = criteriaQuery.from(HibernateReplayAuditEvent.class);
 
             List<Predicate> predicates = new ArrayList<>();
-//            predicates.add(builder.equal(root.get("replayAuditId"), id));
             predicates.add(builder.equal(root.get("id").get("replayAuditId"),id));
 
             criteriaQuery.select(root)
@@ -460,9 +459,9 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
             Root<HibernateReplayEvent> root = criteriaQuery.from(HibernateReplayEvent.class);
 
             criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvested"),false))
+                .where(builder.equal(root.get("harvestedDateTime"),0))
                 .orderBy(
-                    builder.desc(root.get("timestamp")));
+                    builder.asc(root.get("timestamp")));
 
             Query<ReplayEvent> query = session.createQuery(criteriaQuery);
             query.setMaxResults(housekeepingBatchSize);
@@ -490,6 +489,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
                 {
                     Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
                     query.setParameterList(EVENT_IDS, eventIds);
+                    query.setParameter(NOW, System.currentTimeMillis());
                     query.executeUpdate();
                 }
 

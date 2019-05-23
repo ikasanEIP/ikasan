@@ -47,23 +47,29 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterMessageHistoryTimestamp" context="postBaseline">
+    <changeSet author="ikasan dev" id="alterFlowInvocationMetricTimestamp" context="postBaseline">
     
     	<preConditions onFail="MARK_RAN">
-			<not><columnExists tableName="MessageHistory" columnName="HarvestedDateTime"/></not>
+			<not><columnExists tableName="FlowInvocationMetric" columnName="HarvestedDateTime"/></not>
 		</preConditions>
 	    
-	    <addColumn tableName="MessageHistory">
+	    <addColumn tableName="FlowInvocationMetric">
 			<column defaultValueNumeric="0" name="HarvestedDateTime" type="numeric(18)">
 				<constraints nullable="false"/>
 			</column>
 	    </addColumn>
 
         <createIndex
-            indexName="IX_MessageHistory_HarvestedDateTime"
-            tableName="MessageHistory">
+            indexName="IX_FlowInvocationMetric_HarvestedDateTime"
+            tableName="FlowInvocationMetric">
             <column name="HarvestedDateTime" type="numeric(18)"/>
         </createIndex>
+
+        <!-- We need to set the HarvestedDateTime > 0 if we have already been harvested. -->
+        <sql>
+            UPDATE FlowInvocationMetric SET HarvestedDateTime = 1
+            WHERE Harvested = 1
+        </sql>
 
     </changeSet>
 

@@ -65,6 +65,12 @@
             <column name="HarvestedDateTime" type="numeric(18)"/>
         </createIndex>
 
+        <!-- We need to set the HarvestedDateTime > 0 if we have already been harvested. -->
+        <sql>
+            UPDATE ReplayEvent SET HarvestedDateTime = 1
+            WHERE Harvested = 1
+        </sql>
+
     </changeSet>
 
 </databaseChangeLog>
