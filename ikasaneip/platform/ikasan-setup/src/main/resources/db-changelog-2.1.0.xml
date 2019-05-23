@@ -8,6 +8,12 @@
 
     <!-- 2.1.x table alterations -->
     <include file="db/alter/db-changeLog-alterUsers.xml" relativeToChangelogFile="true" />
+    <include file="db/alter/db-changeLog-alterReplayEventAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
+    <include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
+    <include file="db/alter/db-changeLog-alterExclusionEventAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
+    <include file="db/alter/db-changeLog-alterErrorOccurrenceAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
+
+
 
     <!-- 2.1.x cardinality creation -->
 

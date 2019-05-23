@@ -44,6 +44,7 @@ import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.wiretap.WiretapEvent;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Implementation of a flowEvent based on payload being of any generic type.
@@ -61,6 +62,9 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
 
     /** has the record been harvested */
     private boolean harvested;
+
+    /** the time the record was harvested */
+    private long harvestedDateTime;
 
 
     public WiretapFlowEvent()
@@ -114,5 +118,29 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     public void setHarvested(boolean harvested)
     {
         this.harvested = harvested;
+    }
+
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("WiretapFlowEvent{");
+        sb.append(super.toString());
+        sb.append("relatedEventId='").append(relatedEventId).append('\'');
+        sb.append(", eventTimestamp=").append(eventTimestamp);
+        sb.append(", harvested=").append(harvested);
+        sb.append(", harvestedDateTime=").append(harvestedDateTime);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -75,6 +75,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     private static final String EVENT_ID = "eventId";
     private static final String BATCH_SIZE = "batchSize";
     public static final String EVENT_IDS = "eventIds";
+    public static final String CURRENT_DATE_TIME = "currentDateTime";
     public static final String NOW = "now";
 
     /** Query used for housekeeping expired persistence events */
@@ -90,7 +91,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public static final String WIRETAP_EVENTS_DELETE_QUERY = "delete WiretapFlowEvent w " +
             " where w.id in(:" + EVENT_IDS + ")";
 
-    public static final String UPDATE_HARVESTED_QUERY = "update WiretapFlowEvent w set w.harvested = 1 " +
+    public static final String UPDATE_HARVESTED_QUERY = "update WiretapFlowEvent w set w.harvestedDateTime = :" + CURRENT_DATE_TIME + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
 
@@ -311,7 +312,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 if (restrictionExists(payloadContent))
                 {
-//                    criteria.add(Restrictions.like("event", payloadContent, MatchMode.ANYWHERE));
                     predicates.add( builder.like(root.get("event"),payloadContent));
                 }
                 if (restrictionExists(fromDate))
@@ -454,9 +454,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
 
             criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvested"),false))
+                .where(builder.equal(root.get("harvestedDateTime"),0))
                 .orderBy(
-                    builder.desc(root.get("timestamp")));
+                    builder.asc(root.get("timestamp")));
 
             Query<WiretapEvent> query = session.createQuery(criteriaQuery);
             query.setFirstResult(0);
@@ -482,6 +482,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
                 query.setParameterList(EVENT_IDS, eventIds);
+                query.setParameter(CURRENT_DATE_TIME, System.currentTimeMillis());
                 query.executeUpdate();
             }
 

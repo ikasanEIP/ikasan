@@ -254,5 +254,5 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
         return builder.toString();
     }
     
-    //TODO Do we need to override equals contract?
+
 }
