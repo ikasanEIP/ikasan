@@ -72,7 +72,10 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 	/** flag to indicate if the record has been harvested */
 	boolean harvested;
 
-	/**
+    /** the time the record was harvested */
+    private long harvestedDateTime;
+
+    /**
 	 * Default constructor
 	 */
 	public HibernateReplayEvent()
@@ -245,6 +248,16 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 		this.eventAsString = eventAsString;
 	}
 
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
+    }
+
 	/* (non-Javadoc)
              * @see java.lang.Object#hashCode()
              */
@@ -282,16 +295,29 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() 
-	{
-		return "ReplayEvent [id=" + id + ", moduleName=" + moduleName
-				+ ", flowName=" + flowName + ", eventId=" + eventId
-				+ ", event=" + Arrays.toString(event) + ", timestamp="
-				+ timestamp + "]";
-	}
-	
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("HibernateReplayEvent{");
+        sb.append("id=").append(id);
+        sb.append(", moduleName='").append(moduleName).append('\'');
+        sb.append(", flowName='").append(flowName).append('\'');
+        sb.append(", eventId='").append(eventId).append('\'');
+        sb.append(", event=");
+        if (event == null) sb.append("null");
+        else
+        {
+            sb.append('[');
+            for (int i = 0; i < event.length; ++i)
+                sb.append(i == 0 ? "" : ", ").append(event[i]);
+            sb.append(']');
+        }
+        sb.append(", eventAsString='").append(eventAsString).append('\'');
+        sb.append(", timestamp=").append(timestamp);
+        sb.append(", expiry=").append(expiry);
+        sb.append(", harvested=").append(harvested);
+        sb.append(", harvestedDateTime=").append(harvestedDateTime);
+        sb.append('}');
+        return sb.toString();
+    }
 }

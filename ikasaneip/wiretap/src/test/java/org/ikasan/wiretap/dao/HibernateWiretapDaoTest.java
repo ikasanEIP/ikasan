@@ -42,14 +42,20 @@ package org.ikasan.wiretap.dao;
 
 import javax.annotation.Resource;
 
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -63,94 +69,300 @@ import java.util.List;
         "/hsqldb-config.xml",
         "/substitute-components.xml",
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class HibernateWiretapDaoTest
 {
 	/** Object being tested */
 	@Resource private WiretapDao wiretapDao;
 
-//	/**
-//	 * Before each test case, inject a mock {@link HibernateTemplate} to hibernate implementation
-//	 * being tested
-//	 */
-//	@Before
-//	public void setup()
-//	{
-//
-//		for(int i=0; i< 10000; i++)
-//		{
-//			WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
-//					"eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
-//
-//			this.wiretapDao.save(event);
-//		}
-//
-//	}
+	/**
+	 * Before each test case, inject a mock {@link HibernateTemplate} to hibernate implementation
+	 * being tested
+	 */
+	@Before
+	public void setup()
+	{
+
+		for(int i=0; i< 10000; i++)
+		{
+			WiretapFlowEvent event = new WiretapFlowEvent("moduleName" + i, "flowName" + i, "componentName" + i,
+					"eventId" + i, "relatedEventId" + i, System.currentTimeMillis() ,"event" + i, System.currentTimeMillis() - 1000000000);
+
+			this.wiretapDao.save(event);
+		}
+
+	}
 
 	@Test
-	@DirtiesContext
-	public void test_get_harvestableRecords()
+	public void test_get_harvestable_records_and_update()
 	{
-		System.out.println("Getting harvestable records");
-
-        long startTime = System.currentTimeMillis();
 	    List<WiretapEvent> events = wiretapDao.getHarvestableRecords(50);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
 
-//		Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
 
 		wiretapDao.updateAsHarvested(events);
 
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
 		events = wiretapDao.getHarvestableRecords(1000);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
-        events = wiretapDao.getHarvestableRecords(1000);
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
-
         wiretapDao.updateAsHarvested(events);
 
-        System.out.println("Time taken: " + (System.currentTimeMillis() - startTime));
+        events = wiretapDao.getHarvestableRecords(1000);
+        wiretapDao.updateAsHarvested(events);
 
-//		Assert.assertEquals("Wiretap events should equal!", events.size(), 9950);
-        System.out.println("Finished getting harvestable records");
+
+        events = wiretapDao.getHarvestableRecords(10000);
+
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 7950);
 	}
 
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_sybase()
-//	{
-//		wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
-//	}
-//
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_mssql()
-//	{
-//		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
-//	}
-//
-//	@Test
-//	@DirtiesContext
-//	public void test_success_no_results_mysql()
-//	{
-//		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
-//	}
-//
-//	@After
-//	public void process()
-//	{
-//		wiretapDao.setBatchHousekeepDelete(true);
-//		wiretapDao.setHousekeepingBatchSize(100);
-//		wiretapDao.setTransactionBatchSize(2000);
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//		this.wiretapDao.deleteAllExpired();
-//	}
+    @Test
+    public void test_housekeepables_exits()
+    {
+        boolean houserKeepablesExist = wiretapDao.housekeepablesExist();
+
+        Assert.assertEquals("Housekeepables exist!",houserKeepablesExist, true);
+    }
+
+    @Test
+    public void test_housekeep()
+    {
+        wiretapDao.setBatchHousekeepDelete(true);
+        wiretapDao.deleteAllExpired();
+
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 8000);
+    }
+
+    @Test
+    public void test_housekeep_batch()
+    {
+        wiretapDao.setBatchHousekeepDelete(false);
+        wiretapDao.deleteAllExpired();
+
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_id()
+    {
+        List<WiretapEvent> events = wiretapDao.getHarvestableRecords(1);
+
+        WiretapEvent event = this.wiretapDao.findById(events.get(0).getIdentifier());
+
+        Assert.assertEquals("Wiretap event equals", event.getIdentifier(), events.get(0).getIdentifier());
+    }
+
+    @Test
+    public void test_find_by_module_name_collection()
+    {
+        HashSet<String> moduleNames = new HashSet<>();
+        moduleNames.add("moduleName1");
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, moduleNames,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+    }
+
+    @Test
+    public void test_find_by_module_name_collection_null()
+    {
+        HashSet<String> moduleNames = null;
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, moduleNames,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_module_name_collection_with_null_entry()
+    {
+        HashSet<String> moduleNames = new HashSet<>();
+        moduleNames.add(null);
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, moduleNames,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_component_name_collection()
+    {
+        HashSet<String> componentNames = new HashSet<>();
+        componentNames.add("componentName1");
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, componentNames, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+    }
+
+    @Test
+    public void test_find_by_component_name()
+    {
+        HashSet<String> componentNames = new HashSet<>();
+        componentNames.add("componentName1");
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            null, "componentName1", null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+    }
+
+    @Test
+    public void test_find_by_component_name_empty()
+    {
+        HashSet<String> componentNames = new HashSet<>();
+        componentNames.add("componentName1");
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            null, "", null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_compenent_name_collection_null()
+    {
+        HashSet<String> componentNames = null;
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, componentNames, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_component_name_collection_with_null_entry()
+    {
+        HashSet<String> componentNames = new HashSet<>();
+        componentNames.add(null);
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, componentNames, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_flow_name_collection()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        flowNames.add("flowName1");
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+    }
+
+    @Test
+    public void test_find_by_flow_name()
+    {
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            "flowName1", null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+    }
+
+    @Test
+    public void test_find_by_flow_name_empty()
+    {
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            "", null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_flow_name_collection_null()
+    {
+        HashSet<String> flowNames = null;
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_flow_name_collection_with_null_entry()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        flowNames.add(null);
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_event_id()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        flowNames.add(null);
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_event()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        flowNames.add(null);
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, "event1");
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_find_by_date_time_range()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, new Date(System.currentTimeMillis()-100000000L), new Date(System.currentTimeMillis()+100000000L), null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+    }
+
+    @Test
+    public void test_find_by_date_time_range_nothing_found()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, new Date(System.currentTimeMillis()+1000000L), new Date(System.currentTimeMillis()+2000000L), null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_order_by_asc()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, "timestamp", true, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 10000);
+        Assert.assertEquals("Wiretap name equals", events.getPagedResults().get(0).getModuleName(), "moduleName0");
+    }
+
+    @Test
+    public void test_order_by_desc()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, "timestamp", false, null,
+            flowNames, null, "eventId1", null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 1);
+        Assert.assertEquals("Wiretap name equals", events.getPagedResults().get(0).getModuleName(), "moduleName1");
+    }
 }

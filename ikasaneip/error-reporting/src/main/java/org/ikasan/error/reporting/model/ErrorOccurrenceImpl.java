@@ -151,6 +151,9 @@ public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>, HarvestEven
      */
 	private boolean harvested;
 
+    /** the time the record was harvested */
+    private long harvestedDateTime;
+
     /**
      * Constructor
      */
@@ -429,7 +432,17 @@ public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>, HarvestEven
 		this.harvested = harvested;
 	}
 
-	/* (non-Javadoc)
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
+    }
+
+    /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
 	@Override
@@ -579,24 +592,38 @@ public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>, HarvestEven
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "ErrorOccurrence [uri=" + uri + ", moduleName=" + moduleName
-				+ ", flowName=" + flowName + ", flowElementName="
-				+ flowElementName + ", errorDetail=" + errorDetail
-				+ ", errorMessage=" + errorMessage + ", exceptionClass="
-				+ exceptionClass + ", eventLifeIdentifier="
-				+ eventLifeIdentifier + ", eventRelatedIdentifier="
-				+ eventRelatedIdentifier + ", action=" + action + ", event="
-				+ event + ", eventAsString=" + eventAsString + ", timestamp="
-				+ timestamp + ", expiry=" + expiry + ", userAction="
-				+ userAction + ", actionedBy=" + actionedBy
-				+ ", userActionTimestamp=" + userActionTimestamp + "]";
-	}
-
-	
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("ErrorOccurrenceImpl{");
+        sb.append("uri='").append(uri).append('\'');
+        sb.append(", moduleName='").append(moduleName).append('\'');
+        sb.append(", flowName='").append(flowName).append('\'');
+        sb.append(", flowElementName='").append(flowElementName).append('\'');
+        sb.append(", errorDetail='").append(errorDetail).append('\'');
+        sb.append(", errorMessage='").append(errorMessage).append('\'');
+        sb.append(", exceptionClass='").append(exceptionClass).append('\'');
+        sb.append(", eventLifeIdentifier='").append(eventLifeIdentifier).append('\'');
+        sb.append(", eventRelatedIdentifier='").append(eventRelatedIdentifier).append('\'');
+        sb.append(", action='").append(action).append('\'');
+        sb.append(", event=");
+        if (event == null) sb.append("null");
+        else
+        {
+            sb.append('[');
+            for (int i = 0; i < event.length; ++i)
+                sb.append(i == 0 ? "" : ", ").append(event[i]);
+            sb.append(']');
+        }
+        sb.append(", eventAsString='").append(eventAsString).append('\'');
+        sb.append(", timestamp=").append(timestamp);
+        sb.append(", expiry=").append(expiry);
+        sb.append(", userAction='").append(userAction).append('\'');
+        sb.append(", actionedBy='").append(actionedBy).append('\'');
+        sb.append(", userActionTimestamp=").append(userActionTimestamp);
+        sb.append(", harvested=").append(harvested);
+        sb.append(", harvestedDateTime=").append(harvestedDateTime);
+        sb.append('}');
+        return sb.toString();
+    }
 }

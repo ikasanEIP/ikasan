@@ -105,6 +105,20 @@ public interface FlowInvocationMetric<EVENT>
     public void setHarvested(Boolean harvested);
 
     /**
+     * Get the harvested flag.
+     *
+     * @return
+     */
+    public long getHarvestedDateTime();
+
+    /**
+     * Set the harvested flag.
+     *
+     * @param harvested
+     */
+    public void setHarvestedDateTime(long harvested);
+
+    /**
      * Get the metric expiry.
      *
      * @return
