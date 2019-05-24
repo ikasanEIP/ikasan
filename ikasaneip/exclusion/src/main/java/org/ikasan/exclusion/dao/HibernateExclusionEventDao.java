@@ -429,7 +429,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0))
                 .orderBy(
-                    builder.desc(root.get("timestamp")));
+                    builder.asc(root.get("timestamp")));
 
             Query<ExclusionEvent> query = session.createQuery(criteriaQuery);
             query.setMaxResults(housekeepingBatchSize);
