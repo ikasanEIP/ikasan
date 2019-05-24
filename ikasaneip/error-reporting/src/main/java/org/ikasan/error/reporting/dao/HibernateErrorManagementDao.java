@@ -437,7 +437,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0))
-                .orderBy(builder.desc(root.get("timestamp")));
+                .orderBy(builder.asc(root.get("timestamp")));
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
             query.setMaxResults(harvestingBatchSize);
