@@ -1493,4 +1493,41 @@ public class FlowBuilderTest
 
         mockery.assertIsSatisfied();
     }
+
+    /**
+     * Test successful flow creation.
+     * This test is to ensure we can pass exceptionResolver with explicit instance or builder instance
+     */
+    @Test
+    public void test_successful_withExceptionResolver_implied_build()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        // explicit exceptionResolver
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withExceptionResolver( builderFactory.getExceptionResolverBuilder().build() );
+
+        // implied build on exceptionResolver
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withExceptionResolver( builderFactory.getExceptionResolverBuilder() );
+    }
+
+    /**
+     * Test successful flow creation.
+     * This test is to ensure we can pass monitor with explicit instance or builder instance
+     */
+    @Test
+    public void test_successful_withMonitor_implied_build()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        // explicit build() call
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().build() );
+
+        // implied build call
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withDescription("flowDescription")
+                .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor() );
+    }
 }
