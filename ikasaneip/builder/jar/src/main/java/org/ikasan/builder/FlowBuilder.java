@@ -408,6 +408,16 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
+     * Setter for monitor
+     * @param notifierBuilder
+     */
+    public FlowBuilder withMonitor(MonitorBuilder.NotifierBuilder notifierBuilder)
+    {
+        this.withMonitor( notifierBuilder.build() );
+        return this;
+    }
+
+    /**
      * Setter for re-submission service
      * @param resubmissionService
      */
@@ -444,6 +454,15 @@ public class FlowBuilder implements ApplicationContextAware
     {
         this.exceptionResolver = exceptionResolver;
         return this;
+    }
+
+    /**
+     * Setter for exception resolver to be registered with the recovery manager.
+     * @param exceptionResolverBuilder
+     */
+    public FlowBuilder withExceptionResolver(ExceptionResolverBuilder exceptionResolverBuilder)
+    {
+        return this.withExceptionResolver(exceptionResolverBuilder.build());
     }
 
     /**
