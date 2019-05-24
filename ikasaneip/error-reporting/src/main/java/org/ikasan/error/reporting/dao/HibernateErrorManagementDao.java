@@ -84,7 +84,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
     public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
-    public static final String UPDATE_HARVESTED_QUERY = "update ErrorOccurrenceImpl w set w.harvested = 1 " +
+    public static final String UPDATE_HARVESTED_QUERY = "update ErrorOccurrenceImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
     /* (non-Javadoc)
@@ -436,8 +436,8 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             Root<ErrorOccurrenceImpl> root = criteriaQuery.from(ErrorOccurrenceImpl.class);
 
             criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvested"),false))
-                .orderBy(builder.desc(root.get("timestamp")));
+                .where(builder.equal(root.get("harvestedDateTime"),0))
+                .orderBy(builder.asc(root.get("timestamp")));
 
             Query<ErrorOccurrence> query = session.createQuery(criteriaQuery);
             query.setMaxResults(harvestingBatchSize);
@@ -464,6 +464,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
                 for(List<String> eventIds: partitionedIds)
                 {
                     Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
+                    query.setParameter(NOW, System.currentTimeMillis());
                     query.setParameterList(EVENT_IDS, eventIds);
                     query.executeUpdate();
                 }

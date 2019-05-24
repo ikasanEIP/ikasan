@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -44,58 +42,35 @@
  Author:  Ikasan Development Team
  
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-<hibernate-mapping>
+    <changeSet author="ikasan dev" id="alterIkasanWiretapAddHarvestedTimestamp" context="postBaseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><columnExists tableName="IkasanWiretap" columnName="HarvestedDateTime"/></not>
+		</preConditions>
+	    
+	    <addColumn tableName="IkasanWiretap">
+			<column defaultValueNumeric="0" name="HarvestedDateTime" type="numeric(18)">
+				<constraints nullable="false"/>
+			</column>
+	    </addColumn>
 
-    <class name="org.ikasan.exclusion.model.ExclusionEventImpl" table="ExclusionEvent">
+        <createIndex
+            indexName="IX_IkasanWiretap_HarvestedDateTime"
+            tableName="IkasanWiretap">
+            <column name="HarvestedDateTime" type="numeric(18)"/>
+        </createIndex>
 
-        <id name="id" type="long" column="Id">
-            <generator class="native" />
-        </id>
+        <!-- We need to set the HarvestedDateTime > 0 if we have already been harvested. -->
+        <sql>
+            UPDATE IkasanWiretap SET HarvestedDateTime = 1
+            WHERE Harvested = 1
+        </sql>
 
-        <property name="moduleName"
-                  type="java.lang.String"
-                  column="ModuleName"
-                  not-null="true" />
+    </changeSet>
 
-        <property name="flowName"
-                  type="java.lang.String"
-                  column="FlowName"
-                  not-null="true" />
-
-        <property name="identifier"
-                  type="java.lang.String"
-                  column="Identifier"
-                  not-null="true" />
-
-        <property name="event"
-                  type="byte[]"
-                  column="Event"
-                  not-null="true" />
-
-        <property name="timestamp"
-                  type="long"
-                  column="Timestamp"
-                  not-null="true" />
-
-        <property name="errorUri"
-                  type="java.lang.String"
-                  column="ErrorUri"
-                  not-null="false" />
-
-        <property name="harvested"
-                  type="boolean"
-                  column="Harvested"
-                  not-null="true" />
-
-        <property name="harvestedDateTime"
-                  type="long"
-                  column="HarvestedDateTime"
-                  not-null="true" />
-
-    </class>
-
-</hibernate-mapping>
+</databaseChangeLog>

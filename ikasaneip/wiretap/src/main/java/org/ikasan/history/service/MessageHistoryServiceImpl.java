@@ -162,6 +162,7 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
         for(FlowInvocationMetric event: events)
         {
             event.setHarvested(true);
+            event.setHarvestedDateTime(System.currentTimeMillis());
 
             this.messageHistoryDao.save(event);
         }

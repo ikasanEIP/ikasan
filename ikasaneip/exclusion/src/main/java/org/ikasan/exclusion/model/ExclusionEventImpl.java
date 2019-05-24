@@ -76,6 +76,9 @@ public class ExclusionEventImpl implements ExclusionEvent, HarvestEvent
     /** flag to indicate if the record has been harvested */
     boolean harvested;
 
+    /** the time the record was harvested */
+    private long harvestedDateTime;
+
     /**
      * Constructor
      * @param moduleName
@@ -183,6 +186,16 @@ public class ExclusionEventImpl implements ExclusionEvent, HarvestEvent
         this.harvested = harvested;
     }
 
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -207,15 +220,27 @@ public class ExclusionEventImpl implements ExclusionEvent, HarvestEvent
     }
 
     @Override
-    public String toString() {
-        return "ExclusionEvent{" +
-                "id='" + id + '\'' +
-                ", moduleName='" + moduleName + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", identifier='" + identifier + '\'' +
-                ", event=" + Arrays.toString(event) +
-                ", timestamp=" + timestamp +
-                ", errorUri='" + errorUri + '\'' +
-                '}';
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("ExclusionEventImpl{");
+        sb.append("id=").append(id);
+        sb.append(", moduleName='").append(moduleName).append('\'');
+        sb.append(", flowName='").append(flowName).append('\'');
+        sb.append(", identifier='").append(identifier).append('\'');
+        sb.append(", event=");
+        if (event == null) sb.append("null");
+        else
+        {
+            sb.append('[');
+            for (int i = 0; i < event.length; ++i)
+                sb.append(i == 0 ? "" : ", ").append(event[i]);
+            sb.append(']');
+        }
+        sb.append(", timestamp=").append(timestamp);
+        sb.append(", errorUri='").append(errorUri).append('\'');
+        sb.append(", harvested=").append(harvested);
+        sb.append(", harvestedDateTime=").append(harvestedDateTime);
+        sb.append('}');
+        return sb.toString();
     }
 }

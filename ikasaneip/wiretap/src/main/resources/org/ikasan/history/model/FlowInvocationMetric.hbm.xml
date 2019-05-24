@@ -64,22 +64,41 @@
              <one-to-many class="org.ikasan.history.model.ComponentInvocationMetricImpl"/>
         </set>
 
-        <property name="moduleName"        type="java.lang.String"
-                  column="ModuleName"      not-null="true"/>
-        <property name="flowName"          type="java.lang.String"
-                  column="FlowName"        not-null="true"/>
-        <property name="finalAction"          type="java.lang.String"
-                  column="FinalAction"        not-null="true"/>
-        <property name="invocationStartTime"   type="long"
-                  column="StartTime"       not-null="true"/>
-        <property name="invocationEndTime"     type="long"
+        <property name="moduleName"
+                  type="java.lang.String"
+                  column="ModuleName"
+                  not-null="true"/>
+        <property name="flowName"
+                  type="java.lang.String"
+                  column="FlowName"
+                  not-null="true"/>
+        <property name="finalAction"
+                  type="java.lang.String"
+                  column="FinalAction"
+                  not-null="true"/>
+        <property name="invocationStartTime"
+                  type="long"
+                  column="StartTime"
+                  not-null="true"/>
+        <property name="invocationEndTime"
+                  type="long"
                   column="EndTime"/>
-        <property name="expiry"            type="long"
-                  column="Expiry"          not-null="true"/>
-        <property name="harvested"            type="java.lang.Boolean"
-                  column="Harvested"          not-null="true"/>
-        <property name="errorUri"          type="java.lang.String"
-                  column="ErrorUri"        not-null="false"/>
+        <property name="expiry"
+                  type="long"
+                  column="Expiry"
+                  not-null="true"/>
+        <property name="harvested"
+                  type="java.lang.Boolean"
+                  column="Harvested"
+                  not-null="true"/>
+        <property name="errorUri"
+                  type="java.lang.String"
+                  column="ErrorUri"
+                  not-null="false"/>
+        <property name="harvestedDateTime"
+                  type="long"
+                  column="HarvestedDateTime"
+                  not-null="true"/>
 
     </class>
 

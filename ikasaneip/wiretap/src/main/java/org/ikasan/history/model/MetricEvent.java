@@ -62,7 +62,6 @@ public class MetricEvent extends GenericWiretapEvent implements WiretapEvent<Str
     /** event created date/time */
     private long eventTimestamp;
 
-
     public MetricEvent()
     {
     }
