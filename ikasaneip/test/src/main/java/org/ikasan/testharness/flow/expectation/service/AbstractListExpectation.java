@@ -45,10 +45,13 @@ import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.model.IgnoreComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.ikasan.testharness.flow.comparator.service.ComparatorServiceImpl;
+import org.ikasan.testharness.flow.expectation.model.AbstractComponent;
 import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
-import org.junit.ComparisonFailure;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Abstract expectation based on a List of DefaultExpectations
@@ -58,6 +61,8 @@ import java.util.*;
 public abstract class AbstractListExpectation implements FlowExpectation
 {
     protected List<DefaultExpectation> expectations = new ArrayList<>();
+
+    private AtomicInteger expectionIndexCounter = new AtomicInteger(0);
 
     /**
      * comparator service for expectations
@@ -173,9 +178,13 @@ public abstract class AbstractListExpectation implements FlowExpectation
      */
     protected void addExpectation(DefaultExpectation<?> defaultExpectation, String description)
     {
-        defaultExpectation.setDescription(
-            "Expectation[" + (this.expectations.size() + 1) + "] " + ((description == null) ? "" : description));
-        this.expectations.add(defaultExpectation);
+        if (isNotBlank(description))
+        {
+            defaultExpectation.setDescription(description);
+        }
+        int index = expectionIndexCounter.getAndIncrement();
+        defaultExpectation.setOrder(index + 1);
+        this.expectations.add(index, defaultExpectation);
     }
 
     /**
@@ -187,7 +196,7 @@ public abstract class AbstractListExpectation implements FlowExpectation
     public abstract void allSatisfied(List<Capture<?>> captures);
 
     protected ExpectationDifference getExpectationDifference(List<DefaultExpectation> expectations,
-        List<Capture<?>> captures)
+            List<Capture<?>> captures)
     {
         List<DefaultExpectation> unsatisfiedExpectations = new ArrayList<>();
         List<Capture<?>> copyOfCaptures = new ArrayList<>(captures);
@@ -206,7 +215,7 @@ public abstract class AbstractListExpectation implements FlowExpectation
                     expectationSatisfied = true;
                     break;
                 }
-                catch (ComparisonFailure e)
+                catch (AssertionError e)
                 {
                     // carry on
                 }
@@ -216,10 +225,10 @@ public abstract class AbstractListExpectation implements FlowExpectation
                     String expectationClassName = expectation.getExpectation().getClass().getName();
                     String actualClassName = capture.getActual().getClass().getName();
                     throw new RuntimeException(
-                        "FAILED - " + expectation.getDescription() + " when invoking Comparator.compare method["
-                            + comparatorClassName
-                            + "]. Could be comparator method parameters are of the wrong type for this expectation class["
-                            + expectationClassName + "] or actual class[" + actualClassName + "].", e);
+                            "FAILED - " + expectation.getDescription() + " when invoking Comparator.compare method["
+                                    + comparatorClassName
+                                    + "]. Could be comparator method parameters are of the wrong type for this expectation class["
+                                    + expectationClassName + "] or actual class[" + actualClassName + "].", e);
                 }
             }
             if (!expectationSatisfied)
@@ -245,14 +254,19 @@ public abstract class AbstractListExpectation implements FlowExpectation
     protected class DefaultExpectation<T>
     {
         /**
-         * expectation description
+         * Order the DefaultExpectation is declared
          */
-        private String description;
+        private Integer order;
 
         /**
          * generic type of expectation
          */
         private T expectation;
+
+        /**
+         * expectation description
+         */
+        private String description;
 
         /**
          * expectation comparator
@@ -268,6 +282,26 @@ public abstract class AbstractListExpectation implements FlowExpectation
         {
             this.expectation = expectation;
             this.expectationComparator = expectationComparator;
+        }
+
+        /**
+         * Order the DefaultExpectation is declared
+         *
+         * @return order
+         */
+        public Integer getOrder()
+        {
+            return order;
+        }
+
+        /**
+         * Order the DefaultExpectation is declared
+         *
+         * @param order
+         */
+        public void setOrder(int order)
+        {
+            this.order = order;
         }
 
         /**
@@ -311,7 +345,32 @@ public abstract class AbstractListExpectation implements FlowExpectation
         @Override
         public String toString()
         {
-            return "Expectation description[" + description + "] detail[" + expectation.toString() + "]";
+            StringBuilder stringBuilder = new StringBuilder("[Expectation");
+            if (order != null)
+            {
+                stringBuilder.append("[")
+                        .append(order)
+                        .append("]");
+            }
+            stringBuilder.append(" ");
+            if (expectation instanceof AbstractComponent)
+            {
+                stringBuilder.append("FlowComponent[")
+                        .append(expectation.toString())
+                        .append("]");
+            }
+            else
+            {
+                stringBuilder.append(expectation.toString());
+            }
+            if (description != null)
+            {
+                stringBuilder.append(" description[")
+                        .append(description)
+                        .append("]");
+            }
+            stringBuilder.append("]");
+            return stringBuilder.toString();
         }
     }
 

@@ -59,7 +59,7 @@ public interface FlowExpectation
      * @param expectation
      * @param expectationComparator
      */
-    <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator);
+    <T> void expectation(T expectation, ExpectationComparator<?, ?> expectationComparator);
 
     /**
      * Set an expectation with a specific comparator to measure the expecation
@@ -70,7 +70,7 @@ public interface FlowExpectation
      * @param expectationComparator
      * @param description
      */
-    <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator, String description);
+    <T> void expectation(T expectation, ExpectationComparator<?, ?> expectationComparator, String description);
 
     /**
      * Set an expectation.

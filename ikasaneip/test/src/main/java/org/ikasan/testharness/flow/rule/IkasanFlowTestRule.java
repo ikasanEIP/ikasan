@@ -163,7 +163,7 @@ public class IkasanFlowTestRule implements TestRule
         }
         else
         {
-            flowExpectations.expectation(component, component.getName());
+            flowExpectations.expectation(component);
         }
     }
 
