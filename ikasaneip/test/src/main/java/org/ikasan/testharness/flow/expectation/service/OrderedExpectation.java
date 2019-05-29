@@ -43,7 +43,6 @@ package org.ikasan.testharness.flow.expectation.service;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
-import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +103,7 @@ public class OrderedExpectation extends AbstractListExpectation
                     ExpectationComparator expectationComparator = expectation.getExpectationComparator();
                     expectationComparator.compare(expectation.getExpectation(), capture.getActual());
                 }
-                catch (ComparisonFailure e)
+                catch (AssertionError e)
                 {
                     // @formatter:off
                     String format = "%n" +
@@ -112,15 +111,15 @@ public class OrderedExpectation extends AbstractListExpectation
                             "  <%s>%n" +
                             "Actual FlowElements invocations are in a different order:%n" +
                             "  <%s>%n" +
-                            "Unexpected FlowElement invocation at index:%n" +
-                            "  <%s>%n" +
+                            "Unexpected FlowElement invocation at:%n" +
+                            "  <[%s]>%n" +
                             "Expected FlowElement invocation:%n" +
                             "  <%s>%n" +
                             "FlowElement invoked:%n" +
                             "  <%s>%n";
                     // @formatter:on
                     String message = String
-                        .format(format, formatList(expectations), formatList(captures), i, expectation, capture);
+                        .format(format, formatList(expectations), formatList(captures), expectation.getOrder(), expectation, capture);
                     fail(message);
                 }
                 i++;
@@ -139,8 +138,8 @@ public class OrderedExpectation extends AbstractListExpectation
                 "  <%s>%n";
         // @formatter:on
         String message = String
-            .format(format, formatList(expectations), formatList(captures), diff.getUnsatisfiedExpectations(),
-                diff.getUnexpectedCaptures());
+            .format(format, formatList(expectations), formatList(captures), formatList(diff.getUnsatisfiedExpectations()),
+                formatList(diff.getUnexpectedCaptures()));
         fail(message);
     }
 }
