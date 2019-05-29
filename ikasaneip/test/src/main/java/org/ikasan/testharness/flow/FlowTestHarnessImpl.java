@@ -90,7 +90,7 @@ public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
     public <T> void notify(T actual)
     {
         int index = capturesIndex.getAndIncrement();
-        this.captures.add(new Capture(index + 1, actual));
+        this.captures.add(index, new Capture(index + 1, actual));
     }
 
     public void assertIsSatisfied()
