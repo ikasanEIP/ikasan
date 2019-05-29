@@ -46,7 +46,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
-    \-DarchetypeVersion=2.0.4    
+    \-DarchetypeVersion=2.1.0    
     \-DgroupId=com.sample     
     \-DartifactId=sftp-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -84,8 +84,8 @@ Occasionally you might see similar issue when generating an artifact
 [INFO] Generating project in Interactive mode
 [WARNING] Archetype not found in any catalog. Falling back to central repository (http://repo.maven.apache.org/maven2).
 [WARNING] Use -DarchetypeRepository=<your repository> if archetype's repository is elsewhere.
-Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.0.0-SNAPSHOT/maven-metadata.xml
-Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.0.0-SNAPSHOT/ikasan-standalone-filesystem-im-maven-plugin-2.0.0-SNAPSHOT.jar
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.1.0/maven-metadata.xml
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.1.0/ikasan-standalone-filesystem-im-maven-plugin-2.1.0.jar
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
@@ -93,7 +93,7 @@ Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-fi
 [INFO] Finished at: 2017-10-30T11:09:39+00:00
 [INFO] Final Memory: 14M/309M
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-archetype-plugin:2.4:generate (default-cli) on project standalone-pom: The desired archetype does not exist (org.ikasan:ikasan-standalone-filesystem-im-maven-plugin:2.0.0-SNAPSHOT) -> [Help 1]
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-archetype-plugin:2.4:generate (default-cli) on project standalone-pom: The desired archetype does not exist (org.ikasan:ikasan-standalone-filesystem-im-maven-plugin:2.1.0) -> [Help 1]
 ```
 
 This c
