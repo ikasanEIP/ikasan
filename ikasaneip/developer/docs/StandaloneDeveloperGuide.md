@@ -91,7 +91,9 @@ Next we need to update the Maven pom.xml to set the application packaging to cre
 
 Now add the first Ikasan Application dependency to the Maven pom.xml.
  
-Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the build plugin execution requirement.
+Edit the pom.xml and add the following properties and dependencies section.
+This is best practice layout. It keeps all your application versions in one place and defines the dependencies.
+In this case we are adding the ikasan-eip-standalone main library; an h2 standalone persistence library; and two Ikasan test libraries.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -107,7 +109,7 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
     <!-- Add project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>2.1.0-SNAPSHOT</version.ikasan>
+        <version.ikasan>2.1.0</version.ikasan>
         <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
     </properties>
 
@@ -140,6 +142,26 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
         </dependency>
 
     </dependencies>
+    
+</project>
+```
+
+Next we need to add some standard Maven project build features; your SCM (optional); and 
+an Ikasan bill of materials (bom) as project dependency management.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+   <project xmlns="http://maven.apache.org/POM/4.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+       <modelVersion>4.0.0</modelVersion>
+   
+       <groupId>com.ikasan.example</groupId>
+       <artifactId>MyIntegrationModule</artifactId>
+       <version>1.0.0-SNAPSHOT</version>
+       <packaging>jar</packaging>
+   
+        ...
 
     <!-- Add project build plugins -->
     <build>
@@ -232,7 +254,6 @@ Edit the pom.xml and add the ikasan-eip-standalone dependency as well as the bui
 
 </project>
 ```
-
 Now create a class with a fully qualified name of ```com.ikasan.example.Application``` - this is the entry point for Springboot.
 
 Copy and paste the entirety of the code below replacing the content of that class.
@@ -384,7 +405,8 @@ import javax.annotation.Resource;
 
 @Configuration("ModuleFactory")
 @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
 } )
 public class MyModule
 {
@@ -402,8 +424,7 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", 
-                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -414,7 +435,6 @@ public class MyModule
         return module;
     }
 }
-
 ```
 
 Build and run the application again.
@@ -429,60 +449,75 @@ mvn clean install
 Refresh your browser at ```http://localhost:8090/example-im```, login and select 'Modules' - you now see your new module.
 ![Login](quickstart-images/new-project-embeddedConsole-screen9.png)
 
-Selecting the module will show you the flows within this module which can be started, stopped, paused/resumed.
+Selecting the module will show you the flows within this module 
+which can be started, stopped, paused/resumed. The component 'Type' may have a different $Proxy value, dont worry about this for now.
 ![Login](quickstart-images/new-project-embeddedConsole-screen10.png)
 
 Start the flow - you will see the state change from 'stopped' to 'running'. 
 ![Login](quickstart-images/new-project-embeddedConsole-screen11.png)
 
 View the application logs (either in IntelliJ or the command line, depending on how the application was started).
-![Login](quickstart-images/new-project-embeddedConsole-screen12.png)
-
+```less
+2019-05-24 20:31:39.300  INFO 98339 --- [0.1-8080-exec-2] o.i.module.service.ModuleServiceImpl     : startFlow : My Integration Module.Event Generating Flow requested by [admin]
+2019-05-24 20:31:39.304  INFO 98339 --- [0.1-8080-exec-2] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2019-05-24 20:31:39.306  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Source Consumer_1165847135_I]. Default programmatic dao will be used.
+2019-05-24 20:31:39.306  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_1165847135_I]. Default programmatic dao will be used.
+2019-05-24 20:31:39.307  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Source Consumer_1165847135_I]. Default programmatic dao will be used.
+2019-05-24 20:31:39.307  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_1165847135_I]. Default programmatic dao will be used.
+2019-05-24 20:31:39.308  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_729287509_C]. Default programmatic dao will be used.
+2019-05-24 20:31:39.308  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration ModuleEvent Generating FlowMy Source Consumer_element]. Default programmatic dao will be used.
+2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration ModuleEvent Generating FlowMy Target Producer_element]. Default programmatic dao will be used.
+2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module-Event Generating Flow]. Default programmatic dao will be used.
+2019-05-24 20:31:39.310  INFO 98339 --- [0.1-8080-exec-2] o.i.f.v.VisitingInvokerFlow              : Started Flow[Event Generating Flow] in Module[My Integration Module]
+2019-05-24 20:31:39.312  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 1, relatedIdentifier=null, timestamp=1558726299311, payload=Test Message 1]
+2019-05-24 20:31:40.317  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 2, relatedIdentifier=null, timestamp=1558726300317, payload=Test Message 2]
+2019-05-24 20:31:41.318  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 3, relatedIdentifier=null, timestamp=1558726301318, payload=Test Message 3]
+2019-05-24 20:31:42.323  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 4, relatedIdentifier=null, timestamp=1558726302323, payload=Test Message 4]
+2019-05-24 20:31:43.328  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 5, relatedIdentifier=null, timestamp=1558726303328, payload=Test Message 5]
+2019-05-24 20:31:44.334  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 6, relatedIdentifier=null, timestamp=1558726304334, payload=Test Message 6]
+2019-05-24 20:31:45.338  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 7, relatedIdentifier=null, timestamp=1558726305338, payload=Test Message 7]
+2019-05-24 20:31:46.343  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 8, relatedIdentifier=null, timestamp=1558726306343, payload=Test Message 8]
+2019-05-24 20:31:47.344  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 9, relatedIdentifier=null, timestamp=1558726307344, payload=Test Message 9]
+2019-05-24 20:31:48.345  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 10, relatedIdentifier=null, timestamp=1558726308345, payload=Test Message 10]
+2019-05-24 20:31:49.347  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 1, relatedIdentifier=null, timestamp=1558726309347, payload=Test Message 1]
+2019-05-24 20:31:50.352  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 2, relatedIdentifier=null, timestamp=1558726310352, payload=Test Message 2]
+```
 Congratulations - your first working Ikasan Integration Module, but what is it doing...
 
 Lets go back to the code, specifically the ```MyModule``` class to understand what we just implemented and ran.
 
 ```java
-   @Configuration("MyModuleFactory")
-   @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
-   } )
-   public class MyModule
-   {
-      @Resource BuilderFactory builderFactory;
-      ...
-   }
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
+} )
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
+    ...
+}
 ```
-Firstly, we get a instance of a ```builderFactory``` from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
+Firstly, we can see we have added an extra line to the ImportResource 
+for ```classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml```.
+ This tells Ikasan that we want our flow to be transactional and 
+ to guarantee that all operations successfully complete or rollback 
+ to a consistent state in the event of a failure. 
+ This configuration changes based on the Consumer protocol 
+ being implemented. For this example we are using an 
+ EventGeneratingConsumer to which this config will be applied. 
+ Transactions are complex and will be covered in detail later.
+
+All Ikasan artefacts can be created from a single instance of a ```builderFactory``` from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
 
 Next we create a ```moduleBuilder``` from the ```builderFactory```. When we create the ```moduleBuilder``` we provide the name we are going to assign to the module.
 We can also set other properties on the module through this ```moduleBuilder``` such as description.
 
 ```java
-   @Configuration("MyModuleFactory")
-   @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
-   } )
-   public class MyModule
-   {
-      @Resource BuilderFactory builderFactory;
-
-     @Bean
-    public Module myModule()
-    {
-
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
-       ...
-       }
-   
-```
-Next, get a ```componentBuilder``` instance from the ```builderFactory``` - we will be using this in the ```flowBuilder```.
-```java
 @Configuration("ModuleFactory")
 @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
 } )
 public class MyModule
 {
@@ -491,7 +526,27 @@ public class MyModule
     @Bean
     public Module myModule()
     {
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+       ...
+       }
+} 
+```
+Next, get a ```componentBuilder``` instance from the ```builderFactory``` - we will be using this in the ```flowBuilder```.
+```java
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
+} )
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
 
+    @Bean
+    public Module myModule()
+    {
         // Create a module builder from the builder factory
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                 .withDescription("My first integration module.");
@@ -512,7 +567,8 @@ Ikasan components, however, your own components can be easily written and added 
 ```java
 @Configuration("ModuleFactory")
 @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
 } )
 public class MyModule
 {
@@ -521,7 +577,6 @@ public class MyModule
     @Bean
     public Module myModule()
     {
-
         // Create a module builder from the builder factory
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                 .withDescription("My first integration module.");
@@ -531,8 +586,7 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", 
-                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -545,17 +599,20 @@ public class MyModule
 }
 ```
 
-So ```componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?")``` returns an off-the-shelf scheduled consumer component which will provide the functionality of that consumer named "My Source Consumer";
+So ```componentBuilder.eventGeneratingConsumer()``` returns an off-the-shelf event generating consumer component which will provide the functionality of that consumer named "My Source Consumer";
 ```componentBuilder.logProducer()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
 
-So the consumer of this flow will execute every 5 seconds on a repeating schedule. The event from the consumer to the producer is a simple cron based object which is subsequently logged by the producer.
+The consumer of this flow will generate an event every second - this is the default behaviour if this component isn't further configured. 
+The event from the consumer to the producer is a simple string message, incrementing from 1 thru 10 continuously;
+ which is subsequently logged by the producer.
 
 Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
 ```java
 @Configuration("ModuleFactory")
 @ImportResource( {
-        "classpath:h2-datasource-conf.xml"
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
 } )
 public class MyModule
 {
@@ -564,7 +621,6 @@ public class MyModule
     @Bean
     public Module myModule()
     {
-
         // Create a module builder from the builder factory
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
                 .withDescription("My first integration module.");
@@ -574,8 +630,7 @@ public class MyModule
 
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", 
-                  componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 
@@ -607,12 +662,12 @@ package com.ikasan.example.converter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
-public class MyConverter implements Converter<JobExecutionContext,Integer>
+public class MyConverter implements Converter<String,Integer>
 {
-    public Integer convert(String payload) throws TransformationException 
+    public Integer convert(String payload) throws TransformationException
     {
         String[] strings = payload.split(" ");
-        int intPart = Integer.valueOf( strings[1] );
+        int intPart = Integer.valueOf( strings[2] );
         return Integer.valueOf(intPart);
     }
 }
@@ -624,15 +679,18 @@ Simply update the flowBuilder lines to insert this new component called "My Conv
 ```java
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .converter("My Converter", new MyConverter())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
 ```
-
+Remember, you are adding a new functional class that will need to be imported at the top of your MyModule class as 
+```
+import com.ikasan.example.converter.MyConverter;
+```
 Build it, run it, and start the flow from the Browser and see what gets output to the logs by the LogProducer.
 
-You will notice that the `payload=` has changed from the 'Message 1' etc, to simply just the integer part of the message from the consumer.
+You will notice that the `payload=` has changed from the 'Test Message 1' etc, to simply just the integer part of the message from the consumer.
 
 ## Exception Handling
 Every Ikasan flow has an automatically created and assigned 'Recovery Manager'. The role of the Recovery Manager is to manage the flow if things fail at runtime i.e. an Exception occurs in the flow or any of its components.
@@ -642,7 +700,7 @@ Lets see what happens if we get our Converter to throw an exception on a specifi
     public Integer convert(String payload) throws TransformationException
     {
         String[] strings = payload.split(" ");
-        int intPart = Integer.valueOf( strings[1] );
+        int intPart = Integer.valueOf( strings[2] );
         if(intPart == 5)
         {
             throw new TransformationException("error - bad number received [" + 5 + "]");
@@ -660,12 +718,12 @@ RecoveryManager resolving to [Stop] for componentName[My Converter] exception [e
 org.ikasan.spec.component.transformation.TransformationException: error - bad number received [5]
 	at com.ikasan.example.converter.MyConverter.convert(MyConverter.java:14) ~[classes/:na]
 	at com.ikasan.example.converter.MyConverter.convert(MyConverter.java:6) ~[classes/:na]
-	at org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker.invoke(ConverterFlowElementInvoker.java:121) ~[ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:860) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:778) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:76) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:190) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:61) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
+	at org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker.invoke(ConverterFlowElementInvoker.java:121) ~[ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:860) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:778) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:76) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:190) [ikasan-utility-endpoint-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:61) [ikasan-utility-endpoint-2.1.0.jar:na]
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_111]
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_111]
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_111]
@@ -679,8 +737,8 @@ org.ikasan.spec.component.transformation.TransformationException: error - bad nu
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179) [spring-aop-4.3.10.RELEASE.jar:4.3.10.RELEASE]
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:213) [spring-aop-4.3.10.RELEASE.jar:4.3.10.RELEASE]
 	at com.sun.proxy.$Proxy87.onMessage(Unknown Source) [na:na]
-	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.execute(SimpleMessageGenerator.java:95) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.run(SimpleMessageGenerator.java:83) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.execute(SimpleMessageGenerator.java:95) [ikasan-utility-endpoint-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.run(SimpleMessageGenerator.java:83) [ikasan-utility-endpoint-2.1.0.jar:na]
 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [na:1.8.0_111]
 	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [na:1.8.0_111]
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [na:1.8.0_111]
@@ -701,7 +759,7 @@ that caused the exception.
                 .withExceptionResolver(builderFactory
                         .getExceptionResolverBuilder()
                         .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
                 .converter("My Converter", new MyConverter())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
@@ -721,12 +779,12 @@ If you look in the logs you will see something like this,
 org.ikasan.spec.component.transformation.TransformationException: error - bad number received [5]
 	at com.ikasan.example.converter.MyConverter.convert(MyConverter.java:14) ~[classes/:na]
 	at com.ikasan.example.converter.MyConverter.convert(MyConverter.java:6) ~[classes/:na]
-	at org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker.invoke(ConverterFlowElementInvoker.java:121) ~[ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:860) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:778) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:76) [ikasan-flow-visitorPattern-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:190) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:61) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
+	at org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker.invoke(ConverterFlowElementInvoker.java:121) ~[ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:860) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:778) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.flow.visitorPattern.VisitingInvokerFlow.invoke(VisitingInvokerFlow.java:76) [ikasan-flow-visitorPattern-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:190) [ikasan-utility-endpoint-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer.onMessage(EventGeneratingConsumer.java:61) [ikasan-utility-endpoint-2.1.0.jar:na]
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_111]
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_111]
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_111]
@@ -740,8 +798,8 @@ org.ikasan.spec.component.transformation.TransformationException: error - bad nu
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179) [spring-aop-4.3.10.RELEASE.jar:4.3.10.RELEASE]
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:213) [spring-aop-4.3.10.RELEASE.jar:4.3.10.RELEASE]
 	at com.sun.proxy.$Proxy87.onMessage(Unknown Source) [na:na]
-	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.execute(SimpleMessageGenerator.java:95) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
-	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.run(SimpleMessageGenerator.java:83) [ikasan-utility-endpoint-2.1.0-SNAPSHOT.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.execute(SimpleMessageGenerator.java:95) [ikasan-utility-endpoint-2.1.0.jar:na]
+	at org.ikasan.component.endpoint.util.consumer.SimpleMessageGenerator.run(SimpleMessageGenerator.java:83) [ikasan-utility-endpoint-2.1.0.jar:na]
 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [na:1.8.0_111]
 	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [na:1.8.0_111]
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [na:1.8.0_111]
@@ -763,13 +821,16 @@ Currently we have hardcoded a value of 5 to indicate the bad message in the Conv
 
 ### Configured Resources
 We can tell a component that it is a ConfiguredResource. Telling it this allows access to configure attributes on the component through the Console.
-Update the Converter component to implement ```ConfiguredResource``` and specify a Configuration class defining the allowed attributes.
+Firstly, lets define a simple JavaBean to denote the configuration properties we wish to expose.
+Create a new class called ```com.ikasan.example.converter.MyConverterConfiguration``` within which we will
+define an attribute as a configurable value called 'badNumber'.
+
 ```java
 package com.ikasan.example.converter;
 
 public class MyConverterConfiguration
 {
-    public int badNumber = 5;
+    int badNumber = 5;
 
     public int getBadNumber() {
         return badNumber;
@@ -780,7 +841,39 @@ public class MyConverterConfiguration
     }
 }
 ```
+Next, update the Converter component to implement ```ConfiguredResource```.
+The ConfiguredResource interface allows you to specify the exact type of the configuration, 
+in this case ```MyConverterConfiguration```.
+```java
+package com.ikasan.example.converter;
 
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+
+public class MyConverter implements Converter<String,Integer>, ConfiguredResource<MyConverterConfiguration>
+{
+    public Integer convert(String payload) throws TransformationException
+    {
+        String[] strings = payload.split(" ");
+        int intPart = Integer.valueOf( strings[2] );
+        if(intPart == 5)
+        {
+            throw new TransformationException("error - bad number received [" + 5 + "]");
+        }
+        return Integer.valueOf(intPart);
+    }
+}
+```
+Implementing this new contract will require some additional methods to be created to support the configuration instance and 
+a configuredResourceId.
+
+The ConfiguredResourceId is an identifier which ties this instance of the configuration with this component. Infact, if you use the same ConfiguredResourceId across multiple components
+it will load the same instance of the configuration. This can sometimes be very useful where multiple components need to share a configuration.
+However, care should be taken as sometimes shared configuration is not what you want and in that case you simply need to provide a different ConfiguredResourceId value.
+It is best practice to set the ConfiguredResourceId to something representative of that module, flow, and component.
+
+The example class below is updated for these method implementations.
 ```java
 package com.ikasan.example.converter;
 
@@ -796,10 +889,10 @@ public class MyConverter implements Converter<String,Integer>, ConfiguredResourc
     public Integer convert(String payload) throws TransformationException
     {
         String[] strings = payload.split(" ");
-        int intPart = Integer.valueOf( strings[1] );
-        if(intPart == configuration.getBadNumber())
+        int intPart = Integer.valueOf( strings[2] );
+        if(intPart == 5)
         {
-            throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
+            throw new TransformationException("error - bad number received [" + 5 + "]");
         }
         return Integer.valueOf(intPart);
     }
@@ -821,20 +914,23 @@ public class MyConverter implements Converter<String,Integer>, ConfiguredResourc
     }
 }
 ```
-The ConfiguredResource interface allows you to specify the exact type of the configuration, 
-in this case MyConverterConfiguration; as well as enforcing getter/setter methods for the configuration instance 
-and something called the ConfiguredResourceId.
-
-The ConfiguredResourceId is an identifier which ties this instance of the configuration with this component. Infact, if you use the same ConfiguredResourceId across multiple components
-it will load the same instance of the configuration. This can sometimes be very useful where multiple components need to share a configuration.
-However, care should be taken as sometimes shared configuration is not what you want and in that case you simply need to provide a different ConfiguredResourceId value.
-It is best practice to set the ConfiguredResourceId to something representative of that module, flow, and component.
-
+Finally, change the converter method to use the configuration attribute rather than the hard-coded 5.
+```java
+    public Integer convert(String payload) throws TransformationException
+    {
+        String[] strings = payload.split(" ");
+        int intPart = Integer.valueOf( strings[2] );
+        if(intPart == configuration.getBadNumber())
+        {
+            throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
+        }
+        return Integer.valueOf(intPart);
+    }
+```
 Ikasan also has the concept of Configured - this is typically used where your component, marked as a ConfiguredResource, has other classes that can also be configured, but arent defined as specific components.
 
 In this case the subsequent classes would simply be marked as Configured.
 
- 
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
 
 ### Dynamic Configured Resources
@@ -853,17 +949,48 @@ the component using that configuration; or, for off-the-shelf components, as a s
 #### FluentAPI Builder Pattern Usage
 Dynamic Configuration can be programmatically set via the FluentAPI builder pattern.
 ```java
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("EventGeneratingFlow")
-                .withExceptionResolver(builderFactory
-                        .getExceptionResolverBuilder()
-                        .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
-                .consumer("My Source Consumer", componentBuilder.scheduledConsumer().setCronExpression("*/5 * * * * ?"))
-                .converter("My Converter", new MyConverter(), Configuration.converterInvoker().withDynamicConfiguration(true))
-                .producer("My Target Producer", componentBuilder.logProducer())
-                .build();
+         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
+                 .withExceptionResolver(builderFactory
+                         .getExceptionResolverBuilder()
+                         .addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build())
+                 .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
+                 .converter("My Converter", new MyConverter(), org.ikasan.builder.invoker.Configuration.converterInvoker().withDynamicConfiguration(true))
+                 .producer("My Target Producer", componentBuilder.logProducer())
+                 .build();
 ```
 Here is an example of changing a configuration property based on the incoming event within a ConfiguredResource component.
 
+Lets first add a new attribute to hold timestamp in the configuration.
+```java
+package com.ikasan.example.converter;
+
+public class MyConverterConfiguration
+{
+    long timestamp;
+    
+    int badNumber = 5;
+
+    public int getBadNumber() {
+        return badNumber;
+    }
+
+    public void setBadNumber(int badNumber) {
+        this.badNumber = badNumber;
+    }
+
+    public long getTimestamp()
+    {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp)
+    {
+        this.timestamp = timestamp;
+    }
+}
+```
+
+Then update the converter to set the timestamp to the invocation time.
 ```java
 package com.ikasan.example.converter;
 
@@ -875,14 +1002,14 @@ public class MyConverter implements Converter<String,Integer>, ConfiguredResourc
 {
     String configuredResourceId;
     MyConverterConfiguration configuration = new MyConverterConfiguration();
-    
+
     public Integer convert(String payload) throws TransformationException
     {
         // update a timestamp in the configuration based on the time the event hits this component
         configuration.setTimestamp( System.currentTimeMillis() );
-        
+
         String[] strings = payload.split(" ");
-        int intPart = Integer.valueOf( strings[1] );
+        int intPart = Integer.valueOf( strings[2] );
         if(intPart == configuration.getBadNumber())
         {
             throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
@@ -951,8 +1078,11 @@ public class MyConverter implements Converter<String,Integer>,
 
     public Integer convert(String payload) throws TransformationException
     {
+        // update a timestamp in the configuration based on the time the event hits this component
+        configuration.setTimestamp( System.currentTimeMillis() );
+
         String[] strings = payload.split(" ");
-        int intPart = Integer.valueOf( strings[1] );
+        int intPart = Integer.valueOf( strings[2] );
         if(intPart == configuration.getBadNumber())
         {
             throw new TransformationException("error - bad number received [" + configuration.getBadNumber() + "]");
@@ -978,7 +1108,9 @@ public class MyConverter implements Converter<String,Integer>,
         this.configuration =  myConverterConfiguration;
     }
 
-    public void startManagedResource() {
+    public void startManagedResource() 
+    {
+        configuration.setTimestamp(0L);
         logger.info("Call to start any managed resources");
     }
 
@@ -1007,11 +1139,12 @@ TOOO
 #### Flows
 The flow testing is if great method of verifying that whole Spring application boostrap correctly. Also Flow test will help you assess if all flow branches has been executed as expected. Here is how to create a flow test.
 ```java
-package com.sample;
+package com.ikasan.example;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1023,14 +1156,12 @@ import javax.annotation.Resource;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {MyApplication.class},
+@SpringBootTest(classes = {Application.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MyApplicationTest
+public class ApplicationTest
 {
-
     @Resource
     private Module moduleUnderTest;
-
 
     @Rule
     public IkasanFlowTestRule ikasanFlowTestRule = new IkasanFlowTestRule();
@@ -1038,24 +1169,23 @@ public class MyApplicationTest
     @Before
     public void setup()
     {
-        Flow flowUnderTest = (Flow) moduleUnderTest.getFlow("EventGeneratingFlow");
+        Flow flowUnderTest = (Flow) moduleUnderTest.getFlow("Event Generating Flow");
         ikasanFlowTestRule.withFlow(flowUnderTest);
     }
 
     @Test
-    public void test(){
-
+    public void test()
+    {
         ikasanFlowTestRule
                 .consumer("My Source Consumer")
+                .converter("My Converter")
                 .producer("My Target Producer");
 
         ikasanFlowTestRule.startFlow();
-
         ikasanFlowTestRule.sleep(500);
-
+        Assert.assertTrue(ikasanFlowTestRule.getFlowState().equals(Flow.RUNNING));
     }
 }
-
 ```
 
 #### Exception Handling
