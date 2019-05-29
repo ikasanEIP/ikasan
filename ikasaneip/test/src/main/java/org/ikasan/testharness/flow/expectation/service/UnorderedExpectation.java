@@ -103,8 +103,9 @@ public class UnorderedExpectation extends AbstractListExpectation
                 "  <%s>%n";
         // @formatter:on
         String message = String
-            .format(format, formatList(expectations), formatList(captures), diff.getUnsatisfiedExpectations(),
-                diff.getUnexpectedCaptures());
+                .format(format, formatList(expectations), formatList(captures),
+                        formatList(diff.getUnsatisfiedExpectations()),
+                        formatList(diff.getUnexpectedCaptures()));
         fail(message);
     }
 }
