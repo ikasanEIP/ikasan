@@ -57,7 +57,7 @@ public class CaptureTest
     @Test
     public void test_captureWithStrongTyping() 
     {
-        Capture<String> capture = new Capture<>("test string");
+        Capture<String> capture = new Capture<>(1, "test string");
         String result = capture.getActual();
         Assert.assertEquals("test string", result);
     }
@@ -69,7 +69,7 @@ public class CaptureTest
     @Test
     public void test_captureWithNoTyping() 
     {
-        Capture capture = new Capture("test string");
+        Capture capture = new Capture(1, "test string");
         String result = (String) capture.getActual();
         Assert.assertEquals("test string", result);
     }
@@ -81,7 +81,7 @@ public class CaptureTest
     @Test(expected = ClassCastException.class)
     public void test_captureWithFailedTyping() 
     {
-        Capture captureString = new Capture(10);
+        Capture captureString = new Capture(1, 10);
         @SuppressWarnings("unused")
         String result = (String) captureString.getActual();
     }
