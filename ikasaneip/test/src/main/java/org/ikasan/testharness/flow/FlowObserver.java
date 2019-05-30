@@ -53,5 +53,5 @@ public interface FlowObserver
      * Notify the observer of an actual behaviour change.
      * @param actual
      */
-    public <T> void notify(T actual);
+    <T> void notify(T actual);
 }

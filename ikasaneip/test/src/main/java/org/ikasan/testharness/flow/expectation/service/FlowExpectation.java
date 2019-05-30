@@ -43,6 +43,8 @@ package org.ikasan.testharness.flow.expectation.service;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 
+import java.util.List;
+
 /**
  * Public API for setting operations on the FlowExpectation implemenation class.
  * 
@@ -57,7 +59,7 @@ public interface FlowExpectation
      * @param expectation
      * @param expectationComparator
      */
-    public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator);
+    <T> void expectation(T expectation, ExpectationComparator<?, ?> expectationComparator);
 
     /**
      * Set an expectation with a specific comparator to measure the expecation
@@ -68,14 +70,14 @@ public interface FlowExpectation
      * @param expectationComparator
      * @param description
      */
-    public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator, String description);
+    <T> void expectation(T expectation, ExpectationComparator<?, ?> expectationComparator, String description);
 
     /**
      * Set an expectation.
      * @param <T>
      * @param expectation
      */
-    public <T> void expectation(T expectation);
+    <T> void expectation(T expectation);
 
     /**
      * Set an expectation and provide a description for this expecation test
@@ -84,14 +86,14 @@ public interface FlowExpectation
      * @param expectation
      * @param description
      */
-    public <T> void expectation(T expectation, String description);
+    <T> void expectation(T expectation, String description);
 
     /**
      * ignore an expectation
      * @param <T>
      * @param expectation
      */
-    public <T> void ignore(T expectation);
+    <T> void ignore(T expectation);
 
     /**
      * ignore an expectation and provide a description which can help
@@ -100,11 +102,14 @@ public interface FlowExpectation
      * @param expectation
      * @param description
      */
-    public <T> void ignore(T expectation, String description);
+    <T> void ignore(T expectation, String description);
 
-    /** does an expectation satisfy the captured actual behaiour */
-    public void isSatisfied(Capture<?> actual);
 
-    /** have all expectations been satisfied */
-    public void allSatisfied();
+    /**
+     * Have all expectations been satisfied
+     *
+     * @param captures Ordered list of captured FlowElement invocations
+     * @throws AssertionError if all expected invocations not satisfied
+     */
+    void allSatisfied(List<Capture<?>> captures);
 }
