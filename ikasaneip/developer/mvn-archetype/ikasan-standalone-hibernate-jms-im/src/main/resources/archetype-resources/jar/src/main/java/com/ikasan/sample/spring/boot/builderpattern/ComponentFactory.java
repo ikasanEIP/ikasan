@@ -89,12 +89,6 @@ public class ComponentFactory
     @Value("${db.consumer.cronExpression}")
     String cronExpression;
 
-//    @Value("${db.consumer.scheduledGroupName}")
-//    String scheduledGroupName;
-//
-//    @Value("${db.consumer.scheduledName}")
-//    String scheduledName;
-//
     @Value("${db.consumer.configuredResourceId}")
     String dbConsumerConfiguredResourceId;
 
@@ -118,8 +112,6 @@ public class ComponentFactory
     {
         return builderFactory.getComponentBuilder().scheduledConsumer()
                 .setCronExpression(cronExpression)
-              //  .setScheduledJobGroupName(scheduledGroupName)
-              //  .setScheduledJobName(scheduledName)
                 .setConfiguredResourceId(dbConsumerConfiguredResourceId)
                 .setMessageProvider(personMessageProvider)
                 .build();

@@ -80,10 +80,10 @@ public class ApplicationTest
     {
         Flow flow = moduleUnderTest.getFlow("flow name");
         flow.start();
-        assertEquals("running", flow.getState());
+        assertEquals(Flow.RUNNING, flow.getState());
 
         flow.stop();
-        assertEquals("stopped", flow.getState());
+        assertEquals(Flow.STOPPED, flow.getState());
     }
 
     @After
