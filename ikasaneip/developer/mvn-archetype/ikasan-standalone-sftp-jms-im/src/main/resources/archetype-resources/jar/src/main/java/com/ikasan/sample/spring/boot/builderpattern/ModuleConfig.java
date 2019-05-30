@@ -126,8 +126,7 @@ public class ModuleConfig {
                         .setChunking(false)
                         .setConfiguredResourceId("configuredResourceId")
                         .setScheduledJobGroupName("SftpToLogFlow")
-                        .setScheduledJobName("SftpConsumer")
-                        .build())
+                        .setScheduledJobName("SftpConsumer"))
                 .converter("Sftp Payload to Map Converter",new PayloadToMapConverter())
                 .producer("Sftp Jms Producer", jmsProducer).build();
         return sftpToJmsFlow;
@@ -139,7 +138,6 @@ public class ModuleConfig {
         Consumer sftpJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
             .setConnectionFactory(consumerConnectionFactory)
             .setDestinationJndiName("sftp.private.jms.queue")
-            //.setAutoContentConversion(true)
             .setConfiguredResourceId("sftpJmsConsumer")
             .build();
 

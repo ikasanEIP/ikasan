@@ -122,8 +122,7 @@ public class ModuleConfig {
                     .setChunking(false)
                     .setConfiguredResourceId("configuredResourceId")
                     .setScheduledJobGroupName("FtpToLogFlow")
-                    .setScheduledJobName("FtpConsumer")
-                    .build())
+                    .setScheduledJobName("FtpConsumer"))
                 .converter("Ftp Payload to Map Converter",new PayloadToMapConverter())
                 .producer("Ftp Jms Producer", jmsProducer).build();
         return ftpToJmsFlow;
@@ -135,7 +134,6 @@ public class ModuleConfig {
         Consumer ftpJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
             .setConnectionFactory(consumerConnectionFactory)
             .setDestinationJndiName("ftp.private.jms.queue")
-            //.setAutoContentConversion(true)
             .setConfiguredResourceId("ftpJmsConsumer")
             .build();
 

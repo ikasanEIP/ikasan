@@ -67,11 +67,11 @@ public class MyModule
 
         Flow flow = moduleBuilder.getFlowBuilder("flow name")
             .withDescription("Vanilla source flow")
-            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()).build())
-            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().build())
-            .consumer("Event Generating Consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer().build())
+            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
+            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())
+            .consumer("Event Generating Consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer())
             .converter("Event Converter", componentFactory.getConverter())
-            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer().build()).build();
+            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer()).build();
 
         Module module = moduleBuilder
             .addFlow(flow)

@@ -103,7 +103,7 @@ public class ModuleConfig
                 .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
                 .withExceptionResolver(builderFactory.getExceptionResolverBuilder()
                         .addExceptionToAction(SampleGeneratedException.class, OnException.excludeEvent())
-                        .addExceptionToAction(EndpointException.class, OnException.retryIndefinitely(10000)).build())
+                        .addExceptionToAction(EndpointException.class, OnException.retryIndefinitely(10000)))
                 .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("JMS Consumer", jmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
