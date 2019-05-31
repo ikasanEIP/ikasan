@@ -271,6 +271,15 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan emailProducerBuilder
+     * @return emailProducerBuilder
+     */
+    public EmailProducerBuilder emailProducer()
+    {
+        return EmailProducerBuilder.getInstance();
+    }
+
+    /**
      * Get an instance of an Ikasan messageFilterBuilder
      * @return MessageFilterBuilder
      */

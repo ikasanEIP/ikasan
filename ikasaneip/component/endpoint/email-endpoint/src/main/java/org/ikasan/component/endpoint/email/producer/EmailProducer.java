@@ -67,7 +67,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
     private String configurationId;
 
     // configuration bean
-    private EmailProducerConfiguration configuration;
+    private EmailProducerConfiguration configuration = new EmailProducerConfiguration();
 
     /** mail session */
     private Session session;

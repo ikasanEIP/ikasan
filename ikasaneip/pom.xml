@@ -1189,6 +1189,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-email-endpoint</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-component-multiRecipient-router</artifactId>
                 <version>${project.version}</version>
             </dependency>
