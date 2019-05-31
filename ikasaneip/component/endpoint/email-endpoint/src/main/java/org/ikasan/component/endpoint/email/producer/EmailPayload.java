@@ -45,16 +45,22 @@ import java.util.List;
  * This interface defines email payload
  * @author Ikasan Development Team
  */
-public interface EmailPayload{
+public interface EmailPayload
+{
+    static EmailPayload newInstance()
+    {
+        return new DefaultEmailPayload();
+    }
 
-    public String formatEmailBody(String emailBody, String emailFormat);
+    String formatEmailBody(String emailBody, String emailFormat);
 
-    public String getEmailBody();
+    void setEmailBody(String emailBody);
 
-    public byte[] getAttachment(String name);
+    String getEmailBody();
 
-    public List<String> getAttachmentNames();
+    byte[] getAttachment(String name);
 
-    public String getAttachmentType(String name);
+    List<String> getAttachmentNames();
 
+    String getAttachmentType(String name);
 }

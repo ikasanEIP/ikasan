@@ -41,6 +41,7 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.EmailProducerBuilder;
 import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.builder.component.endpoint.FileProducerBuilder;
 import org.ikasan.component.converter.xml.XmlConfiguration;
@@ -61,6 +62,7 @@ import org.ikasan.spec.event.MessageListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
@@ -126,6 +128,14 @@ public class ComponentBuilderTest {
 
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void test_successful_emailProducer()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Assert.assertTrue(componentBuilder.emailProducer() instanceof EmailProducerBuilder);
+    }
+
 
     @Test
     public void test_successful_fileConsumer()
