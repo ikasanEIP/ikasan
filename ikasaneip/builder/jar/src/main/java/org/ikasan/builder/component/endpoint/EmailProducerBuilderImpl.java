@@ -44,7 +44,7 @@ import org.ikasan.component.endpoint.email.producer.EmailProducer;
 import org.ikasan.component.endpoint.email.producer.EmailProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -94,9 +94,7 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     @Override
     public EmailProducerBuilder setToRecipient(String recipient)
     {
-        List<String> recipients = new ArrayList<String>();
-        recipients.add(recipient);
-        return this.setToRecipients(recipients);
+        return this.setToRecipients(Arrays.asList(recipient));
     }
 
     @Override
@@ -109,9 +107,7 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     @Override
     public EmailProducerBuilder setCcRecipient(String recipient)
     {
-        List<String> recipients = new ArrayList<String>();
-        recipients.add(recipient);
-        return this.setCcRecipients(recipients);
+        return this.setCcRecipients(Arrays.asList(recipient));
     }
 
     @Override
@@ -124,9 +120,7 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     @Override
     public EmailProducerBuilder setBccRecipient(String recipient)
     {
-        List<String> recipients = new ArrayList<String>();
-        recipients.add(recipient);
-        return this.setBccRecipients(recipients);
+        return this.setBccRecipients(Arrays.asList(recipient));
     }
 
     @Override
