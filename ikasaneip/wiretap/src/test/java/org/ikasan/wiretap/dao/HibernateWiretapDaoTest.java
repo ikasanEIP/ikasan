@@ -306,22 +306,30 @@ public class HibernateWiretapDaoTest
     public void test_find_by_event_id()
     {
         HashSet<String> flowNames = new HashSet<>();
-        flowNames.add(null);
         PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
-            flowNames, null, null, null, null, null, null);
+            flowNames, null, "eventId1", null, null, null, null);
 
-        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+        Assert.assertEquals("Wiretap event result size == 1", 1, events.getResultSize());
     }
 
     @Test
     public void test_find_by_event()
     {
         HashSet<String> flowNames = new HashSet<>();
-        flowNames.add(null);
         PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
-            flowNames, null, null, null, null, null, "event1");
+            flowNames, null, null, null, null, null, "event9999");
 
-        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+        Assert.assertEquals("Wiretap event result size == 1", 1,events.getResultSize());
+    }
+
+    @Test
+    public void test_find_by_event_when_starts_with_percent()
+    {
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, "%vent9999%");
+
+        Assert.assertEquals("Wiretap event result size == 1",  1,events.getResultSize());
     }
 
     @Test
