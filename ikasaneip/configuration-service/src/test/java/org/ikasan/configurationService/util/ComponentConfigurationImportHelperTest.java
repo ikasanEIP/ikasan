@@ -46,8 +46,9 @@ public class ComponentConfigurationImportHelperTest
             "<value>value</value></listParameter><longParameter><name>longParam</name><value>1</value>" +
             "<description></description></longParameter><mapParameter><name>map</name><description>" +
             "</description><item><name>key</name><value>updated value</value></item></mapParameter>" +
-            "<maskedStringParameter><name>maskedString</name><value>masked</value><description>" +
-            "</description></maskedStringParameter><stringParameter><name>string</name><value>string</value>" +
+//            "<maskedStringParameter><name>maskedString</name><value>masked</value><description>" +
+//            "</description></maskedStringParameter>" +
+            "<stringParameter><name>string</name><value>string</value>" +
             "<description></description></stringParameter></parameters></componentConfiguration>";
 
     private String configXmlNoConfiguredResourceId = "<?xml version=\"1.0\"?><componentConfiguration xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"schemaLocation\">" +
@@ -58,8 +59,9 @@ public class ComponentConfigurationImportHelperTest
             "<value>value</value></listParameter><longParameter><name>longParam</name><value>1</value>" +
             "<description></description></longParameter><mapParameter><name>map</name><description>" +
             "</description><item><name>key</name><value>updated value</value></item></mapParameter>" +
-            "<maskedStringParameter><name>maskedString</name><value>masked</value><description>" +
-            "</description></maskedStringParameter><stringParameter><name>string</name><value>string</value>" +
+//            "<maskedStringParameter><name>maskedString</name><value>masked</value><description>" +
+//            "</description></maskedStringParameter>" +
+            "<stringParameter><name>string</name><value>string</value>" +
             "<description></description></stringParameter></parameters></componentConfiguration>";
     /**
      * Mockery for mocking concrete classes
@@ -96,7 +98,7 @@ public class ComponentConfigurationImportHelperTest
         sampleConfiguration.setBooleanParam(false);
         sampleConfiguration.setLongParam(1000L);
         sampleConfiguration.setIntParam(100);
-        sampleConfiguration.setMaskedString("some string!");
+//        sampleConfiguration.setMaskedString("some string!");
 
         this.configuredResource.setConfiguredResourceId("configureResourceId");
         this.configuredResource.setConfiguration(sampleConfiguration);
@@ -117,7 +119,7 @@ public class ComponentConfigurationImportHelperTest
         Assert.assertEquals("Boolean value must equal", this.configuredResource.getConfiguration().getBooleanParam(), true);
         Assert.assertEquals("Long value must equal", this.configuredResource.getConfiguration().getLongParam(), new Long(1L));
         Assert.assertEquals("Bollean value must equal", this.configuredResource.getConfiguration().getIntParam(), new Integer(1));
-        Assert.assertEquals("Bollean value must equal", this.configuredResource.getConfiguration().getMaskedString(), "masked");
+//        Assert.assertEquals("Bollean value must equal", this.configuredResource.getConfiguration().getMaskedString(), "masked");
     }
 
     @Test (expected = RuntimeException.class)
