@@ -40,8 +40,6 @@
  */
 package org.ikasan.configurationService.util;
 
-import org.ikasan.spec.configuration.Masked;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +52,7 @@ public class ImportExportConfiguration
 {
 	private String string;
     
-    @Masked
+//    @Masked
     private String maskedString;
     
     private Map<String,String>map;

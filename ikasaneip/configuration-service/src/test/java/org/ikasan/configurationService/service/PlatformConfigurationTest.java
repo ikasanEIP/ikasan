@@ -52,6 +52,7 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -71,6 +72,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
       "/substitute-components.xml",
     "/transaction-conf.xml"
       })
+@Ignore
 public class PlatformConfigurationTest
 {
 	
