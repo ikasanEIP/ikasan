@@ -312,7 +312,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 if (restrictionExists(payloadContent))
                 {
-                    predicates.add( builder.like(root.get("event"),payloadContent));
+                    if(payloadContent.startsWith("%")||payloadContent.endsWith("%"))
+                    {
+                        predicates.add(builder.like(root.get("event"), payloadContent));
+                    }else{
+                        predicates.add(builder.like(root.get("event"), "%" + payloadContent + "%"));
+                    }
                 }
                 if (restrictionExists(fromDate))
                 {
