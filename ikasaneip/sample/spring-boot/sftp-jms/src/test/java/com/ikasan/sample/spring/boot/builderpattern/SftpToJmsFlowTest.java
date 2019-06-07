@@ -129,9 +129,13 @@ public class SftpToJmsFlowTest
         flowTestRule.startFlow();
         flowTestRule.sleep(1000L);
         flowTestRule.fireScheduledConsumer();
+        flowTestRule.sleep(1000L);
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
+        flowTestRule.fireScheduledConsumer();
+        flowTestRule.sleep(1000L);
+
+        flowTestRule.fireScheduledConsumer();
+        flowTestRule.sleep(1000L);
 
         flowTestRule.assertIsSatisfied();
 
