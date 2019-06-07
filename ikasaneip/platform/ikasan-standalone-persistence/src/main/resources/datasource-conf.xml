@@ -13,6 +13,7 @@
         <entry key="hibernate.hbm2ddl.auto" value="${datasource.hbm2ddl.auto}"/>
         <entry key="hibernate.transaction.coordinator_class" value="jta" />
         <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
+        <entry key="hibernate.connection.autocommit" value="false" />
     </util:map>
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
