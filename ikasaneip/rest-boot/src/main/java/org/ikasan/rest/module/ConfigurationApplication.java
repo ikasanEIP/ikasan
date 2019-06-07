@@ -260,4 +260,23 @@ public class ConfigurationApplication {
 
         return new ResponseEntity(configuredResources,HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/components",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getComponentsConfigurtion() {
+
+        Module<Flow> module = moduleService.getModules().get(0);
+
+        List<Configuration> configuredResources = module.getFlows().stream()
+            .map(flow -> flow.getFlowElements())
+            .flatMap(Collection::stream)
+            .map(flowElement -> flowElement.getFlowComponent())
+            .filter( flowElementComponent -> flowElementComponent instanceof ConfiguredResource )
+            .map(flowElementComponent -> convert((ConfiguredResource) flowElementComponent))
+            .collect(Collectors.toList());
+
+        return new ResponseEntity(configuredResources,HttpStatus.OK);
+    }
 }
