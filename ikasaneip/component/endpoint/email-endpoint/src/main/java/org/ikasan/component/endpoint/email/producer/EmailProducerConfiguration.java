@@ -39,6 +39,8 @@ package org.ikasan.component.endpoint.email.producer;
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+import org.ikasan.spec.configuration.Masked;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +112,10 @@ public class EmailProducerConfiguration {
     /** email format, e.g. plain text, html */
     protected String emailFormat;
 
+    /** email format, e.g. plain text, html */
+    @Masked
+    protected String password;
+
     /** to recipients */
     protected List<String> toRecipients = new ArrayList<String>();
 
@@ -122,6 +128,15 @@ public class EmailProducerConfiguration {
     /** flag for attachment */
     protected boolean hasAttachment = false;
 
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
 
     public String getMailSmtpClass() {
         return mailSmtpClass;
