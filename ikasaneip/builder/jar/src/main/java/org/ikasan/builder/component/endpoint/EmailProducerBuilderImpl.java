@@ -180,6 +180,20 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     }
 
     @Override
+    public EmailProducerBuilder setUser(String user)
+    {
+        this.emailProducer.getConfiguration().setMailUser(user);
+        return this;
+    }
+
+    @Override
+    public EmailProducerBuilder setPassword(String password)
+    {
+        this.emailProducer.getConfiguration().setPassword(password);
+        return this;
+    }
+
+    @Override
     public EmailProducerBuilder setMailMimeAddressStrict(boolean mailMimeAddressStrict)
     {
         this.emailProducer.getConfiguration().setMailMimeAddressStrict(mailMimeAddressStrict);
