@@ -213,10 +213,23 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             mailProperties.put("mail.pop.user", configuration.getMailPopUser());
         }
 
-
         mailProperties.putAll(configuration.getExtendedMailSessionProperties());
 
-        session = Session.getInstance(mailProperties);
+        if(configuration.getPassword() == null)
+        {
+            session = Session.getInstance(mailProperties);
+        }
+        else
+        {
+            session = Session.getInstance(mailProperties,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(
+                                    configuration.getMailUser(), configuration.getPassword());
+                        }
+                    });
+        }
+
         recipients = Maps.newHashMap();
         recipients.put(Message.RecipientType.TO, toArray(configuration.getToRecipients()));
         recipients.put(Message.RecipientType.CC, toArray(configuration.getCcRecipients()));

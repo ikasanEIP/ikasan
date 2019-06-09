@@ -108,6 +108,10 @@ public interface EmailProducerBuilder extends Builder<Producer>
 
     EmailProducerBuilder setMailhost(String mailhost);
 
+    EmailProducerBuilder setUser(String user);
+
+    EmailProducerBuilder setPassword(String password);
+
     EmailProducerBuilder setExtendedMailSessionProperties(Map<String,String> extendedMailSessionProperties);
 
     EmailProducerBuilder setHasAttachment(boolean hasAttachment);
