@@ -75,7 +75,7 @@ public class EmailProducerConfiguration {
     protected String mailTransportProtocol;
 
     /** The default user name to use when connecting to the mail server. Used if the mail.protocol.user property isn't set. */
-    protected String mailUser;
+    protected String user;
 
     /** Specifies the fully qualified class name of the provider for the specified protocol. Used in cases where more than one provider for a given protocol exists; this property can be used to specify which provider to use by default. The provider must still be listed in a configuration file. */
     protected String mailSmtpClass;
@@ -254,12 +254,12 @@ public class EmailProducerConfiguration {
         this.mailTransportProtocol = mailTransportProtocol;
     }
 
-    public String getMailUser() {
-        return mailUser;
+    public String getUser() {
+        return user;
     }
 
-    public void setMailUser(String mailUser) {
-        this.mailUser = mailUser;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public Map<String, String> getExtendedMailSessionProperties() {
