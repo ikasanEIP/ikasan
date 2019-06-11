@@ -44,6 +44,7 @@ import org.ikasan.component.endpoint.email.producer.EmailProducer;
 import org.ikasan.component.endpoint.email.producer.EmailProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -59,17 +60,16 @@ import static org.junit.Assert.*;
 public class EmailProducerBuilderTest
 {
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void test_emailproducerbuilder_build_invalid_properties()
     {
-        new EmailProducerBuilderImpl( new EmailProducer() ).build();
+        EmailProducerBuilder.getInstance().build();
     }
 
     @Test
     public void test_emailproducerbuilder_getInstance()
     {
-        EmailProducerBuilder emailProducerBuilder = EmailProducerBuilder.getInstance();
-        emailProducerBuilder.build();
+        Assert.assertTrue(EmailProducerBuilder.getInstance() instanceof EmailProducerBuilder);
     }
 
     @Test
