@@ -138,9 +138,56 @@ In order to create your own broker you need to implement [Producer Interface](..
 
 This type of producer discards all data passed to it and does not perform any processing. 
 
+##### Configuration Options
+None.
+
 #### Logging Producer
 
 This type of producer logs all data passed to it. 
+
+##### Configuration Options
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| regExpPattern | String | Optional. Standard regular expression to match content of the event for replacement with alternate values defined below. |
+| replacementText | String | Optional. Replacement value for the above matched regExpPattern. |
+| logEveryNth | long | Optional. Specifies the event will only be logged every Nth occurrence. Default is 1 - log every occurrence. |
+
+#### Email Producer
+
+This type of producer sends an email. This requires an incoming EmailPayload event instance.
+ 
+##### Configuration Options
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| user | String | Optional. The default user name to use when connecting to the mail server. Used if the mail.protocol.user property isn't set.|
+| password | String | Optional. Password for the mail server. |
+| subject | String | Optional. Email subject line. |
+| mailBody | String | Optional. Email body content. |
+| runtimeEnvironment | String | Optional. Addition property which may be specified to denote the runtime instance generating the email. ie. dev, uat|
+| toRecipient | String | Optional. Email recipient 'to' address|
+| toRecipients | List<String> | Optional. Email recipients 'to' addresses|
+| ccRecipient | String | Optional. Email recipient 'cc' address|
+| ccRecipients | List<String> | Optional. Email recipients 'cc' addresses|
+| bccRecipient | String | Optional. Email recipient 'bcc' address|
+| bccRecipients | List<String> | Optional. Email recipients 'bcc' addresses|
+| hasAttachment | boolean | Optional. Whether the email has an attachment or not|
+| extendedMailSessionProperties | Map<String,String> | Optional. |
+| mailDebug | boolean | Optional. Run this in debug mode. Default is false. |
+| mailFrom | String | Optional. The return email address of the current user, used by the InternetAddress method getLocalAddress.|
+| mailMimeAddressStrict | boolean | Optional. The MimeMessage class uses the InternetAddress method parseHeader to parse headers in messages. This property controls the strict flag passed to the parseHeader method. The default is true.|
+| mailHost | String | Optional. The default host name of the mail server for both Stores and Transports. Used if the mail.protocol.host property isn't set.|
+| mailStoreProtocol | String | Optional. Specifies the default message access protocol.|
+| mailTransportProtocol | String | Optional. Specifies the default message transport protocol.|
+| mailSmtpClass | String | Optional. Specifies the fully qualified class name of the provider for the specified protocol. Used in cases where more than one provider for a given protocol exists; this property can be used to specify which provider to use by default.|
+| mailSmtpHost | String | Optional. The host name of the mail server for the specified protocol. Overrides the mailHost property.|
+| mailSmtpPort | int | Optional. The port number of the mail server for the specified protocol. If not specified the protocol's default port number is used.|
+| mailSmtpUser | String | Optional. The user name to use when connecting to mail servers using the specified protocol. Overrides the user property.|
+| mailPopClass | String | Optional. Specifies the fully qualified class name of the provider for the specified protocol. Used in cases where more than one provider for a given protocol exists; this property can be used to specify which provider to use by default.|
+| mailPopPort | int | Optional. The port number of the mail server for the specified protocol. If not specified the protocol's default port number is used.|
+| mailPopUser | String | Optional. The user name to use when connecting to mail servers using the specified protocol. Overrides the user property.|
+| emailFormat | String | Optional. Forat for the email. ie. text/html|
 
 #### JMS Producer
 
