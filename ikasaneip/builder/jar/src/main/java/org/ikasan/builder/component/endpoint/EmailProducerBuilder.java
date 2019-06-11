@@ -55,35 +55,49 @@ import java.util.Map;
  */
 public interface EmailProducerBuilder extends Builder<Producer>
 {
+    /** Get an instance if an EmailProducerBuilder */
     static EmailProducerBuilder getInstance()
     {
         return new EmailProducerBuilderImpl( new EmailProducer() );
     }
 
+    /** Set to true if failure of this resource to start should stop the flow from starting */
     EmailProducerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
+    /** Manually set the configuredResourceId. If not set one will be automatically generated */
     EmailProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
+    /** Pass the complete configuration for this component */
     EmailProducerBuilder setConfiguration(EmailProducerConfiguration emailProducerConfiguration);
 
+    /** Set a single recipient for this email */
     EmailProducerBuilder setToRecipient(String recipient);
 
+    /** Set a list of recipients for this email */
     EmailProducerBuilder setToRecipients(List<String> recipients);
 
+    /** Set a single CC recipient for this email */
     EmailProducerBuilder setCcRecipient(String recipient);
 
+    /** Set a list of CC recipients for this email */
     EmailProducerBuilder setCcRecipients(List<String> recipients);
 
+    /** Set a single BCC recipient for this email */
     EmailProducerBuilder setBccRecipient(String recipient);
 
+    /** Set a list of BCC recipients for this email */
     EmailProducerBuilder setBccRecipients(List<String> recipients);
 
+    /** Set the body content for this email */
     EmailProducerBuilder setEmailBody(String emailBody);
 
+    /** Set the format for this email ie. text or html */
     EmailProducerBuilder setEmailFormat(String emailFormat);
 
+    /** Set a description of the runtime environment this is being generated from */
     EmailProducerBuilder setRuntimeEnvironment(String runtimeEnvironment);
 
+    /** Set the subject content for this email */
     EmailProducerBuilder setMailSubject(String subject);
 
     EmailProducerBuilder setMailStoreProtocol(String mailStoreProtocol);
@@ -108,8 +122,10 @@ public interface EmailProducerBuilder extends Builder<Producer>
 
     EmailProducerBuilder setMailhost(String mailhost);
 
+    /** Set the user to be authenticated against the mail server */
     EmailProducerBuilder setUser(String user);
 
+    /** Set the password for user authentication against the mail server */
     EmailProducerBuilder setPassword(String password);
 
     EmailProducerBuilder setExtendedMailSessionProperties(Map<String,String> extendedMailSessionProperties);
