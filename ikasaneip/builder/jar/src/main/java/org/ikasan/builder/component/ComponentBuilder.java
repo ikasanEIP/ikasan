@@ -304,7 +304,7 @@ public class ComponentBuilder
             throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
                     + "<dependency>\n"
                     + "  <groupId>org.ikasan</groupId>\n"
-                    + "  <artifactId>ikasan-test-component</artifactId>\n"
+                    + "  <artifactId>ikasan-test-endpoint</artifactId>\n"
                     + "</dependency>\n", e);
         }
     }
