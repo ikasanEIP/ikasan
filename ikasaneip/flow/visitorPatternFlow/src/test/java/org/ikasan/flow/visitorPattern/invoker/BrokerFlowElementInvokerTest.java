@@ -42,6 +42,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.flow.*;
@@ -50,6 +51,8 @@ import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.springframework.aop.framework.AdvisedSupport;
+import org.springframework.aop.framework.DefaultAopProxyFactory;
 
 import java.util.Map;
 
@@ -71,7 +74,6 @@ public class BrokerFlowElementInvokerTest
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
-    private Broker broker = mockery.mock(Broker.class, "broker");
     private Map payload = mockery.mock(Map.class, "payload");
 
     // this is to test the InvocationAware aspect
@@ -82,6 +84,8 @@ public class BrokerFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_broker_flowElementInvoker_payloadOnly()
     {
+        Broker broker = new BrokerForObject();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -103,12 +107,9 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
-                exactly(1).of(broker).invoke(flowEvent);
-                will(throwException(new ClassCastException()));
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
-                exactly(1).of(broker).invoke(payload);
-                will(returnValue(payload));
+
                 exactly(1).of(flowEvent).setPayload(payload);
 
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
@@ -134,8 +135,7 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
-                exactly(1).of(broker).invoke(payload);
-                will(returnValue(payload));
+
                 exactly(1).of(flowEvent).setPayload(payload);
 
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
@@ -178,8 +178,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(brokerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(brokerInvocationAware).invoke(flowEvent);
-                will(throwException(new ClassCastException()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(brokerInvocationAware).invoke(payload);
@@ -237,6 +236,7 @@ public class BrokerFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_broker_flowElementInvoker_flowEvent()
     {
+        Broker broker = new BrokerForFlowEventFlowEvent();
         // expectations
         mockery.checking(new Expectations()
         {
@@ -258,8 +258,6 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
-                exactly(1).of(broker).invoke(flowEvent);
-                will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(null));
@@ -282,8 +280,6 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
-                exactly(1).of(broker).invoke(flowEvent);
-                will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
 
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
@@ -304,6 +300,7 @@ public class BrokerFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_broker_flowElementInvoker_flowEvent_with_transition()
     {
+        Broker broker = new BrokerForFlowEventFlowEvent();
         // expectations
         mockery.checking(new Expectations()
         {
@@ -322,8 +319,6 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
-                exactly(1).of(broker).invoke(flowEvent);
-                will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
                 // transition is itself for purposes of testing
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
@@ -344,6 +339,7 @@ public class BrokerFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_broker_flowElementInvoker_exception()
     {
+        Broker broker = new BrokerForException();
         // expectations
         mockery.checking(new Expectations()
         {
@@ -362,12 +358,6 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
 
-                exactly(1).of(broker).invoke(flowEvent);
-                will(throwException(new ClassCastException()));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(broker).invoke(payload);
-                will(throwException(new EndpointException("failed")));
             }
         });
 
@@ -379,6 +369,98 @@ public class BrokerFlowElementInvokerTest
         finally
         {
             mockery.assertIsSatisfied();
+        }
+    }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_broker_proxied_flowElementInvoker_with_flowEvent()
+    {
+        // this is a Proxied Broker, same as one created by builder pattern if the broker is pointcut
+        AdvisedSupport advisedSupport = new AdvisedSupport(Broker.class);
+        advisedSupport.setTarget(new BrokerForFlowEvent());
+        final Broker<FlowEvent,Object> broker = (Broker<FlowEvent, Object>) new DefaultAopProxyFactory().createAopProxy(advisedSupport).getProxy();
+
+        FlowEvent fe = new FlowEventFactory().newEvent("id", "payload");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, fe);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, fe);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, fe, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+
+
+    /**
+     * Test broker class for testing with FlowEvent instance
+     */
+    class BrokerForObject implements Broker<Object,Object>
+    {
+        @Override
+        public Object invoke(Object object) throws EndpointException
+        {
+            return object;
+        }
+    }
+
+
+    /**
+     * Test broker class for testing with FlowEvent instance
+     */
+    class BrokerForFlowEvent implements Broker<FlowEvent,Object>
+    {
+
+        @Override
+        public Object invoke(FlowEvent flowEvent) throws EndpointException
+        {
+            return flowEvent.getPayload();
+        }
+    }
+
+    /**
+     * Test broker class for testing with FlowEvent instance
+     */
+    class BrokerForFlowEventFlowEvent implements Broker<FlowEvent, FlowEvent>
+    {
+
+        @Override
+        public FlowEvent invoke(FlowEvent flowEvent) throws EndpointException
+        {
+            return flowEvent;
+        }
+    }
+
+    /**
+     * Test broker class for testing with FlowEvent instance
+     */
+    class BrokerForException implements Broker<FlowEvent,Object>
+    {
+
+        @Override
+        public Object invoke(FlowEvent flowEvent) throws EndpointException
+        {
+            throw new EndpointException("failed");
         }
     }
 }

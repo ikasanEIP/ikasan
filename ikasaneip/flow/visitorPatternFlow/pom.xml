@@ -144,6 +144,12 @@
             <artifactId>objenesis</artifactId>
         </dependency>
 
+        <!-- added to help invokers on Proxied classes -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>

@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.flow.*;
+import org.springframework.aop.support.AopUtils;
 
 /**
  * A default implementation of the FlowElementInvoker for brokers
@@ -79,6 +80,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
                 {
                     // try with flowEvent and if successful mark this producer
                     // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                    AopUtils.getTargetClass(broker).getMethod("invoke", FlowEvent.class);
                     Object o = broker.invoke(flowEvent);
                     if (o instanceof FlowEvent)
                     {
@@ -90,7 +92,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
                     }
                     requiresFullEventForInvocation = Boolean.TRUE;
                 }
-                catch (java.lang.ClassCastException e)
+                catch (NoSuchMethodException e)
                 {
                     flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
                     requiresFullEventForInvocation = Boolean.FALSE;

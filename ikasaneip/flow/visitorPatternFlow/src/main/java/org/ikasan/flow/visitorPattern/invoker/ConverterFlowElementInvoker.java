@@ -43,6 +43,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
+import org.springframework.aop.support.AopUtils;
 
 /**
  * A default implementation of the FlowElementInvoker for a converter
@@ -89,7 +90,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
                 {
                     // try with flowEvent and if successful mark this producer
                     // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
-                    converter.getClass().getMethod("convert", FlowEvent.class);
+                    AopUtils.getTargetClass(converter).getMethod("convert", FlowEvent.class);
                     Object o = converter.convert(flowEvent);
                     if (o instanceof FlowEvent)
                     {
@@ -102,7 +103,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
                     }
                     requiresFullEventForInvocation = Boolean.TRUE;
                 }
-                catch (java.lang.NoSuchMethodException e)
+                catch (NoSuchMethodException e)
                 {
                     flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
                     requiresFullEventForInvocation = Boolean.FALSE;
@@ -112,7 +113,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
             {
                 if (requiresFullEventForInvocation)
                 {
-                    // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                    // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
                     Object o = converter.convert(flowEvent);
                     if (o instanceof FlowEvent)
                     {

@@ -42,6 +42,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -51,6 +52,8 @@ import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.springframework.aop.framework.AdvisedSupport;
+import org.springframework.aop.framework.DefaultAopProxyFactory;
 
 /**
  * Supports testing of the ConverterFlowElementInvoker
@@ -111,6 +114,43 @@ public class ConverterFlowElementInvokerTest
 
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_converter_proxied_flowElementInvoker_with_flowEvent()
+    {
+        // this is a Proxied Converter, same as one created by builder pattern if the converter is pointcut
+        AdvisedSupport advisedSupport = new AdvisedSupport(Converter.class);
+        advisedSupport.setTarget(new ConverterForFlowEvent());
+        final Converter<FlowEvent,Object> converter = (Converter<FlowEvent, Object>) new DefaultAopProxyFactory().createAopProxy(advisedSupport).getProxy();
+
+        FlowEvent fe = new FlowEventFactory().newEvent("id", "payload");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, fe);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(converter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, fe);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, fe, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -310,6 +350,7 @@ public class ConverterFlowElementInvokerTest
             return payload;
         }
     }
+
 }
 
 
