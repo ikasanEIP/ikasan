@@ -40,46 +40,17 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.builder.component.Builder;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default scheduled consumer builder.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface ScheduledConsumerBuilder extends AbstractScheduledConsumerBuilder<ScheduledConsumerBuilder>
 {
-    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
-
-    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    static ScheduledConsumerConfiguration newConfiguration() { return new ScheduledConsumerConfiguration(); }
 
     ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
-
-    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    ScheduledConsumerBuilder setCronExpression(String cronExpression);
-
-    ScheduledConsumerBuilder setEager(boolean eager);
-
-    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    ScheduledConsumerBuilder setTimezone(String timezone);
-
-    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
-
-    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
-
 }
 

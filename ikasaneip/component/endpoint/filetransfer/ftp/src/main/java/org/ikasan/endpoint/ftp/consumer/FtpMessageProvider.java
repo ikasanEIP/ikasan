@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
+import org.ikasan.spec.configuration.Configured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -71,7 +72,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class FtpMessageProvider implements ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
+public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>, ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
 {
     private static Logger logger = LoggerFactory.getLogger(FtpMessageProvider.class);
 
@@ -412,6 +413,13 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
         this.directoryURLFactory = directoryURLFactory;
     }
 
+    @Override
+    public FtpConsumerConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
     public void setConfiguration(FtpConsumerConfiguration configuration)
     {
         this.configuration = configuration;

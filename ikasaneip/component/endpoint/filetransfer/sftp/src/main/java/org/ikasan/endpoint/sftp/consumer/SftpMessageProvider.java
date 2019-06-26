@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
+import org.ikasan.spec.configuration.Configured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
@@ -69,7 +70,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class SftpMessageProvider implements ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
+public class SftpMessageProvider implements Configured<SftpConsumerConfiguration>, ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
 {
     private static Logger logger = LoggerFactory.getLogger(SftpMessageProvider.class);
 
@@ -379,12 +380,20 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         this.directoryURLFactory = directoryURLFactory;
     }
 
+    @Override
+    public SftpConsumerConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
     public void setConfiguration(SftpConsumerConfiguration configuration)
     {
         this.configuration = configuration;
     }
 
-    @Override public void commitFailureOccurred(TransactionCommitEvent event)
+    @Override
+    public void commitFailureOccurred(TransactionCommitEvent event)
     {
         logger.info("Logging error: " + event.getException().getMessage());
         this.managedResourceRecoveryManager.recover(event.getException());
