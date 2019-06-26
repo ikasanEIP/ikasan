@@ -41,9 +41,8 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
@@ -51,10 +50,7 @@ import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpMessageProvider;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import org.quartz.Job;
+import org.quartz.Scheduler;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
@@ -63,8 +59,40 @@ import org.springframework.transaction.jta.JtaTransactionManager;
  *
  * @author Ikasan Development Team
  */
-public class SftpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl implements SftpConsumerBuilder
+public class SftpConsumerBuilderImpl
+        extends AbstractScheduledConsumerBuilderImpl<SftpConsumerBuilder>
+        implements SftpConsumerBuilder, RequiresAopProxy
 {
+    String sourceDirectory;
+    String filenamePattern;
+    DirectoryURLFactory sourceDirectoryURLFactory;
+    Boolean filterDuplicates;
+    Boolean filterOnFilename;
+    Boolean filterOnLastModifiedDate;
+    Boolean renameOnSuccess;
+    String renameOnSuccessExtension;
+    Boolean moveOnSuccess;
+    String moveOnSuccessNewPath;
+    Boolean chronological;
+    Boolean chunking;
+    Integer chunkSize;
+    Boolean checksum;
+    Long minAge;
+    Boolean destructive;
+    Integer maxRows;
+    Integer ageOfFiles;
+    String clientID;
+    Boolean cleanupJournalOnComplete;
+    String remoteHost;
+    String privateKeyFilename;
+    Integer maxRetryAttempts;
+    Integer remotePort;
+    String knownHostsFilename;
+    String username;
+    String password;
+    Integer connectionTimeout;
+    Boolean isRecursive;
+    String preferredKeyExchangeAlgorithm;
 
     private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
 
@@ -74,376 +102,264 @@ public class SftpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl implem
 
     private JtaTransactionManager transactionManager;
 
-    private MessageProvider messageProvider;
     /**
      * Constructor
-     * @param scheduledConsumer
+     * @param scheduler
+     * @param scheduledJobFactory
+     * @param aopProxyProvider
+     * @param transactionManager
+     * @param baseFileTransferDao
+     * @param fileChunkDao
+     * @param transactionalResourceCommandDAO
      */
-    public SftpConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
-            AopProxyProvider aopProxyProvider, JtaTransactionManager transactionManager,
-            BaseFileTransferDao baseFileTransferDao, FileChunkDao fileChunkDao,
-            TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+    public SftpConsumerBuilderImpl(Scheduler scheduler,
+                                   ScheduledJobFactory scheduledJobFactory,
+                                   AopProxyProvider aopProxyProvider, JtaTransactionManager transactionManager,
+                                   BaseFileTransferDao baseFileTransferDao, FileChunkDao fileChunkDao,
+                                   TransactionalResourceCommandDAO transactionalResourceCommandDAO)
     {
-        super(scheduledConsumer,scheduledJobFactory,aopProxyProvider);
+        super(scheduler,scheduledJobFactory,aopProxyProvider);
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
-
     }
 
-    /**
-     * Is this successful start of this component critical on flow start.
-     * If it can recover post flow start up then its not crititcal.
-     * @param criticalOnStartup
-     * @return
-     */
     @Override
-    public SftpConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup)
+    public SftpConsumerBuilder setConfiguration(SftpConsumerConfiguration configuration)
     {
-        return (SftpConsumerBuilder) super.setCriticalOnStartup(criticalOnStartup);
-
-    }
-
-    /**
-     * ConfigurationService identifier for this component configuration.
-     * @param configuredResourceId
-     * @return
-     */
-    public SftpConsumerBuilder setConfiguredResourceId(String configuredResourceId)
-    {
-        return (SftpConsumerBuilder) super.setConfiguredResourceId(configuredResourceId);
-    }
-
-    /**
-     * Actual runtime configuration
-     * @param scheduledConsumerConfiguration
-     * @return
-     */
-    public SftpConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration)
-    {
-        return (SftpConsumerBuilder) super.setConfiguration(scheduledConsumerConfiguration);
-
-    }
-
-    /**
-     * Underlying tech providing the message event
-     * @param messageProvider
-     * @return
-     */
-    public SftpConsumerBuilder setMessageProvider(MessageProvider messageProvider)
-    {
-        this.messageProvider = messageProvider;
-        return this;
-    }
-
-    /**
-     * Implementation of the managed event identifier service - sets the life identifier based on the incoming event.
-     * @param managedEventIdentifierService
-     * @return
-     */
-    public SftpConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
-    {
-        return (SftpConsumerBuilder) super.setManagedEventIdentifierService(managedEventIdentifierService);
-    }
-
-    /**
-     * Give the component a handle directly to the recovery manager
-     * @param managedResourceRecoveryManager
-     * @return
-     */
-    public SftpConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
-    {
-        return (SftpConsumerBuilder) super.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-    }
-
-    /**
-     * Override default event factory
-     * @param eventFactory
-     * @return
-     */
-    public SftpConsumerBuilder setEventFactory(EventFactory eventFactory) {
-        return (SftpConsumerBuilder) super.setEventFactory(eventFactory);
-    }
-
-    /**
-     * Scheduled consumer cron expression
-     * @param cronExpression
-     * @return
-     */
-    @Override
-    public SftpConsumerBuilder setCronExpression(String cronExpression)
-    {
-        getConfiguration().setCronExpression(cronExpression);
-        return this;
-    }
-
-    /**
-     * When true the scheduled consumer is immediately called back on completion of flow execution.
-     * If false the scheduled consumers cron expression determines the callback.
-     * @param eager
-     * @return
-     */
-    @Override
-    public SftpConsumerBuilder setEager(boolean eager) {
-        getConfiguration().setEager(eager);
-        return this;
-    }
-
-    /**
-     * Whether to ignore call back failures.
-     * @param ignoreMisfire
-     * @return
-     */
-    @Override
-    public SftpConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire) {
-        getConfiguration().setIgnoreMisfire(ignoreMisfire);
-        return this;
-    }
-
-    /**
-     * Specifically set the timezone of the scheduled callback.
-     * @param timezone
-     * @return
-     */
-    @Override
-    public SftpConsumerBuilder setTimezone(String timezone) {
-        getConfiguration().setTimezone(timezone);
+        this.configuration = configuration;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setSourceDirectory(String sourceDirectory)
     {
-        getConfiguration().setSourceDirectory(sourceDirectory);
+        this.sourceDirectory = sourceDirectory;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setFilenamePattern(String filenamePattern)
     {
-        getConfiguration().setFilenamePattern(filenamePattern);
+        this.filenamePattern = filenamePattern;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setSourceDirectoryURLFactory(DirectoryURLFactory sourceDirectoryURLFactory)
     {
-        getConfiguration().setSourceDirectoryURLFactory(sourceDirectoryURLFactory);
+        this.sourceDirectoryURLFactory = sourceDirectoryURLFactory;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setFilterDuplicates(Boolean filterDuplicates)
     {
-        getConfiguration().setFilterDuplicates(filterDuplicates);
+        this.filterDuplicates = filterDuplicates;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setFilterOnFilename(Boolean filterOnFilename)
     {
-        getConfiguration().setFilterOnFilename(filterOnFilename);
+        this.filterOnFilename = filterOnFilename;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setFilterOnLastModifiedDate(Boolean filterOnLastModifiedDate)
     {
-        getConfiguration().setFilterOnLastModifiedDate(filterOnLastModifiedDate);
+        this.filterOnLastModifiedDate = filterOnLastModifiedDate;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setRenameOnSuccess(Boolean renameOnSuccess)
     {
-        getConfiguration().setRenameOnSuccess(renameOnSuccess);
+        this.renameOnSuccess = renameOnSuccess;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setRenameOnSuccessExtension(String renameOnSuccessExtension)
     {
-        getConfiguration().setRenameOnSuccessExtension(renameOnSuccessExtension);
+        this.renameOnSuccessExtension = renameOnSuccessExtension;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setMoveOnSuccess(Boolean moveOnSuccess)
     {
-        getConfiguration().setMoveOnSuccess(moveOnSuccess);
+        this.moveOnSuccess = moveOnSuccess;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setMoveOnSuccessNewPath(String moveOnSuccessNewPath)
     {
-        getConfiguration().setMoveOnSuccessNewPath(moveOnSuccessNewPath);
+        this.moveOnSuccessNewPath = moveOnSuccessNewPath;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setChronological(Boolean chronological)
     {
-        getConfiguration().setChronological(chronological);
+        this.chronological = chronological;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setChunking(Boolean chunking)
     {
-        getConfiguration().setChunking(chunking);
+        this.chunking = chunking;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setChunkSize(Integer chunkSize)
     {
-        getConfiguration().setChunkSize(chunkSize);
+        this.chunkSize = chunkSize;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setChecksum(Boolean checksum)
     {
-        getConfiguration().setChecksum(checksum);
+        this.checksum = checksum;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setMinAge(Long minAge)
     {
-        getConfiguration().setMinAge(minAge);
+        this.minAge = minAge;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setDestructive(Boolean destructive)
     {
-        getConfiguration().setDestructive(destructive);
+        this.destructive = destructive;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setMaxRows(Integer maxRows)
     {
-        getConfiguration().setMaxRows(maxRows);
+        this.maxRows = maxRows;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setAgeOfFiles(Integer ageOfFiles)
     {
-        getConfiguration().setAgeOfFiles(ageOfFiles);
+        this.ageOfFiles = ageOfFiles;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setClientID(String clientID)
     {
-        getConfiguration().setClientID(clientID);
+        this.clientID = clientID;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
     {
-        getConfiguration().setCleanupJournalOnComplete(cleanupJournalOnComplete);
+        this.cleanupJournalOnComplete = cleanupJournalOnComplete;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setRemoteHost(String remoteHost)
     {
-        getConfiguration().setRemoteHost(remoteHost);
+        this.remoteHost = remoteHost;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setPrivateKeyFilename(String privateKeyFilename)
     {
-        getConfiguration().setPrivateKeyFilename(privateKeyFilename);
+        this.privateKeyFilename = privateKeyFilename;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setMaxRetryAttempts(Integer maxRetryAttempts)
     {
-        getConfiguration().setMaxRetryAttempts(maxRetryAttempts);
+        this.maxRetryAttempts = maxRetryAttempts;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setRemotePort(Integer remotePort)
     {
-        getConfiguration().setRemotePort(remotePort);
+        this.remotePort = remotePort;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setKnownHostsFilename(String knownHostsFilename)
     {
-        getConfiguration().setKnownHostsFilename(knownHostsFilename);
+        this.knownHostsFilename = knownHostsFilename;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setUsername(String username)
     {
-        getConfiguration().setUsername(username);
+        this.username = username;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setPassword(String password)
     {
-        getConfiguration().setPassword(password);
+        this.password = password;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setConnectionTimeout(Integer connectionTimeout)
     {
-        getConfiguration().setConnectionTimeout(connectionTimeout);
+        this.connectionTimeout = connectionTimeout;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setIsRecursive(Boolean isRecursive)
     {
-        getConfiguration().setIsRecursive(isRecursive);
+        this.isRecursive = isRecursive;
         return this;
     }
 
     @Override
     public SftpConsumerBuilder setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm)
     {
-        getConfiguration().setPreferredKeyExchangeAlgorithm(preferredKeyExchangeAlgorithm);
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
         return this;
     }
 
     @Override
-    public SftpConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName) {
+    public SftpConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName)
+    {
         this.scheduledJobGroupName = scheduledJobGroupName;
         return this;
     }
 
     @Override
-    public SftpConsumerBuilder setScheduledJobName(String scheduledJobName) {
-        return (SftpConsumerBuilder) super.setScheduledJobName(scheduledJobName);
+    public SftpConsumerBuilder setScheduledJobName(String scheduledJobName)
+    {
+        this.scheduledJobName = scheduledJobName;
+        return this;
     }
 
-
-    private SftpConsumerConfiguration getConfiguration()
+    @Override
+    protected SftpConsumerConfiguration createConfiguration()
     {
-        SftpConsumerConfiguration sftpConsumerConfiguration = (SftpConsumerConfiguration) this.scheduledConsumer.getConfiguration();
-        if(sftpConsumerConfiguration == null)
-        {
-            sftpConsumerConfiguration = new SftpConsumerConfiguration();
-            this.scheduledConsumer.setConfiguration(sftpConsumerConfiguration);
-        }
-
-        return sftpConsumerConfiguration;
+        return SftpConsumerBuilder.newConfiguration();
     }
 
     /**
@@ -451,54 +367,169 @@ public class SftpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl implem
      * ready for use and return the instance.
      * @return
      */
-    public ScheduledConsumer build() {
-        if (this.scheduledConsumer.getConfiguration() == null) {
-            this.scheduledConsumer.setConfiguration(new SftpConsumerConfiguration());
-        }
+    public ScheduledConsumer build()
+    {
+        ScheduledConsumer scheduledConsumer = super.build();
+        SftpConsumerConfiguration configuration = (SftpConsumerConfiguration)scheduledConsumer.getConfiguration();
 
-        validateBuilderConfiguration();
-
-        if(messageProvider != null)
-        {
-            this.scheduledConsumer.setMessageProvider(messageProvider);
-        }
-        else
+        if(messageProvider == null)
         {
             SftpMessageProvider sftpMessageProvider = new SftpMessageProvider(transactionManager,baseFileTransferDao,
                     fileChunkDao, transactionalResourceCommandDAO);
-            sftpMessageProvider.setConfiguration(getConfiguration());
-            this.scheduledConsumer.setMessageProvider(sftpMessageProvider);
+            scheduledConsumer.setMessageProvider(sftpMessageProvider);
         }
 
-        if(this.aopProxyProvider == null)
+        if(sourceDirectory != null)
         {
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            configuration.setSourceDirectory(sourceDirectory);
         }
-        else
+
+        if(filenamePattern != null)
         {
-            Job pointcutJob = this.aopProxyProvider.applyPointcut(this.scheduledJobName, scheduledConsumer);
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            configuration.setFilenamePattern(filenamePattern);
         }
 
-        return this.scheduledConsumer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(this.scheduledJobName == null)
+        if(sourceDirectoryURLFactory != null)
         {
-            throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");
+            configuration.setSourceDirectoryURLFactory(sourceDirectoryURLFactory);
         }
 
-        if(this.scheduledJobGroupName == null)
+        if(filterDuplicates != null)
         {
-            throw new IllegalArgumentException("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'");
+            configuration.setFilterDuplicates(filterDuplicates);
         }
-    }
 
-    @Override
-    public void setAopProxyProvider(AopProxyProvider aopProxyProvider) {
-        this.aopProxyProvider = aopProxyProvider;
+        if(filterOnFilename != null)
+        {
+            configuration.setFilterOnFilename(filterOnFilename);
+        }
+
+        if(filterOnLastModifiedDate != null)
+        {
+            configuration.setFilterOnLastModifiedDate(filterOnLastModifiedDate);
+        }
+
+        if(renameOnSuccess != null)
+        {
+            configuration.setRenameOnSuccess(renameOnSuccess);
+        }
+
+        if(renameOnSuccessExtension != null)
+        {
+            configuration.setRenameOnSuccessExtension(renameOnSuccessExtension);
+        }
+
+        if(moveOnSuccess != null)
+        {
+            configuration.setMoveOnSuccess(moveOnSuccess);
+        }
+
+        if(moveOnSuccessNewPath != null)
+        {
+            configuration.setMoveOnSuccessNewPath(moveOnSuccessNewPath);
+        }
+
+        if(chronological != null)
+        {
+            configuration.setChronological(chronological);
+        }
+
+        if(chunking != null)
+        {
+            configuration.setChunking(chunking);
+        }
+
+        if(chunkSize != null)
+        {
+            configuration.setChunkSize(chunkSize);
+        }
+
+        if(checksum != null)
+        {
+            configuration.setChecksum(checksum);
+        }
+
+        if(minAge != null)
+        {
+            configuration.setMinAge(minAge);
+        }
+
+        if(destructive != null)
+        {
+            configuration.setDestructive(destructive);
+        }
+
+        if(maxRows != null)
+        {
+            configuration.setMaxRows(maxRows);
+        }
+
+        if(ageOfFiles != null)
+        {
+            configuration.setAgeOfFiles(ageOfFiles);
+        }
+
+        if(clientID != null)
+        {
+            configuration.setClientID(clientID);
+        }
+
+        if(cleanupJournalOnComplete != null)
+        {
+            configuration.setCleanupJournalOnComplete(cleanupJournalOnComplete);
+        }
+
+        if(remoteHost != null)
+        {
+            configuration.setRemoteHost(remoteHost);
+        }
+
+        if(privateKeyFilename != null)
+        {
+            configuration.setPrivateKeyFilename(privateKeyFilename);
+        }
+
+        if(maxRetryAttempts != null)
+        {
+            configuration.setMaxRetryAttempts(maxRetryAttempts);
+        }
+
+        if(remotePort != null)
+        {
+            configuration.setRemotePort(remotePort);
+        }
+
+        if(knownHostsFilename != null)
+        {
+            configuration.setKnownHostsFilename(knownHostsFilename);
+        }
+
+        if(username != null)
+        {
+            configuration.setUsername(username);
+        }
+
+        if(password != null)
+        {
+            configuration.setPassword(password);
+        }
+
+        if(connectionTimeout != null)
+        {
+            configuration.setConnectionTimeout(connectionTimeout);
+        }
+
+        if(isRecursive != null)
+        {
+            configuration.setIsRecursive(isRecursive);
+        }
+
+        if(preferredKeyExchangeAlgorithm != null)
+        {
+            configuration.setPreferredKeyExchangeAlgorithm(preferredKeyExchangeAlgorithm);
+        }
+
+        return scheduledConsumer;
     }
 }
 

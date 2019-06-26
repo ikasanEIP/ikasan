@@ -42,13 +42,16 @@ package org.ikasan.builder.component.endpoint;
 
 import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.builder.component.endpoint.ScheduledConsumerBuilder;
-import org.ikasan.builder.component.endpoint.ScheduledConsumerBuilderImpl;
+import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
+import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -59,7 +62,6 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.*;
 
 /**
@@ -87,6 +89,11 @@ public class ScheduledConsumerBuilderTest {
     final AopProxyProvider aopProxyProvider = mockery.mock(AopProxyProvider.class, "mockAopProxyProvider");
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
+    final MessageProvider messageProvider = mockery.mock(MessageProvider.class, "mockMessageProvider");
+    final CallBackMessageProvider callbackMessageProvider = mockery.mock(CallBackMessageProvider.class, "mockCallBackMessageProvider");
+    final EventFactory eventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
+    final ManagedEventIdentifierService managedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class, "mockManagedEventIdentifierService");
+    final ManagedResourceRecoveryManager managedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class, "mockManagedResourceRecoveryManager");
 
     /**
      * Test successful builder creation.
@@ -95,8 +102,8 @@ public class ScheduledConsumerBuilderTest {
     public void scheduledConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -142,8 +149,8 @@ public class ScheduledConsumerBuilderTest {
     public void scheduledConsumer_build_when_no_aop_proxy() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, null);
 
         // expectations
         mockery.checking(new Expectations()
@@ -180,8 +187,8 @@ public class ScheduledConsumerBuilderTest {
     public void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -219,8 +226,8 @@ public class ScheduledConsumerBuilderTest {
     public void scheduledConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -252,15 +259,15 @@ public class ScheduledConsumerBuilderTest {
     public void scheduledConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("testJob"),with(emptyScheduleConsumer));
+                oneOf(aopProxyProvider).applyPointcut(with("testJob"), with(emptyScheduleConsumer));
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
@@ -281,4 +288,165 @@ public class ScheduledConsumerBuilderTest {
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_vanilla_messageProvider() {
+
+        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("testJob"), with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with("testJob"),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = scheduledConsumerBuilder
+                .setCronExpression("121212")
+                .setConfiguredResourceId("testConfigId")
+                .setScheduledJobGroupName("jobGroupName")
+                .setScheduledJobName("testJob")
+                .setConfiguredResourceId("configuredResourceId")
+                .setConfiguration(new ScheduledConsumerConfiguration())
+                .setCriticalOnStartup(true)
+                .setEager(true)
+                .setIgnoreMisfire(true)
+                .setMaxEagerCallbacks(10)
+                .setMessageProvider(messageProvider)
+                .setTimezone("GMT")
+                .setEventFactory(eventFactory)
+                .setManagedEventIdentifierService(managedEventIdentifierService)
+                .setManagedResourceRecoveryManager(managedResourceRecoveryManager)
+                .build();
+
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertTrue(scheduledConsumer.isCriticalOnStartup());
+        assertTrue(scheduledConsumer.getConfiguration().isEager());
+        assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
+        assertTrue(scheduledConsumer.getConfiguration().isEager());
+        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertTrue(scheduledConsumer.getMessageProvider() instanceof MessageProvider);
+        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertTrue(scheduledConsumer.getEventFactory() != null);
+        assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_callback_messageProvider() {
+
+        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
+                scheduler, scheduledJobFactory, aopProxyProvider);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("testJob"), with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with("testJob"),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = scheduledConsumerBuilder
+                .setCronExpression("121212")
+                .setConfiguredResourceId("testConfigId")
+                .setScheduledJobGroupName("jobGroupName")
+                .setScheduledJobName("testJob")
+                .setConfiguredResourceId("configuredResourceId")
+                .setConfiguration(new ScheduledConsumerConfiguration())
+                .setCriticalOnStartup(true)
+                .setEager(true)
+                .setIgnoreMisfire(true)
+                .setMaxEagerCallbacks(10)
+                .setMessageProvider(callbackMessageProvider)
+                .setTimezone("GMT")
+                .setEventFactory(eventFactory)
+                .setManagedEventIdentifierService(managedEventIdentifierService)
+                .setManagedResourceRecoveryManager(managedResourceRecoveryManager)
+                .build();
+
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertTrue(scheduledConsumer.isCriticalOnStartup());
+        assertTrue(scheduledConsumer.getConfiguration().isEager());
+        assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
+        assertTrue(scheduledConsumer.getConfiguration().isEager());
+        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertTrue(scheduledConsumer.getMessageProvider() instanceof CallBackMessageProvider);
+        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertTrue(scheduledConsumer.getEventFactory() != null);
+        assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
+
+        mockery.assertIsSatisfied();
+    }
+
+    class ExtendedScheduledConsumerBuilderImpl extends AbstractScheduledConsumerBuilderImpl<ScheduledConsumerBuilder> implements
+            ScheduledConsumerBuilder
+    {
+        ScheduledConsumer scheduledConsumer;
+
+        /**
+         * Constructor
+         *
+         * @param scheduler
+         * @param scheduledJobFactory
+         * @param aopProxyProvider
+         */
+        public ExtendedScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, AopProxyProvider aopProxyProvider)
+        {
+            super(scheduler, scheduledJobFactory, aopProxyProvider);
+            this.scheduledConsumer = scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a vanilla scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a callback scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getCallbackScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+        @Override
+        protected ScheduledConsumerConfiguration createConfiguration()
+        {
+            return new ScheduledConsumerConfiguration();
+        }
+
+        @Override
+        public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration configuration)
+        {
+            this.configuration = configuration;
+            return this;
+        }
+    }
 }

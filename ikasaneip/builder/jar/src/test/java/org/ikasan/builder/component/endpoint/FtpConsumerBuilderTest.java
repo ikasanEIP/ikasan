@@ -42,7 +42,6 @@ package org.ikasan.builder.component.endpoint;
 
 import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
@@ -51,6 +50,7 @@ import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.endpoint.ftp.consumer.FtpMessageProvider;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -63,7 +63,6 @@ import org.quartz.Scheduler;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -93,11 +92,12 @@ public class FtpConsumerBuilderTest
     final AopProxyProvider aopProxyProvider = mockery.mock(AopProxyProvider.class, "mockAopProxyProvider");
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
-    final MessageProvider messageProvider = mockery.mock(FtpMessageProvider.class, "mockMessageProvider");
+    final FtpMessageProvider messageProvider = mockery.mock(FtpMessageProvider.class, "mockMessageProvider");
     final JtaTransactionManager jtaTransactionManager = mockery.mock(JtaTransactionManager.class, "mockJtaTransactionManager");
     final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class, "mockBaseFileTransferDao");
     final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class, "mockFileChunkDao");
     final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class, "mockTransactionalResourceCommandDAO");
+    final FtpConsumerConfiguration ftpConsumerConfiguration = mockery.mock(FtpConsumerConfiguration.class, "mockFtpConsumerConfiguration");
 
 
     /**
@@ -107,8 +107,8 @@ public class FtpConsumerBuilderTest
     public void ftpConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -123,6 +123,7 @@ public class FtpConsumerBuilderTest
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(FtpConsumerConfiguration.class)));
             }
         });
 
@@ -155,19 +156,24 @@ public class FtpConsumerBuilderTest
     public void ftpConsumer_build_when_configuration_ftp_conf_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null, null, null, null, null);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("testjob"),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(FtpConsumerConfiguration.class)));
             }
         });
 
@@ -269,13 +275,17 @@ public class FtpConsumerBuilderTest
     public void ftpConsumer_build_when_configuration_sftp_conf_provided_and_default_sftpMessageProvider_notsupplied() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null, jtaTransactionManager, baseFileTransferDao, fileChunkDao, transactionalResourceCommandDAO);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("testjob"),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
@@ -307,7 +317,6 @@ public class FtpConsumerBuilderTest
         assertEquals("username should be 'testUser'","testUser", configuration.getUsername());
         assertEquals("password should be 'testPassword'","testPassword", configuration.getPassword());
 
-
         mockery.assertIsSatisfied();
     }
 
@@ -317,9 +326,9 @@ public class FtpConsumerBuilderTest
     @Test
     public void ftpConsumer_build_when_no_aop_proxy() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null ,null, null, null, null);
+        final ScheduledConsumer emptyScheduleConsumer = new ScheduledConsumer(scheduler);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, null);
 
         // expectations
         mockery.checking(new Expectations()
@@ -331,6 +340,7 @@ public class FtpConsumerBuilderTest
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(FtpConsumerConfiguration.class)));
             }
         });
 
@@ -357,8 +367,8 @@ public class FtpConsumerBuilderTest
     public void ftpConsumer_build_when_jobName_and_jobGroup_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -373,6 +383,7 @@ public class FtpConsumerBuilderTest
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(FtpConsumerConfiguration.class)));
             }
         });
 
@@ -390,18 +401,29 @@ public class FtpConsumerBuilderTest
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
 
         mockery.assertIsSatisfied();
-
     }
 
     @Test
     public void ftpConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(any(String.class)),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
 
         ftpConsumerBuilder
                 .setCronExpression("121212")
@@ -410,17 +432,31 @@ public class FtpConsumerBuilderTest
                 .setScheduledJobName(null)
                 .build();
 
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void ftpConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(any(String.class)),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
 
         ftpConsumerBuilder
                 .setCronExpression("121212")
@@ -429,6 +465,49 @@ public class FtpConsumerBuilderTest
                 .setScheduledJobName("testJob")
                 .build();
 
+        mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test class
+     */
+    class ExtendedFtpConsumerBuilderImpl extends FtpConsumerBuilderImpl
+    {
+        ScheduledConsumer scheduledConsumer;
+
+        /**
+         * Constructor
+         * @param scheduledConsumer
+         * @param scheduler
+         * @param scheduledJobFactory
+         * @param aopProxyProvider
+         */
+        public ExtendedFtpConsumerBuilderImpl(ScheduledConsumer scheduledConsumer,
+                                             Scheduler scheduler,
+                                             ScheduledJobFactory scheduledJobFactory,
+                                             AopProxyProvider aopProxyProvider)
+        {
+            super(scheduler, scheduledJobFactory, aopProxyProvider, null, null, null, null);
+            this.scheduledConsumer = scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a vanilla scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a callback scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getCallbackScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+    }
 }

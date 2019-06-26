@@ -52,7 +52,9 @@ import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpMessageProvider;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.management.ManagedResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -94,12 +96,11 @@ public class SftpConsumerBuilderTest
     final AopProxyProvider aopProxyProvider = mockery.mock(AopProxyProvider.class, "mockAopProxyProvider");
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
-    final MessageProvider messageProvider = mockery.mock(SftpMessageProvider.class, "mockMessageProvider");
+    final SftpMessageProvider messageProvider = mockery.mock(SftpMessageProvider.class, "mockMessageProvider");
     final JtaTransactionManager jtaTransactionManager = mockery.mock(JtaTransactionManager.class, "mockJtaTransactionManager");
     final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class, "mockBaseFileTransferDao");
     final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class, "mockFileChunkDao");
     final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class, "mockTransactionalResourceCommandDAO");
-
 
     /**
      * Test successful builder creation.
@@ -108,8 +109,8 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
@@ -124,6 +125,7 @@ public class SftpConsumerBuilderTest
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(SftpConsumerConfiguration.class)));
             }
         });
 
@@ -156,19 +158,24 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_configuration_sftp_conf_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null, null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(SftpConsumerConfiguration.class)));
             }
         });
 
@@ -254,13 +261,16 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_configuration_sftp_conf_provided_and_default_sftpMessageProvider_notsupplied() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null, jtaTransactionManager, baseFileTransferDao, fileChunkDao, transactionalResourceCommandDAO);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
@@ -305,8 +315,8 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_no_aop_proxy() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, null ,null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, null);
 
         // expectations
         mockery.checking(new Expectations()
@@ -318,15 +328,16 @@ public class SftpConsumerBuilderTest
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(SftpConsumerConfiguration.class)));
             }
         });
 
         Consumer scheduledConsumer = sftpConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
+                .setMessageProvider(messageProvider)
                 .setScheduledJobGroupName("testGroup")
                 .setScheduledJobName("testjob")
-                .setMessageProvider(messageProvider)
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
@@ -344,22 +355,22 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_jobName_and_jobGroup_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("testjob"),with(emptyScheduleConsumer));
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("testjob"),
-                        with("testGroup"));
+                        with(any(String.class)),
+                        with(any(String.class)));
                 will(returnValue(jobDetail));
+                exactly(1).of(((Configured)messageProvider)).setConfiguration(with(any(SftpConsumerConfiguration.class)));
             }
         });
 
@@ -384,11 +395,24 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
+
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(any(String.class)),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
 
         sftpConsumerBuilder
                 .setCronExpression("121212")
@@ -403,19 +427,72 @@ public class SftpConsumerBuilderTest
     public void sftpConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
-        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(emptyScheduleConsumer,
-                scheduledJobFactory, aopProxyProvider,null, null, null, null);
+        SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
+                scheduledJobFactory, aopProxyProvider);
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(startsWith("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'"));
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with(any(String.class)),with(emptyScheduleConsumer));
+                will(returnValue(emptyScheduleConsumer));
 
+                oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
+                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(any(String.class)),
+                        with(any(String.class)));
+                will(returnValue(jobDetail));
+            }
+        });
         sftpConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName(null)
                 .setScheduledJobName("testJob")
                 .build();
-
     }
 
+    /**
+     * Test class
+     */
+    class ExtendedSftpConsumerBuilderImpl extends SftpConsumerBuilderImpl
+    {
+        ScheduledConsumer scheduledConsumer;
+
+        /**
+         * Constructor
+         * @param scheduledConsumer
+         * @param scheduler
+         * @param scheduledJobFactory
+         * @param aopProxyProvider
+         */
+        public ExtendedSftpConsumerBuilderImpl(ScheduledConsumer scheduledConsumer,
+                                               Scheduler scheduler,
+                                               ScheduledJobFactory scheduledJobFactory,
+                                               AopProxyProvider aopProxyProvider)
+        {
+            super(scheduler, scheduledJobFactory, aopProxyProvider, null, null, null, null);
+            this.scheduledConsumer = scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a vanilla scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+        /**
+         * Factory method to return a callback scheduled consumer to aid testing
+         * @return
+         */
+        protected ScheduledConsumer getCallbackScheduledConsumer()
+        {
+            return scheduledConsumer;
+        }
+
+    }
 }
