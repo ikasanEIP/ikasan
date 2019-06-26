@@ -41,32 +41,66 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.endpoint.ftp.consumer.FtpMessageProvider;
 import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
-import org.ikasan.endpoint.sftp.consumer.SftpMessageProvider;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import org.quartz.Job;
+import org.quartz.Scheduler;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
- * Ikasan provided scheduled consumer default implementation.
- * This implemnetation allows for proxying of the object to facilitate transaction pointing.
+ * Ikasan provided FTP scheduled consumer default implementation.
+ *
+ * This implementation allows for proxying of the object to facilitate transaction pointing.
  *
  * @author Ikasan Development Team
  */
-public class FtpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl implements FtpConsumerBuilder
+public class FtpConsumerBuilderImpl extends AbstractScheduledConsumerBuilderImpl<FtpConsumerBuilder>
+        implements FtpConsumerBuilder
 {
+    String sourceDirectory;
+    String filenamePattern;
+    DirectoryURLFactory sourceDirectoryURLFactory;
+    Boolean filterDuplicates;
+    Boolean filterOnFilename;
+    Boolean filterOnLastModifiedDate;
+    Boolean renameOnSuccess;
+    String renameOnSuccessExtension;
+    Boolean moveOnSuccess;
+    String moveOnSuccessNewPath;
+    Boolean chronological;
+    Boolean chunking;
+    Integer chunkSize;
+    Boolean checksum;
+    Long minAge;
+    Boolean destructive;
+    Integer maxRows;
+    Integer ageOfFiles;
+    String clientID;
+    Boolean cleanupJournalOnComplete;
+    String remoteHost;
+    Integer maxRetryAttempts;
+    Integer remotePort;
+    String username;
+    String password;
+    Integer connectionTimeout;
+    Boolean isRecursive;
+    String ftpsKeyStoreFilePassword;
+    String ftpsKeyStoreFilePath;
+    Boolean ftpsIsImplicit;
+    String ftpsProtocol;
+    Integer ftpsPort;
+    Boolean FTPS;
+    String passwordFilePath;
+    String systemKey;
+    Integer socketTimeout;
+    Integer dataTimeout;
+    Boolean active;
 
     private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
 
@@ -76,487 +110,510 @@ public class FtpConsumerBuilderImpl extends ScheduledConsumerBuilderImpl impleme
 
     private JtaTransactionManager transactionManager;
 
-    private MessageProvider messageProvider;
     /**
      * Constructor
-     * @param scheduledConsumer
+     * @param scheduler
+     * @param scheduledJobFactory
+     * @param aopProxyProvider
+     * @param transactionManager
+     * @param baseFileTransferDao
+     * @param fileChunkDao
+     * @param transactionalResourceCommandDAO
      */
-    public FtpConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
-            AopProxyProvider aopProxyProvider, JtaTransactionManager transactionManager,
-            BaseFileTransferDao baseFileTransferDao, FileChunkDao fileChunkDao,
-            TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+    public FtpConsumerBuilderImpl(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
+                                  AopProxyProvider aopProxyProvider, JtaTransactionManager transactionManager,
+                                  BaseFileTransferDao baseFileTransferDao, FileChunkDao fileChunkDao,
+                                  TransactionalResourceCommandDAO transactionalResourceCommandDAO)
     {
-        super(scheduledConsumer,scheduledJobFactory,aopProxyProvider);
+        super(scheduler, scheduledJobFactory, aopProxyProvider);
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
-
     }
 
-    /**
-     * Is this successful start of this component critical on flow start.
-     * If it can recover post flow start up then its not crititcal.
-     * @param criticalOnStartup
-     * @return
-     */
-    @Override
-    public FtpConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup)
+    public FtpConsumerBuilder setConfiguration(FtpConsumerConfiguration configuration)
     {
-        return (FtpConsumerBuilder) super.setCriticalOnStartup(criticalOnStartup);
-
-    }
-
-    /**
-     * ConfigurationService identifier for this component configuration.
-     * @param configuredResourceId
-     * @return
-     */
-    public FtpConsumerBuilder setConfiguredResourceId(String configuredResourceId)
-    {
-        return (FtpConsumerBuilder) super.setConfiguredResourceId(configuredResourceId);
-    }
-
-    /**
-     * Actual runtime configuration
-     * @param scheduledConsumerConfiguration
-     * @return
-     */
-    public FtpConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration)
-    {
-        return (FtpConsumerBuilder) super.setConfiguration(scheduledConsumerConfiguration);
-
-    }
-
-    /**
-     * Underlying tech providing the message event
-     * @param messageProvider
-     * @return
-     */
-    public FtpConsumerBuilder setMessageProvider(MessageProvider messageProvider)
-    {
-        this.messageProvider = messageProvider;
-        return this;
-    }
-
-    /**
-     * Implementation of the managed event identifier service - sets the life identifier based on the incoming event.
-     * @param managedEventIdentifierService
-     * @return
-     */
-    public FtpConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
-    {
-        return (FtpConsumerBuilder) super.setManagedEventIdentifierService(managedEventIdentifierService);
-    }
-
-    /**
-     * Give the component a handle directly to the recovery manager
-     * @param managedResourceRecoveryManager
-     * @return
-     */
-    public FtpConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
-    {
-        return (FtpConsumerBuilder) super.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-    }
-
-    /**
-     * Override default event factory
-     * @param eventFactory
-     * @return
-     */
-    public FtpConsumerBuilder setEventFactory(EventFactory eventFactory) {
-        return (FtpConsumerBuilder) super.setEventFactory(eventFactory);
-    }
-
-    /**
-     * Scheduled consumer cron expression
-     * @param cronExpression
-     * @return
-     */
-    @Override
-    public FtpConsumerBuilder setCronExpression(String cronExpression)
-    {
-        getConfiguration().setCronExpression(cronExpression);
-        return this;
-    }
-
-    /**
-     * When true the scheduled consumer is immediately called back on completion of flow execution.
-     * If false the scheduled consumers cron expression determines the callback.
-     * @param eager
-     * @return
-     */
-    @Override
-    public FtpConsumerBuilder setEager(boolean eager) {
-        getConfiguration().setEager(eager);
-        return this;
-    }
-
-    /**
-     * Whether to ignore call back failures.
-     * @param ignoreMisfire
-     * @return
-     */
-    @Override
-    public FtpConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire) {
-        getConfiguration().setIgnoreMisfire(ignoreMisfire);
-        return this;
-    }
-
-    /**
-     * Specifically set the timezone of the scheduled callback.
-     * @param timezone
-     * @return
-     */
-    @Override
-    public FtpConsumerBuilder setTimezone(String timezone) {
-        getConfiguration().setTimezone(timezone);
+        this.configuration = configuration;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setSourceDirectory(String sourceDirectory)
     {
-        getConfiguration().setSourceDirectory(sourceDirectory);
+        this.sourceDirectory = sourceDirectory;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFilenamePattern(String filenamePattern)
     {
-        getConfiguration().setFilenamePattern(filenamePattern);
+        this.filenamePattern = filenamePattern;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setSourceDirectoryURLFactory(DirectoryURLFactory sourceDirectoryURLFactory)
     {
-        getConfiguration().setSourceDirectoryURLFactory(sourceDirectoryURLFactory);
+        this.sourceDirectoryURLFactory = sourceDirectoryURLFactory;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFilterDuplicates(Boolean filterDuplicates)
     {
-        getConfiguration().setFilterDuplicates(filterDuplicates);
+        this.filterDuplicates = filterDuplicates;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFilterOnFilename(Boolean filterOnFilename)
     {
-        getConfiguration().setFilterOnFilename(filterOnFilename);
+        this.filterOnFilename = filterOnFilename;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFilterOnLastModifiedDate(Boolean filterOnLastModifiedDate)
     {
-        getConfiguration().setFilterOnLastModifiedDate(filterOnLastModifiedDate);
+        this.filterOnLastModifiedDate = filterOnLastModifiedDate;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setRenameOnSuccess(Boolean renameOnSuccess)
     {
-        getConfiguration().setRenameOnSuccess(renameOnSuccess);
+        this.renameOnSuccess = renameOnSuccess;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setRenameOnSuccessExtension(String renameOnSuccessExtension)
     {
-        getConfiguration().setRenameOnSuccessExtension(renameOnSuccessExtension);
+        this.renameOnSuccessExtension = renameOnSuccessExtension;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setMoveOnSuccess(Boolean moveOnSuccess)
     {
-        getConfiguration().setMoveOnSuccess(moveOnSuccess);
+        this.moveOnSuccess = moveOnSuccess;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setMoveOnSuccessNewPath(String moveOnSuccessNewPath)
     {
-        getConfiguration().setMoveOnSuccessNewPath(moveOnSuccessNewPath);
+        this.moveOnSuccessNewPath = moveOnSuccessNewPath;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setChronological(Boolean chronological)
     {
-        getConfiguration().setChronological(chronological);
+        this.chronological = chronological;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setChunking(Boolean chunking)
     {
-        getConfiguration().setChunking(chunking);
+        this.chunking = chunking;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setChunkSize(Integer chunkSize)
     {
-        getConfiguration().setChunkSize(chunkSize);
+        this.chunkSize = chunkSize;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setChecksum(Boolean checksum)
     {
-        getConfiguration().setChecksum(checksum);
+        this.checksum = checksum;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setMinAge(Long minAge)
     {
-        getConfiguration().setMinAge(minAge);
+        this.minAge = minAge;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setDestructive(Boolean destructive)
     {
-        getConfiguration().setDestructive(destructive);
+        this.destructive = destructive;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setMaxRows(Integer maxRows)
     {
-        getConfiguration().setMaxRows(maxRows);
+        this.maxRows = maxRows;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setAgeOfFiles(Integer ageOfFiles)
     {
-        getConfiguration().setAgeOfFiles(ageOfFiles);
+        this.ageOfFiles = ageOfFiles;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setClientID(String clientID)
     {
-        getConfiguration().setClientID(clientID);
+        this.clientID = clientID;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
     {
-        getConfiguration().setCleanupJournalOnComplete(cleanupJournalOnComplete);
+        this.cleanupJournalOnComplete = cleanupJournalOnComplete;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setRemoteHost(String remoteHost)
     {
-        getConfiguration().setRemoteHost(remoteHost);
+        this.remoteHost = remoteHost;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setMaxRetryAttempts(Integer maxRetryAttempts)
     {
-        getConfiguration().setMaxRetryAttempts(maxRetryAttempts);
+        this.maxRetryAttempts = maxRetryAttempts;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setRemotePort(Integer remotePort)
     {
-        getConfiguration().setRemotePort(remotePort);
+        this.remotePort = remotePort;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setUsername(String username)
     {
-        getConfiguration().setUsername(username);
+        this.username = username;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setPassword(String password)
     {
-        getConfiguration().setPassword(password);
+        this.password = password;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setConnectionTimeout(Integer connectionTimeout)
     {
-        getConfiguration().setConnectionTimeout(connectionTimeout);
+        this.connectionTimeout = connectionTimeout;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setIsRecursive(Boolean isRecursive)
     {
-        getConfiguration().setIsRecursive(isRecursive);
+        this.isRecursive = isRecursive;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFtpsKeyStoreFilePassword(String ftpsKeyStoreFilePassword)
     {
-        getConfiguration().setFtpsKeyStoreFilePassword(ftpsKeyStoreFilePassword);
+        this.ftpsKeyStoreFilePassword = ftpsKeyStoreFilePassword;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFtpsKeyStoreFilePath(String ftpsKeyStoreFilePath)
     {
-        getConfiguration().setFtpsKeyStoreFilePath(ftpsKeyStoreFilePath);
+        this.ftpsKeyStoreFilePath = ftpsKeyStoreFilePath;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFtpsIsImplicit(Boolean ftpsIsImplicit)
     {
-        getConfiguration().setFtpsIsImplicit(ftpsIsImplicit);
+        this.ftpsIsImplicit = ftpsIsImplicit;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFtpsProtocol(String ftpsProtocol)
     {
-        getConfiguration().setFtpsProtocol(ftpsProtocol);
+        this.ftpsProtocol = ftpsProtocol;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFtpsPort(Integer ftpsPort)
     {
-        getConfiguration().setFtpsPort(ftpsPort);
+        this.ftpsPort = ftpsPort;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setFTPS(Boolean FTPS)
     {
-        getConfiguration().setFTPS(FTPS);
+        this.FTPS = FTPS;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setPasswordFilePath(String passwordFilePath)
     {
-        getConfiguration().setPasswordFilePath(passwordFilePath);
+        this.passwordFilePath = passwordFilePath;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setSystemKey(String systemKey)
     {
-        getConfiguration().setSystemKey(systemKey);
+        this.systemKey = systemKey;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setSocketTimeout(Integer socketTimeout)
     {
-        getConfiguration().setSocketTimeout(socketTimeout);
+        this.socketTimeout = socketTimeout;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setDataTimeout(Integer dataTimeout)
     {
-        getConfiguration().setDataTimeout(dataTimeout);
+        this.dataTimeout = dataTimeout;
         return this;
     }
 
     @Override
     public FtpConsumerBuilder setActive(Boolean active)
     {
-        getConfiguration().setActive(active);
+        this.active = active;
         return this;
     }
 
     @Override
-    public FtpConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName) {
-        this.scheduledJobGroupName = scheduledJobGroupName;
-        return this;
-    }
-
-    @Override
-    public FtpConsumerBuilder setScheduledJobName(String scheduledJobName) {
-        return (FtpConsumerBuilder) super.setScheduledJobName(scheduledJobName);
-    }
-
-
-    private FtpConsumerConfiguration getConfiguration()
+    protected FtpConsumerConfiguration createConfiguration()
     {
-        FtpConsumerConfiguration FtpConsumerConfiguration = (FtpConsumerConfiguration) this.scheduledConsumer.getConfiguration();
-        if(FtpConsumerConfiguration == null)
-        {
-            FtpConsumerConfiguration = new FtpConsumerConfiguration();
-            this.scheduledConsumer.setConfiguration(FtpConsumerConfiguration);
-        }
-
-        return FtpConsumerConfiguration;
+        return FtpConsumerBuilder.newConfiguration();
     }
 
-    /**
-     * Configure the raw component based on the properties passed to the builder, configure it
-     * ready for use and return the instance.
-     * @return
-     */
-    public ScheduledConsumer build() {
-        if (this.scheduledConsumer.getConfiguration() == null) {
-            this.scheduledConsumer.setConfiguration(new FtpConsumerConfiguration());
-        }
 
-        validateBuilderConfiguration();
+    public ScheduledConsumer build()
+    {
+        ScheduledConsumer scheduledConsumer = super.build();
+        FtpConsumerConfiguration configuration = (FtpConsumerConfiguration)scheduledConsumer.getConfiguration();
 
-        if(messageProvider != null)
+        if(messageProvider == null)
         {
-            this.scheduledConsumer.setMessageProvider(messageProvider);
-        }
-        else
-        {
-            FtpMessageProvider sftpMessageProvider = new FtpMessageProvider(transactionManager,baseFileTransferDao,
+            FtpMessageProvider ftpMessageProvider = new FtpMessageProvider(transactionManager,baseFileTransferDao,
                     fileChunkDao, transactionalResourceCommandDAO, new FileBasedPasswordHelper());
-            sftpMessageProvider.setConfiguration(getConfiguration());
-            this.scheduledConsumer.setMessageProvider(sftpMessageProvider);
+            scheduledConsumer.setMessageProvider(ftpMessageProvider);
         }
 
-        if(this.aopProxyProvider == null)
+        if(sourceDirectory != null)
         {
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            configuration.setSourceDirectory(sourceDirectory);
         }
-        else
+
+        if(filenamePattern != null)
         {
-            Job pointcutJob = this.aopProxyProvider.applyPointcut(this.scheduledJobName, scheduledConsumer);
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            configuration.setFilenamePattern(filenamePattern);
         }
 
-        return this.scheduledConsumer;
-    }
-
-    protected void validateBuilderConfiguration()
-    {
-        if(this.scheduledJobName == null)
+        if(sourceDirectoryURLFactory != null)
         {
-            throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");
+            configuration.setSourceDirectoryURLFactory(sourceDirectoryURLFactory);
         }
 
-        if(this.scheduledJobGroupName == null)
+        if(filterDuplicates != null)
         {
-            throw new IllegalArgumentException("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'");
+            configuration.setFilterDuplicates(filterDuplicates);
         }
-    }
 
-    @Override
-    public void setAopProxyProvider(AopProxyProvider aopProxyProvider) {
-        this.aopProxyProvider = aopProxyProvider;
+        if(filterOnFilename != null)
+        {
+            configuration.setFilterOnFilename(filterOnFilename);
+        }
+
+        if(filterOnLastModifiedDate != null)
+        {
+            configuration.setFilterOnLastModifiedDate(filterOnLastModifiedDate);
+        }
+
+        if(renameOnSuccess != null)
+        {
+            configuration.setRenameOnSuccess(renameOnSuccess);
+        }
+
+        if(renameOnSuccessExtension != null)
+        {
+            configuration.setRenameOnSuccessExtension(renameOnSuccessExtension);
+        }
+
+        if(moveOnSuccess != null)
+        {
+            configuration.setMoveOnSuccess(moveOnSuccess);
+        }
+
+        if(moveOnSuccessNewPath != null)
+        {
+            configuration.setMoveOnSuccessNewPath(moveOnSuccessNewPath);
+        }
+
+        if(chronological != null)
+        {
+            configuration.setChronological(chronological);
+        }
+
+        if(chunking != null)
+        {
+            configuration.setChunking(chunking);
+        }
+
+        if(chunkSize != null)
+        {
+            configuration.setChunkSize(chunkSize);
+        }
+
+        if(checksum != null)
+        {
+            configuration.setChecksum(checksum);
+        }
+
+        if(minAge != null)
+        {
+            configuration.setMinAge(minAge);
+        }
+
+        if(destructive != null)
+        {
+            configuration.setDestructive(destructive);
+        }
+
+        if(maxRows != null)
+        {
+            configuration.setMaxRows(maxRows);
+        }
+
+        if(ageOfFiles != null)
+        {
+            configuration.setAgeOfFiles(ageOfFiles);
+        }
+
+        if(clientID != null)
+        {
+            configuration.setClientID(clientID);
+        }
+
+        if(cleanupJournalOnComplete != null)
+        {
+            configuration.setCleanupJournalOnComplete(cleanupJournalOnComplete);
+        }
+
+        if(remoteHost != null)
+        {
+            configuration.setRemoteHost(remoteHost);
+        }
+
+        if(maxRetryAttempts != null)
+        {
+            configuration.setMaxRetryAttempts(maxRetryAttempts);
+        }
+
+        if(remotePort != null)
+        {
+            configuration.setRemotePort(remotePort);
+        }
+
+        if(username != null)
+        {
+            configuration.setUsername(username);
+        }
+
+        if(password != null)
+        {
+            configuration.setPassword(password);
+        }
+
+        if(connectionTimeout != null)
+        {
+            configuration.setConnectionTimeout(connectionTimeout);
+        }
+
+        if(isRecursive != null)
+        {
+            configuration.setIsRecursive(isRecursive);
+        }
+
+        if(ftpsKeyStoreFilePassword != null)
+        {
+            configuration.setFtpsKeyStoreFilePassword(ftpsKeyStoreFilePassword);
+        }
+
+        if(ftpsKeyStoreFilePath != null)
+        {
+            configuration.setFtpsKeyStoreFilePath(ftpsKeyStoreFilePath);
+        }
+
+        if(ftpsIsImplicit != null)
+        {
+            configuration.setFtpsIsImplicit(ftpsIsImplicit);
+        }
+
+        if(ftpsProtocol != null)
+        {
+            configuration.setFtpsProtocol(ftpsProtocol);
+        }
+
+        if(ftpsPort != null)
+        {
+            configuration.setFtpsPort(ftpsPort);
+        }
+
+        if(FTPS != null)
+        {
+            configuration.setFTPS(FTPS);
+        }
+
+        if(passwordFilePath != null)
+        {
+            configuration.setPasswordFilePath(passwordFilePath);
+        }
+
+        if(systemKey != null)
+        {
+            configuration.setSystemKey(systemKey);
+        }
+
+        if(socketTimeout != null)
+        {
+            configuration.setSocketTimeout(socketTimeout);
+        }
+
+        if(dataTimeout != null)
+        {
+            configuration.setDataTimeout(dataTimeout);
+        }
+
+        if(active != null)
+        {
+            configuration.setActive(active);
+        }
+
+        return scheduledConsumer;
     }
 }
 

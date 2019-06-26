@@ -40,40 +40,44 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
-
-import java.util.List;
+import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 /**
- * Contract for a default file consumer builder.
+ * Contract for an abstract scheduled consumer builder.
  *
  * @author Ikasan Development Team.
  */
-public interface FileConsumerBuilder extends AbstractScheduledConsumerBuilder<FileConsumerBuilder>
+public interface AbstractScheduledConsumerBuilder<BUILDER> extends Builder<ScheduledConsumer>
 {
-    static FileConsumerConfiguration newConfiguration() { return new FileConsumerConfiguration(); }
+    BUILDER setCriticalOnStartup(boolean criticalOnStartup);
 
-    FileConsumerBuilder setConfiguration(FileConsumerConfiguration scheduledConsumerConfiguration);
+    BUILDER setConfiguredResourceId(String configuredResourceId);
 
-    FileConsumerBuilder setFilenames(List<String> filenames);
+    BUILDER setMessageProvider(MessageProvider messageProvider);
 
-    FileConsumerBuilder setEncoding(String encoding);
+    BUILDER setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
 
-    FileConsumerBuilder setIncludeHeader(boolean includeHeader);
+    BUILDER setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    FileConsumerBuilder setIncludeTrailer(boolean includeTrailer);
+    BUILDER setEventFactory(EventFactory eventFactory);
 
-    FileConsumerBuilder setSortByModifiedDateTime(boolean sortByModifiedDateTime);
+    BUILDER setCronExpression(String cronExpression);
 
-    FileConsumerBuilder setSortAscending(boolean sortAscending);
+    BUILDER setEager(boolean eager);
 
-    FileConsumerBuilder setDirectoryDepth(int directoryDepth);
+    BUILDER setMaxEagerCallbacks(int maxEagerCallbacks);
 
-    FileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames);
+    BUILDER setIgnoreMisfire(boolean ignoreMisfire);
 
-    FileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
+    BUILDER setTimezone(String timezone);
 
-    FileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor);
+    BUILDER setScheduledJobGroupName(String scheduledJobGroupName);
+
+    BUILDER setScheduledJobName(String scheduledJobName);
 }
 
