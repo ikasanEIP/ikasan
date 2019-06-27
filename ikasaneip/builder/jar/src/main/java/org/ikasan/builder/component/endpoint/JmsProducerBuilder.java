@@ -45,6 +45,7 @@ import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import java.util.Map;
@@ -59,6 +60,8 @@ public interface JmsProducerBuilder extends Builder<Producer> {
     JmsProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
     JmsProducerBuilder setConfiguration(SpringMessageProducerConfiguration springMessageProducerConfiguration);
+
+    JmsProducerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     JmsProducerBuilder setDestinationJndiName(String destinationJndiName);
 

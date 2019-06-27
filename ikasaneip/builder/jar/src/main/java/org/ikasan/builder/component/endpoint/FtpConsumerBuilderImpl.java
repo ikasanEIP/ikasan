@@ -138,6 +138,20 @@ public class FtpConsumerBuilderImpl extends AbstractScheduledConsumerBuilderImpl
         return this;
     }
 
+
+    /**
+     * Sets Transaction Manager which is different than default transaction manager set through constructor.
+     *
+     * @param transactionManager
+     * @return
+     */
+    @Override
+    public FtpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
+        return this;
+    }
+
     @Override
     public FtpConsumerBuilder setSourceDirectory(String sourceDirectory)
     {
