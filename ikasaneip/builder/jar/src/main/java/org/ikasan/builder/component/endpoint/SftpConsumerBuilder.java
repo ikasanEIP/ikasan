@@ -42,6 +42,7 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default sftpConsumerBuilder.
@@ -54,6 +55,8 @@ public interface SftpConsumerBuilder
     static SftpConsumerConfiguration newConfiguration() { return new SftpConsumerConfiguration(); }
 
     SftpConsumerBuilder setConfiguration(SftpConsumerConfiguration configuration);
+
+    SftpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);;
 
     SftpConsumerBuilder setSourceDirectory(String sourceDirectory);
 

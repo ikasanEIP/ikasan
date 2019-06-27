@@ -47,6 +47,7 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import java.util.Map;
@@ -63,6 +64,8 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
     JmsConsumerBuilder setConfiguration(SpringMessageConsumerConfiguration springMessageConsumerConfiguration);
 
     JmsConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+
+    JmsConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     JmsConsumerBuilder setManagedIdentifierService(ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService);
 

@@ -44,6 +44,7 @@ import org.ikasan.builder.component.Builder;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default sftpProducerBuilder.
@@ -57,6 +58,8 @@ public interface SftpProducerBuilder extends Builder<Producer>
     SftpProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
     SftpProducerBuilder setConfiguration(SftpProducerConfiguration sftpProducerConfiguration);
+
+    SftpProducerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     SftpProducerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
