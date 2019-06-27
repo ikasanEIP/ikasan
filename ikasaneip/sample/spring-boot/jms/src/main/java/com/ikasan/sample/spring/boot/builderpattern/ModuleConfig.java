@@ -107,6 +107,7 @@ public class ModuleConfig
                 .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("JMS Consumer", jmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
+                .broker( "Delay Generating Broker", new DelayGenerationBroker())
                 .producer("JMS Producer", jmsProducer)
                 .build();
 
