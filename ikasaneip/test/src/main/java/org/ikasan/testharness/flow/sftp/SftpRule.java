@@ -225,6 +225,8 @@ public class SftpRule extends ExternalResource
         sftpChannel.cd(baseDir);
 
         InputStream inputStream = sftpChannel.get(fileName);
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+
         if (sftpChannel.isConnected())
         {
             sftpChannel.exit();
@@ -233,14 +235,13 @@ public class SftpRule extends ExternalResource
         {
             session.disconnect();
         }
-        return inputStream;
+        return new ByteArrayInputStream(bytes);
     }
 
     public String getFileAsString(String fileName) throws Exception
     {
         return IOUtils.toString(getFile(fileName), "utf-8");
     }
-
 
     public int getPort()
     {
