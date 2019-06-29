@@ -52,6 +52,7 @@ import org.junit.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
@@ -80,6 +81,7 @@ public class JmsProducerBuilderTest {
     final MessageConverter messageConverter = mockery.mock(MessageConverter.class, "mockMessageConverter");
     final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
     final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
+    final JtaTransactionManager jtaTransactionManager = mockery.mock(JtaTransactionManager.class, "mockJtaTransactionManager");
     final TransactionManager transactionManager = mockery.mock(TransactionManager.class, "mockTransactionManager");
     final UserCredentialsConnectionFactoryAdapter mockedUserCredentialsConnectionFactoryAdapter = mockery.mock(UserCredentialsConnectionFactoryAdapter.class, "mockUserCredentialsConnectionFactoryAdapter");
 
@@ -88,13 +90,15 @@ public class JmsProducerBuilderTest {
 
         mockery.checking(new Expectations()
         {{
+            oneOf(jtaTransactionManager).getTransactionManager();
+            will(returnValue(transactionManager));
             oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
             oneOf(mockIkasanJmsTemplate).getConnectionFactory();
             will(returnValue(connectionFactory));
             oneOf(mockIkasanJmsTemplate).setConnectionFactory(connectionFactory);
         }});
 
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate, transactionManager);
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate, jtaTransactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -165,6 +169,8 @@ public class JmsProducerBuilderTest {
 
         mockery.checking(new Expectations()
         {{
+            oneOf(jtaTransactionManager).getTransactionManager();
+            will(returnValue(transactionManager));
             oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
             oneOf(mockIkasanJmsTemplate).getConnectionFactory();
             will(returnValue(connectionFactory));
@@ -174,7 +180,7 @@ public class JmsProducerBuilderTest {
             oneOf(mockedUserCredentialsConnectionFactoryAdapter).setPassword("password");
         }});
 
-        JmsProducerBuilder jmsProducerBuilder = new ExtendedJmsProducerBuilderImpl(mockIkasanJmsTemplate, transactionManager);
+        JmsProducerBuilder jmsProducerBuilder = new ExtendedJmsProducerBuilderImpl(mockIkasanJmsTemplate, jtaTransactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -246,7 +252,13 @@ public class JmsProducerBuilderTest {
     @Test
     public void test_jmsproducerbuilder_build_verify_properties()
     {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
+        mockery.checking(new Expectations()
+        {{
+            oneOf(jtaTransactionManager).getTransactionManager();
+            will(returnValue(transactionManager));
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),jtaTransactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -301,7 +313,13 @@ public class JmsProducerBuilderTest {
     @Test
     public void test_jmsproducerbuilder_build_with_cf()
     {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
+        mockery.checking(new Expectations()
+        {{
+            oneOf(jtaTransactionManager).getTransactionManager();
+            will(returnValue(transactionManager));
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),jtaTransactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -314,7 +332,13 @@ public class JmsProducerBuilderTest {
     @Test
     public void test_jmsproducerbuilder_build_with_messageConverter()
     {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),transactionManager);
+        mockery.checking(new Expectations()
+        {{
+            oneOf(jtaTransactionManager).getTransactionManager();
+            will(returnValue(transactionManager));
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),jtaTransactionManager);
 
         Producer jmsProducer = jmsProducerBuilder
             .setConfiguredResourceId("crid")
@@ -331,10 +355,10 @@ public class JmsProducerBuilderTest {
          * Constructor
          *
          * @param ikasanJmsTemplate
-         * @param arjunaTransactionManager
+         * @param transactionManager
          */
-        public ExtendedJmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, TransactionManager arjunaTransactionManager) {
-            super(ikasanJmsTemplate, arjunaTransactionManager);
+        public ExtendedJmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, JtaTransactionManager transactionManager) {
+            super(ikasanJmsTemplate, transactionManager);
         }
 
         @Override

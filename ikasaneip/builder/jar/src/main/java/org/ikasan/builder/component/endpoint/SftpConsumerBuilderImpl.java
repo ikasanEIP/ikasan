@@ -132,6 +132,19 @@ public class SftpConsumerBuilderImpl
         return this;
     }
 
+    /**
+     * Sets Transaction Manager which is different than default transaction manager set through constructor.
+     *
+     * @param transactionManager
+     * @return
+     */
+    @Override
+    public SftpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
+        return this;
+    }
+
     @Override
     public SftpConsumerBuilder setSourceDirectory(String sourceDirectory)
     {

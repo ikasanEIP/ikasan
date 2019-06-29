@@ -117,14 +117,14 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      * Constructor
      */
     public JmsConsumerBuilderImpl(JmsContainerConsumer jmsConsumer, JtaTransactionManager transactionManager,
-                                  TransactionManager arjunaTransactionManager, AopProxyProvider aopProxyProvider) {
+                                    AopProxyProvider aopProxyProvider) {
         this.jmsConsumer = jmsConsumer;
         if (jmsConsumer == null) {
             throw new IllegalArgumentException("jmsConsumer cannot be 'null'");
         }
 
         this.transactionManager = transactionManager;
-        this.arjunaTransactionManager =  arjunaTransactionManager;
+        this.arjunaTransactionManager =  transactionManager.getTransactionManager();
         this.aopProxyProvider = aopProxyProvider;
     }
 
@@ -149,6 +149,19 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
         this.configuration = jmsConsumerConfiguration;
         return this;
     }
+
+    /**
+     * Sets Transaction Manager which is different than default transaction manager set through constructor.
+     *
+     * @param transactionManager
+     * @return
+     */
+    public JmsConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+        this.arjunaTransactionManager = transactionManager.getTransactionManager();
+        return this;
+    }
+
 
     /**
      * Underlying tech providing the message event
