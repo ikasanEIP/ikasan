@@ -57,7 +57,7 @@ public class SftpRuleTest
     @Test
     public void test_sftp_put_filename_with_string_content() throws Throwable
     {
-        SftpRule sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
+        SftpRule sftp = new SftpRule("test", "test", "./target", SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
         sftp.putFile("testDownload.txt","testContent");
         InputStream inputStream = sftp.getFile("testDownload.txt");
@@ -71,7 +71,7 @@ public class SftpRuleTest
     @Test
     public void test_sftp_put_filename_with_bytes_content() throws Throwable
     {
-        SftpRule sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
+        SftpRule sftp = new SftpRule("test", "test", "./target", SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
         sftp.putFile("testDownload.txt","testContent".getBytes());
         InputStream inputStream = sftp.getFile("testDownload.txt");
@@ -85,23 +85,23 @@ public class SftpRuleTest
     @Test
     public void test_sftp_put_file_content() throws Throwable
     {
-        File file = new File("test/src/test/resources/testDownload.txt");
-        SftpRule sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
+        File file = new File("src/test/resources/testDownload.txt");
+        SftpRule sftp = new SftpRule("test", "test", "./target", SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
         sftp.putFile(file);
         InputStream inputStream = sftp.getFile("testDownload.txt");
-        byte[] readin = new byte[34];
+        byte[] readin = new byte[6];
         inputStream.read(readin);
         String result = new String(readin);
 
-        Assert.assertTrue("line 1\nline 2\nline 3\nline 4\nline 5".equals(result));
+        Assert.assertTrue("line 1".equals(result));
     }
 
     @Test(expected = Exception.class)
     public void test_sftp_put_file_content_read_for_different_filename() throws Throwable
     {
         File file = new File("test/src/test/resources/testDownload.txt");
-        SftpRule sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
+        SftpRule sftp = new SftpRule("test", "test", "./target", SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
         sftp.putFile(file);
         sftp.getFile("noFileExists.txt");
