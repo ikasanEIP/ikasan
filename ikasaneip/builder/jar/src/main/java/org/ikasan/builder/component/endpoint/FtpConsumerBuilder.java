@@ -42,6 +42,7 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default ftpConsumerBuilder.
@@ -54,6 +55,8 @@ public interface FtpConsumerBuilder
     static FtpConsumerConfiguration newConfiguration() { return new FtpConsumerConfiguration(); }
 
     FtpConsumerBuilder setConfiguration(FtpConsumerConfiguration ftpConsumerConfiguration);
+
+    FtpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     FtpConsumerBuilder setSourceDirectory(String sourceDirectory);
 

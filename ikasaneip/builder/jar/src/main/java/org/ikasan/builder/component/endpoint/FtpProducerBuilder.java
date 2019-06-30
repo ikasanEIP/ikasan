@@ -44,6 +44,7 @@ import org.ikasan.builder.component.Builder;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default ftpProducerBuilder.
@@ -56,7 +57,9 @@ public interface FtpProducerBuilder extends Builder<Producer>
 
     FtpProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    FtpProducerBuilder setConfiguration(FtpProducerConfiguration fftpProducerConfiguration);
+    FtpProducerBuilder setConfiguration(FtpProducerConfiguration ftpProducerConfiguration);
+
+    FtpProducerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     FtpProducerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 

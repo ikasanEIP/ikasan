@@ -135,7 +135,7 @@ public class ComponentBuilder
                 this.applicationContext.getBean(Scheduler.class),
                 this.applicationContext.getBean(ScheduledJobFactory.class),
                 this.applicationContext.getBean(AopProxyProvider.class),
-                this.applicationContext.getBean(JtaTransactionManager.class),
+                this.applicationContext.getBean("transactionManager", JtaTransactionManager.class),
                 this.applicationContext.getBean(BaseFileTransferDao.class),
                 this.applicationContext.getBean(FileChunkDao.class),
                 this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
@@ -151,7 +151,7 @@ public class ComponentBuilder
     public SftpProducerBuilder sftpProducer()
     {
         SftpProducerBuilder sftpProducerBuilder = new SftpProducerBuilderImpl(
-                this.applicationContext.getBean(JtaTransactionManager.class)
+                this.applicationContext.getBean("transactionManager", JtaTransactionManager.class)
                 ,this.applicationContext.getBean(BaseFileTransferDao.class)
                 ,this.applicationContext.getBean(FileChunkDao.class)
                 ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
@@ -168,7 +168,7 @@ public class ComponentBuilder
     {
         return new FtpConsumerBuilderImpl(this.applicationContext.getBean(Scheduler.class),
                 this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class)
-                ,this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean("transactionManager", JtaTransactionManager.class)
                 ,this.applicationContext.getBean(BaseFileTransferDao.class)
                 ,this.applicationContext.getBean(FileChunkDao.class)
                 ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
@@ -183,7 +183,7 @@ public class ComponentBuilder
     {
 
         FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl(
-                this.applicationContext.getBean(JtaTransactionManager.class)
+                this.applicationContext.getBean("transactionManager", JtaTransactionManager.class)
                 ,this.applicationContext.getBean(BaseFileTransferDao.class)
                 ,this.applicationContext.getBean(FileChunkDao.class)
                 ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
@@ -223,7 +223,7 @@ public class ComponentBuilder
     {
         JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
         JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer,
-                this.applicationContext.getBean(JtaTransactionManager.class), this.applicationContext.getBean(TransactionManager.class),this.applicationContext.getBean(AopProxyProvider.class));
+                this.applicationContext.getBean("transactionManager", JtaTransactionManager.class), this.applicationContext.getBean(AopProxyProvider.class));
         return jmsConsumerBuilder;
     }
 
@@ -232,7 +232,7 @@ public class ComponentBuilder
      * @return jmsProducerBuilder
      */
     public JmsProducerBuilder jmsProducer() {
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(),this.applicationContext.getBean(TransactionManager.class));
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate(), this.applicationContext.getBean("transactionManager", JtaTransactionManager.class));
         return jmsProducerBuilder;
     }
 

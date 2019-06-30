@@ -47,6 +47,7 @@ import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerCo
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
@@ -94,14 +95,14 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     /**
      * Constructor
      */
-    public JmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, TransactionManager arjunaTransactionManager)
+    public JmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate, JtaTransactionManager transactionManager)
     {
         this.ikasanJmsTemplate = ikasanJmsTemplate;
         if (ikasanJmsTemplate == null)
         {
             throw new IllegalArgumentException("ikasanJmsTemplate cannot be 'null'");
         }
-        this.arjunaTransactionManager = arjunaTransactionManager;
+        this.arjunaTransactionManager = transactionManager.getTransactionManager();
 
     }
 
@@ -126,6 +127,17 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     public JmsProducerBuilder setConfiguration(SpringMessageProducerConfiguration jmsProducerConfiguration)
     {
         this.configuration = jmsProducerConfiguration;
+        return this;
+    }
+
+    /**
+     * Sets Transaction Manager which is different than default transaction manager set through constructor.
+     *
+     * @param transactionManager
+     * @return
+     */
+    public JmsProducerBuilder setTransactionManager(JtaTransactionManager transactionManager) {
+        this.arjunaTransactionManager = transactionManager.getTransactionManager();
         return this;
     }
 
