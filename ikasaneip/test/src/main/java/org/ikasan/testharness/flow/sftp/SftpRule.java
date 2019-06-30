@@ -44,6 +44,7 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.server.SshServer;
@@ -57,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.SocketUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -140,6 +142,62 @@ public class SftpRule extends ExternalResource
         sftpChannel.cd(baseDir);
 
         sftpChannel.put(new ByteArrayInputStream(content.getBytes()), fileName);
+        if (sftpChannel.isConnected())
+        {
+            sftpChannel.exit();
+        }
+        if (session.isConnected())
+        {
+            session.disconnect();
+        }
+        filesToCleanup.add(FileSystems.getDefault().getPath(baseDir+FileSystems.getDefault().getSeparator()+fileName));
+    }
+
+    public void putFile(final File file) throws Exception
+    {
+        JSch jsch = new JSch();
+        Hashtable config = new Hashtable();
+        config.put("StrictHostKeyChecking", "no");
+        JSch.setConfig(config);
+        Session session = jsch.getSession(user, "localhost", sshd.getPort());
+        session.setPassword(password);
+
+        session.connect();
+        Channel channel = session.openChannel("sftp");
+        channel.connect();
+
+        ChannelSftp sftpChannel = (ChannelSftp) channel;
+        sftpChannel.cd(baseDir);
+
+        sftpChannel.put(new ByteArrayInputStream(FileUtils.readFileToByteArray(file)), file.getName());
+        if (sftpChannel.isConnected())
+        {
+            sftpChannel.exit();
+        }
+        if (session.isConnected())
+        {
+            session.disconnect();
+        }
+        filesToCleanup.add(FileSystems.getDefault().getPath(baseDir+FileSystems.getDefault().getSeparator()+file.getName()));
+    }
+
+    public void putFile(String fileName, final byte[] bytes) throws Exception
+    {
+        JSch jsch = new JSch();
+        Hashtable config = new Hashtable();
+        config.put("StrictHostKeyChecking", "no");
+        JSch.setConfig(config);
+        Session session = jsch.getSession(user, "localhost", sshd.getPort());
+        session.setPassword(password);
+
+        session.connect();
+        Channel channel = session.openChannel("sftp");
+        channel.connect();
+
+        ChannelSftp sftpChannel = (ChannelSftp) channel;
+        sftpChannel.cd(baseDir);
+
+        sftpChannel.put(new ByteArrayInputStream(bytes), fileName);
         if (sftpChannel.isConnected())
         {
             sftpChannel.exit();
