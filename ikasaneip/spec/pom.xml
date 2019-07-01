@@ -60,6 +60,7 @@
         <module>monitor</module>
         <module>service</module>
         <module>rest</module>
+        <module>metadata</module>
         <module>uber</module>
     </modules>
 
