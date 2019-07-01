@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.SocketUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class FtpRule extends ExternalResource
     private String password;
 
     private String baseDir;
+    private String osBaseDir;
 
     private int port;
 
@@ -90,7 +92,8 @@ public class FtpRule extends ExternalResource
             try
             {
                 Path tempPath = Files.createTempDirectory("ftpTestBase");
-                this.baseDir = tempPath.toString();
+                this.baseDir = windowsToUnixPathConverter(tempPath.toString());
+                this.osBaseDir = tempPath.toString();
             }
             catch (IOException e)
             {
@@ -112,6 +115,23 @@ public class FtpRule extends ExternalResource
     public FtpRule()
     {
         this("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 30000));
+    }
+
+    public String windowsToUnixPathConverter(String res) {
+        if (res==null) return null;
+        if (File.separatorChar=='\\') {
+            // From Windows to Linux/Mac
+            String tmp =  res.replace(File.separatorChar,'/');
+            if(tmp.charAt(1)==':'){
+                return "/"+tmp;
+            }
+            else{
+                return tmp;
+            }
+        }
+
+        return res;
+
     }
 
     public void putFile(String fileName, final String content) throws Exception
