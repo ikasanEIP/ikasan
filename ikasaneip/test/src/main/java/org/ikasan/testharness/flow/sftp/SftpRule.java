@@ -86,6 +86,8 @@ public class SftpRule extends ExternalResource
 
     private String baseDir;
 
+    private String osBaseDir;
+
     private int port;
 
     public SftpRule(String user, String password, String baseDir, Integer port)
@@ -98,9 +100,11 @@ public class SftpRule extends ExternalResource
         }else{
             try
             {
-                Path tempPath= Files.createTempDirectory("sftpTestBase");
+                Path tempPath = Files.createTempDirectory(Paths.get("target").toAbsolutePath(),"sftpTestBase");
                 filesToCleanup.add(tempPath);
-                this.baseDir = tempPath.toString();
+                this.osBaseDir=tempPath.toString();
+                this.baseDir =  windowsToUnixPathConverter(tempPath.toString());
+
             }
             catch (IOException e)
             {
@@ -124,6 +128,23 @@ public class SftpRule extends ExternalResource
     public SftpRule()
     {
         this("test", "test", null, SocketUtils.findAvailableTcpPort(8000, 9000));
+    }
+
+    public String windowsToUnixPathConverter(String res) {
+        if (res==null) return null;
+        if (File.separatorChar=='\\') {
+            // From Windows to Linux/Mac
+            String tmp =  res.replace(File.separatorChar,'/');
+            if(tmp.charAt(1)==':'){
+                return "/"+tmp;
+            }
+            else{
+                return tmp;
+            }
+        }
+
+        return res;
+
     }
 
     public void putFile(String fileName, final String content) throws Exception
@@ -150,7 +171,7 @@ public class SftpRule extends ExternalResource
         {
             session.disconnect();
         }
-        filesToCleanup.add(FileSystems.getDefault().getPath(baseDir+FileSystems.getDefault().getSeparator()+fileName));
+        filesToCleanup.add(FileSystems.getDefault().getPath(osBaseDir+FileSystems.getDefault().getSeparator()+fileName));
     }
 
     public void putFile(final File file) throws Exception
@@ -178,7 +199,7 @@ public class SftpRule extends ExternalResource
         {
             session.disconnect();
         }
-        filesToCleanup.add(FileSystems.getDefault().getPath(baseDir+FileSystems.getDefault().getSeparator()+file.getName()));
+        filesToCleanup.add(FileSystems.getDefault().getPath(osBaseDir+FileSystems.getDefault().getSeparator()+file.getName()));
     }
 
     public void putFile(String fileName, final byte[] bytes) throws Exception
@@ -206,7 +227,7 @@ public class SftpRule extends ExternalResource
         {
             session.disconnect();
         }
-        filesToCleanup.add(FileSystems.getDefault().getPath(baseDir+FileSystems.getDefault().getSeparator()+fileName));
+        filesToCleanup.add(FileSystems.getDefault().getPath(osBaseDir+FileSystems.getDefault().getSeparator()+fileName));
     }
 
     public InputStream getFile(String fileName) throws Exception

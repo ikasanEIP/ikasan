@@ -43,6 +43,7 @@ package org.ikasan.connector.sftp.net;
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 
+import org.ikasan.connector.basefiletransfer.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.basefiletransfer.net.*;
@@ -1139,7 +1140,8 @@ public class SFTPClient implements FileTransferClient
             SftpProgressMonitor monitor = null;
             // If the consuming is taking place and the isRecursive==true we need to use
             // full path names rather then file name
-             this.channelSftp.get(srcFile.getPath(), output, monitor);
+            String sourceFilePath = FileUtil.windowsToUnixPathConverter(srcFile.getPath());
+             this.channelSftp.get(sourceFilePath, output, monitor);
 
         }
         catch (SftpException e)
@@ -1335,7 +1337,7 @@ public class SFTPClient implements FileTransferClient
     private URI getURI(String absDir, String filename) throws URISyntaxException
     {
         StringBuilder absolutePath = new StringBuilder(512);
-        absolutePath.append(absDir);
+        absolutePath.append(FileUtil.windowsToUnixPathConverter(absDir));
         absolutePath.append('/');
         absolutePath.append(filename);
         absolutePath.trimToSize();
@@ -1638,7 +1640,7 @@ public class SFTPClient implements FileTransferClient
         if (ps.isDir())
         {
             // Call the target remote directory.
-            String startDir = this.channelSftp.pwd();
+            String startDir = FileUtil.windowsToUnixPathConverter(this.channelSftp.pwd());
             this.channelSftp.cd(path);
             String currentDir = this.channelSftp.pwd();
             logger.debug("Listing directory [" + currentDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$
