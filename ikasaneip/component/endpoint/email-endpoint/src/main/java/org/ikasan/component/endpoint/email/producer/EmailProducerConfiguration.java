@@ -39,6 +39,8 @@ package org.ikasan.component.endpoint.email.producer;
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+import org.ikasan.spec.configuration.Masked;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +75,7 @@ public class EmailProducerConfiguration {
     protected String mailTransportProtocol;
 
     /** The default user name to use when connecting to the mail server. Used if the mail.protocol.user property isn't set. */
-    protected String mailUser;
+    protected String user;
 
     /** Specifies the fully qualified class name of the provider for the specified protocol. Used in cases where more than one provider for a given protocol exists; this property can be used to specify which provider to use by default. The provider must still be listed in a configuration file. */
     protected String mailSmtpClass;
@@ -110,6 +112,10 @@ public class EmailProducerConfiguration {
     /** email format, e.g. plain text, html */
     protected String emailFormat;
 
+    /** email format, e.g. plain text, html */
+    @Masked
+    protected String password;
+
     /** to recipients */
     protected List<String> toRecipients = new ArrayList<String>();
 
@@ -122,6 +128,15 @@ public class EmailProducerConfiguration {
     /** flag for attachment */
     protected boolean hasAttachment = false;
 
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
 
     public String getMailSmtpClass() {
         return mailSmtpClass;
@@ -239,12 +254,12 @@ public class EmailProducerConfiguration {
         this.mailTransportProtocol = mailTransportProtocol;
     }
 
-    public String getMailUser() {
-        return mailUser;
+    public String getUser() {
+        return user;
     }
 
-    public void setMailUser(String mailUser) {
-        this.mailUser = mailUser;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public Map<String, String> getExtendedMailSessionProperties() {

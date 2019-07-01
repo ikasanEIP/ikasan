@@ -49,12 +49,6 @@
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="jsonFlowMetaDataProvider" class="org.ikasan.topology.metadata.JsonFlowMetaDataProvider" />
-
-    <bean id="jsonModuleMetaDataProvider" class="org.ikasan.topology.metadata.JsonModuleMetaDataProvider">
-        <constructor-arg ref="jsonFlowMetaDataProvider"/>
-    </bean>
-
 	<bean id="xaTopologyService"
         class="org.ikasan.topology.service.TopologyServiceImpl">
         <constructor-arg ref="xaTopologyDao"/>

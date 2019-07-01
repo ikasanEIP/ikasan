@@ -94,9 +94,4 @@ public class IkasanRestAutoConfiguration
     public ExclusionApplication exclusionApplication(){
         return new ExclusionApplication();
     }
-
-    @Bean
-    public MetaDataApplication metaDataApplication(){
-        return new MetaDataApplication();
-    }
 }

@@ -96,19 +96,23 @@ public class JmsConsumerBuilderTest {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
 
         final JmsContainerConsumer jmsConsumerEmpty = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
-                jtaTransactionManager, transactionManager,aopProxyProvider);
-
 
         mockery.checking(new Expectations()
         {
             {
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
                 // set event factory
                 oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
                 will(returnValue(jmsConsumerEmpty));
 
             }
         });
+
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
+                jtaTransactionManager,aopProxyProvider);
+
+
 
         Consumer jmsConsumer = jmsConsumerBuilder.setMessageProvider(listenerContainer)
                 .setDestinationJndiName("jms.queue.test")
@@ -174,28 +178,20 @@ public class JmsConsumerBuilderTest {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
 
         final JmsContainerConsumer jmsConsumerEmpty = new JmsContainerConsumer();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
+                // set event factory
+                oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
+                will(returnValue(jmsConsumerEmpty));
+
+            }
+        });
         JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
-                jtaTransactionManager, transactionManager,aopProxyProvider);
-
-        mockery.checking(new Expectations()
-        {
-            {
-                // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
-                will(returnValue(jmsConsumerEmpty));
-
-            }
-        });
-
-        mockery.checking(new Expectations()
-        {
-            {
-                // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
-                will(returnValue(jmsConsumerEmpty));
-
-            }
-        });
+            jtaTransactionManager,aopProxyProvider);
 
         Consumer jmsConsumer = jmsConsumerBuilder.setMessageProvider(listenerContainer)
                 .setDestinationJndiPropertyFactoryInitial("testinitialFactory")
@@ -254,19 +250,23 @@ public class JmsConsumerBuilderTest {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
 
         final JmsContainerConsumer jmsConsumerEmpty = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
-            jtaTransactionManager, transactionManager,aopProxyProvider);
-
 
         mockery.checking(new Expectations()
         {
             {
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
+
                 // set event factory
                 oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
                 will(returnValue(jmsConsumerEmpty));
 
             }
         });
+
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
+            jtaTransactionManager,aopProxyProvider);
+
 
         Map<String, String> jndiProps = new HashMap<>();
         jndiProps.put(Context.INITIAL_CONTEXT_FACTORY, "testinitialFactory");
@@ -326,18 +326,21 @@ public class JmsConsumerBuilderTest {
     @Test
     public void test_successful_jmsConsumer_when_consumer_configuration_is_set_messageProvider_not_set() {
         final JmsContainerConsumer jmsConsumerEmpty = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
-            jtaTransactionManager, transactionManager,aopProxyProvider);
 
         mockery.checking(new Expectations()
         {
             {
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
                 // set event factory
                 oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
                 will(returnValue(jmsConsumerEmpty));
 
             }
         });
+
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
+            jtaTransactionManager,aopProxyProvider);
 
         Map<String, String> jndiProps = new HashMap<>();
         jndiProps.put(Context.INITIAL_CONTEXT_FACTORY, "testinitialFactory");
@@ -395,18 +398,21 @@ public class JmsConsumerBuilderTest {
     @Test
     public void test_successful_jmsConsumer_when_messageProvider_not_set() {
         final JmsContainerConsumer jmsConsumerEmpty = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
-                jtaTransactionManager, transactionManager,aopProxyProvider);
 
         mockery.checking(new Expectations()
         {
             {
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
                 // set event factory
                 oneOf(aopProxyProvider).applyPointcut(with("jmsConsumer"),with(jmsConsumerEmpty));
                 will(returnValue(jmsConsumerEmpty));
 
             }
         });
+
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumerEmpty,
+            jtaTransactionManager,aopProxyProvider);
 
         HashMap<String, String> properties = new HashMap<>();
         properties.put("jndi", "test");

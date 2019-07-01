@@ -203,7 +203,7 @@ public class CallbackMessageProviderImplTest
     /**
      * Test with an example callback message provider
      */
-    private class ExampleCallBackMessageProvider implements CallBackMessageProvider
+    private class ExampleCallBackMessageProvider implements CallBackMessageProvider<Boolean>
     {
         /** consumer to call back on for flow invocation */
         CallBackMessageConsumer<String> callBackMessageConsumer;
@@ -222,7 +222,7 @@ public class CallbackMessageProviderImplTest
         }
 
         @Override
-        public boolean invoke(JobExecutionContext context)
+        public Boolean invoke(JobExecutionContext context)
         {
             List<String> strings = new ArrayList<String>();
             strings.add("one");

@@ -168,9 +168,9 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             mailProperties.put("mail.transport.protocol", configuration.getMailTransportProtocol());
         }
 
-        if(configuration.getMailUser() != null)
+        if(configuration.getUser() != null)
         {
-            mailProperties.put("mail.user", configuration.getMailUser());
+            mailProperties.put("mail.user", configuration.getUser());
         }
 
         if(configuration.getMailSmtpClass() != null)
@@ -213,10 +213,23 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             mailProperties.put("mail.pop.user", configuration.getMailPopUser());
         }
 
-
         mailProperties.putAll(configuration.getExtendedMailSessionProperties());
 
-        session = Session.getInstance(mailProperties);
+        if(configuration.getPassword() == null)
+        {
+            session = Session.getInstance(mailProperties);
+        }
+        else
+        {
+            session = Session.getInstance(mailProperties,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(
+                                    configuration.getUser(), configuration.getPassword());
+                        }
+                    });
+        }
+
         recipients = Maps.newHashMap();
         recipients.put(Message.RecipientType.TO, toArray(configuration.getToRecipients()));
         recipients.put(Message.RecipientType.CC, toArray(configuration.getCcRecipients()));

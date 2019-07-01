@@ -40,41 +40,23 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default ftpConsumerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface FtpConsumerBuilder extends ScheduledConsumerBuilder
+public interface FtpConsumerBuilder
+        extends AbstractScheduledConsumerBuilder<FtpConsumerBuilder>
 {
-    FtpConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    static FtpConsumerConfiguration newConfiguration() { return new FtpConsumerConfiguration(); }
 
-    FtpConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    FtpConsumerBuilder setConfiguration(FtpConsumerConfiguration ftpConsumerConfiguration);
 
-    FtpConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
-
-    FtpConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    FtpConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    FtpConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    FtpConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    FtpConsumerBuilder setCronExpression(String cronExpression);
-
-    FtpConsumerBuilder setEager(boolean eager);
-
-    FtpConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    FtpConsumerBuilder setTimezone(String timezone);
+    FtpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     FtpConsumerBuilder setSourceDirectory(String sourceDirectory);
 

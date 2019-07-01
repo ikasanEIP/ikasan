@@ -120,6 +120,19 @@ public class SftpProducerBuilderImpl implements SftpProducerBuilder
     }
 
     /**
+     * Sets Transaction Manager which is different than default transaction manager set through constructor.
+     *
+     * @param transactionManager
+     * @return
+     */
+    @Override
+    public SftpProducerBuilder setTransactionManager(JtaTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
+        return this;
+    }
+
+    /**
      * Give the component a handle directly to the recovery manager
      * @param managedResourceRecoveryManager
      * @return

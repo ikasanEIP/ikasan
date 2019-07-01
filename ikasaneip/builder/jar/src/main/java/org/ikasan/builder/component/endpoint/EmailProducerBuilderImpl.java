@@ -180,6 +180,20 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     }
 
     @Override
+    public EmailProducerBuilder setUser(String user)
+    {
+        this.emailProducer.getConfiguration().setUser(user);
+        return this;
+    }
+
+    @Override
+    public EmailProducerBuilder setPassword(String password)
+    {
+        this.emailProducer.getConfiguration().setPassword(password);
+        return this;
+    }
+
+    @Override
     public EmailProducerBuilder setMailMimeAddressStrict(boolean mailMimeAddressStrict)
     {
         this.emailProducer.getConfiguration().setMailMimeAddressStrict(mailMimeAddressStrict);
@@ -274,7 +288,20 @@ public class EmailProducerBuilderImpl implements EmailProducerBuilder
     @Override
     public Producer build()
     {
+        validate();
+
         return this.emailProducer;
+    }
+
+    protected void validate()
+    {
+        // there must be at leat one recipient of To, CC, or BCC
+        if( (this.emailProducer.getConfiguration().getToRecipients() == null || this.emailProducer.getConfiguration().getToRecipients().size() == 0)
+                &&  (this.emailProducer.getConfiguration().getCcRecipients() == null || this.emailProducer.getConfiguration().getCcRecipients().size() == 0)
+                &&  (this.emailProducer.getConfiguration().getBccRecipients() == null || this.emailProducer.getConfiguration().getBccRecipients().size() == 0) )
+        {
+            throw new IllegalArgumentException("Email must have at least 1 recipient of 'to', 'cc', or 'bcc'");
+        }
     }
 }
 

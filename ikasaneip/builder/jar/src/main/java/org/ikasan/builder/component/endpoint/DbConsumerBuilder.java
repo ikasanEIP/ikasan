@@ -40,44 +40,18 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.component.endpoint.db.messageprovider.DbConsumerConfiguration;
 
 /**
  * Contract for a default dbConsumerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface DbConsumerBuilder extends ScheduledConsumerBuilder
+public interface DbConsumerBuilder extends AbstractScheduledConsumerBuilder<DbConsumerBuilder>
 {
-    DbConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    static DbConsumerConfiguration newConfiguration() { return new DbConsumerConfiguration(); }
 
-    DbConsumerBuilder setConfiguredResourceId(String configuredResourceId);
-
-    DbConsumerBuilder setConfiguration(FileConsumerConfiguration scheduledConsumerConfiguration);
-
-    DbConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    DbConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    DbConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    DbConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    DbConsumerBuilder setCronExpression(String cronExpression);
-
-    DbConsumerBuilder setEager(boolean eager);
-
-    DbConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    DbConsumerBuilder setTimezone(String timezone);
-
-    DbConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
-
-    DbConsumerBuilder setScheduledJobName(String scheduledJobName);
+    DbConsumerBuilder setConfiguration(DbConsumerConfiguration dbConsumerConfiguration);
 
     DbConsumerBuilder setDriver(String driver);
 
@@ -88,6 +62,5 @@ public interface DbConsumerBuilder extends ScheduledConsumerBuilder
     DbConsumerBuilder setPassword(String password);
 
     DbConsumerBuilder setSqlStatement(String sqlStatement);
-
 }
 

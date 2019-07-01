@@ -190,6 +190,7 @@ public class JmsSampleFlowTest
 
         flowTestRule.consumer("JMS Consumer")
             .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker")
             .producer("JMS Producer");
 
         // start the flow and assert it runs
@@ -344,6 +345,47 @@ public class JmsSampleFlowTest
         // Verify the exclusion was not stored to DB
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
+
+
+    }
+
+    @DirtiesContext
+    @Test
+    public void test_transaction_timeout_stopped_in_error()
+    {
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        // update broker config to force exception throwing
+        DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule.getComponent("Delay Generating Broker");
+        delayGenerationBroker.setBrokerDelay(10000l);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(15000L);
+
+       // flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(EndpointException.class.getName(), error.getExceptionClass());
+        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
 
 
     }

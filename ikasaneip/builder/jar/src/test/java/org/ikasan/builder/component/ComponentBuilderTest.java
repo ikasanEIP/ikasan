@@ -189,8 +189,9 @@ public class ComponentBuilderTest {
                 oneOf(applicationContext).getBean(AopProxyProvider.class);
                 will(returnValue(aopProxyProvider));
 
-                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
                 will(returnValue(jtaTransactionManager));
+
 
                 oneOf(applicationContext).getBean(BaseFileTransferDao.class);
                 will(returnValue(baseFileTransferDao));
@@ -217,7 +218,7 @@ public class ComponentBuilderTest {
         {
             {
                 // set event factory
-                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
                 will(returnValue(jtaTransactionManager));
 
                 oneOf(applicationContext).getBean(BaseFileTransferDao.class);
@@ -253,7 +254,7 @@ public class ComponentBuilderTest {
                 oneOf(applicationContext).getBean(AopProxyProvider.class);
                 will(returnValue(aopProxyProvider));
 
-                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
                 will(returnValue(jtaTransactionManager));
 
                 oneOf(applicationContext).getBean(BaseFileTransferDao.class);
@@ -281,7 +282,7 @@ public class ComponentBuilderTest {
         {
             {
                 // set event factory
-                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
                 will(returnValue(jtaTransactionManager));
 
                 oneOf(applicationContext).getBean(BaseFileTransferDao.class);
@@ -309,10 +310,11 @@ public class ComponentBuilderTest {
         {
             {
                 // set event factory
-                oneOf(applicationContext).getBean(TransactionManager.class);
-                will(returnValue(transactionManager));
-                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
                 will(returnValue(jtaTransactionManager));
+
+                oneOf(jtaTransactionManager).getTransactionManager();
+                will(returnValue(transactionManager));
 
                 oneOf(applicationContext).getBean(AopProxyProvider.class);
                 will(returnValue(aopProxyProvider));
@@ -332,8 +334,12 @@ public class ComponentBuilderTest {
         mockery.checking(new Expectations()
         {
             {
-                oneOf(applicationContext).getBean(TransactionManager.class);
+                oneOf(applicationContext).getBean("transactionManager", JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(jtaTransactionManager).getTransactionManager();
                 will(returnValue(transactionManager));
+
 
             }
         });

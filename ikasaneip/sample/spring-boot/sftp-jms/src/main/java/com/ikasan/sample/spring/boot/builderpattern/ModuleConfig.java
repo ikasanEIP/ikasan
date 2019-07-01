@@ -129,7 +129,8 @@ public class ModuleConfig {
                         .setScheduledJobName("SftpConsumer")
                         .build())
                 .converter("Sftp Payload to Map Converter",new PayloadToMapConverter())
-                .producer("Sftp Jms Producer", jmsProducer).build();
+                .producer("Sftp Jms Producer", jmsProducer)
+                .build();
         return sftpToJmsFlow;
     }
 

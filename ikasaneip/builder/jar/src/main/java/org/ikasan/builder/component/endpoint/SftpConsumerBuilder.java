@@ -40,41 +40,23 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Contract for a default sftpConsumerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface SftpConsumerBuilder extends ScheduledConsumerBuilder
+public interface SftpConsumerBuilder
+        extends AbstractScheduledConsumerBuilder<SftpConsumerBuilder>
 {
-    SftpConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    static SftpConsumerConfiguration newConfiguration() { return new SftpConsumerConfiguration(); }
 
-    SftpConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    SftpConsumerBuilder setConfiguration(SftpConsumerConfiguration configuration);
 
-    SftpConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
-
-    SftpConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    SftpConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    SftpConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    SftpConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    SftpConsumerBuilder setCronExpression(String cronExpression);
-
-    SftpConsumerBuilder setEager(boolean eager);
-
-    SftpConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    SftpConsumerBuilder setTimezone(String timezone);
+    SftpConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);;
 
     SftpConsumerBuilder setSourceDirectory(String sourceDirectory);
 
@@ -139,7 +121,5 @@ public interface SftpConsumerBuilder extends ScheduledConsumerBuilder
     SftpConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
 
     SftpConsumerBuilder setScheduledJobName(String scheduledJobName);
-
-    
 }
 

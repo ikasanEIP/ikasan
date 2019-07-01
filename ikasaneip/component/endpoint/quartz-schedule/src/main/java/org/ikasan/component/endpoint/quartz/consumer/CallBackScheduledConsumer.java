@@ -40,10 +40,10 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
-import org.ikasan.spec.management.ManagedResource;
-import org.quartz.*;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.JobExecutionContext;
+import org.quartz.Scheduler;
 
 /**
  * This implements the CallBackMessageConsumer contract supporting message provider callbacks.
@@ -54,14 +54,9 @@ import org.quartz.*;
 public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements CallBackMessageConsumer<T>
 {
     /**
-     * logger
-     */
-    private static Logger logger = LoggerFactory.getLogger(CallBackScheduledConsumer.class);
-
-    /**
      * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter
      */
-    private CallBackMessageProvider messageProvider;
+    private CallBackMessageProvider<Boolean> messageProvider;
 
     /**
      * Constructor
@@ -95,7 +90,7 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
         try
         {
             boolean isRecovering = managedResourceRecoveryManager.isRecovering();
-            boolean isSuccessful = messageProvider.invoke(context);
+            boolean isSuccessful = messageProvider.invoke(context).booleanValue();
 
             // we were recovering, but are now ok so restore eager or business trigger
             if(isRecovering)
@@ -108,6 +103,9 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
                 {
                     scheduleAsBusinessTrigger(context.getTrigger());
                 }
+
+                // cancel any remnants of the recovery
+                this.managedResourceRecoveryManager.cancel();
             }
             else
             {
@@ -138,26 +136,8 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
         }
     }
 
-    public void setCallBackMessageProvider(CallBackMessageProvider messageProvider)
+    public void setCallBackMessageProvider(CallBackMessageProvider<Boolean> messageProvider)
     {
         this.messageProvider = messageProvider;
-    }
-
-    @Override
-    public void startManagedResource()
-    {
-        if(messageProvider instanceof ManagedResource)
-        {
-            ((ManagedResource)messageProvider).startManagedResource();
-        }
-    }
-
-    @Override
-    public void stopManagedResource()
-    {
-        if(messageProvider instanceof ManagedResource)
-        {
-            ((ManagedResource)messageProvider).stopManagedResource();
-        }
     }
 }

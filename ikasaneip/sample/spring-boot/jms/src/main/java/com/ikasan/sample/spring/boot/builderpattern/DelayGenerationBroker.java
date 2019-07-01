@@ -38,42 +38,34 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component.endpoint;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
-
-import java.util.List;
+import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.EndpointException;
 
 /**
- * Contract for a default file consumer builder.
- *
- * @author Ikasan Development Team.
+ * Created by majean on 09/10/2017.
  */
-public interface FileConsumerBuilder extends AbstractScheduledConsumerBuilder<FileConsumerBuilder>
+public class DelayGenerationBroker implements Broker
 {
-    static FileConsumerConfiguration newConfiguration() { return new FileConsumerConfiguration(); }
 
-    FileConsumerBuilder setConfiguration(FileConsumerConfiguration scheduledConsumerConfiguration);
+    private long brokerDelay = 0l;
 
-    FileConsumerBuilder setFilenames(List<String> filenames);
+    @Override public Object invoke(Object o) throws EndpointException
+    {
+        try
+        {
+            Thread.sleep(brokerDelay);
+        }
+        catch (InterruptedException e)
+        {
+            throw new EndpointException(e);
+        }
+        return o;
+    }
 
-    FileConsumerBuilder setEncoding(String encoding);
-
-    FileConsumerBuilder setIncludeHeader(boolean includeHeader);
-
-    FileConsumerBuilder setIncludeTrailer(boolean includeTrailer);
-
-    FileConsumerBuilder setSortByModifiedDateTime(boolean sortByModifiedDateTime);
-
-    FileConsumerBuilder setSortAscending(boolean sortAscending);
-
-    FileConsumerBuilder setDirectoryDepth(int directoryDepth);
-
-    FileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames);
-
-    FileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
-
-    FileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor);
+    public void setBrokerDelay(long brokerDelay)
+    {
+        this.brokerDelay = brokerDelay;
+    }
 }
-
