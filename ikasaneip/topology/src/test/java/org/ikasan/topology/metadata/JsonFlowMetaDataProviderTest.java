@@ -9,8 +9,11 @@ import org.ikasan.topology.metadata.components.*;
 import org.ikasan.topology.metadata.flow.TestFlow;
 import org.ikasan.topology.metadata.flow.TestFlowConfiguration;
 import org.ikasan.topology.metadata.flow.TestFlowElement;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,33 +28,30 @@ public class JsonFlowMetaDataProviderTest
     public static final String SINGLE_RECIPIENT_FLOW_RESULT_JSON = "/data/singleRecipientFlow.json";
 
     @Test
-    public void test_simple_flow() throws IOException
+    public void test_simple_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createSimpleFlow());
 
-        Assert.assertEquals("JSON Result must equal!", loadDataFile(SIMPLE_FLOW_RESULT_JSON).replaceAll("\r", "").replaceAll("\n", "")
-            , json.replaceAll("\r", "").replaceAll("\n", ""));
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(SIMPLE_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
 
     @Test
-    public void test_multi_recipient_flow() throws IOException
+    public void test_multi_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow());
 
-        Assert.assertEquals("JSON Result must equal!", loadDataFile(MULTI_RECIPIENT_FLOW_RESULT_JSON).replaceAll("\r", "").replaceAll("\n", ""),
-            json.replaceAll("\r", "").replaceAll("\n", ""));
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MULTI_RECIPIENT_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
 
     @Test
-    public void test_single_recipient_flow() throws IOException
+    public void test_single_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createSingleRecipientListFlow());
 
-        Assert.assertEquals("JSON Result must equal!", loadDataFile(SINGLE_RECIPIENT_FLOW_RESULT_JSON).replaceAll("\r", "").replaceAll("\n", ""),
-            json.replaceAll("\r", "").replaceAll("\n", ""));
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(SINGLE_RECIPIENT_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
 
     @Test
