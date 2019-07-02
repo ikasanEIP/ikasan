@@ -1,0 +1,233 @@
+package org.ikasan.topology.metadata;
+
+import org.apache.commons.io.IOUtils;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.topology.metadata.components.*;
+import org.ikasan.topology.metadata.flow.TestFlow;
+import org.ikasan.topology.metadata.flow.TestFlowConfiguration;
+import org.ikasan.topology.metadata.flow.TestFlowElement;
+import org.ikasan.topology.metadata.module.TestModule;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class JsonModuleMetaDataProviderTest
+{
+    public static final String MODULE_RESULT_JSON = "/data/module.json";
+
+    @Test
+    public void test_module_serialisation() throws IOException
+    {
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule);
+
+        Assert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON).replaceAll("\r", "").replaceAll("\n", "")
+            , json.replaceAll("\r", "").replaceAll("\n", ""));
+    }
+
+
+    @Test
+    public void test_module_json_to_object() throws IOException
+    {
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule);
+
+        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
+
+        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
+        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
+        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+    }
+
+    private Flow createSimpleFlow(String flowName)
+    {
+        FlowElement producer = new TestFlowElement(new TestProducer(), "Test Producer"
+            , "Test Producer Description", null);
+
+        Map<String, FlowElement> transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, producer);
+
+        TestFlowElement converter = new TestFlowElement(new TestConverter(), "Test Converter",
+            "Test Converter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, converter);
+
+        TestFlowElement broker = new TestFlowElement(new TestBroker(),
+            "Test Broker", "Test Broker Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, broker);
+
+        TestFlowElement splitter = new TestFlowElement(new TestSplitter(), "Test Splitter",
+            "Test Splitter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, splitter);
+
+        TestFlowElement filter = new TestFlowElement(new TestFilter(), "Test Filter",
+            "Test Filter Description", transitions);
+
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, filter);
+
+        TestFlowElement consumer = new TestFlowElement(new TestConsumer(), "Test Consumer", "Test Consumer Description", transitions);
+
+        FlowConfiguration flowConfiguration = new TestFlowConfiguration(consumer);
+
+        Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
+
+        return flow;
+    }
+
+    private Flow createMultiRecipientListFlow(String flowName)
+    {
+        FlowElement producer = new TestFlowElement(new TestProducer(), "Test Producer"
+            , "Test Producer Description", null);
+
+        Map<String, FlowElement> transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, producer);
+
+        FlowElement producer2 = new TestFlowElement(new TestProducer(), "Test Producer 2"
+            , "Test Producer 2 Description", null);
+
+        Map<String, FlowElement> transitions2 = new HashMap<>();
+        transitions2.put(FlowElement.DEFAULT_TRANSITION_NAME, producer2);
+
+        TestFlowElement converter = new TestFlowElement(new TestConverter(), "Test Converter",
+            "Test Converter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, converter);
+
+        TestFlowElement broker = new TestFlowElement(new TestBroker(),
+            "Test Broker", "Test Broker Description", transitions2);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, broker);
+
+        TestFlowElement splitter = new TestFlowElement(new TestSplitter(), "Test Splitter",
+            "Test Splitter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, splitter);
+
+        TestFlowElement filter = new TestFlowElement(new TestFilter(), "Test Filter",
+            "Test Filter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put("route 1", converter);
+        transitions.put("route 2", filter);
+
+        TestFlowElement multiRecipientRouter = new TestFlowElement(new TestMultiRecipientRouter(), "Test Multi Recipient Router",
+            "Test Multi Recipient Router Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, multiRecipientRouter);
+
+        TestFlowElement consumer = new TestFlowElement(new ConfiguredConsumer(), "Test Consumer", "Test Consumer Description", transitions);
+
+        FlowConfiguration flowConfiguration = new TestFlowConfiguration(consumer);
+
+        Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
+
+        return flow;
+    }
+
+    private Flow createSingleRecipientListFlow(String flowName)
+    {
+        FlowElement producer = new TestFlowElement(new TestProducer(), "Test Producer"
+            , "Test Producer Description", null);
+
+        Map<String, FlowElement> transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, producer);
+
+        FlowElement producer2 = new TestFlowElement(new TestProducer(), "Test Producer 2"
+            , "Test Producer 2 Description", null);
+
+        Map<String, FlowElement> transitions2 = new HashMap<>();
+        transitions2.put(FlowElement.DEFAULT_TRANSITION_NAME, producer2);
+
+        TestFlowElement converter = new TestFlowElement(new TestConverter(), "Test Converter",
+            "Test Converter Description", transitions2);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, converter);
+
+        TestFlowElement broker = new TestFlowElement(new TestBroker(),
+            "Test Broker", "Test Broker Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, broker);
+
+        TestFlowElement splitter = new TestFlowElement(new TestSplitter(), "Test Splitter",
+            "Test Splitter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, splitter);
+
+        TestFlowElement filter = new TestFlowElement(new TestFilter(), "Test Filter",
+            "Test Filter Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put("route 1", converter);
+        transitions.put("route 2", filter);
+
+        TestFlowElement multiRecipientRouter = new TestFlowElement(new TestSingleRecipientRouter(), "Test Single Recipient Router",
+            "Test Single Recipient Router Description", transitions);
+
+        transitions = new HashMap<>();
+        transitions.put(FlowElement.DEFAULT_TRANSITION_NAME, multiRecipientRouter);
+
+        TestFlowElement consumer = new TestFlowElement(new TestConsumer(), "Test Consumer", "Test Consumer Description", transitions);
+
+        FlowConfiguration flowConfiguration = new TestFlowConfiguration(consumer);
+
+        Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
+
+        return flow;
+    }
+
+
+    protected String loadDataFile(String fileName) throws IOException
+    {
+        String contentToSend = IOUtils.toString(loadDataFileStream(fileName), "UTF-8");
+
+        return contentToSend;
+    }
+
+    protected InputStream loadDataFileStream(String fileName) throws IOException
+    {
+        return getClass().getResourceAsStream(fileName);
+    }
+}
