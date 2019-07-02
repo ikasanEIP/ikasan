@@ -32,6 +32,22 @@ import java.util.Map;
  */
 public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
 {
+    private ObjectMapper mapper;
+
+    /**
+     * Constructor
+     */
+    public JsonFlowMetaDataProvider()
+    {
+        this.mapper = new ObjectMapper();
+
+        SimpleModule m = new SimpleModule();
+        m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
+        m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
+        m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
+
+        mapper.registerModule(m);
+    }
 
     @Override
     public String describeFlow(Flow flow)
@@ -41,7 +57,6 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
         try
         {
             FlowConfiguration configuration = flow.getFlowConfiguration();
-            flow.getName();
 
             FlowMetaDataImpl flowMetaData = new FlowMetaDataImpl();
             flowMetaData.setName(flow.getName());
@@ -52,7 +67,6 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
                 flowMetaData.setConfigurationId(((ConfiguredResource) flow).getConfiguredResourceId());
             }
 
-            ObjectMapper mapper = new ObjectMapper();
 
             result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(flowMetaData);
         }
@@ -71,14 +85,6 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
 
         try
         {
-            ObjectMapper mapper = new ObjectMapper();
-            SimpleModule m = new SimpleModule();
-            m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
-            m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
-            m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
-
-            mapper.registerModule(m);
-
             //JSON file to Java object
             result = mapper.readValue(metaData, FlowMetaDataImpl.class);
         }
@@ -144,11 +150,13 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
     }
 
     /**
+     * Deal with a component flow element whose component is single transition.
      *
-     * @param flowMetaData
-     * @param flowElement
-     * @param componentType
-     * @return
+     * @param flowMetaData the flow meta data.
+     * @param flowElement the flow element.
+     * @param componentType the component type we are referencing.
+     *
+     * @return the flow element meta data.
      */
     protected FlowElementMetaData manageSingleTransitionComponent(FlowMetaData flowMetaData, FlowElement flowElement, String componentType)
         throws IllegalAccessException
@@ -169,11 +177,13 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
     }
 
     /**
+     * Deal with a component flow element whose component is multi transition.
      *
-     * @param flowMetaData
-     * @param flowElement
-     * @param componentType
-     * @return
+     * @param flowMetaData the flow meta data.
+     * @param flowElement the flow element.
+     * @param componentType the component type we are referencing.
+     *
+     * @return the flow element meta data.
      */
     protected FlowElementMetaData manageMultiTransitionComponent(FlowMetaData flowMetaData, FlowElement flowElement, String componentType)
         throws IllegalAccessException
@@ -198,6 +208,13 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
         return flowElementMetaData;
     }
 
+    /**
+     * Create flow element meta data.
+     *
+     * @param flowElement the flow element
+     * @param componentType the component type associated with the flow element.
+     * @return
+     */
     protected FlowElementMetaData createFlowElementMetaData(FlowElement flowElement, String componentType)
     {
         FlowElementMetaData flowElementMetaData = new FlowElementMetaDataImpl();

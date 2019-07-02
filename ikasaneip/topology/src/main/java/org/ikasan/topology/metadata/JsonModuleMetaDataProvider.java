@@ -12,7 +12,8 @@ import org.ikasan.topology.metadata.model.TransitionImpl;
 
 public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String>
 {
-    JsonFlowMetaDataProvider flowMetaDataProvider;
+    private JsonFlowMetaDataProvider flowMetaDataProvider;
+    private ObjectMapper mapper;
 
     public JsonModuleMetaDataProvider(JsonFlowMetaDataProvider flowMetaDataProvider)
     {
@@ -21,6 +22,15 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
         {
             throw new IllegalArgumentException("flowMetaDataProvider cannot be null!");
         }
+
+        this.mapper = new ObjectMapper();
+        SimpleModule m = new SimpleModule();
+        m.addAbstractTypeMapping(ModuleMetaData.class, ModuleMetaDataImpl.class);
+        m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
+        m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
+        m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
+
+        this.mapper.registerModule(m);
     }
 
     @Override
@@ -41,9 +51,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
                     .deserialiseFlow(flowMetaDataProvider.describeFlow(flow)));
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-
-            result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(moduleMetaData);
+            result = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(moduleMetaData);
         }
         catch (Exception e)
         {
@@ -60,17 +68,8 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
 
         try
         {
-            ObjectMapper mapper = new ObjectMapper();
-            SimpleModule m = new SimpleModule();
-            m.addAbstractTypeMapping(ModuleMetaData.class, ModuleMetaDataImpl.class);
-            m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
-            m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
-            m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
-
-            mapper.registerModule(m);
-
             //JSON file to Java object
-            result = mapper.readValue(module, ModuleMetaDataImpl.class);
+            result = this.mapper.readValue(module, ModuleMetaDataImpl.class);
         }
         catch (Exception e)
         {
