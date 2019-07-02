@@ -9,7 +9,7 @@ public class FileUtil {
         if (File.separatorChar=='\\') {
             // From Windows to Linux/Mac
             String tmp =  res.replace(File.separatorChar,'/');
-            if(tmp.charAt(1)==':'){
+            if(tmp.length() > 1 && tmp.charAt(1)==':'){
                 return "/"+tmp;
             }
             else{
