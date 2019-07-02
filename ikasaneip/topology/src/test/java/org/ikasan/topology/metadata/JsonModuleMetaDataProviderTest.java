@@ -10,8 +10,11 @@ import org.ikasan.topology.metadata.flow.TestFlow;
 import org.ikasan.topology.metadata.flow.TestFlowConfiguration;
 import org.ikasan.topology.metadata.flow.TestFlowElement;
 import org.ikasan.topology.metadata.module.TestModule;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +27,7 @@ public class JsonModuleMetaDataProviderTest
     public static final String MODULE_RESULT_JSON = "/data/module.json";
 
     @Test
-    public void test_module_serialisation() throws IOException
+    public void test_module_serialisation() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
@@ -39,8 +42,7 @@ public class JsonModuleMetaDataProviderTest
 
         String json = jsonModuleMetaDataProvider.describeModule(testModule);
 
-        Assert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON).replaceAll("\r", "").replaceAll("\n", "")
-            , json.replaceAll("\r", "").replaceAll("\n", ""));
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
 
 
