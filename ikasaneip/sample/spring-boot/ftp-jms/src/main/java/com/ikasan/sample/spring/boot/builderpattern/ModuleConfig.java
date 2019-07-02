@@ -20,6 +20,8 @@ import javax.jms.ConnectionFactory;
 @Configuration
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-quartz.xml",
+        "classpath:ikasan-transaction-pointcut-resubmission.xml",
+        "classpath:ikasan-transaction-pointcut-jms.xml",
         "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
 
