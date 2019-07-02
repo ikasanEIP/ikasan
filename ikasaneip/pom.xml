@@ -1028,6 +1028,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-metadata</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-topology</artifactId>
                 <version>${project.version}</version>
             </dependency>
