@@ -43,7 +43,7 @@ package org.ikasan.connector.sftp.net;
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 
-import org.ikasan.connector.basefiletransfer.util.FileUtil;
+import org.ikasan.filetransfer.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.basefiletransfer.net.*;

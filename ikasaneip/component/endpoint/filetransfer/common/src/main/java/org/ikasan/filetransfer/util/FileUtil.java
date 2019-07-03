@@ -1,4 +1,4 @@
-package org.ikasan.connector.basefiletransfer.util;
+package org.ikasan.filetransfer.util;
 
 import java.io.File;
 

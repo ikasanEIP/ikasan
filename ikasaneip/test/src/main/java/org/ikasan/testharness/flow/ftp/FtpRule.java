@@ -41,6 +41,7 @@
 package org.ikasan.testharness.flow.ftp;
 
 
+import org.ikasan.filetransfer.util.FileUtil;
 import org.junit.rules.ExternalResource;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -91,8 +92,8 @@ public class FtpRule extends ExternalResource
         {
             try
             {
-                Path tempPath = Files.createTempDirectory("ftpTestBase");
-                this.baseDir = windowsToUnixPathConverter(tempPath.toString());
+                Path tempPath = Files.createTempDirectory(Paths.get("target").toAbsolutePath(),"ftpTestBase");
+                this.baseDir = FileUtil.windowsToUnixPathConverter(tempPath.toString());
                 this.osBaseDir = tempPath.toString();
             }
             catch (IOException e)
@@ -115,23 +116,6 @@ public class FtpRule extends ExternalResource
     public FtpRule()
     {
         this("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 30000));
-    }
-
-    public String windowsToUnixPathConverter(String res) {
-        if (res==null) return null;
-        if (File.separatorChar=='\\') {
-            // From Windows to Linux/Mac
-            String tmp =  res.replace(File.separatorChar,'/');
-            if(tmp.charAt(1)==':'){
-                return "/"+tmp;
-            }
-            else{
-                return tmp;
-            }
-        }
-
-        return res;
-
     }
 
     public void putFile(String fileName, final String content) throws Exception
