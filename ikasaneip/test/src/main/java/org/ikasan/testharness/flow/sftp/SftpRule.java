@@ -52,6 +52,7 @@ import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.ikasan.filetransfer.util.FileUtil;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +103,8 @@ public class SftpRule extends ExternalResource
             {
                 Path tempPath = Files.createTempDirectory(Paths.get("target").toAbsolutePath(),"sftpTestBase");
                 filesToCleanup.add(tempPath);
-                this.osBaseDir=tempPath.toString();
-                this.baseDir =  windowsToUnixPathConverter(tempPath.toString());
+                this.osBaseDir = tempPath.toString();
+                this.baseDir = FileUtil.windowsToUnixPathConverter(tempPath.toString());
 
             }
             catch (IOException e)
@@ -128,23 +129,6 @@ public class SftpRule extends ExternalResource
     public SftpRule()
     {
         this("test", "test", null, SocketUtils.findAvailableTcpPort(8000, 9000));
-    }
-
-    public String windowsToUnixPathConverter(String res) {
-        if (res==null) return null;
-        if (File.separatorChar=='\\') {
-            // From Windows to Linux/Mac
-            String tmp =  res.replace(File.separatorChar,'/');
-            if(tmp.charAt(1)==':'){
-                return "/"+tmp;
-            }
-            else{
-                return tmp;
-            }
-        }
-
-        return res;
-
     }
 
     public void putFile(String fileName, final String content) throws Exception

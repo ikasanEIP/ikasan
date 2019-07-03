@@ -40,13 +40,12 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.File;
 import java.io.InputStream;
 
 import javax.resource.ResourceException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.ikasan.connector.basefiletransfer.util.FileUtil;
+import org.ikasan.filetransfer.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
