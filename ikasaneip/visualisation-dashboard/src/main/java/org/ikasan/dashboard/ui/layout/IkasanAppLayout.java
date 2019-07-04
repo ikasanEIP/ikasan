@@ -20,15 +20,12 @@ import com.vaadin.flow.shared.ui.Transport;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
-import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
-import org.ikasan.dashboard.ui.visualisation.view.MapView;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @Push(transport = Transport.LONG_POLLING)
 @HtmlImport("frontend://styles/shared-styles.html")
-@HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Theme(Lumo.class)
 public class IkasanAppLayout extends AppLayoutRouterLayout
 {
@@ -38,9 +35,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
         Image ikasan = new Image("frontend/images/ikasan-titling-transparent.png", "");
         ikasan.setHeight("50px");
 
-        IconButton logout = new IconButton(VaadinIcon.SIGN_OUT.create());
-        logout.getElement().setProperty("title", "Log Out");
-
+        IconButton logout = new IconButton(VaadinIcon.EXIT.create());
         logout.addClickListener((ComponentEventListener<ClickEvent<Div>>) divClickEvent ->
         {
             SecurityContextHolder.getContext().setAuthentication(null);
@@ -55,19 +50,32 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
                 .add(logout)
                 .build())
             .withAppMenu(LeftAppMenuBuilder.get()
-                .add(new LeftNavigationItem("Home", VaadinIcon.HOME.create(), HomeView.class))
-                .add(new LeftNavigationItem("Map", VaadinIcon.GLOBE.create(), MapView.class))
-                .add(new LeftNavigationItem("Visualisation", VaadinIcon.CLUSTER.create(), GraphView.class))
+                .add(new LeftNavigationItem("Home", VaadinIcon.CLUSTER.create(), GraphView.class))
                 .add(LeftSubMenuBuilder
                     .get("Administration", VaadinIcon.TOOLS.create())
                     .add(new LeftNavigationItem("Users", VaadinIcon.USERS.create(), UserManagementView.class))
                     .add(new LeftNavigationItem("Groups", VaadinIcon.GROUP.create(), GroupManagementView.class))
                     .add(new LeftNavigationItem("Roles", VaadinIcon.DOCTOR.create(), RoleManagementView.class))
                     .add(new LeftNavigationItem("Policies", VaadinIcon.SAFE.create(), PolicyManagementView.class))
-                    .add(new LeftNavigationItem("User Directories", VaadinIcon.COG.create(), UserDirectoriesView.class))
+                    .add(new LeftNavigationItem("User Directories", VaadinIcon.COG.create(), UserDirectoriesPanel.class))
                     .build())
                 .build()
             ).build());
     }
 
+//    public IkasanAppLayout()
+//    {
+//        this.setSizeFull();
+//        Image ikasan = new Image("frontend/images/mr_squid_titling_dashboard.png", "");
+//        ikasan.setHeight("80px");
+//
+//        add(ikasan);
+//
+//        Div div = new Div();
+//        div.setWidth("100%");
+//        div.setHeight("3px");
+//        div.add(new Html("<hr/>"));
+//
+//        add(div);
+//    }
 }

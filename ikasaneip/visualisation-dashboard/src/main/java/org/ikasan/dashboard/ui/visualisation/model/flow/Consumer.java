@@ -1,23 +1,24 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
 import org.ikasan.vaadin.visjs.network.Node;
+import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
+import org.ikasan.vaadin.visjs.network.util.Shape;
 
 /**
  * Created by stewmi on 08/11/2018.
  */
-public abstract class Consumer extends AbstractSingleTransition implements SingleTransition
+public abstract class Consumer extends Node implements SingleTransition
 {
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param name
-     * @param transitionLabel
-     * @param transition
-     * @param image
-     */
-	public Consumer(String id, String name, String transitionLabel, Node transition, String image)
-    {
-        super(id, name, transition, transitionLabel, image);
-    }
+	private Node transition;
+
+	public Consumer(String id, String label, String image, Node transition)
+	{
+        super(id, label, Nodes.builder().withShape(Shape.image).withImage(image));
+		this.transition = transition;
+	}
+
+	public Node getTransition()
+	{
+		return transition;
+	}
 }

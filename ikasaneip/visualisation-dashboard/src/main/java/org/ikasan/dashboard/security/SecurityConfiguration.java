@@ -45,8 +45,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             // Allow all flow internal requests.
             .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
 
-            .regexMatchers("/persistenceSetup").not().authenticated()
-
             // Allow all requests by logged in users.
             .anyRequest().authenticated()
 
@@ -96,9 +94,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             // (development mode) static resources
             "/frontend/**",
-
-            // persistence setup
-            "/persistenceSetup/**",
 
             // (development mode) webjars
             "/webjars/**",
