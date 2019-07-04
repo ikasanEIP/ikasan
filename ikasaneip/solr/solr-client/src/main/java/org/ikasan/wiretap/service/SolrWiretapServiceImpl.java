@@ -53,6 +53,19 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
         }
     }
 
+    /**
+     * Constructor
+     *
+     * @param moduleService
+     */
+    public SolrWiretapServiceImpl(SolrWiretapDao wiretapDao) {
+        this.wiretapDao = wiretapDao;
+        if (wiretapDao == null) {
+            throw new IllegalArgumentException("wiretapDao cannot be 'null'");
+        }
+
+    }
+
     @Override
     public void save(WiretapEvent wiretapEvent)
     {
