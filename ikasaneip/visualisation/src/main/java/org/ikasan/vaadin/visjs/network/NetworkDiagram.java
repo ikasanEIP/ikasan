@@ -400,10 +400,6 @@ public class NetworkDiagram extends Component implements HasSize {
     runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.destroy"));
   }
 
-  public void drawModule(Integer x, Integer y, Integer w, Integer h, String text) { getElement().callFunction("$connector.drawModuleSquare", x, y ,w, h, text);}
-
-  public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) { getElement().callFunction("$connector.drawFlowBorder", x, y ,w, h, text);}
-
   // ==== Events ====
   private void enableEventDispatching(Class<? extends Event> clazz) {
     runBeforeClientResponse(ui -> {
