@@ -45,6 +45,7 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.ikasan.filetransfer.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -133,7 +134,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         boolean changeDirectory = false;
         logger.info("execute called on this command: [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        String originalDirectory = printWorkingDirectoryName();
+        String originalDirectory = FileUtil.windowsToUnixPathConverter(printWorkingDirectoryName());
         if(!this.outputDirectory.equals(".") && !this.outputDirectory.equals(originalDirectory))
         {
             try
@@ -285,7 +286,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             logger.info("commit called on this command:" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$);
             FileTransferClient client = getClient();
             client.ensureConnection();
-            String originalDirectory = printWorkingDirectoryName();
+            String originalDirectory = FileUtil.windowsToUnixPathConverter(printWorkingDirectoryName());
             if(!this.outputDirectory.equals(".") && !this.outputDirectory.equals(originalDirectory))
             {
                 changeDirectory(this.outputDirectory);
@@ -343,7 +344,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         
         logger.info("put attempted: [" +this.putAttempted + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         if (this.putAttempted){
-            String originalDirectory = printWorkingDirectoryName();
+            String originalDirectory = FileUtil.windowsToUnixPathConverter(printWorkingDirectoryName());
             changeDirectory(this.outputDirectory);
 
             ClientListEntry deliveredEntry = findFile(this.tempFileName);

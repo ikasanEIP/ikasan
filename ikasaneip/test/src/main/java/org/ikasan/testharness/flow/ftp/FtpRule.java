@@ -41,6 +41,7 @@
 package org.ikasan.testharness.flow.ftp;
 
 
+import org.ikasan.filetransfer.util.FileUtil;
 import org.junit.rules.ExternalResource;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -50,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.SocketUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ public class FtpRule extends ExternalResource
     private String password;
 
     private String baseDir;
+    private String osBaseDir;
 
     private int port;
 
@@ -89,8 +92,9 @@ public class FtpRule extends ExternalResource
         {
             try
             {
-                Path tempPath = Files.createTempDirectory("ftpTestBase");
-                this.baseDir = tempPath.toString();
+                Path tempPath = Files.createTempDirectory(Paths.get("target").toAbsolutePath(),"ftpTestBase");
+                this.baseDir = FileUtil.windowsToUnixPathConverter(tempPath.toString());
+                this.osBaseDir = tempPath.toString();
             }
             catch (IOException e)
             {
