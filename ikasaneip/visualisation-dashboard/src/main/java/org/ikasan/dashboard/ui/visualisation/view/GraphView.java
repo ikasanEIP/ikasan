@@ -4,62 +4,49 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import elemental.json.JsonArray;
+import org.apache.commons.io.IOUtils;
+import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStreamGraph;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.FlowState;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
-import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
-import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
-import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
-import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
-import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
-import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
-import org.ikasan.vaadin.visjs.network.listener.ClickListener;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
-import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
-import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
 import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
 import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
 import org.ikasan.vaadin.visjs.network.options.edges.Edges;
-import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.options.physics.Physics;
-import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -67,18 +54,18 @@ import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
-import org.vaadin.tabs.PagedTabs;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Route(value = "visualisation", layout = IkasanAppLayout.class)
-@UIScope
+@Route(value = "", layout = IkasanAppLayout.class)
+@VaadinSessionScope
 @Component
 public class GraphView extends HorizontalLayout
 {
@@ -93,21 +80,17 @@ public class GraphView extends HorizontalLayout
     @Resource
     private ExclusionManagementService solrExclusionService;
 
-    private BusinessStream graph = null;
+    private BusinessStreamGraph graph = null;
     private Upload upload;
     private List<Node> nodes = new ArrayList<>();
     private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
-    private Grid<String> modulesGrid = new Grid<>();
-    private Grid<String> businessStreamGrid = new Grid<>();
+    private Grid<Flow> grid = new Grid<>();
     private Button viewListButton;
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
-    private ModuleMetaDataDaoImpl moduleMataDataDao = new ModuleMetaDataDaoImpl();
-    private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
-    private  ModuleVisualisation moduleVisualisation = new ModuleVisualisation();
 
     /**
      * Constructor
@@ -117,9 +100,8 @@ public class GraphView extends HorizontalLayout
         this.setMargin(true);
         this.setSizeFull();
 
-        this.initialiseModulesGrid();
-        this.initialiseBusinessStreamGrid();
         this.createNetworkDiagram();
+        this.initialiseToolsGrid();
         this.createToolsSlider();
         this.createSearchSlider();
 
@@ -133,7 +115,7 @@ public class GraphView extends HorizontalLayout
     protected void createNetworkDiagram()
     {
         this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
-        this.add(moduleVisualisation);
+        this.add(networkDiagram);
     }
 
     /**
@@ -184,161 +166,84 @@ public class GraphView extends HorizontalLayout
                 }
             }
         });
-
     }
 
     /**
-     * Method to update the network diagram with the node and edge lists.
-     *
-     * @param module to render.
+     * Method to initialise the grid on the tools slider.
      */
-    protected void updateNetworkDiagram(Module module)
+    protected void initialiseToolsGrid()
     {
-        Physics physics = new Physics();
-        physics.setEnabled(false);
-
-        networkDiagram = new NetworkDiagram
-            (Options.builder()
-                .withAutoResize(true)
-                .withPhysics(physics)
-                .withInteraction(Interaction.builder().withDragNodes(false) .build())
-                .withEdges(
-                    Edges.builder()
-                        .withArrows(new Arrows(new ArrowHead()))
-                        .withColor(EdgeColor.builder()
-                            .withColor("#000000")
-                            .build())
-                        .withDashes(false)
-                        .withFont(Font.builder().withSize(9).build())
-                        .build())
-                .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
-                .build());
-
-        networkDiagram.setSizeFull();
-
-//        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
-//        layoutManager.layout();
-
-        IkasanFlowLayoutManager layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(0), networkDiagram, null);
-        layoutManager.layout();
-
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
+        // Create a grid bound to the list
+        grid.setWidth("100%");
+        grid.setHeight("100%");
+        grid.addColumn(Node::getLabel).setHeader("Name");
+        grid.addColumn(new ComponentRenderer<>(node ->
         {
-            logger.info(doubleClickEvent.getParams().toString());
-        });
+            ComboBox<String> comboBox = new ComboBox<>("");
+            comboBox.setWidth("200px");
+            comboBox.getClassNames().add("small");
+            comboBox.setItems(FlowState.RUNNING, FlowState.PAUSED, FlowState.RECOVERING,
+                FlowState.STOPPED, FlowState.STOPPED_IN_ERROR);
 
-        networkDiagram.addClickListener((ClickListener) clickEvent -> {
-            logger.info(clickEvent.getParams().toString());
-        });
 
-        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
-            logger.info(onContextEvent.getParams().toString());
-        });
-    }
+            comboBox.addValueChangeListener(event -> {
+                node.setState(comboBox.getValue());
 
-    /**
-     * Method to initialise the modulesGrid on the tools slider.
-     */
-    protected void initialiseModulesGrid()
-    {
-        // Create a modulesGrid bound to the list
+                current.access(() ->
+                    networkDiagram.updateNodesStates(nodes));
 
-        modulesGrid.setVisible(true);
-        modulesGrid.setHeight("800px");
-        modulesGrid.setWidth("100%");
-
-        modulesGrid.addColumn(String::toString).setHeader("Name");
-        modulesGrid.addColumn(new ComponentRenderer<>((String node) ->
-        {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-               createGraph(this.moduleMataDataDao.getModuleMetaData(node));
             });
 
-            return view;
+            return comboBox;
 
-        }));
-
-        modulesGrid.setItems(this.moduleMataDataDao.getAllModuleName());
+        })).setHeader("State");
     }
 
     /**
-     * Method to initialise the modulesGrid on the tools slider.
+     * Method to create the graph contents from an InputStream. Typically
+     * used by the upload feature of the application.
+     *
+     * @param mimeType The mime type of the uploaded content.
+     * @param stream The input stream.
      */
-    protected void initialiseBusinessStreamGrid()
+    protected void createGraph(String mimeType, InputStream stream)
     {
-        // Create a modulesGrid bound to the list
-        businessStreamGrid.setVisible(true);
-        businessStreamGrid.setHeight("800px");
-        businessStreamGrid.setWidth("100%");
-        
-        businessStreamGrid.addColumn(String::toString).setHeader("Name");
-        businessStreamGrid.addColumn(new ComponentRenderer<>((String node) ->
+        logger.info(mimeType);
+        if (mimeType.equals("application/json"))
         {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            String text;
+            try
             {
-                try
-                {
-                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao.getBusinessStreamMetaData(node));
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                };
-            });
+                text = IOUtils.toString(stream, "UTF-8");
 
-            return view;
+                logger.info(text);
 
-        }));
+                BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
 
-        businessStreamGrid.setItems(this.businessStreamMetaDataDao.getAllBusinessStreamNames());
-    }
+                this.graph = adapter.toBusinessStreamGraph(text);
 
-    /**
-     *
-     * @param json
-     */
-    protected void createGraph(String json)
-    {
+                nodes = new ArrayList<>();
+                nodes.addAll(graph.getFlows());
+                nodes.addAll(graph.getDestinations());
+                nodes.addAll(graph.getIntegratedSystems());
 
-        JsonModuleMetaDataProvider jsonModuleMetaDataProvider
-            = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
+                this.remove(networkDiagram);
+                updateNetworkDiagram(nodes, graph.getEdges());
+                this.add(networkDiagram);
 
-        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider
-            .deserialiseModule(json);
+                this.grid.setItems(graph.getFlows());
+            }
+            catch (IOException e)
+            {
+                 e.printStackTrace();
+                 NotificationHelper.showErrorNotification("An error has occurred attempting to load graph JSON: " + e.getLocalizedMessage());
+            }
+        }
+        else
+        {
+            NotificationHelper.showErrorNotification("File should be JSON!");
+        }
 
-        ModuleVisjsAdapter adapter = new ModuleVisjsAdapter();
-        Module module = adapter.adapt(moduleMetaData);
-
-        this.remove(moduleVisualisation);
-        this.remove(networkDiagram);
-
-        this.moduleVisualisation = new ModuleVisualisation();
-        moduleVisualisation.addModule(module);
-        this.add(moduleVisualisation);
-    }
-
-    /**
-     *
-     * @param json
-     */
-    protected void createBusinessStreamGraphGraph(String json) throws IOException
-    {
-        BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
-
-        this.graph = adapter.toBusinessStreamGraph(json);
-
-        nodes = new ArrayList<>();
-        nodes.addAll(graph.getFlows());
-        nodes.addAll(graph.getDestinations());
-        nodes.addAll(graph.getIntegratedSystems());
-
-        this.remove(networkDiagram);
-        this.remove(this.moduleVisualisation);
-        updateNetworkDiagram(nodes, graph.getEdges());
-        this.add(networkDiagram);
     }
 
     /**
@@ -346,30 +251,28 @@ public class GraphView extends HorizontalLayout
      */
     protected void createToolsSlider()
     {
-        PagedTabs tabs = new PagedTabs();
-        tabs.setSizeFull();
-
-        VerticalLayout modulesLayout = new VerticalLayout();
-        modulesLayout.setSizeFull();
-        modulesLayout.add(modulesGrid);
+        MemoryBuffer buffer = new MemoryBuffer();
+        upload = new Upload(buffer);
 
 
-        VerticalLayout businessStreamLayout = new VerticalLayout();
-        businessStreamLayout.setSizeFull();
-        businessStreamLayout.add(businessStreamGrid);
+        upload.addSucceededListener(event ->
+            createGraph(event.getMIMEType(), buffer.getInputStream()));
 
-        tabs.add((SerializableSupplier<com.vaadin.flow.component.Component>) () -> businessStreamLayout, "Business Streams");
-        tabs.add((SerializableSupplier<com.vaadin.flow.component.Component>) () -> modulesLayout, "Modules");
 
-        Image transparent = new Image("frontend/images/transparent.png", "");
-        transparent.setHeight("60px");
+        Div div = new Div();
+        div.add(upload);
+
+        VerticalLayout sliderLayout = new VerticalLayout();
+        sliderLayout.setSizeFull();
+        sliderLayout.add(div);
+        sliderLayout.add(grid);
 
         Div card = new Div();
         card.setSizeFull();
         card.setWidth("680px");
         card.setHeight("100%");
         card.getStyle().set("background", "white");
-        card.add(transparent, tabs);
+        card.add(sliderLayout);
 
 
         SlideTab gridSlider = new SlideTabBuilder(card)

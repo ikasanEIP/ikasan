@@ -87,11 +87,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-checkbox-flow</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <version>2.0.2.RELEASE</version>
@@ -104,30 +99,6 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.47</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sybase</groupId>
-            <artifactId>jconn4</artifactId>
-            <version>7.07_build_26846</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>3.4.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
@@ -136,18 +107,6 @@
             <groupId>com.github.appreciated</groupId>
             <artifactId>app-layout-addon</artifactId>
             <version>3.0.0.beta5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.appreciated</groupId>
-            <artifactId>vaadin-css-grid</artifactId>
-            <version>0.8.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.appreciated</groupId>
-            <artifactId>apexcharts</artifactId>
-            <version>0.9.0</version>
         </dependency>
 
         <dependency>
@@ -175,34 +134,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-setup</artifactId>
-            <version>2.2.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-configuration-service</artifactId>
-            <version>2.2.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-system-event</artifactId>
-            <version>2.2.0-SNAPSHOT</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.vaadin.erik</groupId>
             <artifactId>slidetab</artifactId>
             <version>1.0.0-beta4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.tabs</groupId>
-            <artifactId>paged-tabs</artifactId>
-            <version>1.2.0</version>
         </dependency>
 
         <dependency>
@@ -233,7 +167,7 @@
         <dependency>
             <groupId>com.github.mvysny.kaributesting</groupId>
             <artifactId>karibu-testing-v10</artifactId>
-            <version>1.1.8</version>
+            <version>1.0.7</version>
             <scope>test</scope>
         </dependency>
 
@@ -246,16 +180,6 @@
             <groupId>org.vaadin.icons</groupId>
             <artifactId>vaadin-icons</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-data</artifactId>
-            <version>1.0.9</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

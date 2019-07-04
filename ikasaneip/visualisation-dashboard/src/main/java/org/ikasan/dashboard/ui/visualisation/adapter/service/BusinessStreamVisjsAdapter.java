@@ -3,10 +3,10 @@ package org.ikasan.dashboard.ui.visualisation.adapter.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.dashboard.ui.visualisation.correlate.XpathCorrelator;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Destination;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.dashboard.ui.visualisation.adapter.model.Graph;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStreamGraph;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.IntegratedSystem;
 
@@ -31,18 +31,18 @@ public class BusinessStreamVisjsAdapter
     }
 
     /**
-     * Converts a JSON representation of a BusinessStream to a BusinessStream
+     * Converts a JSON representation of a BusinessStreamGraph to a BusinessStreamGraph
      * object model.
      *
-     * @param businessStreamGraph a JSON representation of a BusinessStream
-     * @return an initialised BusinessStream
+     * @param businessStreamGraph a JSON representation of a BusinessStreamGraph
+     * @return an initialised BusinessStreamGraph
      * @throws IOException
      */
-    public BusinessStream toBusinessStreamGraph(String businessStreamGraph) throws IOException
+    public BusinessStreamGraph toBusinessStreamGraph(String businessStreamGraph) throws IOException
     {
         Graph graph = this.toGraph(businessStreamGraph);
 
-        return new BusinessStream(getFlows(graph.getFlows()),
+        return new BusinessStreamGraph(getFlows(graph.getFlows()),
             getIntegratedSystem(graph.getIntegratedSystems()),
             getEdges(graph.getEdges()), getDestinations(graph.getDestinations()));
     }

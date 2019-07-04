@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class MessageChannel extends Node
 {
-	public static final String IMAGE = "frontend/images/message-channel.png";
+	public static final String IMAGE = "VAADIN/themes/ikasan/images/MessageChannel.png";
 
 	private List<EventDrivenConsumer> consumers;
 	private boolean isPrivate;

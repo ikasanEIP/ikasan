@@ -69,72 +69,72 @@ public class GraphViewTest
 
         Assertions.assertNotNull(upload);
 
-//        upload.createGraph("application/json", loadDataFileStream(SIMPLE_BOND_FLOW_JSON));
-//
-//        NetworkDiagram networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(12, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 12 nodes in the network diagram!");
-//        Assertions.assertEquals(12, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 12 nodes in the network diagram!");
-//
-//        upload.createGraph("application/json", loadDataFileStream(ELABORATE_BOND_FLOW_JSON));
-//
-//        networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(28, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 28 nodes in the network diagram!");
-//        Assertions.assertEquals(27, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 27 nodes in the network diagram!");
+        upload.createGraph("application/json", loadDataFileStream(SIMPLE_BOND_FLOW_JSON));
+
+        NetworkDiagram networkDiagram = _get(NetworkDiagram.class);
+        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
+
+        Assertions.assertEquals(12, networkDiagram.getNodesDataProvider().size(new Query<>())
+            , "There should be 12 nodes in the network diagram!");
+        Assertions.assertEquals(12, networkDiagram.getEdgesDataProvider().size(new Query<>())
+            , "There should be 12 nodes in the network diagram!");
+
+        upload.createGraph("application/json", loadDataFileStream(ELABORATE_BOND_FLOW_JSON));
+
+        networkDiagram = _get(NetworkDiagram.class);
+        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
+
+        Assertions.assertEquals(28, networkDiagram.getNodesDataProvider().size(new Query<>())
+            , "There should be 28 nodes in the network diagram!");
+        Assertions.assertEquals(27, networkDiagram.getEdgesDataProvider().size(new Query<>())
+            , "There should be 27 nodes in the network diagram!");
     }
 
     @Test
     public void testBadFileUpload() throws IOException
     {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/json", loadDataFileStream(BAD_JSON));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("An error has occurred attempting to load graph JSON: Unrecognized token 'bad': was expecting ('true', 'false' or 'null')\n" +
-//            " at [Source: (String)\"bad json\"; line: 1, column: 4]", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
+        GraphView upload = _get(GraphView.class);
+
+        Assertions.assertNotNull(upload);
+
+        upload.createGraph("application/json", loadDataFileStream(BAD_JSON));
+
+        Notification notification = getNotifications().get(0);
+
+        System.out.println(notification.getChildren());
+
+        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
+
+        Div div = (Div)verticalLayout.getChildren().findFirst().get();
+
+        Assertions.assertEquals("An error has occurred attempting to load graph JSON: Unrecognized token 'bad': was expecting ('true', 'false' or 'null')\n" +
+            " at [Source: (String)\"bad json\"; line: 1, column: 4]", div.getText(), "Error notification message must equal!");
+
+
+        clearNotifications();
     }
 
     @Test
     public void testBadXmlFileUpload() throws IOException
     {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/xml", loadDataFileStream(BAD_XML));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("File should be JSON!", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
+        GraphView upload = _get(GraphView.class);
+
+        Assertions.assertNotNull(upload);
+
+        upload.createGraph("application/xml", loadDataFileStream(BAD_XML));
+
+        Notification notification = getNotifications().get(0);
+
+        System.out.println(notification.getChildren());
+
+        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
+
+        Div div = (Div)verticalLayout.getChildren().findFirst().get();
+
+        Assertions.assertEquals("File should be JSON!", div.getText(), "Error notification message must equal!");
+
+
+        clearNotifications();
     }
 
     protected String loadDataFile(String fileName) throws IOException
