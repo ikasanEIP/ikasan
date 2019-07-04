@@ -72,7 +72,7 @@ public class SaveRequiredMonitor
     }
 
     /**
-     * Method to pop up dialog if a save is required.
+     * Method to pop up component if a save is required.
      * @param navigateTo
      */
     public void manageSaveRequired(String navigateTo)
