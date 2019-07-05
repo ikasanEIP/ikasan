@@ -74,8 +74,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @DisallowConcurrentExecution
 @SuppressWarnings("unchecked")
-public class
-ScheduledConsumer<T>
+public class ScheduledConsumer<T>
         implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ScheduledComponent<JobDetail>, ResubmissionService<T>
 {
     /**

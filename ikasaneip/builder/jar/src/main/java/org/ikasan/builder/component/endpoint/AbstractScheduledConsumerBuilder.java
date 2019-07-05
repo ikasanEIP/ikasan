@@ -42,7 +42,7 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
@@ -52,7 +52,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
  *
  * @author Ikasan Development Team.
  */
-public interface AbstractScheduledConsumerBuilder<BUILDER> extends Builder<ScheduledConsumer>
+public interface AbstractScheduledConsumerBuilder<BUILDER> extends Builder<Consumer>
 {
     BUILDER setCriticalOnStartup(boolean criticalOnStartup);
 

@@ -311,7 +311,7 @@ public class ScheduledConsumerBuilderTest {
             }
         });
 
-        ScheduledConsumer scheduledConsumer = scheduledConsumerBuilder
+        Consumer consumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
@@ -329,6 +329,7 @@ public class ScheduledConsumerBuilderTest {
                 .setManagedResourceRecoveryManager(managedResourceRecoveryManager)
                 .build();
 
+        ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
@@ -367,7 +368,7 @@ public class ScheduledConsumerBuilderTest {
             }
         });
 
-        ScheduledConsumer scheduledConsumer = scheduledConsumerBuilder
+        Consumer consumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
@@ -384,6 +385,8 @@ public class ScheduledConsumerBuilderTest {
                 .setManagedEventIdentifierService(managedEventIdentifierService)
                 .setManagedResourceRecoveryManager(managedResourceRecoveryManager)
                 .build();
+
+        ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
