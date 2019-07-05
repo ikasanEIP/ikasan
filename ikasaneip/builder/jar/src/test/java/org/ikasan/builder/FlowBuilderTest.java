@@ -1530,4 +1530,97 @@ public class FlowBuilderTest
                 .withDescription("flowDescription")
                 .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor() );
     }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_consumer_implied_and_explicit_builds()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        // implied
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().scheduledConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().scheduledConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implied
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().fileConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().fileConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implied
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().dbConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().dbConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+//        // implied
+//        builderFactory.getFlowBuilder("moduleName", "flowName")
+//                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer())
+//                .producer("producerName", producer)
+//                .build();
+//
+//        // explicit
+//        builderFactory.getFlowBuilder("moduleName", "flowName")
+//                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer().build())
+//                .producer("producerName", producer)
+//                .build();
+
+        // implied
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().jmsConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().jmsConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+//        // implied
+//        builderFactory.getFlowBuilder("moduleName", "flowName")
+//                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer())
+//                .producer("producerName", producer)
+//                .build();
+//
+//        // explicit
+//        builderFactory.getFlowBuilder("moduleName", "flowName")
+//                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer().build())
+//                .producer("producerName", producer)
+//                .build();
+
+        // implied
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().eventGeneratingConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().eventGeneratingConsumer().build())
+                .producer("producerName", producer)
+                .build();
+    }
 }
