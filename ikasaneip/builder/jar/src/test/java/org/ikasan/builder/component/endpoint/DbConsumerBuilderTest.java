@@ -47,6 +47,7 @@ import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
@@ -117,7 +118,7 @@ public class DbConsumerBuilderTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = dbConsumerBuilder
+        Consumer consumer = dbConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
@@ -139,6 +140,8 @@ public class DbConsumerBuilderTest
                 .setPassword("password")
                 .setSqlStatement("sqlStatement")
                 .build();
+
+        ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
@@ -186,7 +189,7 @@ public class DbConsumerBuilderTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = dbConsumerBuilder
+        Consumer consumer = dbConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
@@ -209,6 +212,7 @@ public class DbConsumerBuilderTest
                 .setSqlStatement("sqlStatement")
                 .build();
 
+        ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
