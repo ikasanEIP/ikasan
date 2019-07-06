@@ -93,4 +93,15 @@
     </style>
 </custom-style>
 
+<dom-module theme-for="vaadin-grid" id="my-grid">
+    <template>
+        <style>
+            [part~="row"]:hover [part~="body-cell"]{
+                color: red;
+                background-color: rgba(240, 89, 36, 0.1);
+            }
+        </style>
+    </template>
+</dom-module>
+
 
