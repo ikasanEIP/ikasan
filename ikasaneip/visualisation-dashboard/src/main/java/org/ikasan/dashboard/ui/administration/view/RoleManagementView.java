@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Route(value = "roleManagement", layout = IkasanAppLayout.class)
-@VaadinSessionScope
+@UIScope
 @Component
 public class RoleManagementView extends VerticalLayout
 {
