@@ -40,16 +40,13 @@
  */
 package org.ikasan.dashboard.ui.administration.view;
 
-import com.github.appreciated.app.layout.component.appbar.IconButton;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -60,10 +57,10 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
 import org.ikasan.security.service.SecurityService;
@@ -71,14 +68,13 @@ import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.vaadin.teemu.VaadinIcons;
 
 import javax.annotation.Resource;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -97,15 +93,41 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
     @Resource
     private SecurityService securityService;
 
-    @Resource
-    private LdapService ldapService;
-
-    @Resource
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
-
+    private LdapService ldapService;
+    private VerticalLayout mainLayout = new VerticalLayout();
     private Grid<AuthenticationMethod> directoryTable;
-    private Button newDirectoryButton;
+	private Button newDirectoryButton;
 
+//	/**
+//	 * Constructor
+//	 *
+//	 * @param securityService
+//	 * @param authenticationProviderFactory
+//	 * @param ldapService
+//     */
+//    public UserDirectoriesPanel(SecurityService securityService,
+//                                AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,
+//                                LdapService ldapService)
+//    {
+//        super();
+//        this.securityService = securityService;
+//        if(this.securityService == null)
+//        {
+//        	throw new IllegalArgumentException("securityService cannot be null!");
+//        }
+//        this.authenticationProviderFactory = authenticationProviderFactory;
+//        if(this.authenticationProviderFactory == null)
+//        {
+//        	throw new IllegalArgumentException("authenticationProviderFactory cannot be null!");
+//        }
+//        this.ldapService = ldapService;
+//        if(this.ldapService == null)
+//        {
+//        	throw new IllegalArgumentException("ldapService cannot be null!");
+//        }
+//        init();
+//    }
 
     /**
      * Constructor
@@ -130,20 +152,25 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
         hl.add(icon);
 
 
-        Text instructions = new Text(
+        Text parapraphTwo = new Text(
             "The table below shows the user directories currently configured for Ikasan. The order of the directory is the order in which it will be searched for users and groups." +
             " It is recommended that each user exists in a single directory.");
 
-        hl.add(instructions);
+        hl.add(parapraphTwo);
+
+        this.mainLayout.setSizeFull();
+//        this.mainLayout.setSpacing(true);
 
         add(userDirectories);
         add(hl);
+//        this.mainLayout.add(parapraphTwo);
 
         newDirectoryButton = new Button("Add Directory");
-        newDirectoryButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent
-            -> openUserDirectoryDialog(new AuthenticationMethod()));
-
-        applyAdminVisibilitySecurity(newDirectoryButton);
+        newDirectoryButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(securityService, new AuthenticationMethod());
+            userDirectoryDialog.open();
+        });
 
         add(newDirectoryButton);
 
@@ -155,71 +182,17 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
         this.directoryTable.addColumn(AuthenticationMethod::getName).setHeader("Directory Name");
         this.directoryTable.addColumn(AuthenticationMethod::getMethod).setHeader("Type");
+        this.directoryTable.addColumn(AuthenticationMethod::getOrder).setHeader("Order");
         this.directoryTable.addColumn(new ComponentRenderer<>(authenticationMethod ->
         {
+            Button disable = new Button("Disable");
+            Button edit = new Button("Edit");
+            Button delete = new Button("Delete");
+            Button test = new Button("Test");
+            Button synchronise = new Button("Synchronise");
+
             HorizontalLayout layout = new HorizontalLayout();
-
-            Button upArrow = new Button(VaadinIcon.ARROW_UP.create());
-            upArrow.getStyle().set("width", "40px");
-            upArrow.getStyle().set("height", "40px");
-            upArrow.getStyle().set("font-size", "16pt");
-            if(authenticationMethod.getOrder() != 1)
-            {
-                upArrow.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-                {
-                    if(authenticationMethod.getOrder() != 1)
-                    {
-                        AuthenticationMethod upAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder() -1);
-
-                        upAuthMethod.setOrder(authenticationMethod.getOrder());
-                        authenticationMethod.setOrder(authenticationMethod.getOrder() - 1);
-
-                        securityService.saveOrUpdateAuthenticationMethod(upAuthMethod);
-                        securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
-
-                        populateAll();
-                    }
-                });
-
-                layout.add(upArrow);
-                applyWriteVisibilitySecurity(upArrow);
-            }
-
-            long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
-
-            Button downArrow = new Button(VaadinIcon.ARROW_DOWN.create());
-            downArrow.getStyle().set("width", "40px");
-            downArrow.getStyle().set("height", "40px");
-            downArrow.getStyle().set("font-size", "16pt");
-            if(authenticationMethod.getOrder() != numberOfAuthMethods)
-            {
-                downArrow.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->
-                {
-                    if(authenticationMethod.getOrder() != numberOfAuthMethods)
-                    {
-                        AuthenticationMethod downAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder()  + 1);
-
-                        downAuthMethod.setOrder(authenticationMethod.getOrder());
-                        authenticationMethod.setOrder(authenticationMethod.getOrder() + 1);
-
-                        securityService.saveOrUpdateAuthenticationMethod(downAuthMethod);
-                        securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
-
-                        populateAll();
-                    }
-                });
-
-                layout.add(downArrow);
-                applyWriteVisibilitySecurity(downArrow);
-            }
-
-            return layout;
-
-        })).setHeader("Order");
-        this.directoryTable.addColumn(new ComponentRenderer<>(authenticationMethod ->
-        {
-            HorizontalLayout layout = new HorizontalLayout();
-            createUserDirectoryManagementCell(authenticationMethod, layout);
+            layout.add(disable, edit, delete, test, synchronise);
 
             TextArea synchronisedTextArea = new TextArea();
             synchronisedTextArea.setSizeFull();
@@ -241,241 +214,411 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
         })).setHeader("State");
 
 		add(this.directoryTable);
+
+//        this.add(mainLayout);
     }
 
+//	/* (non-Javadoc)
+//	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+//	 */
+//	@Override
+//	public void enter(ViewChangeListener.ViewChangeEvent event)
+//	{
+//		this.populateAll();
+//	}
 
-    /**
-     * Populate the view components.
-     */
 	protected void populateAll()
 	{
+		final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute("USER");
+
 		List<AuthenticationMethod> authenticationMethods = this.securityService.getAuthenticationMethods();
 
-        this.directoryTable.setItems(authenticationMethods);
+		this.directoryTable.setItems(new ArrayList());
+
+		for(final AuthenticationMethod authenticationMethod: authenticationMethods)
+		{
+			this.populateDirectoryTable(authenticationMethod);
+		}
 	}
 
-    /**
-     * Helper method to create the user durectory management grid cell.
-     *
-     * @param authenticationMethod the relevant authentication method.
-     * @param layout the layout to add the cell elements to.
-     */
-	protected void createUserDirectoryManagementCell(final AuthenticationMethod authenticationMethod, HorizontalLayout layout)
+	protected void populateDirectoryTable(final AuthenticationMethod authenticationMethod)
 	{
-        Button disable = new Button("Disable");
-        Button edit = new Button("Edit");
-        Button delete = new Button("Delete");
-        Button test = new Button("Test");
-        Button synchronise = new Button("Synchronise");
-
-        layout.add(disable, edit, delete, test, synchronise);
-
-        applyWriteVisibilitySecurity(disable, edit, delete, test, synchronise);
-
-		test.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+		Button test = new Button("Test");
+//		test.setStyleName(BaseTheme.BUTTON_LINK);
+		test.addClickListener(new ComponentEventListener<ClickEvent<Button>>()
         {
-            try
+            @Override
+            public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
             {
-                authenticationProviderFactory.testAuthenticationConnection(authenticationMethod);
+                try
+                {
+                    authenticationProviderFactory.testAuthenticationConnection(authenticationMethod);
+                }
+                catch(RuntimeException e)
+                {
+                    logger.error("An error occurred testing an LDAP connection", e);
+
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while testing connection!");
+
+                    return;
+                }
+                catch(Exception e)
+                {
+                    logger.error("An error occurred testing an LDAP connection", e);
+
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while testing connection!");
+
+                    return;
+                }
+
+                Notification.show("Connection Successful!");
             }
-            catch(Exception e)
-            {
-                logger.error("An error occurred testing an LDAP connection", e);
-
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-
-                Notification.show("Error occurred while testing connection! " + e, 3000, Notification.Position.MIDDLE);
-
-                return;
-            }
-
-            Notification.show("Connection Successful!", 3000, Notification.Position.MIDDLE);
         });
 
+		final Button enableDisableButton = new Button();
 
 		if(authenticationMethod.isEnabled())
 		{
-			disable.setText("Disable");
+			enableDisableButton.setText("Disable");
 		}
 		else
 		{
-			disable.setText("Enable");
+			enableDisableButton.setText("Enable");
 		}
-
-        disable.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+//		enableDisableButton.setStyleName(BaseTheme.BUTTON_LINK);
+		enableDisableButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>()
         {
-            try
+            @Override
+            public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
             {
+                try
+                {
+                    if(authenticationMethod.isEnabled())
+                    {
+                        authenticationMethod.setEnabled(false);
+                    }
+                    else
+                    {
+                        authenticationMethod.setEnabled(true);
+                    }
+
+                    securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+
+                    populateAll();
+                }
+                catch(RuntimeException e)
+                {
+                    logger.error("An error occurred saving an authentication method", e);
+
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error trying to enable/disable the authentication method!");
+
+                    return;
+                }
+
                 if(authenticationMethod.isEnabled())
                 {
-                    authenticationMethod.setEnabled(false);
+                    enableDisableButton.setText("Disable");
+                    Notification.show("Enabled!");
                 }
                 else
                 {
-                    authenticationMethod.setEnabled(true);
+                    enableDisableButton.setText("Enable");
+                    Notification.show("Disabled!");
                 }
-
-                securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
-
-                populateAll();
-            }
-            catch(RuntimeException e)
-            {
-                logger.error("An error occurred saving an authentication method", e);
-
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-
-                Notification.show("Error trying to enable/disable the authentication method!");
-
-                return;
-            }
-
-            if(authenticationMethod.isEnabled())
-            {
-                disable.setText("Disable");
-                Notification.show("Enabled!", 3000, Notification.Position.MIDDLE);
-            }
-            else
-            {
-                disable.setText("Enable");
-                Notification.show("Disabled!", 3000, Notification.Position.MIDDLE);
             }
         });
 
 
-		delete.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+		Button delete = new Button("Delete");
+//		delete.setStyleName(BaseTheme.BUTTON_LINK);
+		delete.addClickListener(new ComponentEventListener<ClickEvent<Button>>()
         {
-            try
+            @Override
+            public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
             {
-                securityService.deleteAuthenticationMethod(authenticationMethod);
-
-                List<AuthenticationMethod> authenticationMethods = securityService.getAuthenticationMethods();
-
-                directoryTable.setItems(new ArrayList());
-
-                long order = 1;
-
-                for(final AuthenticationMethod authenticationMethod1 : authenticationMethods)
+                try
                 {
-                    authenticationMethod1.setOrder(order++);
-                    securityService.saveOrUpdateAuthenticationMethod(authenticationMethod1);
+                    securityService.deleteAuthenticationMethod(authenticationMethod);
+
+                    List<AuthenticationMethod> authenticationMethods = securityService.getAuthenticationMethods();
+
+                    directoryTable.setItems(new ArrayList());
+
+                    long order = 1;
+
+                    for(final AuthenticationMethod authenticationMethod: authenticationMethods)
+                    {
+                        authenticationMethod.setOrder(order++);
+                        securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+                    }
+
+                    populateAll();
+                }
+                catch(RuntimeException e)
+                {
+                    logger.error("An error occurred deleting an authentication method", e);
+
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error trying to delete the authentication method!");
+
+                    return;
                 }
 
-                populateAll();
-            }
-            catch(RuntimeException e)
-            {
-                logger.error("An error occurred deleting an authentication method", e);
-
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-
-                Notification.show("Error trying to delete the authentication method!" , 3000, Notification.Position.MIDDLE);
-
-                return;
-            }
-
-            Notification.show("Deleted!");
-        });
-
-
-		edit.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> openUserDirectoryDialog(authenticationMethod));
-
-
-		synchronise.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-        {
-            try
-            {
-                ldapService.synchronize(authenticationMethod);
-
-                authenticationMethod.setLastSynchronised(new Date());
-                securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
-
-                populateAll();
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-
-                Notification.show("Error occurred while synchronizing! " + e.getLocalizedMessage()
-                    , 3000, Notification.Position.MIDDLE);
-
-                return;
+                Notification.show("Deleted!");
             }
         });
-
+//
+//		Button edit = new Button("Edit");
+//		edit.setStyleName(BaseTheme.BUTTON_LINK);
+//		edit.addClickListener(new Button.ClickListener()
+//        {
+//            public void buttonClick(ClickEvent event)
+//            {
+//        		UserDirectoryManagementPanel authMethodPanel = new UserDirectoryManagementPanel(authenticationMethod,
+//    					securityService, authenticationProviderFactory, ldapService);
+//
+//        		Window window = new Window("Configure User Directory");
+//        		window.setModal(true);
+//        		window.setHeight("90%");
+//        		window.setWidth("90%");
+//
+//        		window.setContent(authMethodPanel);
+//
+//        		window.addCloseListener(new Window.CloseListener()
+//        		{
+//                    // inline close-listener
+//                    public void windowClose(CloseEvent e)
+//                    {
+//                        populateAll();
+//                    }
+//                });
+//
+//        		UI.getCurrent().addWindow(window);
+//            }
+//        });
+//
+//		Button synchronise = new Button("Synchronise");
+////		synchronise.setStyleName(BaseTheme.BUTTON_LINK);
+//
+//		synchronise.addClickListener(new Button.ClickListener()
+//        {
+//            public void buttonClick(ClickEvent event)
+//            {
+//            	try
+//            	{
+//            		ldapService.synchronize(authenticationMethod);
+//
+//            		authenticationMethod.setLastSynchronised(new Date());
+//	            	securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+//
+//	            	populateAll();
+//            	}
+//            	catch(UnexpectedRollbackException e)
+//            	{
+//            		StringWriter sw = new StringWriter();
+//                    PrintWriter pw = new PrintWriter(sw);
+//                    e.printStackTrace(pw);
+//
+//                    logger.error("Most specific cause: " + e.getMostSpecificCause());
+//                    e.getMostSpecificCause().printStackTrace();
+//                    logger.error("Most specific cause: " + e.getRootCause());
+//                    e.getRootCause().printStackTrace();
+//
+//                    Notification.show("Error occurred while synchronizing!", sw.toString()
+//                        , Notification.Type.ERROR_MESSAGE);
+//
+//                    return;
+//            	}
+//            	catch(RuntimeException e)
+//            	{
+//            		logger.error("An error occurred synchronising an LDAP repository", e);
+//
+//            		StringWriter sw = new StringWriter();
+//                    PrintWriter pw = new PrintWriter(sw);
+//                    e.printStackTrace(pw);
+//
+//                    Notification.show("Error occurred while synchronizing!", sw.toString()
+//                        , Notification.Type.ERROR_MESSAGE);
+//
+//                    return;
+//            	}
+//            	catch(Exception e)
+//            	{
+//            		logger.error("An error occurred synchronising an LDAP repository", e);
+//
+//            		StringWriter sw = new StringWriter();
+//                    PrintWriter pw = new PrintWriter(sw);
+//                    e.printStackTrace(pw);
+//
+//                    Notification.show("Error occurred while synchronizing!", sw.toString()
+//                        , Notification.Type.ERROR_MESSAGE);
+//
+//                    return;
+//            	}
+//
+//                Notification.show("Synchronized!");
+//            }
+//        });
+//
+//		VerticalLayout operationsLayout = new VerticalLayout(9, 2);
+//		operationsLayout.setWidth("250px");
+//		operationsLayout.add(enableDisableButton);
+//		operationsLayout.add(new Label(" "));
+//		operationsLayout.add(edit, 2, 0);
+//		operationsLayout.add(new Label(" "));
+//		operationsLayout.add(delete, 4, 0);
+//		operationsLayout.add(new Label(" "));
+//		operationsLayout.add(test);
+//		operationsLayout.add(new Label(" "));
+//		operationsLayout.add(synchronise);
+//
+//		TextArea synchronisedTextArea = new TextArea();
+////		synchronisedTextArea.setRows(3);
+////		synchronisedTextArea.setWordwrap(true);
+//
+//		if(authenticationMethod.getLastSynchronised() != null)
+//		{
+//			synchronisedTextArea.setValue("This directory was last synchronised at " + authenticationMethod.getLastSynchronised());
+//		}
+//		else
+//		{
+//			synchronisedTextArea.setValue("This directory has not been synchronised");
+//		}
+//
+//		synchronisedTextArea.setSizeFull();
+//		synchronisedTextArea.setReadOnly(true);
+//
+//		operationsLayout.add(synchronisedTextArea);
+//
+//		HorizontalLayout orderLayout = new HorizontalLayout();
+//		orderLayout.setWidth("50%");
+//
+//		Button upArrow = new Button(VaadinIcon.ARROW_UP.create());
+//		if(authenticationMethod.getOrder() != 1)
+//		{
+////			upArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+////			upArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);BUTTON_BORDERLESS
+//			upArrow.addClickListener(new ComponentEventListener<ClickEvent<Button>>()
+//            {
+//                @Override
+//                public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
+//                {
+//                    if(authenticationMethod.getOrder() != 1)
+//                    {
+//                        AuthenticationMethod upAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder() -1);
+//
+//                        upAuthMethod.setOrder(authenticationMethod.getOrder());
+//                        authenticationMethod.setOrder(authenticationMethod.getOrder() - 1);
+//
+//                        securityService.saveOrUpdateAuthenticationMethod(upAuthMethod);
+//                        securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+//
+//                        populateAll();
+//                    }
+//                }
+//            });
+//
+//			orderLayout.add(upArrow);
+//		}
+//
+//
+//		long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
+//
+//		Button downArrow = new Button(VaadinIcons.ARROW_DOWN);
+//		if(authenticationMethod.getOrder() != numberOfAuthMethods)
+//		{
+//			downArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//			downArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+//			downArrow.addClickListener(new Button.ClickListener()
+//	        {
+//	            public void buttonClick(ClickEvent event)
+//	            {
+//	            	long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
+//
+//	            	if(authenticationMethod.getOrder() != numberOfAuthMethods)
+//	        		{
+//	        			AuthenticationMethod downAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder()  + 1);
+//
+//	        			downAuthMethod.setOrder(authenticationMethod.getOrder());
+//	        			authenticationMethod.setOrder(authenticationMethod.getOrder() + 1);
+//
+//	        			securityService.saveOrUpdateAuthenticationMethod(downAuthMethod);
+//	        			securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+//
+//	        			populateAll();
+//	        		}
+//	            }
+//	        });
+//
+//			orderLayout.addComponent(downArrow);
+//		}
+//
+//		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+//				.getAttribute(DashboardSessionValueConstants.USER);
+//
+//
+//		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+//				authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN))
+//		{
+//			test.setVisible(true);
+//			enableDisableButton.setVisible(true);
+//			delete.setVisible(true);
+//			edit.setVisible(true);
+//			synchronise.setVisible(true);
+//			upArrow.setVisible(true);
+//			downArrow.setVisible(true);
+//			newDirectoryButton.setVisible(true);
+//		}
+//		else if(authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_WRITE))
+//		{
+//			test.setVisible(true);
+//			enableDisableButton.setVisible(true);
+//			synchronise.setVisible(true);
+//			upArrow.setVisible(true);
+//			downArrow.setVisible(true);
+//
+//			delete.setVisible(false);
+//			edit.setVisible(false);
+//			newDirectoryButton.setVisible(false);
+//		}
+//		else
+//		{
+//			test.setVisible(false);
+//			enableDisableButton.setVisible(false);
+//			delete.setVisible(false);
+//			edit.setVisible(false);
+//			synchronise.setVisible(false);
+//			upArrow.setVisible(false);
+//			downArrow.setVisible(false);
+//			newDirectoryButton.setVisible(false);
+//		}
+//
+//		this.directoryTable.addItem(new Object[]{authenticationMethod.getName(), "Microsoft Active Directory"
+//				, orderLayout, operationsLayout}, authenticationMethod);
 	}
-
-    /**
-     * Helper to deal with page write authorities.
-     *
-     * @param components
-     */
-	protected void applyWriteVisibilitySecurity(com.vaadin.flow.component.Component... components)
-    {
-        IkasanAuthentication authentication = (IkasanAuthentication)SecurityContextHolder.getContext().getAuthentication();
-
-        for(com.vaadin.flow.component.Component component: components)
-        {
-            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_WRITE))
-            {
-                component.setVisible(true);
-            }
-            else
-            {
-                component.setVisible(false);
-            }
-        }
-    }
-
-    /**
-     * Helper to deal with page admin authorities.
-     *
-     * @param components
-     */
-    protected void applyAdminVisibilitySecurity(com.vaadin.flow.component.Component... components)
-    {
-        IkasanAuthentication authentication = (IkasanAuthentication)SecurityContextHolder.getContext().getAuthentication();
-
-        for(com.vaadin.flow.component.Component component: components)
-        {
-            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN))
-            {
-                component.setVisible(true);
-            }
-            else
-            {
-                component.setVisible(false);
-            }
-        }
-    }
-
-	protected void openUserDirectoryDialog(AuthenticationMethod authenticationMethod)
-    {
-        UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(securityService, authenticationMethod);
-        userDirectoryDialog.open();
-
-        userDirectoryDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-        {
-            if(!dialogOpenedChangeEvent.isOpened())
-            {
-                populateAll();
-            }
-        });
-    }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
         logger.info("before enter");
-        populateAll();
+        List<AuthenticationMethod> authenticationMethods = this.securityService.getAuthenticationMethods();
+
+        this.directoryTable.setItems(authenticationMethods);
     }
 }

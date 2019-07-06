@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Route(value = "policyManagement", layout = IkasanAppLayout.class)
-@VaadinSessionScope
+@UIScope
 @Component
 public class PolicyManagementView extends VerticalLayout
 {
