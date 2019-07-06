@@ -42,24 +42,24 @@ package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.annotation.UIScope;
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
-import com.vaadin.flow.theme.lumo.Lumo;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.themes.BaseTheme;
+import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.vaadin.teemu.VaadinIcons;
 
+import javax.annotation.Resource;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -83,17 +84,19 @@ import java.util.List;
  *
  */
 @Route(value = "userDirectories", layout = IkasanAppLayout.class)
-@VaadinSessionScope
+@UIScope
 @Component
-public class UserDirectoriesPanel extends VerticalLayout
+public class UserDirectoriesView extends VerticalLayout implements BeforeEnterObserver
 {
-	private Logger logger = LoggerFactory.getLogger(UserDirectoriesPanel.class);
+	private Logger logger = LoggerFactory.getLogger(UserDirectoriesView.class);
 
-	private SecurityService securityService;
+    @Resource
+    private SecurityService securityService;
+
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
     private LdapService ldapService;
     private VerticalLayout mainLayout = new VerticalLayout();
-    private Grid directoryTable;
+    private Grid<AuthenticationMethod> directoryTable;
 	private Button newDirectoryButton;
 
 //	/**
@@ -130,7 +133,7 @@ public class UserDirectoriesPanel extends VerticalLayout
      * Constructor
 
      */
-    public UserDirectoriesPanel()
+    public UserDirectoriesView()
     {
         super();
         init();
@@ -140,85 +143,79 @@ public class UserDirectoriesPanel extends VerticalLayout
     {
     	H2 userDirectories = new H2("User Directories");
 
-    	Label parapraphOne = new Label();
-//		parapraphOne.setCaptionAsHtml(true);
-//		parapraphOne.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() +
-//				" The table below shows the user directories currently configured for Ikasan.");
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setWidth("100%");
+
+        Icon icon = VaadinIcon.QUESTION_CIRCLE_O.create();
+        icon.getStyle().set("marginRight", "10px");
+
+        hl.add(icon);
 
 
-        Label parapraphTwo = new Label();
-//        parapraphTwo.setCaptionAsHtml(true);
-//        parapraphTwo.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() +
-//				" The order of the directory is the order in which it will be searched for users and groups." +
-//        		" It is recommended that each user exists in a single directory.");
-//        parapraphTwo.addStyleName(ValoTheme.LABEL_TINY);
-//        parapraphTwo.addStyleName(ValoTheme.LABEL_LIGHT);
+        Text parapraphTwo = new Text(
+            "The table below shows the user directories currently configured for Ikasan. The order of the directory is the order in which it will be searched for users and groups." +
+            " It is recommended that each user exists in a single directory.");
 
-        this.mainLayout.setWidth("100%");
-        this.mainLayout.setSpacing(true);
+        hl.add(parapraphTwo);
 
-        this.mainLayout.add(userDirectories);
-//        this.mainLayout.add(parapraphOne);
+        this.mainLayout.setSizeFull();
+//        this.mainLayout.setSpacing(true);
+
+        add(userDirectories);
+        add(hl);
 //        this.mainLayout.add(parapraphTwo);
 
         newDirectoryButton = new Button("Add Directory");
-        newDirectoryButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>()
+        newDirectoryButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            @Override
-            public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
-            {
-//                final UserDirectoryManagementPanel authMethodPanel = new UserDirectoryManagementPanel(new AuthenticationMethod(),
-//                    securityService, authenticationProviderFactory, ldapService);
-//
-//                Window window = new Window("Configure User Directory");
-//                window.setModal(true);
-//                window.setHeight("90%");
-//                window.setWidth("90%");
-//
-//                window.setContent(authMethodPanel);
-//
-//                UI.getCurrent().addWindow(window);
-//
-//                window.addCloseListener(new Window.CloseListener()
-//                {
-//                    @Override
-//                    public void windowClose(Window.CloseEvent e)
-//                    {
-//                        populateAll();
-//                    }
-//                });
-            }
+            UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(securityService, new AuthenticationMethod());
+            userDirectoryDialog.open();
         });
 
-        this.mainLayout.add(newDirectoryButton);
+        add(newDirectoryButton);
 
-        this.setWidth("100%");
-        this.setHeight("100%");
+        this.setSizeFull();
 
-        this.directoryTable = new Grid();
-		this.directoryTable.setWidth("100%");
-		this.directoryTable.setHeight("600px");
-//		this.directoryTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-//		this.directoryTable.addContainerProperty("Directory Name", String.class,  null);
-//		this.directoryTable.addContainerProperty("Type", String.class,  null);
-//		this.directoryTable.addContainerProperty("Order", Layout.class,  null);
-//		this.directoryTable.addContainerProperty("Operations", Layout.class,  null);
-//
-//		this.directoryTable.setColumnExpandRatio("Directory Name", 25);
-//		this.directoryTable.setColumnExpandRatio("Type", 25);
-//
-//		this.directoryTable.setColumnAlignment("Order",
-//                Align.CENTER);
-//		this.directoryTable.setColumnExpandRatio("Order", 10);
-//		this.directoryTable.setColumnAlignment("Operations",
-//                Align.CENTER);
-//		this.directoryTable.setColumnWidth("Operations", 300);
+        this.directoryTable = new Grid<>();
+		this.directoryTable.setSizeFull();
+		this.directoryTable.setClassName("my-grid");
 
-		this.mainLayout.add(this.directoryTable);
+        this.directoryTable.addColumn(AuthenticationMethod::getName).setHeader("Directory Name");
+        this.directoryTable.addColumn(AuthenticationMethod::getMethod).setHeader("Type");
+        this.directoryTable.addColumn(AuthenticationMethod::getOrder).setHeader("Order");
+        this.directoryTable.addColumn(new ComponentRenderer<>(authenticationMethod ->
+        {
+            Button disable = new Button("Disable");
+            Button edit = new Button("Edit");
+            Button delete = new Button("Delete");
+            Button test = new Button("Test");
+            Button synchronise = new Button("Synchronise");
 
-        this.mainLayout.setMargin(true);
+            HorizontalLayout layout = new HorizontalLayout();
+            layout.add(disable, edit, delete, test, synchronise);
 
-        this.add(mainLayout);
+            TextArea synchronisedTextArea = new TextArea();
+            synchronisedTextArea.setSizeFull();
+            if(authenticationMethod.getLastSynchronised() != null)
+            {
+                synchronisedTextArea.setValue("This directory was last synchronised at " + authenticationMethod.getLastSynchronised());
+            }
+            else
+            {
+                synchronisedTextArea.setValue("This directory has not been synchronised");
+            }
+
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.setSizeFull();
+            verticalLayout.add(layout, synchronisedTextArea);
+
+            return verticalLayout;
+
+        })).setHeader("State");
+
+		add(this.directoryTable);
+
+//        this.add(mainLayout);
     }
 
 //	/* (non-Javadoc)
@@ -616,4 +613,12 @@ public class UserDirectoriesPanel extends VerticalLayout
 //				, orderLayout, operationsLayout}, authenticationMethod);
 	}
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    {
+        logger.info("before enter");
+        List<AuthenticationMethod> authenticationMethods = this.securityService.getAuthenticationMethods();
+
+        this.directoryTable.setItems(authenticationMethods);
+    }
 }

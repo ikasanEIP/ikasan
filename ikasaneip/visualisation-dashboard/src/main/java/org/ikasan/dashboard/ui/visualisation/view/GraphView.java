@@ -17,6 +17,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import elemental.json.JsonArray;
 import org.apache.commons.io.IOUtils;
@@ -65,7 +66,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @Route(value = "", layout = IkasanAppLayout.class)
-@VaadinSessionScope
+@UIScope
 @Component
 public class GraphView extends HorizontalLayout
 {
