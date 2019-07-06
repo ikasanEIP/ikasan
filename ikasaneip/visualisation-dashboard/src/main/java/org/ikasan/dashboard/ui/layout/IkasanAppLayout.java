@@ -57,7 +57,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
                     .add(new LeftNavigationItem("Groups", VaadinIcon.GROUP.create(), GroupManagementView.class))
                     .add(new LeftNavigationItem("Roles", VaadinIcon.DOCTOR.create(), RoleManagementView.class))
                     .add(new LeftNavigationItem("Policies", VaadinIcon.SAFE.create(), PolicyManagementView.class))
-                    .add(new LeftNavigationItem("User Directories", VaadinIcon.COG.create(), UserDirectoriesPanel.class))
+                    .add(new LeftNavigationItem("User Directories", VaadinIcon.COG.create(), UserDirectoriesView.class))
                     .build())
                 .build()
             ).build());

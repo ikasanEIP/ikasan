@@ -17,7 +17,7 @@
         <entry key="hibernate.enable_lazy_load_no_trans" value="true" />
     </util:map>
 
-    <bean id="ikasanDatasource" name="ikasan.ds ikasan.xads " class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="${datasource.driver-class-name}"/>
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
