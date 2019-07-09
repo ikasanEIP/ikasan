@@ -13,19 +13,32 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.AuthenticationServiceException;
+import org.ikasan.setup.persistence.service.PersistenceService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Tag("sa-login-view")
 @Route(value = LoginView.ROUTE)
 @PageTitle("Login")
 @HtmlImport("frontend://styles/shared-styles.html")
+@Component
+@UIScope
 public class LoginView extends VerticalLayout
 {
     public static final String ROUTE = "login";
+
+    @Resource
+    private AuthenticationService authenticationService;
+
 
     private LoginForm login = new LoginForm();
 
@@ -50,56 +63,18 @@ public class LoginView extends VerticalLayout
         login.addLoginListener((ComponentEventListener<AbstractLogin.LoginEvent>) loginEvent ->
         {
 
-            if(!loginEvent.getUsername().equals("mick"))
+            try
             {
-                login.setError(true);
-                return;
+                Authentication authentication = this.authenticationService.login(loginEvent.getUsername(),
+                    loginEvent.getPassword());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
-            SecurityContextHolder.getContext().setAuthentication(new Authentication()
+            catch (AuthenticationServiceException e)
             {
-                @Override
-                public Collection<? extends GrantedAuthority> getAuthorities()
-                {
-                    return null;
-                }
-
-                @Override
-                public Object getCredentials()
-                {
-                    return null;
-                }
-
-                @Override
-                public Object getDetails()
-                {
-                    return null;
-                }
-
-                @Override
-                public Object getPrincipal()
-                {
-                    return null;
-                }
-
-                @Override
-                public boolean isAuthenticated()
-                {
-                    return true;
-                }
-
-                @Override
-                public void setAuthenticated(boolean b) throws IllegalArgumentException
-                {
-
-                }
-
-                @Override
-                public String getName()
-                {
-                    return null;
-                }
-            });
+                e.printStackTrace();
+                login.setError(true);
+            }
 
             UI.getCurrent().navigate("");
         });
