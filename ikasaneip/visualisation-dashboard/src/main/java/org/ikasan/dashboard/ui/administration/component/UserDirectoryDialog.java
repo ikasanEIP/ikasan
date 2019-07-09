@@ -109,7 +109,7 @@ public class UserDirectoryDialog extends Dialog
     protected void init()
     {
 
-        final H2 configureUserDirectories = new H2("Configure User Directories");
+        final H2 configureUserDirectories = new H2("Configure User Directory");
         this.add(configureUserDirectories);
 
 
@@ -128,7 +128,7 @@ public class UserDirectoryDialog extends Dialog
         Div directoryNameDiv = new Div();
         directoryNameDiv.add(this.directoryName);
 
-        formLayout.add(directoryNameDiv, new Div());
+        formLayout.add(directoryNameDiv);
 
         this.ldapServerUrl = new TextField();
         this.ldapServerUrl.setWidth("600px");
@@ -138,7 +138,7 @@ public class UserDirectoryDialog extends Dialog
 
         Div ldapServerUrlDiv = new Div();
         ldapServerUrlDiv.add(ldapServerUrl, hostnameExample);
-        formLayout.add(ldapServerUrlDiv, new Div());
+        formLayout.add(ldapServerUrlDiv);
 
         this.ldapBindUserDn = new TextField();
         this.ldapBindUserDn.setWidth("600px");
@@ -150,7 +150,7 @@ public class UserDirectoryDialog extends Dialog
         Div ldapBindUserDnDiv = new Div();
         ldapBindUserDnDiv.add(this.ldapBindUserDn, usernameExample);
 
-        formLayout.add(ldapBindUserDnDiv, new Div());
+        formLayout.add(ldapBindUserDnDiv);
 
         this.ldapBindUserPassword = new PasswordField();
         this.ldapBindUserPassword.setWidth("300px");
@@ -158,7 +158,6 @@ public class UserDirectoryDialog extends Dialog
         this.ldapBindUserPassword.setLabel("Password");
 
         formLayout.add(new Div(this.ldapBindUserPassword));
-        formLayout.add(new Div());
 
         final H3 ldapSchema = new H3("LDAP Schema");
         formLayout.add(ldapSchema, new Div());
@@ -173,7 +172,7 @@ public class UserDirectoryDialog extends Dialog
         Div ldapUserSearchDnDiv = new Div();
         ldapUserSearchDnDiv.add(this.ldapUserSearchDn, userDnExample);
 
-        formLayout.add(ldapUserSearchDnDiv, new Div());
+        formLayout.add(ldapUserSearchDnDiv);
 
         this.applicationSecurityBaseDn = new TextField();
         this.applicationSecurityBaseDn.setRequired(true);
@@ -185,7 +184,7 @@ public class UserDirectoryDialog extends Dialog
         Div applicationSecurityBaseDnDiv = new Div();
         applicationSecurityBaseDnDiv.add(this.applicationSecurityBaseDn, groupDnExample);
 
-        formLayout.add(applicationSecurityBaseDnDiv, new Div());
+        formLayout.add(applicationSecurityBaseDnDiv);
 
         final H3 ldapAttributes = new H3("LDAP Attributes");
         formLayout.add(ldapAttributes, new Div());
@@ -317,8 +316,6 @@ public class UserDirectoryDialog extends Dialog
         Button save = new Button("Save");
         save.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            this.authenticationMethod = new AuthenticationMethod();
-
             if(binder.writeBeanIfValid(this.authenticationMethod))
             {
                 try
@@ -372,6 +369,8 @@ public class UserDirectoryDialog extends Dialog
     protected Binder<AuthenticationMethod> setupBinderAndValidation()
     {
         Binder<AuthenticationMethod> binder = new Binder<>();
+
+        binder.setBean(this.authenticationMethod);
 
         binder.forField(this.directoryName)
             .withValidator(new StringLengthValidator(

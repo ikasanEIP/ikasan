@@ -35,7 +35,9 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
         Image ikasan = new Image("frontend/images/ikasan-titling-transparent.png", "");
         ikasan.setHeight("50px");
 
-        IconButton logout = new IconButton(VaadinIcon.EXIT.create());
+        IconButton logout = new IconButton(VaadinIcon.SIGN_OUT.create());
+        logout.getElement().setProperty("title", "Log Out");
+
         logout.addClickListener((ComponentEventListener<ClickEvent<Div>>) divClickEvent ->
         {
             SecurityContextHolder.getContext().setAuthentication(null);
@@ -63,19 +65,4 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
             ).build());
     }
 
-//    public IkasanAppLayout()
-//    {
-//        this.setSizeFull();
-//        Image ikasan = new Image("frontend/images/mr_squid_titling_dashboard.png", "");
-//        ikasan.setHeight("80px");
-//
-//        add(ikasan);
-//
-//        Div div = new Div();
-//        div.setWidth("100%");
-//        div.setHeight("3px");
-//        div.add(new Html("<hr/>"));
-//
-//        add(div);
-//    }
 }

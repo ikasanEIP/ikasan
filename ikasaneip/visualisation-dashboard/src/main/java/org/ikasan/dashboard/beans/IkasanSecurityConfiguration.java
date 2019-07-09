@@ -75,10 +75,16 @@ public class IkasanSecurityConfiguration
     {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(ikasands);
-        sessionFactoryBean.setMappingResources("/org/ikasan/security/model/Principal.hbm.xml",
-            "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
-            "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
-            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
+        sessionFactoryBean.setMappingResources(
+            "/org/ikasan/security/model/Principal.hbm.xml",
+            "/org/ikasan/security/model/PrincipalLite.hbm.xml",
+            "/org/ikasan/security/model/Role.hbm.xml",
+            "/org/ikasan/security/model/Policy.hbm.xml",
+            "/org/ikasan/security/model/User.hbm.xml",
+            "/org/ikasan/security/model/UserLite.hbm.xml",
+            "/org/ikasan/security/model/Authority.hbm.xml",
+            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
+            "/org/ikasan/security/model/PolicyLink.hbm.xml",
             "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
@@ -101,4 +107,15 @@ public class IkasanSecurityConfiguration
 
     }
 
+    @Bean
+    public LdapService ldapService()
+    {
+        return new LdapServiceImpl(securityDao(), userDao(), passwordEncoder());
+    }
+
+    @Bean
+    public AuthenticationProviderFactory authenticationProviderFactory()
+    {
+        return new AuthenticationProviderFactoryImpl(userService(), securityService());
+    }
 }
