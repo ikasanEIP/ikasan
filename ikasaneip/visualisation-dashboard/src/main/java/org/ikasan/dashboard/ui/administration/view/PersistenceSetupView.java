@@ -271,7 +271,7 @@ public class PersistenceSetupView extends VerticalLayout implements BeforeEnterO
 
     protected void createFull()
     {
-        if(ikasanAuthentication != null)
+        if(ikasanAuthentication == null)
         {
 //            final AdminPasswordDialog adminPasswordDialog
 //                = new AdminPasswordDialog();
@@ -328,32 +328,27 @@ public class PersistenceSetupView extends VerticalLayout implements BeforeEnterO
 //                    Notification.show("Database successfully created!");
 //                }
 //            });
-        }
-        else
-        {
-            try
-            {
-//                PlatformConfiguration platformConfiguration = new PlatformConfiguration();
-//                platformConfiguration.setWebServiceUserAccount("admin");
-//                platformConfiguration.setWebServiceUserPassword(password);
-                persistenceService.createBaselinePersistence();
-
-                userService.changeUsersPassword("admin", "admin", "admin");
-
-                this.updateIcons();
-            }
-            catch(Exception ex)
-            {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                ex.printStackTrace(pw);
-
-                Notification.show("Error trying to create Ikasan database!");
-
-                return;
-            }
-
-            Notification.show("Database successfully created!");
+//        }
+//        else
+//        {
+//            try
+//            {
+//                persistenceService.createBaselinePersistence();
+//
+//                this.updateIcons();
+//            }
+//            catch(Exception ex)
+//            {
+//                StringWriter sw = new StringWriter();
+//                PrintWriter pw = new PrintWriter(sw);
+//                ex.printStackTrace(pw);
+//
+//                Notification.show("Error trying to create Ikasan database!");
+//
+//                return;
+//            }
+//
+//            Notification.show("Database successfully created!");
         }
     }
 
@@ -403,7 +398,7 @@ public class PersistenceSetupView extends VerticalLayout implements BeforeEnterO
 
     protected void initPersistanceStoreTypeCombo()
     {
-        persistanceStoreTypeCombo = new ComboBox("Please Select","Full Installation", "Upgrade", "Provision File Transfer");
+        persistanceStoreTypeCombo = new ComboBox("Full Installation", "Upgrade", "Provision File Transfer");
     }
 
 
