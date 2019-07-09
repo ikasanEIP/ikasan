@@ -54,7 +54,6 @@ import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
 import org.ikasan.component.endpoint.db.messageprovider.DbMessageProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -71,7 +70,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.TransactionManager;
 import java.util.ArrayList;
 
 /**
