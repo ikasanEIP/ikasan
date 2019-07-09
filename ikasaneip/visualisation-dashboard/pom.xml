@@ -116,6 +116,18 @@
         </dependency>
 
         <dependency>
+            <groupId>sybase</groupId>
+            <artifactId>jconn4</artifactId>
+            <version>7.07_build_26846</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
@@ -214,6 +226,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-data</artifactId>
+            <version>1.0.9</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
