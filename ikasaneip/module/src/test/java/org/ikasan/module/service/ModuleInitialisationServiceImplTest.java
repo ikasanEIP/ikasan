@@ -71,6 +71,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Test cases for ModuleInitialisationServiceImpl
@@ -188,12 +189,6 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(1).of(platformContext).getApplicationName();
             will(returnValue("/sampleModule"));
 
-            //getModule from DB
-            oneOf(topologyService).getModuleByName(MODULE_NAME);
-            will(returnValue(null));
-
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
-
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
             will(returnValue(flowElements));
@@ -222,8 +217,7 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowElementInvoker();
             will(returnValue(new TestInvoker()));
 
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
-
+            oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
 
         }});
 
@@ -262,9 +256,8 @@ public class ModuleInitialisationServiceImplTest {
             oneOf(environment).getProperty("server.address");
             will(returnValue(null));
 
-            //getModule from DB
-            oneOf(topologyService).getModuleByName(MODULE_NAME);
-            will(returnValue(moduleDb));
+            atLeast(1).of(platformContext).getApplicationName();
+            will(returnValue("/sampleModule"));
 
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
@@ -294,9 +287,7 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowElementInvoker();
             will(returnValue(new TestInvoker()));
 
-            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
-
-
+            oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -348,12 +339,6 @@ public class ModuleInitialisationServiceImplTest {
 
             oneOf(topologyService).save(with(any(Server.class)));
 
-            //getModule from DB
-            oneOf(topologyService).getModuleByName(MODULE_NAME);
-            will(returnValue(null));
-
-            exactly(1).of(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
-
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
             will(returnValue(flowElements));
@@ -382,10 +367,7 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowElementInvoker();
             will(returnValue(new TestInvoker()));
 
-            exactly(1).of(topologyService).save(with(any(org.ikasan.topology.model.Flow.class)));
-
-
-
+            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -437,10 +419,6 @@ public class ModuleInitialisationServiceImplTest {
 
             oneOf(topologyService).save(with(any(Server.class)));
 
-            //getModule from DB
-            oneOf(topologyService).getModuleByName(MODULE_NAME);
-            will(returnValue(moduleDb));
-
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
             will(returnValue(flowElements));
@@ -469,11 +447,7 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowElementInvoker();
             will(returnValue(new TestInvoker()));
 
-            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
-
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
-
-
+            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -519,10 +493,6 @@ public class ModuleInitialisationServiceImplTest {
 
             oneOf(topologyService).save(with(any(Server.class)));
 
-            //getModule from DB
-            oneOf(topologyService).getModuleByName(MODULE_NAME);
-            will(returnValue(moduleDb));
-
             // discovery
             exactly(1).of(flowConfiguration).getFlowElements();
             will(returnValue(flowElements));
@@ -551,11 +521,7 @@ public class ModuleInitialisationServiceImplTest {
             exactly(1).of(producerElement).getFlowElementInvoker();
             will(returnValue(new TestInvoker()));
 
-            oneOf(topologyService).discover(with(aNull(Server.class)),with(any(org.ikasan.topology.model.Module.class)),with(any(List.class)));
-
-            oneOf(topologyService).save(with(any(org.ikasan.topology.model.Module.class)));
-
-
+            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
