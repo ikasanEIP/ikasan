@@ -8,7 +8,7 @@ import org.ikasan.vaadin.visjs.network.Node;
  */
 public class PollingConsumer extends Consumer
 {
-	public static final String IMAGE = "VAADIN/themes/ikasan/images/Polling Consumer.png";
+	public static final String IMAGE = "frontend/images/polling-consumer.png";
 
 	public PollingConsumer(String id, String name, Node transition)
 	{

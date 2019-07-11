@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ public class Module
 	private String name;
 	private List<Flow> flows;
 
-	public Module(String name, List<Flow> flows)
+	public Module(String name)
 	{
 		this.name = name;
 		this.flows = flows;
@@ -25,4 +26,14 @@ public class Module
 	{
 		return flows;
 	}
+
+	public  void addFlow(Flow flow)
+    {
+        if(flows == null)
+        {
+            flows = new ArrayList<>();
+        }
+
+        flows.add(flow);
+    }
 }

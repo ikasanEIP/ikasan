@@ -30,6 +30,7 @@ import java.util.Collection;
 @Route(value = LoginView.ROUTE)
 @PageTitle("Login")
 @HtmlImport("frontend://styles/shared-styles.html")
+@HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Component
 @UIScope
 public class LoginView extends VerticalLayout
