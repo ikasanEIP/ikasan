@@ -22,6 +22,8 @@ import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import elemental.json.JsonArray;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStreamGraph;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.FlowState;
@@ -30,13 +32,17 @@ import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
+import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
@@ -65,7 +71,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Route(value = "", layout = IkasanAppLayout.class)
+@Route(value = "visualisation", layout = IkasanAppLayout.class)
 @UIScope
 @Component
 public class GraphView extends HorizontalLayout
@@ -167,6 +173,37 @@ public class GraphView extends HorizontalLayout
                 }
             }
         });
+
+    }
+
+    /**
+     * Method to update the network diagram with the node and edge lists.
+     *
+     * @param module to render.
+     */
+    protected void updateNetworkDiagram(Module module)
+    {
+        Physics physics = new Physics();
+        physics.setEnabled(false);
+
+        networkDiagram = new NetworkDiagram
+            (Options.builder()
+                .withAutoResize(true)
+                .withPhysics(physics)
+                .withEdges(
+                    Edges.builder()
+                        .withArrows(new Arrows(new ArrowHead()))
+                        .withColor(EdgeColor.builder()
+                            .withColor("#000000")
+                            .build())
+                        .withDashes(false)
+                        .build())
+                .build());
+
+        networkDiagram.setSizeFull();
+
+        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
+        layoutManager.layout();
     }
 
     /**
@@ -219,20 +256,33 @@ public class GraphView extends HorizontalLayout
 
                 logger.info(text);
 
-                BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
+//                BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
+//
+//                this.graph = adapter.toBusinessStreamGraph(text);
+//
+//                nodes = new ArrayList<>();
+//                nodes.addAll(graph.getFlows());
+//                nodes.addAll(graph.getDestinations());
+//                nodes.addAll(graph.getIntegratedSystems());
+//
+//                this.remove(networkDiagram);
+//                updateNetworkDiagram(nodes, graph.getEdges());
+//                this.add(networkDiagram);
+//
+//                this.grid.setItems(graph.getFlows());
 
-                this.graph = adapter.toBusinessStreamGraph(text);
+                JsonModuleMetaDataProvider jsonModuleMetaDataProvider
+                    = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
 
-                nodes = new ArrayList<>();
-                nodes.addAll(graph.getFlows());
-                nodes.addAll(graph.getDestinations());
-                nodes.addAll(graph.getIntegratedSystems());
+                ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider
+                    .deserialiseModule(text);
+
+                ModuleVisjsAdapter adapter = new ModuleVisjsAdapter();
+                Module module = adapter.adapt(moduleMetaData);
 
                 this.remove(networkDiagram);
-                updateNetworkDiagram(nodes, graph.getEdges());
+                updateNetworkDiagram(module);
                 this.add(networkDiagram);
-
-                this.grid.setItems(graph.getFlows());
             }
             catch (IOException e)
             {
