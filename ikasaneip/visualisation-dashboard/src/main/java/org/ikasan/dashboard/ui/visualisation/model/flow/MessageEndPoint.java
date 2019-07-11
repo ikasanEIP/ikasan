@@ -9,7 +9,7 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
  */
 public class MessageEndPoint extends Node implements SingleTransition
 {
-	public static final String IMAGE = "VAADIN/themes/ikasan/images/Message Endpoint.png";
+	public static final String IMAGE = "frontend/images/message-endpoint.png";
 
 	private Node transition;
 
