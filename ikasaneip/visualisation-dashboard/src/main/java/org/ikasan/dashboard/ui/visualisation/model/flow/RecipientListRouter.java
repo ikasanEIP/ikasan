@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class RecipientListRouter extends Node implements MultiTransition
 {
-	public static final String IMAGE = "VAADIN/themes/ikasan/images/RecipientListIcon.gif";
+	public static final String IMAGE = "frontend/images/recipient-list-router.png";
 	private List<Node> transitions;
 
 	public RecipientListRouter(String id, String name)

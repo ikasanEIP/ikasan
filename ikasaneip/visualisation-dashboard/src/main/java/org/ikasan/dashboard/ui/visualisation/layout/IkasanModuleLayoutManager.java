@@ -5,8 +5,6 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
-import org.ikasan.vaadin.visjs.network.options.edges.Smooth;
-import org.ikasan.vaadin.visjs.network.util.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,7 @@ public class IkasanModuleLayoutManager
     private Module module;
     private NetworkDiagram networkDiagram;
     private List<Edge> edgeList;
+    private List<Node> nodeList;
     private Logo logo;
     int xExtent = 0;
     int yExtent = 0;
@@ -29,6 +28,7 @@ public class IkasanModuleLayoutManager
         this.module = module;
         this.networkDiagram = networkDiagram;
         this.edgeList = new ArrayList<>();
+        this.nodeList = new ArrayList<>();
         this.logo = logo;
     }
 
@@ -42,39 +42,49 @@ public class IkasanModuleLayoutManager
             flow.getConsumer().setX(x);
             flow.getConsumer().setY(y);
 
+            System.out.println("Add consumer " + flow.getConsumer());
+
+            nodeList.add(flow.getConsumer());
+
             addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId());
 
             manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
 
-//            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 100, flow.getName());
+//            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 400 - x , yExtent + 100, flow.getName());
 
             System.out.println("Add flow " + xExtent + "-->" + yExtent);
 
             x = xExtent + 100 + 300;
         }
 
-        System.out.println("Add module " + xExtent + 200 + "-->" + yExtent + 300);
+        System.out.println("Add module " + xExtent + 400 + "-->" + yExtent + 300);
+
+        this.networkDiagram.setNodes(this.nodeList);
+        this.networkDiagram.setEdges(this.edgeList);
 
 //        this.networkDiagram.drawModule(-100, -100, xExtent + 400, yExtent + 300, module.getName());
 
-        logo.setX(30);
-        logo.setY(yExtent + 150);
+//        logo.setX(30);
+//        logo.setY(yExtent + 150);
     }
 
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)
     {
-        if (transition instanceof SingleTransition)
+        nodeList.add(transition);
+        System.out.println("Add node " + transition);
+
+        if (transition instanceof SingleTransition && ((SingleTransition) transition).getTransition() != null)
         {
-            transition.setX(x + 200);
+            transition.setX(x + 400);
             transition.setY(y);
 
             addEdge(transition.getId(), ((SingleTransition) transition).getTransition().getId());
 
-            manageTransition(((SingleTransition) transition).getTransition(), x + 200, y, networkDiagram);
+            manageTransition(((SingleTransition) transition).getTransition(), x + 400, y, networkDiagram);
         }
         else if (transition instanceof MultiTransition)
         {
-            transition.setX(x + 200);
+            transition.setX(x + 400);
             transition.setY(y);
 
             int i=0;
@@ -83,14 +93,13 @@ public class IkasanModuleLayoutManager
             {
                 addEdge(transition.getId(), next.getId());
 
-                manageTransition(next, x + 200, y + (100 * i++), networkDiagram);
+                manageTransition(next, x + 400, y + (400 * i++), networkDiagram);
             }
         }
         else if(transition instanceof Node)
         {
-            transition.setX(x + 200);
+            transition.setX(x + 400);
             transition.setY(y);
-
         }
 
         if(x > xExtent)
@@ -107,16 +116,16 @@ public class IkasanModuleLayoutManager
     private void addEdge(String fromId, String toId)
     {
         System.out.println("Add edge " + fromId + "-->" + toId);
-		Color black = new Color("#000000");
-		black.setColor("#000000");
-		black.setBorder("#000000");
+//		Color black = new Color("#000000");
+//		black.setColor("#000000");
+//		black.setBorder("#000000");
         Edge edge = new Edge(fromId, toId);
-        edge.setId(fromId + "-->" + toId);
-        Smooth smooth = new Smooth();
-        smooth.setType(Smooth.Type.horizontal);
-        smooth.setRoundness(0.0);
-        edge.setSmooth(smooth);
-        edge.setHidden(false);
+//        edge.setId(fromId + "-->" + toId);
+//        Smooth smooth = new Smooth();
+//        smooth.setType(Smooth.Type.horizontal);
+//        smooth.setRoundness(0.0);
+//        edge.setSmooth(smooth);
+//        edge.setHidden(false);
 
         System.out.println("Add edge " + edge);
         this.edgeList.add(edge);

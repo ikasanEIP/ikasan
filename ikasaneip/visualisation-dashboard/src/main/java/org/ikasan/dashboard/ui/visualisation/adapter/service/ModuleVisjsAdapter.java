@@ -1,10 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
-import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.dashboard.ui.visualisation.model.flow.MultiTransition;
-import org.ikasan.dashboard.ui.visualisation.model.flow.SingleTransition;
+import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.component.endpoint.Broker;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
@@ -16,73 +13,60 @@ import org.ikasan.spec.metadata.FlowElementMetaData;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.Transition;
+import org.ikasan.vaadin.visjs.network.Node;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModuleVisjsAdapter
 {
     public Module adapt(ModuleMetaData moduleMetaData)
     {
+        Module module = new Module(moduleMetaData.getName());
 
         for(FlowMetaData flowMetaData: moduleMetaData.getFlows())
         {
+            module.addFlow(this.manageFlow(flowMetaData));
         }
 
-        return null;
+        return module;
     }
 
-    protected void manageFlow(FlowMetaData flow)
+    protected Flow manageFlow(FlowMetaData flowMetaData)
     {
-        Map<String, FlowElementMetaData> flowElements = new HashMap<>();
+        System.out.println("Sorting flow: " + flowMetaData.getName());
+        Map<String, FlowElementMetaData> flowElements = flowMetaData.getFlowElements().stream().collect(
+            Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData));
 
-        for (FlowElementMetaData flowElement : flow.getFlowElements())
+        EventDrivenConsumer consumer = (EventDrivenConsumer) manageFlowElement(flowMetaData.getConsumer(), flowMetaData.getTransitions(), flowElements);
+
+        return new Flow(flowMetaData.getName(), consumer);
+    }
+
+    protected Node manageFlowElement(FlowElementMetaData flowElement, List<Transition> transitions,
+                                     Map<String, FlowElementMetaData> flowElements)
+    {
+        if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName())
+            || flowElement.getComponentType().equals(Converter.class.getName())
+            || flowElement.getComponentType().equals(Translator.class.getName())
+            || flowElement.getComponentType().equals(Splitter.class.getName())
+            || flowElement.getComponentType().equals(Filter.class.getName())
+            || flowElement.getComponentType().equals(Broker.class.getName())
+            || flowElement.getComponentType().equals(Producer.class.getName()))
         {
-            flowElements.put(flowElement.getComponentName(), flowElement);
+            return manageSingleTransition(flowElement, transitions, flowElements);
         }
-
-        for (FlowElementMetaData flowElement : flow.getFlowElements())
+        else if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName())||
+            flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
         {
-            if (flowElement.getComponentType().equals(Consumer.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Converter.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Translator.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Splitter.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Filter.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Broker.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
-            {
-
-            }
-            else if (flowElement.getComponentType().equals(Producer.class.getName()))
-            {
-
-            }
+            return manageMultiTransition(flowElement, transitions, flowElements);
         }
-
+        else
+        {
+            throw new IllegalArgumentException("Unknown component type encountered");
+        }
     }
 
     protected List<FlowElementMetaData> getTransitions(FlowElementMetaData flowElement, List<Transition> transitions,
@@ -101,15 +85,83 @@ public class ModuleVisjsAdapter
         return transitionFlowElements;
     }
 
-    protected SingleTransition manageSingleTransition(FlowElementMetaData flowElement, List<Transition> transition,
+    protected Node manageSingleTransition(FlowElementMetaData flowElement, List<Transition> transitions,
                                                       Map<String, FlowElementMetaData> flowElements)
     {
-        return null;
+        if (flowElement.getComponentType().equals(Producer.class.getName()))
+        {
+            return new MessageProducer(flowElement.getComponentName(), flowElement.getComponentName(), null);
+        }
+
+        FlowElementMetaData flowElementMetaData = this.getTransitions(flowElement, transitions, flowElements).get(0);
+        if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName()))
+        {
+            return new EventDrivenConsumer(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else if (flowElement.getComponentType().equals(Converter.class.getName()))
+        {
+            return new MessageTranslator(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else if (flowElement.getComponentType().equals(Translator.class.getName()))
+        {
+            return new MessageTranslator(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else if (flowElement.getComponentType().equals(Splitter.class.getName()))
+        {
+            return new MessageTranslator(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else if (flowElement.getComponentType().equals(Filter.class.getName()))
+        {
+            return new MessageTranslator(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else if (flowElement.getComponentType().equals(Broker.class.getName()))
+        {
+            return new org.ikasan.dashboard.ui.visualisation.model.flow.Broker(flowElement.getComponentName(),
+                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown component type encountered");
+        }
+
     }
 
-    protected MultiTransition manageMultiTransition(FlowElementMetaData flowElement, List<Transition> transition,
+    protected Node manageMultiTransition(FlowElementMetaData flowElement, List<Transition> transitions,
                                                     Map<String, FlowElementMetaData> flowElements)
     {
-        return null;
+        List<FlowElementMetaData> flowElementMetaDataTransitions
+            = this.getTransitions(flowElement, transitions, flowElements);
+
+        if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName()))
+        {
+            org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter router
+                = new org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter(flowElement.getComponentName(),
+                    flowElement.getComponentName());
+
+            flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
+                router.addTransition("", manageFlowElement(flowElementMetaData, transitions, flowElements)));
+
+            return router;
+        }
+        else if (flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
+        {
+            org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter router
+                = new org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter(flowElement.getComponentName(),
+                flowElement.getComponentName());
+
+            flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
+                router.addTransition(manageFlowElement(flowElementMetaData, transitions, flowElements)));
+
+            return router;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown component type encountered");
+        }
     }
 }

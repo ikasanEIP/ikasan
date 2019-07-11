@@ -9,7 +9,7 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
  */
 public class DeadEndPoint extends Node implements SingleTransition
 {
-	public static final String IMAGE = "frontend/images/Dead End Point.png";
+	public static final String IMAGE = "frontend/images/dead-end-point.png";
 
 	private Node transition;
 

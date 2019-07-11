@@ -8,7 +8,7 @@ import org.ikasan.vaadin.visjs.network.Node;
  */
 public class EventDrivenConsumer extends Consumer
 {
-	public static final String IMAGE = "frontend/Event Driven Consumer.png";
+	public static final String IMAGE = "frontend/images/event-driven-consumer.png";
 
 	public EventDrivenConsumer(String id, String name, Node transition)
 	{
