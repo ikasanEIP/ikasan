@@ -9,7 +9,7 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
  */
 public class MessageTranslator extends Node implements SingleTransition
 {
-	public static final String IMAGE = "VAADIN/themes/ikasan/images/Message Translator.png";
+	public static final String IMAGE = "frontend/images/message-translator.png";
 
 	private Node transition;
 

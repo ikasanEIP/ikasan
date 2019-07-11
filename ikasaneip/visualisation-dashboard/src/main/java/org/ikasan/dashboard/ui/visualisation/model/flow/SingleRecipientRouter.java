@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class SingleRecipientRouter extends Node implements MultiTransition
 {
-	private static final String IMAGE = "VAADIN/themes/ikasan/images/Message Router.png";
+	private static final String IMAGE = "frontend/images/message-router.png";
 
 	private Map<String, Node> transitions;
 

@@ -20,12 +20,14 @@ import com.vaadin.flow.shared.ui.Transport;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
+import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @Push(transport = Transport.LONG_POLLING)
 @HtmlImport("frontend://styles/shared-styles.html")
+@HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Theme(Lumo.class)
 public class IkasanAppLayout extends AppLayoutRouterLayout
 {
@@ -52,7 +54,8 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
                 .add(logout)
                 .build())
             .withAppMenu(LeftAppMenuBuilder.get()
-                .add(new LeftNavigationItem("Home", VaadinIcon.CLUSTER.create(), GraphView.class))
+                .add(new LeftNavigationItem("Home", VaadinIcon.HOME.create(), HomeView.class))
+                .add(new LeftNavigationItem("Visualisation", VaadinIcon.CLUSTER.create(), GraphView.class))
                 .add(LeftSubMenuBuilder
                     .get("Administration", VaadinIcon.TOOLS.create())
                     .add(new LeftNavigationItem("Users", VaadinIcon.USERS.create(), UserManagementView.class))
