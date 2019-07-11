@@ -79,6 +79,11 @@
 		<aop:pointcut id="errorReportingServiceDaoMethods"
 					  expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingServiceDao.save(..))" />
 
+
+        <aop:pointcut id="moduleInitialisationPointcut"
+                      expression="execution(* org.ikasan.topology.service.TopologyService.initialiseModuleMetaData(..))" />
+
+
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="required-TransactionAdvice"
@@ -93,9 +98,10 @@
 			pointcut-ref="triggerDaoMethods" />
 		<aop:advisor id="wiretapDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="wiretapDaoMethods" />
-
 		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="errorReportingServiceDaoMethods" />
+        <aop:advisor id="moduleInitialisationPointcutAdvice" advice-ref="required-TransactionAdvice"
+                     pointcut-ref="moduleInitialisationPointcut" />
 
   </aop:config>
 

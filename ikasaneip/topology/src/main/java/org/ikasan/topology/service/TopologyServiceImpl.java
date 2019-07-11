@@ -84,6 +84,7 @@ public class TopologyServiceImpl implements TopologyService
 {
 	private static Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
 
+
 	private TopologyDao topologyDao;
 
 	private RestTemplate restTemplate;
@@ -322,6 +323,101 @@ public class TopologyServiceImpl implements TopologyService
             // We may not find the module on the server so just move on to the next module.
             logger.debug("Caught exception attempting to discover module with the following URL: " + url
                 + ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
+     *
+     * @param server
+     * @param applicationName
+     * @param module
+     */
+    public void initialiseModuleMetaData(Server server, String applicationName, Module module)
+    {
+        try
+        {
+            Optional<Server> existingServer = Optional.ofNullable(server);
+
+            org.ikasan.topology.model.Module existingModule = getModuleByName(module.getName());
+            if (existingModule == null)
+            {
+                logger.info("module does not exist [" + module.getName() + "], creating...");
+                existingModule = new org.ikasan.topology.model.Module(module.getName(), applicationName,
+                    module.getDescription() == null ? "" : module.getDescription() , module.getVersion(), null, null);
+                if (existingServer.isPresent())
+                {
+                    existingModule.setServer(existingServer.get());
+                }
+                save(existingModule);
+                createMetadata(module, existingModule);
+            }
+            else
+            {
+                updateMetadata(module, existingModule);
+                if (existingServer.isPresent())
+                {
+                    logger.info(
+                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
+                    existingModule.setServer(existingServer.get());
+                    save(existingModule);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
+        }
+    }
+
+    /**
+     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
+     * meta-data about the module was never stored before.
+     *
+     * @param module module runtime instance
+     * @param moduleDB topology view of the module
+     */
+    private void createMetadata(Module module, org.ikasan.topology.model.Module moduleDB)
+    {
+        try
+        {
+            module.getFlows().forEach(topologyFlow ->
+            {
+                topologyFlow.setModule(moduleDB);
+
+                // We only want to add distinct components per flow. The convenience API repeats components
+                // if they appear in multiple routes in a Flow.
+                topologyFlow.setComponents(new HashSet<>(distinctComponents(topologyFlow.getName(), topologyFlow.getComponents())));
+
+                topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
+
+                save(topologyFlow);
+                logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
+            });
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
+        }
+    }
+
+
+    /**
+     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
+     * existing meta-data and new meta-data need to be reconciled.
+     *
+     * @param module module runtime instance
+     * @param existingModule topology view of the module
+     */
+    private void updateMetadata(Module module, org.ikasan.topology.model.Module existingModule)
+    {
+        try
+        {
+            discover(existingModule.getServer(), existingModule, new ArrayList(module.getFlows()));
+        }
+        catch (Exception e)
+        {
+            logger.warn("Error encountered while performing local discovery.", e);
         }
     }
 

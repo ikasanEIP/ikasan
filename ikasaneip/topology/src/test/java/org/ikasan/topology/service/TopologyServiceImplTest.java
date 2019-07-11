@@ -126,6 +126,41 @@ public class TopologyServiceImplTest
 	}
 
     @Test
+    public void initialiseModuleWhenServerIsNullAndModuleHasComponentsAndModuleIsNew() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+
+        Flow flow = new Flow("Flow Test", "I am flow Test", module);
+
+        Component component = new Component();
+        component.setName("testComponentName1");
+        component.setDescription("description1");
+        component.setOrder(0);
+        component.setConfigurable(false);
+        component.setFlow(flow);
+        flow.addComponent(component);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations() {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(1).of(topologyDao).save(flow);
+
+        }});
+
+        uut.initialiseModuleMetaData(null, "Module Test", module);
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
+
+    @Test
     public void discoveryWhenServerIsNullAndModuleHasDuplicatedComponentsAndModuleIsNew() throws DiscoveryException
     {
 
@@ -172,6 +207,50 @@ public class TopologyServiceImplTest
 
         //do test
         uut.discover(null,module, Arrays.asList(flow));
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
+
+    @Test
+    public void initialiseModuleWhenServerIsNullAndModuleHasDuplicatedComponentsAndModuleIsNew() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+
+        Flow flow = new Flow("Flow Test", "I am flow Test", module);
+
+        Component component = new Component();
+        component.setName("duplicateComponent");
+        component.setDescription("description1");
+        component.setOrder(0);
+        component.setConfigurable(false);
+        component.setFlow(flow);
+
+        flow.addComponent(component);
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+        component2.setFlow(flow);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations() {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(1).of(topologyDao).save(flow);
+
+        }});
+
+        //do test
+        uut.initialiseModuleMetaData(null, "Module Test", module);
 
         //assert dao calls
         mockery.assertIsSatisfied();
@@ -230,20 +309,62 @@ public class TopologyServiceImplTest
 			will(returnValue(Arrays.asList(oldFlow)));
 
 		}});
-
-
-		//do test
-		uut.discover(null,module, Arrays.asList(flow));
-
-		//assert dao calls
-		mockery.assertIsSatisfied();
-
 	}
 
     @Test
-    public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponentsWithDuplicate() throws DiscoveryException
+    public void initialiseModuleWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponents() throws DiscoveryException
     {
 
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2", "version", null, "diagram");
+        module.setId(1l);
+
+        Component component = new Component();
+        component.setName("testComponentName1");
+        component.setDescription("description1");
+        component.setOrder(0);
+        component.setConfigurable(false);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+        component.setFlow(flow);
+        flow.addComponent(component);
+
+        Flow oldFlow = new Flow("Flow Test", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations()
+        {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(2).of(topologyDao).save(with(any(Flow.class)));
+
+        }});
+
+        //do test
+        uut.initialiseModuleMetaData(null, "Module Test", module);
+
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void discoveryModuleWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponentsWithDuplicate() throws DiscoveryException
+    {
         Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
         module.setId(1l);
 
@@ -307,6 +428,62 @@ public class TopologyServiceImplTest
         //assert dao calls
         mockery.assertIsSatisfied();
 
+    }
+
+    @Test
+    public void initialiseModuleWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentComponentsWithDuplicate() throws DiscoveryException
+    {
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+        module.setId(1l);
+
+        Component component1 = new Component();
+        component1.setName("duplicateComponent");
+        component1.setDescription("description1");
+        component1.setOrder(0);
+        component1.setConfigurable(false);
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+        component1.setFlow(flow);
+        flow.addComponent(component1);
+        flow.addComponent(component2);
+
+        Flow oldFlow = new Flow("Flow Test", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations()
+        {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(2).of(topologyDao).save(with(any(Flow.class)));
+
+        }});
+
+        //do test
+        uut.initialiseModuleMetaData(null, "Module Test", module);
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
     }
 
 	@Test
@@ -376,6 +553,59 @@ public class TopologyServiceImplTest
 		mockery.assertIsSatisfied();
 
 	}
+
+    @Test
+    public void initialiseModuleWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentFlows() throws DiscoveryException
+    {
+
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+        module.setId(1l);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+
+        Component component = new Component();
+        component.setName("testComponentName1");
+        component.setDescription("description1");
+        component.setOrder(0);
+        component.setConfigurable(false);
+        component.setFlow(flow);
+        flow.addComponent(component);
+
+
+        Flow oldFlow = new Flow("Old Test Flow", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations()
+        {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(2).of(topologyDao).save(with(any(Flow.class)));
+
+        }});
+
+
+        //do test
+        uut.initialiseModuleMetaData(null, "Module Test", module);
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
 
     @Test
     public void discoveryWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentFlowsWithDuplicateComponent() throws DiscoveryException
@@ -453,5 +683,63 @@ public class TopologyServiceImplTest
 
     }
 
+    @Test
+    public void initialiseModuleWhenServerIsNullAndNewModuleAndOlderModuleVersionIsInDBHaveDifferentFlowsWithDuplicateComponent() throws DiscoveryException
+    {
+        Module module = new Module("Module Test", "/contextRoot", "I am module 2","version", null, "diagram");
+        module.setId(1l);
+
+        Flow flow = new Flow("Flow Test", "I am Test flow", null);
+
+        Component component1 = new Component();
+        component1.setName("duplicateComponent");
+        component1.setDescription("description1");
+        component1.setOrder(0);
+        component1.setConfigurable(false);
+        component1.setFlow(flow);
+        flow.addComponent(component1);
+
+
+        Component component2 = new Component();
+        component2.setName("duplicateComponent");
+        component2.setDescription("description1");
+        component2.setOrder(0);
+        component2.setConfigurable(false);
+        component2.setFlow(flow);
+        flow.addComponent(component2);
+
+        Flow oldFlow = new Flow("Old Test Flow", "I am old Test flow", module);
+        oldFlow.setId(2l);
+        module.addFlow(oldFlow);
+
+        Component oldComponent = new Component();
+        oldComponent.setId(3l);
+        oldComponent.setName("oldTestComponentName1");
+        oldComponent.setDescription("Olddescription1");
+        oldComponent.setOrder(0);
+        oldComponent.setConfigurable(false);
+        oldComponent.setFlow(oldFlow);
+        oldFlow.addComponent(oldComponent);
+
+        module.addFlow(flow);
+
+        mockery.checking(new Expectations()
+        {{
+
+            exactly(1).of(topologyDao).getModuleByName("Module Test");
+            will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(with(any(Module.class)));
+            exactly(2).of(topologyDao).save(with(any(Flow.class)));
+
+        }});
+
+        //do test
+        uut.initialiseModuleMetaData(null, "Module Test", module);
+
+        //assert dao calls
+        mockery.assertIsSatisfied();
+
+    }
 
 }

@@ -41,6 +41,7 @@
 package org.ikasan.topology.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -60,6 +61,15 @@ import org.ikasan.topology.exception.DiscoveryException;
  */
 public interface TopologyService
 {
+    /**
+     * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
+     *
+     * @param existingServer
+     * @param applicationName
+     * @param module
+     */
+    void initialiseModuleMetaData(Server existingServer, String applicationName, Module module);
+
     /**
      * Get all servers
      *

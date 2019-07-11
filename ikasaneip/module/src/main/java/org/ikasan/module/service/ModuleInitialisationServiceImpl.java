@@ -378,106 +378,10 @@ public class ModuleInitialisationServiceImpl
      *
      * @param module - The module
      */
-    protected void initialiseModuleMetaData(Module module)
+    public void initialiseModuleMetaData(Module module)
     {
-        try
-        {
-            Optional<Server> existingServer = getServer();
-            org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
-            if (existingModule == null)
-            {
-                logger.info("module does not exist [" + module.getName() + "], creating...");
-                existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
-                    module.getDescription(), module.getVersion(), null, null);
-                if (existingServer.isPresent())
-                {
-                    existingModule.setServer(existingServer.get());
-                }
-                this.topologyService.save(existingModule);
-                createMetadata(module, existingModule);
-            }
-            else
-            {
-                updateMetadata(module, existingModule);
-                if (existingServer.isPresent())
-                {
-                    logger.info(
-                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
-                    existingModule.setServer(existingServer.get());
-                    this.topologyService.save(existingModule);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
-    }
-
-    /**
-     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
-     * meta-data about the module was never stored before.
-     *
-     * @param moduleRuntime module runtime instance
-     * @param moduleDB topology view of the module
-     */
-    private void createMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module moduleDB)
-    {
-        try
-        {
-            org.ikasan.topology.model.Module module = moduleConverter.convert(moduleRuntime);
-            module.getFlows().forEach(topologyFlow ->
-            {
-                topologyFlow.setModule(moduleDB);
-
-                // We only want to add distinct components per flow. The convenience API repeats components
-                // if they appear in multiple routes in a Flow.
-                topologyFlow.setComponents(new HashSet<>(distinctComponents(topologyFlow.getName(), topologyFlow.getComponents())));
-
-                topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
-
-                topologyService.save(topologyFlow);
-                logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
-            });
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
-    }
-
-    private List<Component> distinctComponents(String flowName, Set<Component> components)
-    {
-        logger.info("Filtering distinct components for flow[{}]. Before:[{}].", flowName, components.size());
-        List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
-        logger.info("After: [{}]", filtered.size());
-        return filtered;
-    }
-
-    private <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
-    {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-    }
-
-    /**
-     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
-     * existing meta-data and new meta-data need to be reconciled.
-     *
-     * @param moduleRuntime module runtime instance
-     * @param existingModule topology view of the module
-     */
-    private void updateMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module existingModule)
-    {
-        try
-        {
-            org.ikasan.topology.model.Module moduleNew = moduleConverter.convert(moduleRuntime);
-            topologyService.discover(existingModule.getServer(), existingModule, new ArrayList(moduleNew.getFlows()));
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
+        topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
+            , this.moduleConverter.convert(module));
     }
 
     /**
