@@ -1,7 +1,11 @@
 package org.ikasan.dashboard.ui.administration.view;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -11,6 +15,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Route(value = "userManagement", layout = IkasanAppLayout.class)
 @UIScope
@@ -79,7 +85,14 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         this.addGridFiltering(hr, userFilter::setNameFilter, "firstname");
         this.addGridFiltering(hr, userFilter::setLastNameFilter, "surname");
         this.addGridFiltering(hr, userFilter::setEmailFilter, "email");
-        this.addGridFiltering(hr, userFilter::setUsernameFilter, "department");
+        this.addGridFiltering(hr, userFilter::setDepartmentFilter, "department");
+
+        this.userGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<User>>) userItemDoubleClickEvent ->
+        {
+            UserManagementDialog dialog = new UserManagementDialog(userItemDoubleClickEvent.getItem(), userService);
+
+            dialog.open();
+        });
 
         add(this.userGrid);
     }
@@ -107,82 +120,113 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
             return;
         }
 
-        users = this.userService.getUsers();
+        this.users = this.userService.getUsers();
 
-        dataProvider = DataProvider.fromFilteringCallbacks(
+        dataProvider = DataProvider.fromFilteringCallbacks(query ->
+        {
 
-            query ->
+            Optional<UserFilter> filter = query.getFilter();
+
+            logger.info("Filtering" + query.getOffset());
+            logger.info("Filtering" + query.getOffset());
+
+            if(filter.isPresent())
             {
-
-                Optional<UserFilter> filter = query.getFilter();
-
-                logger.info("Filtering" + query.getOffset());
-                logger.info("Filtering" + query.getOffset());
-
-                if(filter.isPresent())
+                if(query.getSortOrders() != null)
                 {
-                    return users
-                        .stream()
-                        .filter(user ->
-                        {
-                            if(query.getSortOrders() != null)
-                            {
-                                query.getSortOrders().forEach(querySortOrder -> System.out.println(querySortOrder.getSorted() + " " + querySortOrder.getDirection()));
-                            }
-                            if(filter.get().getNameFilter() == null || filter.get().getNameFilter().isEmpty() || user.getFirstName() == null)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return user.getFirstName().startsWith(filter.get().getNameFilter());
-                            }
-                        })
-                        //.filter(user -> user.getSurname().startsWith(filter.get().getLastNameFilter()))
-                        .skip(query.getOffset())
-                        .limit(query.getLimit());
+                    query.getSortOrders().forEach(querySortOrder -> System.out.println(querySortOrder.getSorted() + " " + querySortOrder.getDirection()));
                 }
-                else
-                {
-                    return users.stream().limit(query.getLimit());
-                }
-            },
 
-            query ->
+                return getFilterStream(filter)
+                    .skip(query.getOffset())
+                    .limit(query.getLimit());
+            }
+            else
             {
+                return users.stream().limit(query.getLimit());
+            }
+        }, query ->
+        {
 
-                Optional<UserFilter> filter = query.getFilter();
+            Optional<UserFilter> filter = query.getFilter();
 
-                if(filter.isPresent())
-                {
-                    return users
-                        .stream()
-                       .filter(user ->
-                       {
-                           if(filter.get().getNameFilter() == null || filter.get().getNameFilter().isEmpty() || user.getFirstName() == null)
-                            {
-                                return true;
-                            }
-                            else
-                           {
-                                return user.getFirstName().startsWith(filter.get().getNameFilter());
-                            }
-                        })
-                        .collect(Collectors.toList()).size();
-                }
-                else
-                {
-                    return users.size();
-                }
-
+            if(filter.isPresent())
+            {
+                return getFilterStream(filter)
+                    .collect(Collectors.toList()).size();
+            }
+            else
+            {
+                return users.size();
             }
 
-        );
+        });
 
         filteredDataProvider = dataProvider.withConfigurableFilter();
         filteredDataProvider.setFilter(userFilter);
 
         this.userGrid.setDataProvider(filteredDataProvider);
+    }
+
+    private Stream<User> getFilterStream(Optional<UserFilter> filter)
+    {
+        return users
+            .stream()
+            .filter(user ->
+            {
+                if(filter.get().getUsernameFilter() == null || filter.get().getUsernameFilter().isEmpty() || user.getUsername() == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return user.getUsername().toLowerCase().startsWith(filter.get().getUsernameFilter().toLowerCase());
+                }
+            })
+            .filter(user ->
+            {
+                if(filter.get().getNameFilter() == null || filter.get().getNameFilter().isEmpty() || user.getFirstName() == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return user.getFirstName().toLowerCase().startsWith(filter.get().getNameFilter().toLowerCase());
+                }
+            })
+            .filter(user ->
+            {
+                if(filter.get().getLastNameFilter() == null || filter.get().getLastNameFilter().isEmpty() || user.getSurname() == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return user.getSurname().toLowerCase().startsWith(filter.get().getLastNameFilter().toLowerCase());
+                }
+            })
+            .filter(user ->
+            {
+                if(filter.get().getEmailFilter() == null || filter.get().getEmailFilter().isEmpty() || user.getEmail() == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return user.getEmail().toLowerCase().startsWith(filter.get().getEmailFilter().toLowerCase());
+                }
+            })
+            .filter(user ->
+            {
+                if(filter.get().getDepartmentFilter() == null || filter.get().getDepartmentFilter().isEmpty() || user.getDepartment() == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return user.getDepartment().toLowerCase().startsWith(filter.get().getDepartmentFilter().toLowerCase());
+                }
+            });
     }
 
     private class UserFilter

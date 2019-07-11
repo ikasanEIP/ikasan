@@ -9,7 +9,7 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
  */
 public class Broker extends Node implements SingleTransition
 {
-	public static final String IMAGE = "frontend/images/Broker.png";
+	public static final String IMAGE = "frontend/images/broker.png";
 
 	private Node transition;
 
