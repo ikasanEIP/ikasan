@@ -83,4 +83,13 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
+    <bean id="configurationMetaDataProvider"
+          class="org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider">
+        <constructor-arg name="configurationManagement" ref="configurationService"/>
+    </bean>
+
+    <bean id="configurationMetaDataExtractor"
+          class="org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor">
+        <constructor-arg name="configurationMetaDataProvider" ref="configurationMetaDataProvider"/>
+    </bean>
 </beans>

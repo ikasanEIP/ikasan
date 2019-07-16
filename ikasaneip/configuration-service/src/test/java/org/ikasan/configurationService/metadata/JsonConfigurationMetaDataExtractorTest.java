@@ -1,0 +1,328 @@
+package org.ikasan.configurationService.metadata;
+
+import org.apache.commons.io.IOUtils;
+import org.ikasan.configurationService.metadata.components.ConfiguredConsumer;
+import org.ikasan.configurationService.metadata.components.ConfiguredProducer;
+import org.ikasan.configurationService.metadata.components.TestProducer;
+import org.ikasan.configurationService.metadata.configuration.DummyConfiguration;
+import org.ikasan.configurationService.metadata.flow.TestFlow;
+import org.ikasan.configurationService.metadata.flow.TestFlowElement;
+import org.ikasan.configurationService.metadata.module.TestModule;
+import org.ikasan.configurationService.model.*;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.json.JSONException;
+import org.junit.Before;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+public class JsonConfigurationMetaDataExtractorTest
+{
+
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+    ConfigurationManagement configurationManagement = mockery.mock(ConfigurationManagement.class);
+
+    JsonConfigurationMetaDataExtractor uut;
+
+    @Before
+    public void setup() {
+
+        ConfigurationMetaDataProvider<String> jsonConfigurationMetaDataProvider = new JsonConfigurationMetaDataProvider(configurationManagement);
+        uut = new JsonConfigurationMetaDataExtractor(jsonConfigurationMetaDataProvider);
+    }
+
+    @Test
+    public void getComponentsConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void getComponentsConfigurationOnFlowWithOneConfigurationElementWhenConfigurationDoesNotExist() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(null));
+                exactly(1).of(configurationManagement).createConfiguration(with(any(ConfiguredResource.class)));
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+
+    @Test
+    public void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithSameId() throws IOException, JSONException
+    {
+
+        FlowElement producer = new TestFlowElement(new ConfiguredProducer(), "Test Producer"
+            , "Test Producer Description",null);
+
+        TestFlowElement consumer = new TestFlowElement(new ConfiguredConsumer(), "Test Consumer",
+            "Test Consumer Description", new DummyConfiguration());
+
+        Flow flow = new TestFlow("Flow Name", "Module Name",
+            Arrays.asList(consumer,producer));
+
+        mockery.checking(new Expectations()
+        {
+            {
+
+                exactly(2).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithDifferentId() throws IOException, JSONException
+    {
+
+        FlowElement producer = new TestFlowElement(new ConfiguredProducer("diffrentId",new DummyConfiguration()), "Test Producer"
+            , "Test Producer Description",null);
+
+        TestFlowElement consumer = new TestFlowElement(new ConfiguredConsumer(), "Test Consumer",
+            "Test Consumer Description", null);
+
+        Flow flow = new TestFlow("Flow Name", "Module Name",
+            Arrays.asList(consumer,producer));
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+                exactly(1).of(configurationManagement).getConfiguration("diffrentId");
+                will(returnValue(getConfiguration("diffConfiguredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/twoConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getComponentsConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(flow);
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(testModule);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getComponentsConfigurationOnModuleWithOneConfigurationElementWhenConfigurationManagmentReturnsNull() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(flow);
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(null));
+                exactly(1).of(configurationManagement).createConfiguration(with(any(ConfiguredResource.class)));
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getComponentsConfiguration(testModule);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getInvokersConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(2).of(configurationManagement).getConfiguration("FLOW_INVOKER_CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getInvokersConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getInvokersConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(flow);
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(2).of(configurationManagement).getConfiguration("FLOW_INVOKER_CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getInvokersConfiguration(testModule);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getFlowConfigurationWhenFlowDoesHaveConfiguration() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("FLOW_CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getFlowConfiguration(flow);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void getFlowConfigurationOnModuleWithFlowDoesHaveConfiguration() throws IOException, JSONException
+    {
+
+        Flow flow = createSimpleFlow();
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(flow);
+
+        mockery.checking(new Expectations()
+        {
+            {
+               
+                exactly(1).of(configurationManagement).getConfiguration("FLOW_CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        String result = uut.getFlowsConfiguration(testModule);
+
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+
+    }
+
+        private Flow createSimpleFlow()
+    {
+        FlowElement producer = new TestFlowElement(new TestProducer(), "Test Producer"
+            , "Test Producer Description",null);
+
+        TestFlowElement consumer = new TestFlowElement(new ConfiguredConsumer(), "Test Consumer",
+            "Test Consumer Description",  new DummyConfiguration());
+
+        Flow flow = new TestFlow("Flow Name", "Module Name",
+            Arrays.asList(consumer,producer));
+
+        return flow;
+    }
+
+    private Configuration getConfiguration(String configuredResourceId){
+        Configuration<List<ConfigurationParameter>> configuration =
+            new DefaultConfiguration(configuredResourceId, new ArrayList<ConfigurationParameter>());
+        configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
+        configuration.getParameters().add( new ConfigurationParameterIntegerImpl("name", Integer.valueOf(10), "desc"));
+        configuration.getParameters().add( new ConfigurationParameterLongImpl("name", Long.valueOf(10), "desc"));
+
+        List<String> listVals = new ArrayList<String>();
+        listVals.add("one");
+        listVals.add("two");
+        listVals.add("three");
+        configuration.getParameters().add( new ConfigurationParameterListImpl("name", listVals, "desc"));
+
+        Map<String,String> mapVals = new HashMap<String,String>();
+        mapVals.put("one", "1");
+        mapVals.put("two", "2");
+        mapVals.put("three", "3");
+        configuration.getParameters().add( new ConfigurationParameterMapImpl("name", mapVals, "desc"));
+
+        return configuration;
+    }
+
+    protected String loadDataFile(String fileName) throws IOException
+    {
+        String contentToSend = IOUtils.toString(loadDataFileStream(fileName), "UTF-8");
+
+        return contentToSend;
+    }
+
+    protected InputStream loadDataFileStream(String fileName) throws IOException
+    {
+        return getClass().getResourceAsStream(fileName);
+    }
+
+}
