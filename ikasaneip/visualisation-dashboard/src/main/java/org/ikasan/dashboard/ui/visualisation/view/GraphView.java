@@ -47,13 +47,19 @@ import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
+import org.ikasan.vaadin.visjs.network.event.OnContextEvent;
+import org.ikasan.vaadin.visjs.network.listener.ClickListener;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
+import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
+import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
 import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
 import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
 import org.ikasan.vaadin.visjs.network.options.edges.Edges;
+import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.options.physics.Physics;
+import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -190,6 +196,7 @@ public class GraphView extends HorizontalLayout
             (Options.builder()
                 .withAutoResize(true)
                 .withPhysics(physics)
+                .withInteraction(Interaction.builder().withDragNodes(false) .build())
                 .withEdges(
                     Edges.builder()
                         .withArrows(new Arrows(new ArrowHead()))
@@ -198,12 +205,26 @@ public class GraphView extends HorizontalLayout
                             .build())
                         .withDashes(false)
                         .build())
+                .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
                 .build());
 
         networkDiagram.setSizeFull();
 
         IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
         layoutManager.layout();
+
+        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
+        {
+            logger.info(doubleClickEvent.getParams().toString());
+        });
+
+        networkDiagram.addClickListener((ClickListener) clickEvent -> {
+            logger.info(clickEvent.getParams().toString());
+        });
+
+        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
+            logger.info(onContextEvent.getParams().toString());
+        });
     }
 
     /**

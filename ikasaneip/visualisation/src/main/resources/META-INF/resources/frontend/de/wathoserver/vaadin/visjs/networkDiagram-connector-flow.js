@@ -150,6 +150,104 @@ window.Vaadin.Flow.networkDiagramConnector = {
             };
         });
 
+        graph.$connector.drawModuleSquare = function (x, y, width, height, text) {
+            graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center';
+
+                ctx.fillStyle = '#000';
+                ctx.fillText(text, x + (width / 2) , y + 25);
+
+                ctx.beginPath();
+                ctx.setLineDash([]);
+                ctx.strokeStyle = 'black';
+
+                var stroke = true;
+                var radius = 20;
+                var fill = false;
+
+                if (typeof radius === 'number') {
+                    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+                } else {
+                    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (var side in defaultRadius) {
+                        radius[side] = radius[side] || defaultRadius[side];
+                    }
+                }
+                ctx.beginPath();
+                ctx.moveTo(x + radius.tl, y);
+                ctx.lineTo(x + width - radius.tr, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                ctx.lineTo(x + width, y + height - radius.br);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                ctx.lineTo(x + radius.bl, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                ctx.lineTo(x, y + radius.tl);
+                ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                ctx.closePath();
+                if (fill) {
+                    ctx.fill();
+                }
+                if (stroke) {
+                    ctx.stroke();
+                }
+
+                // ctx.drawImage(HTMLImageElement("/images/ikasan-titling-transparent.png"), 0, 0);
+            });
+
+            // graph.draw();
+        }
+
+        graph.$connector.drawFlowBorder = function (x, y, width, height, text) {
+            graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center';
+
+                ctx.lineWidth=2.0
+                ctx.beginPath();
+                ctx.setLineDash([10, 10]);
+                ctx.strokeStyle = '#000';
+                ctx.fillStyle = "#D4D4D4";
+                // ctx.back
+
+                var stroke = true;
+                var radius = 20;
+                var fill = true;
+
+                if (typeof radius === 'number') {
+                    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+                } else {
+                    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (var side in defaultRadius) {
+                        radius[side] = radius[side] || defaultRadius[side];
+                    }
+                }
+                ctx.beginPath();
+                ctx.moveTo(x + radius.tl, y);
+                ctx.lineTo(x + width - radius.tr, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                ctx.lineTo(x + width, y + height - radius.br);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                ctx.lineTo(x + radius.bl, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                ctx.lineTo(x, y + radius.tl);
+                ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                ctx.closePath();
+                if (fill) {
+                    ctx.fill();
+                }
+                if (stroke) {
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = '#000';
+                ctx.fillText(text, x + (width / 2) , y + 25);
+            });
+
+            // graph.draw();
+        }
+
 		// not used yet
 		graph.$connector.disableEventDispatching = function(vaadinEventType) {
 			const eventType = vaadinEventType.substring(7);
