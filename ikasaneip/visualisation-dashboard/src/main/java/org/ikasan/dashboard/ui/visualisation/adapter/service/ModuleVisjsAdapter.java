@@ -22,9 +22,13 @@ import java.util.stream.Collectors;
 
 public class ModuleVisjsAdapter
 {
+    private int identifier;
+
     public Module adapt(ModuleMetaData moduleMetaData)
     {
         Module module = new Module(moduleMetaData.getName());
+
+        identifier = 0;
 
         for(FlowMetaData flowMetaData: moduleMetaData.getFlows())
         {
@@ -38,7 +42,7 @@ public class ModuleVisjsAdapter
     {
         System.out.println("Sorting flow: " + flowMetaData.getName());
         Map<String, FlowElementMetaData> flowElements = flowMetaData.getFlowElements().stream().collect(
-            Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData));
+            Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData, (key1, key2) -> key1));
 
         EventDrivenConsumer consumer = (EventDrivenConsumer) manageFlowElement(flowMetaData.getConsumer(), flowMetaData.getTransitions(), flowElements);
 
@@ -90,38 +94,44 @@ public class ModuleVisjsAdapter
     {
         if (flowElement.getComponentType().equals(Producer.class.getName()))
         {
-            return new MessageProducer(flowElement.getComponentName(), flowElement.getComponentName(), null);
+            if(flowElement.getImplementingClass().equals("org.ikasan.component.endpoint.util.producer.DevNull"))
+            {
+                return new DeadEndPoint(flowElement.getComponentName() + identifier++, flowElement.getComponentName(), null);
+            }
+
+            return new MessageProducer(flowElement.getComponentName() + identifier++, flowElement.getComponentName()
+                , new MessageChannel("channel"+identifier++, "esb.com.some.channel", false));
         }
 
         FlowElementMetaData flowElementMetaData = this.getTransitions(flowElement, transitions, flowElements).get(0);
         if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName()))
         {
-            return new EventDrivenConsumer(flowElement.getComponentName(),
+            return new EventDrivenConsumer(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Converter.class.getName()))
         {
-            return new MessageTranslator(flowElement.getComponentName(),
+            return new MessageTranslator(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Translator.class.getName()))
         {
-            return new MessageTranslator(flowElement.getComponentName(),
+            return new MessageTranslator(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Splitter.class.getName()))
         {
-            return new MessageTranslator(flowElement.getComponentName(),
+            return new org.ikasan.dashboard.ui.visualisation.model.flow.Splitter(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Filter.class.getName()))
         {
-            return new MessageTranslator(flowElement.getComponentName(),
+            return new org.ikasan.dashboard.ui.visualisation.model.flow.Filter(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Broker.class.getName()))
         {
-            return new org.ikasan.dashboard.ui.visualisation.model.flow.Broker(flowElement.getComponentName(),
+            return new org.ikasan.dashboard.ui.visualisation.model.flow.Broker(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else
@@ -140,18 +150,18 @@ public class ModuleVisjsAdapter
         if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName()))
         {
             org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter router
-                = new org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter(flowElement.getComponentName(),
+                = new org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter(flowElement.getComponentName() + identifier++,
                     flowElement.getComponentName());
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
-                router.addTransition("", manageFlowElement(flowElementMetaData, transitions, flowElements)));
+                router.addTransition(flowElementMetaData.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements)));
 
             return router;
         }
         else if (flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
         {
             org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter router
-                = new org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter(flowElement.getComponentName(),
+                = new org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter(flowElement.getComponentName() + identifier++,
                 flowElement.getComponentName());
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
