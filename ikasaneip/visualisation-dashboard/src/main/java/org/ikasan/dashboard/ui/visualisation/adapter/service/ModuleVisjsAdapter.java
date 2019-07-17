@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
+import org.apache.commons.lang.WordUtils;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -96,10 +97,10 @@ public class ModuleVisjsAdapter
         {
             if(flowElement.getImplementingClass().equals("org.ikasan.component.endpoint.util.producer.DevNull"))
             {
-                return new DeadEndPoint(flowElement.getComponentName() + identifier++, flowElement.getComponentName(), null);
+                return new DeadEndPoint(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25), null);
             }
 
-            return new MessageProducer(flowElement.getComponentName() + identifier++, flowElement.getComponentName()
+            return new MessageProducer(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25)
                 , new MessageChannel("channel"+identifier++, "esb.com.some.channel", false));
         }
 
@@ -107,32 +108,32 @@ public class ModuleVisjsAdapter
         if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName()))
         {
             return new EventDrivenConsumer(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Converter.class.getName()))
         {
             return new MessageTranslator(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Translator.class.getName()))
         {
             return new MessageTranslator(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Splitter.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Splitter(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Filter.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Filter(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Broker.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Broker(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else
         {
@@ -151,7 +152,7 @@ public class ModuleVisjsAdapter
         {
             org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter router
                 = new org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter(flowElement.getComponentName() + identifier++,
-                    flowElement.getComponentName());
+                WordUtils.wrap(flowElement.getComponentName(), 25));
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
                 router.addTransition(flowElementMetaData.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements)));
@@ -162,7 +163,7 @@ public class ModuleVisjsAdapter
         {
             org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter router
                 = new org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter(flowElement.getComponentName() + identifier++,
-                flowElement.getComponentName());
+                WordUtils.wrap(flowElement.getComponentName(), 25));
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
                 router.addTransition(manageFlowElement(flowElementMetaData, transitions, flowElements)));
