@@ -19,9 +19,15 @@ public class IkasanModuleLayoutManager
     private NetworkDiagram networkDiagram;
     private List<Edge> edgeList;
     private List<Node> nodeList;
+    private List<MessageChannel> channels;
     private Logo logo;
     int xExtent = 0;
     int yExtent = 0;
+    int xExtentFinal = 0;
+    int xSpacing = 200;
+    int ySpacing = 150;
+
+    int flowSpacing = 300;
 
     public IkasanModuleLayoutManager(Module module, NetworkDiagram networkDiagram, Logo logo)
     {
@@ -29,6 +35,7 @@ public class IkasanModuleLayoutManager
         this.networkDiagram = networkDiagram;
         this.edgeList = new ArrayList<>();
         this.nodeList = new ArrayList<>();
+        this.channels = new ArrayList<>();
         this.logo = logo;
     }
 
@@ -50,19 +57,24 @@ public class IkasanModuleLayoutManager
 
             manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
 
-//            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 400 - x , yExtent + 100, flow.getName());
+            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
 
-            System.out.println("Add flow " + xExtent + "-->" + yExtent);
+//            System.out.println("Add flow " + xExtent + "-->" + yExtent);
 
-            x = xExtent + 100 + 300;
+//            x = xExtent + flowSpacing;
+            x = 100;
+            xExtent = x;
+            y = yExtent + flowSpacing;
         }
 
-        System.out.println("Add module " + xExtent + 400 + "-->" + yExtent + 300);
+//        System.out.println("Add module " + xExtent + 400 + "-->" + yExtent + 300);
 
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
-//        this.networkDiagram.drawModule(-100, -100, xExtent + 400, yExtent + 300, module.getName());
+        this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
+
+        this.networkDiagram.drawModule(-100, -100, xExtentFinal + 500, yExtent + 300, module.getName());
 
 //        logo.setX(30);
 //        logo.setY(yExtent + 150);
@@ -71,20 +83,26 @@ public class IkasanModuleLayoutManager
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)
     {
         nodeList.add(transition);
-        System.out.println("Add node " + transition);
+        System.out.println("Add node " + transition.getId() + " x=" + x + " y=" + y + " yExtent=" + yExtent);
+
+//        if(yExtent >= y)
+//        {
+//            y = yExtent;
+//        }
 
         if (transition instanceof SingleTransition && ((SingleTransition) transition).getTransition() != null)
         {
-            transition.setX(x + 400);
+            transition.setX(x + xSpacing);
             transition.setY(y);
 
             addEdge(transition.getId(), ((SingleTransition) transition).getTransition().getId());
 
-            manageTransition(((SingleTransition) transition).getTransition(), x + 400, y, networkDiagram);
+            manageTransition(((SingleTransition) transition).getTransition(), x + xSpacing, y, networkDiagram);
         }
         else if (transition instanceof MultiTransition)
         {
-            transition.setX(x + 400);
+
+            transition.setX(x + xSpacing);
             transition.setY(y);
 
             int i=0;
@@ -93,18 +111,43 @@ public class IkasanModuleLayoutManager
             {
                 addEdge(transition.getId(), next.getId());
 
-                manageTransition(next, x + 400, y + (400 * i++), networkDiagram);
+                if(i++ > 0)
+                {
+                    y = y + (ySpacing);
+                }
+
+                if(yExtent >= y)
+                {
+                     y = yExtent + ySpacing;
+                }
+
+                manageTransition(next, x + xSpacing, y, networkDiagram);
+            }
+
+            if(y > yExtent)
+            {
+                yExtent = y;
             }
         }
         else if(transition instanceof Node)
         {
-            transition.setX(x + 400);
+            transition.setX(x + xSpacing);
             transition.setY(y);
+
+            if(transition instanceof MessageChannel)
+            {
+                this.channels.add((MessageChannel)transition);
+            }
         }
 
         if(x > xExtent)
         {
             xExtent = x;
+        }
+
+        if(x >  xExtentFinal)
+        {
+            xExtentFinal = x;
         }
 
         if(y > yExtent)
@@ -127,7 +170,6 @@ public class IkasanModuleLayoutManager
 //        edge.setSmooth(smooth);
 //        edge.setHidden(false);
 
-        System.out.println("Add edge " + edge);
         this.edgeList.add(edge);
 
 //        ContextMenu contextMenu = new ContextMenu(this, false);

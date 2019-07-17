@@ -49,6 +49,16 @@
           "from": "Test Consumer",
           "to": "Test Multi Recipient Router",
           "name": "default"
+        },
+        {
+          "from": "Test Multi Recipient Router",
+          "to": "Test Filter 2",
+          "name": "route 1"
+        },
+        {
+          "from": "Test Filter 2",
+          "to": "Test Producer 3",
+          "name": "route 1"
         }
       ],
       "flowElements": [
@@ -123,6 +133,24 @@
           "configurationId": "CONFIGURATION_ID",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
           "configurable": true
+        },
+        {
+          "componentName": "Test Filter 2",
+          "description": "Test Filter Description",
+          "componentType": "org.ikasan.spec.component.filter.Filter",
+          "implementingClass": "org.ikasan.topology.metadata.components.TestFilter",
+          "configurationId": null,
+          "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
+          "configurable": false
+        },
+        {
+          "componentName": "Test Producer 3",
+          "description": "Test Producer Description",
+          "componentType": "org.ikasan.spec.component.endpoint.Producer",
+          "implementingClass": "org.ikasan.topology.metadata.components.TestProducer",
+          "configurationId": null,
+          "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
+          "configurable": false
         }
       ],
       "configurationId": "FLOW_CONFIGURATION_ID"

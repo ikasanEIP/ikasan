@@ -1,0 +1,438 @@
+{
+  "name" : "ion-jgbTrade",
+  "description" : "ION Debt Trade",
+  "version" : null,
+  "flows" : [ {
+    "name" : "JGB Filtering Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeUnfilteredJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Region Router",
+      "to" : "Private Bespoke Trade Filtered MSUSA Destination Producer",
+      "name" : "RATES_US"
+    }, {
+      "from" : "Region Router",
+      "to" : "Private Bespoke Trade Filtered Destination Producer",
+      "name" : "default"
+    }, {
+      "from" : "Message Type Router",
+      "to" : "Region Router",
+      "name" : "JPY"
+    }, {
+      "from" : "Message Type Router",
+      "to" : "Ignore Message Endpoint",
+      "name" : "default"
+    }, {
+      "from" : "Duplicate Filter",
+      "to" : "Message Type Router",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "Duplicate Filter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Private Bespoke Trade Filtered MSUSA Destination Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Private Bespoke Trade Filtered Destination Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Region Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Ignore Message Endpoint",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Message Type Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Duplicate Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeUnfilteredJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB Filtering Flow"
+  }, {
+    "name" : "JGB MSUSA Notification Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Ikasan Notification Event Enricher",
+      "to" : "Ikasan Notification Producer",
+      "name" : "default"
+    }, {
+      "from" : "Ikasan Notification Event Transformer",
+      "to" : "Ikasan Notification Event Enricher",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "Ikasan Notification Event Transformer",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Ikasan Notification Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.email.producer.EmailProducer",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Ikasan Notification Event Enricher",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.EmailPayloadConverter",
+      "configurationId" : "ion-jgbTrade-ignoreNonLondonTradesNotificationEventEnricher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Ikasan Notification Event Transformer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.BespokeToMsusaFormatTransformer",
+      "configurationId" : "ion-jgbPostTradeSrc-bespokeToMsusaXml",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB MSUSA Notification Flow"
+  }, {
+    "name" : "JGB Enrichment Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Enriched Trade Distribution Router",
+      "to" : "Enriched TT Trade Publisher",
+      "name" : "enrichedTTTradePublisher"
+    }, {
+      "from" : "Enriched Trade Distribution Router",
+      "to" : "Enriched RF Trade Publisher",
+      "name" : "enrichedRFTradePublisher"
+    }, {
+      "from" : "Dirty JGB Enricher",
+      "to" : "Enriched Trade Distribution Router",
+      "name" : "default"
+    }, {
+      "from" : "Trade Confirmation Enricher",
+      "to" : "Dirty JGB Enricher",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "Trade Confirmation Enricher",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Enriched TT Trade Publisher",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Enriched RF Trade Publisher",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Enriched Trade Distribution Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
+      "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Dirty JGB Enricher",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.DirtyJGBEnricher",
+      "configurationId" : "ion-jgbPostTradeSrc-dirtyJgbEnricher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Trade Confirmation Enricher",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.MappingConfigurationEnricher",
+      "configurationId" : "ion-jgbTrade-tradeConfirmationEnricherComponent",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB Enrichment Flow"
+  }, {
+    "name" : "JGB Bespoke to CMF RF Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "CMF RF Trade Validator",
+      "to" : "CMF RF Trade Prebook Producer",
+      "name" : "default"
+    }, {
+      "from" : "Bespoke Xml to CMF RF Converter",
+      "to" : "CMF RF Trade Validator",
+      "name" : "default"
+    }, {
+      "from" : "MCS Contra Book Lookup Broker",
+      "to" : "Bespoke Xml to CMF RF Converter",
+      "name" : "default"
+    }, {
+      "from" : "Organisation Id CDW Lookup Broker",
+      "to" : "MCS Contra Book Lookup Broker",
+      "name" : "default"
+    }, {
+      "from" : "MCS Counterparty Lookup Broker",
+      "to" : "Organisation Id CDW Lookup Broker",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "MCS Counterparty Lookup Broker",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "CMF RF Trade Prebook Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-prebookTradeJMSProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF RF Trade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "ion-jgbTrade-cmfRFTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bespoke Xml to CMF RF Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.XsltConverter",
+      "configurationId" : "ion-jgbPostTradeSrc-bespokeToRFCmfTranslator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "MCS Contra Book Lookup Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.McsContraBookLookupBroker",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Organisation Id CDW Lookup Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.OrganisationIdCdwLookupBroker",
+      "configurationId" : "ion-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "MCS Counterparty Lookup Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.McsCounterpartyLookupBroker",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB Bespoke to CMF RF Flow"
+  }, {
+    "name" : "JGB Bespoke to CMF TT Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "CMF TT Trade Validator",
+      "to" : "Private CMF TT Trade Producer",
+      "name" : "default"
+    }, {
+      "from" : "Bespoke XML to CMF TT Transformer",
+      "to" : "CMF TT Trade Validator",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "Bespoke XML to CMF TT Transformer",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Private CMF TT Trade Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-tradeTTJMSProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF TT Trade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "ion-jgbTrade-cmfTTTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bespoke XML to CMF TT Transformer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.XsltConverter",
+      "configurationId" : "ion-jgbPostTradeSrc-bespokeToTTCmfTranslator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB Bespoke to CMF TT Flow"
+  }, {
+    "name" : "JGB CMF TT Trade Splitter Flow",
+    "consumer" : {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "CMF TT Trade Splitter",
+      "to" : "Split CMF TT Trade Prebook Producer",
+      "name" : "default"
+    }, {
+      "from" : "JMS Consumer",
+      "to" : "CMF TT Trade Splitter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Split CMF TT Trade Prebook Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "ion-jgbTrade-prebookTradeJMSProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF TT Trade Splitter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
+      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.sequencer.TradeNominalSplitter",
+      "configurationId" : "ion-jgbPostTradeSrc-cmfTTTradeSplitter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$e8412dda",
+      "configurationId" : "ion-jgbTrade-tradeRawJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "ion-jgbTrade-JGB CMF TT Trade Splitter Flow"
+  } ]
+}
