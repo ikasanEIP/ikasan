@@ -5,6 +5,8 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class IkasanModuleLayoutManager
 {
+    Logger logger = LoggerFactory.getLogger(IkasanModuleLayoutManager.class);
+
     private Module module;
     private NetworkDiagram networkDiagram;
     private List<Edge> edgeList;
@@ -28,6 +32,8 @@ public class IkasanModuleLayoutManager
     int ySpacing = 150;
 
     int flowSpacing = 300;
+    int xStart = 0;
+    int yStart = 0;
 
     public IkasanModuleLayoutManager(Module module, NetworkDiagram networkDiagram, Logo logo)
     {
@@ -41,15 +47,15 @@ public class IkasanModuleLayoutManager
 
     public void layout()
     {
-        int x = 100;
-        int y = 100;
+        int x = xStart;
+        int y = yStart;
 
         for(Flow flow: module.getFlows())
         {
             flow.getConsumer().setX(x);
             flow.getConsumer().setY(y);
 
-            System.out.println("Add consumer " + flow.getConsumer());
+            logger.info("Add consumer " + flow.getConsumer());
 
             nodeList.add(flow.getConsumer());
 
@@ -59,22 +65,17 @@ public class IkasanModuleLayoutManager
 
             this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
 
-//            System.out.println("Add flow " + xExtent + "-->" + yExtent);
-
-//            x = xExtent + flowSpacing;
-            x = 100;
+            x = xStart;
             xExtent = x;
             y = yExtent + flowSpacing;
         }
-
-//        System.out.println("Add module " + xExtent + 400 + "-->" + yExtent + 300);
 
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
         this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
 
-        this.networkDiagram.drawModule(-100, -100, xExtentFinal + 500, yExtent + 300, module.getName());
+        this.networkDiagram.drawModule(xStart - 200, yStart - 200, xExtentFinal + 600, yExtent + 400, module.getName());
 
 //        logo.setX(30);
 //        logo.setY(yExtent + 150);
@@ -83,12 +84,8 @@ public class IkasanModuleLayoutManager
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)
     {
         nodeList.add(transition);
-        System.out.println("Add node " + transition.getId() + " x=" + x + " y=" + y + " yExtent=" + yExtent);
+        logger.info("Add node " + transition.getId() + " x=" + x + " y=" + y + " yExtent=" + yExtent);
 
-//        if(yExtent >= y)
-//        {
-//            y = yExtent;
-//        }
 
         if (transition instanceof SingleTransition && ((SingleTransition) transition).getTransition() != null)
         {
@@ -158,72 +155,8 @@ public class IkasanModuleLayoutManager
 
     private void addEdge(String fromId, String toId)
     {
-        System.out.println("Add edge " + fromId + "-->" + toId);
-//		Color black = new Color("#000000");
-//		black.setColor("#000000");
-//		black.setBorder("#000000");
+        logger.info("Add edge " + fromId + "-->" + toId);
         Edge edge = new Edge(fromId, toId);
-//        edge.setId(fromId + "-->" + toId);
-//        Smooth smooth = new Smooth();
-//        smooth.setType(Smooth.Type.horizontal);
-//        smooth.setRoundness(0.0);
-//        edge.setSmooth(smooth);
-//        edge.setHidden(false);
-
         this.edgeList.add(edge);
-
-//        ContextMenu contextMenu = new ContextMenu(this, false);
-//
-//        contextMenu.addItem("Delete", e -> {
-//
-//        });
-//
-//        networkDiagram.addEdgeSelectListener(new Edge.EdgeSelectListener(edge)
-//        {
-//            @Override
-//            public void onFired(SelectEdgeEvent event)
-//            {
-//                System.out.println(event);
-//            }
-//        });
-//
-//        networkDiagram.addEdgeClickListener(new Edge.EdgeClickListener(edge)
-//        {
-//            @Override
-//            public void onFired(ClickEvent event)
-//            {
-//                System.out.println(event);
-//            }
-//        });
-//
-//        networkDiagram.addEdgeConextListener(new Edge.EdgeContextListener(edge)
-//        {
-//            @Override
-//            public void onFired(ContextEvent event)
-//            {
-//                System.out.println(event);
-//                contextMenu.open((int) event.getDOMx(), (int) event.getDOMy());
-//            }
-//        });
-    }
-
-//    private void updateDiagram()
-//    {
-//        networkDiagram.getUI().getSession().getLockInstance().lock();
-//        try
-//        {
-//            networkDiagram.clear();
-//            networkDiagram.updateEdges(edgeList);
-//        }
-//        finally
-//        {
-//            networkDiagram.getUI().getSession().getLockInstance().unlock();
-//            UI.getCurrent().push();
-//        }
-//    }
-
-    public List<Edge> getEdgeList()
-    {
-        return edgeList;
     }
 }
