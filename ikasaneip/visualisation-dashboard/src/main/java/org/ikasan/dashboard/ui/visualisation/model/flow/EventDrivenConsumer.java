@@ -10,8 +10,16 @@ public class EventDrivenConsumer extends Consumer
 {
 	public static final String IMAGE = "frontend/images/event-driven-consumer.png";
 
-	public EventDrivenConsumer(String id, String name, Node transition)
-	{
-        super(id, name, IMAGE, transition);
-	}
+    /**
+     * Constructor
+     *
+     * @param id
+     * @param name
+     * @param transitionLabel
+     * @param transition
+     */
+	public EventDrivenConsumer(String id, String name, String transitionLabel, Node transition)
+    {
+        super(id, name, transitionLabel, transition, IMAGE);
+    }
 }
