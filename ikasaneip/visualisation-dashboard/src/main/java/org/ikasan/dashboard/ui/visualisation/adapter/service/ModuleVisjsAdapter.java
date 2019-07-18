@@ -16,14 +16,17 @@ import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.Transition;
 import org.ikasan.vaadin.visjs.network.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ModuleVisjsAdapter
 {
     private int identifier;
+    private HashMap<String, String> fromTransitionLabelMap = new HashMap<>();
+    private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
 
     public Module adapt(ModuleMetaData moduleMetaData)
     {
@@ -45,9 +48,37 @@ public class ModuleVisjsAdapter
         Map<String, FlowElementMetaData> flowElements = flowMetaData.getFlowElements().stream().collect(
             Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData, (key1, key2) -> key1));
 
-        EventDrivenConsumer consumer = (EventDrivenConsumer) manageFlowElement(flowMetaData.getConsumer(), flowMetaData.getTransitions(), flowElements);
+        this.buildFromTransitionLabelMap(flowMetaData.getTransitions());
+        this.buildToTransitionLabelMap(flowMetaData.getTransitions());
+
+        List<Transition> uniqueTransitions = distinctList(flowMetaData.getTransitions(), Transition::getFrom, Transition::getTo);
+
+        EventDrivenConsumer consumer = (EventDrivenConsumer) manageFlowElement(flowMetaData.getConsumer(), uniqueTransitions, flowElements);
 
         return new Flow(flowMetaData.getName(), consumer);
+    }
+
+    public static <T> List<T> distinctList(List<T> list, Function<? super T, ?>... keyExtractors) {
+
+        return list
+            .stream()
+            .filter(distinctByKeys(keyExtractors))
+            .collect(Collectors.toList());
+    }
+
+    private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
+
+        final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
+
+        return t -> {
+
+            final List<?> keys = Arrays.stream(keyExtractors)
+                .map(ke -> ke.apply(t))
+                .collect(Collectors.toList());
+
+            return seen.putIfAbsent(keys, Boolean.TRUE) == null;
+
+        };
     }
 
     protected Node manageFlowElement(FlowElementMetaData flowElement, List<Transition> transitions,
@@ -90,17 +121,62 @@ public class ModuleVisjsAdapter
         return transitionFlowElements;
     }
 
+    protected void buildFromTransitionLabelMap(List<Transition> transitions)
+    {
+        for(Transition transition: transitions)
+        {
+            if (this.fromTransitionLabelMap.containsKey(transition.getFrom()))
+            {
+                String label = fromTransitionLabelMap.get(transition.getFrom());
+
+                if(!label.contains(transition.getName()))
+                {
+                    label = label + ", " + transition.getName();
+                    fromTransitionLabelMap.put(transition.getFrom(), label);
+                }
+            }
+            else
+            {
+                String label = transition.getName();
+                fromTransitionLabelMap.put(transition.getFrom(), label);
+            }
+        }
+    }
+
+    protected void buildToTransitionLabelMap(List<Transition> transitions)
+    {
+        for(Transition transition: transitions)
+        {
+            if (this.toTransitionLabelMap.containsKey(transition.getTo()))
+            {
+                String label = toTransitionLabelMap.get(transition.getTo());
+
+                if(!label.contains(transition.getName()))
+                {
+                    label = label + ", " + transition.getName();
+                    toTransitionLabelMap.put(transition.getTo(), WordUtils.wrap(label, 15));
+                }
+            }
+            else
+            {
+                String label = transition.getName();
+                toTransitionLabelMap.put(transition.getTo(), label);
+            }
+        }
+    }
+
     protected Node manageSingleTransition(FlowElementMetaData flowElement, List<Transition> transitions,
                                                       Map<String, FlowElementMetaData> flowElements)
     {
+
         if (flowElement.getComponentType().equals(Producer.class.getName()))
         {
             if(flowElement.getImplementingClass().equals("org.ikasan.component.endpoint.util.producer.DevNull"))
             {
-                return new DeadEndPoint(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25), null);
+                return new DeadEndPoint(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), null);
             }
 
-            return new MessageProducer(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25)
+            return new MessageProducer(flowElement.getComponentName() + identifier++, WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName())
                 , new MessageChannel("channel"+identifier++, "esb.com.some.channel", false));
         }
 
@@ -108,32 +184,32 @@ public class ModuleVisjsAdapter
         if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName()))
         {
             return new EventDrivenConsumer(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Converter.class.getName()))
         {
             return new MessageTranslator(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Translator.class.getName()))
         {
             return new MessageTranslator(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Splitter.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Splitter(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Filter.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Filter(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else if (flowElement.getComponentType().equals(Broker.class.getName()))
         {
             return new org.ikasan.dashboard.ui.visualisation.model.flow.Broker(flowElement.getComponentName() + identifier++,
-                WordUtils.wrap(flowElement.getComponentName(), 25), manageFlowElement(flowElementMetaData, transitions, flowElements));
+                WordUtils.wrap(flowElement.getComponentName(), 25), this.fromTransitionLabelMap.get(flowElement.getComponentName()), manageFlowElement(flowElementMetaData, transitions, flowElements));
         }
         else
         {
@@ -155,7 +231,8 @@ public class ModuleVisjsAdapter
                 WordUtils.wrap(flowElement.getComponentName(), 25));
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
-                router.addTransition(flowElementMetaData.getComponentName(), manageFlowElement(flowElementMetaData, transitions, flowElements)));
+                router.addTransition(this.toTransitionLabelMap.get(flowElementMetaData.getComponentName()) != null ? this.toTransitionLabelMap.get(flowElementMetaData.getComponentName()): flowElementMetaData.getComponentName()
+                    , manageFlowElement(flowElementMetaData, transitions, flowElements)));
 
             return router;
         }
@@ -166,7 +243,8 @@ public class ModuleVisjsAdapter
                 WordUtils.wrap(flowElement.getComponentName(), 25));
 
             flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
-                router.addTransition(manageFlowElement(flowElementMetaData, transitions, flowElements)));
+                router.addTransition(this.toTransitionLabelMap.get(flowElementMetaData.getComponentName()) != null ? this.toTransitionLabelMap.get(flowElementMetaData.getComponentName()): flowElementMetaData.getComponentName()
+                    , manageFlowElement(flowElementMetaData, transitions, flowElements)));
 
             return router;
         }

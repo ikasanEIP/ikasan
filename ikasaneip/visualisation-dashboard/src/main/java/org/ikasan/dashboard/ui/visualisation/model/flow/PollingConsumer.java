@@ -10,8 +10,16 @@ public class PollingConsumer extends Consumer
 {
 	public static final String IMAGE = "frontend/images/polling-consumer.png";
 
-	public PollingConsumer(String id, String name, Node transition)
-	{
-	    super(id, name, IMAGE, transition);
-	}
+    /**
+     * Constructor
+     *
+     * @param id
+     * @param name
+     * @param transitionLabel
+     * @param transition
+     */
+	public PollingConsumer(String id, String name, String transitionLabel, Node transition)
+    {
+        super(id, name, transitionLabel, transition, IMAGE);
+    }
 }
