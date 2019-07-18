@@ -5,7 +5,8 @@ import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.util.Shape;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by stewmi on 07/11/2018.
@@ -13,22 +14,22 @@ import java.util.List;
 public class RecipientListRouter extends Node implements MultiTransition
 {
 	public static final String IMAGE = "frontend/images/recipient-list-router.png";
-	private List<Node> transitions;
+    private Map<String, Node> transitions;
 
 	public RecipientListRouter(String id, String name)
 	{
         super(id, name, Nodes.builder().withShape(Shape.image).withImage(IMAGE));
-		this.transitions = new ArrayList<>();
+		this.transitions = new HashMap<>();
 	}
 
-	public void addTransition(Node node)
+	public void addTransition(String context, Node node)
 	{
-		this.transitions.add(node);
+		this.transitions.put(context, node);
 	}
 
 	@Override
-	public List<Node> getTransitions()
+	public Map<String, Node> getTransitions()
 	{
-		return transitions;
+		return this.transitions;
 	}
 }
