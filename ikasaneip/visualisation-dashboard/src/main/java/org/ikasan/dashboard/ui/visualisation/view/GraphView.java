@@ -204,6 +204,7 @@ public class GraphView extends HorizontalLayout
                             .withColor("#000000")
                             .build())
                         .withDashes(false)
+                        .withFont(Font.builder().withSize(9).build())
                         .build())
                 .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
                 .build());

@@ -28,6 +28,7 @@ public class IkasanModuleLayoutManager
     int xExtent = 0;
     int yExtent = 0;
     int xExtentFinal = 0;
+
     int xSpacing = 200;
     int ySpacing = 150;
 
@@ -59,7 +60,7 @@ public class IkasanModuleLayoutManager
 
             nodeList.add(flow.getConsumer());
 
-            addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId());
+            addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId(), flow.getConsumer().getTransitionLabel());
 
             manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
 
@@ -92,7 +93,7 @@ public class IkasanModuleLayoutManager
             transition.setX(x + xSpacing);
             transition.setY(y);
 
-            addEdge(transition.getId(), ((SingleTransition) transition).getTransition().getId());
+            addEdge(transition.getId(), ((SingleTransition) transition).getTransition().getId(), ((SingleTransition) transition).getTransitionLabel());
 
             manageTransition(((SingleTransition) transition).getTransition(), x + xSpacing, y, networkDiagram);
         }
@@ -104,9 +105,14 @@ public class IkasanModuleLayoutManager
 
             int i=0;
 
-            for (Node next : ((MultiTransition) transition).getTransitions())
+            for (String key: ((MultiTransition) transition).getTransitions().keySet())
             {
-                addEdge(transition.getId(), next.getId());
+                if(key.equals(((MultiTransition) transition).getTransitions().get(key)))
+                {
+                   key = "";
+                }
+
+                addEdge(transition.getId(), ((MultiTransition) transition).getTransitions().get(key).getId(), key);
 
                 if(i++ > 0)
                 {
@@ -118,7 +124,7 @@ public class IkasanModuleLayoutManager
                      y = yExtent + ySpacing;
                 }
 
-                manageTransition(next, x + xSpacing, y, networkDiagram);
+                manageTransition(((MultiTransition) transition).getTransitions().get(key), x + xSpacing, y, networkDiagram);
             }
 
             if(y > yExtent)
@@ -153,10 +159,11 @@ public class IkasanModuleLayoutManager
         }
     }
 
-    private void addEdge(String fromId, String toId)
+    private void addEdge(String fromId, String toId, String label)
     {
         logger.info("Add edge " + fromId + "-->" + toId);
         Edge edge = new Edge(fromId, toId);
+        edge.setLabel(label);
         this.edgeList.add(edge);
     }
 }

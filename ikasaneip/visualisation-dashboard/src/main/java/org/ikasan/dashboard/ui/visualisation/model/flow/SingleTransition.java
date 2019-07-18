@@ -5,5 +5,5 @@ import org.ikasan.vaadin.visjs.network.Node;
 public interface SingleTransition
 {
     public Node getTransition();
-
+    public String getTransitionLabel();
 }
