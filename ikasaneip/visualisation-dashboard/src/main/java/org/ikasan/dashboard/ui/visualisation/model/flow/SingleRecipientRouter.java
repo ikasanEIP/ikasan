@@ -30,8 +30,8 @@ public class SingleRecipientRouter extends Node implements MultiTransition
 	}
 
 	@Override
-	public List<Node> getTransitions()
+	public Map<String, Node> getTransitions()
 	{
-		return new ArrayList<>(transitions.values());
+		return this.transitions;
 	}
 }
