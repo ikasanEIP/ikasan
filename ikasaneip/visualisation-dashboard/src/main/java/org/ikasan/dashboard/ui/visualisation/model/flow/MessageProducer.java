@@ -1,33 +1,24 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
 import org.ikasan.vaadin.visjs.network.Node;
-import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
-import org.ikasan.vaadin.visjs.network.util.Shape;
 
 /**
  * Created by stewmi on 07/11/2018.
  */
-public class MessageProducer extends Node implements SingleTransition
+public class MessageProducer extends AbstractSingleTransition
 {
 	public static final String IMAGE = "frontend/images/channel-adapter.png";
 
-	private MessageChannel messageChannel;
-
-	public MessageProducer(String id, String name, MessageChannel messageChannel)
-	{
-        super(id, name, Nodes.builder().withShape(Shape.image).withImage(IMAGE));
-		this.messageChannel = messageChannel;
-	}
-
-	public MessageChannel getMessageChannel()
-	{
-		return messageChannel;
-	}
-
-
-	@Override
-	public Node getTransition()
-	{
-		return messageChannel;
-	}
+    /**
+     * Constructor
+     *
+     * @param id
+     * @param name
+     * @param transitionLabel
+     * @param transition
+     */
+	public MessageProducer(String id, String name, String transitionLabel, Node transition)
+    {
+        super(id, name, transition, transitionLabel, IMAGE);
+    }
 }
