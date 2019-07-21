@@ -40,26 +40,22 @@
  */
 package org.ikasan.setup.persistence.service.custom;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.sql.DataSource;
-
 import liquibase.change.custom.CustomTaskChange;
 import liquibase.change.custom.CustomTaskRollback;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.CustomChangeException;
-import liquibase.exception.DatabaseException;
 import liquibase.exception.RollbackImpossibleException;
 import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.service.AuthenticationServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * 

@@ -44,7 +44,6 @@ import javax.annotation.Resource;
 
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +56,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
+@ContextConfiguration(locations = { "/h2-datasource-conf.xml", "/providers-conf.xml"})
 public class PersistenceServiceImplTest
 {
     /**
