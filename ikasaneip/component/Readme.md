@@ -14,8 +14,11 @@ In order to create your own consumer you need to implement [Consumer Interface](
 ### Types
 All consumers are driven by event occurrences be this time driven events or data driven events.
 
-#### Time Driven Events
-Activated on a time based schedule, either relative or absolute, at which point the consumer is activated. This activation can be to pull data from an underlying technical API or to simply invoke the next component in the flow.
+#### Schedule Driven Consumers
+Invoked on a time based schedule, either relative or absolute.
+This scheduled invocation can be to pull data from an underlying source system API or to simply invoke the next component in the flow.
+ 
+The following consumers are off-the-shelf scheduled driven consumers.
 
 - [Scheduled Consumer](endpoint/quartz-schedule/Readme.md)
 - [Local File Consumer](endpoint/quartz-schedule/localFileConsumer.md)
@@ -23,8 +26,10 @@ Activated on a time based schedule, either relative or absolute, at which point 
 - [FTP Consumer](endpoint/filetransfer/ftp/consumer.md)
 - [SFTP Consumer](endpoint/filetransfer/sftp/consumer.md)
 
-#### Data Driven Events
-Activated by the underlying technical API invoking the consumer and pushing one or more data events to the consumer.
+#### Data Driven Consumers
+Invoked by the underlying source system API which pushes one or more data events to the consumer.
+
+The following consumers are off-the-shelf data driven consumers.
 
 - [Generic JMS Consumer](endpoint/jms-client/consumer.md)
 - [SpringTemplate JMS Consumer](endpoint/jms-spring-arjuna/consumer.md)
