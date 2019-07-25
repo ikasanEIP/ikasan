@@ -6,65 +6,14 @@
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 
 
-##### Configuration Options
+##### Mandatory Configuration Options
 
 | Option | Type | Purpose |
 | --- | --- | --- |
+| cronExpression | String | Cron based expression dictating the invocation schedule for this component. Example, "\*/5 \* \* \* \* ?" will fire every 5 seconds.|
 | filenames | List<String> | Filenames to be processed. |
-| encoding | String | Encoding of the files |
-| includeHeader | boolean | Assume first line of the file is a header and include it as a header within the message payload. |
-| sortByModifiedDateTime | boolean | Sort the received file list by last modified date time. |
-| sortAscending | boolean | Sort the list in ascending order (true) or descending order (false) when a sort method is used. |
-| directoryDepth | int | How deep down the directory tree to go to find matching filenames. |
-| logMatchedFilenames | boolean | Write any matching filenames found to the log files as additional information. |
-| ignoreFileRenameWhilstScanning | boolean | Ignore cases where the file has been renamed between scanning and retrieval. |
 
-
-##### Sample Usage - Spring XML
-
-```xml
-<!-- fileConsumer is a bean definition of component -->
-<bean id="fileConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
-        <constructor-arg ref="scheduler"/>
-        <property name="messageProvider" ref="fileMessageProvider"/>
-        <property name="jobDetail">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="scheduledJobFactory"/>
-                <property name="targetMethod" value="createJobDetail"/>
-                <property name="arguments">
-                    <list>
-                        <ref bean="fileConsumer"/>
-                        <value type="java.lang.Class">
-                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
-                        </value>
-                        <value>fileConsumer</value>
-                        <value>localfile</value>
-                    </list>
-                </property>
-            </bean>
-        </property>
-        <property name="configuration" ref="fileConsumerConfiguration"/>
-        <property name="configuredResourceId" value="fileConsumer"/>
-    </bean>
-
-    <bean id="fileConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
-        <property name="cronExpression" value="0 0/1 * * * ?"/>
-        <property name="filenames" value="*.txt"/>
-     </bean>
-    
-<bean id="fileMessageProvider" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
-</bean>
-
-<!-- fileConsumerFlowElement is a bean definition of flow elements which uses fileConsumer as a component -->
-<bean id="fileConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
-    <property name="name" value="FILE Consumer"/>
-    <property name="component"  ref="fileConsumer"/>
-    <property name="transition" ref="converterFlowElement"/>
-</bean>
-
-```
-
-##### Sample Usage - builder pattern
+##### Sample Usage - Ikasan Java FluentAPI
 
 ```java
 public class ModuleConfig {
@@ -76,14 +25,68 @@ public class ModuleConfig {
   public Consumer getFileConsumer()
   {
       return builderFactory.getComponentBuilder().fileConsumer()
-              .setCronExpression("0 0/1 * * * ?")
-              .setScheduledJobGroupName(scheduledGroupName)
-              .setScheduledJobName(scheduledName)
+              .setCronExpression("*/5 * * * * ?")
               .setFilenames(sourceFilenames)
-              .setLogMatchedFilenames(true)
-              .setConfiguredResourceId(fileConsumerConfiguredResourceId)
               .build();
   }
 }
-
 ```
+
+##### Optional Configuration Options
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| encoding | String | Encoding of the files |
+| directoryDepth | integer | How deep down the directory tree to go to find matching filenames. |
+| ignoreFileRenameWhilstScanning | boolean | Ignore cases where the file has been renamed between scanning and retrieval. |
+| includeHeader | boolean | Assume first line of the file is a header and include it as a header within the message payload. |
+| includeTrailer | boolean | Assume last line of the file is a trailer and include it as a trailer within the message payload. |
+| sortAscending | boolean | Sort the list in ascending order (true) or descending order (false) when a sort method is used. |
+| sortByModifiedDateTime | boolean | Sort the received file list by last modified date time. |
+| logMatchedFilenames | boolean | Write any matching filenames found to the log files as additional information. |
+| messageProviderPostProcessor | MessageProviderPostProcessor | Provide additional functionality to be applied to the payload as a post processor before returning for next component invocation.|
+| configuration | ScheduledConsumerConfiguration | Override configuration with a complete instance of the ScheduledConsumerConfiguration. See [Configured Resources](TODO/Readme.md).|
+| configuredResourceId | boolean | Override default generated configuredResource identifier. This is useful if you want to shared configuredResource instances across components. See [Configured Resources](TODO/Readme.md).|
+| criticalOnStartup | boolean | Default false. Override to specify whether the failure of starting this consumer component should also fail the flow starting. |
+| messageProvider | MessageProvider | Data provider for this consumer. Default is a simple ScheduledConsumer which is invoked with a Quartz JobExecutionContext instance. Default messageProvider will simply transition to the next component in the flow. MessageProvider can be overridden with a CallbackScheduledConsumer which is invoked with a Quartz JobExecutionContext, but leaves control with the developer to consume source system events as required. This is recommended when consuming large amounts of data within a single schedule as the developer can control how much data is read and processed by the flow on each callback. All consumption within the CallbackScheduledConsumer is within a single transaction. |
+| managedEventIdentifierService | ManagedEventIdentifierService | Default null. Override to provide your own ManagedEventIdentifierService. See [Managed Event Identifier Service](TODO/Readme.md) for details. |
+| managedResourceRecoveryManager | ManagedResourceRecoveryManager | Default null. Override to provide your own ManagedResourceRecoveryManager. See [Managed Resource Recovery Manager](TODO/Readme.md) for details. |
+| eventFactory | EventFactory | Default null. Override to provide your own EventFactory. Only override this if you are an Ikasan Ninja. |
+| scheduledJobName | String | Default generated. Override to provide your own Quartz ScheduledJobName. |
+| scheduledJobGroupName | String | Default generated. Override to provide your own Quartz ScheduledJobGroupName. |
+
+##### Sample Usage - Ikasan Java FluentAPI
+
+```java
+public class ModuleConfig {
+
+
+  @Resource
+  private BuilderFactory builderFactory;
+
+  public Consumer getFileConsumer()
+  {
+      return builderFactory.getComponentBuilder().fileConsumer()
+                    .setCronExpression("*/5 * * * * ?")
+                    .setFilenames(filenames)
+                    .setEncoding("UTF-8")
+                    .setDirectoryDepth(1)
+                    .setIgnoreFileRenameWhilstScanning(true)
+                    .setIncludeHeader(true)
+                    .setIncludeTrailer(true)
+                    .setSortAscending(true)
+                    .setSortByModifiedDateTime(true)
+                    .setLogMatchedFilenames(true)
+                    .setMessageProviderPostProcessor(messageProviderPostProcessor)
+                    .setConfiguration(scheduledConsumerConfiguration)
+                    .setConfiguredResourceId("moduleName-flowName-component")
+                    .setCriticalOnStartup(true)
+                    .setManagedResourceRecoveryManager(managedResourceRecoveryManager)
+                    .setManagedEventIdentifierService(managedEventIdentifierService)
+                    .setEventFactory(eventFactory)
+                    .setMessageProvider(messageProvider)
+                    .setScheduledJobName("moduleName-flowName-componentName")
+                    .setScheduledJobGroupName("moduleName-flowName")
+                    .build();
+  }
+}
