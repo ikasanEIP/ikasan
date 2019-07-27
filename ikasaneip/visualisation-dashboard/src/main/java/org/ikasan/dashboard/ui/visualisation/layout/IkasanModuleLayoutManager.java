@@ -78,8 +78,6 @@ public class IkasanModuleLayoutManager
 
         this.networkDiagram.drawModule(xStart - 200, yStart - 200, xExtentFinal + 600, yExtent + 400, module.getName());
 
-//        logo.setX(30);
-//        logo.setY(yExtent + 150);
     }
 
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)
