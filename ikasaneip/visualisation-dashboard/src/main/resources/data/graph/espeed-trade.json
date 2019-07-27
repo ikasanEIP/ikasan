@@ -1,0 +1,170 @@
+{
+  "name" : "espeed-trade",
+  "description" : "Espeed Trade module publishing FIX trade confirmations to the BDM pre-book channel, after converting them to a cmfTrade message.",
+  "version" : null,
+  "flows" : [ {
+    "name" : "Espeed FIX Messages Consumer Flow",
+    "consumer" : {
+      "componentName" : "Espeed FIX Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
+      "configurationId" : "espeed-trade-espeedFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Duplicate Filter",
+      "to" : "Espeed FIX Confirm Producer",
+      "name" : "default"
+    }, {
+      "from" : "Trade Confirmation Filter",
+      "to" : "Duplicate Filter",
+      "name" : "default"
+    }, {
+      "from" : "Fix OutBound Broker",
+      "to" : "Trade Confirmation Filter",
+      "name" : "default"
+    }, {
+      "from" : "Fix To XML Converter",
+      "to" : "Fix OutBound Broker",
+      "name" : "default"
+    }, {
+      "from" : "Espeed FIX Consumer",
+      "to" : "Fix To XML Converter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Espeed FIX Confirm Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "espeed-trade-espeedFixProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Duplicate Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "espeed-trade-duplicateFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Trade Confirmation Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "espeed-trade-confirmationTradeFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Fix OutBound Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.fix.broker.EspeedBiDirectionalBroker",
+      "configurationId" : "espeed-trade-espeedFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Fix To XML Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.converter.QuickFixConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Espeed FIX Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
+      "configurationId" : "espeed-trade-espeedFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "espeed-trade-Espeed FIX Messages Consumer Flow"
+  }, {
+    "name" : "FIX Confirmation Transformation Flow",
+    "consumer" : {
+      "componentName" : "Transformation Flow Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$4e222eb2",
+      "configurationId" : "espeed-trade-transformationFlowConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "CmfTrade Nominal Splitter",
+      "to" : "CmfTrade Message to BDM",
+      "name" : "default"
+    }, {
+      "from" : "CmfTrade Validator",
+      "to" : "CmfTrade Nominal Splitter",
+      "name" : "default"
+    }, {
+      "from" : "FIX Confirmation To CmfTrade Convert",
+      "to" : "CmfTrade Validator",
+      "name" : "default"
+    }, {
+      "from" : "FIX Confirmation Mcs Broker",
+      "to" : "FIX Confirmation To CmfTrade Convert",
+      "name" : "default"
+    }, {
+      "from" : "Transformation Flow Consumer",
+      "to" : "FIX Confirmation Mcs Broker",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "CmfTrade Message to BDM",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "espeed-trade-cmfTradeBdmProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CmfTrade Nominal Splitter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
+      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.sequencer.TradeNominalSplitter",
+      "configurationId" : "espeed-trade-cmfTradeNominalSplitter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CmfTrade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "espeed-trade-cmfTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "FIX Confirmation To CmfTrade Convert",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.converter.DynamicXsltConverter",
+      "configurationId" : "espeed-trade-fixConfirmationToCmfTradeConverter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "FIX Confirmation Mcs Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.broker.McsBroker",
+      "configurationId" : "espeed-trade-mcsBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Transformation Flow Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$4e222eb2",
+      "configurationId" : "espeed-trade-transformationFlowConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "espeed-trade-FIX Confirmation Transformation Flow"
+  } ]
+}
