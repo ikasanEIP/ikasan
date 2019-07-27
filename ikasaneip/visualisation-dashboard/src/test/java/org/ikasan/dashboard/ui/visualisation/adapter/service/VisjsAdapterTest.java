@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
 import org.ikasan.dashboard.ui.visualisation.adapter.model.*;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStreamGraph;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class VisjsAdapterTest
         BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
         System.out.println(adapter.toJson(graph));
 
-        BusinessStreamGraph graph1 = adapter.toBusinessStreamGraph(adapter.toJson(graph));
+        BusinessStream graph1 = adapter.toBusinessStreamGraph(adapter.toJson(graph));
 
         System.out.println(graph1);
 
