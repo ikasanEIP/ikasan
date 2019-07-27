@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by stewmi on 08/11/2018.
  */
-public class IkasanModuleLayoutManager
+public class IkasanFlowLayoutManager
 {
-    Logger logger = LoggerFactory.getLogger(IkasanModuleLayoutManager.class);
+    Logger logger = LoggerFactory.getLogger(IkasanFlowLayoutManager.class);
 
-    private Module module;
+    private Flow flow;
     private NetworkDiagram networkDiagram;
     private List<Edge> edgeList;
     private List<Node> nodeList;
@@ -36,9 +36,9 @@ public class IkasanModuleLayoutManager
     int xStart = 0;
     int yStart = 0;
 
-    public IkasanModuleLayoutManager(Module module, NetworkDiagram networkDiagram, Logo logo)
+    public IkasanFlowLayoutManager(Flow flow, NetworkDiagram networkDiagram, Logo logo)
     {
-        this.module = module;
+        this.flow = flow;
         this.networkDiagram = networkDiagram;
         this.edgeList = new ArrayList<>();
         this.nodeList = new ArrayList<>();
@@ -51,33 +51,29 @@ public class IkasanModuleLayoutManager
         int x = xStart;
         int y = yStart;
 
-        for(Flow flow: module.getFlows())
-        {
-            flow.getConsumer().setX(x);
-            flow.getConsumer().setY(y);
 
-            logger.info("Add consumer " + flow.getConsumer());
+        flow.getConsumer().setX(x);
+        flow.getConsumer().setY(y);
 
-            nodeList.add(flow.getConsumer());
+        logger.info("Add consumer " + flow.getConsumer());
 
-            addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId(), flow.getConsumer().getTransitionLabel());
+        nodeList.add(flow.getConsumer());
 
-            manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
+        addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId(), flow.getConsumer().getTransitionLabel());
 
-            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
+        manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
 
-            x = xStart;
-            xExtent = x;
-            y = yExtent + flowSpacing;
-        }
+        this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
+
+        x = xStart;
+        xExtent = x;
+        y = yExtent + flowSpacing;
+
 
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
         this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
-
-        this.networkDiagram.drawModule(xStart - 200, yStart - 200, xExtentFinal + 600, yExtent + 400, module.getName());
-
     }
 
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)

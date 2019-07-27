@@ -5,15 +5,15 @@ import org.ikasan.vaadin.visjs.network.Edge;
 
 import java.util.List;
 
-public class BusinessStreamGraph
+public class BusinessStream
 {
     List<Flow> flows;
     List<IntegratedSystem> integratedSystems;
     List<Edge> edges;
     List<Destination> destinations;
 
-    public BusinessStreamGraph(List<Flow> flows, List<IntegratedSystem> integratedSystems, List<Edge> edges,
-                               List<Destination> destinations)
+    public BusinessStream(List<Flow> flows, List<IntegratedSystem> integratedSystems, List<Edge> edges,
+                          List<Destination> destinations)
     {
         this.flows = flows;
         this.integratedSystems = integratedSystems;

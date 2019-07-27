@@ -1,0 +1,842 @@
+{
+  "name" : "tt-trade",
+  "description" : "TT Trade",
+  "version" : null,
+  "flows" : [ {
+    "name" : "Back Office Fix Inbound Flow",
+    "consumer" : {
+      "componentName" : "Back Office Fix Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$de5b3cde",
+      "configurationId" : "tt-trade-backOfficeFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Future XML To String Converter",
+      "to" : "Futures JMS Producer",
+      "name" : "default"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Future XML To String Converter",
+      "name" : "FUTURE"
+    }, {
+      "from" : "Bond XML To String Converter",
+      "to" : "Bonds JMS Producer",
+      "name" : "default"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Bond XML To String Converter",
+      "name" : "TREASURIES_PLUS_AGENCY_DEBENTURE"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Not Found TradeType",
+      "name" : "default"
+    }, {
+      "from" : "Fill Order MRR",
+      "to" : "Trade Type XPath Router",
+      "name" : "converters"
+    }, {
+      "from" : "XML To String Converter",
+      "to" : "Orders JMS Producer",
+      "name" : "default"
+    }, {
+      "from" : "Fill Order MRR",
+      "to" : "XML To String Converter",
+      "name" : "orders"
+    }, {
+      "from" : "Execution Report Filter",
+      "to" : "Fill Order MRR",
+      "name" : "default"
+    }, {
+      "from" : "Back Office Fix To XML Converter",
+      "to" : "Execution Report Filter",
+      "name" : "default"
+    }, {
+      "from" : "Back Office Fix Consumer",
+      "to" : "Back Office Fix To XML Converter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Futures JMS Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future XML To String Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.XmlToStringConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Bonds JMS Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond XML To String Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.XmlToStringConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Not Found TradeType",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Trade Type XPath Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeTypeXPathRouter",
+      "configurationId" : "tt-trade-boTradeTypeXPathRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Orders JMS Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-ordersProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "XML To String Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.XmlToStringConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Fill Order MRR",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.FillOrderMultiRecipientRouter",
+      "configurationId" : "tt-trade-boFillOrderMrr",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Execution Report Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "tt-trade-boHeartBeatFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Back Office Fix To XML Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.QuickFixConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Back Office Fix Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$de5b3cde",
+      "configurationId" : "tt-trade-backOfficeFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-Back Office Fix Inbound Flow"
+  }, {
+    "name" : "MHUSA Fix Inbound Flow",
+    "consumer" : {
+      "componentName" : "MHUSA Fix Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$de5b3cde",
+      "configurationId" : "tt-trade-mhusaFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "MHUSA Fix Consumer",
+      "to" : "MHUSA Filter Producer",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "MHUSA Filter Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-filterProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "MHUSA Fix Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$de5b3cde",
+      "configurationId" : "tt-trade-mhusaFixConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-MHUSA Fix Inbound Flow"
+  }, {
+    "name" : "Back Office Bond Transformation Flow",
+    "consumer" : {
+      "componentName" : "Back Office JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Bond Fast Track Router",
+      "to" : "Priority CMF BDM Producer",
+      "name" : "FAST_TRACK"
+    }, {
+      "from" : "Bond Fast Track Router",
+      "to" : "CMF BDM Producer",
+      "name" : "NON_FAST_TRACK"
+    }, {
+      "from" : "CmfTrade Validator",
+      "to" : "Bond Fast Track Router",
+      "name" : "default"
+    }, {
+      "from" : "Bond to CmfTrade Converter",
+      "to" : "CmfTrade Validator",
+      "name" : "default"
+    }, {
+      "from" : "Bond Next Business Day Broker",
+      "to" : "Bond to CmfTrade Converter",
+      "name" : "default"
+    }, {
+      "from" : "Bond Mcs Broker",
+      "to" : "Bond Next Business Day Broker",
+      "name" : "default"
+    }, {
+      "from" : "Duplicate Filter",
+      "to" : "Bond Mcs Broker",
+      "name" : "default"
+    }, {
+      "from" : "String to Document Converter",
+      "to" : "Duplicate Filter",
+      "name" : "default"
+    }, {
+      "from" : "Back Office JMS Consumer",
+      "to" : "String to Document Converter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Priority CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-xmlMessageJMSPublisher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-cmfBdmProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Fast Track Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeBookFastTrackRouter",
+      "configurationId" : "tt-trade-bondFastTrackRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CmfTrade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "tt-trade-cmfTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond to CmfTrade Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
+      "configurationId" : "tt-trade-boBondToCmfTradeConverter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Next Business Day Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.NextBusinessDayBroker",
+      "configurationId" : "tt-trade-boBondNextBusinessDayBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Mcs Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.BOMcsBroker",
+      "configurationId" : "tt-trade-boBondMcsBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Duplicate Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "tt-trade-boBondHeartBeatFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "String to Document Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.StringToDocumentConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Back Office JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-Back Office Bond Transformation Flow"
+  }, {
+    "name" : "Back Office Future Transformation Flow",
+    "consumer" : {
+      "componentName" : "Back Office JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Future Fast Track Router",
+      "to" : "Priority CMF BDM Producer",
+      "name" : "FAST_TRACK"
+    }, {
+      "from" : "Future Fast Track Router",
+      "to" : "CMF BDM Producer",
+      "name" : "NON_FAST_TRACK"
+    }, {
+      "from" : "CmfTrade Validator",
+      "to" : "Future Fast Track Router",
+      "name" : "default"
+    }, {
+      "from" : "Future to CmfTrade Converter",
+      "to" : "CmfTrade Validator",
+      "name" : "default"
+    }, {
+      "from" : "Future Mcs Broker",
+      "to" : "Future to CmfTrade Converter",
+      "name" : "default"
+    }, {
+      "from" : "Duplicate Filter",
+      "to" : "Future Mcs Broker",
+      "name" : "default"
+    }, {
+      "from" : "String to Document Converter",
+      "to" : "Duplicate Filter",
+      "name" : "default"
+    }, {
+      "from" : "Back Office JMS Consumer",
+      "to" : "String to Document Converter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Priority CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-xmlMessageJMSPublisher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-cmfBdmProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future Fast Track Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeBookFastTrackRouter",
+      "configurationId" : "tt-trade-futureFastTrackRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CmfTrade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "tt-trade-cmfTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future to CmfTrade Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
+      "configurationId" : "tt-trade-boFutureToCmfTradeConverter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future Mcs Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.BOMcsBroker",
+      "configurationId" : "tt-trade-boFutureMcsBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Duplicate Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "tt-trade-boHeartBeatFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "String to Document Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.StringToDocumentConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Back Office JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-bondFixXmlMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-Back Office Future Transformation Flow"
+  }, {
+    "name" : "FIX Messages Transformation Flow",
+    "consumer" : {
+      "componentName" : "FIX Message JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-fixMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Future Fast Track Router",
+      "to" : "Priority CMF BDM Producer",
+      "name" : "FAST_TRACK"
+    }, {
+      "from" : "Future Fast Track Router",
+      "to" : "CMF BDM Producer",
+      "name" : "NON_FAST_TRACK"
+    }, {
+      "from" : "Future CmfTrade Validator",
+      "to" : "Future Fast Track Router",
+      "name" : "default"
+    }, {
+      "from" : "Future to CmfTrade Converter",
+      "to" : "Future CmfTrade Validator",
+      "name" : "default"
+    }, {
+      "from" : "Future Mcs Broker",
+      "to" : "Future to CmfTrade Converter",
+      "name" : "default"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Future Mcs Broker",
+      "name" : "FUTURE"
+    }, {
+      "from" : "Bond Fast Track Router",
+      "to" : "Priority CMF BDM Producer",
+      "name" : "FAST_TRACK"
+    }, {
+      "from" : "Bond Fast Track Router",
+      "to" : "CMF BDM Producer",
+      "name" : "NON_FAST_TRACK"
+    }, {
+      "from" : "Bond CmfTrade Validator",
+      "to" : "Bond Fast Track Router",
+      "name" : "default"
+    }, {
+      "from" : "Bond to CmfTrade Converter",
+      "to" : "Bond CmfTrade Validator",
+      "name" : "default"
+    }, {
+      "from" : "Bond Next Business Day Broker",
+      "to" : "Bond to CmfTrade Converter",
+      "name" : "default"
+    }, {
+      "from" : "Bond Mcs Broker",
+      "to" : "Bond Next Business Day Broker",
+      "name" : "default"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Bond Mcs Broker",
+      "name" : "TREASURIES_PLUS_AGENCY_DEBENTURE"
+    }, {
+      "from" : "Trade Type XPath Router",
+      "to" : "Not Found TradeType",
+      "name" : "default"
+    }, {
+      "from" : "Fill Order MRR",
+      "to" : "Trade Type XPath Router",
+      "name" : "converters"
+    }, {
+      "from" : "XML To String Converter",
+      "to" : "Orders JMS Producer",
+      "name" : "default"
+    }, {
+      "from" : "Fill Order MRR",
+      "to" : "XML To String Converter",
+      "name" : "orders"
+    }, {
+      "from" : "Duplicate Filter",
+      "to" : "Fill Order MRR",
+      "name" : "default"
+    }, {
+      "from" : "Execution Report Filter",
+      "to" : "Duplicate Filter",
+      "name" : "default"
+    }, {
+      "from" : "Fix To XML Converter",
+      "to" : "Execution Report Filter",
+      "name" : "default"
+    }, {
+      "from" : "FIX Message JMS Consumer",
+      "to" : "Fix To XML Converter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Priority CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-xmlMessageJMSPublisher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-cmfBdmProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future Fast Track Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeBookFastTrackRouter",
+      "configurationId" : "tt-trade-futureFastTrackRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future CmfTrade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "tt-trade-cmfTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future to CmfTrade Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
+      "configurationId" : "tt-trade-futureToCmfTradeConverter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Future Mcs Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.McsBroker",
+      "configurationId" : "tt-trade-mcsBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Priority CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-xmlMessageJMSPublisher",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "CMF BDM Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-cmfBdmProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Fast Track Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeBookFastTrackRouter",
+      "configurationId" : "tt-trade-bondFastTrackRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond CmfTrade Validator",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
+      "configurationId" : "tt-trade-cmfTradeValidator",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond to CmfTrade Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
+      "configurationId" : "tt-trade-bondToCmfTradeConverter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Next Business Day Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.NextBusinessDayBroker",
+      "configurationId" : "tt-trade-nextBusinessDayBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Bond Mcs Broker",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.broker.McsBroker",
+      "configurationId" : "tt-trade-mcsBroker",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Not Found TradeType",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Trade Type XPath Router",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.TradeTypeXPathRouter",
+      "configurationId" : "tt-trade-tradeTypeXPathRouter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Orders JMS Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-ordersProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "XML To String Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.XmlToStringConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "Fill Order MRR",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.router.FillOrderMultiRecipientRouter",
+      "configurationId" : "tt-trade-fillOrderMrr",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Duplicate Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "tt-trade-heartBeatFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Execution Report Filter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
+      "configurationId" : "tt-trade-heartBeatFilter",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Fix To XML Converter",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.QuickFixConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "FIX Message JMS Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-fixMessageJMSConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-FIX Messages Transformation Flow"
+  }, {
+    "name" : "TT Trade Log Download Flow",
+    "consumer" : {
+      "componentName" : "TT Trade Log Download SFTP Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$53e42528",
+      "configurationId" : "tt-trade-ttTradeLogDownloadConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "TT Trade Log Download Payload Converter Flow Element",
+      "to" : "TT Trade Log Download Producer",
+      "name" : "default"
+    }, {
+      "from" : "TT Trade Log Download SFTP Consumer",
+      "to" : "TT Trade Log Download Payload Converter Flow Element",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "TT Trade Log Download Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+      "configurationId" : "tt-trade-ttTradeLogDownloadProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "TT Trade Log Download Payload Converter Flow Element",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.SftpPayloadToMapConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "TT Trade Log Download SFTP Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$53e42528",
+      "configurationId" : "tt-trade-ttTradeLogDownloadConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-TT Trade Log Download Flow"
+  }, {
+    "name" : "TT Trade Log Publisher Flow",
+    "consumer" : {
+      "componentName" : "TT Trade Log Publisher Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-ttTradeLogPublisherConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "Payload Converter Flow Element",
+      "to" : "TT Trade Log Sftp Producer",
+      "name" : "default"
+    }, {
+      "from" : "TT Trade Log Publisher Consumer",
+      "to" : "Payload Converter Flow Element",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "TT Trade Log Sftp Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.endpoint.sftp.producer.SftpProducer",
+      "configurationId" : "tt-trade-ttTradeLogSftpProducer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    }, {
+      "componentName" : "Payload Converter Flow Element",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.converter.MapMessageToSftpPayloadConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "TT Trade Log Publisher Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$a0c1b680",
+      "configurationId" : "tt-trade-ttTradeLogPublisherConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-TT Trade Log Publisher Flow"
+  }, {
+    "name" : "TT Housekeeping Flow",
+    "consumer" : {
+      "componentName" : "TT Housekeeping Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$53e42528",
+      "configurationId" : "tt-trade-ttHousekeepingConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    },
+    "transitions" : [ {
+      "from" : "TT Housekeeping Consumer",
+      "to" : "TT Housekeeping DB Producer",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "TT Housekeeping DB Producer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "com.mizuho.esb.mhi.tt.trade.component.producer.TTHousekeepingDBProducer",
+      "configurationId" : null,
+      "invokerConfigurationId" : null,
+      "configurable" : false
+    }, {
+      "componentName" : "TT Housekeeping Consumer",
+      "description" : null,
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$53e42528",
+      "configurationId" : "tt-trade-ttHousekeepingConsumer",
+      "invokerConfigurationId" : null,
+      "configurable" : true
+    } ],
+    "configurationId" : "tt-trade-TT Housekeeping Flow"
+  } ]
+}
