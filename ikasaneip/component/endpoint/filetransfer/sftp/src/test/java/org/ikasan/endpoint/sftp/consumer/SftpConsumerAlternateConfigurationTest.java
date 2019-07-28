@@ -40,8 +40,7 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
+import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.junit.Assert;
 
 import org.junit.Test;
@@ -212,10 +211,10 @@ public class SftpConsumerAlternateConfigurationTest
     
     /**
      * Test property successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success() throws InvalidPropertyException
+    public void test_sftpConfiguration_validate_success() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.validate();
@@ -224,10 +223,10 @@ public class SftpConsumerAlternateConfigurationTest
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of destructive and renameOnSuccess being true.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -238,10 +237,10 @@ public class SftpConsumerAlternateConfigurationTest
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess and renameOnSuccess being true.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -252,10 +251,10 @@ public class SftpConsumerAlternateConfigurationTest
     /**
      * Test property failed validate invocation based a missing property when
      * of renameOnSuccess is true and renameOnSuccessExtension is missing.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -265,10 +264,10 @@ public class SftpConsumerAlternateConfigurationTest
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess is true and destructive is true.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
@@ -279,10 +278,10 @@ public class SftpConsumerAlternateConfigurationTest
     /**
      * Test property failed validate invocation based a missing property when
      * of moveOnSuccess is true and moveOnSuccessNewPath is missing.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
@@ -291,10 +290,10 @@ public class SftpConsumerAlternateConfigurationTest
 
     /**
      * Test default property values successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidPropertyException
+    public void test_sftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -304,10 +303,10 @@ public class SftpConsumerAlternateConfigurationTest
 
     /**
      * Test default property values successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidPropertyException
+    public void test_sftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);

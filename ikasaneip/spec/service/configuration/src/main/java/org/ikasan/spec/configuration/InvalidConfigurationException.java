@@ -41,28 +41,43 @@
 package org.ikasan.spec.configuration;
 
 /**
- * Interface provisioning callbacks for setting configuration properties
- * for a flow component as required for runtime. 
+ * Exception resulting from validation failure for a configuration instance.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface Configured<T>
+@SuppressWarnings("serial")
+public class InvalidConfigurationException
+    extends RuntimeException
 {
-    static void validate(Object configuration)
+    /**
+     * Constructor
+     *
+     * @param message
+     */
+    public InvalidConfigurationException(String message)
     {
-        if(configuration != null && configuration instanceof IsValidationAware)
-        {
-            ((IsValidationAware)configuration).validate();
-        }
+        super(message);
     }
 
     /**
-     * Set configuration.
+     * Constructor
+     *
+     * @param message
+     * @param exception
      */
-    public T getConfiguration();
+    public InvalidConfigurationException(String message, Exception exception)
+    {
+        super(message, exception);
+    }
 
     /**
-     * Set configuration.
+     * Constructor
+     *
+     * @param exception
      */
-    public void setConfiguration(T configuration);
+    public InvalidConfigurationException(Exception exception)
+    {
+        super(exception);
+    }
 }

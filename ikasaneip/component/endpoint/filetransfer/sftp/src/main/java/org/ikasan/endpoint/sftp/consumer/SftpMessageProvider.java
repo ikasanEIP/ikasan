@@ -260,19 +260,12 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
 
     @Override public void startManagedResource()
     {
-        try
-        {
-            configuration.validate();
-            SFTPConnectionSpec spec = createSpec(configuration);
-            SFTPConnectionSpec alternateSpec = createAlternateSpec(configuration);
-            // Finally, update populated configuration with complex objects that cannot be specified by front end clients
-            configuration.setSourceDirectoryURLFactory(this.directoryURLFactory);
-            getEndpoint(spec, alternateSpec);
-        }
-        catch (InvalidPropertyException e)
-        {
-            throw new EndpointException(e);
-        }
+        //configuration.validate();
+        SFTPConnectionSpec spec = createSpec(configuration);
+        SFTPConnectionSpec alternateSpec = createAlternateSpec(configuration);
+        // Finally, update populated configuration with complex objects that cannot be specified by front end clients
+        configuration.setSourceDirectoryURLFactory(this.directoryURLFactory);
+        getEndpoint(spec, alternateSpec);
     }
 
     @Override public void stopManagedResource()
