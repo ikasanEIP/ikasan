@@ -42,9 +42,7 @@ package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
-
-import javax.resource.spi.InvalidPropertyException;
-
+import org.ikasan.spec.configuration.InvalidConfigurationException;
 /**
  * SFTP Consumer Configuration window.
  * 
@@ -669,30 +667,25 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
         this.isRecursive = isRecursive;
     }
 
-    /**
-     * Validate configured properties.
-     * 
-     * @throws InvalidPropertyException if combination of configured properties is invalid
-     */
-    public void validate() throws InvalidPropertyException
+    public void validate() throws InvalidConfigurationException
     {
         if(this.renameOnSuccess)
         {
             if(this.destructive)
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccess.booleanValue())
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] and moveOnSuccess[" + this.moveOnSuccess 
                         + "] are mutually exclusive.");
             }
             if(this.renameOnSuccessExtension == null)
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] requires renameOnSuccessExtention to be specified.");
             }
         }
@@ -701,13 +694,13 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
         {
             if(this.destructive)
             {
-                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                throw new InvalidConfigurationException("moveOnSuccess[" + this.moveOnSuccess
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccessNewPath == null)
             {
-                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                throw new InvalidConfigurationException("moveOnSuccess[" + this.moveOnSuccess
                         + "] requires moveOnSuccessNewPath to be specified.");
             }
         }

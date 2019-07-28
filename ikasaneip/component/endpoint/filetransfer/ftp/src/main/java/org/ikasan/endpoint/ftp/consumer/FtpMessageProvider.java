@@ -264,19 +264,12 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
 
     @Override public void startManagedResource()
     {
-        try
-        {
-            configuration.validate();
-            FTPConnectionSpec spec = createSpec(configuration);
-            FTPConnectionSpec alternateSpec = createAlternateSpec(configuration);
-            // Finally, update populated configuration with complex objects that cannot be specified by front end clients
-            configuration.setSourceDirectoryURLFactory(this.directoryURLFactory);
-            getEndpoint(spec, alternateSpec);
-        }
-        catch (InvalidPropertyException e)
-        {
-            throw new EndpointException(e);
-        }
+//            configuration.validate();
+        FTPConnectionSpec spec = createSpec(configuration);
+        FTPConnectionSpec alternateSpec = createAlternateSpec(configuration);
+        // Finally, update populated configuration with complex objects that cannot be specified by front end clients
+        configuration.setSourceDirectoryURLFactory(this.directoryURLFactory);
+        getEndpoint(spec, alternateSpec);
     }
 
     @Override public void stopManagedResource()

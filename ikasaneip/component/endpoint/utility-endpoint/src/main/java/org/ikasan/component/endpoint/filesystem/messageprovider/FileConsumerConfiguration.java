@@ -41,7 +41,10 @@
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,10 +52,10 @@ import java.util.List;
  * 
  * @author mitcje
  */
-public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
+public class FileConsumerConfiguration extends ScheduledConsumerConfiguration implements IsValidationAware
 {
     /** filenames to be processed */
-    private List<String> filenames;
+    private List<String> filenames = new ArrayList<String>();
 
     /** encoding of the files */
     private String encoding;
@@ -150,4 +153,23 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
     public void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning) {
         this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
     }
+
+    @Override
+    public void validate() throws InvalidConfigurationException
+    {
+        try
+        {
+            super.validate();
+        }
+        catch(InvalidConfigurationException e)
+        {
+            if(filenames == null || filenames.size() == 0)
+            {
+                throw new InvalidConfigurationException("filenames[" + filenames + "] filenames is a mandatory field which must be specified.");
+            }
+
+            throw e;
+        }
+    }
+
 }
