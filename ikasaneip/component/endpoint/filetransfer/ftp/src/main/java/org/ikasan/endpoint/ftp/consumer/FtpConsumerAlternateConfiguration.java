@@ -40,8 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
+import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,10 +249,10 @@ public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration
     /**
      * Validate configured properties.
      * 
-     * @throws InvalidPropertyException if combination of configured properties is invalid
+     * @throws InvalidConfigurationException if combination of configured properties is invalid
      */
     @Override
-    public void validate() throws InvalidPropertyException
+    public void validate() throws InvalidConfigurationException
     {
         super.validate();
         if (this.alternateSystemKey == null || this.alternateSystemKey.equals(" "))

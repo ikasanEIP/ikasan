@@ -41,28 +41,15 @@
 package org.ikasan.spec.configuration;
 
 /**
- * Interface provisioning callbacks for setting configuration properties
- * for a flow component as required for runtime. 
+ * Interface for validating runtime object instances.
  * 
  * @author Ikasan Development Team
  */
-public interface Configured<T>
+public interface IsValidationAware
 {
-    static void validate(Object configuration)
-    {
-        if(configuration != null && configuration instanceof IsValidationAware)
-        {
-            ((IsValidationAware)configuration).validate();
-        }
-    }
-
     /**
-     * Set configuration.
+     * Validate this instance.
+     * @throws InvalidConfigurationException
      */
-    public T getConfiguration();
-
-    /**
-     * Set configuration.
-     */
-    public void setConfiguration(T configuration);
+    void validate() throws InvalidConfigurationException;
 }
