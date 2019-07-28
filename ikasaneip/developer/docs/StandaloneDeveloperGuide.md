@@ -933,6 +933,11 @@ In this case the subsequent classes would simply be marked as Configured.
 
 So now we have updated our module lets build it, run it, and open the Console from a Browser.
 
+#### Configuration Validation
+The configuration class can implement the ```IsValidationAware``` interface which will require the class to implement a ```validate()``` method.
+This method allows the configuration class to have specific attributes checked to ensure validity. The ```validate()``` method is called by Ikasan just prior to the configuration being passed to the component, any failure will result in an ```InvalidConfigurationException``` being thrown from validate().
+Typically this should only be thrown from ```validate()``` on critical issues with the configuration instance. Validation will be called on any configuration implementing this contract.
+
 ### Dynamic Configured Resources
 Configured resources can specifically be set to persist their configuration on every event invocation through the flow.
 This can be useful where the configuration itself is updated based on the inflight event.
