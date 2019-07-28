@@ -120,6 +120,10 @@ public class ConfiguredResourceConfigurationServiceTest {
                 // once to log the fact we did not find one
                 one(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
+
+                // once to see if configuration isValidationAware
+                one(configuredResource).getConfiguration();
+                will(returnValue(null));
             }
         });
 

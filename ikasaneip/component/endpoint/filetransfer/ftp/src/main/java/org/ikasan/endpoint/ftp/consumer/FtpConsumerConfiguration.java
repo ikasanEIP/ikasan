@@ -40,8 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
+import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -164,27 +163,27 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     /**
      * Validate configured properties.
      * 
-     * @throws InvalidPropertyException if combination of configured properties is invalid
+     * @throws InvalidConfigurationException if combination of configured properties is invalid
      */
-    public void validate() throws InvalidPropertyException
+    public void validate() throws InvalidConfigurationException
     {
         if(this.renameOnSuccess.booleanValue())
         {
             if(this.destructive.booleanValue())
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccess.booleanValue())
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] and moveOnSuccess[" + this.moveOnSuccess 
                         + "] are mutually exclusive.");
             }
             if(this.renameOnSuccessExtension == null)
             {
-                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
                         + "] requires renameOnSuccessExtention to be specified.");
             }
         }
@@ -193,13 +192,13 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
         {
             if(this.destructive.booleanValue())
             {
-                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                throw new InvalidConfigurationException("moveOnSuccess[" + this.moveOnSuccess
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccessNewPath == null)
             {
-                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                throw new InvalidConfigurationException("moveOnSuccess[" + this.moveOnSuccess
                         + "] requires moveOnSuccessNewPath to be specified.");
             }
         }

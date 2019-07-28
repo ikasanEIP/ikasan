@@ -46,13 +46,7 @@ import java.util.List;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.util.ReflectionUtils;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationException;
-import org.ikasan.spec.configuration.ConfigurationFactory;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,6 +132,8 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         {
             logger.warn("No persisted dao for configuredResource [" + configuredResource.getConfiguredResourceId()
                     + "]. Default programmatic dao will be used.");
+
+            Configured.validate( configuredResource.getConfiguration() );
             return;
         }
         Object runtimeConfiguration = configuredResource.getConfiguration();
@@ -150,7 +146,13 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
                     ReflectionUtils.setProperty( runtimeConfiguration, persistedConfigurationParameter.getName(),
                             persistedConfigurationParameter.getValue() );
                 }
+
+                Configured.validate(runtimeConfiguration);
                 configuredResource.setConfiguration(runtimeConfiguration);
+            }
+            catch (InvalidConfigurationException e)
+            {
+                throw e;
             }
             catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
             {

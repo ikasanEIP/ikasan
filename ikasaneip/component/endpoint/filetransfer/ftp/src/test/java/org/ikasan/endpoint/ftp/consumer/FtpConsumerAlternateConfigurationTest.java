@@ -40,8 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
+import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.junit.Assert;
 
 import org.junit.Test;
@@ -225,10 +224,10 @@ public class FtpConsumerAlternateConfigurationTest
     
     /**
      * Test property successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_ftpConfiguration_validate_success() throws InvalidPropertyException
+    public void test_ftpConfiguration_validate_success() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.validate();
@@ -238,10 +237,10 @@ public class FtpConsumerAlternateConfigurationTest
      * Test property failed validate invocation based on mutually exclusive properties
      * of destructive and renameOnSuccess being true.
      * 
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -253,10 +252,10 @@ public class FtpConsumerAlternateConfigurationTest
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess and renameOnSuccess being true.
      * 
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -268,10 +267,10 @@ public class FtpConsumerAlternateConfigurationTest
      * Test property failed validate invocation based a missing property when
      * of renameOnSuccess is true and renameOnSuccessExtension is missing.
      * 
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -282,10 +281,10 @@ public class FtpConsumerAlternateConfigurationTest
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess is true and destructive is true.
      * 
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
@@ -297,10 +296,10 @@ public class FtpConsumerAlternateConfigurationTest
      * Test property failed validate invocation based a missing property when
      * of moveOnSuccess is true and moveOnSuccessNewPath is missing.
      * 
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidPropertyException.class)
-    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidPropertyException
+    @Test(expected = InvalidConfigurationException.class)
+    public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
@@ -309,10 +308,10 @@ public class FtpConsumerAlternateConfigurationTest
 
     /**
      * Test default property values successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_ftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidPropertyException
+    public void test_ftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
@@ -322,10 +321,10 @@ public class FtpConsumerAlternateConfigurationTest
 
     /**
      * Test default property values successful validate invocation.
-     * @throws InvalidPropertyException if configuration instance is invalid
+     * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_ftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidPropertyException
+    public void test_ftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
@@ -337,9 +336,9 @@ public class FtpConsumerAlternateConfigurationTest
      * If the systemKey value injected was invalid, validate will reset to default value <i>empty {@link String}</i>.
      * Invalid systemKey values are: <code>null</code> or <i>single space {@link String}</i> 
      * 
-     * @throws InvalidPropertyException if error validating configuration
+     * @throws InvalidConfigurationException if error validating configuration
      */
-    @Test public void validate_will_reset_systemKey_to_default_if_invalid() throws InvalidPropertyException
+    @Test public void validate_will_reset_systemKey_to_default_if_invalid() throws InvalidConfigurationException
     {
         FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
 

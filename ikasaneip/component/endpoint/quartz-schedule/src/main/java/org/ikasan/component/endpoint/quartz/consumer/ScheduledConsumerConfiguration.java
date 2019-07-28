@@ -41,12 +41,15 @@
 package org.ikasan.component.endpoint.quartz.consumer;
 
 
+import org.ikasan.spec.configuration.IsValidationAware;
+import org.ikasan.spec.configuration.InvalidConfigurationException;
+
 /**
  * Scheduled consumer configuration bean.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerConfiguration
+public class ScheduledConsumerConfiguration implements IsValidationAware
 {
     /** cron based expression for this schedule */
     private String cronExpression;
@@ -108,5 +111,14 @@ public class ScheduledConsumerConfiguration
     public void setTimezone(String timezone)
     {
         this.timezone = timezone;
+    }
+
+    @Override
+    public void validate() throws InvalidConfigurationException
+    {
+        if(cronExpression == null)
+        {
+            throw new InvalidConfigurationException("cronExpression[" + cronExpression + "] cronExpression is a mandatory field which must be specified.");
+        }
     }
 }
