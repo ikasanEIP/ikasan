@@ -1,40 +1,26 @@
-package org.ikasan.dashboard.housekeeping;
+package org.ikasan.housekeeping;
 
-import org.ikasan.solr.service.SolrGeneralServiceImpl;
-import org.ikasan.spec.solr.SolrService;
-import org.ikasan.spec.solr.SolrServiceBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 /**
- * Created by Ikasan Development Team on 09/08/2016.
+ * Created by Ikasan Development Team on 09/07/2019.
  */
 @DisallowConcurrentExecution
-public class HousekeepingJob implements Job
+public class HousekeepingJobImpl implements HousekeepingJob
 {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(HousekeepingJob.class);
-
-    public static final String HOUSE_KEEPING_BATCH_SIZE = "-houseKeepingBatchSize";
-    public static final String TRANSACTION_BATCH_SIZE = "-transactionBatchSize";
-    public static final String CRON_EXPRESSION = "-cronExpression";
-    public static final String ENABLED = "-enabled";
-
-
-    public static final String DEFAULT_CRON_EXPRESSION = "0 0/1 * * * ?";
-    public static final Integer DEFAULT_BATCH_DELETE_SIZE = 200;
-    public static final Integer DEFAULT_TRANSACTION_DELETE_SIZE = 2500;
-
+    private static Logger logger = LoggerFactory.getLogger(HousekeepingJobImpl.class);
 
     private String jobName;
     private HousekeepService houseKeepService;
-    private PlatformConfigurationService platformConfigurationService;
+    private Environment environment;
     private Integer batchDeleteSize;
     private Integer transactionDeleteSize;
     private String cronExpression;
@@ -43,9 +29,8 @@ public class HousekeepingJob implements Job
     private String executionErrorMessage;
     private Boolean initialised = false;
 
-
-    public HousekeepingJob(String jobName, HousekeepService houseKeepService,
-                           PlatformConfigurationService platformConfigurationService)
+    public HousekeepingJobImpl(String jobName, HousekeepService houseKeepService,
+        Environment environment)
     {
         this.jobName = jobName;
         if(this.jobName == null)
@@ -57,18 +42,19 @@ public class HousekeepingJob implements Job
         {
             throw new IllegalArgumentException("houseKeepService cannot be null!");
         }
-        this.platformConfigurationService = platformConfigurationService;
-        if(this.platformConfigurationService == null)
+        this.environment = environment;
+        if(this.environment == null)
         {
-            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+            throw new IllegalArgumentException("environment cannot be null!");
         }
     }
 
+    @Override
     public void init()
     {
         try
         {
-            String houseKeepingBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + HOUSE_KEEPING_BATCH_SIZE);
+            String houseKeepingBatchSize = this.environment.getProperty(this.jobName + HOUSE_KEEPING_BATCH_SIZE);
             if (houseKeepingBatchSize != null && houseKeepingBatchSize.length() > 0)
             {
                 try
@@ -80,7 +66,6 @@ public class HousekeepingJob implements Job
                 {
                     this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                     this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
-                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + HOUSE_KEEPING_BATCH_SIZE, DEFAULT_BATCH_DELETE_SIZE.toString());
                     logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
                             + " is not a number. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
                 }
@@ -89,12 +74,11 @@ public class HousekeepingJob implements Job
             {
                 this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                 this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
-                this.platformConfigurationService.saveConfigurationValue(this.getJobName() + HOUSE_KEEPING_BATCH_SIZE, DEFAULT_BATCH_DELETE_SIZE.toString());
                 logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
                         + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
             }
 
-            String transactionBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + TRANSACTION_BATCH_SIZE);
+            String transactionBatchSize = this.environment.getProperty(this.jobName + TRANSACTION_BATCH_SIZE);
             if (transactionBatchSize != null && transactionBatchSize.length() > 0)
             {
                 try
@@ -106,7 +90,6 @@ public class HousekeepingJob implements Job
                 {
                     this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
                     this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
-                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + TRANSACTION_BATCH_SIZE, DEFAULT_TRANSACTION_DELETE_SIZE.toString());
                     logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
                             + " is not a number. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
                 }
@@ -115,12 +98,11 @@ public class HousekeepingJob implements Job
             {
                 this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
                 this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
-                this.platformConfigurationService.saveConfigurationValue(this.getJobName() + TRANSACTION_BATCH_SIZE, DEFAULT_TRANSACTION_DELETE_SIZE.toString());
                 logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
                         + " is not available. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
             }
 
-            String enabled = this.platformConfigurationService.getConfigurationValue(this.jobName + ENABLED);
+            String enabled = this.environment.getProperty(this.jobName + ENABLED);
             if (enabled != null && enabled.length() > 0)
             {
                 try
@@ -129,14 +111,12 @@ public class HousekeepingJob implements Job
                 } catch (Exception e)
                 {
                     this.enabled = true;
-                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
                     logger.warn("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
                 }
             }
             else
             {
                 this.enabled = true;
-                this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
                 logger.warn("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
             }
         }
@@ -149,6 +129,11 @@ public class HousekeepingJob implements Job
         this.initialised = true;
     }
 
+    @Override public void save()
+    {
+        //Not Supported
+    }
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
@@ -158,15 +143,6 @@ public class HousekeepingJob implements Job
         {
             if (houseKeepService.housekeepablesExist())
             {
-                if(this.houseKeepService instanceof SolrGeneralServiceImpl)
-                {
-                    String username = this.platformConfigurationService.getSolrUsername();
-                    String password = this.platformConfigurationService.getSolrPassword();
-
-                    ((SolrGeneralServiceImpl)this.houseKeepService).setSolrUsername(username);
-                    ((SolrGeneralServiceImpl)this.houseKeepService).setSolrPassword(password);
-                }
-
                 this.houseKeepService.housekeep();
             }
         }
@@ -181,41 +157,27 @@ public class HousekeepingJob implements Job
         logger.info("Finished housekeeping job executing: " + this.getJobName());
     }
 
-    public void save()
-    {
-        getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.CRON_EXPRESSION, this.cronExpression);
-        getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.HOUSE_KEEPING_BATCH_SIZE, this.batchDeleteSize.toString());
-        getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.TRANSACTION_BATCH_SIZE, this.transactionDeleteSize.toString());
-        getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.ENABLED, this.enabled.toString());
-
-    }
-
-
     public void setCronExpression(String cronExpression)
     {
         this.cronExpression = cronExpression;
     }
 
+    @Override
     public String getCronExpression()
     {
-        cronExpression = this.platformConfigurationService.getConfigurationValue(this.getJobName() + CRON_EXPRESSION);
+        cronExpression = this.environment.getProperty(this.getJobName() + CRON_EXPRESSION);
 
         if(cronExpression == null || cronExpression.isEmpty())
         {
             cronExpression = DEFAULT_CRON_EXPRESSION;
-            this.platformConfigurationService.saveConfigurationValue(this.getJobName() + CRON_EXPRESSION, cronExpression);
         }
 
         return cronExpression;
     }
 
-    public PlatformConfigurationService getPlatformConfigurationService()
+    public Environment getEnvironment()
     {
-        return platformConfigurationService;
+        return environment;
     }
 
     public String getJobName()
@@ -243,6 +205,7 @@ public class HousekeepingJob implements Job
         this.transactionDeleteSize = transactionDeleteSize;
     }
 
+    @Override
     public Boolean isEnabled()
     {
         return enabled;
@@ -253,16 +216,19 @@ public class HousekeepingJob implements Job
         this.enabled = enabled;
     }
 
+    @Override
     public Boolean getLastExecutionSuccessful()
     {
         return lastExecutionSuccessful;
     }
 
+    @Override
     public String getExecutionErrorMessage()
     {
         return executionErrorMessage;
     }
 
+    @Override
     public Boolean isInitialised()
     {
         return initialised;

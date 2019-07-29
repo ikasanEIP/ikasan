@@ -40,28 +40,20 @@
  */
 package org.ikasan.dashboard.ui;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import com.google.common.base.Splitter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.discovery.DiscoverySchedulerService;
-import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.notification.NotifierServiceImpl;
 import org.ikasan.dashboard.solr.SolrInitialiser;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.ikasan.spec.solr.SolrInitialisationService;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
  * 

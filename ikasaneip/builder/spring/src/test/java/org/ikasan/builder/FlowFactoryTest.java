@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
 import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.housekeeping.HousekeepingAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -70,7 +71,8 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class })
+@ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
+    HousekeepingAutoConfiguration.class })
 public class FlowFactoryTest
 {
     @Resource
