@@ -121,15 +121,4 @@ public class ModuleConfig
         return module;
     }
 
-
-//    @Bean
-//    @DependsOn("ikasanDatasource")
-//    public SpringLiquibase liquibase(
-//    DataSource ikasanDatasource) {
-//        SpringLiquibase liquibase = new SpringLiquibase();
-//        liquibase.setChangeLog("classpath:db-changelog.xml");
-//        liquibase.setDataSource(ikasanDatasource);
-//        return liquibase;
-//    }
-
 }
