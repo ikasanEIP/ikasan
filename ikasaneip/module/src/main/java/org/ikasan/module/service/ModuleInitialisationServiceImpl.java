@@ -41,15 +41,13 @@
 package org.ikasan.module.service;
 
 import org.ikasan.module.converter.ModuleConverter;
-import org.ikasan.topology.model.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -59,21 +57,23 @@ import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -114,7 +114,13 @@ public class ModuleInitialisationServiceImpl
      */
     private TopologyService topologyService;
 
+    /**
+     * HousekeepingSchedulerService provides access to starting off house keeping processes
+     */
+    private HousekeepingSchedulerService housekeepingSchedulerService;
+
     private ModuleConverter moduleConverter = new ModuleConverter();
+
 
     /**
      * Constructor
@@ -124,7 +130,8 @@ public class ModuleInitialisationServiceImpl
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-            SecurityService securityService, TopologyService topologyService)
+        SecurityService securityService, TopologyService topologyService,
+        HousekeepingSchedulerService housekeepingSchedulerService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -146,6 +153,11 @@ public class ModuleInitialisationServiceImpl
         if (topologyService == null)
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
+        }
+        this.housekeepingSchedulerService = housekeepingSchedulerService;
+        if (housekeepingSchedulerService == null)
+        {
+            throw new IllegalArgumentException("housekeepingSchedulerService cannot be 'null'");
         }
     }
 
@@ -258,6 +270,7 @@ public class ModuleInitialisationServiceImpl
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
+            this.housekeepingSchedulerService.registerJobs();
         }
         catch (RuntimeException re)
         {

@@ -1,9 +1,11 @@
-package org.ikasan.dashboard.housekeeping;
+package org.ikasan.housekeeping;
 
+import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.housekeeping.HousekeepingJob;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.scheduler.ScheduledJobFactory;
-import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.*;
@@ -14,10 +16,10 @@ import static org.quartz.TriggerBuilder.newTrigger;
 /**
  * Created by Ikasan Development Team on 24/08/2016.
  */
-public class HousekeepingSchedulerService
+public class HousekeepingSchedulerServiceImpl implements HousekeepingSchedulerService
 {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(HousekeepingSchedulerService.class);
+    private static Logger logger = LoggerFactory.getLogger(HousekeepingSchedulerServiceImpl.class);
 
     /**
      * Scheduler
@@ -32,7 +34,7 @@ public class HousekeepingSchedulerService
 
     private Map<String, JobDetail> houseKeepingJobDetailsMap;
 
-    public HousekeepingSchedulerService(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
+    public HousekeepingSchedulerServiceImpl(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
                              List<HousekeepingJob> houseKeepingJobs)
     {
         this.scheduler = scheduler;
@@ -46,14 +48,14 @@ public class HousekeepingSchedulerService
             throw new IllegalArgumentException("scheduledJobFactory cannot be null!");
         }
 
-        this.houseKeepingJobs = new HashMap<String, HousekeepingJob>();
-        this.houseKeepingJobDetailsMap = new HashMap<String, JobDetail>();
-        this.houseKeepingJobDetails = new ArrayList<JobDetail>();
+        this.houseKeepingJobs = new HashMap<>();
+        this.houseKeepingJobDetailsMap = new HashMap<>();
+        this.houseKeepingJobDetails = new ArrayList<>();
 
         for(HousekeepingJob job: houseKeepingJobs)
         {
             JobDetail jobDetail = this.scheduledJobFactory.createJobDetail
-                    (job, HousekeepingJob.class, job.getJobName(), "housekeeping");
+                    (job, HousekeepingJobImpl.class, job.getJobName(), "housekeeping");
 
             houseKeepingJobDetails.add(jobDetail);
             houseKeepingJobDetailsMap.put(job.getJobName(), jobDetail);
@@ -137,7 +139,7 @@ public class HousekeepingSchedulerService
      * Method factory for creating a cron trigger
      *
      * @return jobDetail
-     * @throws java.text.ParseException
+     * @throws ParseException
      */
     protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {

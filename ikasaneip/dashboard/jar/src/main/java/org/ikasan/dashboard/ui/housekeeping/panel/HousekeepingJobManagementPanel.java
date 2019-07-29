@@ -1,18 +1,16 @@
 package org.ikasan.dashboard.ui.housekeeping.panel;
 
-
 import com.vaadin.data.Validator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.ikasan.dashboard.housekeeping.HousekeepingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.QuartzCronExpressionValidator;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.housekeeping.HousekeepingJob;
 
 /**
  * Created by Ikasan Development Team on 24/08/2016.
@@ -20,14 +18,12 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 public class HousekeepingJobManagementPanel extends Panel
 {
     private HousekeepingJob housekeepingjob;
-    private PlatformConfigurationService platformConfigurationService;
     private HousekeepingSchedulerService housekeepingSchedulerService;
 
-    public HousekeepingJobManagementPanel(HousekeepingJob housekeepingjob, PlatformConfigurationService platformConfigurationService,
+    public HousekeepingJobManagementPanel(HousekeepingJob housekeepingjob,
                                           HousekeepingSchedulerService housekeepingSchedulerService)
     {
         this.housekeepingjob = housekeepingjob;
-        this.platformConfigurationService = platformConfigurationService;
         this.housekeepingSchedulerService = housekeepingSchedulerService;
 
         init();

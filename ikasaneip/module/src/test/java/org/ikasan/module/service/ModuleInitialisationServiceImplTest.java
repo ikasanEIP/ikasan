@@ -40,7 +40,6 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
@@ -48,13 +47,14 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
-import org.ikasan.spec.module.*;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleActivator;
+import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.topology.model.*;
-import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -71,7 +71,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Test cases for ModuleInitialisationServiceImpl
@@ -91,6 +90,7 @@ public class ModuleInitialisationServiceImplTest {
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
     SecurityService securityService = mockery.mock(SecurityService.class);
     TopologyService topologyService = mockery.mock(TopologyService.class);
+    HousekeepingSchedulerService housekeepingSchedulerService = mockery.mock(HousekeepingSchedulerService.class);
     FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class);
     RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class);
     SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class);
@@ -109,7 +109,7 @@ public class ModuleInitialisationServiceImplTest {
     ModuleInitialisationServiceImpl uut;
     @Before
     public void setup(){
-        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService);
+        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService, housekeepingSchedulerService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
@@ -117,17 +117,17 @@ public class ModuleInitialisationServiceImplTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService);
+        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService, housekeepingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService);
+        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService, housekeepingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_startupControlDao() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,topologyService);
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,topologyService, housekeepingSchedulerService);
     }
 
     @Test

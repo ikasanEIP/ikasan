@@ -44,6 +44,10 @@ datasource.url=jdbc:sybase:Tds:hostname:50100/Ikasan01
 datasource.db.name=Ikasan01
 datasource.port=50100
 datasource.host=hostname
+
+datasource.validationQuery=select 1
+datasource.min.pool.size=20
+datasource.max.pool.size=100
 ```         
    - mssql   
 ```
@@ -56,10 +60,30 @@ datasource.url=jdbc:sybase:Tds:hostname:50100/Ikasan01
 datasource.db.name=Ikasan01
 datasource.port=50100
 datasource.host=hostname
+
+datasource.validationQuery=select 1
+datasource.min.pool.size=20
+datasource.max.pool.size=100
+```    
+   - mysql   
+```
+datasource.username=ikasan01xxx
+datasource.password=XXXXXXXXXXXXXXXXXXXXXXX
+datasource.url=jdbc:mysql://hostname:3306/Ikasan01
+datasource.dialect=org.hibernate.dialect.MySQL5Dialect
+datasource.driver-class-name=com.mysql.jdbc.Driver
+datasource.xadriver-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+datasource.db.name=Ikasan01
+datasource.port=3306
+datasource.host=hostname
+
+datasource.validationQuery=select 1
+datasource.min.pool.size=20
+datasource.max.pool.size=100
 ```                          
 - Start dashboard with custom driver 
 ```
-$JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.0.jar
+$JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.1.jar
 
 ```    
 
@@ -69,6 +93,9 @@ Navigate to Frontend [http://localhost:8080/ikasan-dashboard](http://localhost:8
 server.port=8080
 server.address=0.0.0.0
 server.servlet.context-path=/ikasan-dashboard
+
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.solr.SolrAutoConfiguration,org.ikasan.module.IkasanModuleAutoConfiguration,org.ikasan.builder.IkasanBaseAutoConfiguration,org.ikasan.housekeeping.HousekeepingAutoConfiguration,org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+
 ```      
 
 

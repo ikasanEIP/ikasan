@@ -851,6 +851,7 @@
                 <module>system-event</module>
                 <module>module</module>
                 <module>scheduler</module>
+                <module>housekeeping</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
@@ -895,6 +896,7 @@
                 <module>system-event</module>
                 <module>module</module>
                 <module>scheduler</module>
+                <module>housekeeping</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
@@ -1038,6 +1040,11 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-topology</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-housekeeping</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
