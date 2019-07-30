@@ -168,7 +168,8 @@ public class FlowBuilderTest
     public void setup()
     {
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
-        "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
+            "--spring.liquibase.change-log=classpath:db-changelog.xml",
+            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
         };
