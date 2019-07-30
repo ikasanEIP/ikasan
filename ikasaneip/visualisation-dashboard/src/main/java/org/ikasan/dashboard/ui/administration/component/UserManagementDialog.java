@@ -2,6 +2,7 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
+import com.vaadin.data.Item;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -13,12 +14,20 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UserManagementDialog extends Dialog
@@ -28,7 +37,16 @@ public class UserManagementDialog extends Dialog
     private SecurityService securityService;
     private SystemEventService systemEventService;
 
-    public UserManagementDialog(User user, UserService userService)
+    /**
+     * Constructor
+     *
+     * @param user
+     * @param userService
+     * @param securityService
+     * @param systemEventService
+     */
+    public UserManagementDialog(User user, UserService userService,
+        SecurityService securityService, SystemEventService systemEventService)
     {
         this.user = user;
         if(this.user == null)
@@ -39,6 +57,16 @@ public class UserManagementDialog extends Dialog
         if(this.userService == null)
         {
             throw new IllegalArgumentException("User Service cannot be null!");
+        }
+        this.securityService = securityService;
+        if(this.userService == null)
+        {
+            throw new IllegalArgumentException("securityService cannot be null!");
+        }
+        this.systemEventService = systemEventService;
+        if(this.systemEventService == null)
+        {
+            throw new IllegalArgumentException("systemEventService cannot be null!");
         }
 
         init();
@@ -66,20 +94,31 @@ public class UserManagementDialog extends Dialog
     {
         H3 dashboardActivityLabel = new H3("Dashboard Activity");
 
-        Grid<User> grid = new Grid<>();
+        Grid<SystemEvent> dashboardActivityGrid = new Grid<>();
 
-        grid.setClassName("my-grid");
-        grid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-        grid.addColumn(User::getPreviousAccessTimestamp).setHeader("Last Access").setSortable(true);
+        dashboardActivityGrid.setClassName("my-grid");
+        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
+        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
 
-        grid.setSizeFull();
+        dashboardActivityGrid.setSizeFull();
+
+        ArrayList<String> subjects = new ArrayList<String>();
+        subjects.add(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS);
+        subjects.add(SystemEventConstants.DASHBOARD_LOGOUT_CONSTANTS);
+        subjects.add(SystemEventConstants.DASHBOARD_SESSION_EXPIRED_CONSTANTS);
+
+        List<SystemEvent> events = this.systemEventService.listSystemEvents(subjects, user.getUsername(), null, null);
+        dashboardActivityGrid.setItems(events);
+
+        Button dummy = new Button("button");
+        dummy.setVisible(false);
+
+        HorizontalLayout labelLayout = new HorizontalLayout();
+        labelLayout.setWidthFull();
+        labelLayout.add(dashboardActivityLabel, dummy);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(dashboardActivityLabel, grid);
+        layout.add(labelLayout, dashboardActivityGrid);
 
         return layout;
     }
@@ -88,18 +127,17 @@ public class UserManagementDialog extends Dialog
     {
         H3 rolesLabel = new H3("Ikasan Roles");
 
-        Grid<User> grid = new Grid<>();
+        Grid<Role> grid = new Grid<>();
 
         grid.setClassName("my-grid");
-        grid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
-
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-        grid.addColumn(User::getPreviousAccessTimestamp).setHeader("Last Access").setSortable(true);
+        grid.addColumn(Role::getName).setKey("username").setHeader("Name").setSortable(true);
+        grid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true);
 
         grid.setSizeFull();
+
+        IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
+
+        grid.setItems(principal.getRoles());
 
         Button addRoleButton = new Button("Add role");
 
@@ -138,16 +176,24 @@ public class UserManagementDialog extends Dialog
     private VerticalLayout createLdapGroupGrid()
     {
         H3 ldapGroupsLabel = new H3("LDAP Groups");
-        Grid<User> grid = new Grid<>();
+        Grid<IkasanPrincipal> grid = new Grid<>();
 
         grid.setClassName("my-grid");
-        grid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader("LDAP Group").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getType).setKey("type").setHeader("Type").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader("Description").setSortable(true);
 
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-        grid.addColumn(User::getPreviousAccessTimestamp).setHeader("Last Access").setSortable(true);
+        List<IkasanPrincipal> ldapGroups = new ArrayList<>();
+
+        for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
+        {
+            if(!ikasanPrincipal.getType().equals("user"))
+            {
+               ldapGroups.add(ikasanPrincipal);
+            }
+        }
+
+        grid.setItems(ldapGroups);
 
         grid.setSizeFull();
 
@@ -159,21 +205,24 @@ public class UserManagementDialog extends Dialog
     private VerticalLayout createSecurityChangesGrid()
     {
         H3 userSecurityChangesLabel = new H3("User Security Changes");
-        Grid<User> grid = new Grid<>();
 
-        grid.setClassName("my-grid");
-        grid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
+        Grid<SystemEvent> lastAccessGrid = new Grid<>();
 
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-        grid.addColumn(User::getPreviousAccessTimestamp).setHeader("Last Access").setSortable(true);
+        lastAccessGrid.setClassName("my-grid");
+        lastAccessGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
+        lastAccessGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
 
-        grid.setSizeFull();
+        lastAccessGrid.setSizeFull();
+
+        ArrayList<String> subjects = new ArrayList<String>();
+        subjects.add(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS);
+
+        List<SystemEvent> events = this.systemEventService.listSystemEvents(subjects, user.getUsername(), null, null);
+
+        lastAccessGrid.setItems(events);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userSecurityChangesLabel, grid);
+        layout.add(userSecurityChangesLabel, lastAccessGrid);
         return layout;
     }
 
