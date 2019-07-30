@@ -18,7 +18,9 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.security.model.User;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,12 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private SecurityService securityService;
+
+    @Resource
+    private SystemEventService systemEventService;
 
     private Grid<User> userGrid;
 
@@ -89,7 +97,8 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
 
         this.userGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<User>>) userItemDoubleClickEvent ->
         {
-            UserManagementDialog dialog = new UserManagementDialog(userItemDoubleClickEvent.getItem(), userService);
+            UserManagementDialog dialog = new UserManagementDialog(userItemDoubleClickEvent.getItem(), userService
+                , this.securityService, this.systemEventService);
 
             dialog.open();
         });
