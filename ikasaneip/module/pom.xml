@@ -88,49 +88,44 @@
 	      <artifactId>ikasan-spec-module</artifactId>
 	    </dependency>
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+        </dependency>
+        <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-security</artifactId>
-          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-system-event</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-flow</artifactId>
-          <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-monitor</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
-			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-housekeeping</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -141,7 +136,6 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

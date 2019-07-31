@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.harvesting.window.HarvestingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
