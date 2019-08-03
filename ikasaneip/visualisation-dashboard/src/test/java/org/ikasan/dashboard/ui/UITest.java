@@ -6,6 +6,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouteData;
 import com.vaadin.flow.router.Router;
 import com.vaadin.flow.router.RouterLayout;
+import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.junit.jupiter.api.Assertions;
@@ -41,8 +42,8 @@ public class UITest
         Map<Class<? extends RouterLayout>, List<RouteData>> routesByParent = router.getRoutesByParent();
         List<RouteData> myRoutes = routesByParent.get(IkasanAppLayout.class);
 
-        Assertions.assertEquals(1, myRoutes.size(), "Number of Routes is 1!");
-        Assertions.assertEquals("", myRoutes.get(0).getUrl(), "Number of Routes is 1!");
-        Assertions.assertEquals(GraphView.class, myRoutes.get(0).getNavigationTarget(), "Number of Routes is 1!");
+        Assertions.assertEquals(8, myRoutes.size(), "Number of Routes is 1!");
+        Assertions.assertEquals("", myRoutes.get(0).getUrl(), "Default route is an empty string!");
+        Assertions.assertEquals(HomeView.class, myRoutes.get(0).getNavigationTarget(), "HomeView is the default view!");
     }
 }
