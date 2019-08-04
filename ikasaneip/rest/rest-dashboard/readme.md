@@ -8,6 +8,7 @@ The runtime metadata is also pushed to a data store and is used to build visual 
 while the runtime state can be used for monitoring and control purposes.  
 
 ## Error Harvesting Service
+Aggregation service for errors produced by the Ikasan Hospital service.
 
 | Parameter | Value  | 
 |--- | --- |
@@ -85,6 +86,14 @@ while the runtime state can be used for monitoring and control purposes.
 </details>
 
 ## Exclusions Harvesting Service
+Aggregation service for exclusions produced by the Ikasan Hospital service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/harvest/exclusions |
+| Payload | A json serialised List of [ExclusionEvent](../../spec/service/exclusion/src/main/java/org/ikasan/spec/exclusion/ExclusionEvent.java) |
+
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -129,6 +138,14 @@ while the runtime state can be used for monitoring and control purposes.
 </details>
 
 ## Metrics Harvesting Service
+Aggregation service for metrics produced by the Ikasan Metrics service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/harvest/metrics |
+| Payload | A json serialised List of [FlowInvocationMetric](../../spec/service/history/src/main/java/org/ikasan/spec/history/FlowInvocationMetric.java) |
+
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -1181,6 +1198,14 @@ while the runtime state can be used for monitoring and control purposes.
 </details>
 
 ## Replay Events Harvesting Service
+Aggregation service for replay events produced by the Ikasan Replay service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/harvest/replay |
+| Payload | A json serialised List of [ReplayEvent](../../spec/service/replay/src/main/java/org/ikasan/spec/replay/ReplayEvent.java) |
+
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -1227,6 +1252,13 @@ while the runtime state can be used for monitoring and control purposes.
 </details>
 
 ## Wiretap Events Harvesting Service
+Aggregation service for wiretap events produced by the Ikasan Wiretap service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/harvest/wiretaps |
+| Payload | A json serialised List of [WiretapEvent](../../spec/service/wiretap/src/main/java/org/ikasan/spec/wiretap/WiretapEvent.java) |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -1271,6 +1303,205 @@ while the runtime state can be used for monitoring and control purposes.
 </details>
 
 ## Metadata Service
+Aggregation service for module meta data produced by the Ikasan Topology service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/module/metadata |
+| Payload | A json serialised [ModuleMetaData](../../spec/metadata/src/main/java/org/ikasan/spec/metadata/ModuleMetaData.java) |
+
+
+<details>
+    <summary>Click to view the sample JSON payload expected by the service.</summary>
+<p>
+
+````json
+{
+  "name" : "module name",
+  "description" : "module description",
+  "version" : "module version",
+  "flows" : [ {
+    "name" : "Simple Flow 1",
+    "consumer" : {
+      "componentName" : "Test Consumer",
+      "description" : "Test Consumer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    },
+    "transitions" : [ {
+      "from" : "Test Converter",
+      "to" : "Test Producer",
+      "name" : "default"
+    }, {
+      "from" : "Test Broker",
+      "to" : "Test Converter",
+      "name" : "default"
+    }, {
+      "from" : "Test Splitter",
+      "to" : "Test Broker",
+      "name" : "default"
+    }, {
+      "from" : "Test Filter",
+      "to" : "Test Splitter",
+      "name" : "default"
+    }, {
+      "from" : "Test Consumer",
+      "to" : "Test Filter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Test Producer",
+      "description" : "Test Producer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.metadata.components.TestProducer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Converter",
+      "description" : "Test Converter Description",
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.metadata.components.TestConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Broker",
+      "description" : "Test Broker Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "org.ikasan.metadata.components.TestBroker",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Splitter",
+      "description" : "Test Splitter Description",
+      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
+      "implementingClass" : "org.ikasan.metadata.components.TestSplitter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Filter",
+      "description" : "Test Filter Description",
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.metadata.components.TestFilter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Consumer",
+      "description" : "Test Consumer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    } ],
+    "configurationId" : "FLOW_CONFIGURATION_ID"
+  }, {
+    "name" : "Simple Flow 2",
+    "consumer" : {
+      "componentName" : "Test Consumer",
+      "description" : "Test Consumer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    },
+    "transitions" : [ {
+      "from" : "Test Converter",
+      "to" : "Test Producer",
+      "name" : "default"
+    }, {
+      "from" : "Test Broker",
+      "to" : "Test Converter",
+      "name" : "default"
+    }, {
+      "from" : "Test Splitter",
+      "to" : "Test Broker",
+      "name" : "default"
+    }, {
+      "from" : "Test Filter",
+      "to" : "Test Splitter",
+      "name" : "default"
+    }, {
+      "from" : "Test Consumer",
+      "to" : "Test Filter",
+      "name" : "default"
+    } ],
+    "flowElements" : [ {
+      "componentName" : "Test Producer",
+      "description" : "Test Producer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+      "implementingClass" : "org.ikasan.metadata.components.TestProducer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Converter",
+      "description" : "Test Converter Description",
+      "componentType" : "org.ikasan.spec.component.transformation.Converter",
+      "implementingClass" : "org.ikasan.metadata.components.TestConverter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Broker",
+      "description" : "Test Broker Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+      "implementingClass" : "org.ikasan.metadata.components.TestBroker",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Splitter",
+      "description" : "Test Splitter Description",
+      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
+      "implementingClass" : "org.ikasan.metadata.components.TestSplitter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Filter",
+      "description" : "Test Filter Description",
+      "componentType" : "org.ikasan.spec.component.filter.Filter",
+      "implementingClass" : "org.ikasan.metadata.components.TestFilter",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    }, {
+      "componentName" : "Test Consumer",
+      "description" : "Test Consumer Description",
+      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
+      "configurationId" : null,
+      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
+      "configurable" : false
+    } ],
+    "configurationId" : "FLOW_CONFIGURATION_ID"
+  }
+  ]
+}
+````
+ 
+</p>
+</details>
+
+## Configuration Service
+Aggregation service for module meta data produced by the Ikasan Topology service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {dashboard-root-context}/rest/module/configuration |
+| Payload | See [ModuleMetaData](../../configuration-service/Readme.md) |
+
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
