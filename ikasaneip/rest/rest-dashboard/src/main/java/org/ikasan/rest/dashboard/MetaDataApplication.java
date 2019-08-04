@@ -1,77 +1,52 @@
 package org.ikasan.rest.dashboard;
 
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.FlowMetaDataProvider;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleContainer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ikasan.rest.dashboard.model.WiretapEventImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.util.List;
 
 
 /**
  * Metadata application implementing the REST contract
  */
 
-@RequestMapping("/rest/metadata")
+@RequestMapping("/rest")
 @RestController
 public class MetaDataApplication
 {
     private static Logger logger = LoggerFactory.getLogger(MetaDataApplication.class);
 
+    private ObjectMapper mapper;
 
-    @Autowired
-    private ModuleContainer moduleContainer;
-
-    @Autowired
-    private FlowMetaDataProvider<String> flowMetaDataProvider;
-
-    @Autowired
-    private ModuleMetaDataProvider<String> moduleMetaDataProvider;
-
-    /**
-     * TODO: work out how to get annotation security working.
-     *
-     * @param moduleName
-     * @param flowName
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.GET,
-            value = "/flow/{moduleName}/{flowName}",
-            produces = {"application/json"})
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getFlowMetadata(@PathVariable("moduleName") String moduleName,
-                                              @PathVariable("flowName") String flowName) {
-
-        Module<Flow> module = moduleContainer.getModule(moduleName);
-
-        Flow flow = module.getFlow(flowName);
-
-        return new ResponseEntity(this.flowMetaDataProvider.describeFlow(flow), HttpStatus.OK);
+    public MetaDataApplication()
+    {
+        this.mapper = new ObjectMapper();
     }
 
-    /**
-     * TODO: work out how to get annotation security working.
-     *
-     * @param moduleName
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/module/{moduleName}",
-        produces = {"application/json"})
+    @RequestMapping(method = RequestMethod.PUT,
+        value = "/module/metadata")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getModuleMetadata(@PathVariable("moduleName") String moduleName) {
+    public ResponseEntity harvestWiretap(@RequestBody String metadataJsonPayload)
+    {
+//        try
+//        {
+            logger.info(metadataJsonPayload);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//            throw new ResponseStatusException(
+//                HttpStatus.BAD_REQUEST, "Cannot parse wiretap JSON!", e);
+//        }
 
-        Module<Flow> module = moduleContainer.getModule(moduleName);
-
-        return new ResponseEntity(this.moduleMetaDataProvider.describeModule(module), HttpStatus.OK);
+        return new ResponseEntity("Module metadata successfully captured!", HttpStatus.OK);
     }
 }
