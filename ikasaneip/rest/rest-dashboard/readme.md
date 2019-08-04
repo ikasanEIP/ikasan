@@ -1500,7 +1500,7 @@ Aggregation service for module meta data produced by the Ikasan Topology service
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/module/configuration |
-| Payload | See [ModuleMetaData](../../configuration-service/Readme.md) |
+| Payload | See [Configuration Service metadata](../../configuration-service/Readme.md) |
 
 
 <details>
