@@ -9,10 +9,11 @@ while the runtime state can be used for monitoring and control purposes.
 
 ## Error Harvesting Service
 
-| |  | 
+| Parameter | Value  | 
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/harvest/errors |
+| Payload | A json serialised List of [ErrorOccurence](../../spec/service/error-reporting/src/main/java/org/ikasan/spec/error/reporting/ErrorOccurrence.java) |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
