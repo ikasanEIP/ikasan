@@ -8,6 +8,35 @@ import org.ikasan.spec.wiretap.WiretapEvent;
  */
 public class SolrWiretapEvent implements WiretapEvent<String>
 {
+
+    @Field("id")
+    private String id;
+
+    @Field("payload")
+    private String event;
+
+    @Field("moduleName")
+    private String moduleName;
+
+    @Field("flowName")
+    private String flowName;
+
+    @Field("componentName")
+    private String componentName;
+
+    @Field("timestamp")
+    private long timestamp;
+
+    @Field("expiry")
+    private long expiry;
+
+    @Field("event")
+    private String eventId;
+
+    @Field("relateEvent")
+    private String relatedEventId;
+
+
     /**
      * Used by solr to create results.
      */
@@ -39,34 +68,6 @@ public class SolrWiretapEvent implements WiretapEvent<String>
         this.timestamp = eventTimestamp;
         this.event = event;
     }
-
-    @Field("id")
-    private String id;
-
-    @Field("payload")
-    private String event;
-
-    @Field("moduleName")
-    private String moduleName;
-
-    @Field("flowName")
-    private String flowName;
-
-    @Field("componentName")
-    private String componentName;
-
-    @Field("timestamp")
-    private long timestamp;
-
-    @Field("expiry")
-    private long expiry;
-
-    @Field("event")
-    private String eventId;
-
-    @Field("relateEvent")
-    private String relatedEventId;
-
 
 
     @Override
