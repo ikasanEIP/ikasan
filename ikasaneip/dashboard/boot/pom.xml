@@ -41,7 +41,7 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.ikasan</groupId>
-					<artifactId>ikasan-rest-boot</artifactId>
+					<artifactId>ikasan-rest-module</artifactId>
 				</exclusion>
 			</exclusions>
         </dependency>

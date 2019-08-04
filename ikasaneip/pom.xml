@@ -861,7 +861,7 @@
                 <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
-                <module>rest-boot</module>
+                <module>rest</module>
                 <module>test</module>
                 <module>monitor</module>
                 <module>marshaller</module>
@@ -1271,7 +1271,7 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-rest-boot</artifactId>
+                <artifactId>ikasan-rest-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

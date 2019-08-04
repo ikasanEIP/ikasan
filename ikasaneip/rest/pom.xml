@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
 # //
 # //
 # // $Id$
@@ -44,42 +43,21 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>webconsole</artifactId>
+        <artifactId>ikasan-build</artifactId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.ikasan</groupId>
-    <artifactId>ikasan-webconsole-boot-war</artifactId>
-    <packaging>jar</packaging>
-    <name>ikasan :: boot :: webconsole : war</name>
+    <artifactId>ikasan-rest</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-rest-module</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-webconsole-jar</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-    </dependencies>
+    <modules>
+        <module>rest-module</module>
+        <module>rest-dashboard</module>
+    </modules>
 
 </project>
-
