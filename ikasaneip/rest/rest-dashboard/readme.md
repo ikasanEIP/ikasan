@@ -1508,177 +1508,86 @@ Aggregation service for module meta data produced by the Ikasan Topology service
 <p>
 
 ````json
-{
-  "name" : "module name",
-  "description" : "module description",
-  "version" : "module version",
-  "flows" : [ {
-    "name" : "Simple Flow 1",
-    "consumer" : {
-      "componentName" : "Test Consumer",
-      "description" : "Test Consumer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    },
-    "transitions" : [ {
-      "from" : "Test Converter",
-      "to" : "Test Producer",
-      "name" : "default"
-    }, {
-      "from" : "Test Broker",
-      "to" : "Test Converter",
-      "name" : "default"
-    }, {
-      "from" : "Test Splitter",
-      "to" : "Test Broker",
-      "name" : "default"
-    }, {
-      "from" : "Test Filter",
-      "to" : "Test Splitter",
-      "name" : "default"
-    }, {
-      "from" : "Test Consumer",
-      "to" : "Test Filter",
-      "name" : "default"
-    } ],
-    "flowElements" : [ {
-      "componentName" : "Test Producer",
-      "description" : "Test Producer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "org.ikasan.metadata.components.TestProducer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Converter",
-      "description" : "Test Converter Description",
-      "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "org.ikasan.metadata.components.TestConverter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Broker",
-      "description" : "Test Broker Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "org.ikasan.metadata.components.TestBroker",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Splitter",
-      "description" : "Test Splitter Description",
-      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "org.ikasan.metadata.components.TestSplitter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Filter",
-      "description" : "Test Filter Description",
-      "componentType" : "org.ikasan.spec.component.filter.Filter",
-      "implementingClass" : "org.ikasan.metadata.components.TestFilter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Consumer",
-      "description" : "Test Consumer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    } ],
-    "configurationId" : "FLOW_CONFIGURATION_ID"
+[ {
+  "configurationId" : "consumerConfiguredResourceId",
+  "description" : "desc",
+  "implementingClass" : "org.ikasan.configurationService.model.DefaultConfiguration",
+  "parameters" : [ {
+    "id" : null,
+    "name" : "name",
+    "value" : "value",
+    "description" : "desc",
+    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
   }, {
-    "name" : "Simple Flow 2",
-    "consumer" : {
-      "componentName" : "Test Consumer",
-      "description" : "Test Consumer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
+    "id" : null,
+    "name" : "name",
+    "value" : 10,
+    "description" : "desc",
+    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+  }, {
+    "id" : null,
+    "name" : "name",
+    "value" : 10,
+    "description" : "desc",
+    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+  }, {
+    "id" : null,
+    "name" : "name",
+    "value" : [ "one", "two", "three" ],
+    "description" : "desc",
+    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterListImpl"
+  }, {
+    "id" : null,
+    "name" : "name",
+    "value" : {
+      "one" : "1",
+      "two" : "2",
+      "three" : "3"
     },
-    "transitions" : [ {
-      "from" : "Test Converter",
-      "to" : "Test Producer",
-      "name" : "default"
+    "description" : "desc",
+    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+  } ]
+},
+  {
+    "configurationId" : "producerConfiguredResourceId",
+    "description" : "desc",
+    "implementingClass" : "org.ikasan.configurationService.model.DefaultConfiguration",
+    "parameters" : [ {
+      "id" : null,
+      "name" : "name",
+      "value" : "value",
+      "description" : "desc",
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
     }, {
-      "from" : "Test Broker",
-      "to" : "Test Converter",
-      "name" : "default"
+      "id" : null,
+      "name" : "name",
+      "value" : 10,
+      "description" : "desc",
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
     }, {
-      "from" : "Test Splitter",
-      "to" : "Test Broker",
-      "name" : "default"
+      "id" : null,
+      "name" : "name",
+      "value" : 10,
+      "description" : "desc",
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
     }, {
-      "from" : "Test Filter",
-      "to" : "Test Splitter",
-      "name" : "default"
+      "id" : null,
+      "name" : "name",
+      "value" : [ "one", "two", "three" ],
+      "description" : "desc",
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterListImpl"
     }, {
-      "from" : "Test Consumer",
-      "to" : "Test Filter",
-      "name" : "default"
-    } ],
-    "flowElements" : [ {
-      "componentName" : "Test Producer",
-      "description" : "Test Producer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "org.ikasan.metadata.components.TestProducer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Converter",
-      "description" : "Test Converter Description",
-      "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "org.ikasan.metadata.components.TestConverter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Broker",
-      "description" : "Test Broker Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "org.ikasan.metadata.components.TestBroker",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Splitter",
-      "description" : "Test Splitter Description",
-      "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "org.ikasan.metadata.components.TestSplitter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Filter",
-      "description" : "Test Filter Description",
-      "componentType" : "org.ikasan.spec.component.filter.Filter",
-      "implementingClass" : "org.ikasan.metadata.components.TestFilter",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    }, {
-      "componentName" : "Test Consumer",
-      "description" : "Test Consumer Description",
-      "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "org.ikasan.metadata.components.TestConsumer",
-      "configurationId" : null,
-      "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-      "configurable" : false
-    } ],
-    "configurationId" : "FLOW_CONFIGURATION_ID"
-  }
-  ]
-}
+      "id" : null,
+      "name" : "name",
+      "value" : {
+        "one" : "1",
+        "two" : "2",
+        "three" : "3"
+      },
+      "description" : "desc",
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    } ]
+  }]
 ````
  
 </p>
