@@ -398,7 +398,7 @@
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.commons-io>2.5</version.commons-io>
-        <version.commons-dbcp>1.4</version.commons-dbcp>
+        <version.commons-dbcp2>2.6.0</version.commons-dbcp2>
         <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
         <version.com.h2database>1.4.197</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
@@ -2153,10 +2153,12 @@
                 <version>${version.commons-io}</version>
             </dependency>
 
+
+
             <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>${version.commons-dbcp}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${version.commons-dbcp2}</version>
             </dependency>
 
             <dependency>
