@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
 import org.junit.Assert;
 
 import org.junit.Test;
@@ -201,22 +202,34 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_defauls_success() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.validate();
     }
 
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of destructive and renameOnSuccess being true.
-     * 
+     *
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test(expected = InvalidConfigurationException.class)
     public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setDestructive(Boolean.TRUE);
         ftpConfiguration.validate();
+    }
+
+    /**
+     * Test to ensure the configuration is validation aware.
+     *
+     **/
+    @Test
+    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    {
+        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new FtpConsumerConfiguration() instanceof IsValidationAware);
     }
 
     /**
@@ -229,6 +242,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
@@ -244,6 +258,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
     }
@@ -258,6 +273,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.setDestructive(Boolean.TRUE);
         ftpConfiguration.validate();
@@ -273,6 +289,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
     }
@@ -285,6 +302,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setRenameOnSuccessExtension(".done");
         ftpConfiguration.validate();
@@ -298,6 +316,7 @@ public class FtpConsumerConfigurationTest
     public void test_ftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
     {
         FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        ftpConfiguration.setCronExpression("0/5 * * * * ?");
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.setMoveOnSuccessNewPath("/done");
         ftpConfiguration.validate();

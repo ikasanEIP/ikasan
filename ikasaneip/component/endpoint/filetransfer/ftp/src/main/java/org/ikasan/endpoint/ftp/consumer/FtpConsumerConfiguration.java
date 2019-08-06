@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -51,7 +52,7 @@ import org.ikasan.framework.factory.DirectoryURLFactory;
  * 
  * @author Ikasan Development Team
  */
-public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
+public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration implements IsValidationAware
 {
     /** Remote directory from which to discover files */
     private String sourceDirectory;
@@ -167,18 +168,20 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
      */
     public void validate() throws InvalidConfigurationException
     {
+        super.validate();
+
         if(this.renameOnSuccess.booleanValue())
         {
             if(this.destructive.booleanValue())
             {
                 throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
-                        + "] and destructive[" + this.destructive 
+                        + "] and destructive[" + this.destructive
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccess.booleanValue())
             {
                 throw new InvalidConfigurationException("renameOnSuccess[" + this.renameOnSuccess
-                        + "] and moveOnSuccess[" + this.moveOnSuccess 
+                        + "] and moveOnSuccess[" + this.moveOnSuccess
                         + "] are mutually exclusive.");
             }
             if(this.renameOnSuccessExtension == null)
@@ -187,13 +190,13 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
                         + "] requires renameOnSuccessExtention to be specified.");
             }
         }
-        
+
         if(this.moveOnSuccess.booleanValue())
         {
             if(this.destructive.booleanValue())
             {
                 throw new InvalidConfigurationException("moveOnSuccess[" + this.moveOnSuccess
-                        + "] and destructive[" + this.destructive 
+                        + "] and destructive[" + this.destructive
                         + "] are mutually exclusive.");
             }
             if(this.moveOnSuccessNewPath == null)
@@ -202,7 +205,7 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
                         + "] requires moveOnSuccessNewPath to be specified.");
             }
         }
-        
+
         if (this.systemKey == null || this.systemKey.equals(" "))
         {
             logger.info("Provided systemKey value [" + this.systemKey + "] is invalid. Reverting to default empty String.");
