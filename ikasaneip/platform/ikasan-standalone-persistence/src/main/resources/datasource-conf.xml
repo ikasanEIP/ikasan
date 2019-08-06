@@ -16,7 +16,7 @@
         <entry key="hibernate.connection.autocommit" value="false" />
     </util:map>
 
-    <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp2.BasicDataSource">
         <property name="driverClassName" value="${datasource.driver-class-name}"/>
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
@@ -24,7 +24,7 @@
         <property name="validationQuery" value="${datasource.validationQuery}" />
     </bean>
 
-    <bean id="ikasanXADatasource" name="ikasan.xads" primary="true" class="org.apache.commons.dbcp.managed.BasicManagedDataSource">
+    <bean id="ikasanXADatasource" name="ikasan.xads" primary="true" class="org.apache.commons.dbcp2.managed.BasicManagedDataSource">
         <property name="driverClassName" value="${datasource.xadriver-class-name}"/>
         <property name="url" value="${datasource.url}" />
         <property name="username" value="${datasource.username}" />
