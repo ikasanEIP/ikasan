@@ -43,6 +43,9 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
+import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.SchedulerException;
 
@@ -77,4 +80,43 @@ public class ScheduledConsumerConfigurationTest
         assertEquals("maxEagerCallbacks should be populated with '2'", 2, consumerConfiguration.getMaxEagerCallbacks());
     }
 
+    /**
+     * Test to ensure the configuration is validation aware.
+     *
+     **/
+    @Test
+    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    {
+        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new ScheduledConsumerConfiguration() instanceof IsValidationAware);
+    }
+
+    /**
+     * Test.
+     */
+    @Test
+    public void test_invalid_configuration_invalid_cronExpression()
+    {
+        ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
+
+        try
+        {
+            scheduledConsumerConfiguration.validate();
+            Assert.fail("configuration is not valid");
+        }
+        catch(InvalidConfigurationException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test.
+     */
+    @Test
+    public void test_valid_configuration()
+    {
+        ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
+        scheduledConsumerConfiguration.setCronExpression("0/5 * * * * ?");
+        scheduledConsumerConfiguration.validate();
+    }
 }

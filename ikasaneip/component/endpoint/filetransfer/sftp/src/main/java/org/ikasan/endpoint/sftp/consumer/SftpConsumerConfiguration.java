@@ -43,12 +43,14 @@ package org.ikasan.endpoint.sftp.consumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
+
 /**
  * SFTP Consumer Configuration window.
  * 
  * @author Ikasan Development Team
  */
-public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
+public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration implements IsValidationAware
 {
     /** Remote directory from which to discover files */
     private String sourceDirectory;
@@ -669,6 +671,8 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
 
     public void validate() throws InvalidConfigurationException
     {
+        super.validate();
+
         if(this.renameOnSuccess)
         {
             if(this.destructive)

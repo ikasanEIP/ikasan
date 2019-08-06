@@ -118,7 +118,7 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
     {
         if(cronExpression == null)
         {
-            throw new InvalidConfigurationException("cronExpression[" + cronExpression + "] cronExpression is a mandatory field which must be specified.");
+            throw new InvalidConfigurationException("Invalid cronExpression specified [" + cronExpression + "].");
         }
     }
 }
