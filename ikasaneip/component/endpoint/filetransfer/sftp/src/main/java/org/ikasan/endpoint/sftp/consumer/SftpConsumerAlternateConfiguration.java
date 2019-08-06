@@ -40,12 +40,14 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
+import org.ikasan.spec.configuration.IsValidationAware;
+
 /**
  * SFTP Consumer Configuration window.
  * 
  * @author Ikasan Development Team
  */
-public class SftpConsumerAlternateConfiguration extends SftpConsumerConfiguration
+public class SftpConsumerAlternateConfiguration extends SftpConsumerConfiguration implements IsValidationAware
 {
     /** SFTP default Remote host */
     private String alternateRemoteHost = String.valueOf("127.0.0.1");
