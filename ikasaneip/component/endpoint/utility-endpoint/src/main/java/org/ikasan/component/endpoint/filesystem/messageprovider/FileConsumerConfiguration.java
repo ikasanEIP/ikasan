@@ -165,10 +165,16 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
         {
             if(filenames == null || filenames.size() == 0)
             {
-                throw new InvalidConfigurationException("filenames[" + filenames + "] filenames is a mandatory field which must be specified.");
+                throw new InvalidConfigurationException("Invalid filenames specified [" + filenames + "].", e);
             }
 
             throw e;
+        }
+
+
+        if(filenames == null || filenames.size() == 0)
+        {
+            throw new InvalidConfigurationException("Invalid filenames specified [" + filenames + "].");
         }
     }
 

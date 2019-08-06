@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ikasan Development Team
  */
-public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration
+public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration implements IsValidationAware
 {
     /** Remote host */
     private String alternateRemoteHost = String.valueOf("localhost");
@@ -255,6 +256,7 @@ public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration
     public void validate() throws InvalidConfigurationException
     {
         super.validate();
+
         if (this.alternateSystemKey == null || this.alternateSystemKey.equals(" "))
         {
             logger.info("Provided systemKey value [" + this.alternateSystemKey + "] is invalid. Reverting to default empty String.");

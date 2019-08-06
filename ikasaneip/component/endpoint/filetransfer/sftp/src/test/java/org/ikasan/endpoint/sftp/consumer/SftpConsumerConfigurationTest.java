@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
+import org.ikasan.spec.configuration.IsValidationAware;
 import org.junit.Assert;
 
 import org.junit.Test;
@@ -184,7 +185,17 @@ public class SftpConsumerConfigurationTest
         sftpConfiguration.setConnectionTimeout(Integer.valueOf(1500));
         Assert.assertEquals("connectionTimeout", Integer.valueOf(1500), sftpConfiguration.getConnectionTimeout());
     }
-    
+
+    /**
+     * Test to ensure the configuration is validation aware.
+     *
+     **/
+    @Test
+    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    {
+        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new SftpConsumerConfiguration() instanceof IsValidationAware);
+    }
+
     /**
      * Test property successful validate invocation.
      * @throws InvalidConfigurationException if configuration instance is invalid
@@ -193,6 +204,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_success() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.validate();
     }
     
@@ -205,6 +217,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         sftpConfiguration.setDestructive(Boolean.TRUE);
         sftpConfiguration.validate();
@@ -219,6 +232,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         sftpConfiguration.validate();
@@ -233,6 +247,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         sftpConfiguration.validate();
     }
@@ -246,6 +261,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         sftpConfiguration.setDestructive(Boolean.TRUE);
         sftpConfiguration.validate();
@@ -260,6 +276,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         sftpConfiguration.validate();
     }
@@ -272,6 +289,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         sftpConfiguration.setRenameOnSuccessExtension(".done");
         sftpConfiguration.validate();
@@ -285,6 +303,7 @@ public class SftpConsumerConfigurationTest
     public void test_sftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         sftpConfiguration.setMoveOnSuccessNewPath("/done");
         sftpConfiguration.validate();
