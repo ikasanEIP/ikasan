@@ -48,6 +48,7 @@ import org.ikasan.module.service.StartupControlServiceImpl;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -77,9 +78,12 @@ public class IkasanModuleAutoConfiguration
     @DependsOn("liquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,ModuleActivator moduleActivator,
         SecurityService securityService, TopologyService localTxTopologyService,
-        HousekeepingSchedulerService housekeepingSchedulerService){
+        HousekeepingSchedulerService housekeepingSchedulerService,
+        HarvestingSchedulerService harvestingSchedulerService
+
+        ){
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, housekeepingSchedulerService);
+            localTxTopologyService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

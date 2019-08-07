@@ -2,7 +2,7 @@ package org.ikasan.dashboard.ui.harvesting.window;
 
 
 import com.vaadin.ui.Window;
-import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
 import org.ikasan.dashboard.ui.harvesting.panel.HarvestingJobManagementPanel;
 import org.ikasan.spec.configuration.PlatformConfigurationService;

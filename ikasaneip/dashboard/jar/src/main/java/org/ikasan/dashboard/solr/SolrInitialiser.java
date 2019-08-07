@@ -3,7 +3,7 @@ package org.ikasan.dashboard.solr;
 import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.solr.SolrInitialisationService;

@@ -47,6 +47,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
@@ -118,6 +119,10 @@ public class ModuleInitialisationServiceImpl
      * HousekeepingSchedulerService provides access to starting off house keeping processes
      */
     private HousekeepingSchedulerService housekeepingSchedulerService;
+   /**
+     * HarvestingSchedulerService provides access to starting off harvesting processes
+     */
+    private HarvestingSchedulerService harvestingSchedulerService;
 
     private ModuleConverter moduleConverter = new ModuleConverter();
 
@@ -131,7 +136,8 @@ public class ModuleInitialisationServiceImpl
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
         SecurityService securityService, TopologyService topologyService,
-        HousekeepingSchedulerService housekeepingSchedulerService)
+        HousekeepingSchedulerService housekeepingSchedulerService,
+        HarvestingSchedulerService harvestingSchedulerService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -158,6 +164,11 @@ public class ModuleInitialisationServiceImpl
         if (housekeepingSchedulerService == null)
         {
             throw new IllegalArgumentException("housekeepingSchedulerService cannot be 'null'");
+        }
+        this.harvestingSchedulerService = harvestingSchedulerService;
+        if (harvestingSchedulerService == null)
+        {
+            throw new IllegalArgumentException("harvestingSchedulerService cannot be 'null'");
         }
     }
 
@@ -271,6 +282,7 @@ public class ModuleInitialisationServiceImpl
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
             this.housekeepingSchedulerService.registerJobs();
+            this.harvestingSchedulerService.registerJobs();
         }
         catch (RuntimeException re)
         {

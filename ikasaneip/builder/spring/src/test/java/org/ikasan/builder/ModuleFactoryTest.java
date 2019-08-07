@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.harvesting.HarvestingAutoConfiguration;
 import org.ikasan.housekeeping.HousekeepingAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.flow.Flow;
@@ -61,7 +62,7 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class,
-    IkasanModuleAutoConfiguration.class, HousekeepingAutoConfiguration.class })
+    IkasanModuleAutoConfiguration.class, HousekeepingAutoConfiguration.class, HarvestingAutoConfiguration.class })
 public class ModuleFactoryTest
 {
     @Resource

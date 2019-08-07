@@ -5,7 +5,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;

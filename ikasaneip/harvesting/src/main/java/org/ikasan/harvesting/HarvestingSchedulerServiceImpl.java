@@ -1,5 +1,7 @@
-package org.ikasan.dashboard.harvesting;
+package org.ikasan.harvesting;
 
+import org.ikasan.spec.harvest.HarvestingJob;
+import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -14,10 +16,10 @@ import static org.quartz.TriggerBuilder.newTrigger;
 /**
  * Created by Ikasan Development Team on 24/08/2016.
  */
-public class HarvestingSchedulerService
+public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerService
 {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(HarvestingSchedulerService.class);
+    private static Logger logger = LoggerFactory.getLogger(HarvestingSchedulerServiceImpl.class);
 
     /**
      * Scheduler
@@ -26,14 +28,14 @@ public class HarvestingSchedulerService
 
     private ScheduledJobFactory scheduledJobFactory;
 
-    private List<JobDetail> houseKeepingJobDetails;
+    private List<JobDetail> harvestingJobDetails;
 
-    private Map<String, SolrHarvestingJob> houseKeepingJobs;
+    private Map<String, HarvestingJob> harvestingJobs;
 
-    private Map<String, JobDetail> houseKeepingJobDetailsMap;
+    private Map<String, JobDetail> harvestingJobDetailsMap;
 
-    public HarvestingSchedulerService(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
-                                      List<SolrHarvestingJob> houseKeepingJobs)
+    public HarvestingSchedulerServiceImpl(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
+                                      List<HarvestingJob> harvestingJobs)
     {
         this.scheduler = scheduler;
         if(this.scheduler == null)
@@ -46,42 +48,42 @@ public class HarvestingSchedulerService
             throw new IllegalArgumentException("scheduledJobFactory cannot be null!");
         }
 
-        this.houseKeepingJobs = new HashMap<String, SolrHarvestingJob>();
-        this.houseKeepingJobDetailsMap = new HashMap<String, JobDetail>();
-        this.houseKeepingJobDetails = new ArrayList<JobDetail>();
+        this.harvestingJobs = new HashMap<String, HarvestingJob>();
+        this.harvestingJobDetailsMap = new HashMap<String, JobDetail>();
+        this.harvestingJobDetails = new ArrayList<JobDetail>();
 
-        for(SolrHarvestingJob job: houseKeepingJobs)
+        for(HarvestingJob job: harvestingJobs)
         {
             JobDetail jobDetail = this.scheduledJobFactory.createJobDetail
-                    (job, SolrHarvestingJob.class, job.getJobName(), "harvest");
+                    (job, HarvestingJob.class, job.getJobName(), "harvest");
 
-            houseKeepingJobDetails.add(jobDetail);
-            houseKeepingJobDetailsMap.put(job.getJobName(), jobDetail);
-            this.houseKeepingJobs.put(jobDetail.getKey().toString(), job);
+            harvestingJobDetails.add(jobDetail);
+            harvestingJobDetailsMap.put(job.getJobName(), jobDetail);
+            this.harvestingJobs.put(jobDetail.getKey().toString(), job);
         }
     }
 
     public void registerJobs()
     {
-        for(JobDetail jobDetail: this.houseKeepingJobDetails)
+        for(JobDetail jobDetail: this.harvestingJobDetails)
         {
             try
             {
                 // create trigger
                 JobKey jobkey = jobDetail.getKey();
 
-                SolrHarvestingJob harvestingJob = this.houseKeepingJobs.get(jobkey.toString());
+                HarvestingJob harvestingJob = this.harvestingJobs.get(jobkey.toString());
                 harvestingJob.init();
 
                 if(harvestingJob.isInitialised() && harvestingJob.isEnabled()
                         && !this.scheduler.checkExists(jobkey))
                 {
-                    Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
+                    Trigger trigger = getCronTrigger(jobkey, this.harvestingJobs.get(jobkey.toString()).getCronExpression());
                     Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
                     logger.info("Scheduled harvesting job ["
                             + jobkey.toString()
                             + "] starting at [" + scheduledDate + "] using cron expression ["
-                            + this.houseKeepingJobs.get(jobkey.toString()).getCronExpression() + "]");
+                            + this.harvestingJobs.get(jobkey.toString()).getCronExpression() + "]");
                 }
 
             }
@@ -96,9 +98,9 @@ public class HarvestingSchedulerService
     {
         try
         {
-            if(this.scheduler.checkExists(this.houseKeepingJobDetailsMap.get(jobName).getKey()))
+            if(this.scheduler.checkExists(this.harvestingJobDetailsMap.get(jobName).getKey()))
             {
-                this.scheduler.deleteJob(this.houseKeepingJobDetailsMap.get(jobName).getKey());
+                this.scheduler.deleteJob(this.harvestingJobDetailsMap.get(jobName).getKey());
             }
         }
         catch (SchedulerException e)
@@ -114,16 +116,16 @@ public class HarvestingSchedulerService
             // remove the job so we can reschedule it if the cron expression has changed.
             this.removeJob(jobName);
 
-            if(!this.scheduler.checkExists(this.houseKeepingJobDetailsMap.get(jobName).getKey()))
+            if(!this.scheduler.checkExists(this.harvestingJobDetailsMap.get(jobName).getKey()))
             {
-                JobDetail jobDetail = this.houseKeepingJobDetailsMap.get(jobName);
+                JobDetail jobDetail = this.harvestingJobDetailsMap.get(jobName);
                 JobKey jobkey = jobDetail.getKey();
-                Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
+                Trigger trigger = getCronTrigger(jobkey, this.harvestingJobs.get(jobkey.toString()).getCronExpression());
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
                 logger.info("Scheduled harvesting job ["
                         + jobkey.toString()
                         + "] starting at [" + scheduledDate + "] using cron expression ["
-                        + this.houseKeepingJobs.get(jobkey.toString()).getCronExpression() + "]");
+                        + this.harvestingJobs.get(jobkey.toString()).getCronExpression() + "]");
             }
         }
         catch (Exception e)

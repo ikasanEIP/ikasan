@@ -18,7 +18,7 @@
         <constructor-arg ref="solrHarvestSchedulerService" />
     </bean>
 
-    <bean id="solrHarvestSchedulerService" class="org.ikasan.dashboard.harvesting.HarvestingSchedulerService">
+    <bean id="solrHarvestSchedulerService" class="org.ikasan.harvesting.HarvestingSchedulerService">
         <constructor-arg ref="harvestingScheduler" />
         <constructor-arg ref="harvestingScheduledJobFactory" />
         <constructor-arg ref="harvestingJobs" />
