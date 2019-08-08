@@ -75,11 +75,12 @@
 		<li><a href="<c:url value='/home.htm'/>">Home</a></li>
 		<li><a href="<c:url value='/modules/list.htm'/>">Modules</a></li>
 		<li><a href="<c:url value='/events/search.htm'/>">Events</a></li>
-
 		<security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
 		  <li><a href="<c:url value='/admin/admin.htm'/>">Admin</a></li>
 		</security:authorize>
-	</ul>
+        <li><a href="<c:url value='/swagger-ui.html'/>">REST API</a></li>
+
+    </ul>
 	<span id="sessioninfo">
 		logged in as
 		<!--security:authentication property="principal.username"/> --> - <a href="${logoutUrl}">Logout</a>
