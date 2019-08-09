@@ -202,11 +202,7 @@
 	
 	</table>
 </c:if>
-	<div>
-	<form method="post" id="housekeepingForm" action="housekeeping.htm">
-	<input type="submit" value="Housekeep System Events"
-		class="controlButton" /></form>
-	</div>
+
 </div>
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
