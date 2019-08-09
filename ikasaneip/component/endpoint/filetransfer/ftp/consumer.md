@@ -3,7 +3,6 @@
 # FTP Consumer
 
 <img src="../../../../developer/docs/quickstart-images/ftp-consumer.png" width="200px" align="left">This is a &quot;time event&quot; based consumer configured to be either an absolute or relative time schedule, backed by FTP ```MessageProvider```. 
-The FTP ```MessageProvider``` is underpinned with a persistent store supporting meta information about the files we are processing.
 Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/PollingConsumer.html)
 <br/>
 <br/>
@@ -16,6 +15,8 @@ This consumer is invoked on a Quartz based schedule with the ```MessageProvider`
 ```java
 org.ikasan.filetransfer.Payload invoke(org.quartz.JobExecutionContext context)
 ```
+The FTP ```MessageProvider``` is underpinned with a persistent store supporting meta information about the files we are processing.
+
 
 ##### Supported Features
 The following Ikasan features are supported by this component.

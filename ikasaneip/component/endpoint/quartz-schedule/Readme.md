@@ -10,6 +10,8 @@ Read more about EIP [Polling Consumer](http://www.enterpriseintegrationpatterns.
 <br/>
 <br/>
 <br/>
+<br/>
+
 ##### Operation
 This consumer is invoked on a Quartz based schedule with the ```MessageProvider``` returning the Quartz ```JobExecutionContext```.
 
