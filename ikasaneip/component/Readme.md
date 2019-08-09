@@ -12,12 +12,14 @@ Consumers provide the &quot;glue&quot; between the entry into the flow and the u
 In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java).
 
 ### Types
-All consumers are driven by event occurrences be this time driven events or data driven events.
+All consumers are driven by event occurrences be this by scheduled time driven events or data driven events.
 
 #### Schedule Driven Consumers
 Invoked on a time based schedule, either relative or absolute.
+All scheduled consumers operate based on a Quartz scheduled invocation. 
 This scheduled invocation can be to pull data from an underlying source system API or to simply invoke the next component in the flow.
- 
+The ```MessageProvider``` set on the consumer dictates this behaviour, with off-the-shelf consumers having specific ```MessageProvider``` implementations to suit the required source system API.
+
 The following consumers are off-the-shelf scheduled driven consumers.
 
 - [Scheduled Consumer](endpoint/quartz-schedule/Readme.md)
