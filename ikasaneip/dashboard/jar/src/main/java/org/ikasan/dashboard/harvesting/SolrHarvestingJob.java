@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.harvesting;
 
 import com.google.common.collect.Lists;
+import org.ikasan.spec.harvest.HarvestingJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.harvest.HarvestEvent;
@@ -22,21 +23,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Ikasan Development Team on 09/08/2016.
  */
 @DisallowConcurrentExecution
-public class SolrHarvestingJob implements Job
+public class SolrHarvestingJob implements HarvestingJob
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrHarvestingJob.class);
-
-    public static final String HARVEST_BATCH_SIZE = "-harvestBatchSize";
-    public static final String THREAD_COUNT = "-threadCount";
-    public static final String CRON_EXPRESSION = "-cronExpression";
-    public static final String ENABLED = "-enabled";
-
-
-    public static final String DEFAULT_CRON_EXPRESSION = "0/10 * * * * ?";
-    public static final Integer DEFAULT_BATCH_DELETE_SIZE = 200;
-    public static final Integer DEFAULT_THREAD_COUNT = 1;
-
 
     private String jobName;
     private HarvestService harvestService;
@@ -77,6 +67,7 @@ public class SolrHarvestingJob implements Job
         }
     }
 
+    @Override
     public void init()
     {
         try
@@ -203,6 +194,7 @@ public class SolrHarvestingJob implements Job
         logger.info("Finished harvesting job executing: " + this.getJobName());
     }
 
+    @Override
     public void save()
     {
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
@@ -235,61 +227,62 @@ public class SolrHarvestingJob implements Job
         return cronExpression;
     }
 
+
     public PlatformConfigurationService getPlatformConfigurationService()
     {
         return platformConfigurationService;
     }
-
+    @Override
     public String getJobName()
     {
         return jobName;
     }
-
+    @Override
     public Integer getHarvestSize()
     {
         return harvestSize;
     }
-
+    @Override
     public void setHarvestSize(Integer harvestSize)
     {
         this.harvestSize = harvestSize;
     }
-
+    @Override
     public Boolean isEnabled()
     {
         return enabled;
     }
-
+    @Override
     public void setEnabled(Boolean enabled)
     {
         this.enabled = enabled;
     }
-
+    @Override
     public Boolean getLastExecutionSuccessful()
     {
         return lastExecutionSuccessful;
     }
-
+    @Override
     public String getExecutionErrorMessage()
     {
         return executionErrorMessage;
     }
-
+    @Override
     public Boolean isInitialised()
     {
         return initialised;
     }
-
+    @Override
     public void setInitialised(Boolean initialised)
     {
         this.initialised = initialised;
     }
-
+    @Override
     public Integer getThreadCount()
     {
         return threadCount;
     }
-
+    @Override
     public void setThreadCount(Integer threadCount)
     {
         this.threadCount = threadCount;

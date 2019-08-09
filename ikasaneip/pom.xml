@@ -852,6 +852,7 @@
                 <module>module</module>
                 <module>scheduler</module>
                 <module>housekeeping</module>
+                <module>harvesting</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
@@ -1042,9 +1043,16 @@
                 <artifactId>ikasan-topology</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-housekeeping</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+             <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-harvesting</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

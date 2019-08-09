@@ -1,9 +1,8 @@
 [../](../../Readme.md)
 ![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Housekeeping Service
-<img src="../developer/docs/quickstart-images/hospital.gif" width="200px" align="left"> 
 The Ikasan Housekeeping Service provides default HousekeepingJob implementation and Scheduled based service responsible 
-for scheduling various housekeeping jobs. The default set of jobs autoconfigrued by ikasan-housekeeping project includes:
+for scheduling various housekeeping jobs. The default set of jobs auto-configrued by ikasan-housekeeping project includes:
 
 - replayHousekeepingJob
 - wiretapHousekeepingJob
