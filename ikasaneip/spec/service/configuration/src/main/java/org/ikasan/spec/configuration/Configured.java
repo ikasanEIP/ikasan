@@ -48,6 +48,14 @@ package org.ikasan.spec.configuration;
  */
 public interface Configured<T>
 {
+    static void validate(Object configuration)
+    {
+        if(configuration != null && configuration instanceof IsValidationAware)
+        {
+            ((IsValidationAware)configuration).validate();
+        }
+    }
+
     /**
      * Set configuration.
      */

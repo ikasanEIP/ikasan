@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
@@ -54,10 +55,12 @@ import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
+import javax.sql.DataSource;
 
 @Configuration
 @ImportResource( {
@@ -117,7 +120,5 @@ public class ModuleConfig
             .build();
         return module;
     }
-
-
 
 }

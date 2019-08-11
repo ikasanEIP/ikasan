@@ -206,7 +206,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-rest-boot</artifactId>
+            <artifactId>ikasan-rest-module</artifactId>
         </dependency>
 
         <dependency>
@@ -223,6 +223,12 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-setup</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -379,11 +385,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-standalone-persistence</artifactId>

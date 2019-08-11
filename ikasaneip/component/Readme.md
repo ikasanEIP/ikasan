@@ -12,15 +12,29 @@ Consumers provide the &quot;glue&quot; between the entry into the flow and the u
 In order to create your own consumer you need to implement [Consumer Interface](../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Consumer.java).
 
 ### Types
+All consumers are driven by event occurrences be this time driven events or data driven events.
+
+#### Schedule Driven Consumers
+Invoked on a time based schedule, either relative or absolute.
+This scheduled invocation can be to pull data from an underlying source system API or to simply invoke the next component in the flow.
+ 
+The following consumers are off-the-shelf scheduled driven consumers.
+
 - [Scheduled Consumer](endpoint/quartz-schedule/Readme.md)
 - [Local File Consumer](endpoint/quartz-schedule/localFileConsumer.md)
-- [Generic JMS Consumer](endpoint/jms-client/consumer.md)
-- [SpringTemplate JMS Consumer](endpoint/jms-spring-arjuna/consumer.md)
 - [MongoDB Client Consumer](endpoint/mongo-endpoint/Readme.md)
 - [FTP Consumer](endpoint/filetransfer/ftp/consumer.md)
 - [SFTP Consumer](endpoint/filetransfer/sftp/consumer.md)
-  
-  
+
+#### Data Driven Consumers
+Invoked by the underlying source system API which pushes one or more data events to the consumer.
+
+The following consumers are off-the-shelf data driven consumers.
+
+- [Generic JMS Consumer](endpoint/jms-client/consumer.md)
+- [SpringTemplate JMS Consumer](endpoint/jms-spring-arjuna/consumer.md)
+
+
 ## Converters
 
 ### Purpose

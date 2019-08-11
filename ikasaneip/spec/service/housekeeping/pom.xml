@@ -56,4 +56,11 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Housekeeping Resource Contracts</name>
     <description>The specification housekeeping contracts for the Ikasan Enterprise Integration Platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+    </dependencies>
 </project>

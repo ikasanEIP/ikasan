@@ -9,10 +9,10 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.housekeeping.HousekeepingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -75,7 +75,7 @@ public class HousekeepingPanel extends Panel implements View
             throw new IllegalArgumentException("housekeepingSchedulerService cannot be null!");
         }
 
-        this.houseKeepingJobs = new HashMap<String, HousekeepingJob>();
+        this.houseKeepingJobs = new HashMap<>();
         this.houseKeepingJobDetails = new ArrayList<JobDetail>();
 
         for(HousekeepingJob job: houseKeepingJobs)

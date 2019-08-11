@@ -41,15 +41,13 @@
 package org.ikasan.module.service;
 
 import org.ikasan.module.converter.ModuleConverter;
-import org.ikasan.topology.model.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -59,21 +57,23 @@ import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -114,7 +114,13 @@ public class ModuleInitialisationServiceImpl
      */
     private TopologyService topologyService;
 
+    /**
+     * HousekeepingSchedulerService provides access to starting off house keeping processes
+     */
+    private HousekeepingSchedulerService housekeepingSchedulerService;
+
     private ModuleConverter moduleConverter = new ModuleConverter();
+
 
     /**
      * Constructor
@@ -124,7 +130,8 @@ public class ModuleInitialisationServiceImpl
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-            SecurityService securityService, TopologyService topologyService)
+        SecurityService securityService, TopologyService topologyService,
+        HousekeepingSchedulerService housekeepingSchedulerService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -146,6 +153,11 @@ public class ModuleInitialisationServiceImpl
         if (topologyService == null)
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
+        }
+        this.housekeepingSchedulerService = housekeepingSchedulerService;
+        if (housekeepingSchedulerService == null)
+        {
+            throw new IllegalArgumentException("housekeepingSchedulerService cannot be 'null'");
         }
     }
 
@@ -258,6 +270,7 @@ public class ModuleInitialisationServiceImpl
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
+            this.housekeepingSchedulerService.registerJobs();
         }
         catch (RuntimeException re)
         {
@@ -378,106 +391,10 @@ public class ModuleInitialisationServiceImpl
      *
      * @param module - The module
      */
-    protected void initialiseModuleMetaData(Module module)
+    public void initialiseModuleMetaData(Module module)
     {
-        try
-        {
-            Optional<Server> existingServer = getServer();
-            org.ikasan.topology.model.Module existingModule = this.topologyService.getModuleByName(module.getName());
-            if (existingModule == null)
-            {
-                logger.info("module does not exist [" + module.getName() + "], creating...");
-                existingModule = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
-                    module.getDescription(), module.getVersion(), null, null);
-                if (existingServer.isPresent())
-                {
-                    existingModule.setServer(existingServer.get());
-                }
-                this.topologyService.save(existingModule);
-                createMetadata(module, existingModule);
-            }
-            else
-            {
-                updateMetadata(module, existingModule);
-                if (existingServer.isPresent())
-                {
-                    logger.info(
-                        "Updating [" + module.getName() + "] server instance to  [" + existingServer.get().getUrl() + "].");
-                    existingModule.setServer(existingServer.get());
-                    this.topologyService.save(existingModule);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
-    }
-
-    /**
-     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
-     * meta-data about the module was never stored before.
-     *
-     * @param moduleRuntime module runtime instance
-     * @param moduleDB topology view of the module
-     */
-    private void createMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module moduleDB)
-    {
-        try
-        {
-            org.ikasan.topology.model.Module module = moduleConverter.convert(moduleRuntime);
-            module.getFlows().forEach(topologyFlow ->
-            {
-                topologyFlow.setModule(moduleDB);
-
-                // We only want to add distinct components per flow. The convenience API repeats components
-                // if they appear in multiple routes in a Flow.
-                topologyFlow.setComponents(new HashSet<>(distinctComponents(topologyFlow.getName(), topologyFlow.getComponents())));
-
-                topologyFlow.getComponents().forEach(component -> component.setFlow(topologyFlow));
-
-                topologyService.save(topologyFlow);
-                logger.info("Saving flow with components [" + topologyFlow.getName() + "]");
-            });
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
-    }
-
-    private List<Component> distinctComponents(String flowName, Set<Component> components)
-    {
-        logger.info("Filtering distinct components for flow[{}]. Before:[{}].", flowName, components.size());
-        List<Component> filtered = components.stream().filter( distinctByKey(component -> component.getName())).collect(Collectors.toList());
-        logger.info("After: [{}]", filtered.size());
-        return filtered;
-    }
-
-    private <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
-    {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-    }
-
-    /**
-     * Helper method to store meta-data about module into sa topology related tables. This method only executes when
-     * existing meta-data and new meta-data need to be reconciled.
-     *
-     * @param moduleRuntime module runtime instance
-     * @param existingModule topology view of the module
-     */
-    private void updateMetadata(Module<Flow> moduleRuntime, org.ikasan.topology.model.Module existingModule)
-    {
-        try
-        {
-            org.ikasan.topology.model.Module moduleNew = moduleConverter.convert(moduleRuntime);
-            topologyService.discover(existingModule.getServer(), existingModule, new ArrayList(moduleNew.getFlows()));
-        }
-        catch (Exception e)
-        {
-            logger.warn("Error encountered while performing local discovery.", e);
-        }
+        topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
+            , this.moduleConverter.convert(module));
     }
 
     /**

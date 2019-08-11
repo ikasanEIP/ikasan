@@ -2,10 +2,9 @@ package org.ikasan.dashboard.ui.housekeeping.window;
 
 
 import com.vaadin.ui.Window;
-import org.ikasan.dashboard.housekeeping.HousekeepingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingJobManagementPanel;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.spec.housekeeping.HousekeepingJob;
 
 /**
  * Created by Ikasan Development Team on 24/08/2016.
@@ -13,7 +12,6 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 public class HousekeepingJobManagementWindow extends Window
 {
     private HousekeepingJob housekeepingjob;
-    private PlatformConfigurationService platformConfigurationService;
     private HousekeepingSchedulerService housekeepingSchedulerService;
 
     /**
@@ -29,11 +27,6 @@ public class HousekeepingJobManagementWindow extends Window
         if(this.housekeepingjob == null)
         {
             throw new IllegalArgumentException("housekeepingjob cannot be null!");
-        }
-        this.platformConfigurationService = housekeepingjob.getPlatformConfigurationService();
-        if(this.platformConfigurationService == null)
-        {
-            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
         }
         this.housekeepingSchedulerService = housekeepingSchedulerService;
         if(this.housekeepingSchedulerService == null)
@@ -52,7 +45,7 @@ public class HousekeepingJobManagementWindow extends Window
         this.setHeight("300px");
         this.setWidth("500px");
 
-        HousekeepingJobManagementPanel panel = new HousekeepingJobManagementPanel(this.housekeepingjob, this.platformConfigurationService,
+        HousekeepingJobManagementPanel panel = new HousekeepingJobManagementPanel(this.housekeepingjob,
                 this.housekeepingSchedulerService);
 
         this.setContent(panel);

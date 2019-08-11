@@ -402,6 +402,8 @@
         <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
         <version.com.h2database>1.4.197</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
+        <version.org.liquibase>3.6.3</version.org.liquibase>
+        <version.org.yaml.snakeyaml>1.19</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>9.4.14.v20181114</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
@@ -849,6 +851,7 @@
                 <module>system-event</module>
                 <module>module</module>
                 <module>scheduler</module>
+                <module>housekeeping</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
@@ -858,7 +861,7 @@
                 <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
-                <module>rest-boot</module>
+                <module>rest</module>
                 <module>test</module>
                 <module>monitor</module>
                 <module>marshaller</module>
@@ -895,6 +898,7 @@
                 <module>system-event</module>
                 <module>module</module>
                 <module>scheduler</module>
+                <module>housekeeping</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
@@ -1038,6 +1042,11 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-topology</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-housekeeping</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1264,7 +1273,7 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-rest-boot</artifactId>
+                <artifactId>ikasan-rest-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -2174,6 +2183,18 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${version.com.mysqldriver}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${version.org.liquibase}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${version.org.yaml.snakeyaml}</version>
             </dependency>
 
             <dependency>

@@ -71,6 +71,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.SocketUtils;
 
@@ -84,6 +85,10 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
+@org.springframework.context.annotation.Configuration
+@ImportResource( {
+        "classpath:filetransfer-service-conf.xml",
+} )
 public class FlowBuilderTest
 {
     /**
@@ -163,14 +168,13 @@ public class FlowBuilderTest
     public void setup()
     {
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
-        "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
+            "--spring.liquibase.change-log=classpath:db-changelog.xml",
+            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
         };
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-
-
     }
 
     private void setupMockExpectations(){
@@ -1529,5 +1533,98 @@ public class FlowBuilderTest
         builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor() );
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_consumer_implied_and_explicit_builds()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().scheduledConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().scheduledConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().fileConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().fileConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().dbConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().dbConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().jmsConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().jmsConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer().build())
+                .producer("producerName", producer)
+                .build();
+
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().eventGeneratingConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().eventGeneratingConsumer().build())
+                .producer("producerName", producer)
+                .build();
     }
 }

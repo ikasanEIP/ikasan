@@ -48,6 +48,7 @@ import org.ikasan.module.service.StartupControlServiceImpl;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -56,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.annotation.Resource;
@@ -72,9 +74,12 @@ public class IkasanModuleAutoConfiguration
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
+    @DependsOn("liquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService localTxTopologyService){
-        return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, localTxTopologyService);
+        SecurityService securityService, TopologyService localTxTopologyService,
+        HousekeepingSchedulerService housekeepingSchedulerService){
+        return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+            localTxTopologyService, housekeepingSchedulerService);
     }
 
     @Bean
