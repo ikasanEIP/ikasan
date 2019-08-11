@@ -46,6 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
 
             .regexMatchers("/persistenceSetup").not().authenticated()
+            .regexMatchers("/rest").not().authenticated()
 
             // Allow all requests by logged in users.
             .anyRequest().authenticated()
@@ -93,6 +94,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             // icons and images
             "/icons/**",
             "/images/**",
+
+
+            // rest - todo need to sort out security for this
+            "/rest/**",
 
             // (development mode) static resources
             "/frontend/**",
