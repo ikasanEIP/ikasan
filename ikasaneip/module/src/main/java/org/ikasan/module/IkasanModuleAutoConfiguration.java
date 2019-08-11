@@ -53,12 +53,15 @@ import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.topology.service.DashboardRestService;
+import org.ikasan.topology.service.DashboardRestServiceImpl;
 import org.ikasan.topology.service.TopologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.annotation.Resource;
@@ -70,20 +73,25 @@ import java.util.Properties;
 
 public class IkasanModuleAutoConfiguration
 {
+    private String METADATA_PATH = "/rest/module/metadata";
+
     @Resource Map platformHibernateProperties;
     @Autowired
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
     @DependsOn("liquibase")
-    public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,ModuleActivator moduleActivator,
+    public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
+        ModuleActivator moduleActivator,
         SecurityService securityService, TopologyService localTxTopologyService,
         HousekeepingSchedulerService housekeepingSchedulerService,
-        HarvestingSchedulerService harvestingSchedulerService
-
-        ){
+        HarvestingSchedulerService harvestingSchedulerService,
+        Environment environment
+    )
+    {
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, METADATA_PATH);
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, housekeepingSchedulerService, harvestingSchedulerService);
+            localTxTopologyService, dashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

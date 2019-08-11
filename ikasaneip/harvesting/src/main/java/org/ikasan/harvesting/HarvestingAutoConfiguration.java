@@ -5,6 +5,8 @@ import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
+import org.ikasan.topology.service.DashboardRestService;
+import org.ikasan.topology.service.DashboardRestServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -37,14 +39,14 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, REPLAY_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, REPLAY_PATH);
         return new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment,dashboardRestService);
     }
 
     @Bean
     public HarvestingJob wiretapHarvestingJob(HarvestService wiretapService, Environment environment)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, WIRETAP_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, WIRETAP_PATH);
 
         return new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment,dashboardRestService);
     }
@@ -52,7 +54,7 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingJob errorReportingHarvestingJob(HarvestService errorReportingManagementService, Environment environment)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, ERROR_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, ERROR_PATH);
 
         return new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,dashboardRestService);
     }
@@ -60,7 +62,7 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, EXCLUSION_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, EXCLUSION_PATH);
 
         return new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment,dashboardRestService);
     }
@@ -69,7 +71,7 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingJob messageHistorJob(HarvestService messageHistoryService, Environment environment)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, METRICS_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, METRICS_PATH);
 
         return new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,dashboardRestService);
     }

@@ -55,6 +55,7 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.topology.model.Server;
+import org.ikasan.topology.service.DashboardRestService;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -116,6 +117,11 @@ public class ModuleInitialisationServiceImpl
     private TopologyService topologyService;
 
     /**
+     * TopologyService provides access to dashoard rest client
+     */
+    private DashboardRestService dashboardRestService;
+
+    /**
      * HousekeepingSchedulerService provides access to starting off house keeping processes
      */
     private HousekeepingSchedulerService housekeepingSchedulerService;
@@ -135,7 +141,7 @@ public class ModuleInitialisationServiceImpl
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService topologyService,
+        SecurityService securityService, TopologyService topologyService, DashboardRestService dashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService)
     {
@@ -159,6 +165,11 @@ public class ModuleInitialisationServiceImpl
         if (topologyService == null)
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
+        }
+        this.dashboardRestService = dashboardRestService;
+        if (dashboardRestService == null)
+        {
+            throw new IllegalArgumentException("dashboardRestService cannot be 'null'");
         }
         this.housekeepingSchedulerService = housekeepingSchedulerService;
         if (housekeepingSchedulerService == null)
@@ -407,6 +418,9 @@ public class ModuleInitialisationServiceImpl
     {
         topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
             , this.moduleConverter.convert(module));
+
+        dashboardRestService.publish(module);
+
     }
 
     /**

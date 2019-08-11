@@ -1,7 +1,10 @@
-package org.ikasan.harvesting;
+package org.ikasan.topology.service;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.metadata.ModuleMetaDataProvider;
+import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -10,20 +13,14 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.ws.Response;
 import java.util.Base64;
 import java.util.List;
 
-public class DashboardRestService
+public class DashboardRestServiceImpl implements DashboardRestService
 {
-    Logger logger = LoggerFactory.getLogger(DashboardRestService.class);
+    Logger logger = LoggerFactory.getLogger(DashboardRestServiceImpl.class);
 
-    protected static final String MODULE_NAME_PROPERTY="module.name";
-    protected static final String DASHBOARD_BASE_URL_PROPERTY="ikasan.dashboard.base.url";
-    protected static final String DASHBOARD_USERNAME_PROPERTY="ikasan.dashboard.username";
-    protected static final String DASHBOARD_PASSWORD_PROPERTY="ikasan.dashboard.password";
-    protected static final String HARVESTING_ENABLED_PROPERTY="ikasan.harvesting.enabled";
-
+    private ModuleMetaDataProvider<String> moduleMetaDataProvider;
 
     private RestTemplate restTemplate;
 
@@ -33,7 +30,12 @@ public class DashboardRestService
     private String password;
     private boolean isEnabled;
 
-    public DashboardRestService(Environment environment, String path)
+    public DashboardRestServiceImpl(Environment environment, String path, ModuleMetaDataProvider<String> moduleMetaDataProvider)
+    {
+        this(environment,path);
+        this.moduleMetaDataProvider = moduleMetaDataProvider;
+    }
+    public DashboardRestServiceImpl(Environment environment, String path)
     {
         restTemplate = new RestTemplate();
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
@@ -69,12 +71,38 @@ public class DashboardRestService
             }
             catch (RestClientException e)
             {
-                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + username + "] with response [{}]", e);
+                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
                 return false;
             }
         }
         return false;
     }
+
+    public boolean publish(Module<Flow> module)
+    {
+        if(isEnabled && module!=null)
+        {
+            logger.debug("Pushing [{}] module to dashboard [{}]", module.getName(), url);
+
+            HttpHeaders headers = createHttpHeaders();
+
+            HttpEntity<String> entity = new HttpEntity<>(moduleMetaDataProvider.describeModule(module), headers);
+
+            try
+            {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+                logger.debug("Successfully published [{}] module to dashboard [{}] with response [{}]", module.getName(), url, response);
+                return true;
+            }
+            catch (RestClientException e)
+            {
+                logger.warn("Issue  while publishing [" +module.getName()+ "] module to dashboard [" + url + "] with response [{}]", e);
+                return false;
+            }
+        }
+        return false;
+    }
+
 
     private HttpHeaders createHttpHeaders()
     {
