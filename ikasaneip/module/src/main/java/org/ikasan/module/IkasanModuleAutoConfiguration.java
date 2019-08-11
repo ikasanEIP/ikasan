@@ -50,6 +50,7 @@ import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -86,10 +87,11 @@ public class IkasanModuleAutoConfiguration
         SecurityService securityService, TopologyService localTxTopologyService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService,
-        Environment environment
+        Environment environment,
+        ModuleMetaDataProvider jsonModuleMetaDataProvider
     )
     {
-        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, METADATA_PATH);
+        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, METADATA_PATH, jsonModuleMetaDataProvider);
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
             localTxTopologyService, dashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }

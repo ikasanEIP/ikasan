@@ -52,7 +52,7 @@ messageHistoryHarvestingJob-enabled=true
 <br/>
 <br/>
 
-All above jobs are using DashboardRestService to publish respective data entities to ikasan dashboard. Publishing data to dashboard 
+All above jobs are using DashboardRestService which is part of topology project to publish respective data entities to ikasan dashboard. Publishing data to dashboard 
 is switched off by default but can be enabled using properties. Following four properties are responsible for providing
 dashboard coordinates
 
