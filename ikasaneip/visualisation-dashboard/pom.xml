@@ -186,6 +186,12 @@
             <version>2.2.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-rest-dashboard</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.vaadin.erik</groupId>
