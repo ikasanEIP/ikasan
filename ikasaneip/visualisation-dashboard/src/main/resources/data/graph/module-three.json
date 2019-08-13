@@ -58,7 +58,7 @@
       "componentName" : "Region Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -74,7 +74,7 @@
       "componentName" : "Message Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.router.XPathSelectorRouter",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -132,7 +132,7 @@
       "componentName" : "Ikasan Notification Event Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.EmailPayloadConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.converter.EmailPayloadConverter",
       "configurationId" : "ion-jgbTrade-ignoreNonLondonTradesNotificationEventEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -140,7 +140,7 @@
       "componentName" : "Ikasan Notification Event Transformer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.BespokeToMsusaFormatTransformer",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.converter.BespokeToMsusaFormatTransformer",
       "configurationId" : "ion-jgbPostTradeSrc-bespokeToMsusaXml",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -214,7 +214,7 @@
       "componentName" : "Dirty JGB Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.DirtyJGBEnricher",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.converter.DirtyJGBEnricher",
       "configurationId" : "ion-jgbPostTradeSrc-dirtyJgbEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -222,7 +222,7 @@
       "componentName" : "Trade Confirmation Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.converter.MappingConfigurationEnricher",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.converter.MappingConfigurationEnricher",
       "configurationId" : "ion-jgbTrade-tradeConfirmationEnricherComponent",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -300,7 +300,7 @@
       "componentName" : "MCS Contra Book Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.McsContraBookLookupBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.broker.McsContraBookLookupBroker",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -308,7 +308,7 @@
       "componentName" : "Organisation Id CDW Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.OrganisationIdCdwLookupBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.broker.OrganisationIdCdwLookupBroker",
       "configurationId" : "ion-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -316,7 +316,7 @@
       "componentName" : "MCS Counterparty Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.broker.McsCounterpartyLookupBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.broker.McsCounterpartyLookupBroker",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -420,7 +420,7 @@
       "componentName" : "CMF TT Trade Splitter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "com.mizuho.esb.mhi.ion.jgbTrade.component.sequencer.TradeNominalSplitter",
+      "implementingClass" : "com.ikasan.esb.mhi.ion.jgbTrade.component.sequencer.TradeNominalSplitter",
       "configurationId" : "ion-jgbPostTradeSrc-cmfTTTradeSplitter",
       "invokerConfigurationId" : null,
       "configurable" : true

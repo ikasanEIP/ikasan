@@ -8,7 +8,7 @@
       "componentName" : "Espeed FIX Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
       "configurationId" : "espeed-trade-espeedFixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -62,7 +62,7 @@
       "componentName" : "Fix OutBound Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.fix.broker.EspeedBiDirectionalBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.espeed.trade.component.fix.broker.EspeedBiDirectionalBroker",
       "configurationId" : "espeed-trade-espeedFixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -70,7 +70,7 @@
       "componentName" : "Fix To XML Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.converter.QuickFixConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.espeed.trade.component.converter.QuickFixConverter",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -78,7 +78,7 @@
       "componentName" : "Espeed FIX Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$4e0f6e37",
       "configurationId" : "espeed-trade-espeedFixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -128,7 +128,7 @@
       "componentName" : "CmfTrade Nominal Splitter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.sequencer.TradeNominalSplitter",
+      "implementingClass" : "com.ikasan.esb.mhi.espeed.trade.component.sequencer.TradeNominalSplitter",
       "configurationId" : "espeed-trade-cmfTradeNominalSplitter",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -144,7 +144,7 @@
       "componentName" : "FIX Confirmation To CmfTrade Convert",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.converter.DynamicXsltConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.espeed.trade.component.converter.DynamicXsltConverter",
       "configurationId" : "espeed-trade-fixConfirmationToCmfTradeConverter",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -152,7 +152,7 @@
       "componentName" : "FIX Confirmation Mcs Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.espeed.trade.component.broker.McsBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.espeed.trade.component.broker.McsBroker",
       "configurationId" : "espeed-trade-mcsBroker",
       "invokerConfigurationId" : null,
       "configurable" : true
