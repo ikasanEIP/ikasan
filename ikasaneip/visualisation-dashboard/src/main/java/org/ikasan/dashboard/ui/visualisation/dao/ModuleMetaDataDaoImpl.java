@@ -11,12 +11,12 @@ import java.util.Map;
 
 public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
 {
-    private static final String BLBGTOMS_MHITRADE = "/data/graph/blbgToms-mhiTrade.json";
-    private static final String ESPEED_TRADE = "/data/graph/espeed-trade.json";
-    private static final String ION_JGB_TRADE = "/data/graph/ion-jgbTrade.json";
-    private static final String R2R_MHEU_ELECTRONIC = "/data/graph/r2r-mheu2Mhi-electronicTrade.json";
-    private static final String TRADEWEB_TRADE = "/data/graph/tradeweb-trade-sa.json";
-    private static final String TT_TRADE = "/data/graph/tt-trade.json";
+    private static final String MODULE_ONE = "/data/graph/module-one.json";
+    private static final String MODULE_TWO = "/data/graph/module-two.json";
+    private static final String MODULE_THREE = "/data/graph/module-three.json";
+    private static final String MODULE_FOUR = "/data/graph/module-four.json";
+    private static final String MODULE_FIVE = "/data/graph/module-five.json";
+    private static final String MODULE_SIX = "/data/graph/module-six.json";
 
     private Map<String, String> moduleMetadata;
 
@@ -31,12 +31,12 @@ public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
     {
         try
         {
-            this.moduleMetadata.put("blbgToms-mhiTrade", IOUtils.toString(loadDataFileStream(BLBGTOMS_MHITRADE), "UTF-8"));
-            this.moduleMetadata.put("espeed-trade", IOUtils.toString(loadDataFileStream(ESPEED_TRADE), "UTF-8"));
-            this.moduleMetadata.put("ion-jgbTrade", IOUtils.toString(loadDataFileStream(ION_JGB_TRADE), "UTF-8"));
-            this.moduleMetadata.put("r2r-mheu2Mhi-electronicTrade", IOUtils.toString(loadDataFileStream(R2R_MHEU_ELECTRONIC), "UTF-8"));
-            this.moduleMetadata.put("tradeweb-trade", IOUtils.toString(loadDataFileStream(TRADEWEB_TRADE), "UTF-8"));
-            this.moduleMetadata.put("tt-trade", IOUtils.toString(loadDataFileStream(TT_TRADE), "UTF-8"));
+            this.moduleMetadata.put("module-one", IOUtils.toString(loadDataFileStream(MODULE_ONE), "UTF-8"));
+            this.moduleMetadata.put("module-two", IOUtils.toString(loadDataFileStream(MODULE_TWO), "UTF-8"));
+            this.moduleMetadata.put("module-three", IOUtils.toString(loadDataFileStream(MODULE_THREE), "UTF-8"));
+            this.moduleMetadata.put("module-four", IOUtils.toString(loadDataFileStream(MODULE_FOUR), "UTF-8"));
+            this.moduleMetadata.put("module-five", IOUtils.toString(loadDataFileStream(MODULE_FIVE), "UTF-8"));
+            this.moduleMetadata.put("module-six", IOUtils.toString(loadDataFileStream(MODULE_SIX), "UTF-8"));
         }
         catch (IOException e)
         {

@@ -1,5 +1,5 @@
 {
-  "name" : "tradeweb-trade-sa",
+  "name" : "trading-place-trade-sa",
   "description" : "Tradeweb JGB Trade",
   "version" : null,
   "flows" : [ {
@@ -8,8 +8,8 @@
       "componentName" : "Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$ae91e1f8",
-      "configurationId" : "tradeweb-trade-sa-fixConsumer",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$ae91e1f8",
+      "configurationId" : "trading-place-trade-sa-fixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -23,19 +23,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-tradeRawJMSProducer",
+      "configurationId" : "trading-place-trade-sa-tradeRawJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$ae91e1f8",
-      "configurationId" : "tradeweb-trade-sa-fixConsumer",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$ae91e1f8",
+      "configurationId" : "trading-place-trade-sa-fixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Fix Inbound Flow"
+    "configurationId" : "trading-place-trade-sa-Fix Inbound Flow"
   }, {
     "name" : "Flat to Bespoke Transformation Flow",
     "consumer" : {
@@ -43,7 +43,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-tradeRawJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-tradeRawJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -61,14 +61,14 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-unfilteredTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-unfilteredTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Fixed Format To Bespoke Xml Transformer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.transformer.XMLReaderTransformer",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.transformer.XMLReaderTransformer",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -77,11 +77,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-tradeRawJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-tradeRawJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Flat to Bespoke Transformation Flow"
+    "configurationId" : "trading-place-trade-sa-Flat to Bespoke Transformation Flow"
   }, {
     "name" : "Business Filtering Flow",
     "consumer" : {
@@ -89,7 +89,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-techFilteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-techFilteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -127,7 +127,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-filteredTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-filteredTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -142,7 +142,7 @@
       "componentName" : "Ignore Tokyo Salesperson Notification Event Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.transformer.EmailPayloadConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.transformer.EmailPayloadConverter",
       "configurationId" : "${ikasan.module.name}-ignoreTokyoSalespersonNotificationEventEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -150,8 +150,8 @@
       "componentName" : "Ignore Tokyo Salesperson Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.router.XPathIgnoreRouter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.router.XPathIgnoreRouter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -166,7 +166,7 @@
       "componentName" : "Ignore Non London Trades Notification Event Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.transformer.EmailPayloadConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.transformer.EmailPayloadConverter",
       "configurationId" : "${ikasan.module.name}-ignoreNonLondonTradesNotificationEventEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -174,8 +174,8 @@
       "componentName" : "Trade Location Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.router.XPathIgnoreRouter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-tradeLocationRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.router.XPathIgnoreRouter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-tradeLocationRouter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -183,11 +183,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-techFilteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-techFilteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Business Filtering Flow"
+    "configurationId" : "trading-place-trade-sa-Business Filtering Flow"
   }, {
     "name" : "Technical Filtering Flow",
     "consumer" : {
@@ -195,7 +195,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-unfilteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-unfilteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -221,7 +221,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-techFilteredTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-techFilteredTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -236,8 +236,8 @@
       "componentName" : "Message Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.router.XPathIgnoreRouter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.router.XPathIgnoreRouter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -253,11 +253,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-unfilteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-unfilteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Technical Filtering Flow"
+    "configurationId" : "trading-place-trade-sa-Technical Filtering Flow"
   }, {
     "name" : "Trade Type Router Flow",
     "consumer" : {
@@ -265,7 +265,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-filteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-filteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -295,7 +295,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-preEnrichmentTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-preEnrichmentTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -303,7 +303,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-swapTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-swapTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -318,7 +318,7 @@
       "componentName" : "Unknown Trade Type Notification Event Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.transformer.EmailPayloadConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.transformer.EmailPayloadConverter",
       "configurationId" : "${ikasan.module.name}-unknownTradeTypeNotificationEventEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
@@ -326,8 +326,8 @@
       "componentName" : "Trade Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.router.XPathSelectorRouter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.router.XPathSelectorRouter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-ignoreTokyoSalespersonRouter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -335,11 +335,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-filteredTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-filteredTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Trade Type Router Flow"
+    "configurationId" : "trading-place-trade-sa-Trade Type Router Flow"
   }, {
     "name" : "Swap Trade Splitter Flow",
     "consumer" : {
@@ -347,7 +347,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-swapTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-swapTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -365,15 +365,15 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-preEnrichmentTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-preEnrichmentTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Swap Trade Splitter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.sequencer.SwapTradeSplitter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-swapTradeSplitter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.sequencer.SwapTradeSplitter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-swapTradeSplitter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -381,11 +381,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-swapTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-swapTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Swap Trade Splitter Flow"
+    "configurationId" : "trading-place-trade-sa-Swap Trade Splitter Flow"
   }, {
     "name" : "Enrichment Flow",
     "consumer" : {
@@ -393,7 +393,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-preEnrichmentTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-preEnrichmentTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -419,7 +419,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-ttEnrichedTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-ttEnrichedTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -427,7 +427,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-rfEnrichedTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-rfEnrichedTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -442,8 +442,8 @@
       "componentName" : "Sequence Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.transformer.TradewebSequenceEnricher",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-sequenceEnricher",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.transformer.TradewebSequenceEnricher",
+      "configurationId" : "trading-place-jgbPostTradeSrc-sequenceEnricher",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -451,11 +451,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-preEnrichmentTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-preEnrichmentTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Enrichment Flow"
+    "configurationId" : "trading-place-trade-sa-Enrichment Flow"
   }, {
     "name" : "Bespoke XML to CMF Trade Retail Feed Transformer Flow",
     "consumer" : {
@@ -463,7 +463,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-rfEnrichedTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-rfEnrichedTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -497,7 +497,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-prebookTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-prebookTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -505,7 +505,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "tradeweb-trade-sa-cmfRFTradeValidator",
+      "configurationId" : "trading-place-trade-sa-cmfRFTradeValidator",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -513,30 +513,30 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-bespokeToRFCmfTranslator",
+      "configurationId" : "trading-place-jgbPostTradeSrc-bespokeToRFCmfTranslator",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "MCS Contra Book Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.broker.OrganisationIdCdwLookupBroker",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.broker.OrganisationIdCdwLookupBroker",
+      "configurationId" : "trading-place-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Organisation Id Cdw Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.broker.OrganisationIdCdwLookupBroker",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.broker.OrganisationIdCdwLookupBroker",
+      "configurationId" : "trading-place-jgbPostTradeSrc-organisationIdCdwLookupTransformer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "RF MCS Windows Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.broker.McsWindowsLookupBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.broker.McsWindowsLookupBroker",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -545,11 +545,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-rfEnrichedTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-rfEnrichedTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Bespoke XML to CMF Trade Retail Feed Transformer Flow"
+    "configurationId" : "trading-place-trade-sa-Bespoke XML to CMF Trade Retail Feed Transformer Flow"
   }, {
     "name" : "Bespoke XML To CMF Trade Trader Ticket Transformer Flow",
     "consumer" : {
@@ -557,7 +557,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-ttEnrichedTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-ttEnrichedTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -583,7 +583,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-ttTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-ttTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -591,7 +591,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "tradeweb-trade-sa-cmfTTTradeValidator",
+      "configurationId" : "trading-place-trade-sa-cmfTTTradeValidator",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -599,14 +599,14 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-bespokeToTTCmfTranslator",
+      "configurationId" : "trading-place-jgbPostTradeSrc-bespokeToTTCmfTranslator",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "TT MCS Windows Lookup Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.broker.McsWindowsLookupBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.broker.McsWindowsLookupBroker",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -615,11 +615,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-ttEnrichedTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-ttEnrichedTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-Bespoke XML To CMF Trade Trader Ticket Transformer Flow"
+    "configurationId" : "trading-place-trade-sa-Bespoke XML To CMF Trade Trader Ticket Transformer Flow"
   }, {
     "name" : "CMF Trader Ticket Trade Splitter Flow",
     "consumer" : {
@@ -627,7 +627,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-ttTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-ttTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -645,15 +645,15 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "tradeweb-trade-sa-prebookTradeJMSProducer",
+      "configurationId" : "trading-place-trade-sa-prebookTradeJMSProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "CMF Trader Ticket Trade Splitter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.splitting.Splitter",
-      "implementingClass" : "com.mizuho.esb.mhi.tradeweb.trade.component.sequencer.TradeNominalSplitter",
-      "configurationId" : "tradeweb-jgbPostTradeSrc-cmfTTTradeSplitter",
+      "implementingClass" : "com.ikasan.esb.mhi.trading-place.trade.component.sequencer.TradeNominalSplitter",
+      "configurationId" : "trading-place-jgbPostTradeSrc-cmfTTTradeSplitter",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -661,10 +661,10 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$b43be197",
-      "configurationId" : "tradeweb-trade-sa-ttTradeJMSConsumer",
+      "configurationId" : "trading-place-trade-sa-ttTradeJMSConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "tradeweb-trade-sa-CMF Trader Ticket Trade Splitter Flow"
+    "configurationId" : "trading-place-trade-sa-CMF Trader Ticket Trade Splitter Flow"
   } ]
 }

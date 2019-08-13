@@ -1,5 +1,5 @@
 {
-  "name" : "blbgToms-mhiTrade-sa",
+  "name" : "bloomberg-trade",
   "description" : "Bloomberg MHI TOMS Post Trade Feed and Trade Booking Application",
   "version" : null,
   "flows" : [ {
@@ -8,9 +8,9 @@
       "componentName" : "Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Inbound FlowFix ConsumerInvoker",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
+      "configurationId" : "bloomberg-trade-fixConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Inbound FlowFix ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -23,19 +23,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixJmsProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Inbound FlowFix Jms ProducerInvoker",
+      "configurationId" : "bloomberg-trade-fixJmsProducer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Inbound FlowFix Jms ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Inbound FlowFix ConsumerInvoker",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
+      "configurationId" : "bloomberg-trade-fixConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Inbound FlowFix ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Fix Inbound Flow"
+    "configurationId" : "bloomberg-trade-Fix Inbound Flow"
   }, {
     "name" : "Fix Outbound Flow",
     "consumer" : {
@@ -43,8 +43,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixOutboundJmsConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Outbound FlowFix Outbound Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-fixOutboundJmsConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Outbound FlowFix Outbound Jms ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -66,42 +66,42 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Outbound FlowDo NothingInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeFix Outbound FlowDo NothingInvoker",
       "configurable" : false
     }, {
       "componentName" : "Fix Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.fix.broker.BiDirectionalBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Outbound FlowFix BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.fix.broker.BiDirectionalBroker",
+      "configurationId" : "bloomberg-trade-fixConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Outbound FlowFix BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Fix Message Unescape Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.converter.FixMessageUnescapeConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.converter.FixMessageUnescapeConverter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Outbound FlowFix Message Unescape ConverterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeFix Outbound FlowFix Message Unescape ConverterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Fix Outbound Jms Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixOutboundJmsConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saFix Outbound FlowFix Outbound Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-fixOutboundJmsConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeFix Outbound FlowFix Outbound Jms ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Fix Outbound Flow"
+    "configurationId" : "bloomberg-trade-Fix Outbound Flow"
   }, {
     "name" : "Priority Fix Inbound Flow",
     "consumer" : {
       "componentName" : "Priority Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
+      "configurationId" : "bloomberg-trade-fixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -115,19 +115,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixJmsProducer",
+      "configurationId" : "bloomberg-trade-fixJmsProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Priority Fix Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
+      "implementingClass" : "com.ikasan.esb.fix.consumer.FIXMessageConsumer$$EnhancerBySpringCGLIB$$d655c7ed",
+      "configurationId" : "bloomberg-trade-fixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Priority Fix Inbound Flow"
+    "configurationId" : "bloomberg-trade-Priority Fix Inbound Flow"
   }, {
     "name" : "Priority Fix Outbound Flow",
     "consumer" : {
@@ -135,7 +135,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixOutboundJmsConsumer",
+      "configurationId" : "bloomberg-trade-fixOutboundJmsConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -164,15 +164,15 @@
       "componentName" : "Priority Fix Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.fix.broker.BiDirectionalBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixConsumer",
+      "implementingClass" : "com.ikasan.esb.fix.broker.BiDirectionalBroker",
+      "configurationId" : "bloomberg-trade-fixConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Priority Fix Message Unescape Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.converter.FixMessageUnescapeConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.converter.FixMessageUnescapeConverter",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -181,11 +181,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixOutboundJmsConsumer",
+      "configurationId" : "bloomberg-trade-fixOutboundJmsConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Priority Fix Outbound Flow"
+    "configurationId" : "bloomberg-trade-Priority Fix Outbound Flow"
   }, {
     "name" : "Prebook Bond Inbound Flow",
     "consumer" : {
@@ -193,8 +193,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookBondConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Bond Inbound Flow_Prebook Bond Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-prebookBondConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Bond Inbound Flow_Prebook Bond Consumer_1165847135_I",
       "configurable" : true
     },
     "transitions" : [ {
@@ -207,19 +207,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Bond Inbound Flow_Prebook Bond Producer_1165847135_I",
+      "configurationId" : "bloomberg-trade-orderedProducer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Bond Inbound Flow_Prebook Bond Producer_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "Prebook Bond Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookBondConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Bond Inbound Flow_Prebook Bond Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-prebookBondConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Bond Inbound Flow_Prebook Bond Consumer_1165847135_I",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Prebook Bond Inbound Flow"
+    "configurationId" : "bloomberg-trade-Prebook Bond Inbound Flow"
   }, {
     "name" : "Prebook Future Inbound Flow",
     "consumer" : {
@@ -227,8 +227,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookFutureConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Future Inbound Flow_Prebook Future Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-prebookFutureConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Future Inbound Flow_Prebook Future Consumer_1165847135_I",
       "configurable" : true
     },
     "transitions" : [ {
@@ -241,19 +241,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-unorderedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Future Inbound Flow_Prebook Future Producer_1165847135_I",
+      "configurationId" : "bloomberg-trade-unorderedProducer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Future Inbound Flow_Prebook Future Producer_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "Prebook Future Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookFutureConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Prebook Future Inbound Flow_Prebook Future Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-prebookFutureConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Prebook Future Inbound Flow_Prebook Future Consumer_1165847135_I",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Prebook Future Inbound Flow"
+    "configurationId" : "bloomberg-trade-Prebook Future Inbound Flow"
   }, {
     "name" : "Trade Capture Routing Flow",
     "consumer" : {
@@ -261,8 +261,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowPrebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-prebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowPrebook ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -287,43 +287,43 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-unorderedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowUnordered ProducerInvoker",
+      "configurationId" : "bloomberg-trade-unorderedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowUnordered ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ordered Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowOrdered ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowOrdered ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ordered Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowOrdered ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowOrdered ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ordering Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathBooleanRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureOrderingRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowOrdering RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathBooleanRouter",
+      "configurationId" : "bloomberg-trade-tradeCaptureOrderingRouter",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowOrdering RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Prebook Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-prebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saTrade Capture Routing FlowPrebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-prebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeTrade Capture Routing FlowPrebook ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Trade Capture Routing Flow"
+    "configurationId" : "bloomberg-trade-Trade Capture Routing Flow"
   }, {
     "name" : "Ordered Trade Capture Flow",
     "consumer" : {
@@ -331,8 +331,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedPrebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowOrdered Prebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-orderedPrebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowOrdered Prebook ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -404,140 +404,140 @@
       "componentName" : "Trade Already Acked Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Already Acked ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Already Acked ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Swap TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSwapTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSwapTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "RetailFeed Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeRetailFeedConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowRetailFeed ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeRetailFeedConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowRetailFeed ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Ticket Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeTicketTypeRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
+      "configurationId" : "bloomberg-trade-tradeTicketTypeRouter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Base Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeBaseConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Base ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeBaseConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Base ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "MCS Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityMcsBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowMCS BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
+      "configurationId" : "bloomberg-trade-priorityMcsBroker",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowMCS BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade State Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade State EnricherInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade State EnricherInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ack Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowAck RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowAck RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Ordered Prebook Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedPrebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowOrdered Prebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-orderedPrebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowOrdered Prebook ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Ordered Trade Capture Flow"
+    "configurationId" : "bloomberg-trade-Ordered Trade Capture Flow"
   }, {
     "name" : "Unordered Trade Capture Flow",
     "consumer" : {
@@ -545,8 +545,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-unorderedPrebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saUnordered Trade Capture FlowUnordered Prebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-unorderedPrebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeUnordered Trade Capture FlowUnordered Prebook ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -618,140 +618,140 @@
       "componentName" : "Trade Already Acked Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saUnordered Trade Capture FlowTrade Already Acked ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeUnordered Trade Capture FlowTrade Already Acked ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Swap TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSwapTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSwapTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "RetailFeed Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeRetailFeedConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowRetailFeed ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeRetailFeedConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowRetailFeed ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Ticket Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeTicketTypeRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
+      "configurationId" : "bloomberg-trade-tradeTicketTypeRouter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Base Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeBaseConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Base ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeBaseConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Base ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "MCS Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityMcsBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowMCS BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
+      "configurationId" : "bloomberg-trade-priorityMcsBroker",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowMCS BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade State Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saUnordered Trade Capture FlowTrade State EnricherInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeUnordered Trade Capture FlowTrade State EnricherInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ack Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saUnordered Trade Capture FlowAck RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeUnordered Trade Capture FlowAck RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Unordered Prebook Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-unorderedPrebookConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saUnordered Trade Capture FlowUnordered Prebook ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-unorderedPrebookConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeUnordered Trade Capture FlowUnordered Prebook ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Unordered Trade Capture Flow"
+    "configurationId" : "bloomberg-trade-Unordered Trade Capture Flow"
   }, {
     "name" : "Priority Trade Capture Flow",
     "consumer" : {
@@ -759,7 +759,7 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityPrebookConsumer",
+      "configurationId" : "bloomberg-trade-priorityPrebookConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     },
@@ -832,8 +832,8 @@
       "componentName" : "Trade Already Acked Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
@@ -841,118 +841,118 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Swap TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSwapTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSwapTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSwap TraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "RetailFeed Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeRetailFeedConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowRetailFeed ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeRetailFeedConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowRetailFeed ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-priorityTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "TraderTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeTraderTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTraderTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeTraderTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTraderTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-orderedTradeCaptureProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Capture ProducerInvoker",
+      "configurationId" : "bloomberg-trade-orderedTradeCaptureProducer",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Capture ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "SalesTicket Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeSalesTicketConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowSalesTicket ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeSalesTicketConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowSalesTicket ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Ticket Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeTicketTypeRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
+      "configurationId" : "bloomberg-trade-tradeTicketTypeRouter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Ticket Type RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Base Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeBaseConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowTrade Base ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeBaseConverter",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowTrade Base ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "MCS Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityMcsBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saOrdered Trade Capture FlowMCS BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.McsBroker",
+      "configurationId" : "bloomberg-trade-priorityMcsBroker",
+      "invokerConfigurationId" : "bloomberg-tradeOrdered Trade Capture FlowMCS BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade State Enricher",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureTradeStateProducer",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
+      "configurationId" : "bloomberg-trade-tradeCaptureTradeStateProducer",
       "invokerConfigurationId" : null,
       "configurable" : true
     }, {
       "componentName" : "Ack Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
       "invokerConfigurationId" : null,
       "configurable" : false
@@ -961,11 +961,11 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-priorityPrebookConsumer",
+      "configurationId" : "bloomberg-trade-priorityPrebookConsumer",
       "invokerConfigurationId" : null,
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Priority Trade Capture Flow"
+    "configurationId" : "bloomberg-trade-Priority Trade Capture Flow"
   }, {
     "name" : "Ack Nack Flow",
     "consumer" : {
@@ -973,8 +973,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-ackNakConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowFix Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-ackNakConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowFix Jms ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1052,103 +1052,103 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAlready AckedInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAlready AckedInvoker",
       "configurable" : false
     }, {
       "componentName" : "Trade State Ack Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeStateAckProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowTrade State Ack ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
+      "configurationId" : "bloomberg-trade-tradeStateAckProducer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowTrade State Ack ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfDelivery Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfDeliveryProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfDelivery ProducerInvoker",
+      "configurationId" : "bloomberg-trade-cmfDeliveryProducer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfDelivery ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfDelivery Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfDeliveryValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfDelivery ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfDeliveryValidator",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfDelivery ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfDelivery Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfDeliveryConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfDelivery ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfDeliveryConverter",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfDelivery ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfAcknowledgement Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfAcknowledgementProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfAcknowledgement ProducerInvoker",
+      "configurationId" : "bloomberg-trade-cmfAcknowledgementProducer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfAcknowledgement ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfAcknowledgement Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfAcknowledgementValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfAcknowledgement ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfAcknowledgementValidator",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfAcknowledgement ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfAcknowledgement Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfAcknowledgementConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowCmfAcknowledgement ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfAcknowledgementConverter",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowCmfAcknowledgement ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Capture Ack Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.TradeCaptureAckRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.TradeCaptureAckRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowTrade Capture Ack RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowTrade Capture Ack RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "AllocationInstruction State Ack Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-allocationInstructionStateAckProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAllocationInstruction State Ack ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
+      "configurationId" : "bloomberg-trade-allocationInstructionStateAckProducer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAllocationInstruction State Ack ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Alloc CmfAcknowledgement Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-allocCmfAcknowledgementProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAlloc CmfAcknowledgement ProducerInvoker",
+      "configurationId" : "bloomberg-trade-allocCmfAcknowledgementProducer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAlloc CmfAcknowledgement ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Alloc CmfAcknowledgement Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-allocationAckCmfAcknowledgementValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAlloc CmfAcknowledgement ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-allocationAckCmfAcknowledgementValidator",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAlloc CmfAcknowledgement ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "Alloc CmfAcknowledgement Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-allocationAckToCmfAcknowledgementConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAlloc CmfAcknowledgement ConverterInvoker",
+      "configurationId" : "bloomberg-trade-allocationAckToCmfAcknowledgementConverter",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAlloc CmfAcknowledgement ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Allocation Ack Router",
@@ -1156,7 +1156,7 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowAllocation Ack RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowAllocation Ack RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Ignore Fix Message",
@@ -1164,34 +1164,34 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowIgnore Fix MessageInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowIgnore Fix MessageInvoker",
       "configurable" : false
     }, {
       "componentName" : "Fix Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathBooleanRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-fixTypeRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowFix Type RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathBooleanRouter",
+      "configurationId" : "bloomberg-trade-fixTypeRouter",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowFix Type RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Fix To XML Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.converter.QuickFixConverter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.converter.QuickFixConverter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowFix To XML ConverterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowFix To XML ConverterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Fix Jms Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-ackNakConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Nack FlowFix Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-ackNakConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Nack FlowFix Jms ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Ack Nack Flow"
+    "configurationId" : "bloomberg-trade-Ack Nack Flow"
   }, {
     "name" : "Nack Publishing Flow",
     "consumer" : {
@@ -1199,8 +1199,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-exclusionJmsConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowExclusion Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-exclusionJmsConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowExclusion Jms ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1320,17 +1320,17 @@
       "componentName" : "CmfAcknowledgement State Ack Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-collectionCmfAcknowledgementStateAckProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfAcknowledgement State Ack ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
+      "configurationId" : "bloomberg-trade-collectionCmfAcknowledgementStateAckProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfAcknowledgement State Ack ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Collection CmfAcknowledgement Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-collectionCmfAcknowledgementProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCollection CmfAcknowledgement ProducerInvoker",
+      "configurationId" : "bloomberg-trade-collectionCmfAcknowledgementProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCollection CmfAcknowledgement ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfTradeCollection Ack MRR",
@@ -1338,23 +1338,23 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTradeCollection Ack MRRInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTradeCollection Ack MRRInvoker",
       "configurable" : false
     }, {
       "componentName" : "CmfTradeCollection CmfAcknowledgement Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeCollectionAckCmfAcknowledgementValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTradeCollection CmfAcknowledgement ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeCollectionAckCmfAcknowledgementValidator",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTradeCollection CmfAcknowledgement ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfTradeCollection CmfAcknowledgement Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeCollectionToCmfAcknowledgementConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTradeCollection CmfAcknowledgement ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeCollectionToCmfAcknowledgementConverter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTradeCollection CmfAcknowledgement ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Ignore",
@@ -1362,23 +1362,23 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowIgnoreInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowIgnoreInvoker",
       "configurable" : false
     }, {
       "componentName" : "TradeCapture Nak Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureNakProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowTradeCapture Nak ProducerInvoker",
+      "configurationId" : "bloomberg-trade-tradeCaptureNakProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowTradeCapture Nak ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "TradeState Nak Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-nakTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowTradeState Nak ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
+      "configurationId" : "bloomberg-trade-nakTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowTradeState Nak ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nacked Trades MRR",
@@ -1386,47 +1386,47 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNacked Trades MRRInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNacked Trades MRRInvoker",
       "configurable" : false
     }, {
       "componentName" : "CmfTrade Delivery Report Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeDeliveryReportValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTrade Delivery Report ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeDeliveryReportValidator",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTrade Delivery Report ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfTrade Delivery Report Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeDeliveryReportConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTrade Delivery Report ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeDeliveryReportConverter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTrade Delivery Report ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ProducerInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementValidator",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ConverterInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementConverter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CMF MRR Router",
@@ -1434,15 +1434,15 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CMF MRR RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CMF MRR RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Nacke Trades Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNacke Trades RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNacke Trades RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Ignore",
@@ -1450,23 +1450,23 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowIgnoreInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowIgnoreInvoker",
       "configurable" : false
     }, {
       "componentName" : "TradeCapture Nak Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeCaptureNakProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowTradeCapture Nak ProducerInvoker",
+      "configurationId" : "bloomberg-trade-tradeCaptureNakProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowTradeCapture Nak ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "TradeState Nak Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-nakTradeStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowTradeState Nak ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeStateProducer",
+      "configurationId" : "bloomberg-trade-nakTradeStateProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowTradeState Nak ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nacked Trades MRR",
@@ -1474,47 +1474,47 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNacked Trades MRRInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNacked Trades MRRInvoker",
       "configurable" : false
     }, {
       "componentName" : "CmfTrade Delivery Report Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeDeliveryReportValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTrade Delivery Report ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeDeliveryReportValidator",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTrade Delivery Report ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfTrade Delivery Report Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeDeliveryReportConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowCmfTrade Delivery Report ConverterInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeDeliveryReportConverter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowCmfTrade Delivery Report ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ProducerInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementProducer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementValidator",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CmfAcknowledgement Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackCmfAcknowledgementConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CmfAcknowledgement ConverterInvoker",
+      "configurationId" : "bloomberg-trade-nackCmfAcknowledgementConverter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CmfAcknowledgement ConverterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Nack CMF MRR Router",
@@ -1522,34 +1522,34 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack CMF MRR RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack CMF MRR RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Nacke Trades Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNacke Trades RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNacke Trades RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Nack Type Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-nackTypeRouter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowNack Type RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.XPathRouter",
+      "configurationId" : "bloomberg-trade-nackTypeRouter",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowNack Type RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "Exclusion Jms Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-exclusionJmsConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saNack Publishing FlowExclusion Jms ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-exclusionJmsConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeNack Publishing FlowExclusion Jms ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Nack Publishing Flow"
+    "configurationId" : "bloomberg-trade-Nack Publishing Flow"
   }, {
     "name" : "Ack Housekeeping Flow",
     "consumer" : {
@@ -1557,8 +1557,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-ackHousekeepingScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Housekeeping FlowAck Housekeeping Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-ackHousekeepingScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Housekeeping FlowAck Housekeeping Scheduled ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1572,18 +1572,18 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Housekeeping FlowExpired Acks DevNullInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeAck Housekeeping FlowExpired Acks DevNullInvoker",
       "configurable" : false
     }, {
       "componentName" : "Ack Housekeeping Scheduled Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-ackHousekeepingScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saAck Housekeeping FlowAck Housekeeping Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-ackHousekeepingScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeAck Housekeeping FlowAck Housekeeping Scheduled ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Ack Housekeeping Flow"
+    "configurationId" : "bloomberg-trade-Ack Housekeeping Flow"
   }, {
     "name" : "Missing Trades Acks Flow",
     "consumer" : {
@@ -1591,8 +1591,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-missingTradesAcksScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMissing Trades Acks FlowMissing Trades Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-missingTradesAcksScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeMissing Trades Acks FlowMissing Trades Scheduled ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1604,29 +1604,29 @@
       "componentName" : "Missing Trades Error Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.MissingTradesAcksErrorProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-missingTradesAcksErrorProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMissing Trades Acks FlowMissing Trades Error ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.MissingTradesAcksErrorProducer",
+      "configurationId" : "bloomberg-trade-missingTradesAcksErrorProducer",
+      "invokerConfigurationId" : "bloomberg-tradeMissing Trades Acks FlowMissing Trades Error ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Missing Trades Scheduled Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-missingTradesAcksScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMissing Trades Acks FlowMissing Trades Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-missingTradesAcksScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeMissing Trades Acks FlowMissing Trades Scheduled ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Missing Trades Acks Flow"
+    "configurationId" : "bloomberg-trade-Missing Trades Acks Flow"
   }, {
     "name" : "Bloomberg Trade Feed Consumer Flow",
     "consumer" : {
       "componentName" : "String Message Bloomberg MQ Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.mq.endpoint.consumer.MQJmsConsumer$$EnhancerBySpringCGLIB$$ceb1c275",
+      "implementingClass" : "com.ikasan.esb.mq.endpoint.consumer.MQJmsConsumer$$EnhancerBySpringCGLIB$$ceb1c275",
       "configurationId" : "blbgToms-mhiTrade-consumerFlow-tradeFeedConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Consumer FlowString Message Bloomberg MQ ConsumerInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Consumer FlowString Message Bloomberg MQ ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1639,19 +1639,19 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedConsumerFlowProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Consumer FlowConsumer Flow Trade Feed Message ProducerInvoker",
+      "configurationId" : "bloomberg-trade-tradeFeedConsumerFlowProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Consumer FlowConsumer Flow Trade Feed Message ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "String Message Bloomberg MQ Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
-      "implementingClass" : "com.mizuho.esb.mq.endpoint.consumer.MQJmsConsumer$$EnhancerBySpringCGLIB$$ceb1c275",
+      "implementingClass" : "com.ikasan.esb.mq.endpoint.consumer.MQJmsConsumer$$EnhancerBySpringCGLIB$$ceb1c275",
       "configurationId" : "blbgToms-mhiTrade-consumerFlow-tradeFeedConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Consumer FlowString Message Bloomberg MQ ConsumerInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Consumer FlowString Message Bloomberg MQ ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Bloomberg Trade Feed Consumer Flow"
+    "configurationId" : "bloomberg-trade-Bloomberg Trade Feed Consumer Flow"
   }, {
     "name" : "Bloomberg Trade Feed Message Transformation Flow",
     "consumer" : {
@@ -1659,8 +1659,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedTransformationFlowConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTransformation Flow ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-tradeFeedTransformationFlowConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTransformation Flow ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1757,16 +1757,16 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-amqBondPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowAMQ Bond CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-amqBondPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowAMQ Bond CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Bond CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-bondPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowBond CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-bondPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowBond CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Bond CmfTrade Recipient List Router",
@@ -1774,31 +1774,31 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowBond CmfTrade Recipient List RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowBond CmfTrade Recipient List RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "ETF CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-etfPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowETF CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-etfPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowETF CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "AMQ Future CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-amqFuturePostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowAMQ Future CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-amqFuturePostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowAMQ Future CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Future CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-futurePostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFuture CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-futurePostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFuture CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Future CmfTrade Recipient List Router",
@@ -1806,47 +1806,47 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFuture CmfTrade Recipient List RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFuture CmfTrade Recipient List RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "FxSpot CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-fxSpotPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFxSpot CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-fxSpotPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFxSpot CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "FxForward CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-fxForwardPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFxForward CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-fxForwardPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFxForward CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "FxSwap CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-fxSwapPostTradeFeedProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFxSwap CmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-fxSwapPostTradeFeedProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFxSwap CmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Product Xpath Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.ProductXpathRouter",
-      "configurationId" : "blbgToms-mhiTrade-sa-productXpathRouterConfiguration",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowProduct Xpath RouterInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.ProductXpathRouter",
+      "configurationId" : "bloomberg-trade-productXpathRouterConfiguration",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowProduct Xpath RouterInvoker",
       "configurable" : true
     }, {
       "componentName" : "CmfTrade Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedTransformationFlowProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowCmfTrade ProducerInvoker",
+      "configurationId" : "bloomberg-trade-tradeFeedTransformationFlowProducer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowCmfTrade ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "CMF Post Trade Router",
@@ -1854,55 +1854,55 @@
       "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
       "implementingClass" : "org.ikasan.component.router.multirecipient.RecipientListRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowCMF Post Trade RouterInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowCMF Post Trade RouterInvoker",
       "configurable" : false
     }, {
       "componentName" : "Cmf Trade Validator",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.validator.xml.XMLValidator",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeValidator",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowCmf Trade ValidatorInvoker",
+      "configurationId" : "bloomberg-trade-cmfTradeValidator",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowCmf Trade ValidatorInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Feed To CmfTrade Convert",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.XsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedToCmfTradeConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTrade Feed To CmfTrade ConvertInvoker",
+      "configurationId" : "bloomberg-trade-tradeFeedToCmfTradeConverter",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTrade Feed To CmfTrade ConvertInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Feed Trade Purpose Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.MtnTradePurposeBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-mtnTradeFeedTradePurposeBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTrade Feed Trade Purpose BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.MtnTradePurposeBroker",
+      "configurationId" : "bloomberg-trade-mtnTradeFeedTradePurposeBroker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTrade Feed Trade Purpose BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Feed Decision Maker Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.DecisionMakerBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedDecisionMakerBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTrade Feed Decision Maker BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.DecisionMakerBroker",
+      "configurationId" : "bloomberg-trade-tradeFeedDecisionMakerBroker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTrade Feed Decision Maker BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "MHEU Trade Book Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.MheuTradeBookBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-mheuTradeBookBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowMHEU Trade Book BrokerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.MheuTradeBookBroker",
+      "configurationId" : "bloomberg-trade-mheuTradeBookBroker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowMHEU Trade Book BrokerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Trade Feed Master Ticket Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.MasterTicketBroker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.MasterTicketBroker",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTrade Feed Master Ticket BrokerInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTrade Feed Master Ticket BrokerInvoker",
       "configurable" : false
     }, {
       "componentName" : "Duplicate Endpoint Producer",
@@ -1910,15 +1910,15 @@
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.util.producer.DevNull",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowDuplicate Endpoint ProducerInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowDuplicate Endpoint ProducerInvoker",
       "configurable" : false
     }, {
       "componentName" : "Filter out duplicate trade feed messages",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.FilteringRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.FilteringRouter",
       "configurationId" : "blbgToms-mhiTrade-tradeFeedDuplicateFilter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFilter out duplicate trade feed messagesInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFilter out duplicate trade feed messagesInvoker",
       "configurable" : true
     }, {
       "componentName" : "Filter out trade feed Swaps",
@@ -1926,18 +1926,18 @@
       "componentType" : "org.ikasan.spec.component.filter.Filter",
       "implementingClass" : "org.ikasan.filter.DefaultMessageFilter",
       "configurationId" : "blbgToms-mhiTrade-tradeFeedSwapFilter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowFilter out trade feed SwapsInvoker",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowFilter out trade feed SwapsInvoker",
       "configurable" : true
     }, {
       "componentName" : "Transformation Flow Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer$$EnhancerBySpringCGLIB$$aa7bcce8",
-      "configurationId" : "blbgToms-mhiTrade-sa-tradeFeedTransformationFlowConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saBloomberg Trade Feed Message Transformation FlowTransformation Flow ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-tradeFeedTransformationFlowConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeBloomberg Trade Feed Message Transformation FlowTransformation Flow ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Bloomberg Trade Feed Message Transformation Flow"
+    "configurationId" : "bloomberg-trade-Bloomberg Trade Feed Message Transformation Flow"
   }, {
     "name" : "Master Ticket Housekeeping Flow",
     "consumer" : {
@@ -1945,8 +1945,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-masterTicketHousekeepingScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMaster Ticket Housekeeping FlowMaster Ticket Housekeeping Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-masterTicketHousekeepingScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeMaster Ticket Housekeeping FlowMaster Ticket Housekeeping Scheduled ConsumerInvoker",
       "configurable" : true
     },
     "transitions" : [ {
@@ -1958,20 +1958,20 @@
       "componentName" : "Master Ticket Housekeeping Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.MasterTicketHousekeepingProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-masterTicketHousekeepingConfiguration",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMaster Ticket Housekeeping FlowMaster Ticket Housekeeping ProducerInvoker",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.MasterTicketHousekeepingProducer",
+      "configurationId" : "bloomberg-trade-masterTicketHousekeepingConfiguration",
+      "invokerConfigurationId" : "bloomberg-tradeMaster Ticket Housekeeping FlowMaster Ticket Housekeeping ProducerInvoker",
       "configurable" : true
     }, {
       "componentName" : "Master Ticket Housekeeping Scheduled Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer$$EnhancerBySpringCGLIB$$5d9e3b90",
-      "configurationId" : "blbgToms-mhiTrade-sa-masterTicketHousekeepingScheduleConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-saMaster Ticket Housekeeping FlowMaster Ticket Housekeeping Scheduled ConsumerInvoker",
+      "configurationId" : "bloomberg-trade-masterTicketHousekeepingScheduleConsumer",
+      "invokerConfigurationId" : "bloomberg-tradeMaster Ticket Housekeeping FlowMaster Ticket Housekeeping Scheduled ConsumerInvoker",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Master Ticket Housekeeping Flow"
+    "configurationId" : "bloomberg-trade-Master Ticket Housekeeping Flow"
   }, {
     "name" : "Allocations Flow",
     "consumer" : {
@@ -1979,8 +1979,8 @@
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "com.sun.proxy.$Proxy134",
-      "configurationId" : "blbgToms-mhiTrade-sa-AllocationsBDMConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_Allocations BDM Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-AllocationsBDMConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_Allocations BDM Consumer_1165847135_I",
       "configurable" : true
     },
     "transitions" : [ {
@@ -2020,33 +2020,33 @@
       "componentName" : "CmfTradeCollection Already Acked Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeCollectionAllocAlreadyAckedStateProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_CmfTradeCollection Already Acked Producer_1165847135_I",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.producer.TradeAlreadyAckedProducer",
+      "configurationId" : "bloomberg-trade-cmfTradeCollectionAllocAlreadyAckedStateProducer",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_CmfTradeCollection Already Acked Producer_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "Allocations FIX JMS Producer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Producer",
       "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-      "configurationId" : "blbgToms-mhiTrade-sa-allocationsFIXProducer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_Allocations FIX JMS Producer_1165847135_I",
+      "configurationId" : "bloomberg-trade-allocationsFIXProducer",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_Allocations FIX JMS Producer_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "CmfTradeCollection to FIX Allocation Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ThreadSafeXsltConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-CmfTradeCollectionToAllocationConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_CmfTradeCollection to FIX Allocation Converter_1165847135_I",
+      "configurationId" : "bloomberg-trade-CmfTradeCollectionToAllocationConverter",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_CmfTradeCollection to FIX Allocation Converter_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "CmfTradeCollection Object To String Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
       "implementingClass" : "org.ikasan.component.converter.xml.ObjectToXMLStringConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-CmfTradeCollectionObjectToStringConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_CmfTradeCollection Object To String Converter_1165847135_I",
+      "configurationId" : "bloomberg-trade-CmfTradeCollectionObjectToStringConverter",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_CmfTradeCollection Object To String Converter_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "CmfTradeCollection Fragment Splitter",
@@ -2054,41 +2054,41 @@
       "componentType" : "org.ikasan.spec.component.splitting.Splitter",
       "implementingClass" : "org.ikasan.component.splitter.DefaultListSplitter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_CmfTradeCollection Fragment Splitter_-91481914_I",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_CmfTradeCollection Fragment Splitter_-91481914_I",
       "configurable" : false
     }, {
       "componentName" : "CmfTradeCollection Fragment Converter",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.transformation.Converter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.converter.CmfTradeCollectionFragmentConverter",
-      "configurationId" : "blbgToms-mhiTrade-sa-CmfTradeCollectionFragmentConverter",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_CmfTradeCollection Fragment Converter_1165847135_I",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.converter.CmfTradeCollectionFragmentConverter",
+      "configurationId" : "bloomberg-trade-CmfTradeCollectionFragmentConverter",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_CmfTradeCollection Fragment Converter_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "Allocation State Broker",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Broker",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
-      "configurationId" : "blbgToms-mhiTrade-sa-cmfTradeCollectionAllocStateBroker",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_Allocation State Broker_1165847135_I",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.broker.TradeStateBroker",
+      "configurationId" : "bloomberg-trade-cmfTradeCollectionAllocStateBroker",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_Allocation State Broker_1165847135_I",
       "configurable" : true
     }, {
       "componentName" : "Allocations CmfTradeCollection Router",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
-      "implementingClass" : "com.mizuho.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
+      "implementingClass" : "com.ikasan.esb.mhi.blbgToms.mhiTrade.component.routing.CmfTradeRouter",
       "configurationId" : null,
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_Allocations CmfTradeCollection Router_1165847135_I",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_Allocations CmfTradeCollection Router_1165847135_I",
       "configurable" : false
     }, {
       "componentName" : "Allocations BDM Consumer",
       "description" : null,
       "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
       "implementingClass" : "com.sun.proxy.$Proxy134",
-      "configurationId" : "blbgToms-mhiTrade-sa-AllocationsBDMConsumer",
-      "invokerConfigurationId" : "blbgToms-mhiTrade-sa_Allocations Flow_Allocations BDM Consumer_1165847135_I",
+      "configurationId" : "bloomberg-trade-AllocationsBDMConsumer",
+      "invokerConfigurationId" : "bloomberg-trade_Allocations Flow_Allocations BDM Consumer_1165847135_I",
       "configurable" : true
     } ],
-    "configurationId" : "blbgToms-mhiTrade-sa-Allocations Flow"
+    "configurationId" : "bloomberg-trade-Allocations Flow"
   } ]
 }
