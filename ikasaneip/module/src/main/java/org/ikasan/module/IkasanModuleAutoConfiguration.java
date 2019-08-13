@@ -40,6 +40,7 @@
  */
 package org.ikasan.module;
 
+import org.ikasan.topology.service.TopologyService;
 import org.ikasan.module.container.ModuleContainerImpl;
 import org.ikasan.module.service.ModuleActivatorDefaultImpl;
 import org.ikasan.module.service.ModuleInitialisationServiceImpl;
@@ -48,21 +49,17 @@ import org.ikasan.module.service.StartupControlServiceImpl;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.systemevent.service.SystemEventService;
-import org.ikasan.topology.service.DashboardRestService;
-import org.ikasan.topology.service.DashboardRestServiceImpl;
-import org.ikasan.topology.service.TopologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.annotation.Resource;
@@ -74,7 +71,6 @@ import java.util.Properties;
 
 public class IkasanModuleAutoConfiguration
 {
-    private String METADATA_PATH = "/rest/module/metadata";
 
     @Resource Map platformHibernateProperties;
     @Autowired
@@ -87,13 +83,11 @@ public class IkasanModuleAutoConfiguration
         SecurityService securityService, TopologyService localTxTopologyService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService,
-        Environment environment,
-        ModuleMetaDataProvider jsonModuleMetaDataProvider
+        DashboardRestService moduleMetadataDashboardRestService
     )
     {
-        DashboardRestService dashboardRestService = new DashboardRestServiceImpl(environment, METADATA_PATH, jsonModuleMetaDataProvider);
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, dashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+            localTxTopologyService, moduleMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

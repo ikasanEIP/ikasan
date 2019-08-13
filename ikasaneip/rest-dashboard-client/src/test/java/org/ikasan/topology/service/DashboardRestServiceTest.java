@@ -3,6 +3,7 @@ package org.ikasan.topology.service;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

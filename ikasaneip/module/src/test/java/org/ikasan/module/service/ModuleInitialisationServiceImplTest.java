@@ -40,11 +40,13 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.topology.service.TopologyService;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -56,8 +58,6 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.DashboardRestService;
-import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;

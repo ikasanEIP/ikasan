@@ -1,4 +1,4 @@
-package org.ikasan.topology.service;
+package org.ikasan.spec.dashboard;
 
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.flow.Flow;

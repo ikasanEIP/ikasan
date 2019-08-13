@@ -87,10 +87,23 @@
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-spec-module</artifactId>
 	    </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-dashboard-client</artifactId>
+        </dependency>
+
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-security</artifactId>
@@ -107,14 +120,6 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-housekeeping</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-harvesting</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>

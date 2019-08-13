@@ -1,9 +1,9 @@
 package org.ikasan.harvesting;
 
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
-import org.ikasan.topology.service.DashboardRestService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;

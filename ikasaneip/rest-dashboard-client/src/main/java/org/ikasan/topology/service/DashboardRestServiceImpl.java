@@ -2,6 +2,7 @@ package org.ikasan.topology.service;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
