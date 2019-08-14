@@ -863,7 +863,6 @@
                 <module>wiretap</module>
                 <module>security</module>
                 <module>rest</module>
-                <module>rest-dashboard-client</module>
                 <module>test</module>
                 <module>monitor</module>
                 <module>marshaller</module>
@@ -1063,12 +1062,6 @@
                <groupId>org.ikasan</groupId>
                <artifactId>ikasan-harvesting</artifactId>
                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-rest-dashboard-client</artifactId>
-                <version>${project.version}</version>
             </dependency>
 
             <dependency>
@@ -1295,6 +1288,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-rest-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-rest-dashboard-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

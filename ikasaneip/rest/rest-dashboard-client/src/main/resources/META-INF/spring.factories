@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.ikasan.topology.service.DashboardClientAutoConfiguration
+  org.ikasan.dashboard.DashboardClientAutoConfiguration

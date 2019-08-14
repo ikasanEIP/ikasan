@@ -40,7 +40,7 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.topology.service.DashboardClientAutoConfiguration;
+import org.ikasan.dashboard.DashboardClientAutoConfiguration;
 import org.ikasan.harvesting.HarvestingAutoConfiguration;
 import org.ikasan.housekeeping.HousekeepingAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;

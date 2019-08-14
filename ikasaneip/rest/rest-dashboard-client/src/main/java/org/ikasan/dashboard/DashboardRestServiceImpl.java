@@ -1,4 +1,4 @@
-package org.ikasan.topology.service;
+package org.ikasan.dashboard;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.harvest.HarvestEvent;

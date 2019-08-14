@@ -1,4 +1,4 @@
-package org.ikasan.topology.service;
+package org.ikasan.dashboard;
 
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;

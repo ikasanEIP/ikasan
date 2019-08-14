@@ -41,7 +41,7 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
-import org.ikasan.topology.service.DashboardClientAutoConfiguration;
+import org.ikasan.dashboard.DashboardClientAutoConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.harvesting.HarvestingAutoConfiguration;
 import org.ikasan.housekeeping.HousekeepingAutoConfiguration;
