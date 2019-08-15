@@ -2,10 +2,8 @@ package org.ikasan.dashboard;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
-import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -17,36 +15,39 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Base64;
 import java.util.List;
 
-public class DashboardRestServiceImpl implements DashboardRestService
+public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 {
     Logger logger = LoggerFactory.getLogger(DashboardRestServiceImpl.class);
 
-    private ModuleMetaDataProvider<String> moduleMetaDataProvider;
+    private Converter converter;
 
     private RestTemplate restTemplate;
 
     private String url;
+
     private String moduleName;
+
     private String username;
+
     private String password;
+
     private boolean isEnabled;
 
-    public DashboardRestServiceImpl(Environment environment, String path, ModuleMetaDataProvider<String> moduleMetaDataProvider)
+    public DashboardRestServiceImpl(Environment environment, String path,
+        Converter converter)
     {
-        this(environment,path);
-        this.moduleMetaDataProvider = moduleMetaDataProvider;
+        this(environment, path);
+        this.converter = converter;
     }
+
     public DashboardRestServiceImpl(Environment environment, String path)
     {
         restTemplate = new RestTemplate();
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-
-        isEnabled = Boolean.valueOf(environment.getProperty(HARVESTING_ENABLED_PROPERTY,"false"));
-
-
-        if(isEnabled)
+        isEnabled = Boolean.valueOf(environment.getProperty(HARVESTING_ENABLED_PROPERTY, "false"));
+        if (isEnabled)
         {
             this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
@@ -55,54 +56,88 @@ public class DashboardRestServiceImpl implements DashboardRestService
         }
     }
 
-    public boolean publish(List<HarvestEvent> events)
+    public boolean publish(T events)
     {
-        if(isEnabled && events!=null)
+        if (isEnabled && events != null)
         {
-            logger.debug("Pushing [{}] events to dashboard [{}]", events.size(), url);
-
+            logger.debug("Pushing events [{}] to dashboard [{}]",events, url);
             HttpHeaders headers = createHttpHeaders();
-            HttpEntity<List<HarvestEvent>> entity = new HttpEntity<>(events, headers);
-
+            HttpEntity<List<HarvestEvent>> entity ;
+            if (converter != null)
+            {
+                entity = new HttpEntity(converter.convert(events), headers);
+            }
+            else
+            {
+                entity = new HttpEntity(events, headers);
+            }
             try
             {
                 ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events.size(), url, response);
+                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events,
+                    url, response);
                 return true;
             }
             catch (RestClientException e)
             {
-                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
+                logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
+                    + "] with response [{}]", e);
                 return false;
             }
         }
         return false;
     }
 
-    public boolean publish(Module<Flow> module)
-    {
-        if(isEnabled && module!=null)
-        {
-            logger.debug("Pushing [{}] module to dashboard [{}]", module.getName(), url);
 
-            HttpHeaders headers = createHttpHeaders();
 
-            HttpEntity<String> entity = new HttpEntity<>(moduleMetaDataProvider.describeModule(module), headers);
+//    public boolean publish(List<HarvestEvent> events)
+//    {
+//        if(isEnabled && events!=null)
+//        {
+//            logger.debug("Pushing [{}] events to dashboard [{}]", events.size(), url);
+//
+//            HttpHeaders headers = createHttpHeaders();
+//            HttpEntity<List<HarvestEvent>> entity = new HttpEntity<>(events, headers);
+//
+//            try
+//            {
+//                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+//                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events.size(), url, response);
+//                return true;
+//            }
+//            catch (RestClientException e)
+//            {
+//                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
+//                return false;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    public boolean publish(List<HarvestEvent> events)
+//    {
+//        if(isEnabled && events!=null)
+//        {
+//            logger.debug("Pushing [{}] events to dashboard [{}]", events.size(), url);
+//
+//            HttpHeaders headers = createHttpHeaders();
+//            HttpEntity<List<HarvestEvent>> entity = new HttpEntity<>(events, headers);
+//
+//            try
+//            {
+//                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+//                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events.size(), url, response);
+//                return true;
+//            }
+//            catch (RestClientException e)
+//            {
+//                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
+//                return false;
+//            }
+//        }
+//        return false;
+//    }
 
-            try
-            {
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-                logger.debug("Successfully published [{}] module to dashboard [{}] with response [{}]", module.getName(), url, response);
-                return true;
-            }
-            catch (RestClientException e)
-            {
-                logger.warn("Issue  while publishing [" +module.getName()+ "] module to dashboard [" + url + "] with response [{}]", e);
-                return false;
-            }
-        }
-        return false;
-    }
 
 
     private HttpHeaders createHttpHeaders()

@@ -1,7 +1,10 @@
 package org.ikasan.dashboard;
 
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
+import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -22,6 +25,8 @@ public class DashboardClientAutoConfiguration
     private String WIRETAP_PATH = "/rest/harvest/wiretaps";
 
     private String METADATA_PATH = "/rest/module/metadata";
+
+    private String CONFIGURATION_METADATA_PATH = "/rest/module/configuration";
 
     @Bean
     public DashboardRestService replyDashboardRestService(Environment environment)
@@ -57,9 +62,19 @@ public class DashboardClientAutoConfiguration
 
     @Bean
     public DashboardRestService moduleMetadataDashboardRestService(Environment environment,
-        ModuleMetaDataProvider jsonModuleMetaDataProvider)
+        ModuleMetaDataProvider<String> jsonModuleMetaDataProvider)
     {
-        return new DashboardRestServiceImpl(environment, METADATA_PATH, jsonModuleMetaDataProvider);
+        return new DashboardRestServiceImpl(environment, METADATA_PATH,
+            (Converter<Module, String>) module -> jsonModuleMetaDataProvider.describeModule(module));
+
+    }
+
+    @Bean
+    public DashboardRestService configurationMetadataDashboardRestService(Environment environment,
+        ConfigurationMetaDataExtractor<String> configurationMetaDataProvider)
+    {
+        return new DashboardRestServiceImpl(environment, CONFIGURATION_METADATA_PATH,
+            (Converter<Module, String>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
 
     }
 

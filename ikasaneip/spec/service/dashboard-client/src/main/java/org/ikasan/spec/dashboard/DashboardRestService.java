@@ -6,7 +6,7 @@ import org.ikasan.spec.module.Module;
 
 import java.util.List;
 
-public interface DashboardRestService
+public interface DashboardRestService<T>
 {
 
     String MODULE_NAME_PROPERTY="module.name";
@@ -15,7 +15,7 @@ public interface DashboardRestService
     String DASHBOARD_PASSWORD_PROPERTY="ikasan.dashboard.password";
     String HARVESTING_ENABLED_PROPERTY="ikasan.harvesting.enabled";
 
-    boolean publish(List<HarvestEvent> events);
+    boolean publish(T t);
 
-    boolean publish(Module<Flow> module);
+
 }

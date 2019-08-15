@@ -83,11 +83,12 @@ public class IkasanModuleAutoConfiguration
         SecurityService securityService, TopologyService localTxTopologyService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService,
-        DashboardRestService moduleMetadataDashboardRestService
+        DashboardRestService moduleMetadataDashboardRestService,
+        DashboardRestService configurationMetadataDashboardRestService
     )
     {
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, moduleMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+            localTxTopologyService, moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

@@ -117,9 +117,14 @@ public class ModuleInitialisationServiceImpl
     private TopologyService topologyService;
 
     /**
-     * TopologyService provides access to dashoard rest client
+     * Module Metadata dashboard rest client
      */
-    private DashboardRestService dashboardRestService;
+    private DashboardRestService moduleMetadataDashboardRestService;
+
+    /**
+     * Configuration Metadata dashboard rest client
+     */
+    private DashboardRestService configurationMetadataDashboardRestService;
 
     /**
      * HousekeepingSchedulerService provides access to starting off house keeping processes
@@ -141,7 +146,9 @@ public class ModuleInitialisationServiceImpl
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService topologyService, DashboardRestService dashboardRestService,
+        SecurityService securityService, TopologyService topologyService,
+        DashboardRestService moduleMetadataDashboardRestService,
+        DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService)
     {
@@ -166,10 +173,15 @@ public class ModuleInitialisationServiceImpl
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
-        this.dashboardRestService = dashboardRestService;
-        if (dashboardRestService == null)
+        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
+        if (moduleMetadataDashboardRestService == null)
         {
-            throw new IllegalArgumentException("dashboardRestService cannot be 'null'");
+            throw new IllegalArgumentException("moduleMetadataDashboardRestService cannot be 'null'");
+        }
+        this.configurationMetadataDashboardRestService = configurationMetadataDashboardRestService;
+        if (configurationMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("configurationMetadataDashboardRestService cannot be 'null'");
         }
         this.housekeepingSchedulerService = housekeepingSchedulerService;
         if (housekeepingSchedulerService == null)
@@ -419,7 +431,8 @@ public class ModuleInitialisationServiceImpl
         topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
             , this.moduleConverter.convert(module));
 
-        dashboardRestService.publish(module);
+        moduleMetadataDashboardRestService.publish(module);
+        configurationMetadataDashboardRestService.publish(module);
 
     }
 
