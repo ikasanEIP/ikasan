@@ -1,6 +1,7 @@
 package org.ikasan.harvesting;
 
 import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.jmock.Expectations;

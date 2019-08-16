@@ -46,6 +46,7 @@ import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
@@ -116,6 +117,16 @@ public class ModuleInitialisationServiceImpl
     private TopologyService topologyService;
 
     /**
+     * Module Metadata dashboard rest client
+     */
+    private DashboardRestService moduleMetadataDashboardRestService;
+
+    /**
+     * Configuration Metadata dashboard rest client
+     */
+    private DashboardRestService configurationMetadataDashboardRestService;
+
+    /**
      * HousekeepingSchedulerService provides access to starting off house keeping processes
      */
     private HousekeepingSchedulerService housekeepingSchedulerService;
@@ -136,6 +147,8 @@ public class ModuleInitialisationServiceImpl
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
         SecurityService securityService, TopologyService topologyService,
+        DashboardRestService moduleMetadataDashboardRestService,
+        DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService)
     {
@@ -159,6 +172,16 @@ public class ModuleInitialisationServiceImpl
         if (topologyService == null)
         {
             throw new IllegalArgumentException("topologyService cannot be 'null'");
+        }
+        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
+        if (moduleMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("moduleMetadataDashboardRestService cannot be 'null'");
+        }
+        this.configurationMetadataDashboardRestService = configurationMetadataDashboardRestService;
+        if (configurationMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("configurationMetadataDashboardRestService cannot be 'null'");
         }
         this.housekeepingSchedulerService = housekeepingSchedulerService;
         if (housekeepingSchedulerService == null)
@@ -407,6 +430,10 @@ public class ModuleInitialisationServiceImpl
     {
         topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
             , this.moduleConverter.convert(module));
+
+        moduleMetadataDashboardRestService.publish(module);
+        configurationMetadataDashboardRestService.publish(module);
+
     }
 
     /**

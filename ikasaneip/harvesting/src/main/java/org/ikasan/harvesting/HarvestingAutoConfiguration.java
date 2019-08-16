@@ -2,6 +2,7 @@ package org.ikasan.harvesting;
 
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -16,16 +17,6 @@ import java.util.List;
  */
 public class HarvestingAutoConfiguration
 {
-    private String ERROR_PATH = "/rest/harvest/errors";
-
-    private String EXCLUSION_PATH = "/rest/harvest/exclusions";
-
-    private String METRICS_PATH = "/rest/harvest/metrics";
-
-    private String REPLAY_PATH = "/rest/harvest/replay";
-
-    private String WIRETAP_PATH = "/rest/harvest/wiretaps";
-
     @Bean
     public HarvestingSchedulerService harvestingSchedulerService(List<HarvestingJob> harvestingJobs)
     {
@@ -35,43 +26,41 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment)
+    public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment,DashboardRestService replyDashboardRestService)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, REPLAY_PATH);
-        return new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment,dashboardRestService);
+
+        return new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment, replyDashboardRestService);
     }
 
     @Bean
-    public HarvestingJob wiretapHarvestingJob(HarvestService wiretapService, Environment environment)
+    public HarvestingJob wiretapHarvestingJob(HarvestService wiretapService, Environment environment,
+        DashboardRestService wiretapDashboardRestService )
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, WIRETAP_PATH);
 
-        return new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment,dashboardRestService);
+        return new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment, wiretapDashboardRestService);
     }
 
     @Bean
-    public HarvestingJob errorReportingHarvestingJob(HarvestService errorReportingManagementService, Environment environment)
+    public HarvestingJob errorReportingHarvestingJob(HarvestService errorReportingManagementService,
+        Environment environment, DashboardRestService errorReportingDashboardRestService)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, ERROR_PATH);
 
-        return new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,dashboardRestService);
+        return new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,
+            errorReportingDashboardRestService);
     }
 
     @Bean
-    public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment)
+    public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment,DashboardRestService exclusionDashboardRestService)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, EXCLUSION_PATH);
-
-        return new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment,dashboardRestService);
+        return new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment, exclusionDashboardRestService);
     }
 
 
     @Bean
-    public HarvestingJob messageHistorJob(HarvestService messageHistoryService, Environment environment)
+    public HarvestingJob messageHistoryJob(HarvestService messageHistoryService, Environment environment, DashboardRestService metricsDashboardRestService)
     {
-        DashboardRestService dashboardRestService = new DashboardRestService(environment, METRICS_PATH);
 
-        return new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,dashboardRestService);
+        return new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,metricsDashboardRestService);
     }
 
 

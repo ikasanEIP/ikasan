@@ -48,48 +48,27 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>ikasan-rest</artifactId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
-
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-topology</artifactId>
+    <artifactId>ikasan-rest-dashboard-client</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Topology</name>
-    <description>The topology library for the Ikasan Enterprise Integration Platform</description>
+    <name>Ikasan Rest Dashboard clinet</name>
+    <description>The rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
     <version>2.2.0-SNAPSHOT</version>
 
     <dependencies>
 
+
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-management</artifactId>
+            <artifactId>ikasan-spec-dashboard-client</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-metadata</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-housekeeping</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-persistence</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
 
         <dependency>
@@ -105,22 +84,7 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
         </dependency>
 
         <dependency>
@@ -136,12 +100,6 @@
         <!-- Test Dependencies -->
 
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -154,26 +112,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -186,12 +126,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
 

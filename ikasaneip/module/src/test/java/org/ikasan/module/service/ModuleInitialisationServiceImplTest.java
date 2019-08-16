@@ -40,11 +40,13 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.topology.service.TopologyService;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -56,7 +58,6 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.TopologyService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -91,6 +92,8 @@ public class ModuleInitialisationServiceImplTest {
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
     SecurityService securityService = mockery.mock(SecurityService.class);
     TopologyService topologyService = mockery.mock(TopologyService.class);
+    DashboardRestService moduleDashboardRestService = mockery.mock(DashboardRestService.class,"moduleDashboardRestService");
+    DashboardRestService configurationMetadataDashboardRestService = mockery.mock(DashboardRestService.class,"configurationMetadataDashboardRestService");
     HousekeepingSchedulerService housekeepingSchedulerService = mockery.mock(HousekeepingSchedulerService.class);
     HarvestingSchedulerService harvestingSchedulerService = mockery.mock(HarvestingSchedulerService.class);
     FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class);
@@ -111,7 +114,8 @@ public class ModuleInitialisationServiceImplTest {
     ModuleInitialisationServiceImpl uut;
     @Before
     public void setup(){
-        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService, housekeepingSchedulerService,harvestingSchedulerService);
+        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+            moduleDashboardRestService,configurationMetadataDashboardRestService,housekeepingSchedulerService,harvestingSchedulerService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
@@ -119,18 +123,53 @@ public class ModuleInitialisationServiceImplTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService, housekeepingSchedulerService,harvestingSchedulerService);
+        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService,
+            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService, housekeepingSchedulerService,harvestingSchedulerService);
+        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService,
+            moduleDashboardRestService, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_startupControlDao() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,topologyService, housekeepingSchedulerService,harvestingSchedulerService);
+    public void test_constructor_null_securityService() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,topologyService,
+            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService,harvestingSchedulerService);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_topology() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, null,
+            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService,harvestingSchedulerService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_dashboard() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+            null, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_configurationMetadataDashboardRestService() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+            moduleDashboardRestService, null,housekeepingSchedulerService, harvestingSchedulerService);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_housekeeping() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+            moduleDashboardRestService, configurationMetadataDashboardRestService,null, harvestingSchedulerService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_harvestion() {
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+            moduleDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, null);
+    }
+
 
     @Test
     public void destroy() throws Exception {
@@ -221,6 +260,8 @@ public class ModuleInitialisationServiceImplTest {
 
             oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
 
+            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
+            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -290,6 +331,9 @@ public class ModuleInitialisationServiceImplTest {
             will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
+
+            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
+            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -370,6 +414,9 @@ public class ModuleInitialisationServiceImplTest {
             will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
+
+            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
+            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -450,6 +497,9 @@ public class ModuleInitialisationServiceImplTest {
             will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
+
+            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
+            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);
@@ -524,6 +574,9 @@ public class ModuleInitialisationServiceImplTest {
             will(returnValue(new TestInvoker()));
 
             oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
+
+            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
+            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
         }});
 
         uut.initialiseModuleMetaData(module);

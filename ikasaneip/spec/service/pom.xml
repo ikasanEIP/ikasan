@@ -98,5 +98,6 @@
 	   <module>replay</module>
        <module>mapping</module>
        <module>solr</module>
+       <module>dashboard-client</module>
     </modules>
 </project>

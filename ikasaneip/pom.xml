@@ -1024,6 +1024,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-dashboard-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1052,10 +1058,10 @@
                 <version>${project.version}</version>
             </dependency>
 
-             <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-harvesting</artifactId>
-                <version>${project.version}</version>
+            <dependency>
+               <groupId>org.ikasan</groupId>
+               <artifactId>ikasan-harvesting</artifactId>
+               <version>${project.version}</version>
             </dependency>
 
             <dependency>
@@ -1282,6 +1288,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-rest-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-rest-dashboard-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

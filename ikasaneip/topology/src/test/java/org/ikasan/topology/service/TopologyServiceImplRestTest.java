@@ -46,7 +46,6 @@ import org.apache.commons.io.IOUtils;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.dao.TopologyDao;
 import org.ikasan.topology.exception.DiscoveryException;
-import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
