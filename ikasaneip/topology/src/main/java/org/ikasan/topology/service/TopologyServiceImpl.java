@@ -278,7 +278,7 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
+			    	logger.info("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    }
 
@@ -321,7 +321,7 @@ public class TopologyServiceImpl implements TopologyService
         catch (Exception e)
         {
             // We may not find the module on the server so just move on to the next module.
-            logger.debug("Caught exception attempting to discover module with the following URL: " + url
+            logger.info("Caught exception attempting to discover module with the following URL: " + url
                 + ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
         }
     }
@@ -469,9 +469,6 @@ public class TopologyServiceImpl implements TopologyService
 
             flowSet.add(flow);
 
-            logger.debug("Saving flow: " + flow);
-            this.topologyDao.save(flow);
-
             Set<Component> componentSet = new HashSet<Component>();
 
             for(Component component: components)
@@ -488,7 +485,6 @@ public class TopologyServiceImpl implements TopologyService
 
             flow.setComponents(componentSet);
 
-            this.topologyDao.save(flow);
             this.cleanUpComponents(serverId, module.getId(), flow.getName(), discoveredComponentNames);
         }
 		return flowSet;

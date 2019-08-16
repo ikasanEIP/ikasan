@@ -100,8 +100,8 @@
                   not-null="true" 
                   unique="false"/>
            
-        <many-to-one name="flow" cascade="all" column="FlowId"
-       		class="org.ikasan.topology.model.Flow" not-null="true" lazy="false"/>
+        <many-to-one name="flow" cascade="merge" column="FlowId"
+       		class="org.ikasan.topology.model.Flow" not-null="false" lazy="false"/>
        	
         <property name="createdDateTime"
                   type="java.util.Date"
