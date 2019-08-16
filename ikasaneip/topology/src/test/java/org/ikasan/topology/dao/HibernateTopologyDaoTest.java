@@ -152,11 +152,15 @@ public class HibernateTopologyDaoTest
     	component.setDescription("description");
     	component.setOrder(0);
     	component.setConfigurable(false);
-    	component.setFlow(flow);
+
+        this.xaTopologyDao.save(component);
+
+        component.setFlow(flow);
     	
     	flow.getComponents().add(component);
     	
     	this.xaTopologyDao.save(flow);
+        this.xaTopologyDao.save(component);
     }
     
 	/**
@@ -171,6 +175,31 @@ public class HibernateTopologyDaoTest
 		
 		Assert.assertTrue(servers.get(0).getModules().size() == 4);
 	}
+
+    @Test
+    @DirtiesContext
+    public void testDeleteModule()
+    {
+        List<Server> servers = this.xaTopologyDao.getAllServers();
+
+        servers.get(0).getModules().forEach(module -> this.xaTopologyDao.delete(module));
+
+        Assert.assertEquals("All modules deleted!", 0, this.xaTopologyDao.getAllModules().size());
+        Assert.assertEquals("All flows deleted!", 0, this.xaTopologyDao.getAllFlows().size());
+        Assert.assertEquals("All components deleted!", 0, this.xaTopologyDao.getAllComponents().size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testDeleteFlow()
+    {
+        List<Server> servers = this.xaTopologyDao.getAllServers();
+
+        servers.get(0).getModules().forEach(module -> module.getFlows().forEach(flow -> this.xaTopologyDao.delete(flow)));
+
+        Assert.assertEquals("All flows deleted!", 0, this.xaTopologyDao.getAllFlows().size());
+        Assert.assertEquals("All components deleted!", 0, this.xaTopologyDao.getAllComponents().size());
+    }
 	
 	/**
 	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
