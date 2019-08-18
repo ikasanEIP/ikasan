@@ -54,6 +54,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -83,13 +84,25 @@ public class HibernateWiretapDaoTest
 	public void setup()
 	{
 
-		for(int i=0; i< 10000; i++)
+		for(int i=0; i<5000; i++)
 		{
 			WiretapFlowEvent event = new WiretapFlowEvent("moduleName" + i, "flowName" + i, "componentName" + i,
 					"eventId" + i, "relatedEventId" + i, System.currentTimeMillis() ,"event" + i, System.currentTimeMillis() - 1000000000);
 
 			this.wiretapDao.save(event);
 		}
+
+		List<WiretapEvent> events = new ArrayList<>();
+
+        for(int i=5000; i<10000; i++)
+        {
+            WiretapFlowEvent event = new WiretapFlowEvent("moduleName" + i, "flowName" + i, "componentName" + i,
+                "eventId" + i, "relatedEventId" + i, System.currentTimeMillis() ,"event" + i, System.currentTimeMillis() - 1000000000);
+
+            events.add(event);
+        }
+
+        this.wiretapDao.save(events);
 
 	}
 

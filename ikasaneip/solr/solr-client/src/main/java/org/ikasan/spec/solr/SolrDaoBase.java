@@ -348,28 +348,22 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         query.append(AND);
         query.append(EXPIRY).append(COLON).append("{").append("*").append(TO).append(currentTime).append("}");
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+        this.deleteByQuery(query.toString());
+    }
 
-            req.deleteByQuery(query.toString());
+    /**
+     * Method to remove expired records from the solr index by type.
+     *
+     * @param type
+     */
+    public void removeById(String type, String id)
+    {
+        StringBuffer query = new StringBuffer();
+        query.append(TYPE).append(COLON).append("\"").append(type).append("\"");
+        query.append(AND);
+        query.append(ID).append(COLON).append("\"").append(id).append("\"");
 
-            if(this.solrClient == null)
-            {
-                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
-                return;
-            }
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-            req.commit(solrClient, SolrConstants.CORE);
-
-            logger.info("Deleted " + type + " solr records. Response [" + rsp + "]." );
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An error has occurred deleting " + type + ": " + e.getMessage(), e);
-        }
+        this.deleteByQuery(query.toString());
     }
 
     /**
@@ -382,28 +376,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         StringBuffer query = new StringBuffer();
         query.append(EXPIRY).append(COLON).append("{").append("*").append(TO).append(currentTime).append("}");
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req = req.deleteByQuery(query.toString());
-
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            if(this.solrClient == null)
-            {
-                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
-                return;
-            }
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-            req.commit(solrClient, SolrConstants.CORE);
-
-            logger.info("Deleted solr records. Response [" + rsp + "]." );
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An error has occurred deleting solr records: " + e.getMessage(), e);
-        }
+        this.deleteByQuery(query.toString());
     }
 
     public void setDaysToKeep(int daysToKeep)
@@ -430,5 +403,36 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     public void setSolrPassword(String solrPassword)
     {
         this.solrPassword = solrPassword;
+    }
+
+    /**
+     * Helper method to delete records based on query.
+     *
+     * @param query
+     */
+    protected void deleteByQuery(String query)
+    {
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            req.deleteByQuery(query.toString());
+
+            if(this.solrClient == null)
+            {
+                logger.warn("Solr client has not been initialised. This indicates that the platform has not been configured for solr.");
+                return;
+            }
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+            req.commit(solrClient, SolrConstants.CORE);
+
+            logger.info("Deleted solr records using query [{}]. Response [" + rsp + "].", query);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An error has occurred deleting using query [" + query + "].: " + e.getMessage(), e);
+        }
     }
 }

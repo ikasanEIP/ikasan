@@ -11,6 +11,7 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
@@ -24,9 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -104,6 +103,86 @@ public class SolrWiretapServiceTest extends SolrTestCaseJ4
 
             server.close();
 
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_collection() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
+            solrCloudBase.setSolrClient(server);
+            solrCloudBase.setDaysToKeep(0);
+
+            SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
+                "eventId", "relatedEventId", 12345l, "event");
+
+
+            SolrWiretapServiceImpl solrWiretapService = new SolrWiretapServiceImpl(solrCloudBase);
+
+            List<WiretapEvent> events = new ArrayList<>();
+            events.add(event);
+
+            solrWiretapService.save(events);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_batch_insert() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
+            solrCloudBase.setSolrClient(server);
+            solrCloudBase.setDaysToKeep(0);
+
+            SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
+                "eventId", "relatedEventId", 12345l, "event");
+
+
+            BatchInsert<WiretapEvent> solrWiretapService = new SolrWiretapServiceImpl(solrCloudBase);
+
+            List<WiretapEvent> events = new ArrayList<>();
+            events.add(event);
+
+            solrWiretapService.insert(events);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+
+            server.close();
         }
     }
 
@@ -401,7 +480,6 @@ public class SolrWiretapServiceTest extends SolrTestCaseJ4
         {
             {
                 oneOf(moduleService).getModule(with(any(String.class)));
-//                will(returnValue(any(MyModule.class)));
             }
         });
 

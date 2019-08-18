@@ -10,12 +10,15 @@ import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.model.SolrExclusionEventImpl;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -63,10 +66,84 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
-
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void test_save_bulk() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            SolrExclusionServiceImpl solrExclusionService = new SolrExclusionServiceImpl(dao);
+
+            SolrExclusionEventImpl event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
+                "event".getBytes(), "uri");
+
+            List<ExclusionEvent> events = new ArrayList<>();
+            events.add(event);
+
+            solrExclusionService.save(events);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_batch_insert() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            BatchInsert<ExclusionEvent> batchInsert = new SolrExclusionServiceImpl(dao);
+
+            SolrExclusionEventImpl event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
+                "event".getBytes(), "uri");
+
+            List<ExclusionEvent> events = new ArrayList<>();
+            events.add(event);
+
+            batchInsert.insert(events);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
+        }
+    }
 
 
     public static String TEST_HOME() {

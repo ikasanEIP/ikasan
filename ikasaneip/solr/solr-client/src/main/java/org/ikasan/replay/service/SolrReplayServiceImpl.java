@@ -1,6 +1,7 @@
 package org.ikasan.replay.service;
 
 import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.*;
 import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.solr.SolrServiceBase;
@@ -11,7 +12,8 @@ import java.util.List;
 /**
  * Created by Ikasan Development Team on 23/09/2017.
  */
-public class SolrReplayServiceImpl extends SolrServiceBase implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> {
+public class SolrReplayServiceImpl extends SolrServiceBase implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>, BatchInsert<ReplayEvent>
+{
 
     private SolrReplayDao replayDao;
     private ReplayAuditDao<ReplayAudit, ReplayAuditEvent> replayAuditDao;
@@ -43,13 +45,10 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
     {
         this.replayDao.setSolrUsername(this.solrUsername);
         this.replayDao.setSolrPassword(this.solrPassword);
-        this.replayDao.saveOrUpdate(save);
+        this.replayDao.save(save);
     }
 
-    /**
-     * (non-Javadoc)
-     * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(List, List, String, String, Date, Date)
-     */
+
     @Override
     public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId
             , String payloadContent, Date fromDate, Date toDate, int resultSize)
@@ -98,5 +97,11 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
         this.replayDao.setSolrUsername(this.solrUsername);
         this.replayDao.setSolrPassword(this.solrPassword);
         return this.replayDao.getReplayEventById(id);
+    }
+
+    @Override
+    public void insert(List<ReplayEvent> entities)
+    {
+        this.save(entities);
     }
 }

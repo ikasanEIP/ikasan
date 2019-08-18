@@ -90,7 +90,24 @@ public class HibernateExclusionEventDaoTest
         exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
         Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
     }
-    
+
+    /**
+     * Test exclusion
+     */
+    @DirtiesContext
+    @Test
+    public void test_contains_batch_save_find_delete_operations()
+    {
+        ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+
+        List<ExclusionEvent> events = new ArrayList<>();
+        events.add(exclusionEvent);
+        exclusionEventDao.save(events);
+
+        exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
+        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+    }
     
     /**
      * Test exclusion

@@ -79,11 +79,25 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
+    private ExclusionEventConverter exclusionEventConverter;
+
+    public HibernateExclusionEventDao()
+    {
+        exclusionEventConverter = new ExclusionEventConverter();
+    }
 
     @Override
     public void save(ExclusionEvent exclusionEvent)
     {
         this.getHibernateTemplate().saveOrUpdate(exclusionEvent);
+    }
+
+    @Override
+    public void save(List<ExclusionEvent> exclusionEvents)
+    {
+        exclusionEvents = this.exclusionEventConverter.convert(exclusionEvents);
+
+        exclusionEvents.forEach(exclusionEvent -> this.save(exclusionEvent));
     }
 
     @Override

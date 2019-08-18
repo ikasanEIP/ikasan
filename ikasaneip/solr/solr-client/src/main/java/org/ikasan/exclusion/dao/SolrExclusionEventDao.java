@@ -118,23 +118,7 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
         StringBuffer query = new StringBuffer();
         query.append(ID).append(COLON).append(errorUri);
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.deleteByQuery(query.toString());
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            req.commit(solrClient, SolrConstants.CORE);
-
-            logger.info("Deleted " + errorUri + " exclusion solr records. Response [" + rsp + "]." );
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An error has occurred ");
-        }
+        deleteByQuery(query.toString());
     }
 
     @Override

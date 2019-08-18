@@ -40,6 +40,8 @@
  */
 package org.ikasan.wiretap.service;
 
+import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +59,8 @@ import org.springframework.beans.factory.InitializingBean;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the <code>WiretapService</code>
@@ -64,7 +68,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  */
 public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
-        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>
+        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>, BatchInsert<WiretapEvent>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
@@ -289,5 +293,11 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     public void updateAsHarvested(List<WiretapEvent> events)
     {
         this.wiretapDao.updateAsHarvested(events);
+    }
+
+    @Override
+    public void insert(List<WiretapEvent> entities)
+    {
+        wiretapDao.save(entities);
     }
 }

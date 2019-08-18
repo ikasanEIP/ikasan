@@ -139,6 +139,13 @@ public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
     public void save(EVENT event);
 
     /**
+     * Save the a list of incoming EVENT.
+     *
+     * @param events
+     */
+    public void save(List<EVENT> events);
+
+    /**
      * Support delete of expired error reporting events.
      */
     public void deleteExpired();

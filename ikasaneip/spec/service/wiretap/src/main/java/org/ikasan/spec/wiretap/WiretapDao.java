@@ -55,11 +55,18 @@ public interface WiretapDao
 {
 
     /**
-     * Save a wiretapEvent entry.
+     * Save a List of wiretapEvent entries.
      * 
      * @param wiretapEvent - The wiretap event to save
      */
     public void save(WiretapEvent wiretapEvent);
+
+    /**
+     * Save a wiretapEvent entry.
+     *
+     * @param wiretapEvents - The wiretap event to save
+     */
+    public void save(List<WiretapEvent> wiretapEvents);
 
     /**
      * Perform a paged search for <code>WiretapFlowEvent</code>s

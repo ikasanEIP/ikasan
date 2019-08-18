@@ -46,12 +46,15 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,13 +87,16 @@ public class ErrorReportingManagementServiceImplTest {
     @Resource 
     ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
 
+    Exception exception = new Exception("failed error occurence msg");
+
     List<String> uris;
 
     @Before
     public void load() {
         uris = new ArrayList<String>();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++)
+        {
             ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail",
                     "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
 
@@ -120,5 +126,27 @@ public class ErrorReportingManagementServiceImplTest {
         Assert.assertTrue("Expected 0 errors after closing them all, got " + numberOfErrorsFound, numberOfErrorsFound == 0);
     }
 
+    /**
+     * Test save of errorOccurrence
+     */
+    @DirtiesContext
+    @Test
+    public void test_batch_save_and_find()
+    {
+        ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+
+        List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+        errorOccurrences.add(errorOccurrence);
+
+        ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        Assert.assertNull("Should not be found", persistedErrorOccurrence);
+
+        BatchInsert<ErrorOccurrence> batchInsert = new ErrorReportingManagementServiceImpl(errorManagementDao, errorReportingServiceDao);
+
+        batchInsert.insert(errorOccurrences);
+
+        persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
+    }
 
 }

@@ -4,6 +4,7 @@ import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Created by Ikasan Development Team on 23/09/2017.
  */
-public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrService<ExclusionEvent>, ExclusionManagementService<ExclusionEvent, String>
+public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrService<ExclusionEvent>, ExclusionManagementService<ExclusionEvent, String>, BatchInsert<ExclusionEvent>
 {
 
     private SolrExclusionEventDao exclusionEventDao;
@@ -102,5 +103,11 @@ public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrSer
         this.exclusionEventDao.setSolrUsername(this.solrUsername);
         this.exclusionEventDao.setSolrPassword(this.solrPassword);
         return this.exclusionEventDao.find(errorUri);
+    }
+
+    @Override
+    public void insert(List<ExclusionEvent> entities)
+    {
+        this.save(entities);
     }
 }

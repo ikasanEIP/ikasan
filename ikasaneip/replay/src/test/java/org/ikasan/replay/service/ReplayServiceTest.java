@@ -113,13 +113,23 @@ public class ReplayServiceTest
 
         baseUri = "http://localhost:"+wireMockRule.port()+"/";
 
-        for(int i=0; i<100; i++)
+        for(int i=0; i<50; i++)
 		{
 			HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "this is a test event", "moduleName", "flowName", 0);
 			
 	        
 			this.replayDao.saveOrUpdate(replayEvent);
 		}
+
+		List<ReplayEvent> replayEvents = new ArrayList<>();
+
+        for(int i=50; i<100; i++)
+        {
+            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "this is a test event", "moduleName", "flowName", 0);
+            replayEvents.add(replayEvent);
+        }
+
+        this.replayDao.save(replayEvents);
 
         stubFor(put(urlEqualTo("/moduleName/rest/replay/eventReplay/moduleName/flowName"))
                 .withHeader(HttpHeaders.USER_AGENT, equalTo("moduleName"))
