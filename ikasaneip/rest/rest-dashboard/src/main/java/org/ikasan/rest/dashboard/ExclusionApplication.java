@@ -41,8 +41,12 @@
 package org.ikasan.rest.dashboard;
 
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.ExclusionEventImpl;
+import org.ikasan.rest.dashboard.model.exclusion.ExclusionEventImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -68,28 +72,39 @@ public class ExclusionApplication
 
     private ObjectMapper mapper;
 
-    public ExclusionApplication()
+    private BatchInsert<ExclusionEvent> batchInsert;
+
+    public ExclusionApplication(BatchInsert<ExclusionEvent> batchInsert)
     {
+        this.batchInsert = batchInsert;
+        if(this.batchInsert == null)
+        {
+            throw new IllegalArgumentException("BatchInsert cannot be null!");
+        }
+
         this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
         value = "/harvest/exclusion")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity harvestWiretap(@RequestBody String exclusionsJsonPayload)
+    public ResponseEntity harvestExclusion(@RequestBody String exclusionsJsonPayload)
     {
         try
         {
-            List<ExclusionEventImpl> exclusionEvents = this.mapper.readValue(exclusionsJsonPayload
+            logger.info(exclusionsJsonPayload);
+
+            List<ExclusionEvent> exclusionEvents = this.mapper.readValue(exclusionsJsonPayload
                 , mapper.getTypeFactory().constructCollectionType(List.class, ExclusionEventImpl.class));
 
-            logger.info(exclusionsJsonPayload);
+            this.batchInsert.insert(exclusionEvents);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Cannot parse exclusion JSON!", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                , "An error has occurred attempting to perform a batch insert of ExclusionEvents!", e);
         }
 
         return new ResponseEntity("Harvested exclusions successfully captured!", HttpStatus.OK);

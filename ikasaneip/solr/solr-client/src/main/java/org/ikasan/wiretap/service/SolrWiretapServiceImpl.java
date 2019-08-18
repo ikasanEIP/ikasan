@@ -36,7 +36,6 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
      */
     private ModuleService moduleService;
 
-
     /**
      * Constructor
      *

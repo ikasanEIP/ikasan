@@ -1,11 +1,5 @@
 package org.ikasan.spec.dashboard;
 
-import org.ikasan.harvest.HarvestEvent;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-
-import java.util.List;
-
 public interface DashboardRestService<T>
 {
 

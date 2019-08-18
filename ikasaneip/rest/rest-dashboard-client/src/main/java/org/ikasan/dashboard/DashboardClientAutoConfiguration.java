@@ -26,7 +26,7 @@ public class DashboardClientAutoConfiguration
 
     private String METADATA_PATH = "/rest/module/metadata";
 
-    private String CONFIGURATION_METADATA_PATH = "/rest/module/configuration";
+    private String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
 
     @Bean
     public DashboardRestService replyDashboardRestService(Environment environment)

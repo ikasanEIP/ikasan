@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.metrics;
 
 import org.ikasan.spec.history.ComponentInvocationMetric;
 
