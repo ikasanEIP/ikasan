@@ -84,6 +84,10 @@
                       expression="execution(* org.ikasan.topology.service.TopologyService.initialiseModuleMetaData(..))" />
 
 
+        <aop:pointcut id="customAuthenticationProviderPointcut"
+                      expression="execution(* org.ikasan.security.service.authentication.CustomAuthenticationProvider.authenticate(..))" />
+
+
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="required-TransactionAdvice"
@@ -100,8 +104,12 @@
 			pointcut-ref="wiretapDaoMethods" />
 		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="errorReportingServiceDaoMethods" />
+
         <aop:advisor id="moduleInitialisationPointcutAdvice" advice-ref="required-TransactionAdvice"
                      pointcut-ref="moduleInitialisationPointcut" />
+
+        <aop:advisor id="customAuthenticationProviderPointcutAdvice" advice-ref="required-TransactionAdvice"
+                     pointcut-ref="customAuthenticationProviderPointcut" />
 
   </aop:config>
 
