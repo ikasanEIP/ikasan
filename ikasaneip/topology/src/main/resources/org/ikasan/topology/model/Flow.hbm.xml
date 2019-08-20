@@ -80,7 +80,7 @@
         <many-to-one name="module" column="ModuleId"
        		class="org.ikasan.topology.model.Module" not-null="false" lazy="false"/>
        	
-       	<set name="components" cascade="merge,delete" order-by="ComponentOrder asc" lazy="true">
+       	<set name="components" cascade="merge,delete,save-update" order-by="ComponentOrder asc" lazy="true">
          	<key column="FlowId"/>
          	<one-to-many class="org.ikasan.topology.model.Component" />
       	</set>

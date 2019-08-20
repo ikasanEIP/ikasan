@@ -464,6 +464,11 @@ public class TopologyServiceImpl implements TopologyService
                 dbFlow.setConfigurationId(flow.getConfigurationId());
                 flow = dbFlow;
             }
+            else
+            {
+                flow.setModule(module);
+                save(flow);
+            }
 
             flow.setModule(module);
 
