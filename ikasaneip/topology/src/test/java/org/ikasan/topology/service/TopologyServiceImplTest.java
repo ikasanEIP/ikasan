@@ -103,6 +103,8 @@ public class TopologyServiceImplTest
 			exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, null,"Flow Test" );
 			will(returnValue(null));
 
+            exactly(1).of(topologyDao).save(flow);
+
 			exactly(1).of(topologyDao).save(component);
 
 			exactly(1).of(topologyDao).getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(null, null,"Flow Test", Arrays.asList("testComponentName1") );
@@ -188,6 +190,8 @@ public class TopologyServiceImplTest
 
             exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, null,"Flow Test" );
             will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(flow);
 
             exactly(1).of(topologyDao).save(component);
 
@@ -287,6 +291,8 @@ public class TopologyServiceImplTest
 
 			exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, 1l,"Flow Test" );
 			will(returnValue(oldFlow));
+
+            exactly(1).of(topologyDao).save(flow);
 
 			exactly(1).of(topologyDao).save(component);
 
@@ -514,6 +520,8 @@ public class TopologyServiceImplTest
 			exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, 1l,"Flow Test" );
 			will(returnValue(null));
 
+            exactly(1).of(topologyDao).save(flow);
+
 			exactly(1).of(topologyDao).save(component);
 
 			exactly(1).of(topologyDao).getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(null, 1l,"Flow Test", Arrays.asList("testComponentName1") );
@@ -640,6 +648,8 @@ public class TopologyServiceImplTest
 
             exactly(1).of(topologyDao).getFlowByServerIdModuleIdAndFlowname(null, 1l,"Flow Test" );
             will(returnValue(null));
+
+            exactly(1).of(topologyDao).save(flow);
 
             exactly(1).of(topologyDao).save(component1);
 
