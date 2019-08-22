@@ -49,9 +49,9 @@ public class HousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob duplicateFilterHousekeepingJob(HousekeepService duplicateFilterService, Environment environment)
+    public HousekeepingJob duplicateFilterHousekeepingJob(HousekeepService managementFilterService, Environment environment)
     {
-        return new HousekeepingJobImpl("duplicateFilterHousekeepingJob", duplicateFilterService, environment);
+        return new HousekeepingJobImpl("duplicateFilterHousekeepingJob", managementFilterService, environment);
     }
 
     @Bean

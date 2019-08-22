@@ -67,6 +67,12 @@ public interface FilterEntry
      */
     public final static String EXPRIY_PROP_KEY = "expiry";
 
+    /**
+     * Constant property name for clientId field in any {@link FilterEntry}
+     * implementors
+     */
+    public final static String CREATED_PROP_KEY = "createdDateTime";
+
     /** 
      * Getter for a clientId variable. Together with the criteria,
      * it identifies a persisted {@link FilterEntry}

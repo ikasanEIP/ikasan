@@ -317,7 +317,7 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
-	<bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+	<bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultManagementFilterService">
 		<constructor-arg ref="duplicateFilterDao"/>
 	</bean>
 

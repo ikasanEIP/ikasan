@@ -41,6 +41,8 @@
 package org.ikasan.rest.module;
 
 
+import org.ikasan.rest.module.dto.ErrorDto;
+import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionSearchService;
 import org.ikasan.spec.module.ModuleService;
@@ -55,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -72,6 +75,8 @@ public class ExclusionApplication
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
 
+    private DateTimeConverter dateTimeConverter = new DateTimeConverter();
+
 
     @RequestMapping(method = RequestMethod.GET,
         value = "/")
@@ -84,27 +89,33 @@ public class ExclusionApplication
         @RequestParam(value = "flow",required = false) String flow,
         @RequestParam(value = "componentName",required = false) String componentName,
         @RequestParam(value = "identifier",required = false) String identifier,
-        @RequestParam(value= "fromDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date fromDateTime,
-        @RequestParam(value= "untilDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date untilDateTime
+        @RequestParam(value= "fromDateTime",required = false) String fromDateTime,
+        @RequestParam(value= "untilDateTime",required = false) String untilDateTime
         ) {
 
         String moduleName = moduleService.getModules().get(0).getName();
-
-        PagedSearchResult<ExclusionEvent> errors =  exclusionSearchService.find(
-            pageNumber,
-            pageSize,
-            orderBy,
-            orderAscending,
-            moduleName,
-            flow,
-            componentName,
-            identifier,
-            fromDateTime,
-            untilDateTime
-            );
-
-
-        return new ResponseEntity(errors, HttpStatus.OK);
+        PagedSearchResult<ExclusionEvent> exclusions = null;
+        try
+        {
+            exclusions = exclusionSearchService.find(
+                pageNumber,
+                pageSize,
+                orderBy,
+                orderAscending,
+                moduleName,
+                flow,
+                componentName,
+                identifier,
+                dateTimeConverter.getDate(fromDateTime),
+                dateTimeConverter.getDate(untilDateTime)
+                );
+            return new ResponseEntity(exclusions, HttpStatus.OK);
+        }
+        catch (ParseException e)
+        {
+            return new ResponseEntity(new ErrorDto("fromDateTime or untilDateTime has invalid dateTime format not following yyyy-MM-dd'T'HH:mm:ss."),
+                HttpStatus.BAD_REQUEST);
+        }
 
     }
 

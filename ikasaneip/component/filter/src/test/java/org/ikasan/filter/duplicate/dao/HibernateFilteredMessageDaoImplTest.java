@@ -40,6 +40,7 @@
  */
 package org.ikasan.filter.duplicate.dao;
 
+import org.ikasan.spec.search.PagedSearchResult;
 import org.junit.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
@@ -53,7 +54,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
-
+import  static org.junit.Assert.assertEquals;
+import  static org.junit.Assert.assertNull;
+import  static org.junit.Assert.assertNotNull;
 /**
  * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
  * database rather than mocking the hibernate template.
@@ -71,7 +74,7 @@ import java.util.Date;
         "/FilteredMessageDaoInMemDBTest-context.xml",
         "/filter-service-conf.xml"
 })
-public class FilteredMessageDaoInMemDBTest
+public class HibernateFilteredMessageDaoImplTest
 {
     @Autowired
     private FilteredMessageDao duplicateFilterDao;
@@ -87,8 +90,9 @@ public class FilteredMessageDaoInMemDBTest
         this.duplicateFilterDao.save(aMessage);
         FilterEntry messageToBeFound = new DefaultFilterEntry( "test".hashCode(), "find_test", 1);
         FilterEntry result = this.duplicateFilterDao.findMessage(messageToBeFound);
-        Assert.assertNull(result);
+        assertNull(result);
     }
+
 
     /**
      * Test case: save given filter entry. 
@@ -106,7 +110,7 @@ public class FilteredMessageDaoInMemDBTest
         //Now lets find it..
         FilterEntry newEntryReloaded = this.duplicateFilterDao.findMessage(newEntry);
 
-        Assert.assertNotNull(newEntryReloaded);
+        assertNotNull(newEntryReloaded);
         Assert.assertEquals("test", newEntryReloaded.getClientId());
         Assert.assertEquals("save_test".hashCode(), newEntryReloaded.getCriteria().intValue());
 
@@ -128,7 +132,6 @@ public class FilteredMessageDaoInMemDBTest
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(one);
-        this.duplicateFilterDao.setHousekeepQuery("delete top _bs_ from MessageFilter where Expiry <= _ex_");   //sybase
 
         FilterEntry two = new DefaultFilterEntry("two".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(two);
@@ -140,13 +143,13 @@ public class FilteredMessageDaoInMemDBTest
         this.duplicateFilterDao.deleteAllExpired();
 
         FilterEntry found = this.duplicateFilterDao.findMessage(one);
-        Assert.assertNull(found);
+        assertNull(found);
 
         found = this.duplicateFilterDao.findMessage(two);
-        Assert.assertNull(found);
+        assertNull(found);
 
         found = this.duplicateFilterDao.findMessage(three);
-        Assert.assertNotNull(found);
+        assertNotNull(found);
     }
 
     /**
@@ -171,7 +174,7 @@ public class FilteredMessageDaoInMemDBTest
 
         this.duplicateFilterDao.setBatchHousekeepDelete(false);
 
-        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
+        assertNull(this.duplicateFilterDao.findExpiredMessages());
 
         for(int i=0; i<77; i++)
         {
@@ -186,7 +189,7 @@ public class FilteredMessageDaoInMemDBTest
 
         this.duplicateFilterDao.setBatchHousekeepDelete(false);
 
-        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
+        assertNull(this.duplicateFilterDao.findExpiredMessages());
     }
 
     /**
@@ -212,13 +215,13 @@ public class FilteredMessageDaoInMemDBTest
         this.duplicateFilterDao.deleteAllExpired();
 
         FilterEntry found = this.duplicateFilterDao.findMessage(one);
-        Assert.assertNull(found);
+        assertNull(found);
 
         found = this.duplicateFilterDao.findMessage(two);
-        Assert.assertNull(found);
+        assertNull(found);
 
         found = this.duplicateFilterDao.findMessage(three);
-        Assert.assertNotNull(found);
+        assertNotNull(found);
     }
     /**
      * Test case: try to save an already existing filter entry
@@ -235,4 +238,70 @@ public class FilteredMessageDaoInMemDBTest
         //Now try to save it again
         this.duplicateFilterDao.save(newEntry);
     }
+
+
+    @Test
+    @DirtiesContext
+    public void findMessagesByPage_with_filter_entry_in_db()
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+
+        PagedSearchResult<FilterEntry> result = this.duplicateFilterDao.findMessagesByPage(0,1,
+            "aMessage".hashCode(),null,null,null);
+        assertEquals(1,result.getResultSize());
+        assertEquals(aMessage,result.getPagedResults().get(0));
+    }
+
+    @Test
+    @DirtiesContext
+    public void findMessagesByPage_with_filter_entry_in_db_by_clientId()
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+
+        PagedSearchResult<FilterEntry> result = this.duplicateFilterDao.findMessagesByPage(0,1,
+            null,"find_test",null,null);
+        assertEquals(1,result.getResultSize());
+        assertEquals(aMessage,result.getPagedResults().get(0));
+    }
+
+    @Test
+    @DirtiesContext
+    public void findMessagesByPage_with_filter_entry_in_db_searchBy_from_date()
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+
+        PagedSearchResult<FilterEntry> result = this.duplicateFilterDao.findMessagesByPage(0,1,
+            null, null,new Date(1l),null);
+        assertEquals(1,result.getResultSize());
+        assertEquals(aMessage,result.getPagedResults().get(0));
+    }
+
+    @Test
+    @DirtiesContext
+    public void findMessagesByPage_with_filter_entry_in_db_searchBy_until_date()
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+
+        PagedSearchResult<FilterEntry> result = this.duplicateFilterDao.findMessagesByPage(0,1,
+            null, null,null, new Date());
+        assertEquals(1,result.getResultSize());
+        assertEquals(aMessage,result.getPagedResults().get(0));
+    }
+
+    @Test
+    @DirtiesContext
+    public void findMessagesByPage_with_filter_entry_in_db_search_by_until_date_no_result()
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+
+        PagedSearchResult<FilterEntry> result = this.duplicateFilterDao.findMessagesByPage(0,1,
+            null, null,null, new Date(1));
+        assertEquals(0,result.getResultSize());
+    }
+
 }

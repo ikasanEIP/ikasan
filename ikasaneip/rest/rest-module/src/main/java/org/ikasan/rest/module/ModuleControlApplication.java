@@ -34,8 +34,10 @@ public class ModuleControlApplication {
             value = "/controlFlowState/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlFlowState(
-            @PathVariable("moduleName") String moduleName,
-            @PathVariable("flowName") String flowName, @RequestBody String action) {
+        @PathVariable("moduleName") String moduleName,
+        @PathVariable("flowName") String flowName,
+        @RequestBody String action)
+    {
 
         try {
 
@@ -81,19 +83,12 @@ public class ModuleControlApplication {
 
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
         }
-//        else
-        //      {
-        //      	throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
-        //            .entity("Unknown startup type!.").build());
-        //	return new ResponseEntity("Unknown startup type!.",HttpStatus.FORBIDDEN);
 
-        //	}
     }
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
             value = "/flowState/{moduleName}/{flowName}")
-    //@Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public String getFlowState(@PathVariable("moduleName") String moduleName,
                                @PathVariable("flowName") String flowName) {
