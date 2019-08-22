@@ -44,6 +44,8 @@ import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a singleRecipientRouter
  *
@@ -68,9 +70,9 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<SingleRecipientRouter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<SingleRecipientRouter> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         SingleRecipientRouter router = flowElement.getFlowComponent();
@@ -95,7 +97,7 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
                     + "All Routers must result in at least one transition.");
         }
 
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         final FlowElement nextFlowElement = flowElement.getTransition(targetName);
         if (nextFlowElement == null)
         {

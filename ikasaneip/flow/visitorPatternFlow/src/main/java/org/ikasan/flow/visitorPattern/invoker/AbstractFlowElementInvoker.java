@@ -90,17 +90,20 @@ public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResourc
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    void notifyListenersBeforeElement(FlowEventListener flowEventListener, String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    void notifyListenersBeforeElement(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
-        if (flowEventListener != null)
+        if (flowEventListeners != null)
         {
-            try
+            for(FlowEventListener flowEventListener:flowEventListeners)
             {
-                flowEventListener.beforeFlowElement(moduleName, flowName, flowElement, flowEvent);
-            }
-            catch (Throwable t)
-            {
-                logger.error("flowEventListener caught throwable before flowElement [" + flowElement + "], exception is[" + t + "]", t);
+                try
+                {
+                    flowEventListener.beforeFlowElement(moduleName, flowName, flowElement, flowEvent);
+                }
+                catch (Throwable t)
+                {
+                    logger.error("flowEventListener caught throwable before flowElement [" + flowElement + "], exception is[" + t + "]", t);
+                }
             }
         }
     }
@@ -112,17 +115,20 @@ public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResourc
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    void notifyListenersAfterElement(FlowEventListener flowEventListener, String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    void notifyListenersAfterElement(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
-        if (flowEventListener != null)
+        if (flowEventListeners != null)
         {
-            try
+            for(FlowEventListener flowEventListener:flowEventListeners)
             {
-                flowEventListener.afterFlowElement(moduleName, flowName, flowElement, flowEvent);
-            }
-            catch (Throwable t)
-            {
-                logger.error("flowEventListener caught throwable after flowElement [" + flowElement + "], exception is[" + t + "]", t);
+                try
+                {
+                    flowEventListener.afterFlowElement(moduleName, flowName, flowElement, flowEvent);
+                }
+                catch (Throwable t)
+                {
+                    logger.error("flowEventListener caught throwable after flowElement [" + flowElement + "], exception is[" + t + "]", t);
+                }
             }
         }
     }

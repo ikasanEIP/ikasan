@@ -99,9 +99,9 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         MultiRecipientRouter router = flowElement.getFlowComponent();
@@ -126,7 +126,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                     + "All Routers must result in at least one transition.");
         }
 
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         if (targetNames.size() == 1)
         {
             String targetName = targetNames.get(0);
@@ -171,7 +171,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                 while (nextFlowElementInRoute != null)
                 {
                     notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
-                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, routedFlowEvent, nextFlowElementInRoute);
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, routedFlowEvent, nextFlowElementInRoute);
                 }
             }
         }

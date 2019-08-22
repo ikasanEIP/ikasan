@@ -51,6 +51,8 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,6 +75,8 @@ public class FilterFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Filter filter = mockery.mock(Filter.class, "filter");
     private Map payload = mockery.mock(Map.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface FilterInvocationAware extends Filter, InvocationAware {}
@@ -113,7 +117,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -152,7 +157,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -190,7 +196,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -231,7 +238,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -272,7 +280,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -314,7 +323,8 @@ public class FilterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

@@ -51,6 +51,8 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,6 +75,8 @@ public class BrokerFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Broker broker = mockery.mock(Broker.class, "broker");
     private Map payload = mockery.mock(Map.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface BrokerInvocationAware extends Broker, InvocationAware {}
@@ -145,8 +149,9 @@ public class BrokerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -225,8 +230,9 @@ public class BrokerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -294,8 +300,9 @@ public class BrokerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -335,7 +342,8 @@ public class BrokerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -374,7 +382,8 @@ public class BrokerFlowElementInvokerTest
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
         try
         {
-            flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
         }
         finally
         {

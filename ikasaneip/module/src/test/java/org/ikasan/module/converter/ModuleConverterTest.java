@@ -149,7 +149,7 @@ public class ModuleConverterTest
     public class TestInvoker implements FlowElementInvoker
     {
         @Override
-        public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+        public FlowElement invoke(List flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
         {
             return null;
         }

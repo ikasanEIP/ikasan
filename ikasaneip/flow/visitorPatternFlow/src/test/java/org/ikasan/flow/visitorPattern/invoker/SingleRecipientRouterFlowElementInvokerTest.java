@@ -51,6 +51,8 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,6 +75,8 @@ public class SingleRecipientRouterFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private SingleRecipientRouter router = mockery.mock(SingleRecipientRouter.class, "singleRecipientRouter");
     private Map payload = mockery.mock(Map.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface SingleRecipientRouterInvocationAware extends SingleRecipientRouter, InvocationAware {}
@@ -114,7 +118,8 @@ public class SingleRecipientRouterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -157,7 +162,8 @@ public class SingleRecipientRouterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -194,7 +200,8 @@ public class SingleRecipientRouterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -236,7 +243,8 @@ public class SingleRecipientRouterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

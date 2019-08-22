@@ -52,6 +52,9 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Supports testing of the ConverterFlowElementInvoker
  */
@@ -71,6 +74,8 @@ public class ConverterFlowElementInvokerTest
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Object payload = mockery.mock(Object.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface ConverterInvocationAware extends Converter, InvocationAware {}
@@ -110,7 +115,8 @@ public class ConverterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -150,7 +156,8 @@ public class ConverterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -193,7 +200,8 @@ public class ConverterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -235,7 +243,8 @@ public class ConverterFlowElementInvokerTest
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
         try
         {
-            flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
         }
         finally
         {
@@ -280,7 +289,8 @@ public class ConverterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

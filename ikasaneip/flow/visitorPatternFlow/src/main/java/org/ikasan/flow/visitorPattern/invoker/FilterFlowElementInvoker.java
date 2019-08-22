@@ -46,6 +46,8 @@ import org.ikasan.spec.flow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a filter
  *
@@ -72,9 +74,9 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker<FilterI
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Filter filter = flowElement.getFlowComponent();
@@ -111,7 +113,7 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker<FilterI
             endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
 
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

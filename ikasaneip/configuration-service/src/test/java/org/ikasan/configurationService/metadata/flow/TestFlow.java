@@ -57,6 +57,18 @@ public class TestFlow implements Flow, ConfiguredResource
     }
 
     @Override
+    public boolean addFlowListener(FlowEventListener flowEventListener)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeFlowListener(FlowEventListener flowEventListener)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
     {
         throw new UnsupportedOperationException();

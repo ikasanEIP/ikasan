@@ -46,6 +46,8 @@ import org.ikasan.spec.flow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a translator
  *
@@ -72,9 +74,9 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker<Tra
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Translator translator = flowElement.getFlowComponent();
@@ -99,7 +101,7 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker<Tra
             unsetInvocationOnComponent(flowElementInvocation, translator);
             endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
         flowElement = getDefaultTransition(flowElement);

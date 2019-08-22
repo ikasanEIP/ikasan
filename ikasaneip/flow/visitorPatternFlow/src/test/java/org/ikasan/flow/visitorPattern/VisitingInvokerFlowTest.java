@@ -199,6 +199,7 @@ public class VisitingInvokerFlowTest
     private final boolean isUnrecoverable = true;
     private final boolean isNotUnrecoverable = false;
 
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     @Before
     public void setup()
@@ -1797,7 +1798,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
 
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
                 oneOf(exclusionService).isBlackListed("identifier");
@@ -1896,7 +1897,7 @@ public class VisitingInvokerFlowTest
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(configuration));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(false);
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
                 oneOf(flowConfiguration).getReplayRecordService();
@@ -2109,7 +2110,7 @@ public class VisitingInvokerFlowTest
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
                 oneOf(exclusionService).isBlackListed("identifier");
@@ -2205,7 +2206,7 @@ public class VisitingInvokerFlowTest
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
                 oneOf(exclusionService).isBlackListed("identifier");
@@ -2396,7 +2397,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
 
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
@@ -2499,7 +2500,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
 
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
@@ -2602,7 +2603,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
 
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
@@ -2704,7 +2705,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
 
-                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
@@ -3275,6 +3276,12 @@ public class VisitingInvokerFlowTest
         protected FlowInvocationContext createFlowInvocationContext()
         {
             return flowInvocationContext;
+        }
+
+        @Override
+        protected List<FlowEventListener> getFlowEventListeners()
+        {
+            return flowEventListeners;
         }
     }
 }

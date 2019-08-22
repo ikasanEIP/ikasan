@@ -50,6 +50,8 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,6 +74,8 @@ public class ProducerFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Producer producer = mockery.mock(Producer.class, "producer");
     private Map payload = mockery.mock(Map.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface ProducerInvocationAware extends Producer, InvocationAware {}
@@ -134,8 +138,9 @@ public class ProducerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ProducerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -199,8 +204,9 @@ public class ProducerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ProducerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -257,8 +263,9 @@ public class ProducerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ProducerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Supports testing of the SplitterFlowElementInvoker
@@ -87,6 +88,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
     interface SplitterInvocationAware extends Splitter, InvocationAware {}
     private SplitterInvocationAware splitterInvocationAware = mockery.mock(SplitterInvocationAware.class, "splitterInvocationAware");
 
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     private Object payload = mockery.mock(Object.class, "payload");
     private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = mockery.mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
@@ -140,7 +142,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
                 exactly(1).of(mainFlowElement).getFlowElementInvoker();
                 will(returnValue(mainFlowElementInvoker));
-                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
+                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
                 will(returnValue(null));
 
                 exactly(1).of(flowEvent).setPayload(payload);
@@ -155,7 +157,8 @@ public class ConcurrentSplitterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
         mockery.assertIsSatisfied();
     }
 
@@ -213,7 +216,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
                 exactly(1).of(mainFlowElement).getFlowElementInvoker();
                 will(returnValue(mainFlowElementInvoker));
-                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
+                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
                 will(returnValue(null));
 
                 exactly(1).of(flowEvent).setPayload(payload);
@@ -228,7 +231,8 @@ public class ConcurrentSplitterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
         mockery.assertIsSatisfied();
     }
 
@@ -247,14 +251,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
         /**
          * Mock the async task.
          */
-        protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+        protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
         {
             return asyncTask;
-        }
-
-        protected boolean pendingCallback(List payloads)
-        {
-            return callbackCount < payloads.size() && callbackThrowableException == null;
         }
     }
 }

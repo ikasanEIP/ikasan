@@ -105,10 +105,10 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, final FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, final FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
 
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         FlowElement nextSubFlowElement = getSubFlowTransition(flowElement);
@@ -190,14 +190,14 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             {
                 asyncFlowEvent =  new FlowEventFactory().newEvent(flowEvent.getIdentifier(), payload);
             }
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, asyncFlowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListeners, moduleName, flowName, asyncFlowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextSubFlowElement;
 
             // TODO - replace new DefaultFlowInvocationContext with a factory method
             FlowInvocationContext asyncTaskFlowInvocationContext = new DefaultFlowInvocationContext();
 
-            Callable<SplitFlowElement> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, asyncTaskFlowInvocationContext, asyncFlowEvent);
+            Callable<SplitFlowElement> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListeners, moduleName, flowName, asyncTaskFlowInvocationContext, asyncFlowEvent);
             final ListenableFuture<SplitFlowElement> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
             Futures.addCallback(listenableFuture, splitFlowCallback);
@@ -257,13 +257,13 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         if(this.configuration.isSendSplitsAsSinglePayload())
         {
             flowEvent.setPayload(subFlowPayloads);
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
             FlowElement nextMainFlowElementInRoute = nextMainFlowElement;
             while (nextMainFlowElementInRoute != null)
             {
                 notifyFlowInvocationContextListenersSnapEvent(nextMainFlowElementInRoute, flowEvent);
-                nextMainFlowElementInRoute = nextMainFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextMainFlowElementInRoute);
+                nextMainFlowElementInRoute = nextMainFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, nextMainFlowElementInRoute);
             }
         }
         else
@@ -278,13 +278,13 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
                 {
                     flowEvent.setPayload(payload);
                 }
-                notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+                notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
                 FlowElement nextMainFlowElementInRoute = nextMainFlowElement;
                 while (nextMainFlowElementInRoute != null)
                 {
                     notifyFlowInvocationContextListenersSnapEvent(nextMainFlowElementInRoute, flowEvent);
-                    nextMainFlowElementInRoute = nextMainFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextMainFlowElementInRoute);
+                    nextMainFlowElementInRoute = nextMainFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, nextMainFlowElementInRoute);
                 }
             }
         }
@@ -320,16 +320,16 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
      * Factory method to aid testing.
      *
      * @param nextFlowElementInRoute
-     * @param flowEventListener
+     * @param flowEventListeners
      * @param moduleName
      * @param flowName
      * @param flowInvocationContext
      * @param flowEvent
      * @return
      */
-    protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+    protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
     {
-        return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
+        return new SplitFlowElement(nextFlowElementInRoute, flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent);
     }
 
     protected class SplitFlowCallback implements FutureCallback<SplitFlowElement>
@@ -378,13 +378,13 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     protected class SplitFlowElement implements Callable<SplitFlowElement>
     {
         FlowElement _nextFlowElementInRoute;
-        FlowEventListener _flowEventListener;
+        List<FlowEventListener> _flowEventListeners;
         String _moduleName;
         String _flowName;
         FlowInvocationContext _flowInvocationContext;
         FlowEvent _flowEvent;
 
-        public SplitFlowElement(FlowElement _nextFlowElementInRoute, FlowEventListener _flowEventListener, String _moduleName, String _flowName, FlowInvocationContext _flowInvocationContext, FlowEvent _flowEvent)
+        public SplitFlowElement(FlowElement _nextFlowElementInRoute, List<FlowEventListener> _flowEventListeners, String _moduleName, String _flowName, FlowInvocationContext _flowInvocationContext, FlowEvent _flowEvent)
         {
             this._nextFlowElementInRoute = _nextFlowElementInRoute;
             if(_nextFlowElementInRoute == null)
@@ -392,10 +392,10 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
                 throw new IllegalArgumentException("_nextFlowElementInRoute cannot be 'null'");
             }
 
-            this._flowEventListener = _flowEventListener;
-            if(_flowEventListener == null)
+            this._flowEventListeners = _flowEventListeners;
+            if(_flowEventListeners == null)
             {
-                throw new IllegalArgumentException("_flowEventListener cannot be 'null'");
+                throw new IllegalArgumentException("_flowEventListeners cannot be 'null'");
             }
 
             this._moduleName = _moduleName;
@@ -430,7 +430,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             {
                 while (_nextFlowElementInRoute != null)
                 {
-                    _nextFlowElementInRoute = _nextFlowElementInRoute.getFlowElementInvoker().invoke(_flowEventListener, _moduleName, _flowName, _flowInvocationContext, _flowEvent, _nextFlowElementInRoute);
+                    _nextFlowElementInRoute = _nextFlowElementInRoute.getFlowElementInvoker().invoke(_flowEventListeners, _moduleName, _flowName, _flowInvocationContext, _flowEvent, _nextFlowElementInRoute);
                     if (Thread.currentThread().isInterrupted()) {
                         return null;
                     }

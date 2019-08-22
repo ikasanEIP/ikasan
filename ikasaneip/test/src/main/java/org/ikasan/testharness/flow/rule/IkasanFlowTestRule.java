@@ -453,7 +453,7 @@ public class IkasanFlowTestRule implements TestRule
             configuration.setCronExpression("0/5 * * * * ? 2099"); // set to never run
             configuration.setEager(false); // do not callback on the provider once complete
         }
-        flow.setFlowListener(testHarnessFlowEventListener);
+        flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
         Assert.assertEquals("flow should be running", "running", flow.getState());
     }
@@ -461,6 +461,7 @@ public class IkasanFlowTestRule implements TestRule
     public void stopFlow()
     {
         flow.stop();
+        flow.removeFlowListener(testHarnessFlowEventListener);
         assertEquals("flow should be stopped", errorEndState ?
             "stoppedInError" :
             "stopped", flow.getState());

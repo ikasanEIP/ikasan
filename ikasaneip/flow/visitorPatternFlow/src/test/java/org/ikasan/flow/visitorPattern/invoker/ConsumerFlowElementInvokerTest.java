@@ -53,6 +53,9 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Supports testing of the ConsumerFlowElementInvoker
  */
@@ -73,6 +76,8 @@ public class ConsumerFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Consumer consumer = mockery.mock(Consumer.class, "consumer");
     private Converter mockedConverter = mockery.mock(Converter.class, "converter");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect (note we invoke on the converter since the consumer is never 'invoked')
     interface ConsumerConverterInvocationAware extends Converter, InvocationAware {}
@@ -109,7 +114,8 @@ public class ConsumerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -150,7 +156,8 @@ public class ConsumerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -195,7 +202,8 @@ public class ConsumerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new StubbedConsumerAwareFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -230,7 +238,8 @@ public class ConsumerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
