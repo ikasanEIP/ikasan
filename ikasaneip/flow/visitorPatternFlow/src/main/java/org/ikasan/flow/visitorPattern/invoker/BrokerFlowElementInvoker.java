@@ -43,6 +43,8 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for brokers
  *
@@ -60,9 +62,9 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Broker broker = flowElement.getFlowComponent();
@@ -127,13 +129,13 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
         {
             // allow broker to terminate a flow
             flowInvocationContext.setFinalAction(FinalAction.PUBLISH);
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
             return null;
         }
         if (flowEvent.getPayload() != null)
         {
             // keep going if we have some payload
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
             return nextFlowElement;
         }
 

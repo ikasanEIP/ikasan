@@ -43,6 +43,8 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a producer
  *
@@ -69,9 +71,9 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Producer producer = flowElement.getFlowComponent();
@@ -116,7 +118,7 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
         // TODO - what should be the final action if we have a DevNull Producer?!
         flowInvocationContext.setFinalAction(FinalAction.PUBLISH);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow
         return null;
     }

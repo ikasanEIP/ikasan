@@ -44,6 +44,8 @@ import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a converter
  *
@@ -70,9 +72,9 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Converter converter = flowElement.getFlowComponent();
@@ -135,7 +137,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
             unsetInvocationOnComponent(flowElementInvocation, converter);
             endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
         flowElement = getDefaultTransition(flowElement);

@@ -73,9 +73,9 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Splitter splitter = flowElement.getFlowComponent();
@@ -134,13 +134,13 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
         if(this.configuration.isSendSplitsAsSinglePayload())
         {
             flowEvent.setPayload(payloads);
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextFlowElement;
             while (nextFlowElementInRoute != null)
             {
                 notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
-                nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
             }
         }
         else
@@ -151,12 +151,12 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
                 } else {
                     flowEvent.setPayload(payload);
                 }
-                notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+                notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
                 FlowElement nextFlowElementInRoute = nextFlowElement;
                 while (nextFlowElementInRoute != null) {
                     notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
-                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
                 }
             }
         }

@@ -51,6 +51,9 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Supports testing of the TranslatorFlowElementInvoker
  */
@@ -71,6 +74,8 @@ public class TranslatorFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Translator translator = mockery.mock(Translator.class, "translator");
     private Object payload = mockery.mock(Object.class, "payload");
+
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
     // this is to test the InvocationAware aspect
     interface TranslatorInvocationAware extends Translator, InvocationAware {}
@@ -110,7 +115,8 @@ public class TranslatorFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new TranslatorFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -150,7 +156,8 @@ public class TranslatorFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new TranslatorFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -190,7 +197,8 @@ public class TranslatorFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new TranslatorFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

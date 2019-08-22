@@ -76,6 +76,8 @@ public class SequencerFlowElementInvokerTest
     private Sequencer sequencer = mockery.mock(Sequencer.class, "sequencer");
     private Object payload = mockery.mock(Object.class, "payload");
 
+    private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
+
     // this is to test the InvocationAware aspect
     interface SequencerInvocationAware extends Sequencer, InvocationAware {}
     private SequencerInvocationAware sequencerInvocationAware = mockery.mock(SequencerInvocationAware.class, "sequencerInvocationAware");
@@ -115,13 +117,14 @@ public class SequencerFlowElementInvokerTest
                 exactly(1).of(flowEvent).setPayload(payload);
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -163,12 +166,13 @@ public class SequencerFlowElementInvokerTest
                 exactly(1).of(flowEvent).setPayload(payload);
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));            }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -216,13 +220,14 @@ public class SequencerFlowElementInvokerTest
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                exactly(3).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                exactly(3).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -262,7 +267,8 @@ public class SequencerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -300,7 +306,8 @@ public class SequencerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }
@@ -340,7 +347,8 @@ public class SequencerFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
     }

@@ -45,6 +45,8 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * A default implementation of the FlowElementInvoker for a consumer
  *
@@ -74,9 +76,9 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
@@ -111,7 +113,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
         flowElement = getDefaultTransition(flowElement);

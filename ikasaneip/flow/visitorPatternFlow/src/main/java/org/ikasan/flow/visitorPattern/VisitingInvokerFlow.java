@@ -62,6 +62,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +89,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     /** Name of the module within which this flow exists */
     private String moduleName;
 
-    /** The flow event listener */
-    private FlowEventListener flowEventListener;
+    /** The flow event listeners */
+    private List<FlowEventListener> flowEventListeners;
 
     /** flow configuration implementation */
     private FlowConfiguration flowConfiguration;
@@ -216,6 +217,17 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         }
         
         this.configuredResourceId = this.moduleName + "-" + this.name;
+
+        this.flowEventListeners = getFlowEventListeners();
+    }
+
+    /**
+     * Allow extention for testing.
+     * @return
+     */
+    protected List<FlowEventListener> getFlowEventListeners()
+    {
+        return new  ArrayList<FlowEventListener>();
     }
 
     /**
@@ -875,7 +887,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             	flowElementCaptureMetrics(flowElement);
                 flowElement.getFlowElementInvoker().setFlowInvocationContextListeners(this.flowInvocationContextListeners);
                 flowElement.getFlowElementInvoker().setInvokeContextListeners(invokeContextListeners);
-                flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
                 
             }
             catch (ClassCastException e)
@@ -1037,13 +1049,32 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     }
 
     /**
-     * Set the flow event listener
+     * Replace existing flow event listeners with this flow event listener.
      * @param flowEventListener
      */
 	public void setFlowListener(FlowEventListener flowEventListener)
 	{
-		this.flowEventListener = flowEventListener;
+        this.flowEventListeners.clear();
+        this.flowEventListeners.add(flowEventListener);
 	}
+
+    /**
+     * Add a flow event listener
+     * @param flowEventListener
+     */
+    public boolean addFlowListener(FlowEventListener flowEventListener)
+    {
+        return this.flowEventListeners.add(flowEventListener);
+    }
+
+    /**
+     * Remove a flow event listener
+     * @param flowEventListener
+     */
+    public boolean removeFlowListener(FlowEventListener flowEventListener)
+    {
+        return this.flowEventListeners.remove(flowEventListener);
+    }
 
     @Override
     public void setErrorReportingService(ErrorReportingService errorReportingService)

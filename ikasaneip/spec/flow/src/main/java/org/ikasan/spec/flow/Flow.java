@@ -108,11 +108,26 @@ public interface Flow
     FlowConfiguration getFlowConfiguration();
 
     /**
-     * Setter for a listener for flow events
+     * Setter for a listener for flow events.
+     * This will replace any existing flow listeners.
      *
      * @param flowEventListener
      */
     void setFlowListener(FlowEventListener flowEventListener);
+
+    /**
+     * Add a flow listener for flow events.
+     * @param flowEventListener
+     * @return boolean returns true when successfully added or false when not
+     */
+    boolean addFlowListener(FlowEventListener flowEventListener);
+
+    /**
+     * Remove a flow listener for flow events.
+     * @param flowEventListener
+     * @return boolean returns true when successfully removed or false when not
+     */
+    boolean removeFlowListener(FlowEventListener flowEventListener);
 
     /**
      * Setter for a List of listeners for the FlowInvocationContext

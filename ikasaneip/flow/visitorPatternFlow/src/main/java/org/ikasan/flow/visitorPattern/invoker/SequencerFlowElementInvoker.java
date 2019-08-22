@@ -70,9 +70,9 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
+    public FlowElement invoke(List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        notifyListenersBeforeElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Sequencer sequencer = flowElement.getFlowComponent();
@@ -103,13 +103,13 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
             for (Object payload : payloads)
             {
                 flowEvent.setPayload(payload);
-                notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+                notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
 
                 FlowElement nextFlowElementInRoute = nextFlowElement;
                 while (nextFlowElementInRoute != null)
                 {
                     notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
-                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
                 }
             }
         }
