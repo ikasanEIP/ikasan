@@ -66,7 +66,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
                 {
                     this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                     this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
-                    logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
+                    logger.debug("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
                             + " is not a number. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
                 }
             }
@@ -74,7 +74,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
             {
                 this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                 this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
-                logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
+                logger.debug("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
                         + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
             }
 
@@ -90,7 +90,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
                 {
                     this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
                     this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
-                    logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
+                    logger.info("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
                             + " is not a number. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
                 }
             }
@@ -98,7 +98,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
             {
                 this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
                 this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
-                logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
+                logger.debug("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
                         + " is not available. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
             }
 
@@ -111,13 +111,13 @@ public class HousekeepingJobImpl implements HousekeepingJob
                 } catch (Exception e)
                 {
                     this.enabled = true;
-                    logger.warn("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
+                    logger.debug("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
                 }
             }
             else
             {
                 this.enabled = true;
-                logger.warn("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
+                logger.debug("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
             }
         }
         catch(Exception e)
@@ -137,7 +137,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
-        logger.info("Housekeeping job executing: " + this.getJobName()
+        logger.debug("Housekeeping job executing: " + this.getJobName()
                 + " [transaction size: " + this.transactionDeleteSize + "][batch delete size: " + this.batchDeleteSize + "]");
         try
         {
@@ -154,7 +154,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
         }
 
         this.lastExecutionSuccessful = true;
-        logger.info("Finished housekeeping job executing: " + this.getJobName());
+        logger.debug("Finished housekeeping job executing: " + this.getJobName());
     }
 
     public void setCronExpression(String cronExpression)
