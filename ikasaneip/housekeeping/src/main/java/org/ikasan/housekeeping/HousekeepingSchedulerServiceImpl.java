@@ -80,7 +80,7 @@ public class HousekeepingSchedulerServiceImpl implements HousekeepingSchedulerSe
                 {
                     Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
                     Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                    logger.info("Scheduled consumer for house keeper job ["
+                    logger.debug("Scheduled consumer for house keeper job ["
                             + jobkey.getName()
                             + "-" + jobkey.getGroup()
                             + "] starting at [" + scheduledDate + "]");
@@ -122,7 +122,7 @@ public class HousekeepingSchedulerServiceImpl implements HousekeepingSchedulerSe
                 JobKey jobkey = jobDetail.getKey();
                 Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                logger.info("Scheduled consumer for house keeper job ["
+                logger.debug("Scheduled consumer for house keeper job ["
                         + jobkey.getName()
                         + "-" + jobkey.getGroup()
                         + "] starting at [" + scheduledDate + "] using cron expression ["

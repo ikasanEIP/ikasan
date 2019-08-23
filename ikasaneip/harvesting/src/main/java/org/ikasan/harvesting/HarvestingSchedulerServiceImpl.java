@@ -80,7 +80,7 @@ public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerServic
                 {
                     Trigger trigger = getCronTrigger(jobkey, this.harvestingJobs.get(jobkey.toString()).getCronExpression());
                     Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                    logger.info("Scheduled harvesting job ["
+                    logger.debug("Scheduled harvesting job ["
                             + jobkey.toString()
                             + "] starting at [" + scheduledDate + "] using cron expression ["
                             + this.harvestingJobs.get(jobkey.toString()).getCronExpression() + "]");
@@ -122,7 +122,7 @@ public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerServic
                 JobKey jobkey = jobDetail.getKey();
                 Trigger trigger = getCronTrigger(jobkey, this.harvestingJobs.get(jobkey.toString()).getCronExpression());
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                logger.info("Scheduled harvesting job ["
+                logger.debug("Scheduled harvesting job ["
                         + jobkey.toString()
                         + "] starting at [" + scheduledDate + "] using cron expression ["
                         + this.harvestingJobs.get(jobkey.toString()).getCronExpression() + "]");

@@ -77,14 +77,14 @@ public class HarvestingJobImpl implements HarvestingJob
                 catch (NumberFormatException e)
                 {
                     this.harvestSize = DEFAULT_BATCH_DELETE_SIZE;
-                    logger.warn("The value configured for " + this.jobName + HARVEST_BATCH_SIZE
+                    logger.info("The value configured for " + this.jobName + HARVEST_BATCH_SIZE
                         + " is not a number. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
                 }
             }
             else
             {
                 this.harvestSize = DEFAULT_BATCH_DELETE_SIZE;
-                logger.warn("The value configured for " + this.jobName + HARVEST_BATCH_SIZE
+                logger.info("The value configured for " + this.jobName + HARVEST_BATCH_SIZE
                     + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
             }
 
@@ -98,13 +98,13 @@ public class HarvestingJobImpl implements HarvestingJob
                 } catch (Exception e)
                 {
                     this.enabled = true;
-                    logger.warn("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
+                    logger.info("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
                 }
             }
             else
             {
                 this.enabled = true;
-                logger.warn("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
+                logger.info("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
             }
         }
         catch(Exception e)
