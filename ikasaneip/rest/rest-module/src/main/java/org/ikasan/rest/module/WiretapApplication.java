@@ -40,6 +40,8 @@
  */
 package org.ikasan.rest.module;
 
+import org.ikasan.rest.module.dto.ErrorDto;
+import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -54,6 +56,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,6 +78,8 @@ public class WiretapApplication {
     @Autowired
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
+
+    private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
@@ -132,17 +137,26 @@ public class WiretapApplication {
         @RequestParam(value = "payloadId",required = false) String payloadId,
         @RequestParam(value = "eventId",required = false) String eventId,
         @RequestParam(value = "payloadContent",required = false) String payloadContent,
-        @RequestParam(value= "fromDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date fromDateTime,
-        @RequestParam(value= "untilDateTime",required = false) @DateTimeFormat(pattern="yyyy-MM-ddThh:mm:ss") Date untilDateTime
+        @RequestParam(value= "fromDateTime",required = false) String fromDateTime,
+        @RequestParam(value= "untilDateTime",required = false) String untilDateTime
         ) {
 
         String moduleName = moduleService.getModules().get(0).getName();
-        PagedSearchResult<WiretapEvent> pagedResult = wiretapService.findWiretapEvents(
-            pageNumber, pageSize, orderBy, orderAscending, new HashSet(){{add(moduleName);}},
-            flow, componentName, eventId, payloadId,
-            fromDateTime, untilDateTime, payloadContent);
+        PagedSearchResult<WiretapEvent> pagedResult = null;
+        try
+        {
+            pagedResult = wiretapService.findWiretapEvents(
+                pageNumber, pageSize, orderBy, orderAscending, new HashSet(){{add(moduleName);}},
+                flow, componentName, eventId, payloadId,
+                dateTimeConverter.getDate(fromDateTime), dateTimeConverter.getDate(untilDateTime), payloadContent);
+            return new ResponseEntity(pagedResult, HttpStatus.OK);
 
-        return new ResponseEntity(pagedResult, HttpStatus.OK);
+        }
+        catch (ParseException e)
+        {
+            return new ResponseEntity(new ErrorDto("fromDateTime or untilDateTime has invalid dateTime format not following yyyy-MM-dd'T'HH:mm:ss."),
+                HttpStatus.BAD_REQUEST);
+        }
 
     }
 

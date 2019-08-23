@@ -42,77 +42,58 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.configuration.Configured;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * The default implementation for {@link DuplicateFilterService}
+ * Test class for {@link  DefaultManagementFilterService}
  * 
  * @author Ikasan Development Team
  *
  */
-public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>
+public class DefaultManagementFilterServiceTest
 {
-    /** {@link FilteredMessageDao} for accessing encountered messages*/
-    private final FilteredMessageDao dao;
+    /** {@link Mockery} for mocking interfaces */
+    private Mockery mockery = new Mockery();
 
-    /** filter configuration - provide a default instance */
-    private FilteredMessageConfiguration configuration = new FilteredMessageConfiguration();
+    /** Mocked {@link FilteredMessageDao} */
+    private final FilteredMessageDao dao = this.mockery.mock(FilteredMessageDao.class, "mockDao");
+
+    /** Mocked {@link FilterEntry} returned */
+    private final FilterEntry entry = this.mockery.mock(FilterEntry.class, "filterEntry");
+
+    /** Implementation of {@link DuplicateFilterService} to be tested*/
+    private  DefaultManagementFilterService uut = new  DefaultManagementFilterService(this.dao);
 
     /**
-     * Constructor
-     * @param dao
+     * Test case: persist message
      */
-    public DefaultDuplicateFilterService(final FilteredMessageDao dao)
+    @Test public void new_messages_are_persisted()
     {
-        this.dao = dao;
-        if(dao == null)
+        this.mockery.checking(new Expectations()
         {
-            throw new IllegalArgumentException("dao cannot be 'null'");
-        }
+            {
+                one(dao).save(entry);
+            }
+        });
+        this.uut.save(this.entry);
+        this.mockery.assertIsSatisfied();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#isDuplicate(java.lang.String)
+    /**
+     * Test case: housekeep persisted messages
      */
-    public boolean isDuplicate(FilterEntry message)
+    @Test public void delete_expired_messages()
     {
-        FilterEntry messageEntryFound = this.dao.findMessage(message);
-        if (messageEntryFound == null)
+        this.mockery.checking(new Expectations()
         {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+            {
+                one(dao).deleteAllExpired();
+            }
+        });
+        this.uut.housekeep();
+        this.mockery.assertIsSatisfied();
     }
-
-    /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#persistMessage(java.lang.String)
-     */
-    public void persistMessage(FilterEntry message)
-    {
-        this.dao.save(message);
-    }
-
-
-    @Override
-    public FilteredMessageConfiguration getConfiguration() {
-        return this.configuration;
-    }
-
-    @Override
-    public void setConfiguration(FilteredMessageConfiguration configuration)
-    {
-        this.configuration = configuration;
-
-        // set dependents
-        this.dao.setBatchHousekeepDelete(configuration.isBatchHousekeepDelete());
-        this.dao.setHousekeepingBatchSize(configuration.getHousekeepingBatchSize());
-        this.dao.setTransactionBatchSize(configuration.getTransactionBatchSize());
-    }
-
 }

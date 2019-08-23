@@ -99,4 +99,8 @@ public class IkasanRestAutoConfiguration
     public MetaDataApplication metaDataApplication(){
         return new MetaDataApplication();
     }
+    @Bean
+    public FilterApplication filterApplication(){
+        return new FilterApplication();
+    }
 }

@@ -114,18 +114,5 @@ public class DefaultDuplicateFilterServiceTest
         this.mockery.assertIsSatisfied();
     }
 
-    /**
-     * Test case: housekeep persisted messages
-     */
-    @Test public void delete_expired_messages()
-    {
-        this.mockery.checking(new Expectations()
-        {
-            {
-                one(dao).deleteAllExpired();
-            }
-        });
-        this.serviceToTest.housekeep();
-        this.mockery.assertIsSatisfied();
-    }
+
 }

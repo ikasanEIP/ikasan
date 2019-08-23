@@ -88,7 +88,12 @@
                       expression="execution(* org.ikasan.security.service.authentication.CustomAuthenticationProvider.authenticate(..))" />
 
 
-		<aop:advisor id="securityServicePointcutAdvice" advice-ref="required-TransactionAdvice"
+        <aop:pointcut id="filterApplicationPointcut"
+                      expression="execution(* org.ikasan.rest.module.FilterApplication.create(..))
+                                  ||execution(* org.ikasan.rest.module.FilterApplication.delete(..))" />
+
+
+        <aop:advisor id="securityServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="systemEventServiceMethods" />
@@ -110,6 +115,9 @@
 
         <aop:advisor id="customAuthenticationProviderPointcutAdvice" advice-ref="required-TransactionAdvice"
                      pointcut-ref="customAuthenticationProviderPointcut" />
+
+         <aop:advisor id="filterApplicationPointcutAdvice" advice-ref="required-TransactionAdvice"
+                     pointcut-ref="filterApplicationPointcut" />
 
   </aop:config>
 

@@ -38,81 +38,68 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
+
 package org.ikasan.filter.duplicate.service;
 
-import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.search.PagedSearchResult;
+
+import java.util.Date;
+import java.util.List;
 
 /**
- * The default implementation for {@link DuplicateFilterService}
- * 
- * @author Ikasan Development Team
+ * Management Service interface for accessing persisted message.
  *
  */
-public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>
+public interface ManagementFilterService
 {
-    /** {@link FilteredMessageDao} for accessing encountered messages*/
-    private final FilteredMessageDao dao;
-
-    /** filter configuration - provide a default instance */
-    private FilteredMessageConfiguration configuration = new FilteredMessageConfiguration();
+    /**
+     * Stores Message.
+     * @param message
+     */
+    void save(FilterEntry message);
 
     /**
-     * Constructor
-     * @param dao
+     * Find unique Message for given clientId and criteriaId
+     *
+     * @param criteriaId
+     * @param clientId
+     * @return
      */
-    public DefaultDuplicateFilterService(final FilteredMessageDao dao)
-    {
-        this.dao = dao;
-        if(dao == null)
-        {
-            throw new IllegalArgumentException("dao cannot be 'null'");
-        }
-    }
+    FilterEntry find(Integer criteriaId, String clientId);
 
-    /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#isDuplicate(java.lang.String)
+    /**
+     * Find group of Message by clientId
+     *
+     * @param clientId
+     * @return
      */
-    public boolean isDuplicate(FilterEntry message)
-    {
-        FilterEntry messageEntryFound = this.dao.findMessage(message);
-        if (messageEntryFound == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    List<FilterEntry> find(String clientId);
 
-    /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#persistMessage(java.lang.String)
+    /**
+     * Find a Paged List of{@link FilterEntry} by its id: clientId or and clientId
+     *
+     * @param pageNo page number
+     * @param pageSize page Size to be returned
+     * @param criteria of {@link FilterEntry}s to be found
+     * @param clientId of {@link FilterEntry}s to be found
+     * @param fromDate from date criteria
+     * @param untilDate until date criteria
+     *
+     * @return The found Paged Search result of {@link FilterEntry} or empty if nothing
+     *         found in persistence.
      */
-    public void persistMessage(FilterEntry message)
-    {
-        this.dao.save(message);
-    }
+    PagedSearchResult<FilterEntry> findMessagesByPage(int pageNo, int pageSize,
+        String clientId, Integer criteria, Date fromDate, Date untilDate);
 
+    /**
+     * Delete Message with given criteriaId and clientId
+     *
+     * @param criteria to be deleted
+     * @param clientId to be deleted
+     * @return
+     */
+    void delete(Integer criteria, String clientId);
 
-    @Override
-    public FilteredMessageConfiguration getConfiguration() {
-        return this.configuration;
-    }
-
-    @Override
-    public void setConfiguration(FilteredMessageConfiguration configuration)
-    {
-        this.configuration = configuration;
-
-        // set dependents
-        this.dao.setBatchHousekeepDelete(configuration.isBatchHousekeepDelete());
-        this.dao.setHousekeepingBatchSize(configuration.getHousekeepingBatchSize());
-        this.dao.setTransactionBatchSize(configuration.getTransactionBatchSize());
-    }
 
 }

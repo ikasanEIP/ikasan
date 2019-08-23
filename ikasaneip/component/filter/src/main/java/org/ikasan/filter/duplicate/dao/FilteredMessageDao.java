@@ -42,7 +42,9 @@
 package org.ikasan.filter.duplicate.dao;
 
 import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.ikasan.spec.search.PagedSearchResult;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,13 +59,13 @@ public interface FilteredMessageDao
      * Save new message.
      * @param message
      */
-    public void save(FilterEntry message);
+    void save(FilterEntry message);
 
     /**
      * Save or update a message.
      * @param message
      */
-    public void saveOrUpdate(FilterEntry message);
+    void saveOrUpdate(FilterEntry message);
 
     /**
      * Try to find {@link FilterEntry} by its id: clientId and
@@ -74,7 +76,7 @@ public interface FilteredMessageDao
      * @return The found {@link FilterEntry} or null if nothing
      *         found in persistence.
      */
-    public FilterEntry findMessage(FilterEntry message);
+    FilterEntry findMessage(FilterEntry message);
 
     /**
      * Try to find a List of{@link FilterEntry} by its id: clientId.
@@ -84,44 +86,65 @@ public interface FilteredMessageDao
      * @return The found List of {@link FilterEntry} or null if nothing
      *         found in persistence.
      */
-    public List<FilterEntry> findMessages(String clientId);
+    List<FilterEntry> findMessages(String clientId);
+
+    /**
+     * Find a Paged List of{@link FilterEntry} by its id: clientId or and clientId
+     *
+     * @param pageNo page number
+     * @param pageSize page Size to be returned
+     * @param criteria of {@link FilterEntry}s to be found
+     * @param clientId of {@link FilterEntry}s to be found
+     * @param fromDate from date criteria
+     * @param untilDate until date criteria
+     *
+     * @return The found Paged Search result of {@link FilterEntry} or empty if nothing
+     *         found in persistence.
+     */
+    PagedSearchResult<FilterEntry> findMessagesByPage(int pageNo, int pageSize,
+        Integer criteria, String clientId, Date fromDate, Date untilDate);
+
+    /**
+     * Deletes given FilterEntry.
+     * @param message to be deleted
+     */
+    void delete(FilterEntry message);
 
     /**
      * Delete expired Filter Entries from persistence 
      */
-    public void deleteAllExpired();
+    void deleteAllExpired();
 
     /**
      * Allow batching of housekeep tasks to be turned on/off
      * @param batchedHousekeep
      */
-    public void setBatchHousekeepDelete(boolean batchedHousekeep);
+    void setBatchHousekeepDelete(boolean batchedHousekeep);
 
     /**
      * Allow the batch size to be overridden
      * @param batchSize
      */
-    public void setHousekeepingBatchSize(int batchSize);
+    void setHousekeepingBatchSize(int batchSize);
 
     /**
      * Allow the transaction batch size to be overridden
      * @param transactionBatchSize transactionBatchSize
      */
-    public void setTransactionBatchSize(int transactionBatchSize);
+    void setTransactionBatchSize(int transactionBatchSize);
 
     /**
      * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
      *
      * @return true if there is at least 1 expired WiretapFlowEvent
      */
-    public boolean housekeepablesExist();
+    boolean housekeepablesExist();
 
     /**
      * Find expired messages.
      *
      * @return
      */
-    public List<FilterEntry> findExpiredMessages();
+    List<FilterEntry> findExpiredMessages();
 
-    void setHousekeepQuery(String housekeepQuery);
 }
