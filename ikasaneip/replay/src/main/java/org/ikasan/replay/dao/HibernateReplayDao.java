@@ -106,11 +106,10 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
-    private ReplayEventConverter replayEventConverter;
 
     public HibernateReplayDao()
     {
-        replayEventConverter = new ReplayEventConverter();
+
     }
 
     /* (non-Javadoc)
@@ -208,9 +207,6 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     @Override
     public void save(List<ReplayEvent> replayEvents)
     {
-        // Convert the events into the hibernate domain objects.
-        replayEvents = this.replayEventConverter.convert(replayEvents);
-
         replayEvents.forEach(replayEvent -> this.getHibernateTemplate().save(replayEvent));
     }
 

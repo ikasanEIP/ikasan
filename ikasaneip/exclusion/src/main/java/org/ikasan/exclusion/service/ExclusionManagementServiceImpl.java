@@ -43,6 +43,7 @@ package org.ikasan.exclusion.service;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.exclusion.dao.ExclusionEventConverter;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.harvest.HarvestService;
@@ -60,6 +61,8 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 {
 	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
+    private ExclusionEventConverter exclusionEventConverter;
+
 	public ExclusionManagementServiceImpl(ExclusionEventDao<String,ExclusionEvent> exclusionEventDao)
 	{
 		this.exclusionEventDao = exclusionEventDao;
@@ -67,6 +70,7 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 		{
 			throw new IllegalArgumentException("exclusionEventDao cannot be null!");
 		}
+        exclusionEventConverter = new ExclusionEventConverter();
 	}
 
 	/* (non-Javadoc)
@@ -177,6 +181,8 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
     @Override
     public void insert(List<ExclusionEvent> entities)
     {
+        entities = this.exclusionEventConverter.convert(entities);
+
         this.exclusionEventDao.save(entities);
     }
 }

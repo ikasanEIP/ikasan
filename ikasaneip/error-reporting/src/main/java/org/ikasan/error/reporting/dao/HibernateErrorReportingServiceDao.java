@@ -74,11 +74,8 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
     /** batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete ErrorOccurrenceImpl s where s.uri in (:event_uris)";
 
-    private ErrorOccurrenceConverter errorOccurrenceConverter;
-
     public HibernateErrorReportingServiceDao()
     {
-        this.errorOccurrenceConverter = new ErrorOccurrenceConverter();
     }
 
     @Override
@@ -323,8 +320,6 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
     @Override
     public void save(List<ErrorOccurrence> errorOccurrences)
     {
-        errorOccurrences = this.errorOccurrenceConverter.convert(errorOccurrences);
-
         errorOccurrences.forEach(errorOccurrence -> this.save(errorOccurrence));
     }
 

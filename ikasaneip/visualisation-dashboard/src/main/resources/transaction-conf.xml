@@ -38,6 +38,9 @@
                 expression="execution(* org.ikasan.security.service.AuthenticationService*.*(..))"/>
         <aop:pointcut id="ldapServiceMethods"
                 expression="execution(* org.ikasan.security.service.LdapService*.synchronize(..))"/>
+        <aop:pointcut id="customAuthenticationProviderPointcut"
+                      expression="execution(* org.ikasan.security.service.authentication.CustomAuthenticationProvider.authenticate(..))" />
+
         <!--<aop:pointcut id="mappingServiceMethods"-->
                 <!--expression="execution(* org.ikasan.mapping.service.*.*(..))"/>-->
         <!--<aop:pointcut id="configurationServiceMethods"-->
@@ -77,6 +80,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="customAuthenticationProviderPointcut" />
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="mappingServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="configurationServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="topologyDaoSaveMethods"/>-->

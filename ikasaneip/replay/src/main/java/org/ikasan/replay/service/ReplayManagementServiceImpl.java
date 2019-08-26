@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import org.ikasan.replay.dao.ReplayEventConverter;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayAuditDao;
@@ -72,6 +73,8 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 
 	private Integer transactionBatchSize = 1000;
 
+    private ReplayEventConverter replayEventConverter;
+
 	/**
 	 * Constructor
 	 * 
@@ -86,6 +89,8 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 		{
 			throw new IllegalArgumentException("repalyDao cannot be null!");
 		}
+
+        replayEventConverter = new ReplayEventConverter();
 	}
 
 	/* (non-Javadoc)
@@ -200,6 +205,9 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
     @Override
     public void insert(List<ReplayEvent> entities)
     {
+        // Convert the events into the hibernate domain objects.
+        entities = this.replayEventConverter.convert(entities);
+
         this.replayDao.save(entities);
     }
 }

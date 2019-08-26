@@ -107,14 +107,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
     private String housekeepQuery;
 
-    private WiretapEventConverter eventConverter;
 
     /**
      * Constructor
      */
     public HibernateWiretapDao() {
         super();
-        this.eventConverter = new WiretapEventConverter();
     }
 
     /**
@@ -128,7 +126,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         this();
         this.batchHousekeepDelete = batchHousekeepDelete;
         this.housekeepingBatchSize = housekeepingBatchSize;
-        this.eventConverter = new WiretapEventConverter();
     }
 
     /**
@@ -145,9 +142,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     @Override
     public void save(List<WiretapEvent> wiretapEvents)
     {
-        // Convert to hibernate specific domain objects
-        wiretapEvents = this.eventConverter.convert(wiretapEvents);
-
         wiretapEvents.forEach(wiretapEvent -> this.save(wiretapEvent));
     }
 

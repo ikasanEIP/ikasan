@@ -41,6 +41,7 @@
 package org.ikasan.wiretap.service;
 
 import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.wiretap.dao.WiretapEventConverter;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,9 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
 
     /** */
     private WiretapEventFactory wiretapEventFactory;
+
+
+    private WiretapEventConverter eventConverter;
     
     /**
      * Constructor
@@ -112,6 +116,8 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         {
             throw new IllegalArgumentException("wiretapEventFactory cannot be 'null'");
         }
+
+        this.eventConverter = new WiretapEventConverter();
     }
 
     /**
@@ -298,6 +304,8 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     @Override
     public void insert(List<WiretapEvent> entities)
     {
+        // Convert to hibernate specific domain objects
+        entities = this.eventConverter.convert(entities);
         wiretapDao.save(entities);
     }
 }
