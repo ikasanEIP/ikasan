@@ -89,7 +89,6 @@ public class MetricsApplication
         }
         catch (IOException e)
         {
-            e.printStackTrace();
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Cannot parse metrics JSON!", e);
         }

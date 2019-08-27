@@ -96,7 +96,6 @@ public class ErrorApplication
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "An error has occurred attempting to perform a batch insert of ErrorOccurrences!", e);
         }
