@@ -103,4 +103,24 @@ public class IkasanRestAutoConfiguration
     {
         return new MetricsApplication();
     }
+
+    @Bean
+    public JwtAuthenticationController jwtAuthenticationController(){
+        return new JwtAuthenticationController();
+    }
+
+    @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint(){
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public JwtRequestFilter jwtRequestFilter(){
+        return new JwtRequestFilter();
+    }
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil(){
+        return new JwtTokenUtil();
+    }
 }
