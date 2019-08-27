@@ -99,5 +99,6 @@
        <module>mapping</module>
        <module>solr</module>
        <module>dashboard-client</module>
+       <module>persistence</module>
     </modules>
 </project>

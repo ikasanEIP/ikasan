@@ -40,41 +40,67 @@
  */
 package org.ikasan.rest.dashboard;
 
+import org.ikasan.spec.persistence.BatchInsert;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 @Configuration
 public class IkasanRestAutoConfiguration
 {
+    @Resource
+    private BatchInsert errorOccurrenceBatchInsert;
+
+    @Resource
+    private BatchInsert replayEventBatchInsert;
+
+    @Resource
+    private BatchInsert exclusionEventBatchInsert;
+
+    @Resource
+    private BatchInsert wiretapEventBatchInsert;
+
+    @Resource
+    private BatchInsert moduleMetadataBatchInsert;
+
+    @Resource
+    private BatchInsert configurationMetadataBatchInsert;
 
     @Bean
     public ReplayApplication replayApplication()
     {
-        return new ReplayApplication();
+        return new ReplayApplication(this.replayEventBatchInsert);
     }
 
     @Bean
-    public WiretapApplication wiretapApplication(){
-        return new WiretapApplication();
+    public WiretapApplication wiretapApplication()
+    {
+        return new WiretapApplication(this.wiretapEventBatchInsert);
     }
 
     @Bean
-    public ErrorApplication errorApplication(){
-        return new ErrorApplication();
+    public ErrorApplication errorApplication()
+    {
+        return new ErrorApplication(this.errorOccurrenceBatchInsert);
     }
 
     @Bean
-    public ExclusionApplication exclusionApplication(){
-        return new ExclusionApplication();
+    public ExclusionApplication exclusionApplication()
+    {
+        return new ExclusionApplication(this.exclusionEventBatchInsert);
     }
 
     @Bean
-    public MetaDataApplication metaDataApplication(){
-        return new MetaDataApplication();
+    public MetaDataApplication metaDataApplication()
+    {
+        return new MetaDataApplication(this.moduleMetadataBatchInsert,
+            this.configurationMetadataBatchInsert);
     }
 
     @Bean
-    public MetricsApplication metricsApplication(){
+    public MetricsApplication metricsApplication()
+    {
         return new MetricsApplication();
     }
 }

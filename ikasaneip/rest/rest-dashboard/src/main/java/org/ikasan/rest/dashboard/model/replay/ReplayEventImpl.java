@@ -1,34 +1,25 @@
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.replay;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.spec.replay.ReplayEvent;
 
 @JsonIgnoreProperties(value = { "harvested",  "harvestedDateTime"})
 public class ReplayEventImpl implements ReplayEvent
 {
-    @Field("id")
     private String id;
 
-    @Field("moduleName")
     private String moduleName;
 
-    @Field("flowName")
     private String flowName;
 
-    @Field("event")
     private String eventId;
 
-    @Field("payloadRaw")
     private byte[] payloadRaw;
 
-    @Field("payload")
     private String eventAsString;
 
-    @Field("timestamp")
     private long timestamp;
 
-    @Field("expiry")
     private long expiry;
 
 

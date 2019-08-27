@@ -98,6 +98,12 @@ public class MapErrorReportingServiceDao<T>
     }
 
     @Override
+    public void save(List<ErrorOccurrence> errorOccurrences)
+    {
+        errorOccurrences.forEach(errorOccurrence -> this.save(errorOccurrence));
+    }
+
+    @Override
     public void deleteExpired()
     {
         List<String> expiredIdentifiers = new ArrayList<>();

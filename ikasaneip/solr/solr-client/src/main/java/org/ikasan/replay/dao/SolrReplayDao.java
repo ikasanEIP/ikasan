@@ -77,7 +77,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
         }
     }
 
-    public void saveOrUpdate(List<ReplayEvent> replayEvents)
+    public void save(List<ReplayEvent> replayEvents)
     {
         long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
         long expiry = millisecondsInDay + System.currentTimeMillis();

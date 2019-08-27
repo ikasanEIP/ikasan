@@ -40,8 +40,13 @@
  */
 package org.ikasan.rest.dashboard;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.WiretapEventImpl;
+import org.ikasan.rest.dashboard.model.wiretap.WiretapEventImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -66,10 +71,18 @@ public class WiretapApplication
     private static Logger logger = LoggerFactory.getLogger(WiretapApplication.class);
 
     private ObjectMapper mapper;
+    private BatchInsert<WiretapEvent> batchInsert;
 
-    public WiretapApplication()
+    public WiretapApplication(BatchInsert<WiretapEvent> batchInsert)
     {
+        this.batchInsert = batchInsert;
+        if(this.batchInsert == null)
+        {
+            throw new IllegalArgumentException("BatchInsert cannot be null!");
+        }
+
         this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
@@ -79,16 +92,17 @@ public class WiretapApplication
     {
         try
         {
-            List<WiretapEventImpl> wiretapEvents = this.mapper.readValue(wiretapJsonPayload
+            logger.debug(wiretapJsonPayload);
+
+            List<WiretapEvent> wiretapEvents = this.mapper.readValue(wiretapJsonPayload
                 , mapper.getTypeFactory().constructCollectionType(List.class, WiretapEventImpl.class));
 
-            logger.info(wiretapJsonPayload);
+            this.batchInsert.insert(wiretapEvents);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Cannot parse wiretap JSON!", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                , "An error has occurred attempting to perform a batch insert of WiretapEvents!", e);
         }
 
         return new ResponseEntity("Harvested wiretaps successfully captured!", HttpStatus.OK);

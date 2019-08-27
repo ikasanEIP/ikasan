@@ -6,6 +6,7 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.solr.SolrServiceBase;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * Created by Ikasan Development Team on 23/09/2017.
  */
-public class SolrErrorReportingManagementServiceImpl extends SolrServiceBase implements SolrService<ErrorOccurrence>, ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence>
+public class SolrErrorReportingManagementServiceImpl extends SolrServiceBase implements SolrService<ErrorOccurrence>, ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence>, BatchInsert<ErrorOccurrence>
 {
 
     private SolrErrorReportingServiceDao errorReportingServiceDao;
@@ -128,5 +129,11 @@ public class SolrErrorReportingManagementServiceImpl extends SolrServiceBase imp
     public Long rowCount(List<String> moduleName, List<String> flowName, List<String> flowElementname, Date startDate, Date endDate)
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void insert(List<ErrorOccurrence> entities)
+    {
+        this.save(entities);
     }
 }

@@ -44,7 +44,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.error.reporting.dao.ErrorOccurrenceConverter;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
@@ -61,7 +63,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  *
  */
 public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
-		HousekeepService, HarvestService<ErrorOccurrence> {
+		HousekeepService, HarvestService<ErrorOccurrence>, BatchInsert<ErrorOccurrence>
+{
 	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
 
 	public static final String CLOSE = "close";
@@ -74,6 +77,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 
 	private int transactionBatchSize = 1000;
 
+    private ErrorOccurrenceConverter errorOccurrenceConverter;
 
 	/**
 	 * Constructor
@@ -92,6 +96,8 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 		if (this.errorReportingServiceDao == null) {
 			throw new IllegalArgumentException("errorManagementDao cannot be null!");
 		}
+
+        this.errorOccurrenceConverter = new ErrorOccurrenceConverter();
 	}
 
 	/* (non-Javadoc)
@@ -296,5 +302,13 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
     public void updateAsHarvested(List<ErrorOccurrence> events)
     {
         this.errorManagementDao.updateAsHarvested(events);
+    }
+
+    @Override
+    public void insert(List<ErrorOccurrence> entities)
+    {
+        entities = this.errorOccurrenceConverter.convert(entities);
+
+        this.errorReportingServiceDao.save(entities);
     }
 }

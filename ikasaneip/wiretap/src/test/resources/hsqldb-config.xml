@@ -56,6 +56,7 @@
         <entry key="hibernate.show_sql" value="false"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
         <entry key="hibernate.flushMode" value="commit"/>
+        <entry key="hibernate.jdbc.batch_size" value="5"/>
     </util:map>
 
     <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"

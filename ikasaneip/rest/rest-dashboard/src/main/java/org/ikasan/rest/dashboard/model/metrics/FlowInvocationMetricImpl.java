@@ -1,5 +1,6 @@
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.metrics;
 
+import org.ikasan.rest.dashboard.model.metrics.ComponentInvocationMetricImpl;
 import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.io.Serializable;

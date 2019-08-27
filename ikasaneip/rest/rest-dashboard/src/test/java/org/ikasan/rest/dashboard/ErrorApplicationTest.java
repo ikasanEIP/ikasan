@@ -1,8 +1,8 @@
 package org.ikasan.rest.dashboard;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.ikasan.rest.dashboard.model.ErrorOccurrenceImpl;
+import org.ikasan.rest.dashboard.util.TestBatchInsert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,18 +19,29 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.annotation.Resource;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ErrorApplication.class)
 @WebAppConfiguration
+@ContextConfiguration(
+    {
+        "/substitute-components.xml"
+    }
+)
 public class ErrorApplicationTest extends  AbstractRestMvcTest
 {
     public static final String ERRORS_JSON = "/data/errorOccurrences.json";
 
     protected MockMvc mvc;
+
     @Autowired
     WebApplicationContext webApplicationContext;
+
+    @Resource
+    TestBatchInsert batchInsert;
 
     @Before
     public void setUp()
@@ -39,7 +51,7 @@ public class ErrorApplicationTest extends  AbstractRestMvcTest
 
 
     @Test
-    public void harvest_wiretap_success() throws Exception
+    public void harvest_error_occurrence_success() throws Exception
     {
         String uri = "/rest/harvest/error";
 
@@ -50,6 +62,8 @@ public class ErrorApplicationTest extends  AbstractRestMvcTest
         assertEquals(HttpStatus.OK.value(), status);
         String content = mvcResult.getResponse().getContentAsString();
         assertEquals(content, "Harvested errors successfully captured!");
+
+        Assert.assertEquals("Batch insert size == 3", 3, batchInsert.getSize());
     }
 
     @Test
@@ -63,7 +77,7 @@ public class ErrorApplicationTest extends  AbstractRestMvcTest
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "Cannot parse error JSON!");
+        assertEquals(content, "An error has occurred attempting to perform a batch insert of ErrorOccurrences!");
     }
 
 }

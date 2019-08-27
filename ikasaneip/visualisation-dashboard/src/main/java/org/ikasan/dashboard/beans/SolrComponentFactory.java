@@ -1,14 +1,22 @@
 package org.ikasan.dashboard.beans;
 
+import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
+import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetadataServiceImpl;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
+import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
+import org.ikasan.module.metadata.service.SolrModuleMetadataServiceImpl;
+import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -25,7 +33,7 @@ public class SolrComponentFactory
     @Value("${solr.password}")
     private String solrPassword;
 
-    @Bean
+    @Bean("wiretapEventBatchInsert")
     public WiretapService solrWiretapService()
     {
         SolrWiretapDao dao = new SolrWiretapDao();
@@ -37,7 +45,7 @@ public class SolrComponentFactory
         return service;
     }
 
-    @Bean
+    @Bean("errorOccurrenceBatchInsert")
     public ErrorReportingService solrErrorReportingService()
     {
         SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
@@ -49,7 +57,7 @@ public class SolrComponentFactory
         return service;
     }
 
-    @Bean
+    @Bean("exclusionEventBatchInsert")
     public ExclusionManagementService solrExclusionService()
     {
         SolrExclusionEventDao dao = new SolrExclusionEventDao();
@@ -60,4 +68,44 @@ public class SolrComponentFactory
 
         return service;
     }
+
+    @Bean("replayEventBatchInsert")
+    public ReplayManagementService solrReplayService()
+    {
+        SolrReplayDao dao = new SolrReplayDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao, dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean("moduleMetadataBatchInsert")
+    public SolrModuleMetadataServiceImpl moduleMetadataService()
+    {
+        SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrModuleMetadataServiceImpl service = new SolrModuleMetadataServiceImpl(dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean("configurationMetadataBatchInsert")
+    public SolrComponentConfigurationMetadataServiceImpl configurationMetadataService()
+    {
+        SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrComponentConfigurationMetadataServiceImpl service = new SolrComponentConfigurationMetadataServiceImpl(dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
 }

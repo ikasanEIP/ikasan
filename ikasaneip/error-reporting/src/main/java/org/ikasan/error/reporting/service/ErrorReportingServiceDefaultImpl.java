@@ -42,9 +42,8 @@ package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -263,7 +262,8 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     {
         return this.errorReportingServiceDao.find(pageNo, pageSize, orderBy, orderAscending, moduleName, flowName, componentName, fromDate, untilDate);
     }
-        /* (non-Javadoc)
+
+    /* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override

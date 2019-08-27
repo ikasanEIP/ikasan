@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import org.ikasan.replay.dao.ReplayEventConverter;
 import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.replay.*;
@@ -40,6 +41,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
     	= new ArrayList<ReplayListener<HibernateReplayAuditEvent>>();
 
     private RestTemplate restTemplate;
+
 	/**
 	 * Constructor
 	 * 

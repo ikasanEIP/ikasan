@@ -105,10 +105,16 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 
     public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
-	
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
-	 */
+
+
+    public HibernateReplayDao()
+    {
+
+    }
+
+    /* (non-Javadoc)
+         * @see org.ikasan.spec.replay.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+         */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<HibernateReplayAudit> getReplayAudits(final List<String> moduleNames, final List<String> flowNames,
@@ -198,9 +204,15 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		this.getHibernateTemplate().saveOrUpdate(replayEvent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayDao#getReplayEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
-	 */
+    @Override
+    public void save(List<ReplayEvent> replayEvents)
+    {
+        replayEvents.forEach(replayEvent -> this.getHibernateTemplate().save(replayEvent));
+    }
+
+    /* (non-Javadoc)
+         * @see org.ikasan.spec.replay.ReplayDao#getReplayEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+         */
 	@Override
 	public List<ReplayEvent> getReplayEvents(String moduleName,
                                                       String flowName, Date startDate, Date endDate, int resultSize)

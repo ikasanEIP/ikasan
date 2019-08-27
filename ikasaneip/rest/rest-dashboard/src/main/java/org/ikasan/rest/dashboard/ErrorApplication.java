@@ -40,8 +40,11 @@
  */
 package org.ikasan.rest.dashboard;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.ErrorOccurrenceImpl;
+import org.ikasan.rest.dashboard.model.error.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -50,7 +53,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -63,30 +65,39 @@ public class ErrorApplication
     private static Logger logger = LoggerFactory.getLogger(ErrorApplication.class);
 
     private ObjectMapper mapper;
+    private BatchInsert<ErrorOccurrence> batchInsert;
 
-    public ErrorApplication()
+    public ErrorApplication(BatchInsert<ErrorOccurrence> batchInsert)
     {
+        this.batchInsert = batchInsert;
+        if(this.batchInsert == null)
+        {
+            throw new IllegalArgumentException("BatchInsert cannot be null!");
+        }
+
         this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
         value = "/harvest/error")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity harvestWiretap(@RequestBody String errorsJsonPayload)
+    public ResponseEntity harvestError(@RequestBody String errorsJsonPayload)
     {
         try
         {
-            List<ErrorOccurrenceImpl> errorOccurrences = this.mapper.readValue(errorsJsonPayload
+            logger.debug(errorsJsonPayload);
+
+            List<ErrorOccurrence> errorOccurrences = this.mapper.readValue(errorsJsonPayload
                 , mapper.getTypeFactory().constructCollectionType(List.class, ErrorOccurrenceImpl.class));
 
-            logger.info(errorsJsonPayload);
 
+            this.batchInsert.insert(errorOccurrences);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Cannot parse error JSON!", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                , "An error has occurred attempting to perform a batch insert of ErrorOccurrences!", e);
         }
 
         return new ResponseEntity("Harvested errors successfully captured!", HttpStatus.OK);

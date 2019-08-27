@@ -59,6 +59,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Hibernate implementation of the <code>WiretapDao</code>
@@ -105,6 +106,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     private Integer transactionBatchSize = 2000;
 
     private String housekeepQuery;
+
+
     /**
      * Constructor
      */
@@ -134,6 +137,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public void save(WiretapEvent wiretapEvent)
     {
         getHibernateTemplate().saveOrUpdate(wiretapEvent);
+    }
+
+    @Override
+    public void save(List<WiretapEvent> wiretapEvents)
+    {
+        wiretapEvents.forEach(wiretapEvent -> this.save(wiretapEvent));
     }
 
     /**

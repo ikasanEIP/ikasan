@@ -38,10 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.metrics;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.model.GenericWiretapEvent;
 
 import java.io.Serializable;
 
@@ -51,27 +51,114 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
-public class MetricEventImpl extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
+
+@JsonIgnoreProperties
+public class MetricEventImpl implements WiretapEvent<String>, Serializable
 {
-    /** event id */
+    private String identifier;
+
+    private String event;
+
+    private String moduleName;
+
+    private String flowName;
+
+    private String componentName;
+
+    private long timestamp;
+
+    private long expiry;
+
     private String eventId;
 
-    /** related event id */
     private String relatedEventId;
 
-    /** event created date/time */
-    private long eventTimestamp;
 
-    public MetricEventImpl()
+
+    @Override
+    public long getIdentifier()
     {
+        return new Long(identifier);
     }
 
+    @Override
+    public String getModuleName()
+    {
+        return this.moduleName;
+    }
+
+    @Override
+    public String getFlowName()
+    {
+        return this.flowName;
+    }
+
+    @Override
+    public String getComponentName()
+    {
+        return this.componentName;
+    }
+
+    @Override
+    public long getTimestamp()
+    {
+        return this.timestamp;
+    }
+
+    @Override
+    public String getEvent()
+    {
+        return event;
+    }
+
+    @Override
+    public long getExpiry()
+    {
+        return this.getExpiry();
+    }
+
+    @Override
     public String getEventId()
     {
-        return eventId;
+        return this.eventId;
     }
 
-    protected void setEventId(String eventId)
+    public void setId(String id)
+    {
+        this.identifier = id;
+    }
+
+    public void setEvent(String event)
+    {
+        this.event = event;
+    }
+
+    public void setModuleName(String moduleName)
+    {
+        this.moduleName = moduleName;
+    }
+
+    public void setFlowName(String flowName)
+    {
+        this.flowName = flowName;
+    }
+
+    public void setComponentName(String componentName)
+    {
+        this.componentName = componentName;
+    }
+
+    public void setTimestamp(long timestamp)
+    {
+        this.timestamp = timestamp;
+    }
+
+    public void setExpiry(long expiry)
+    {
+        this.expiry = expiry;
+    }
+
+    public void setEventId(String eventId)
     {
         this.eventId = eventId;
     }
@@ -81,27 +168,21 @@ public class MetricEventImpl extends GenericWiretapEvent implements WiretapEvent
         return relatedEventId;
     }
 
-    protected void setRelatedEventId(String relatedEventId)
+    public void setRelatedEventId(String relatedEventId)
     {
         this.relatedEventId = relatedEventId;
     }
 
-    public long getEventTimestamp()
-    {
-        return eventTimestamp;
-    }
-
-    protected void setEventTimestamp(long eventTimestamp)
-    {
-        this.eventTimestamp = eventTimestamp;
-    }
-
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "MetricEventImpl{" +
-                "eventId='" + eventId + '\'' +
-                ", relatedEventId='" + relatedEventId + '\'' +
-                ", eventTimestamp=" + eventTimestamp +
-                "} " + super.toString();
+            "id='" + identifier + '\'' +
+            ", event='" + event + '\'' +
+            ", moduleName='" + moduleName + '\'' +
+            ", flowName='" + flowName + '\'' +
+            ", componentName='" + componentName + '\'' +
+            ", timestamp=" + timestamp +
+            '}';
     }
 }

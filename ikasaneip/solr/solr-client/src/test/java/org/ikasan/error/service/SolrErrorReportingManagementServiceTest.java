@@ -1,30 +1,22 @@
 package org.ikasan.error.service;
 
 import org.apache.solr.SolrTestCaseJ4;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
-import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
-import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -70,6 +62,88 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
 
 
             solrErrorReportingManagementService.save(event);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_bulk_success() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            SolrErrorReportingManagementServiceImpl solrErrorReportingManagementService
+                = new SolrErrorReportingManagementServiceImpl(dao);
+
+            SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
+                "eventId", "relatedEventId", "event", 12345l);
+
+            List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+            errorOccurrences.add(event);
+
+
+            solrErrorReportingManagementService.save(errorOccurrences);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_batch_insert_success() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            BatchInsert<ErrorOccurrence> batchInsert
+                = new SolrErrorReportingManagementServiceImpl(dao);
+
+            SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
+                "eventId", "relatedEventId", "event", 12345l);
+
+            List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+            errorOccurrences.add(event);
+
+
+            batchInsert.insert(errorOccurrences);
 
             assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());

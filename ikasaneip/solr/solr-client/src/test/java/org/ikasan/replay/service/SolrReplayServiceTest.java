@@ -13,6 +13,7 @@ import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.model.SolrReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
@@ -132,6 +133,96 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
                 , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_events_list() throws Exception
+    {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+
+            SolrReplayDao dao = new SolrReplayDao();
+            dao.setSolrClient(server);
+
+            SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
+
+            SolrReplayEvent replayEvent = new SolrReplayEvent();
+            replayEvent.setModuleName("moduleName");
+            replayEvent.setFlowName("flowName");
+            replayEvent.setEvent("event".getBytes());
+            replayEvent.setTimestamp(System.currentTimeMillis());
+            replayEvent.setExpiry(0);
+            replayEvent.setId(1l);
+
+            List<ReplayEvent> events = new ArrayList<>();
+            events.add(replayEvent);
+
+            solrReplayService.save(events);
+
+            List<ReplayEvent> replayEventList = solrReplayService.getReplayEvents(new ArrayList<>(), new ArrayList<>()
+                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
+
+            assertEquals(2, replayEventList.size());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_events_list_batch_insert() throws Exception
+    {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+
+            SolrReplayDao dao = new SolrReplayDao();
+            dao.setSolrClient(server);
+
+            BatchInsert<ReplayEvent> batchInsert = new SolrReplayServiceImpl(dao, dao);
+
+            SolrReplayEvent replayEvent = new SolrReplayEvent();
+            replayEvent.setModuleName("moduleName");
+            replayEvent.setFlowName("flowName");
+            replayEvent.setEvent("event".getBytes());
+            replayEvent.setTimestamp(System.currentTimeMillis());
+            replayEvent.setExpiry(0);
+            replayEvent.setId(1l);
+
+            List<ReplayEvent> events = new ArrayList<>();
+            events.add(replayEvent);
+
+            batchInsert.insert(events);
+
+            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }

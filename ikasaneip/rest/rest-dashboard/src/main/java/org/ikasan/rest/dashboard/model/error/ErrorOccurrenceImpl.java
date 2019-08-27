@@ -1,60 +1,50 @@
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.error;
 
-import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>
 {
     /** unique identifier for this instance */
-    @Field("errorUri")
     private String uri;
 
     /**
      * name of the module where this error occurred
      */
-    @Field("moduleName")
     private String moduleName;
 
     /**
      * name of the flow where this error occurred, if it was event/flow related
      */
-    @Field("flowName")
     private String flowName;
 
     /**
      * name of the flow element where this error occurred, if it was event/flow related
      */
-    @Field("componentName")
     private String flowElementName;
 
     /**
      * raw dump of the error as it occurred
      */
-    @Field("errorDetail")
     private String errorDetail;
 
     /**
      * the error message extracted from the errorDetail
      */
-    @Field("errorMessage")
     private String errorMessage;
 
     /**
      * the exception class associated with the error
      */
-    @Field("exceptionClass")
     private String exceptionClass;
 
     /**
      * Id of the event associated with this error, if it was event/flow related
      */
-    @Field("event")
     private String eventLifeIdentifier;
 
     /**
      * Related identifier
      */
-    @Field("relatedEventId")
     private String eventRelatedIdentifier;
 
     /** action to be taken on this error incident */
@@ -68,13 +58,11 @@ public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>
     /**
      * Representation of the Event as a String at the time that the error took place
      */
-    @Field("payload")
     private String eventAsString;
 
     /**
      * Time that this error was logged
      */
-    @Field("timestamp")
     private long timestamp;
 
     /**

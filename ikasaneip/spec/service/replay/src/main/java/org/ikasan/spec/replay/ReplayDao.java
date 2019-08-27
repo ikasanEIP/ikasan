@@ -59,6 +59,13 @@ public interface ReplayDao
 	public void saveOrUpdate(ReplayEvent replayEvent);
 
     /**
+     * Method to save a liso of ReplayEvents.
+     *
+     * @param replayEvents
+     */
+    public void save(List<ReplayEvent> replayEvents);
+
+    /**
      * Get a list of ReplayEvent depending upon search criteria.
      *
      * @param moduleName

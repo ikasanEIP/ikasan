@@ -40,8 +40,9 @@
  */
 package org.ikasan.rest.dashboard;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.FlowInvocationMetricImpl;
+import org.ikasan.rest.dashboard.model.metrics.FlowInvocationMetricImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -70,6 +71,7 @@ public class MetricsApplication
     public MetricsApplication()
     {
         this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
@@ -87,7 +89,6 @@ public class MetricsApplication
         }
         catch (IOException e)
         {
-            e.printStackTrace();
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Cannot parse metrics JSON!", e);
         }

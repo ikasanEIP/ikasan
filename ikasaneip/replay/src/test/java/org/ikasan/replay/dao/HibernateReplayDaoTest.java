@@ -42,6 +42,7 @@ package org.ikasan.replay.dao;
 
 import javax.annotation.Resource;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -89,7 +90,31 @@ public class HibernateReplayDaoTest
 		HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
       
 		this.replayDao.saveOrUpdate(replayEvent);
+
+		ReplayEvent replayEvent1 = this.replayDao.getReplayEventById(replayEvent.getId());
+
+		Assert.assertEquals("Replay events equal", replayEvent, replayEvent1);
 	}
+
+    @Test
+    @DirtiesContext
+    public void testSaveReplayEvents_success()
+    {
+        List<ReplayEvent> replayEvents = new ArrayList<>();
+
+        for(int i=0; i<100; i++)
+        {
+            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+
+            replayEvents.add(replayEvent);
+        }
+
+        this.replayDao.save(replayEvents);
+
+        List<ReplayEvent> replayEventsResults = this.replayDao.getReplayEvents("moduleName", null, null, null, 1000);
+
+        Assert.assertEquals("Result size == 100", 100, replayEventsResults.size());
+    }
 
     @Test
     @DirtiesContext

@@ -40,8 +40,11 @@
  */
 package org.ikasan.rest.dashboard;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.ReplayEventImpl;
+import org.ikasan.rest.dashboard.model.replay.ReplayEventImpl;
+import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -50,7 +53,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -63,10 +65,18 @@ public class ReplayApplication
     private static Logger logger = LoggerFactory.getLogger(ReplayApplication.class);
 
     private ObjectMapper mapper;
+    private BatchInsert<ReplayEvent> batchInsert;
 
-    public ReplayApplication()
+    public ReplayApplication(BatchInsert<ReplayEvent> batchInsert)
     {
+        this.batchInsert = batchInsert;
+        if(this.batchInsert == null)
+        {
+            throw new IllegalArgumentException("BatchInsert cannot be null!");
+        }
+
         this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
@@ -76,17 +86,17 @@ public class ReplayApplication
     {
         try
         {
-            List<ReplayEventImpl> replayEvents = this.mapper.readValue(replayEventsJsonPayload
+            logger.debug(replayEventsJsonPayload);
+
+            List<ReplayEvent> replayEvents = this.mapper.readValue(replayEventsJsonPayload
                 , mapper.getTypeFactory().constructCollectionType(List.class, ReplayEventImpl.class));
 
-            logger.info(replayEventsJsonPayload);
-
+            this.batchInsert.insert(replayEvents);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
             throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Cannot parse replay JSON!", e);
+                HttpStatus.BAD_REQUEST, "An error has occurred attempting to perform a batch insert of ReplayEvents!", e);
         }
 
         return new ResponseEntity("Harvested replay events successfully captured!", HttpStatus.OK);

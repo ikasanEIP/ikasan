@@ -59,6 +59,13 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
     public void save(EVENT event);
 
     /**
+     * Save a list of events
+     * @param events
+     * @return
+     */
+    public void save(List<EVENT> events);
+
+    /**
      * Remove the event
      * @param moduleName
      * @param flowName

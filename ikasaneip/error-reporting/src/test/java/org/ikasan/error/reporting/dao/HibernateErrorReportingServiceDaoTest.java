@@ -41,6 +41,7 @@
 package org.ikasan.error.reporting.dao;
 
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
@@ -51,6 +52,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -70,7 +73,7 @@ import javax.annotation.Resource;
 public class HibernateErrorReportingServiceDaoTest
 {
     @Resource
-    ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
 
     Exception exception = new Exception("failed error occurence msg");
 
@@ -83,10 +86,31 @@ public class HibernateErrorReportingServiceDaoTest
     {
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
-        ErrorOccurrenceImpl persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
         Assert.assertNull("Should not be found", persistedErrorOccurrence);
 
         errorReportingServiceDao.save(errorOccurrence);
+        persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
+    }
+
+    /**
+     * Test save of errorOccurrence
+     */
+    @DirtiesContext
+    @Test
+    public void test_batch_save_and_find()
+    {
+        ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+
+        List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+        errorOccurrences.add(errorOccurrence);
+
+        ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
+        Assert.assertNull("Should not be found", persistedErrorOccurrence);
+
+        errorReportingServiceDao.save(errorOccurrences);
+
         persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
         Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
     }

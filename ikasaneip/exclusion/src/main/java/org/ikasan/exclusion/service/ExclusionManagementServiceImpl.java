@@ -43,20 +43,25 @@ package org.ikasan.exclusion.service;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.exclusion.dao.ExclusionEventConverter;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.management.HousekeeperService;
+import org.ikasan.spec.persistence.BatchInsert;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>, HarvestService<ExclusionEvent>, HousekeeperService
+public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>, HarvestService<ExclusionEvent>
+    , HousekeeperService, BatchInsert<ExclusionEvent>
 {
 	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
+
+    private ExclusionEventConverter exclusionEventConverter;
 
 	public ExclusionManagementServiceImpl(ExclusionEventDao<String,ExclusionEvent> exclusionEventDao)
 	{
@@ -65,6 +70,7 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 		{
 			throw new IllegalArgumentException("exclusionEventDao cannot be null!");
 		}
+        exclusionEventConverter = new ExclusionEventConverter();
 	}
 
 	/* (non-Javadoc)
@@ -170,6 +176,14 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
     public void updateAsHarvested(List<ExclusionEvent> events)
     {
         this.exclusionEventDao.updateAsHarvested(events);
+    }
+
+    @Override
+    public void insert(List<ExclusionEvent> entities)
+    {
+        entities = this.exclusionEventConverter.convert(entities);
+
+        this.exclusionEventDao.save(entities);
     }
 }
  
