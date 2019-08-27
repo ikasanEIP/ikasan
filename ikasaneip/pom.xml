@@ -884,7 +884,7 @@
                 <module>sample</module>
                 <module>dashboard</module>
                 <module>visualisation</module>
-<!--                <module>visualisation-dashboard</module>-->
+                <module>visualisation-dashboard</module>
             </modules>
 
 
