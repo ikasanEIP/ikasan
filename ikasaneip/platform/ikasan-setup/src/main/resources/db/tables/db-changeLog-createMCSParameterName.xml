@@ -48,7 +48,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet author="ikasan dev" id="createMCSParameterName" context="postBaseline">
-    
+
+        <validCheckSum>any</validCheckSum>
+
     	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="MCSParameterName" /></not>
 		</preConditions>
@@ -56,7 +58,7 @@
         <createTable tableName="MCSParameterName">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints primaryKey="true" primaryKeyName="MCSKeyLoca_5982901602"/>
+                <constraints primaryKey="true" primaryKeyName="MCSParamNamePk"/>
             </column>
             <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
