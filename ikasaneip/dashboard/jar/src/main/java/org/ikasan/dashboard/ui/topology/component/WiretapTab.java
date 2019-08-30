@@ -53,6 +53,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.google.common.net.MediaType;
+import com.vaadin.server.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.WiretapPopup;
@@ -82,12 +84,6 @@ import org.vaadin.teemu.VaadinIcons;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
@@ -568,7 +564,38 @@ public class WiretapTab extends TopologyTab
         });
 		
 		Button downloadButton = new Button();
-		FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
+		FileDownloader fd = new FileDownloader(new ConnectorResource() {
+            private final String filename = String.format("payload-%s.zip", new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date()));
+
+            @Override
+            public String getFilename() {
+                return filename;
+            }
+
+            @Override
+            public String getMIMEType() {
+                return MediaType.ZIP.toString();
+            }
+
+            @Override
+            public DownloadStream getStream() {
+                try {
+                    // generate data .... => inputstream
+                    InputStream data  = new ByteArrayInputStream(getPayloadStream().toByteArray());
+                    final DownloadStream stream = new DownloadStream(data, getMIMEType(), filename);
+                    stream.setParameter("Content-Disposition", "attachment;filename=" + filename);
+                    // This magic incantation should prevent anyone from caching the data
+                    stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                    // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                    stream.setCacheTime(1000);
+                    return stream;
+                } catch (final IOException e) {
+                    logger.error("Can't download " + filename, e);
+                }
+                return null;
+            }
+        });
+
         fd.extend(downloadButton);
 
         downloadButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
@@ -621,38 +648,6 @@ public class WiretapTab extends TopologyTab
 		this.setSizeFull();
 		this.addComponent(wrapper);
 	}
-	
-    
-    /**
-     * Helper method to get the stream associated with the export of the file.
-     * 
-     * @return the StreamResource associated with the export.
-     */
-    private StreamResource getPayloadDownloadStream() 
-    {
-		StreamResource.StreamSource source = new StreamResource.StreamSource() 
-		{
-		    public InputStream getStream() 
-		    {
-		    	ByteArrayOutputStream stream = null;
-		    	
-		        try
-		        {
-		            stream = getPayloadStream();
-		        }
-		        catch (IOException e)
-		        {
-		        	logger.error(e.getMessage(), e);
-		        }
-		        
-		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
-		        return input;
-		    }
-		};
-            
-	    StreamResource resource = new StreamResource ( source,"payload.zip");
-	    return resource;
-    }
     
     /**
      * Helper method to get the ByteArrayOutputStream associated with the export.

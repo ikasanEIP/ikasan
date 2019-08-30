@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.ui.topology.window;
 
+import com.vaadin.server.ConnectorResource;
+import com.vaadin.server.DownloadStream;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
@@ -19,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Ikasan Development Team on 20/12/2016.
@@ -90,7 +94,37 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         exportMappingConfigurationButton.setDescription("Export the current flow component configurations");
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
-        FileDownloader fd = new FileDownloader(this.getFlowConfigurationExportStream(flow));
+        FileDownloader fd = new FileDownloader(new ConnectorResource() {
+            private final String filename = String.format("flowConfigurationExport-%s.xml", new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date()));
+
+            @Override
+            public String getFilename() {
+                return filename;
+            }
+
+            @Override
+            public String getMIMEType() {
+                return com.google.common.net.MediaType.ZIP.toString();
+            }
+
+            @Override
+            public DownloadStream getStream() {
+                try {
+                    // generate data .... => inputstream
+                    InputStream data  = new ByteArrayInputStream(getFlowConfigurationExport(flow).toByteArray());
+                    final DownloadStream stream = new DownloadStream(data, getMIMEType(), filename);
+                    stream.setParameter("Content-Disposition", "attachment;filename=" + filename);
+                    // This magic incantation should prevent anyone from caching the data
+                    stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                    // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                    stream.setCacheTime(1000);
+                    return stream;
+                } catch (final IOException e) {
+                    logger.error("Can't download " + filename, e);
+                }
+                return null;
+            }
+        });
         fd.extend(exportMappingConfigurationButton);
 
         Button importMappingConfigurationButton = new Button();
@@ -117,37 +151,6 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
 
         this.layout.addComponent(uploadDownloadLayout, 0 ,1);
         this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_CENTER);
-    }
-
-    /**
-     * Helper method to get the stream associated with the export of the file.
-     *
-     * @return the StreamResource associated with the export.
-     */
-    private StreamResource getFlowConfigurationExportStream(final Flow flow)
-    {
-        logger.info("Getting export stream for flow: " + flow.getName() + " with " + flow.getComponents().size() + " components");
-
-        StreamResource.StreamSource source = new StreamResource.StreamSource()
-        {
-
-            public InputStream getStream() {
-                ByteArrayOutputStream stream = null;
-                try
-                {
-                    stream = getFlowConfigurationExport(flow);
-                }
-                catch (IOException e)
-                {
-                    logger.error(e.getMessage(), e);
-                }
-                InputStream input = new ByteArrayInputStream(stream.toByteArray());
-                return input;
-
-            }
-        };
-        StreamResource resource = new StreamResource ( source,"flowConfigurationExport1.xml");
-        return resource;
     }
 
     /**
