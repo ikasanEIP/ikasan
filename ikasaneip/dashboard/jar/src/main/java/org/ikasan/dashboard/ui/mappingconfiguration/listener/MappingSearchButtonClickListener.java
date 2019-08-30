@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.vaadin.server.*;
@@ -214,7 +215,48 @@ public class MappingSearchButtonClickListener implements ClickListener
             }
 
             final Button exportMappingConfigurationButton = new Button();
-            FileDownloader fd = new FileDownloader(getMappingConfigurationExportStream(mappingConfiguration));
+            FileDownloader fd = new FileDownloader(new ConnectorResource() {
+
+                @Override
+                public String getFilename() {
+                    StringBuffer fileName = new StringBuffer();
+                    fileName.append(mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+                    fileName.append(mappingConfiguration.getConfigurationType().getName()).append("_");
+                    fileName.append(mappingConfiguration.getSourceContext().getName()).append("_");
+                    fileName.append(mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
+
+                    return fileName.toString();
+                }
+
+                @Override
+                public String getMIMEType() {
+                    return com.google.common.net.MediaType.ZIP.toString();
+                }
+
+                @Override
+                public DownloadStream getStream() {
+                    try {
+                        StringBuffer fileName = new StringBuffer();
+                        fileName.append(mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+                        fileName.append(mappingConfiguration.getConfigurationType().getName()).append("_");
+                        fileName.append(mappingConfiguration.getSourceContext().getName()).append("_");
+                        fileName.append(mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
+
+                        // generate data .... => inputstream
+                        InputStream data  = new ByteArrayInputStream(getMappingConfigurationExport(mappingConfiguration).toByteArray());
+                        final DownloadStream stream = new DownloadStream(data, getMIMEType(), fileName.toString());
+                        stream.setParameter("Content-Disposition", "attachment;filename=" + fileName.toString());
+                        // This magic incantation should prevent anyone from caching the data
+                        stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                        // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                        stream.setCacheTime(1000);
+                        return stream;
+                    } catch (final IOException e) {
+                        logger.error("Can't download " + getFilename().toLowerCase(), e);
+                    }
+                    return null;
+                }
+            });
             fd.extend(exportMappingConfigurationButton);
 
             exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
@@ -232,51 +274,15 @@ public class MappingSearchButtonClickListener implements ClickListener
     }
 
     /**
-     * Helper method to get the stream associated with the export of the file.
-     *
-     * @return the StreamResource associated with the export.
-     */
-    private StreamResource getMappingConfigurationExportStream(final MappingConfigurationLite lite)
-    {
-        StreamResource.StreamSource source = new StreamResource.StreamSource()
-        {
-
-            public InputStream getStream() {
-                ByteArrayOutputStream stream = null;
-                try
-                {
-                    logger.info("downloading mapping configuration: " + lite.getId());
-                    final MappingConfiguration mappingConfiguration = mappingConfigurationService.getMappingConfigurationById(lite.getId());
-                    stream = getMappingConfigurationExport(mappingConfiguration);
-                }
-                catch (IOException e)
-                {
-                    logger.error(e.getMessage(), e);
-                }
-                InputStream input = new ByteArrayInputStream(stream.toByteArray());
-                return input;
-
-            }
-        };
-
-        StringBuffer fileName = new StringBuffer();
-        fileName.append(lite.getConfigurationServiceClient().getName()).append("_");
-        fileName.append(lite.getConfigurationType().getName()).append("_");
-        fileName.append(lite.getSourceContext().getName()).append("_");
-        fileName.append(lite.getTargetContext().getName()).append("_mappingExport.xml");
-
-        StreamResource resource = new StreamResource ( source, fileName.toString());
-        return resource;
-    }
-
-    /**
      * Helper method to get the ByteArrayOutputStream associated with the export.
      *
      * @return
      * @throws IOException
      */
-    private ByteArrayOutputStream getMappingConfigurationExport(MappingConfiguration mappingConfiguration) throws IOException
+    private ByteArrayOutputStream getMappingConfigurationExport(MappingConfigurationLite mappingConfigurationLite) throws IOException
     {
+        final MappingConfiguration mappingConfiguration = mappingConfigurationService.getMappingConfigurationById(mappingConfigurationLite.getId());
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");

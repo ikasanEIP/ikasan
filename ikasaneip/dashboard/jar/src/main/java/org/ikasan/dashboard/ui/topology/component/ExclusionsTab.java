@@ -545,7 +545,38 @@ public class ExclusionsTab extends TopologyTab
 		excelButton.setImmediate(true);
 		excelButton.setDescription("Export Excel table");
 
-		FileDownloader fd = new FileDownloader(this.getExcelDownloadStream());
+		FileDownloader fd = new FileDownloader(new ConnectorResource() {
+            private final String filename = String.format("exclusions-%s.csv", new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date()));
+
+            @Override
+            public String getFilename() {
+                return filename;
+            }
+
+            @Override
+            public String getMIMEType() {
+                return com.google.common.net.MediaType.ZIP.toString();
+            }
+
+            @Override
+            public DownloadStream getStream() {
+                try {
+                    // generate data .... => inputstream
+                    InputStream data  = new ByteArrayInputStream(getExcelStream().toByteArray());
+                    final DownloadStream stream = new DownloadStream(data, getMIMEType(), filename);
+                    stream.setParameter("Content-Disposition", "attachment;filename=" + filename);
+                    // This magic incantation should prevent anyone from caching the data
+                    stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                    // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                    stream.setCacheTime(1000);
+                    return stream;
+                } catch (final IOException e) {
+                    logger.error("Can't download " + filename, e);
+                }
+                return null;
+            }
+        });
+
 		fd.extend(excelButton);
 
 		buttons.addComponent(excelButton);
@@ -918,37 +949,6 @@ public class ExclusionsTab extends TopologyTab
 		}
 
 		return myItems;
-	}
-
-	/**
-	 * Helper method to get the stream associated with the export of the file.
-	 *
-	 * @return the StreamResource associated with the export.
-	 */
-	private StreamResource getExcelDownloadStream()
-	{
-		StreamResource.StreamSource source = new StreamResource.StreamSource()
-		{
-			public InputStream getStream()
-			{
-				ByteArrayOutputStream stream = null;
-
-				try
-				{
-					stream = getExcelStream();
-				}
-				catch (IOException e)
-				{
-					logger.error(e.getMessage(), e);
-				}
-
-				InputStream input = new ByteArrayInputStream(stream.toByteArray());
-				return input;
-			}
-		};
-
-		StreamResource resource = new StreamResource ( source,"exclusions.csv");
-		return resource;
 	}
 
 	/**

@@ -48,6 +48,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
+import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,9 +92,6 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
@@ -697,79 +695,84 @@ public class MappingConfigurationPanel extends Panel implements View
 
         tableLayout.addComponent(vpanel);
 
+        FileDownloader fd = new FileDownloader(new ConnectorResource() {
+
+            @Override
+            public String getFilename() {
+                StringBuffer fileName = new StringBuffer();
+                fileName.append(mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+                fileName.append(mappingConfiguration.getConfigurationType().getName()).append("_");
+                fileName.append(mappingConfiguration.getSourceContext().getName()).append("_");
+                fileName.append(mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
+
+                return fileName.toString();
+            }
+
+            @Override
+            public String getMIMEType() {
+                return com.google.common.net.MediaType.ZIP.toString();
+            }
+
+            @Override
+            public DownloadStream getStream() {
+                try {
+                    // generate data .... => inputstream
+                    InputStream data  = new ByteArrayInputStream(getMappingConfigurationExport().toByteArray());
+                    final DownloadStream stream = new DownloadStream(data, getMIMEType(), getFilename());
+                    stream.setParameter("Content-Disposition", "attachment;filename=" + getFilename());
+                    // This magic incantation should prevent anyone from caching the data
+                    stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                    // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                    stream.setCacheTime(1000);
+                    return stream;
+                } catch (final IOException e) {
+                    logger.error("Can't download " + getFilename(), e);
+                }
+                return null;
+            }
+        });
+
+        fd.extend(exportMappingConfigurationButton);
+
+        FileDownloader fdValues = new FileDownloader(new ConnectorResource() {
+
+            @Override
+            public String getFilename() {
+                StringBuffer fileName = new StringBuffer();
+                fileName.append(mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+                fileName.append(mappingConfiguration.getConfigurationType().getName()).append("_");
+                fileName.append(mappingConfiguration.getSourceContext().getName()).append("_");
+                fileName.append(mappingConfiguration.getTargetContext().getName()).append("_mappingExportValues.xml");
+
+                return fileName.toString();
+            }
+
+            @Override
+            public String getMIMEType() {
+                return com.google.common.net.MediaType.ZIP.toString();
+            }
+
+            @Override
+            public DownloadStream getStream() {
+                try {
+                    // generate data .... => inputstream
+                    InputStream data  = new ByteArrayInputStream(getMappingConfigurationValuesExport().toByteArray());
+                    final DownloadStream stream = new DownloadStream(data, getMIMEType(), getFilename());
+                    stream.setParameter("Content-Disposition", "attachment;filename=" + getFilename());
+                    // This magic incantation should prevent anyone from caching the data
+                    stream.setParameter("Cache-Control", "private,no-cache,no-store");
+                    // In theory <=0 disables caching. In practice Chrome, Safari (and, apparently, IE) all ignore <=0. Set to 1s
+                    stream.setCacheTime(1000);
+                    return stream;
+                } catch (final IOException e) {
+                    logger.error("Can't download " + getFilename(), e);
+                }
+                return null;
+            }
+        });
+        fdValues.extend(exportMappingConfigurationValuesButton);
+
         return tableLayout;
-    }
-
-    /**
-     * Helper method to get the stream associated with the export of the file.
-     * 
-     * @return the StreamResource associated with the export.
-     */
-    private StreamResource getMappingConfigurationValuesExportStream() 
-    {
-        StreamResource.StreamSource source = new StreamResource.StreamSource()
-        {
-
-                public InputStream getStream() {
-                    ByteArrayOutputStream stream = null;
-                    try
-                    {
-                        stream = getMappingConfigurationValuesExport();
-                    }
-                    catch (IOException e)
-                    {
-                    	logger.error(e.getMessage(), e);
-                    }
-                    InputStream input = new ByteArrayInputStream(stream.toByteArray());
-                      return input;
-    
-                }
-        };
-
-        StringBuffer fileName = new StringBuffer();
-        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingValuesExport.xml");
-
-        StreamResource resource = new StreamResource ( source, fileName.toString());
-        return resource;
-    }
-
-    /**
-     * Helper method to get the stream associated with the export of the file.
-     * 
-     * @return the StreamResource associated with the export.
-     */
-    private StreamResource getMappingConfigurationExportStream() 
-    {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() 
-        {
-
-                public InputStream getStream() {
-                    ByteArrayOutputStream stream = null;
-                    try
-                    {
-                        stream = getMappingConfigurationExport();
-                    }
-                    catch (IOException e)
-                    {
-                    	logger.error(e.getMessage(), e);
-                    }
-                    InputStream input = new ByteArrayInputStream(stream.toByteArray());
-                      return input;
-    
-                }
-        };
-
-        StringBuffer fileName = new StringBuffer();
-        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
-        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
-
-        StreamResource resource = new StreamResource ( source, fileName.toString());
-          return resource;
     }
 
     /**
@@ -1131,12 +1134,6 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingConfiguration = mappingConfiguration;
         this.loadParameterNames();
 
-        FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
-        fd.extend(exportMappingConfigurationButton);
-
-        FileDownloader fdValues = new FileDownloader(this.getMappingConfigurationValuesExportStream());
-        fdValues.extend(exportMappingConfigurationValuesButton);
-        
         this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
     }
 }

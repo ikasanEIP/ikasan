@@ -40,37 +40,11 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import com.vaadin.ui.Window;
 import org.ikasan.dashboard.ui.topology.panel.WiretapPayloadViewPanel;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
-import org.vaadin.aceeditor.AceEditor;
-import org.vaadin.aceeditor.AceMode;
-import org.vaadin.aceeditor.AceTheme;
-import org.vaadin.teemu.VaadinIcons;
-
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
