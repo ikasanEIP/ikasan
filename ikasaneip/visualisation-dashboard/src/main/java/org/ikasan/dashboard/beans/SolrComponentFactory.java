@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.beans;
 
+import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
 import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetadataServiceImpl;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Component
 public class SolrComponentFactory
 {
@@ -33,11 +36,21 @@ public class SolrComponentFactory
     @Value("${solr.password}")
     private String solrPassword;
 
+    @Resource
+    private EmbeddedSolrServer embeddedSolrServer;
+
     @Bean("wiretapEventBatchInsert")
     public WiretapService solrWiretapService()
     {
         SolrWiretapDao dao = new SolrWiretapDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
         SolrWiretapServiceImpl service = new SolrWiretapServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
@@ -49,7 +62,14 @@ public class SolrComponentFactory
     public ErrorReportingService solrErrorReportingService()
     {
         SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
         SolrErrorReportingManagementServiceImpl service = new SolrErrorReportingManagementServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
@@ -61,7 +81,14 @@ public class SolrComponentFactory
     public ExclusionManagementService solrExclusionService()
     {
         SolrExclusionEventDao dao = new SolrExclusionEventDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
         SolrExclusionServiceImpl service = new SolrExclusionServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
@@ -73,7 +100,14 @@ public class SolrComponentFactory
     public ReplayManagementService solrReplayService()
     {
         SolrReplayDao dao = new SolrReplayDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
 
         SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao, dao);
         service.setSolrUsername(solrUsername);
@@ -86,7 +120,14 @@ public class SolrComponentFactory
     public SolrModuleMetadataServiceImpl moduleMetadataService()
     {
         SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
 
         SolrModuleMetadataServiceImpl service = new SolrModuleMetadataServiceImpl(dao);
         service.setSolrUsername(solrUsername);
@@ -99,7 +140,14 @@ public class SolrComponentFactory
     public SolrComponentConfigurationMetadataServiceImpl configurationMetadataService()
     {
         SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao();
-        dao.initStandalone(solrUrl, 30);
+        if(embeddedSolrServer != null)
+        {
+            dao.setSolrClient(embeddedSolrServer);
+        }
+        else
+        {
+            dao.initStandalone(solrUrl, 30);
+        }
 
         SolrComponentConfigurationMetadataServiceImpl service = new SolrComponentConfigurationMetadataServiceImpl(dao);
         service.setSolrUsername(solrUsername);
