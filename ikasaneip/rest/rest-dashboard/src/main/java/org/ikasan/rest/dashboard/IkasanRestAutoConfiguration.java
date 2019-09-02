@@ -41,6 +41,8 @@
 package org.ikasan.rest.dashboard;
 
 import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.security.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -105,22 +107,23 @@ public class IkasanRestAutoConfiguration
     }
 
     @Bean
-    public JwtAuthenticationController jwtAuthenticationController(){
-        return new JwtAuthenticationController();
+    public JwtAuthenticationController jwtAuthenticationController(AuthenticationManager authenticationManager,
+                                                                   JwtTokenUtil jwtTokenUtil, UserService userService) {
+        return new JwtAuthenticationController(authenticationManager, jwtTokenUtil, userService);
     }
 
     @Bean
-    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint(){
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
         return new JwtAuthenticationEntryPoint();
     }
 
     @Bean
-    public JwtRequestFilter jwtRequestFilter(){
-        return new JwtRequestFilter();
+    public JwtRequestFilter jwtRequestFilter(UserService userService, JwtTokenUtil jwtTokenUtil) {
+        return new JwtRequestFilter(userService, jwtTokenUtil);
     }
 
     @Bean
-    public JwtTokenUtil jwtTokenUtil(){
+    public JwtTokenUtil jwtTokenUtil() {
         return new JwtTokenUtil();
     }
 }

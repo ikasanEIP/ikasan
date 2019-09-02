@@ -32,10 +32,10 @@ public class IkasanSecurityConfiguration
 {
     @Autowired
     @Qualifier("ikasan.ds")
-    DataSource ikasands;
+    private DataSource ikasands;
 
     @Resource
-    Map platformHibernateProperties;
+    private Map platformHibernateProperties;
 
     @Bean public PasswordEncoder passwordEncoder()
     {
