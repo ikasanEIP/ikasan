@@ -5,7 +5,7 @@ Solr Reference Guide
 
 Solr Online Documentation: [Solr Reference Guide](https://lucene.apache.org/solr/guide/)
 
-###Solr Installation Location
+### Solr Installation Location
 
 ````text 
 /opt/<env>/solr-8.2.0
@@ -16,7 +16,7 @@ Solr Online Documentation: [Solr Reference Guide](https://lucene.apache.org/solr
 /opt/runtime/solr
 ````
 
-###Controlling Solr
+### Controlling Solr
 
 ````text 
 cd /opt/runtime/solr/bin
@@ -39,7 +39,7 @@ bin/solr status
 
 For more information on please see the solr control script documentation.
 
-###Solr Logging
+### Solr Logging
 
 Solr logs to the following location.
 
@@ -48,7 +48,7 @@ Solr logs to the following location.
 /opt/runtime/solr/server/logs/
 ````
 
-###Solr Index Location
+### Solr Index Location
 
 The solr index can be found at the following location.
 
@@ -57,12 +57,12 @@ The solr index can be found at the following location.
 /opt/<env>index/solr/ikasan/
 ````
 
-###Creating a new Ikasan core
+### Creating a new Ikasan core
 
 ````txt
 ./solr create_core -c ikasan
 ````
-###Auto Schema Creation
+### Auto Schema Creation
 
 For the Ikasan use case, auto schema creation has been disabled. This prevents documents of any shape from being added to the index.
 
@@ -70,7 +70,7 @@ For the Ikasan use case, auto schema creation has been disabled. This prevents d
 curl http://localhost:8983/solr/ikasan/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 ````
 
-###Configuring Solr to point at the index location
+### Configuring Solr to point at the index location
 
 ````text
 vi /opt/runtime/solr/server/solr/ikasan/conf/solrconfig.xml
@@ -78,7 +78,7 @@ vi /opt/runtime/solr/server/solr/ikasan/conf/solrconfig.xml
 <dataDir>/opt/<env>index/solr/${solr.core.name}</dataDir> 
 ````
 
-###Solr Security
+### Solr Security
 
 Solr is constrained by HTTP basic authentication. In order to initialise basic authentication a file called /opt/runtime/solr/server/solr/security.json needs to be created.
 This file contains the authentication details along with the security roles. 
@@ -115,7 +115,7 @@ curl -u solr:SolrRocks -H 'Content-type:application/json' -d '{
 curl --user solr:SolrRocks http://localhost:8983/solr/admin/authentication -H 'Content-type:application/json' -d  '{"delete-user": ["solr"]}'
 ````
 
-###Schema Definition
+### Schema Definition
 
 The following schema definition has been defined to support all Ikasan related data. Each curl command is required to 
 be run against the Ikasan solr index that has been created.
