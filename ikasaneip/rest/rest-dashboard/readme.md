@@ -32,8 +32,25 @@ Authentication and Authorization Service.
 ````
  
 </p>
+
+
+
 </details>
 
+<details>
+    <summary>Provided response.</summary>
+<p>
+
+````json
+{
+  "token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU2NzI1NzYwOCwiaWF0IjoxNTY3MjM5NjA4fQ.9v2AolonpxP2E6jl-PJVNK-A3oHrHTR1YNM9MCQMkSTLtbreO9vAWlh6dsN3NeWgRipXWVcG3TZp1HO0gQnndw"
+}
+````
+
+</p>
+
+
+</details>
 
 ## Error Harvesting Service
 Aggregation service for errors produced by the Ikasan Hospital service.
