@@ -40,11 +40,11 @@
  */
 package org.ikasan.rest.dashboard;
 
-import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.security.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import javax.annotation.Resource;
 

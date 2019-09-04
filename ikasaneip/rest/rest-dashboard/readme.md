@@ -5,7 +5,35 @@ to push both transient data to the dashboard as well as data that describes the 
 module along with the runtime state. The dashboard acts as an aggregator for the transient data and pushes
 the transient data to a Solr text index or a database depending on the manner in which Ikasan is configured. 
 The runtime metadata is also pushed to a data store and is used to build visual representations of the underlying topology,
-while the runtime state can be used for monitoring and control purposes.  
+while the runtime state can be used for monitoring and control purposes. 
+
+All Ikasan Dashboard REST service endpoints require Authorisation HTTP header to be send along with data payload. 
+Authorisation Header has a form of "Bearer {JWT TOKEN}". The {JWT TOKEN} can be obtained from Authorisation Endpoint by
+providing user credentials.
+
+## Authorization Endpoint
+Authentication and Authorization Service.
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | POST |
+| Service Context | {dashboard-root-context}/authenticate |
+| Payload | A json serialised  [JwtRequest](src/main/java/org/ikasan/rest/dashboard/model/JwtRequest.java) |
+
+<details>
+    <summary>Click to view the sample JSON payload expected by the service.</summary>
+<p>
+
+````json
+{
+     "username":"testUsername",
+     "password":"SecretPassword"
+}
+````
+ 
+</p>
+</details>
+
 
 ## Error Harvesting Service
 Aggregation service for errors produced by the Ikasan Hospital service.
@@ -14,6 +42,7 @@ Aggregation service for errors produced by the Ikasan Hospital service.
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/harvest/errors |
+| Requires 'Authorization' HTTP Header | Bearer {JWT TOKEN} |
 | Payload | A json serialised List of [ErrorOccurence](../../spec/service/error-reporting/src/main/java/org/ikasan/spec/error/reporting/ErrorOccurrence.java) |
 
 <details>
@@ -92,6 +121,7 @@ Aggregation service for exclusions produced by the Ikasan Hospital service.
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/harvest/exclusions |
+| Requires 'Authorization' HTTP Header | Bearer {JWT TOKEN} |
 | Payload | A json serialised List of [ExclusionEvent](../../spec/service/exclusion/src/main/java/org/ikasan/spec/exclusion/ExclusionEvent.java) |
 
 
@@ -144,6 +174,7 @@ Aggregation service for metrics produced by the Ikasan Metrics service.
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/harvest/metrics |
+| Requires 'Authorization' HTTP Header | Bearer {JWT TOKEN} |
 | Payload | A json serialised List of [FlowInvocationMetric](../../spec/service/history/src/main/java/org/ikasan/spec/history/FlowInvocationMetric.java) |
 
 
@@ -1204,6 +1235,7 @@ Aggregation service for replay events produced by the Ikasan Replay service.
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/harvest/replay |
+| Requires 'Authorization' HTTP Header | Bearer {JWT TOKEN} |
 | Payload | A json serialised List of [ReplayEvent](../../spec/service/replay/src/main/java/org/ikasan/spec/replay/ReplayEvent.java) |
 
 
@@ -1309,6 +1341,7 @@ Aggregation service for module meta data produced by the Ikasan Topology service
 |--- | --- |
 | Request Method | PUT |
 | Service Context | {dashboard-root-context}/rest/module/metadata |
+| Requires 'Authorization' HTTP Header | Bearer {JWT TOKEN} |
 | Payload | A json serialised [ModuleMetaData](../../spec/metadata/src/main/java/org/ikasan/spec/metadata/ModuleMetaData.java) |
 
 
