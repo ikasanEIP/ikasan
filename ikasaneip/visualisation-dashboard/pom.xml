@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependencies -->
-        <vaadin.version>13.0.9</vaadin.version>
+        <vaadin.version>14.0.2</vaadin.version>
     </properties>
 
     <parent>
@@ -49,6 +49,11 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-server-compatibility-mode</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -289,6 +294,9 @@
                         <version>5.1.0</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <argLine>-Dvaadin.compatibilityMode=true</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
