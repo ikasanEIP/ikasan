@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 public class DashboardRestServiceTest
 {
-
-    private Mockery mockery = new Mockery() {{
+    private Mockery mockery = new Mockery()
+    {{
         setImposteriser(ClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
@@ -33,103 +33,126 @@ public class DashboardRestServiceTest
     Environment environment = mockery.mock(Environment.class);
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+    public WireMockRule wireMockRule = new WireMockRule(
+        WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
 
     DashboardRestServiceImpl uut;
 
     @Before
-    public void setup(){
-
-        String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
-
-        mockery.checking(new Expectations() {{
-            oneOf(environment).getProperty(DashboardRestService.HARVESTING_ENABLED_PROPERTY,"false");
+    public void setup()
+    {
+        String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
+        mockery.checking(new Expectations()
+        {{
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
             will(returnValue("true"));
-
-            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
+            atLeast(2).of(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
             will(returnValue(dashboardBaseUrl));
-
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_USERNAME_PROPERTY);
             will(returnValue(null));
-
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_PASSWORD_PROPERTY);
             will(returnValue(null));
-
-           oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
+            oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
             will(returnValue("testModule"));
-
         }});
-
-
-        uut = new DashboardRestServiceImpl(environment,"/rest/harvest/wiretaps");
-
-        wireMockRule.addMockServiceRequestListener((request,response) ->{
+        uut = new DashboardRestServiceImpl(environment, "/rest/harvest/wiretaps");
+        wireMockRule.addMockServiceRequestListener((request, response) -> {
             System.out.println(request);
             System.out.println(response);
         });
-
     }
 
     @Test
     public void pushWiretapReturns201()
     {
-        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule","testFlow","testComponent","lifeId",null,1111l,"{event:content,as:json}",222222l);
+        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
+            1111l, "{event:content,as:json}", 222222l);
         List<HarvestEvent> wiretaps = new ArrayList<>();
         wiretaps.add(wiretap);
-
-
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-
             .willReturn(aResponse()
                 .withStatus(201)
             ));
+        assertEquals(true, uut.publish(wiretaps));
+    }
 
-        assertEquals(true,uut.publish(wiretaps));
-
-
+    @Test
+    public void pushWiretapReturns401_Followed_by_authentication_and_successful_wiretap_push()
+    {
+        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
+            1111l, "{event:content,as:json}", 222222l);
+        List<HarvestEvent> wiretaps = new ArrayList<>();
+        wiretaps.add(wiretap);
+        String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
+        mockery.checking(new Expectations()
+        {{
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
+            will(returnValue("true"));
+            atLeast(2).of(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
+            will(returnValue(dashboardBaseUrl));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_USERNAME_PROPERTY);
+            will(returnValue("admin"));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_PASSWORD_PROPERTY);
+            will(returnValue("admin"));
+            oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
+            will(returnValue("testModule"));
+        }});
+        uut = new DashboardRestServiceImpl(environment, "/rest/harvest/wiretaps");
+        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withStatus(401)
+            ));
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.AUTHORIZATION, equalTo("Bearer msamsmsamsmas"))
+            .willReturn(aResponse()
+                .withStatus(201)
+            ));
+        assertEquals(true, uut.publish(wiretaps));
     }
 
     @Test
     public void pushWiretapReturns400()
     {
-        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule","testFlow","testComponent","lifeId",null,1111l,"{event:content,as:json}",222222l);
+        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
+            1111l, "{event:content,as:json}", 222222l);
         List<HarvestEvent> wiretaps = new ArrayList<>();
         wiretaps.add(wiretap);
-
-
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-
             .willReturn(aResponse()
                 .withStatus(400)
             ));
-
-        assertEquals(false,uut.publish(wiretaps));
-
+        assertEquals(false, uut.publish(wiretaps));
     }
 
     @Test
     public void pushWiretapReturns500()
     {
-        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule","testFlow","testComponent","lifeId",null,1111l,"{event:content,as:json}",222222l);
+        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
+            1111l, "{event:content,as:json}", 222222l);
         List<HarvestEvent> wiretaps = new ArrayList<>();
         wiretaps.add(wiretap);
-
-
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-
             .willReturn(aResponse()
                 .withStatus(500)
             ));
-
-        assertEquals(false,uut.publish(wiretaps));
-
+        assertEquals(false, uut.publish(wiretaps));
     }
-
-
 }
