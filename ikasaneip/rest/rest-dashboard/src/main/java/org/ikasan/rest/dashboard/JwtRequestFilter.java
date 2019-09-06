@@ -49,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter
                         UserDetails userDetails = this.userService.loadUserByUsername(username);
                         // if token is valid configure Spring Security to manually set
                         // authentication
-                        if (jwtTokenUtil.validateToken(jwtToken, userDetails))
+                        if (userDetails!=null && jwtTokenUtil.validateToken(jwtToken, userDetails))
                         {
                             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
@@ -64,12 +64,12 @@ public class JwtRequestFilter extends OncePerRequestFilter
                 }
                 catch (IllegalArgumentException e)
                 {
-                    logger.warn("Unable to get JWT Token by [\" + requestServletUrl + \"]");
+                    logger.warn("Unable to get JWT Token by [" + requestServletUrl + "]");
 
                 }
                 catch (ExpiredJwtException e)
                 {
-                    logger.warn("JWT Token has expired called by [\" + requestServletUrl + \"]");
+                    logger.warn("JWT Token has expired called by [" + requestServletUrl + "]");
                 }
             }
             else

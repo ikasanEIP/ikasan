@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
@@ -65,7 +67,11 @@ public class JwtTokenUtil implements Serializable
     public String generateToken(UserDetails userDetails)
     {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("auth", userDetails.getAuthorities().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        claims.put("auth", userDetails.getAuthorities().stream()
+            .filter(Objects::nonNull)
+            .map(a-> new SimpleGrantedAuthority(((GrantedAuthority) a).getAuthority()))
+            .collect(Collectors.toList())
+        );
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
