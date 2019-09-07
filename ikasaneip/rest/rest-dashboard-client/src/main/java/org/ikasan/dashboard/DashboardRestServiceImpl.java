@@ -1,6 +1,8 @@
 package org.ikasan.dashboard;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.ikasan.dashboard.model.JwtRequest;
+import org.ikasan.dashboard.model.JwtResponse;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -9,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
 import java.util.List;
 
 public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
@@ -25,11 +27,15 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 
     private String url;
 
+    private String authenticateUrl;
+
     private String moduleName;
 
     private String username;
 
     private String password;
+
+    private String token;
 
     private boolean isEnabled;
 
@@ -46,10 +52,11 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-        isEnabled = Boolean.valueOf(environment.getProperty(HARVESTING_ENABLED_PROPERTY, "false"));
+        isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
         if (isEnabled)
         {
             this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
+            this.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
             this.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
             this.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
@@ -60,96 +67,79 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
     {
         if (isEnabled && events != null)
         {
-            logger.debug("Pushing events [{}] to dashboard [{}]",events, url);
-            HttpHeaders headers = createHttpHeaders();
-            HttpEntity<List<HarvestEvent>> entity ;
-            if (converter != null)
-            {
-                entity = new HttpEntity(converter.convert(events), headers);
-            }
-            else
-            {
-                entity = new HttpEntity(events, headers);
-            }
-            try
-            {
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events,
-                    url, response);
-                return true;
-            }
-            catch (RestClientException e)
-            {
-                logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
-                    + "] with response [{}]", e);
-                return false;
-            }
+            return callHttp(events, true);
         }
         return false;
     }
 
+    private boolean callHttp(T events, boolean isFirst)
+    {
+        logger.debug("Pushing events [{}] to dashboard [{}]", events, url);
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<List<HarvestEvent>> entity;
+        if (converter != null)
+        {
+            entity = new HttpEntity(converter.convert(events), headers);
+        }
+        else
+        {
+            entity = new HttpEntity(events, headers);
+        }
+        try
+        {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+            logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events,
+                url, response);
+            return true;
+        }
+        catch (HttpClientErrorException e)
+        {
+            if (e.getRawStatusCode() == 401 && isFirst)
+            {
+                this.token = null;
+                if (authenticate())
+                    return callHttp(events, false);
+            }
+            logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
+                + "] with response [{}]", e);
+            return false;
+        }catch(RestClientException e){
+            logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
+                + "] with response [{}]", e);
+            return false;
+        }
+    }
 
-
-//    public boolean publish(List<HarvestEvent> events)
-//    {
-//        if(isEnabled && events!=null)
-//        {
-//            logger.debug("Pushing [{}] events to dashboard [{}]", events.size(), url);
-//
-//            HttpHeaders headers = createHttpHeaders();
-//            HttpEntity<List<HarvestEvent>> entity = new HttpEntity<>(events, headers);
-//
-//            try
-//            {
-//                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-//                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events.size(), url, response);
-//                return true;
-//            }
-//            catch (RestClientException e)
-//            {
-//                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
-//                return false;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public boolean publish(List<HarvestEvent> events)
-//    {
-//        if(isEnabled && events!=null)
-//        {
-//            logger.debug("Pushing [{}] events to dashboard [{}]", events.size(), url);
-//
-//            HttpHeaders headers = createHttpHeaders();
-//            HttpEntity<List<HarvestEvent>> entity = new HttpEntity<>(events, headers);
-//
-//            try
-//            {
-//                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-//                logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events.size(), url, response);
-//                return true;
-//            }
-//            catch (RestClientException e)
-//            {
-//                logger.warn("Issue  while publishing [" +events.size()+ "] events to dashboard [" + url + "] with response [{}]", e);
-//                return false;
-//            }
-//        }
-//        return false;
-//    }
-
-
+    private boolean authenticate()
+    {
+        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password),createHttpHeaders());
+        try
+        {
+            if (username != null && password != null)
+            {
+                ResponseEntity<JwtResponse> response = restTemplate
+                    .exchange(authenticateUrl, HttpMethod.POST, entity, JwtResponse.class);
+                this.token = response.getBody().getToken();
+                return true;
+            }
+            return false;
+        }
+        catch (HttpClientErrorException e)
+        {
+            logger.warn("Issue while authenticating to dashboard [" + authenticateUrl
+                + "] with response [{"+e.getResponseBodyAsString()+"}]", e);
+            return false;
+        }
+    }
 
     private HttpHeaders createHttpHeaders()
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.USER_AGENT,moduleName);
-        if(username!=null && password!=null)
+        headers.add(HttpHeaders.USER_AGENT, moduleName);
+        if (token != null)
         {
-            String notEncoded = username + ":" + password;
-            String encodedAuth = Base64.getEncoder().encodeToString(notEncoded.getBytes());
-            headers.add("Authorization", "Basic " + encodedAuth);
+            headers.add("Authorization", "Bearer " + token);
         }
         return headers;
     }

@@ -136,8 +136,10 @@ public class UserManagementDialog extends Dialog
         grid.setSizeFull();
 
         IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
-
-        grid.setItems(principal.getRoles());
+        if(principal!=null)
+        {
+            grid.setItems(principal.getRoles());
+        }
 
         Button addRoleButton = new Button("Add role");
 

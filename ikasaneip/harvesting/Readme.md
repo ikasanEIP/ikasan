@@ -48,23 +48,3 @@ messageHistoryHarvestingJob-enabled=true
 
 
 ```
-
-<br/>
-<br/>
-
-All above jobs are using DashboardRestService which is part of topology project to publish respective data entities to ikasan dashboard. Publishing data to dashboard 
-is switched off by default but can be enabled using properties. Following four properties are responsible for providing
-dashboard coordinates
-
-<br/>
-
-```properties
-# harvesting settings
-ikasan.harvesting.enabled=true
-ikasan.dashboard.base.url=http://localhost:8090/ikasan-dashboard
-ikasan.dashboard.username=
-ikasan.dashboard.password=
-
-```
-
-<br/>
