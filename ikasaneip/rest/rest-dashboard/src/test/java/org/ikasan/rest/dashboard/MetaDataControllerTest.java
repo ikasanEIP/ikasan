@@ -18,20 +18,24 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.Resource;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = MetaDataApplication.class)
+@SpringBootTest(classes = MetaDataController.class)
 @WebAppConfiguration
+@EnableWebMvc
 @ContextConfiguration(
     {
         "/substitute-components.xml"
     }
 )
-public class MetaDataApplicationTest extends  AbstractRestMvcTest
+public class MetaDataControllerTest extends  AbstractRestMvcTest
 {
     public static final String MODULE_METADATA_JSON = "/data/metadata.json";
     public static final String CONFIGURATION_METADATA_JSON = "/data/configuration.json";
@@ -60,8 +64,6 @@ public class MetaDataApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
-        String content = mvcResult.getResponse().getContentAsString();
-        assertEquals(content, "Module metadata successfully captured!");
 
         Assert.assertEquals("Batch insert size == 1", 1, batchInsert.getSize());
     }
@@ -76,8 +78,9 @@ public class MetaDataApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
-        String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "An error has occurred attempting to perform a batch insert of ModuleMetaData!");
+        String content = mvcResult.getResponse().getContentAsString();
+        assertThat(content,containsString( "An error has occurred attempting to perform a batch insert of ModuleMetaData!"));
+
     }
 
     @Test
@@ -90,8 +93,6 @@ public class MetaDataApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
-        String content = mvcResult.getResponse().getContentAsString();
-        assertEquals(content, "Configuration metadata successfully captured!");
 
         Assert.assertEquals("Batch insert size == 2", 2, batchInsert.getSize());
     }
@@ -106,7 +107,7 @@ public class MetaDataApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
-        String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "An error has occurred attempting to perform a batch insert of ConfigurationMetaData!");
+        String content = mvcResult.getResponse().getContentAsString();
+        assertThat(content,containsString( "An error has occurred attempting to perform a batch insert of ConfigurationMetaData!"));
     }
 }

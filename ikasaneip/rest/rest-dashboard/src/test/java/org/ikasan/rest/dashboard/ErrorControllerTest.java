@@ -18,24 +18,29 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.Resource;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = WiretapApplication.class)
+@SpringBootTest(classes = ErrorController.class)
 @WebAppConfiguration
+@EnableWebMvc
 @ContextConfiguration(
     {
         "/substitute-components.xml"
     }
 )
-public class WiretapApplicationTest extends  AbstractRestMvcTest
+public class ErrorControllerTest extends  AbstractRestMvcTest
 {
-    public static final String WIRETAPS_JSON = "/data/wiretaps.json";
+    public static final String ERRORS_JSON = "/data/errorOccurrences.json";
 
     protected MockMvc mvc;
+
     @Autowired
     WebApplicationContext webApplicationContext;
 
@@ -50,17 +55,15 @@ public class WiretapApplicationTest extends  AbstractRestMvcTest
 
 
     @Test
-    public void harvest_wiretap_success() throws Exception
+    public void harvest_error_occurrence_success() throws Exception
     {
-        String uri = "/rest/harvest/wiretaps";
+        String uri = "/rest/harvest/errors";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(super.loadDataFile(WIRETAPS_JSON))).andReturn();
+            .contentType(MediaType.APPLICATION_JSON_VALUE).content(super.loadDataFile(ERRORS_JSON))).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
-        String content = mvcResult.getResponse().getContentAsString();
-        assertEquals(content, "Harvested wiretaps successfully captured!");
 
         Assert.assertEquals("Batch insert size == 3", 3, batchInsert.getSize());
     }
@@ -68,14 +71,17 @@ public class WiretapApplicationTest extends  AbstractRestMvcTest
     @Test
     public void test_exception_bad_post_json() throws Exception
     {
-        String uri = "/rest/harvest/wiretaps";
+        String uri = "/rest/harvest/errors";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content("bad json")).andReturn();
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("bad json")).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
-        String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "An error has occurred attempting to perform a batch insert of WiretapEvents!");
+        String content = mvcResult.getResponse().getContentAsString();
+        assertThat(content,containsString( "An error has occurred attempting to perform a batch insert of ErrorOccurrences!"));
+
     }
+
 }

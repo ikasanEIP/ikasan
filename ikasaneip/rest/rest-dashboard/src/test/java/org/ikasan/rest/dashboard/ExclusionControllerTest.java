@@ -18,20 +18,24 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.Resource;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = ExclusionApplication.class)
+@SpringBootTest(classes = ExclusionController.class)
 @WebAppConfiguration
+@EnableWebMvc
 @ContextConfiguration(
     {
         "/substitute-components.xml"
     }
 )
-public class ExclusionApplicationTest extends  AbstractRestMvcTest
+public class ExclusionControllerTest extends  AbstractRestMvcTest
 {
     public static final String EXCLUSIONS_JSON = "/data/exclusions.json";
 
@@ -59,8 +63,6 @@ public class ExclusionApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
-        String content = mvcResult.getResponse().getContentAsString();
-        assertEquals(content, "Harvested exclusions successfully captured!");
 
         Assert.assertEquals("Batch insert size == 3", 3, batchInsert.getSize());
     }
@@ -75,8 +77,8 @@ public class ExclusionApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
-        String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "An error has occurred attempting to perform a batch insert of ExclusionEvents!");
+        String content = mvcResult.getResponse().getContentAsString();
+        assertThat(content,containsString( "An error has occurred attempting to perform a batch insert of ExclusionEvents!"));
     }
 
 }

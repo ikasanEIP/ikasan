@@ -42,16 +42,19 @@ package org.ikasan.rest.dashboard;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.error.ErrorOccurrenceImpl;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.rest.dashboard.model.dto.ErrorDto;
+import org.ikasan.rest.dashboard.model.wiretap.WiretapEventImpl;
 import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -60,14 +63,14 @@ import java.util.List;
  */
 @RequestMapping("/rest")
 @RestController
-public class ErrorApplication
+public class WiretapController
 {
-    private static Logger logger = LoggerFactory.getLogger(ErrorApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(WiretapController.class);
 
     private ObjectMapper mapper;
-    private BatchInsert<ErrorOccurrence> batchInsert;
+    private BatchInsert<WiretapEvent> batchInsert;
 
-    public ErrorApplication(BatchInsert<ErrorOccurrence> batchInsert)
+    public WiretapController(BatchInsert<WiretapEvent> batchInsert)
     {
         this.batchInsert = batchInsert;
         if(this.batchInsert == null)
@@ -80,26 +83,24 @@ public class ErrorApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/harvest/errors")
+            value = "/harvest/wiretaps")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity harvestError(@RequestBody String errorsJsonPayload)
+    public ResponseEntity harvestWiretap(@RequestBody String wiretapJsonPayload)
     {
         try
         {
-            logger.debug(errorsJsonPayload);
+            logger.debug(wiretapJsonPayload);
 
-            List<ErrorOccurrence> errorOccurrences = this.mapper.readValue(errorsJsonPayload
-                , mapper.getTypeFactory().constructCollectionType(List.class, ErrorOccurrenceImpl.class));
+            List<WiretapEvent> wiretapEvents = this.mapper.readValue(wiretapJsonPayload
+                , mapper.getTypeFactory().constructCollectionType(List.class, WiretapEventImpl.class));
 
-
-            this.batchInsert.insert(errorOccurrences);
+            this.batchInsert.insert(wiretapEvents);
         }
         catch (Exception e)
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
-                , "An error has occurred attempting to perform a batch insert of ErrorOccurrences!", e);
+            return new ResponseEntity(new ErrorDto( "An error has occurred attempting to perform a batch insert of WiretapEvents!"), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity("Harvested errors successfully captured!", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

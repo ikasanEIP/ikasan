@@ -42,6 +42,7 @@ package org.ikasan.rest.dashboard;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ikasan.rest.dashboard.model.dto.ErrorDto;
 import org.ikasan.rest.dashboard.model.metrics.FlowInvocationMetricImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +63,13 @@ import java.util.List;
  */
 @RequestMapping("/rest")
 @RestController
-public class MetricsApplication
+public class MetricsController
 {
-    private static Logger logger = LoggerFactory.getLogger(MetricsApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(MetricsController.class);
 
     private ObjectMapper mapper;
 
-    public MetricsApplication()
+    public MetricsController()
     {
         this.mapper = new ObjectMapper();
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -89,10 +90,11 @@ public class MetricsApplication
         }
         catch (IOException e)
         {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Cannot parse metrics JSON!", e);
+            return new ResponseEntity(
+                new ErrorDto("Cannot parse metrics JSON!"),
+                HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity("Harvested metrics successfully captured!", HttpStatus.OK);
+        return new ResponseEntity( HttpStatus.OK);
     }
 }

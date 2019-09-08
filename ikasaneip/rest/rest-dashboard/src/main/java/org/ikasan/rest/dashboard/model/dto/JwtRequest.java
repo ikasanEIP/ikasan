@@ -1,4 +1,4 @@
-package org.ikasan.rest.dashboard.model;
+package org.ikasan.rest.dashboard.model.dto;
 
 
 import java.io.Serializable;

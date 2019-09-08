@@ -106,10 +106,6 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-exclusion</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-hospital</artifactId>
         </dependency>
         <dependency>
@@ -170,11 +166,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
         </dependency>
 
         <dependency>

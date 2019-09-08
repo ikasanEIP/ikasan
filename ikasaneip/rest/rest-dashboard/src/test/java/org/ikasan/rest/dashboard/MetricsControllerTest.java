@@ -15,13 +15,17 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = MetricsApplication.class)
+@SpringBootTest(classes = MetricsController.class)
 @WebAppConfiguration
-public class MetricsApplicationTest extends  AbstractRestMvcTest
+@EnableWebMvc
+public class MetricsControllerTest extends  AbstractRestMvcTest
 {
     public static final String METRICS_JSON = "/data/metrics.json";
 
@@ -46,8 +50,7 @@ public class MetricsApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
-        String content = mvcResult.getResponse().getContentAsString();
-        assertEquals(content, "Harvested metrics successfully captured!");
+
     }
 
     @Test
@@ -60,8 +63,8 @@ public class MetricsApplicationTest extends  AbstractRestMvcTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
-        String content = mvcResult.getResponse().getErrorMessage();
-        assertEquals(content, "Cannot parse metrics JSON!");
+        String content = mvcResult.getResponse().getContentAsString();
+        assertThat(content,containsString( "Cannot parse metrics JSON!"));
     }
 
 }

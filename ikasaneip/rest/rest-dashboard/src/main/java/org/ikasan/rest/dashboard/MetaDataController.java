@@ -3,14 +3,13 @@ package org.ikasan.rest.dashboard;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.rest.dashboard.model.exclusion.ExclusionEventImpl;
+import org.ikasan.rest.dashboard.model.dto.ErrorDto;
 import org.ikasan.rest.dashboard.model.metadata.configuration.ConfigurationMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.configuration.ConfigurationParameterMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.module.FlowElementMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.module.FlowMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.module.ModuleMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.module.TransitionImpl;
-import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger;
@@ -22,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +32,16 @@ import java.util.List;
 
 @RequestMapping("/rest")
 @RestController
-public class MetaDataApplication
+public class MetaDataController
 {
-    private static Logger logger = LoggerFactory.getLogger(MetaDataApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(MetaDataController.class);
 
     private ObjectMapper mapper;
 
     private BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert;
     private BatchInsert<ConfigurationMetaData> configurationMetaDataBatchInsert;
 
-    public MetaDataApplication(BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert
+    public MetaDataController(BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert
         , BatchInsert<ConfigurationMetaData> configurationMetaDataBatchInsert)
     {
         this.moduleMetaDataBatchInsert = moduleMetaDataBatchInsert;
@@ -90,12 +87,12 @@ public class MetaDataApplication
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
-                , "An error has occurred attempting to perform a batch insert of ModuleMetaData!", e);
+            return new ResponseEntity(
+                new ErrorDto("An error has occurred attempting to perform a batch insert of ModuleMetaData!"),
+                HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity("Module metadata successfully captured!", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
@@ -114,10 +111,11 @@ public class MetaDataApplication
         }
         catch (Exception e)
         {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "An error has occurred attempting to perform a batch insert of ConfigurationMetaData!", e);
+            return new ResponseEntity(
+                new ErrorDto("An error has occurred attempting to perform a batch insert of ConfigurationMetaData!"),
+                HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity("Configuration metadata successfully captured!", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

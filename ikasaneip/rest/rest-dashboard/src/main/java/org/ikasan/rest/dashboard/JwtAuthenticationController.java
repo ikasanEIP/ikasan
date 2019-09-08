@@ -1,7 +1,7 @@
 package org.ikasan.rest.dashboard;
 
-import org.ikasan.rest.dashboard.model.JwtRequest;
-import org.ikasan.rest.dashboard.model.JwtResponse;
+import org.ikasan.rest.dashboard.model.dto.JwtRequest;
+import org.ikasan.rest.dashboard.model.dto.JwtResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

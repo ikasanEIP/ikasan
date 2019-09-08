@@ -42,63 +42,64 @@ package org.ikasan.rest.dashboard;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.rest.dashboard.model.replay.ReplayEventImpl;
+import org.ikasan.rest.dashboard.model.dto.ErrorDto;
+import org.ikasan.rest.dashboard.model.exclusion.ExclusionEventImpl;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.persistence.BatchInsert;
-import org.ikasan.spec.replay.ReplayEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
- * @author Ikasan Development Team
+ * Module application implementing the REST contract for Exclusion
  */
 @RequestMapping("/rest")
 @RestController
-public class ReplayApplication
+public class ExclusionController
 {
-    private static Logger logger = LoggerFactory.getLogger(ReplayApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ExclusionController.class);
 
     private ObjectMapper mapper;
-    private BatchInsert<ReplayEvent> batchInsert;
 
-    public ReplayApplication(BatchInsert<ReplayEvent> batchInsert)
+    private BatchInsert<ExclusionEvent> batchInsert;
+
+    public ExclusionController(BatchInsert<ExclusionEvent> batchInsert)
     {
         this.batchInsert = batchInsert;
-        if(this.batchInsert == null)
+        if (this.batchInsert == null)
         {
             throw new IllegalArgumentException("BatchInsert cannot be null!");
         }
-
         this.mapper = new ObjectMapper();
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/harvest/replay")
+        value = "/harvest/exclusions")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity harvestReplayEvents(@RequestBody String replayEventsJsonPayload)
+    public ResponseEntity harvestExclusion(@RequestBody String exclusionsJsonPayload)
     {
         try
         {
-            logger.debug(replayEventsJsonPayload);
-
-            List<ReplayEvent> replayEvents = this.mapper.readValue(replayEventsJsonPayload
-                , mapper.getTypeFactory().constructCollectionType(List.class, ReplayEventImpl.class));
-
-            this.batchInsert.insert(replayEvents);
+            logger.info(exclusionsJsonPayload);
+            List<ExclusionEvent> exclusionEvents = this.mapper.readValue(exclusionsJsonPayload
+                , mapper.getTypeFactory().constructCollectionType(List.class, ExclusionEventImpl.class));
+            this.batchInsert.insert(exclusionEvents);
         }
         catch (Exception e)
         {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "An error has occurred attempting to perform a batch insert of ReplayEvents!", e);
+            return new ResponseEntity(
+                new ErrorDto("An error has occurred attempting to perform a batch insert of ExclusionEvents!"),
+                HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity("Harvested replay events successfully captured!", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
