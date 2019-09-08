@@ -17,13 +17,13 @@ The Ikasan Dashboard provides a management web front end for searching and track
 
 ## Step-by-step guide how run ikasan-dashboard as standalone 
 
-Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.0](https://oss.sonatype.org/service/local/repositories/snapshots/content/org/ikasan/ikasan-dashboard-boot/2.1.0/)
+Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://oss.sonatype.org/service/local/repositories/snapshots/content/org/ikasan/ikasan-dashboard-boot/2.1.3/)
 
 Start Ikasan-dashboard with h2 in memory database.
 - Out of the box ikasan-dashboard is shipped with build in H2 driver which allows you to exlore the product.
 - Run           
 ```
-$JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.0.jar
+$JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
 
 Start ikasan-dashboard with different DB driver              
@@ -60,7 +60,7 @@ datasource.host=hostname
 ```                          
 - Start dashboard with custom driver 
 ```
-$JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.0.jar
+$JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.3.jar
 
 ```    
 
