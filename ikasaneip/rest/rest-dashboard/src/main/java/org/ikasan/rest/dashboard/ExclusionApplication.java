@@ -87,7 +87,7 @@ public class ExclusionApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/harvest/exclusion")
+        value = "/harvest/exclusions")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity harvestExclusion(@RequestBody String exclusionsJsonPayload)
     {

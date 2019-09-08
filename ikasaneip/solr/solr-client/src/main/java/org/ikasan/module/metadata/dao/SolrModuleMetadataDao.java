@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.
@@ -56,10 +57,10 @@ public class SolrModuleMetadataDao extends SolrDaoBase
 
             for(ModuleMetaData moduleMetaData: moduleMetaDataList)
             {
-                super.removeById(MODULE_METADATA, moduleMetaData.getName() + "_" + moduleMetaData.getVersion());
+                super.removeById(MODULE_METADATA, moduleMetaData.getName());
 
                 SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, moduleMetaData.getName() + "_" + moduleMetaData.getVersion());
+                document.addField(ID, moduleMetaData.getName());
                 document.addField(TYPE, MODULE_METADATA);
                 document.addField(PAYLOAD_CONTENT, objectMapper.writeValueAsString(moduleMetaData));
                 document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
@@ -83,14 +84,50 @@ public class SolrModuleMetadataDao extends SolrDaoBase
 
     public ModuleMetaData findById(String id)
     {
-        String queryString = "id:\"" + id + "\"";
+        String queryString = "id:\"" + id + "AND type:\"" + MODULE_METADATA + "\"";
 
         logger.info("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
 
-        List<SolrModule> beans;
+        List<SolrModule> beans = this.findByQuery(queryString);
+
+        if(beans.size() > 0 && beans.get(0).getModuleMetaData() != null)
+        {
+            return this.convert(beans.get(0).getModuleMetaData());
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public List<ModuleMetaData> findAll()
+    {
+        String queryString = "type:\"" + MODULE_METADATA + "\"";
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+
+        List<SolrModule> beans = this.findByQuery(queryString);
+
+        List<ModuleMetaData> results = beans.stream().map(bean -> convert(bean.getModuleMetaData())).collect(Collectors.toList());
+
+        return results;
+    }
+
+    /**
+     * Helper method to find by query.
+     *
+     * @param queryString
+     */
+    private List<SolrModule> findByQuery(String queryString)
+    {
+        logger.debug("queryString: " + queryString);
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
 
         try
         {
@@ -99,31 +136,33 @@ public class SolrModuleMetadataDao extends SolrDaoBase
 
             QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
 
-            beans = rsp.getBeans(SolrModule.class);
+            return rsp.getBeans(SolrModule.class);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Error resolving solr module meta data by id [" + id + "] from the ikasan solr index!", e);
+            throw new RuntimeException("Error resolving solr module meta data by query [" + queryString + "] from the ikasan solr index!", e);
         }
+    }
 
-        if(beans.size() > 0 && beans.get(0).getRawConfigurationMetadata() != null)
+    /**
+     * Helper method to convert raw module metadata.
+     *
+     * @param rawModuleMetaData
+     * @return
+     */
+    private ModuleMetaData convert(String rawModuleMetaData)
+    {
+        try
         {
-            try
-            {
-                SolrModuleMetaDataImpl solrConfigurationMetaData
-                    = objectMapper.readValue(beans.get(0).getRawConfigurationMetadata(), SolrModuleMetaDataImpl.class);
+            SolrModuleMetaDataImpl solrConfigurationMetaData
+                = objectMapper.readValue(rawModuleMetaData, SolrModuleMetaDataImpl.class);
 
-                return solrConfigurationMetaData;
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(String.format("Unable to deserialise ModuleMetaData [%s]"
-                    , beans.get(0).getRawConfigurationMetadata()), e);
-            }
+            return solrConfigurationMetaData;
         }
-        else
+        catch (Exception e)
         {
-            return null;
+            throw new RuntimeException(String.format("Unable to deserialise ModuleMetaData [%s]"
+                , rawModuleMetaData), e);
         }
     }
 

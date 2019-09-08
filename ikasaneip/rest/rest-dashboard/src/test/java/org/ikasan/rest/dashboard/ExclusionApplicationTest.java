@@ -52,7 +52,7 @@ public class ExclusionApplicationTest extends  AbstractRestMvcTest
     @Test
     public void harvest_exclusions_success() throws Exception
     {
-        String uri = "/rest/harvest/exclusion";
+        String uri = "/rest/harvest/exclusions";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(super.loadDataFile(EXCLUSIONS_JSON))).andReturn();
@@ -68,7 +68,7 @@ public class ExclusionApplicationTest extends  AbstractRestMvcTest
     @Test
     public void test_exception_bad_post_json() throws Exception
     {
-        String uri = "/rest/harvest/exclusion";
+        String uri = "/rest/harvest/exclusions";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content("bad json")).andReturn();

@@ -2,26 +2,23 @@ package org.ikasan.module.metadata.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.spec.solr.SolrDaoBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SolrModule
 {
-    private static Logger logger = LoggerFactory.getLogger(SolrModule.class);
-
     @Field(SolrDaoBase.ID)
-    private String configurationId;
+    private String id;
 
     @Field(SolrDaoBase.PAYLOAD_CONTENT)
     private String rawConfigurationMetadata;
 
-    public String getConfigurationId()
+
+    public String getId()
     {
-        return configurationId;
+        return this.id;
     }
 
-    public String getRawConfigurationMetadata()
+    public String getModuleMetaData()
     {
-        return rawConfigurationMetadata;
+        return this.rawConfigurationMetadata;
     }
 }

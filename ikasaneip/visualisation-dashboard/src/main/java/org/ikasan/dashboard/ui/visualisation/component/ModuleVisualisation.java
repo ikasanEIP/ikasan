@@ -2,6 +2,9 @@ package org.ikasan.dashboard.ui.visualisation.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.function.SerializableSupplier;
@@ -55,7 +58,10 @@ public class ModuleVisualisation extends PagedTabs implements ComponentEventList
     protected void add(Flow flow)
     {
         NetworkDiagram networkDiagram = this.createNetworkDiagram(flow);
-        Tab tab = new Tab(flow.getName());
+        Icon play = new Icon(VaadinIcon.CIRCLE);
+        play.setColor("green");
+        play.setSize("40px");
+        Tab tab = new Tab(new Label(flow.getName()), play);
         this.add(networkDiagram, tab);
         this.networkDiagramMap.put(tab, networkDiagram);
         this.flowMap.put(tab, flow);

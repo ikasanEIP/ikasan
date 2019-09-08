@@ -209,7 +209,7 @@ public class JsonConfigurationMetaDataExtractorTest
         });
         String result = uut.getInvokersConfiguration(flow);
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
 
@@ -231,7 +231,7 @@ public class JsonConfigurationMetaDataExtractorTest
         });
         String result = uut.getInvokersConfiguration(testModule);
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
 
@@ -251,8 +251,7 @@ public class JsonConfigurationMetaDataExtractorTest
         });
         String result = uut.getFlowConfiguration(flow);
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
-
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowDefaultConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
     }
 
     @Test
@@ -273,7 +272,7 @@ public class JsonConfigurationMetaDataExtractorTest
         });
         String result = uut.getFlowsConfiguration(testModule);
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
 

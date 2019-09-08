@@ -52,7 +52,7 @@ public class WiretapApplicationTest extends  AbstractRestMvcTest
     @Test
     public void harvest_wiretap_success() throws Exception
     {
-        String uri = "/rest/harvest/wiretap";
+        String uri = "/rest/harvest/wiretaps";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(super.loadDataFile(WIRETAPS_JSON))).andReturn();
@@ -68,7 +68,7 @@ public class WiretapApplicationTest extends  AbstractRestMvcTest
     @Test
     public void test_exception_bad_post_json() throws Exception
     {
-        String uri = "/rest/harvest/wiretap";
+        String uri = "/rest/harvest/wiretaps";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content("bad json")).andReturn();

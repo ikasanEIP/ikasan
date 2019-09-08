@@ -18,8 +18,8 @@ public class PollingConsumer extends Consumer
      * @param transitionLabel
      * @param transition
      */
-	public PollingConsumer(String id, String name, String transitionLabel, Node transition)
+	public PollingConsumer(String id, String name, String transitionLabel, Node transition, Node source)
     {
-        super(id, name, transitionLabel, transition, IMAGE);
+        super(id, name, transitionLabel, transition, IMAGE, source);
     }
 }

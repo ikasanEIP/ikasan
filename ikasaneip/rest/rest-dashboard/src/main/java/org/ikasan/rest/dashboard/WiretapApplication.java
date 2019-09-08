@@ -86,7 +86,7 @@ public class WiretapApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-            value = "/harvest/wiretap")
+            value = "/harvest/wiretaps")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity harvestWiretap(@RequestBody String wiretapJsonPayload)
     {

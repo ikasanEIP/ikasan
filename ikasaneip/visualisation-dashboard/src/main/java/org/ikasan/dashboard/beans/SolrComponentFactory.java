@@ -82,7 +82,7 @@ public class SolrComponentFactory
         return service;
     }
 
-    @Bean("moduleMetadataBatchInsert")
+    @Bean({"moduleMetadataBatchInsert", "moduleMetadataService"})
     public SolrModuleMetadataServiceImpl moduleMetadataService()
     {
         SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
@@ -95,7 +95,7 @@ public class SolrComponentFactory
         return service;
     }
 
-    @Bean("configurationMetadataBatchInsert")
+    @Bean({"configurationMetadataBatchInsert", "configurationMetadataService"})
     public SolrComponentConfigurationMetadataServiceImpl configurationMetadataService()
     {
         SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao();
