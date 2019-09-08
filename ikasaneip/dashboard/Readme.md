@@ -73,7 +73,7 @@ You will be presented with a screen.
 - Select "Full Installation" from the action drop down.
 - Press the create button.
 
-You will be presented with a dialog that prompts the the admin password that will be created.
+You will be presented with a dialog that prompts for the admin password that will be created.
 ![IKASAN](../developer/docs/quickstart-images/admin-password.png)
 
 - Enter the admin password that you wish to use. Press save.
