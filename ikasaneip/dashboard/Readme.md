@@ -34,12 +34,26 @@ Start ikasan-dashboard with different DB driver configuration
 - create sub dir lib, and place new driver in lib        
 - create sub dir config
 - create new config/application.properties file based on [application.properties](boot/src/main/resources/application.properties)
-   - H2 Server with File Persistence 
+ 
+ - H2 Server with File Persistence
+ Extract the H2 jar from the dashboard jar
+ ```
+ jar xvf ikasan-dashboard-boot-2.1.3.jar BOOT-INF/lib/h2-1.4.197.jar
+ ```
+ Start the H2 Server
+ ```
+ java -cp ./BOOT-INF/lib/h2-1.4.197.jar org.h2.tools.Server -tcp -tcpAllowOthers
+ ```
+ This will start the H2 server on an IP and port as shown in the example below (IP and port number may differ from you),
+ ```
+ TCP server running at tcp://192.168.0.8:52477 (others can connect)
+ ```
+ The server and port should be copied into the datasource.url below.
 ```
 datasource.username=sa
 datasource.password=sa
 datasource.driver-class-name=org.h2.Driver
-datasource.url=jdbc:h2:tcp://localhost/~/dev/github/temp/archetypes/myIntegrationModule/db/esb;IFEXISTS=FALSE
+datasource.url=jdbc:h2:tcp://<Specified IP>:<Specified Port>/~/dev/github/temp/archetypes/myIntegrationModule/db/esb;IFEXISTS=FALSE
 datasource.dialect=org.hibernate.dialect.H2Dialect
 datasource.show-sql=true
 datasource.min.pool.size=20
