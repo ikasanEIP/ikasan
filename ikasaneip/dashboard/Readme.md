@@ -149,5 +149,9 @@ server.port=8080
 server.address=0.0.0.0
 server.servlet.context-path=/ikasan-dashboard
 ```      
-
+### Initial Configuration
+The Platform Configuration should be updated to ensure the server url of the dashboard is correctly set.
+From the left side Menu, navigate to the Platform Configuration and then the Control tab.
+Set the Dashboard Base URL to the base URL of where the dashboard is running ie. http://<IP:Port>/ikasan-dashboard.
+Ensure you save this update.
 
