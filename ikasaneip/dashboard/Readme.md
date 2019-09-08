@@ -46,6 +46,12 @@ This will start the H2 server on an IP and port as shown in the example below (I
  ```
 
 This will require a configuration change to the packaged application.properties. To do this, create a config directory and a new application.properties file inside based on [application.properties](boot/src/main/resources/application.properties)
+
+Specifically the database.url will require changing to use the H2 server IP and port, and to give the folly qualified name of the database. The final part of the url tell H2 to create the database is it doesnt already exist.
+Example format,
+```
+datasource.url=jdbc:h2:tcp://<Specified IP>:<Specified Port>/<relative or absolute path for the database>;IFEXISTS=FALSE
+```
  
 ```
 datasource.username=sa
