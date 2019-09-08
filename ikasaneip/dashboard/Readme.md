@@ -25,6 +25,7 @@ Start Ikasan-dashboard with h2 in memory database.
 ```
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
+The first time you run the dashboard you will see a number of errors relating to the database, this is normal as we havent created the required tables yet.
 
 Start ikasan-dashboard with different DB driver              
 - download desired driver 
