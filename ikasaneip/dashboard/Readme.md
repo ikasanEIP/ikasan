@@ -18,6 +18,7 @@ The Ikasan Dashboard provides a management web front end for searching and track
 
 Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://repo1.maven.org/maven2/org/ikasan/ikasan-dashboard-boot/2.1.3/ikasan-dashboard-boot-2.1.3.jar)
 
+### Out of the Box with h2 in-memory persistence
 Start Ikasan-dashboard with h2 in-memory database.
 - Out of the box ikasan-dashboard is shipped with built in H2 driver which allows you to exlore the product.
 - Run           
@@ -25,8 +26,40 @@ Start Ikasan-dashboard with h2 in-memory database.
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
 The first time you run the dashboard you will see a number of errors relating to the database, this is normal as we havent created the required tables yet.
+As this is an in-memory database you will lose all configuration as soon as the dashbaord JVM is stopped.
 
-Start ikasan-dashboard with different DB driver configuration              
+### Out of the Box with h2 Server and file persistence
+To run the dashboard with h2 as a server and file persistence, extract the H2 jar from the dashboard jar
+ ```
+ jar xvf ikasan-dashboard-boot-2.1.3.jar BOOT-INF/lib/h2-1.4.197.jar
+ ```
+ 
+Start the H2 Server
+ ```
+ java -cp ./BOOT-INF/lib/h2-1.4.197.jar org.h2.tools.Server -tcp -tcpAllowOthers
+ ```
+
+This will start the H2 server on an IP and port as shown in the example below (IP and port number may differ from you),
+ ```
+ TCP server running at tcp://192.168.0.8:52477 (others can connect)
+ ```
+
+This will require a configuration change to the packaged application.properties. To do this, create a config directory and a new application.properties file inside based on [application.properties](boot/src/main/resources/application.properties)
+ 
+```
+datasource.username=sa
+datasource.password=sa
+datasource.driver-class-name=org.h2.Driver
+datasource.url=jdbc:h2:tcp://<Specified IP>:<Specified Port>/~/dev/github/temp/archetypes/myIntegrationModule/db/esb;IFEXISTS=FALSE
+datasource.dialect=org.hibernate.dialect.H2Dialect
+datasource.show-sql=true
+datasource.min.pool.size=20
+datasource.max.pool.size=100
+```
+The server and port should be copied into the datasource.url below.
+
+### Alternate Database Providers
+To start the ikasan-dashboard with different DB driver configuration              
 - download desired driver 
   - sybase [jconn4-7.0.jar](http://mvn.sonner.com.br/~maven/com/sybase/jdbc4/jdbc/jconn4/7.0/jconn4-7.0.jar)
   - sql [mssql-jdbc-6.2.1.jre8.jar](http://central.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/6.2.1.jre8/mssql-jdbc-6.2.1.jre8.jar)
@@ -35,20 +68,6 @@ Start ikasan-dashboard with different DB driver configuration
 - create sub dir config
 - create new config/application.properties file based on [application.properties](boot/src/main/resources/application.properties)
  
-Running H2 Server with File Persistence
- Extract the H2 jar from the dashboard jar
- ```
- jar xvf ikasan-dashboard-boot-2.1.3.jar BOOT-INF/lib/h2-1.4.197.jar
- ```
- Start the H2 Server
- ```
- java -cp ./BOOT-INF/lib/h2-1.4.197.jar org.h2.tools.Server -tcp -tcpAllowOthers
- ```
- This will start the H2 server on an IP and port as shown in the example below (IP and port number may differ from you),
- ```
- TCP server running at tcp://192.168.0.8:52477 (others can connect)
- ```
- The server and port should be copied into the datasource.url below.
 ```
 datasource.username=sa
 datasource.password=sa
@@ -89,7 +108,7 @@ datasource.host=hostname
 $JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.3.jar
 
 ```    
-
+### Initial Setup
 Navigate to Frontend [http://localhost:9980/ikasan-dashboard](http://localhost:9980/ikasan-dashboard)
 
 In order to setup the ikasan dashboard for the first time navigate to [http://localhost:9980/ikasan-dashboard/#!persistanceSetupView](http://localhost:9980/ikasan-dashboard/#!persistanceSetupView) 
