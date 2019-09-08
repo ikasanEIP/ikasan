@@ -18,15 +18,15 @@ The Ikasan Dashboard provides a management web front end for searching and track
 
 Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://repo1.maven.org/maven2/org/ikasan/ikasan-dashboard-boot/2.1.3/ikasan-dashboard-boot-2.1.3.jar)
 
-Start Ikasan-dashboard with h2 in memory database.
-- Out of the box ikasan-dashboard is shipped with build in H2 driver which allows you to exlore the product.
+Start Ikasan-dashboard with h2 in-memory database.
+- Out of the box ikasan-dashboard is shipped with built in H2 driver which allows you to exlore the product.
 - Run           
 ```
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
 The first time you run the dashboard you will see a number of errors relating to the database, this is normal as we havent created the required tables yet.
 
-Start ikasan-dashboard with different DB driver              
+Start ikasan-dashboard with different DB driver configuration              
 - download desired driver 
   - sybase [jconn4-7.0.jar](http://mvn.sonner.com.br/~maven/com/sybase/jdbc4/jdbc/jconn4/7.0/jconn4-7.0.jar)
   - sql [mssql-jdbc-6.2.1.jre8.jar](http://central.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/6.2.1.jre8/mssql-jdbc-6.2.1.jre8.jar)
@@ -34,7 +34,19 @@ Start ikasan-dashboard with different DB driver
 - create sub dir lib, and place new driver in lib        
 - create sub dir config
 - create new config/application.properties file based on [application.properties](boot/src/main/resources/application.properties)
-   - Sybase 
+   - H2 Server with File Persistence 
+```
+datasource.username=sa
+datasource.password=sa
+datasource.driver-class-name=org.h2.Driver
+datasource.url=jdbc:h2:tcp://localhost/~/dev/github/temp/archetypes/myIntegrationModule/db/esb;IFEXISTS=FALSE
+datasource.dialect=org.hibernate.dialect.H2Dialect
+datasource.show-sql=true
+datasource.min.pool.size=20
+datasource.max.pool.size=100
+```
+
+- Sybase 
 ```
 datasource.username=ikasan01xxx
 datasource.password=XXXXXXXXXXXXXXXXXXXXXXX
