@@ -3,10 +3,6 @@ package org.ikasan.dashboard.ui.visualisation.view;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.RouteData;
 import com.vaadin.flow.router.Router;
 import com.vaadin.flow.router.RouterLayout;
@@ -14,7 +10,6 @@ import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.github.mvysny.kaributesting.v10.LocatorJ.*;
-import static com.github.mvysny.kaributesting.v10.NotificationsKt.*;
 
 public class GraphViewTest
 {

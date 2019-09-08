@@ -277,14 +277,26 @@ public class ModuleVisjsAdapter
                 }
             }
 
+            String destinationName = new String();
+
             ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
-            ConfigurationParameterMetaData parameterMetaData = this.getListConfigurationParameterMetaData("destinationJndiName", (List<ConfigurationParameterMetaData>)configurationMetaData.getParameters());
+
+            if(configurationMetaData != null)
+            {
+                ConfigurationParameterMetaData parameterMetaData = this.getListConfigurationParameterMetaData
+                    ("destinationJndiName", (List<ConfigurationParameterMetaData>) configurationMetaData.getParameters());
+
+                if(parameterMetaData != null)
+                {
+                    destinationName = (String)parameterMetaData.getValue();
+                }
+            }
 
             return new EventDrivenConsumer(flowElement.getComponentName() + identifier++,
                 WordUtils.wrap(flowElement.getComponentName(), 25)
                 , this.fromTransitionLabelMap.get(flowElement.getComponentName())
                 , manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap),
-                new MessageChannel("messageChannel"+ identifier++, (String)parameterMetaData.getValue(), false));
+                new MessageChannel("messageChannel"+ identifier++, destinationName, false));
         }
         else if (flowElement.getComponentType().equals(Converter.class.getName()))
         {

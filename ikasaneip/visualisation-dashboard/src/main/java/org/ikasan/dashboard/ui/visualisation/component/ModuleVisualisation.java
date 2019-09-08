@@ -1,7 +1,10 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
+import com.github.appreciated.apexcharts.config.tooltip.X;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -32,17 +35,21 @@ import org.vaadin.tabs.PagedTabs;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModuleVisualisation extends PagedTabs implements ComponentEventListener<Tabs.SelectedChangeEvent>
+public class ModuleVisualisation extends PagedTabs
 {
     Logger logger = LoggerFactory.getLogger(ModuleVisualisation.class);
-    Map<Tab, NetworkDiagram> networkDiagramMap;
-    Map<Tab, Flow> flowMap;
+    private Map<Tab, NetworkDiagram> networkDiagramMap;
+    private Map<Tab, Flow> flowMap;
+    private ControlPanel controlPanel;
+    private Map<Tab, Icon> flowIconMap = new HashMap<>();
 
-    public ModuleVisualisation()
+    public ModuleVisualisation(ControlPanel controlPanel)
     {
         this.setSizeFull();
+        this.controlPanel = controlPanel;
+        this.controlPanel.registerListener(this.asButtonClickedListener());
 
-        super.tabs.addSelectedChangeListener(this);
+        super.tabs.addSelectedChangeListener(this.asTabSelectedListener());
         this.networkDiagramMap = new HashMap<>();
         this.flowMap = new HashMap<>();
     }
@@ -58,13 +65,20 @@ public class ModuleVisualisation extends PagedTabs implements ComponentEventList
     protected void add(Flow flow)
     {
         NetworkDiagram networkDiagram = this.createNetworkDiagram(flow);
-        Icon play = new Icon(VaadinIcon.CIRCLE);
-        play.setColor("green");
-        play.setSize("40px");
-        Tab tab = new Tab(new Label(flow.getName()), play);
+
+        Icon icon = new Icon(VaadinIcon.CIRCLE_THIN);
+        icon.setColor("grey");
+        icon.setSize("20px");
+
+
+        this.controlPanel.setFlowStatus("stopped");
+
+        Tab tab = new Tab(new Label(flow.getName()), icon);
         this.add(networkDiagram, tab);
         this.networkDiagramMap.put(tab, networkDiagram);
         this.flowMap.put(tab, flow);
+
+        this.flowIconMap.put(tab, icon);
     }
 
     /**
@@ -163,15 +177,41 @@ public class ModuleVisualisation extends PagedTabs implements ComponentEventList
         return networkDiagram;
     }
 
-    @Override
-    public void onComponentEvent(Tabs.SelectedChangeEvent selectedChangeEvent)
+    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener() {
+        return (ComponentEventListener<ClickEvent<Button>>) selectedChangeEvent ->
     {
-        if(flowMap.get(this.tabs.getSelectedTab()) != null)
+        if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
         {
-            final NetworkDiagram networkDiagram = this.createNetworkDiagram(flowMap.get(this.tabs.getSelectedTab()));
-            this.networkDiagramMap.put(this.tabs.getSelectedTab(), networkDiagram);
+            controlPanel.setFlowStatus("running");
 
-            this.tabsToSuppliers.put(this.tabs.getSelectedTab(), (SerializableSupplier<Component>) () -> networkDiagram);
+            if(tabs.getSelectedTab() != null)
+            {
+                tabs.getSelectedTab().removeAll();
+
+                Flow flow = flowMap.get(tabs.getSelectedTab());
+
+                Icon icon = new Icon(VaadinIcon.CIRCLE);
+                icon.setColor("green");
+                icon.setSize("20px");
+
+                tabs.getSelectedTab().add(new Label(flow.getName()), icon);
+            }
         }
+    };
+}
+
+
+    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener() {
+        return (ComponentEventListener<Tabs.SelectedChangeEvent>) selectedChangeEvent ->
+        {
+            if(flowMap.get(tabs.getSelectedTab()) != null)
+            {
+                final NetworkDiagram networkDiagram = createNetworkDiagram(flowMap.get(tabs.getSelectedTab()));
+                networkDiagramMap.put(tabs.getSelectedTab(), networkDiagram);
+
+                tabsToSuppliers.put(tabs.getSelectedTab(), (SerializableSupplier<Component>) () -> networkDiagram);
+            }
+        };
     }
+
 }
