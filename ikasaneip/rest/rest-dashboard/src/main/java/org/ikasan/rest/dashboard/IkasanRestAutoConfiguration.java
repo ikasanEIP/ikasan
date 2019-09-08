@@ -107,6 +107,12 @@ public class IkasanRestAutoConfiguration
     }
 
     @Bean
+    public UserController userController(UserService userService)
+    {
+        return new UserController(userService);
+    }
+
+    @Bean
     public JwtAuthenticationController jwtAuthenticationController(AuthenticationManager authenticationManager,
                                                                    JwtTokenUtil jwtTokenUtil, UserService userService) {
         return new JwtAuthenticationController(authenticationManager, jwtTokenUtil, userService);
