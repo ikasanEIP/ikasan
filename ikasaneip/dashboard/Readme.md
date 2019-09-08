@@ -1,4 +1,5 @@
 [../](../../Readme.md)
+![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Dashboard
  
 The Ikasan Dashboard provides a management web front end for searching and tracking events passing through Ikasan Integration Modules. Ikasan dashboard functionality covers:
@@ -63,7 +64,33 @@ $JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.0.ja
 
 ```    
 
-Navigate to Frontend [http://localhost:8080/ikasan-dashboard](http://localhost:8080/ikasan-dashboard)
+Navigate to Frontend [http://localhost:9980/ikasan-dashboard](http://localhost:9980/ikasan-dashboard)
+
+In order to setup the ikasan dashboard for the first time navigate to [http://localhost:9980/ikasan-dashboard/#!persistanceSetupView](http://localhost:9980/ikasan-dashboard/#!persistanceSetupView) 
+
+You will be presented with a screen.
+![IKASAN](../developer/docs/quickstart-images/db-installation.png)
+
+- Select "Full Installation" from the action drop down.
+- Press the create button.
+
+You will be presented with a dialog that prompts the the admin password that will be created.
+![IKASAN](../developer/docs/quickstart-images/admin-password.png)
+
+- Enter the admin password that you wish to use. Press save.
+- A notification will appear to state that the database has been created successfully. Click on the return to login link in the top left corner.
+
+You will return to the login screen. 
+
+![IKASAN](../developer/docs/quickstart-images/login.png)
+
+- Enter the user name as 'admin' along with the password created in the previous step.
+
+When you have logged in successfully, you will be presented with the following screen.
+
+![IKASAN](../developer/docs/quickstart-images/dashboard-screen.png)
+
+
 - you can modify binding IP, port and application context in  [application.properties](boot/src/main/resources/application.properties)
 ```
 server.port=8080
