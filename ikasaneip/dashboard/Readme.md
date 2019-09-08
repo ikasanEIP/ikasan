@@ -17,7 +17,7 @@ The Ikasan Dashboard provides a management web front end for searching and track
 
 ## Step-by-step guide how run ikasan-dashboard as standalone 
 
-Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://oss.sonatype.org/service/local/repositories/releases/content/org/ikasan/ikasan-dashboard-boot/2.1.3/)
+Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://repo1.maven.org/maven2/org/ikasan/ikasan-dashboard-boot/2.1.3/ikasan-dashboard-boot-2.1.3.jar)
 
 Start Ikasan-dashboard with h2 in memory database.
 - Out of the box ikasan-dashboard is shipped with build in H2 driver which allows you to exlore the product.
