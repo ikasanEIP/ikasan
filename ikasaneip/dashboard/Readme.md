@@ -26,7 +26,8 @@ Start Ikasan-dashboard with h2 in-memory database.
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
 The first time you run the dashboard you will see a number of errors in the log relating to the database, this is normal as we havent created the required tables yet.
-As this is an in-memory database you will lose all configuration as soon as the dashbaord JVM is stopped.
+
+It should be note that as this is an in-memory database you will lose all configuration as soon as the dashboard JVM is stopped.
 
 ### Out of the Box with h2 Server and file persistence
 To run the dashboard with h2 as a server and file persistence, extract the H2 jar from the dashboard jar
