@@ -35,7 +35,7 @@ Start ikasan-dashboard with different DB driver configuration
 - create sub dir config
 - create new config/application.properties file based on [application.properties](boot/src/main/resources/application.properties)
  
- - H2 Server with File Persistence
+Running H2 Server with File Persistence
  Extract the H2 jar from the dashboard jar
  ```
  jar xvf ikasan-dashboard-boot-2.1.3.jar BOOT-INF/lib/h2-1.4.197.jar
