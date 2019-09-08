@@ -294,7 +294,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-Dvaadin.compatibilityMode=true</argLine>
+                    <argLine>@{argLine} -Dvaadin.compatibilityMode=true</argLine>
                 </configuration>
             </plugin>
             <plugin>

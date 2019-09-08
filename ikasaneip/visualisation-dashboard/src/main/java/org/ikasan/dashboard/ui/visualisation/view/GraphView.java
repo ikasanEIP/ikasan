@@ -9,8 +9,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -35,7 +33,6 @@ import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
-import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
@@ -51,8 +48,6 @@ import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
-import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
@@ -119,9 +114,10 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
     private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
-    private ModuleVisualisation moduleVisualisation = new ModuleVisualisation();
+    private ModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
-    private  HorizontalLayout hl = new HorizontalLayout();
+    private HorizontalLayout hl = new HorizontalLayout();
+    private ControlPanel controlPanel = new ControlPanel();
 
     /**
      * Constructor
@@ -135,15 +131,73 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.createToolsSlider();
         this.createSearchSlider();
 
+        this.createModuleGrid();
+        this.createdBusinessStreamGrid();
+
         session = UI.getCurrent().getSession();
         current = UI.getCurrent();
+    }
+
+    protected void createModuleGrid()
+    {
+        // Create a modulesGrid bound to the list
+        modulesGrid.removeAllColumns();
+        modulesGrid.setVisible(true);
+        modulesGrid.setHeight("800px");
+        modulesGrid.setWidth("100%");
+
+        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name");
+        modulesGrid.addColumn(new ComponentRenderer<>((ModuleMetaData node) ->
+        {
+            Button view = new Button(VaadinIcon.EYE.create());
+            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                this.moduleLabel.setText(node.getName());
+                this.hl.setVisible(true);
+                createGraph(node);
+            });
+
+            return view;
+
+        }));
+    }
+
+    protected void createdBusinessStreamGrid()
+    {
+        // Create a modulesGrid bound to the list
+        businessStreamGrid.removeAllColumns();
+        businessStreamGrid.setVisible(true);
+        businessStreamGrid.setHeight("800px");
+        businessStreamGrid.setWidth("100%");
+
+        businessStreamGrid.addColumn(String::toString).setHeader("Name");
+        businessStreamGrid.addColumn(new ComponentRenderer<>((String node) ->
+        {
+            Button view = new Button(VaadinIcon.EYE.create());
+            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                try
+                {
+                    this.moduleLabel.setText(node);
+                    this.hl.setVisible(true);
+                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao.getBusinessStreamMetaData(node));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                };
+            });
+
+            return view;
+
+        }));
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
-        this.initialiseModulesGrid();
-        this.initialiseBusinessStreamGrid();
+        this.populateModulesGrid();
+        this.populateBusinessStreamGrid();
     }
 
     /**
@@ -156,16 +210,14 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         Image ikasan = new Image("frontend/images/mr-squid-head.png", "");
         ikasan.setHeight("50px");
 
-        ControlPanel controlPanel = new ControlPanel();
-
 
         hl.setWidth("100%");
         hl.add(ikasan, moduleLabel, controlPanel);
         hl.setVerticalComponentAlignment(Alignment.CENTER, moduleLabel, ikasan, controlPanel);
 
-        controlPanel.getElement().getStyle().set("margin-left", "auto");
-
         hl.setVisible(false);
+
+        moduleVisualisation = new ModuleVisualisation(controlPanel);
 
         this.add(hl);
         this.add(moduleVisualisation);
@@ -274,63 +326,16 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     /**
      * Method to initialise the modulesGrid on the tools slider.
      */
-    protected void initialiseModulesGrid()
+    protected void populateModulesGrid()
     {
-        // Create a modulesGrid bound to the list
-        modulesGrid.setVisible(true);
-        modulesGrid.setHeight("800px");
-        modulesGrid.setWidth("100%");
-
-        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name");
-        modulesGrid.addColumn(new ComponentRenderer<>((ModuleMetaData node) ->
-        {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-                this.moduleLabel.setText(node.getName());
-                this.hl.setVisible(true);
-                createGraph(node);
-            });
-
-            return view;
-
-        }));
-
         modulesGrid.setItems(moduleMetadataService.findAll());
     }
 
     /**
      * Method to initialise the modulesGrid on the tools slider.
      */
-    protected void initialiseBusinessStreamGrid()
+    protected void populateBusinessStreamGrid()
     {
-        // Create a modulesGrid bound to the list
-        businessStreamGrid.setVisible(true);
-        businessStreamGrid.setHeight("800px");
-        businessStreamGrid.setWidth("100%");
-        
-        businessStreamGrid.addColumn(String::toString).setHeader("Name");
-        businessStreamGrid.addColumn(new ComponentRenderer<>((String node) ->
-        {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-                try
-                {
-                    this.moduleLabel.setText(node);
-                    this.hl.setVisible(true);
-                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao.getBusinessStreamMetaData(node));
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                };
-            });
-
-            return view;
-
-        }));
-
         businessStreamGrid.setItems(this.businessStreamMetaDataDao.getAllBusinessStreamNames());
     }
 
@@ -356,7 +361,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.remove(moduleVisualisation);
         this.remove(networkDiagram);
 
-        this.moduleVisualisation = new ModuleVisualisation();
+        this.moduleVisualisation = new ModuleVisualisation(this.controlPanel);
         moduleVisualisation.addModule(module);
         this.add(moduleVisualisation);
     }

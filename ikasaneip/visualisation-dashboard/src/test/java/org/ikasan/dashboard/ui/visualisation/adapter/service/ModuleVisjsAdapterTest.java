@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class ModuleVisjsAdapterTest
 {
@@ -28,7 +29,7 @@ public class ModuleVisjsAdapterTest
 
         ModuleVisjsAdapter moduleVisjsAdapter = new ModuleVisjsAdapter();
 
-        Module module = moduleVisjsAdapter.adapt(moduleMetaData, null);
+        Module module = moduleVisjsAdapter.adapt(moduleMetaData, new ArrayList<>());
 
         System.out.println(module);
     }
