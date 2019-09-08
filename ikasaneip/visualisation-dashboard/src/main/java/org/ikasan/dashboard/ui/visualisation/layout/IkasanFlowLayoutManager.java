@@ -52,18 +52,18 @@ public class IkasanFlowLayoutManager
         int y = yStart;
 
 
-        flow.getConsumer().setX(x);
-        flow.getConsumer().setY(y);
+        flow.getConsumer().getSource().setX(x);
+        flow.getConsumer().getSource().setY(y);
 
         logger.info("Add consumer " + flow.getConsumer());
 
-        nodeList.add(flow.getConsumer());
+        nodeList.add(flow.getConsumer().getSource());
 
-        addEdge(flow.getConsumer().getId(), flow.getConsumer().getTransition().getId(), flow.getConsumer().getTransitionLabel());
+        addEdge(flow.getConsumer().getSource().getId(), flow.getConsumer().getId(), "");
 
-        manageTransition(flow.getConsumer().getTransition(), x, y, networkDiagram);
+        manageTransition(flow.getConsumer(), x, y, networkDiagram);
 
-        this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
+        this.networkDiagram.drawFlow(x + 100, y - 100, xExtent - x , yExtent + 200 - y , flow.getName());
 
         x = xStart;
         xExtent = x;
@@ -73,7 +73,7 @@ public class IkasanFlowLayoutManager
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
-        this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
+        this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 200));
     }
 
     private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)

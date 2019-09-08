@@ -7,7 +7,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,6 +19,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -27,6 +32,7 @@ import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
@@ -38,7 +44,10 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
@@ -53,10 +62,7 @@ import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
-import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
-import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
-import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
-import org.ikasan.vaadin.visjs.network.options.edges.Edges;
+import org.ikasan.vaadin.visjs.network.options.edges.*;
 import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.ikasan.vaadin.visjs.network.util.Font;
@@ -76,11 +82,12 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Route(value = "visualisation", layout = IkasanAppLayout.class)
 @UIScope
 @Component
-public class GraphView extends HorizontalLayout
+public class GraphView extends VerticalLayout implements BeforeEnterObserver
 {
     Logger logger = LoggerFactory.getLogger(GraphView.class);
 
@@ -93,21 +100,28 @@ public class GraphView extends HorizontalLayout
     @Resource
     private ExclusionManagementService solrExclusionService;
 
+    @Resource
+    private ModuleMetaDataService moduleMetadataService;
+
+    @Resource
+    private ConfigurationMetaDataService configurationMetadataService;
+
     private BusinessStream graph = null;
     private Upload upload;
     private List<Node> nodes = new ArrayList<>();
     private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
-    private Grid<String> modulesGrid = new Grid<>();
+    private Grid<ModuleMetaData> modulesGrid = new Grid<>();
     private Grid<String> businessStreamGrid = new Grid<>();
     private Button viewListButton;
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
-    private ModuleMetaDataDaoImpl moduleMataDataDao = new ModuleMetaDataDaoImpl();
     private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
-    private  ModuleVisualisation moduleVisualisation = new ModuleVisualisation();
+    private ModuleVisualisation moduleVisualisation = new ModuleVisualisation();
+    private H2 moduleLabel = new H2();
+    private  HorizontalLayout hl = new HorizontalLayout();
 
     /**
      * Constructor
@@ -117,8 +131,6 @@ public class GraphView extends HorizontalLayout
         this.setMargin(true);
         this.setSizeFull();
 
-        this.initialiseModulesGrid();
-        this.initialiseBusinessStreamGrid();
         this.createNetworkDiagram();
         this.createToolsSlider();
         this.createSearchSlider();
@@ -127,12 +139,35 @@ public class GraphView extends HorizontalLayout
         current = UI.getCurrent();
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    {
+        this.initialiseModulesGrid();
+        this.initialiseBusinessStreamGrid();
+    }
+
     /**
      * Method to create the new network diagram and add it as a component to the view.
      */
     protected void createNetworkDiagram()
     {
         this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
+
+        Image ikasan = new Image("frontend/images/mr-squid-head.png", "");
+        ikasan.setHeight("50px");
+
+        ControlPanel controlPanel = new ControlPanel();
+
+
+        hl.setWidth("100%");
+        hl.add(ikasan, moduleLabel, controlPanel);
+        hl.setVerticalComponentAlignment(Alignment.CENTER, moduleLabel, ikasan, controlPanel);
+
+        controlPanel.getElement().getStyle().set("margin-left", "auto");
+
+        hl.setVisible(false);
+
+        this.add(hl);
         this.add(moduleVisualisation);
     }
 
@@ -242,25 +277,26 @@ public class GraphView extends HorizontalLayout
     protected void initialiseModulesGrid()
     {
         // Create a modulesGrid bound to the list
-
         modulesGrid.setVisible(true);
         modulesGrid.setHeight("800px");
         modulesGrid.setWidth("100%");
 
-        modulesGrid.addColumn(String::toString).setHeader("Name");
-        modulesGrid.addColumn(new ComponentRenderer<>((String node) ->
+        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name");
+        modulesGrid.addColumn(new ComponentRenderer<>((ModuleMetaData node) ->
         {
             Button view = new Button(VaadinIcon.EYE.create());
             view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
-               createGraph(this.moduleMataDataDao.getModuleMetaData(node));
+                this.moduleLabel.setText(node.getName());
+                this.hl.setVisible(true);
+                createGraph(node);
             });
 
             return view;
 
         }));
 
-        modulesGrid.setItems(this.moduleMataDataDao.getAllModuleName());
+        modulesGrid.setItems(moduleMetadataService.findAll());
     }
 
     /**
@@ -281,6 +317,8 @@ public class GraphView extends HorizontalLayout
             {
                 try
                 {
+                    this.moduleLabel.setText(node);
+                    this.hl.setVisible(true);
                     this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao.getBusinessStreamMetaData(node));
                 }
                 catch (IOException e)
@@ -297,20 +335,23 @@ public class GraphView extends HorizontalLayout
     }
 
     /**
+     * Create module graph
      *
-     * @param json
+     * @param moduleMetaData
      */
-    protected void createGraph(String json)
+    protected void createGraph(ModuleMetaData moduleMetaData)
     {
+        List<String> configurationIds = moduleMetaData.getFlows().stream()
+            .map(flowMetaData -> flowMetaData.getFlowElements()).flatMap(List::stream)
+            .map(flowElementMetaData -> flowElementMetaData.getConfigurationId())
+            .filter(id -> id != null)
+            .collect(Collectors.toList());
 
-        JsonModuleMetaDataProvider jsonModuleMetaDataProvider
-            = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
-
-        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider
-            .deserialiseModule(json);
+        List<ConfigurationMetaData> configurationMetaData
+            = this.configurationMetadataService.findByIdList(configurationIds);
 
         ModuleVisjsAdapter adapter = new ModuleVisjsAdapter();
-        Module module = adapter.adapt(moduleMetaData);
+        Module module = adapter.adapt(moduleMetaData, configurationMetaData);
 
         this.remove(moduleVisualisation);
         this.remove(networkDiagram);

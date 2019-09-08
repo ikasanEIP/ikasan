@@ -102,6 +102,8 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
     @Override
     public void insert(List<ReplayEvent> entities)
     {
+        this.replayDao.setSolrUsername(this.solrUsername);
+        this.replayDao.setSolrPassword(this.solrPassword);
         this.save(entities);
     }
 }

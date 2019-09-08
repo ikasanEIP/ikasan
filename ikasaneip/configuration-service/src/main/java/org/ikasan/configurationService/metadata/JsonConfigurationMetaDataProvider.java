@@ -120,7 +120,9 @@ public class JsonConfigurationMetaDataProvider implements ConfigurationMetaDataP
         }
 
         ConfigurationMetaDataImpl configurationMetaDataImpl = new ConfigurationMetaDataImpl(configuration.getConfigurationId(),
-            configuration.getDescription(),configuration.getClass().getName(),getParameters(configuration.getParameters()));
+            configuration.getDescription(),configuredResource.getConfiguration() != null ?
+            configuredResource.getConfiguration().getClass().getName() : configuration.getClass().getName(),
+            getParameters(configuration.getParameters()));
 
         return configurationMetaDataImpl;
 

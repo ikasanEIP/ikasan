@@ -108,6 +108,8 @@ public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrSer
     @Override
     public void insert(List<ExclusionEvent> entities)
     {
+        this.exclusionEventDao.setSolrUsername(this.solrUsername);
+        this.exclusionEventDao.setSolrPassword(this.solrPassword);
         this.save(entities);
     }
 }

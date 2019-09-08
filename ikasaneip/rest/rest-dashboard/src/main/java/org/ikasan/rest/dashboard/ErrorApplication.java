@@ -80,7 +80,7 @@ public class ErrorApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/harvest/error")
+        value = "/harvest/errors")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity harvestError(@RequestBody String errorsJsonPayload)
     {

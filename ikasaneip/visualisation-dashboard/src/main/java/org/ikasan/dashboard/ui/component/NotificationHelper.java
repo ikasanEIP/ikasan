@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +52,6 @@ public class NotificationHelper
         errorIcon.setColor("white");
 
         Span content = new Span();
-        content.getStyle().set("color", "blue");
         content.setText(message);
 
         VerticalLayout layout = new VerticalLayout();
@@ -63,6 +63,7 @@ public class NotificationHelper
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, content);
 
         Notification notification = new Notification(layout);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setPosition(Notification.Position.MIDDLE);
         notification.setDuration(errorNotificationDuration);
         notification.setOpened(true);

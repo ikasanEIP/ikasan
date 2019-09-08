@@ -14,9 +14,17 @@ public interface ConfigurationMetaDataService
 
 
     /**
-     * Get all the persisted configuration   metadata.
+     * Get all the persisted configuration metadata.
      *
      * @return
      */
     public List<ConfigurationMetaData> findAll();
+
+    /**
+     * Find a list of configuration meta data based on a list of ids.
+     *
+     * @param configurationIds
+     * @return
+     */
+    public List<ConfigurationMetaData> findByIdList(List<String> configurationIds);
 }

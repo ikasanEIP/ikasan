@@ -118,10 +118,58 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
 
             dao.save(moduleMetaDataList);
 
-            ModuleMetaData moduleMetaData = dao.findById("module name_module version");
+            ModuleMetaData moduleMetaData = dao.findById("module name");
 
             Assert.assertEquals("name equals","module name", moduleMetaData.getName());
             Assert.assertEquals("6 flows", 6, moduleMetaData.getFlows().size());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find_all() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            ModuleMetaData solrConfigurationMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+
+            List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
+            moduleMetaDataList.add(solrConfigurationMetaData);
+
+            dao.save(moduleMetaDataList);
+
+            List<ModuleMetaData> moduleMetaData = dao.findAll();
+
+            Assert.assertEquals("Number of results 2",2, moduleMetaData.size());
+            Assert.assertEquals("name equals","module name", moduleMetaData.get(0).getName());
+            Assert.assertEquals("6 flows", 6, moduleMetaData.get(0).getFlows().size());
 
             server.close();
         }

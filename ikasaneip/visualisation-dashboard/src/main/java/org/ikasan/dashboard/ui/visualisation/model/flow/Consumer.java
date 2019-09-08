@@ -7,6 +7,8 @@ import org.ikasan.vaadin.visjs.network.Node;
  */
 public abstract class Consumer extends AbstractSingleTransition implements SingleTransition
 {
+    private Node source;
+
     /**
      * Constructor
      *
@@ -16,8 +18,15 @@ public abstract class Consumer extends AbstractSingleTransition implements Singl
      * @param transition
      * @param image
      */
-	public Consumer(String id, String name, String transitionLabel, Node transition, String image)
+	public Consumer(String id, String name, String transitionLabel, Node transition, String image, Node source)
     {
         super(id, name, transition, transitionLabel, image);
+
+        this.source = source;
+    }
+
+    public Node getSource()
+    {
+        return source;
     }
 }

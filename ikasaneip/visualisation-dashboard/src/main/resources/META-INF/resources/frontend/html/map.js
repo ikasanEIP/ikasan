@@ -63,7 +63,26 @@ window.Vaadin.Flow.mapConnector = {
             var img = new Image();
             img.src = "/frontend/images/mr-squid-head.png";
 
-            context.drawImage(img, 0, 0, 300, 300);
+            var coords = projection([0,51]);
+
+
+            context.drawImage(img, coords[0] -18 , coords[1] - 25, 37, 49);
+
+            context.beginPath();
+            context.arcTo(coords[0] -18 , coords[1] - 25, 0, 0, 10);
+            context.stroke();
+
+            coords = projection([-74,41]);
+
+            context.drawImage(img, coords[0] -18 , coords[1] - 25, 37, 49);
+
+            coords = projection([139,35]);
+
+            context.drawImage(img, coords[0] -18 , coords[1] - 25, 37, 49);
+
+            coords = projection([114,22]);
+
+            context.drawImage(img, coords[0] -18 , coords[1] - 25, 37, 49);
 
 
 
@@ -78,10 +97,10 @@ window.Vaadin.Flow.mapConnector = {
             //     .enter()
             //     .append("image")
             //     .attr('class','mark')
-            //     .attr('width', 20)
-            //     .attr('height', 20)
+            //     .attr('width', 200)
+            //     .attr('height', 200)
             //     .attr("xlink:href",'https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png')
-            //     .attr("transform", function(d) { return "translate(" + projection([d.long,d.lat]) + ")"});
+            //     .attr("transform", function(d) { return "translate(" + projection([d.long,d.lat]) + ")"});lat
         }
 
         function update() {

@@ -53,7 +53,7 @@ public class ErrorApplicationTest extends  AbstractRestMvcTest
     @Test
     public void harvest_error_occurrence_success() throws Exception
     {
-        String uri = "/rest/harvest/error";
+        String uri = "/rest/harvest/errors";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(super.loadDataFile(ERRORS_JSON))).andReturn();
@@ -69,7 +69,7 @@ public class ErrorApplicationTest extends  AbstractRestMvcTest
     @Test
     public void test_exception_bad_post_json() throws Exception
     {
-        String uri = "/rest/harvest/error";
+        String uri = "/rest/harvest/errors";
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content("bad json")).andReturn();
