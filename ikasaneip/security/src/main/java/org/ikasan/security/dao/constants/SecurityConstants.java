@@ -47,6 +47,7 @@ package org.ikasan.security.dao.constants;
 public interface SecurityConstants
 {
 	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
+	public static final String AUTH_METHOD_DASHBOARD = "AUTH_METHOD_DASHBOARD";
 	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
 	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
     
