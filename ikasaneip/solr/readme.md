@@ -32,7 +32,7 @@ unzip -d solr <kasan-solr-distribution>.zip
 ### Controlling Solr
 
 ````text 
-cd /opt/runtime/solr/bin
+cd <solr-installation-directory>/solr/bin
 ````
 
 ````text 
