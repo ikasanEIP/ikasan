@@ -3,8 +3,8 @@
 # Dashboard
  
 The Ikasan Dashboard provides a management web front end for searching and tracking events passing through Ikasan Integration Modules. Ikasan dashboard functionality covers:
-- [Navigating the Dashboard](./MenuNavigation.md)
 - [Platform Setup and Maintenance](./PlatformSetup.md)
+- [Navigating the Dashboard](./MenuNavigation.md)
 - [Event Searching and Tracking](./Topology.md)
 - [User Administration and Management](./UserAdministration.md)
 - [Ikasan Support and Resources](./HousekeepingAndHarvesting.md)
