@@ -101,11 +101,11 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
                     return callHttp(events, false);
             }
             logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
-                + "] with response [{}]", e);
+                + "] with response [{"+e.getResponseBodyAsString()+"}]");
             return false;
         }catch(RestClientException e){
             logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
-                + "] with response [{}]", e);
+                + "] with response [{"+e.getLocalizedMessage()+"}]");
             return false;
         }
     }
