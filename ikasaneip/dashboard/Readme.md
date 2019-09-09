@@ -24,7 +24,7 @@ Out of the box the Ikasan-dashboard runs with an h2 in-memory database.
 The following command will run the dashboard fully functional based on in-memory persistence.
 
 ```
-$JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
+java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
 The first time you run the dashboard you will see a number of errors in the log relating to the database, this is normal as we havent created the required tables yet.
 
@@ -65,6 +65,11 @@ datasource.min.pool.size=20
 datasource.max.pool.size=100
 ```
 The server and port should be copied into the datasource.url below.
+
+Start the Iaksan Dashboard as follows,
+```
+java -Dloader.path=config -jar ikasan-dashboard-boot-2.1.3.jar
+```
 
 ### Alternate Database Providers
 To start the ikasan-dashboard with different DB driver configuration              
