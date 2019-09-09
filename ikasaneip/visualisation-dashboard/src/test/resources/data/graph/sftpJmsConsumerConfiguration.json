@@ -1,0 +1,133 @@
+{
+  "configurationId": "sftpJmsConsumer",
+  "description": null,
+  "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration",
+  "parameters": [
+    {
+      "id": null,
+      "name": "autoContentConversion",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "autoSplitBatch",
+      "value": true,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "batchMode",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "batchSize",
+      "value": 0,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "cacheLevel",
+      "value": 1,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "concurrentConsumers",
+      "value": 1,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryJndiProperties",
+      "value": {},
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryName",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryPassword",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryUsername",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "destinationJndiName",
+      "value": "sftp.private.jms.queue",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "destinationJndiProperties",
+      "value": {},
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    },
+    {
+      "id": null,
+      "name": "durable",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "durableSubscriptionName",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "maxConcurrentConsumers",
+      "value": 1,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "pubSubDomain",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "sessionAcknowledgeMode",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "sessionTransacted",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }
+  ]
+}

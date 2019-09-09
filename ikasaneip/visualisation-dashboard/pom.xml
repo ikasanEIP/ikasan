@@ -268,6 +268,13 @@
             <artifactId>spring-test</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <classifier>runtime</classifier>
+            <version>0.8.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -294,7 +301,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>@{argLine} -Dvaadin.compatibilityMode=true</argLine>
+                    <argLine>${argLine} -Dvaadin.compatibilityMode=true</argLine>
                 </configuration>
             </plugin>
             <plugin>
