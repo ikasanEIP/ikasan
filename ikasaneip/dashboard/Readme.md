@@ -118,7 +118,7 @@ $JAVA_HOME/bin/java -Dloader.path=lib,config -jar ikasan-dashboard-boot-2.1.3.ja
 ### Initial Setup
 Navigate to Frontend [http://localhost:9980/ikasan-dashboard](http://localhost:9980/ikasan-dashboard)
 
-In order to setup the ikasan dashboard for the first time navigate to [http://localhost:9980/ikasan-dashboard/#!persistanceSetupView](http://localhost:9980/ikasan-dashboard/#!persistanceSetupView) 
+In order to setup the ikasan dashboard for the first time append #!persistanceSetupView to the url in the browser to navigate to the persistence setup page (http://localhost:9980/ikasan-dashboard/#!persistanceSetupView). 
 
 You will be presented with a screen.
 ![IKASAN](../developer/docs/quickstart-images/db-installation.png)
