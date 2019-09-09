@@ -155,3 +155,8 @@ From the left side Menu, navigate to the Platform Configuration and then the Con
 Set the Dashboard Base URL to the base URL of where the dashboard is running ie. http://<IP:Port>/ikasan-dashboard.
 Ensure you save this update.
 
+WARNING: Any Integration Modules pointing to the same database must have their application.properties datasource.hbm2ddl.auto set to none. If left as the default 'create' you will drop and recreate the tables shared by the Integration Modules and the Dashboard.
+```
+datasource.hbm2ddl.auto=none
+```
+
