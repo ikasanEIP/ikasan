@@ -84,7 +84,7 @@ public class SolrModuleMetadataDao extends SolrDaoBase
 
     public ModuleMetaData findById(String id)
     {
-        String queryString = "id:\"" + id + "AND type:\"" + MODULE_METADATA + "\"";
+        String queryString = "id:\"" + id + "\" AND type:\"" + MODULE_METADATA + "\"";
 
         logger.info("queryString: " + queryString);
 
