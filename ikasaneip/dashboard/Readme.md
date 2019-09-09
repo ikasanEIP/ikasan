@@ -19,9 +19,8 @@ The Ikasan Dashboard provides a management web front end for searching and track
 Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](https://repo1.maven.org/maven2/org/ikasan/ikasan-dashboard-boot/2.1.3/ikasan-dashboard-boot-2.1.3.jar)
 
 ### Out of the Box with h2 in-memory persistence
-Start Ikasan-dashboard with h2 in-memory database.
-- Out of the box ikasan-dashboard is shipped with built in H2 driver which allows you to exlore the product.
-- Run           
+Out of the box the Ikasan-dashboard runs with an h2 in-memory database.
+The following command will run the dashboard fully functional based on in-memory persistence. NOTE: As it is in-memory persistence all changes will be lost on the restart of the JVM.           
 ```
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
