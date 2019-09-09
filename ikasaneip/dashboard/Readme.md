@@ -20,7 +20,9 @@ Download ikasan-dashboard from official mvn repo [ikasan-dashboard-boot/2.1.3](h
 
 ### Out of the Box with h2 in-memory persistence
 Out of the box the Ikasan-dashboard runs with an h2 in-memory database.
-The following command will run the dashboard fully functional based on in-memory persistence. NOTE: As it is in-memory persistence all changes will be lost on the restart of the JVM.           
+
+The following command will run the dashboard fully functional based on in-memory persistence.
+
 ```
 $JAVA_HOME/bin/java -jar ikasan-dashboard-boot-2.1.3.jar
 ```           
