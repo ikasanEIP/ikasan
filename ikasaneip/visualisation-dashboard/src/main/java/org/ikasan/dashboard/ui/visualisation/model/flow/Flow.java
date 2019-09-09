@@ -6,11 +6,20 @@ package org.ikasan.dashboard.ui.visualisation.model.flow;
 public class Flow
 {
 	private String name;
+    private String configurationId;
 	private Consumer consumer;
 
-	public Flow(String name, Consumer consumer)
+    /**
+     * Constructor
+     *
+     * @param name
+     * @param configurationId
+     * @param consumer
+     */
+	public Flow(String name, String configurationId, Consumer consumer)
 	{
 		this.name = name;
+		this.configurationId = configurationId;
 		this.consumer = consumer;
 	}
 
@@ -19,7 +28,12 @@ public class Flow
 		return name;
 	}
 
-	public Consumer getConsumer()
+    public String getConfigurationId()
+    {
+        return configurationId;
+    }
+
+    public Consumer getConsumer()
 	{
 		return consumer;
 	}

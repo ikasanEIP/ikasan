@@ -5,10 +5,9 @@ import org.ikasan.vaadin.visjs.network.Node;
 /**
  * Created by stewmi on 07/11/2018.
  */
-public class MessageTranslator extends AbstractSingleTransition
+public class MessageConverter extends AbstractSingleTransition
 {
 	public static final String IMAGE = "frontend/images/message-translator.png";
-
 
     /**
      * Constructor
@@ -18,59 +17,59 @@ public class MessageTranslator extends AbstractSingleTransition
      * @param transitionLabel
      * @param transition
      */
-	public MessageTranslator(String id, String name, String transitionLabel, Node transition)
+	public MessageConverter(String id, String name, String transitionLabel, Node transition)
     {
         super(id, name, transition, transitionLabel, IMAGE);
     }
 
-    public static MessageTranslatorBuilder messageConverterBuilder()
+    public static MessageConverterBuilder messageConverterBuilder()
     {
-        return new MessageTranslatorBuilder();
+        return new MessageConverterBuilder();
     }
 
     /**
      * Builder class
      */
-    public static class MessageTranslatorBuilder
+    public static class MessageConverterBuilder
     {
         private String id;
         private String name;
         private String transitionLabel;
         private Node transition;
 
-        public MessageTranslatorBuilder withId(String id)
+        public MessageConverterBuilder withId(String id)
         {
             this.id = id;
             return this;
         }
 
-        public MessageTranslatorBuilder withName(String name)
+        public MessageConverterBuilder withName(String name)
         {
             this.name = name;
             return this;
         }
 
-        public MessageTranslatorBuilder withTransitionLabel(String transitionLabel)
+        public MessageConverterBuilder withTransitionLabel(String transitionLabel)
         {
             this.transitionLabel = transitionLabel;
             return this;
         }
 
-        public MessageTranslatorBuilder withTransition(Node transition)
+        public MessageConverterBuilder withTransition(Node transition)
         {
             this.transition = transition;
             return this;
         }
 
 
-        public MessageTranslator build()
+        public MessageConverter build()
         {
             if (id == null || name == null || transition == null)
             {
                 throw new IllegalStateException("Cannot create MessageConverter. id, name and transition cannot be null!");
             }
 
-            return new MessageTranslator(id, name, transitionLabel, transition);
+            return new MessageConverter(id, name, transitionLabel, transition);
         }
     }
 }

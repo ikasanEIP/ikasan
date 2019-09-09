@@ -32,4 +32,41 @@ public class RecipientListRouter extends Node implements MultiTransition
 	{
 		return this.transitions;
 	}
+
+    public static RecipientListRouterBuilder recipientRouterBuilder()
+    {
+        return new RecipientListRouterBuilder();
+    }
+
+    /**
+     * Builder class
+     */
+    public static class RecipientListRouterBuilder
+    {
+        private String id;
+        private String name;
+
+        public RecipientListRouterBuilder withId(String id)
+        {
+            this.id = id;
+            return this;
+        }
+
+        public RecipientListRouterBuilder withName(String name)
+        {
+            this.name = name;
+            return this;
+        }
+
+
+        public RecipientListRouter build()
+        {
+            if (id == null || name == null)
+            {
+                throw new IllegalStateException("Cannot create RecipientListRouter. id and name cannot ne null!");
+            }
+
+            return new RecipientListRouter(id, name);
+        }
+    }
 }

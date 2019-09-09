@@ -1,0 +1,115 @@
+{
+  "name": "sample-boot-sftp-jms",
+  "description": "Sftp Jms Sample Module",
+  "version": null,
+  "flows": [
+    {
+      "name": "Sftp To Jms Flow",
+      "consumer": {
+        "componentName": "Sftp Consumer",
+        "description": null,
+        "componentType": "org.ikasan.spec.component.endpoint.Consumer",
+        "implementingClass": "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer",
+        "configurationId": "stfpConsumerConfigurationId",
+        "invokerConfigurationId": "sample-boot-sftp-jms_Sftp To Jms Flow_Sftp Consumer_1165847135_I",
+        "configurable": true
+      },
+      "transitions": [
+        {
+          "from": "Sftp Payload to Map Converter",
+          "to": "Sftp Jms Producer",
+          "name": "default"
+        },
+        {
+          "from": "Sftp Consumer",
+          "to": "Sftp Payload to Map Converter",
+          "name": "default"
+        }
+      ],
+      "flowElements": [
+        {
+          "componentName": "Sftp Jms Producer",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.endpoint.Producer",
+          "implementingClass": "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+          "configurationId": "sftpJmsProducer",
+          "invokerConfigurationId": "sample-boot-sftp-jms_Sftp To Jms Flow_Sftp Jms Producer_1165847135_I",
+          "configurable": true
+        },
+        {
+          "componentName": "Sftp Payload to Map Converter",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.transformation.Converter",
+          "implementingClass": "org.ikasan.component.converter.filetransfer.PayloadToMapConverter",
+          "configurationId": null,
+          "invokerConfigurationId": "sample-boot-sftp-jms_Sftp To Jms Flow_Sftp Payload to Map Converter_1165847135_I",
+          "configurable": false
+        },
+        {
+          "componentName": "Sftp Consumer",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.endpoint.Consumer",
+          "implementingClass": "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer",
+          "configurationId": "stfpConsumerConfigurationId",
+          "invokerConfigurationId": "sample-boot-sftp-jms_Sftp To Jms Flow_Sftp Consumer_1165847135_I",
+          "configurable": true
+        }
+      ],
+      "configurationId": "sample-boot-sftp-jms-Sftp To Jms Flow"
+    },
+    {
+      "name": "Jms To Sftp Flow",
+      "consumer": {
+        "componentName": "Sftp Jms Consumer",
+        "description": null,
+        "componentType": "org.ikasan.spec.component.endpoint.Consumer",
+        "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+        "configurationId": "sftpJmsConsumer",
+        "invokerConfigurationId": "sample-boot-sftp-jms_Jms To Sftp Flow_Sftp Jms Consumer_1165847135_I",
+        "configurable": true
+      },
+      "transitions": [
+        {
+          "from": "MapMessage to SFTP Payload Converter",
+          "to": "Sftp Producer",
+          "name": "default"
+        },
+        {
+          "from": "Sftp Jms Consumer",
+          "to": "MapMessage to SFTP Payload Converter",
+          "name": "default"
+        }
+      ],
+      "flowElements": [
+        {
+          "componentName": "Sftp Producer",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.endpoint.Producer",
+          "implementingClass": "org.ikasan.endpoint.sftp.producer.SftpProducer",
+          "configurationId": "sftpProducerConfiguration",
+          "invokerConfigurationId": "sample-boot-sftp-jms_Jms To Sftp Flow_Sftp Producer_1165847135_I",
+          "configurable": true
+        },
+        {
+          "componentName": "MapMessage to SFTP Payload Converter",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.transformation.Converter",
+          "implementingClass": "org.ikasan.component.converter.filetransfer.MapMessageToPayloadConverter",
+          "configurationId": "sample-boot-sftp-jms_Jms To Sftp Flow_MapMessage to SFTP Payload Converter_-1310167143_C",
+          "invokerConfigurationId": "sample-boot-sftp-jms_Jms To Sftp Flow_MapMessage to SFTP Payload Converter_1165847135_I",
+          "configurable": true
+        },
+        {
+          "componentName": "Sftp Jms Consumer",
+          "description": null,
+          "componentType": "org.ikasan.spec.component.endpoint.Consumer",
+          "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+          "configurationId": "sftpJmsConsumer",
+          "invokerConfigurationId": "sample-boot-sftp-jms_Jms To Sftp Flow_Sftp Jms Consumer_1165847135_I",
+          "configurable": true
+        }
+      ],
+      "configurationId": "sample-boot-sftp-jms-Jms To Sftp Flow"
+    }
+  ]
+}
