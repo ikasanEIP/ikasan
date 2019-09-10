@@ -59,7 +59,7 @@
 
     <properties>
         <solr.version>8.2.0</solr.version>
-        <solr.archive.file>${project.build.directory}/ikasan-solr-${solr.version}.zip</solr.archive.file>
+        <solr.archive.file>${project.build.directory}/ikasan-solr-distribution-${version}.zip</solr.archive.file>
     </properties>
 
     <build>
@@ -113,7 +113,7 @@
 
                                 <copy file="${basedir}/src/main/resources/security.json" tofile="${project.build.directory}/solr-${solr.version}/server/solr/security.json" />
 
-                                <zip destfile="${project.build.directory}/ikasan-solr-${solr.version}.zip">
+                                <zip destfile="${project.build.directory}/ikasan-solr-distribution-${version}.zip">
                                     <zipfileset filemode="755" dir="${project.build.directory}/solr-${solr.version}/" />
                                 </zip>
 
