@@ -14,19 +14,12 @@ public class MessageChannel extends Node
 {
 	public static final String IMAGE = "frontend/images/message-channel.png";
 
-	private List<EventDrivenConsumer> consumers;
 	private boolean isPrivate;
 
 	public MessageChannel(String id, String name, boolean isPrivate)
 	{
         super(id, name, Nodes.builder().withShape(Shape.image).withImage(IMAGE));
-		this.consumers = new ArrayList<>();
 		this.isPrivate = isPrivate;
-	}
-
-	public void addConsumer(EventDrivenConsumer consumer)
-	{
-		this.consumers.add(consumer);
 	}
 
 	public boolean isPrivate()

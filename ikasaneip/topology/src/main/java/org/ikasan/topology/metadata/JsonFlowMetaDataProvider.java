@@ -22,7 +22,12 @@ import org.ikasan.spec.metadata.Transition;
 import org.ikasan.topology.metadata.model.FlowElementMetaDataImpl;
 import org.ikasan.topology.metadata.model.FlowMetaDataImpl;
 import org.ikasan.topology.metadata.model.TransitionImpl;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 
 /**
@@ -103,7 +108,7 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
      * @param flowElement
      * @return
      */
-    protected FlowElementMetaData describeFlowElement(FlowMetaData flowMetaData, FlowElement flowElement) throws IllegalAccessException
+    protected FlowElementMetaData describeFlowElement(FlowMetaData flowMetaData, FlowElement flowElement) throws Exception
     {
 
         if(flowElement.getFlowComponent() instanceof Consumer)
@@ -159,7 +164,7 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
      * @return the flow element meta data.
      */
     protected FlowElementMetaData manageSingleTransitionComponent(FlowMetaData flowMetaData, FlowElement flowElement, String componentType)
-        throws IllegalAccessException
+        throws Exception
     {
         FlowElementMetaData flowElementMetaData = createFlowElementMetaData(flowElement, componentType);
 
@@ -186,7 +191,7 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
      * @return the flow element meta data.
      */
     protected FlowElementMetaData manageMultiTransitionComponent(FlowMetaData flowMetaData, FlowElement flowElement, String componentType)
-        throws IllegalAccessException
+        throws Exception
     {
         FlowElementMetaData flowElementMetaData = createFlowElementMetaData(flowElement, componentType);
 
@@ -215,13 +220,21 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
      * @param componentType the component type associated with the flow element.
      * @return
      */
-    protected FlowElementMetaData createFlowElementMetaData(FlowElement flowElement, String componentType)
+    protected FlowElementMetaData createFlowElementMetaData(FlowElement flowElement, String componentType) throws Exception
     {
         FlowElementMetaData flowElementMetaData = new FlowElementMetaDataImpl();
         flowElementMetaData.setComponentName(flowElement.getComponentName());
         flowElementMetaData.setDescription(flowElement.getDescription());
         flowElementMetaData.setComponentType(componentType);
-        flowElementMetaData.setImplementingClass(flowElement.getFlowComponent().getClass().getName());
+
+        if (AopUtils.isJdkDynamicProxy(flowElement.getFlowComponent()))
+        {
+            flowElementMetaData.setImplementingClass(AopProxyUtils.ultimateTargetClass(flowElement.getFlowComponent()).getName());
+        }
+        else
+        {
+            flowElementMetaData.setImplementingClass(flowElement.getFlowComponent().getClass().getName());
+        }
 
         if(flowElement.getFlowComponent() instanceof ConfiguredResource)
         {

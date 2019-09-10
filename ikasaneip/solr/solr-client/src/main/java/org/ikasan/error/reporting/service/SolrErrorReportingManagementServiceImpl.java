@@ -134,6 +134,8 @@ public class SolrErrorReportingManagementServiceImpl extends SolrServiceBase imp
     @Override
     public void insert(List<ErrorOccurrence> entities)
     {
+        this.errorReportingServiceDao.setSolrUsername(this.solrUsername);
+        this.errorReportingServiceDao.setSolrPassword(this.solrPassword);
         this.save(entities);
     }
 }

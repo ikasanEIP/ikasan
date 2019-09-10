@@ -222,6 +222,8 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
     @Override
     public void insert(List<WiretapEvent> entities)
     {
+        wiretapDao.setSolrUsername(this.solrUsername);
+        wiretapDao.setSolrPassword(this.solrPassword);
         this.save(entities);
     }
 }

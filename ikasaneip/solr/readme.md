@@ -1,5 +1,6 @@
 ![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Solr
+=======
 Solr Reference Guide
 
 Solr Online Documentation: [Solr Reference Guide](https://lucene.apache.org/solr/guide/)
@@ -58,6 +59,7 @@ Solr logs to the following location.
 
 ````text
 #Solr logging directory
+
 <solr-installation-directory>/solr/server/logs/
 ````
 
@@ -75,6 +77,7 @@ It is possible to configure solr to point at another location to store the data 
 
 ````text
 vi <solr-installation-directory>/solr/server/solr/ikasan/conf/solrconfig.xml
+
 # Update the Solr data directory to point at the relevant mount by modifying the relevant line in the solrconfig.xml file to 
 <dataDir>/opt/<env>index/solr/${solr.core.name}</dataDir> 
 ````
@@ -86,10 +89,12 @@ This file contains the authentication details along with the security roles.
 
 The default **ikasan:1ka5an** credentials are created as part of the Ikasan distribution.
 
+
 All administration of Solr security is performed via the exposed http services as seen below. See the Solr security reference for further information.
 
 ````text
 # Sample command to add a new user to Solr
+
 curl --user ikasan:1ka5an http://localhost:8983/solr/admin/authentication -H 'Content-type:application/json' -d '{"set-user": {"<new-user>":"<new-password>"}}'
  
 # Give the new user the admin role
@@ -99,4 +104,14 @@ curl -u ikasan:1ka5an -H 'Content-type:application/json' -d '{
 
 # You may wish to delete the default ikasan solr user once you have created your own admin user.
 curl --user ikasan:1ka5an http://localhost:8983/solr/admin/authentication -H 'Content-type:application/json' -d  '{"delete-user": ["ikasan"]}'
+curl --user solr:SolrRocks http://localhost:8983/solr/admin/authentication -H 'Content-type:application/json' -d '{"set-user": {"<new-user>":"<new-password"}}’
+ 
+# Give the new user the admin role
+curl -u solr:SolrRocks -H 'Content-type:application/json' -d '{
+   "set-user-role" : {"<new-username>": ["admin"]}
+}' http://localhost:8983/solr/admin/authorization
+
+# Delete the default solr user
+curl --user solr:SolrRocks http://localhost:8983/solr/admin/authentication -H 'Content-type:application/json' -d  '{"delete-user": ["solr"]}'
 ````
+

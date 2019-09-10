@@ -1,0 +1,140 @@
+{
+  "configurationId": "sftpJmsProducer",
+  "description": null,
+  "implementingClass": "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+  "parameters": [
+    {
+      "id": null,
+      "name": "connectionFactoryJndiProperties",
+      "value": {},
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryName",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryPassword",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionFactoryUsername",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "deliveryMode",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "deliveryPersistent",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "destinationJndiName",
+      "value": "sftp.private.jms.queue",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "destinationJndiProperties",
+      "value": {},
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    },
+    {
+      "id": null,
+      "name": "explicitQosEnabled",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "messageIdEnabled",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "messageTimestampEnabled",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "priority",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "pubSubDomain",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "pubSubNoLocal",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "receiveTimeout",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+    },
+    {
+      "id": null,
+      "name": "sessionAcknowledgeMode",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "sessionAcknowledgeModeName",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "sessionTransacted",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "timeToLive",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+    }
+  ]
+}

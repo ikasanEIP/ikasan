@@ -22,4 +22,55 @@ public class MessageTranslator extends AbstractSingleTransition
     {
         super(id, name, transition, transitionLabel, IMAGE);
     }
+
+    public static MessageTranslatorBuilder messageConverterBuilder()
+    {
+        return new MessageTranslatorBuilder();
+    }
+
+    /**
+     * Builder class
+     */
+    public static class MessageTranslatorBuilder
+    {
+        private String id;
+        private String name;
+        private String transitionLabel;
+        private Node transition;
+
+        public MessageTranslatorBuilder withId(String id)
+        {
+            this.id = id;
+            return this;
+        }
+
+        public MessageTranslatorBuilder withName(String name)
+        {
+            this.name = name;
+            return this;
+        }
+
+        public MessageTranslatorBuilder withTransitionLabel(String transitionLabel)
+        {
+            this.transitionLabel = transitionLabel;
+            return this;
+        }
+
+        public MessageTranslatorBuilder withTransition(Node transition)
+        {
+            this.transition = transition;
+            return this;
+        }
+
+
+        public MessageTranslator build()
+        {
+            if (id == null || name == null || transition == null)
+            {
+                throw new IllegalStateException("Cannot create MessageConverter. id, name and transition cannot be null!");
+            }
+
+            return new MessageTranslator(id, name, transitionLabel, transition);
+        }
+    }
 }

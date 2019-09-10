@@ -1,7 +1,7 @@
 [ {
   "configurationId" : "configuredResourceId",
   "description" : null,
-  "implementingClass" : "org.ikasan.configurationService.model.DefaultConfiguration",
+  "implementingClass" : "org.ikasan.configurationService.metadata.configuration.DummyConfiguration",
   "parameters" : [ {
     "id" : null,
     "name" : "name",

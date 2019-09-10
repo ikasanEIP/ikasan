@@ -9,11 +9,22 @@ import java.util.List;
 public class Module
 {
 	private String name;
+	private String description;
+	private String version;
 	private List<Flow> flows;
 
-	public Module(String name)
+    /**
+     * Construcior
+     *
+     * @param name
+     * @param description
+     * @param version
+     */
+	public Module(String name, String description, String version)
 	{
 		this.name = name;
+		this.description = description;
+		this.version = version;
 		this.flows = flows;
 	}
 
@@ -22,12 +33,22 @@ public class Module
 		return name;
 	}
 
-	public List<Flow> getFlows()
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public String getVersion()
+    {
+        return version;
+    }
+
+    public List<Flow> getFlows()
 	{
 		return flows;
 	}
 
-	public  void addFlow(Flow flow)
+	public void addFlow(Flow flow)
     {
         if(flows == null)
         {

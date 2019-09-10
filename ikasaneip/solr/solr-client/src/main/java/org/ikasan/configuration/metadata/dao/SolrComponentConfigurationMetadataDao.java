@@ -10,6 +10,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.configuration.metadata.model.SolrComponentConfiguration;
 import org.ikasan.configuration.metadata.model.SolrConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.
@@ -42,9 +44,6 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
 
     public void save(List<ConfigurationMetaData> configurationMetaDataList)
     {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
         try
         {
             UpdateRequest req = new UpdateRequest();
@@ -79,9 +78,76 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
 
     public ConfigurationMetaData findById(String id)
     {
-        String queryString = "id:\"" + id + "\"";
+        String queryString = "id:\"" + id + "\" AND type: \"" + COMPONENT_CONFIGURATION + "\"";
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
+
+        List<SolrComponentConfiguration> beans = this.findByQuery(queryString);
+
+        if(beans.size() > 0 && beans.get(0).getRawConfigurationMetadata() != null)
+        {
+            return this.convert(beans.get(0).getRawConfigurationMetadata());
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public List<ConfigurationMetaData> findAll()
+    {
+        String queryString = "type: \"" + COMPONENT_CONFIGURATION + "\"";
+
+        logger.debug("queryString: " + queryString);
+
+        List<SolrComponentConfiguration> beans = this.findByQuery(queryString);
+
+        return beans.stream().map(bean -> convert(bean.getRawConfigurationMetadata())).collect(Collectors.toList());
+    }
+
+    public List<ConfigurationMetaData> findInIdList(List<String> configurationIds)
+    {
+        StringBuffer queryString = new StringBuffer("type: \"").append(COMPONENT_CONFIGURATION).append("\"");
+        queryString.append(" AND id:(");
+
+        configurationIds.forEach(id -> {
+            queryString.append("\"").append(id).append("\",");
+        });
+
+        queryString.append(")");
+
+        logger.debug("queryString: " + queryString);
+
+        List<SolrComponentConfiguration> beans = this.findByQuery(queryString.toString());
+
+        return beans.stream().map(bean -> convert(bean.getRawConfigurationMetadata())).collect(Collectors.toList());
+    }
+
+    private SolrConfigurationMetaData convert(String solrComponentConfiguration)
+    {
+        try
+        {
+            SolrConfigurationMetaData solrConfigurationMetaData
+                = objectMapper.readValue(solrComponentConfiguration, SolrConfigurationMetaData.class);
+
+            return solrConfigurationMetaData;
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(String.format("Unable to deserialise ConfigurationMetaData [%s]"
+                , solrComponentConfiguration), e);
+        }
+    }
+
+    /**
+     * Helper method to perform query.
+     *
+     * @param queryString
+     * @return
+     */
+    private List<SolrComponentConfiguration> findByQuery(String queryString)
+    {
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
@@ -95,32 +161,11 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
 
             QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
 
-            beans = rsp.getBeans(SolrComponentConfiguration.class);
+            return rsp.getBeans(SolrComponentConfiguration.class);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Error resolving solr component configuration by id [" + id + "] from the ikasan solr index!", e);
-        }
-
-        if(beans.size() > 0 && beans.get(0).getRawConfigurationMetadata() != null)
-        {
-            try
-            {
-                SolrConfigurationMetaData solrConfigurationMetaData
-                    = objectMapper.readValue(beans.get(0).getRawConfigurationMetadata(), SolrConfigurationMetaData.class);
-
-                return solrConfigurationMetaData;
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(String.format("Unable to deserialise ConfigurationMetaData [%s]"
-                    , beans.get(0).getRawConfigurationMetadata()), e);
-            }
-        }
-        else
-        {
-            return null;
+            throw new RuntimeException("Error resolving solr component configuration by query [" + queryString + "] from the ikasan solr index!", e);
         }
     }
-
 }

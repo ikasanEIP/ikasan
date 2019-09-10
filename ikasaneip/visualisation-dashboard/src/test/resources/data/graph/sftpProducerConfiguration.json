@@ -1,0 +1,140 @@
+{
+  "configurationId": "sftpProducerConfiguration",
+  "description": null,
+  "implementingClass": "org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration",
+  "parameters": [
+    {
+      "id": null,
+      "name": "checksumDelivered",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "cleanUpChunks",
+      "value": true,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "cleanupJournalOnComplete",
+      "value": true,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "clientID",
+      "value": "JmsToSftpFlow",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "connectionTimeout",
+      "value": 60000,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "createParentDirectory",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "knownHostsFilename",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "maxRetryAttempts",
+      "value": 3,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "outputDirectory",
+      "value": ".",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "overwrite",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "password",
+      "value": "test",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "preferredKeyExchangeAlgorithm",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "privateKeyFilename",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "remoteHost",
+      "value": "localhost",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "remotePort",
+      "value": 22,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    },
+    {
+      "id": null,
+      "name": "renameExtension",
+      "value": ".tmp",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "tempFileName",
+      "value": null,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    },
+    {
+      "id": null,
+      "name": "unzip",
+      "value": false,
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    },
+    {
+      "id": null,
+      "name": "username",
+      "value": "test",
+      "description": null,
+      "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    }
+  ]
+}
