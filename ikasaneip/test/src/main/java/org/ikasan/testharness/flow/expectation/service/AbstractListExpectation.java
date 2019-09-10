@@ -51,7 +51,7 @@ import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Abstract expectation based on a List of DefaultExpectations

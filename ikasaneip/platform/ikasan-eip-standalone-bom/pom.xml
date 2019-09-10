@@ -122,7 +122,13 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-security</artifactId>
+                <artifactId>ikasan-security-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-security-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

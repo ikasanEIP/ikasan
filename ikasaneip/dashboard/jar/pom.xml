@@ -228,7 +228,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security</artifactId>
+            <artifactId>ikasan-security-ldap</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.ikasan</groupId>

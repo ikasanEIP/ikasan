@@ -48,64 +48,20 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>ikasan-security-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-topology</artifactId>
+    <artifactId>ikasan-security-ldap</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Topology</name>
-    <description>The topology library for the Ikasan Enterprise Integration Platform</description>
-    <version>2.2.0-SNAPSHOT</version>
+    <name>Ikasan Security LDAP</name>
+    <description>The security library for the Ikasan Enterprise Integration Platform using ldap</description>
 
     <dependencies>
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-management</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-metadata</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-housekeeping</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-persistence</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security-db</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-transaction-arjuna</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
         </dependency>
 
         <dependency>
@@ -114,26 +70,75 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-odm</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>freemarker</artifactId>
+                    <groupId>org.freemarker</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-pool</artifactId>
+                    <groupId>commons-pool</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-ldif-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-ldif-batch</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+
+
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-
-        <!-- Test Dependencies -->
 
         <dependency>
             <groupId>commons-collections</groupId>
@@ -148,8 +153,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -159,6 +170,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- TODO:  Upgrade to 3.12.0 at some stage -->
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
@@ -168,7 +180,42 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-all</artifactId>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.directory.api</groupId>
+                    <artifactId>api-ldap-schema-data</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-server-integ</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-core-integ</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-server-unit</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
         </dependency>
 
         <dependency>
@@ -192,66 +239,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-wiretap</artifactId>
             <scope>test</scope>
         </dependency>
 
