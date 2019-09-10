@@ -100,7 +100,7 @@ import elemental.json.impl.JreJsonString;
  */
 @SuppressWarnings("serial")
 @Tag("div")
-@JavaScript("frontend://de/wathoserver/vaadin/visjs/vis-patched.min.js-old")
+@JavaScript("frontend://de/wathoserver/vaadin/visjs/vis-patched.min.js")
 @JavaScript("frontend://de/wathoserver/vaadin/visjs/networkDiagram-connector-flow.js")
 @StyleSheet("frontend://de/wathoserver/vaadin/visjs/vis-network.min.css")
 @StyleSheet("frontend://de/wathoserver/vaadin/visjs/networkDiagram.css")
