@@ -244,6 +244,6 @@ public class GenericJmsConsumerConfiguration
 
     public boolean isAutoContentConversion()
     {
-        return this.isAutoContentConversion();
+        return this.autoContentConversion;
     }
 }
