@@ -113,6 +113,8 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
     String componentName = "jmsConsumer";
 
+    private Long receiveTimeout;
+
     /**
      * Constructor
      */
@@ -171,6 +173,18 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      */
     public JmsConsumerBuilder setMessageProvider(MessageProvider messageProvider) {
         this.messageProvider = messageProvider;
+        return this;
+    }
+
+    /**
+     * Sets the receive timout use in the JMS implementation (querying and download of content).
+     * Null leads to the default JMS spring timeout.
+     *
+     * @param receiveTimeout
+     * @return
+     */
+    public JmsConsumerBuilder setReceiveTimeout(Long receiveTimeout) {
+        this.receiveTimeout = receiveTimeout;
         return this;
     }
 
@@ -459,6 +473,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setMessageListener(aopProxiedMessageListener);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setErrorHandler(jmsConsumer);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setExceptionListener(jmsConsumer);
+                if (receiveTimeout != null) { ((ArjunaIkasanMessageListenerContainer) messageProvider).setReceiveTimeout(receiveTimeout); }
             }
 
             this.jmsConsumer.setMessageProvider(messageProvider);
@@ -471,6 +486,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
             messageListenerContainer.setExceptionListener(jmsConsumer);
             messageListenerContainer.setTransactionManager(transactionManager);
             messageListenerContainer.setLocalTransactionManager(arjunaTransactionManager);
+            if (receiveTimeout != null) { messageListenerContainer.setReceiveTimeout(receiveTimeout); }
             this.jmsConsumer.setMessageProvider(messageListenerContainer);
         }
 
