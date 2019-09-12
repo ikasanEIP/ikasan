@@ -36,6 +36,7 @@ public class ReplayApplicationTest extends  AbstractRestMvcTest
     public static final String REPLAY_JSON = "/data/replayEvents.json";
 
     protected MockMvc mvc;
+
     @Autowired
     WebApplicationContext webApplicationContext;
 

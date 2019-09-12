@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource( {
     "classpath:providers-conf.xml",
     "classpath:configuration-service-conf.xml",
-    "systemevent-service-conf.xml"
+    "classpath:systemevent-service-conf.xml"
 } )
 public class PersistenceComponentFactory
 {

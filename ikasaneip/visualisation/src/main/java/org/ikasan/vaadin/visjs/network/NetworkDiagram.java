@@ -120,6 +120,8 @@ public class NetworkDiagram extends Component implements HasSize {
   private Registration edgeDataProviderListenerRegistration;
   private Registration nodeDataProviderListenerRegistration;
 
+  private int x, y, w, h;
+
   public NetworkDiagram(final Options options) {
     super();
     // Dont transfer empty options.

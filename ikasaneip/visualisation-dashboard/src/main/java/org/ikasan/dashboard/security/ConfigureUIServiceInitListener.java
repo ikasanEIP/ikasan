@@ -6,15 +6,22 @@ import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.ikasan.dashboard.ui.administration.view.PersistenceSetupView;
 import org.ikasan.dashboard.ui.security.view.LoginView;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 {
 
+    @Value("${dashboard.security.mode:production}")
+    private String dashboardSecurityMode;
+
+
 	@Override
-    public void serviceInit(ServiceInitEvent event) {
-		event.getSource().addUIInitListener(uiEvent -> {
+    public void serviceInit(ServiceInitEvent event)
+    {
+		event.getSource().addUIInitListener(uiEvent ->
+        {
 			final UI ui = uiEvent.getUI();
 			ui.addBeforeEnterListener(this::beforeEnter);
 		});
@@ -26,13 +33,15 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 	 * @param event
 	 *            before navigation event with event details
 	 */
-	private void beforeEnter(BeforeEnterEvent event) {
+	private void beforeEnter(BeforeEnterEvent event)
+    {
 	    if(PersistenceSetupView.class.equals(event.getNavigationTarget()))
         {
             return;
         }
+
 		if (!LoginView.class.equals(event.getNavigationTarget())
-		    && !SecurityUtils.isUserLoggedIn())
+		    && !SecurityUtils.isUserLoggedIn() && !dashboardSecurityMode.equals("test"))
 		{
 			event.rerouteTo(LoginView.class);
 		}

@@ -21,8 +21,10 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.home.view.HomeView;
+import org.ikasan.dashboard.ui.search.SearchView;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.ikasan.dashboard.ui.visualisation.view.MapView;
+import org.ikasan.dashboard.ui.visualisation.view.ModuleView;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
@@ -57,7 +59,9 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
             .withAppMenu(LeftAppMenuBuilder.get()
                 .add(new LeftNavigationItem("Home", VaadinIcon.HOME.create(), HomeView.class))
                 .add(new LeftNavigationItem("Map", VaadinIcon.GLOBE.create(), MapView.class))
+                .add(new LeftNavigationItem("Search", VaadinIcon.SEARCH.create(), SearchView.class))
                 .add(new LeftNavigationItem("Visualisation", VaadinIcon.CLUSTER.create(), GraphView.class))
+                .add(new LeftNavigationItem("Integration Modules", VaadinIcon.MODAL.create(), ModuleView.class))
                 .add(LeftSubMenuBuilder
                     .get("Administration", VaadinIcon.TOOLS.create())
                     .add(new LeftNavigationItem("Users", VaadinIcon.USERS.create(), UserManagementView.class))
