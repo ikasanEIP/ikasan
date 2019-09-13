@@ -70,40 +70,46 @@ public class IkasanRestAutoConfiguration
     private BatchInsert configurationMetadataBatchInsert;
 
     @Bean
-    public ReplayApplication replayApplication()
+    public ReplayController replayApplication()
     {
-        return new ReplayApplication(this.replayEventBatchInsert);
+        return new ReplayController(this.replayEventBatchInsert);
     }
 
     @Bean
-    public WiretapApplication wiretapApplication()
+    public WiretapController wiretapController()
     {
-        return new WiretapApplication(this.wiretapEventBatchInsert);
+        return new WiretapController(this.wiretapEventBatchInsert);
     }
 
     @Bean
-    public ErrorApplication errorApplication()
+    public ErrorController errorApplication()
     {
-        return new ErrorApplication(this.errorOccurrenceBatchInsert);
+        return new ErrorController(this.errorOccurrenceBatchInsert);
     }
 
     @Bean
-    public ExclusionApplication exclusionApplication()
+    public ExclusionController exclusionApplication()
     {
-        return new ExclusionApplication(this.exclusionEventBatchInsert);
+        return new ExclusionController(this.exclusionEventBatchInsert);
     }
 
     @Bean
-    public MetaDataApplication metaDataApplication()
+    public MetaDataController metaDataApplication()
     {
-        return new MetaDataApplication(this.moduleMetadataBatchInsert,
+        return new MetaDataController(this.moduleMetadataBatchInsert,
             this.configurationMetadataBatchInsert);
     }
 
     @Bean
-    public MetricsApplication metricsApplication()
+    public MetricsController metricsApplication()
     {
-        return new MetricsApplication();
+        return new MetricsController();
+    }
+
+    @Bean
+    public UserController userController(UserService userService)
+    {
+        return new UserController(userService);
     }
 
     @Bean
