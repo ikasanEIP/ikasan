@@ -19,8 +19,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
-import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -94,7 +92,7 @@ public class UserManagementDialog extends Dialog
     {
         FluentGridLayout layout = new FluentGridLayout()
             .withTemplateRows(new Flex(1), new Flex(1.5), new Flex(1.5))
-            .withTemplateColumns(new Flex(1.5), new Flex(1.5), new Flex(2))
+            .withTemplateColumns(new Flex(1.5), new Flex(1.5), new Flex(1.25))
             .withRowAndColumn(initUserForm(), 1,1, 1, 3)
             .withRowAndColumn(createLastAccessGrid(), 2,3, 3, 3)
             .withRowAndColumn(createRolesAccessGrid(), 2,1,  2, 3)
@@ -117,8 +115,8 @@ public class UserManagementDialog extends Dialog
         Grid<SystemEvent> dashboardActivityGrid = new Grid<>();
 
         dashboardActivityGrid.setClassName("my-grid");
-        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true).setFlexGrow(4);
-        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true).setFlexGrow(1);
+        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
+        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
 
         dashboardActivityGrid.setSizeFull();
 
@@ -149,18 +147,19 @@ public class UserManagementDialog extends Dialog
 
         roleGrid.setClassName("my-grid");
         roleGrid.addColumn(Role::getName).setKey("username").setHeader("Name").setSortable(true).setFlexGrow(1);
-        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true).setFlexGrow(6);
+        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true).setFlexGrow(4);
         roleGrid.addColumn(new ComponentRenderer<>(role->
         {
-            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            Button deleteButton = new Button(VaadinIcon.TRASH.create());
             deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
                 IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
                 principal.getRoles().remove(role);
                 securityService.savePrincipal(principal);
 
-                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS
-                    , "Role " + role.getName() + " removed.", user.getName());
+                String action = "Role " + role.getName() + " removed.";
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action);
 
                 this.updateRolesGrid();
                 this.updateSecurityChangesGrid();
@@ -169,7 +168,7 @@ public class UserManagementDialog extends Dialog
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
             layout.add(deleteButton);
-            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
             return layout;
         })).setFlexGrow(1);
 
@@ -180,8 +179,7 @@ public class UserManagementDialog extends Dialog
         Button addRoleButton = new Button("Add role");
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            IkasanPrincipal principal = securityService.findPrincipalByName(this.user.getUsername());
-            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger);
+            SelectRoleDialog dialog = new SelectRoleDialog(this.user, this.userService, this.securityService, this.systemEventService);
             dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
             {
                 if(dialogOpenedChangeEvent.isOpened() == false)
@@ -194,9 +192,18 @@ public class UserManagementDialog extends Dialog
             dialog.open();
         });
 
-        ComponentSecurityVisibility.applySecurity(addRoleButton, SecurityConstants.ALL_AUTHORITY
-            , SecurityConstants.USER_ADMINISTRATION_ADMIN
-            , SecurityConstants.USER_ADMINISTRATION_WRITE);
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+            authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
+            || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
+        {
+            addRoleButton.setVisible(true);
+        }
+        else
+        {
+            addRoleButton.setVisible(false);
+        }
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setWidthFull();
@@ -232,9 +239,9 @@ public class UserManagementDialog extends Dialog
         Grid<IkasanPrincipal> grid = new Grid<>();
 
         grid.setClassName("my-grid");
-        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader("LDAP Group").setSortable(true).setFlexGrow(4);
-        grid.addColumn(IkasanPrincipal::getType).setKey("type").setHeader("Type").setSortable(true).setFlexGrow(1);
-        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader("LDAP Group").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getType).setKey("type").setHeader("Type").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader("Description").setSortable(true);
 
         List<IkasanPrincipal> ldapGroups = new ArrayList<>();
 
@@ -260,8 +267,9 @@ public class UserManagementDialog extends Dialog
         H3 userSecurityChangesLabel = new H3("User Security Changes");
 
         securityChangesGrid.setClassName("my-grid");
-        securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true).setFlexGrow(4);
-        securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true).setFlexGrow(1);
+        securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
+        securityChangesGrid.addColumn(SystemEvent::getActor).setKey("actor").setHeader("Actor").setSortable(true);
+        securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
 
         securityChangesGrid.setSizeFull();
 
@@ -274,8 +282,8 @@ public class UserManagementDialog extends Dialog
 
     private void updateSecurityChangesGrid()
     {
-        ArrayList<String> subjects = new ArrayList<>();
-        subjects.add(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS);
+        ArrayList<String> subjects = new ArrayList<String>();
+        subjects.add(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS);
 
         List<SystemEvent> events = this.systemEventService.listSystemEvents(subjects, user.getUsername(), null, null);
 
@@ -289,22 +297,18 @@ public class UserManagementDialog extends Dialog
         FormLayout formLayout = new FormLayout();
 
         TextField firstnameTf = new TextField("First name");
-        firstnameTf.setReadOnly(true);
         firstnameTf.setValue(this.user.getFirstName());
         formLayout.add(firstnameTf);
 
         TextField surnameTf = new TextField("Surname");
-        surnameTf.setReadOnly(true);
         surnameTf.setValue(this.user.getSurname());
         formLayout.add(surnameTf);
 
         TextField departmentTf = new TextField("Department");
-        departmentTf.setReadOnly(true);
         departmentTf.setValue(this.user.getDepartment() == null ? "" : this.user.getDepartment());
         formLayout.add(departmentTf);
 
         TextField emailTf = new TextField("Email");
-        emailTf.setReadOnly(true);
         formLayout.add(emailTf);
         emailTf.setValue(this.user.getEmail()== null ? "" : this.user.getEmail());
         formLayout.setSizeFull();
