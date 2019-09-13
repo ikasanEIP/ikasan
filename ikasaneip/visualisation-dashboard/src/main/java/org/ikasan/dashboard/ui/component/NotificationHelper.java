@@ -25,45 +25,16 @@ public class NotificationHelper
 
     public static void showErrorNotification(String errorMessage)
     {
-        Icon errorIcon = new Icon(VaadinIcon.EXCLAMATION);
-        errorIcon.setColor("white");
-
-        Div content = new Div();
-        content.setWidth("500px");
-        content.getStyle().set("color", "red");
-        content.setText(errorMessage);
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        layout.setMargin(false);
-        layout.setSizeFull();
-        layout.add(content);
-
-        Notification notification = new Notification(layout);
+        Notification notification = new Notification(errorMessage);
         notification.setPosition(Notification.Position.MIDDLE);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(errorNotificationDuration);
         notification.setOpened(true);
     }
 
     public static void showUserNotification(String message)
     {
-        Icon errorIcon = new Icon(VaadinIcon.EXCLAMATION);
-        errorIcon.setColor("white");
-
-        Span content = new Span();
-        content.setText(message);
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        layout.setMargin(false);
-        layout.setSizeFull();
-        layout.add(content);
-        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, content);
-
-        Notification notification = new Notification(layout);
-        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        Notification notification = new Notification(message);
         notification.setPosition(Notification.Position.MIDDLE);
         notification.setDuration(errorNotificationDuration);
         notification.setOpened(true);
