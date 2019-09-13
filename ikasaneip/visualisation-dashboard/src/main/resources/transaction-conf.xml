@@ -55,8 +55,8 @@
                       <!--expression="execution(* org.ikasan.exclusion.dao.*.*(..))"/>-->
         <!--<aop:pointcut id="triggerDaoMethods"-->
                 <!--expression="execution(* org.ikasan.trigger.dao.*.*(..))"/>-->
-        <!--<aop:pointcut id="systemEventServiceMethods"-->
-                <!--expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>-->
+        <aop:pointcut id="systemEventServiceMethods"
+                expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
         <!--<aop:pointcut id="errorCategorisationServiceMethods"-->
                 <!--expression="execution(* org.ikasan.error.reporting.service.*.*(..))"/>-->
         <!--<aop:pointcut id="startupControlServiceMethods"-->
@@ -88,7 +88,7 @@
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="exclusionDaoMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>-->
-        <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="housekeepingServiceMethods"/>-->
