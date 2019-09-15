@@ -5,51 +5,45 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Set;
 
 public class SelectRoleDialog extends Dialog
 {
-    private User user;
-    private UserService userService;
+    private IkasanPrincipal principal;
     private SecurityService securityService;
-    private SystemEventService systemEventService;
+    private SystemEventLogger systemEventLogger;
 
-    public SelectRoleDialog(User user, UserService userService, SecurityService securityService, SystemEventService systemEventService)
+    public SelectRoleDialog(IkasanPrincipal principal, SecurityService securityService, SystemEventLogger systemEventLogger)
     {
-        this.user = user;
-        if(this.user == null)
+        this.principal = principal;
+        if(this.principal == null)
         {
-            throw new IllegalArgumentException("User cannot be null!");
-        }
-        this.userService = userService;
-        if(this.userService == null)
-        {
-            throw new IllegalArgumentException("User Service cannot be null!");
+            throw new IllegalArgumentException("principal cannot be null!");
         }
         this.securityService = securityService;
         if(this.securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be null!");
         }
-        this.systemEventService = systemEventService;
-        if(this.systemEventService == null)
+        this.systemEventLogger = systemEventLogger;
+        if(this.systemEventLogger == null)
         {
-            throw new IllegalArgumentException("systemEventService cannot be null!");
+            throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
 
         init();
@@ -59,17 +53,17 @@ public class SelectRoleDialog extends Dialog
     {
         List<Role> roles = this.securityService.getAllRoles();
 
-        IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
-
         Set<Role> principalRoles = principal.getRoles();
 
         roles.removeAll(principalRoles);
 
-        Grid<Role> roleGrid = new Grid<>();
+        RoleFilter roleFilter = new RoleFilter();
+
+        FilteringGrid<Role> roleGrid = new FilteringGrid<>(roleFilter);
         roleGrid.setSizeFull();
 
         roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("role").setHeader("Role").setSortable(true);
+        roleGrid.addColumn(Role::getName).setKey("role").setFlexGrow(5);
         roleGrid.addColumn(new ComponentRenderer<>(role ->
         {
             Button addRoleButton = new Button(VaadinIcon.PLUS.create());
@@ -80,17 +74,21 @@ public class SelectRoleDialog extends Dialog
 
                 this.securityService.savePrincipal(principal);
 
-                IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)SecurityContextHolder.getContext().getAuthentication();
+                String action = String.format("Role [%s] added to group [%s].", role.getName(), principal.getName());
 
-                String action = "Role " + role.getName() + " added by " + ikasanAuthentication.getName();
-
-                systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, principal.getName());
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, principal.getName());
 
                 this.close();
             });
 
-            return addRoleButton;
-        }));
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.add(addRoleButton);
+            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, addRoleButton);
+            return verticalLayout;
+        })).setFlexGrow(1);
+
+        HeaderRow hr = roleGrid.appendHeaderRow();
+        roleGrid.addGridFiltering(hr, roleFilter::setNameFilter, "role");
 
         roleGrid.setItems(roles);
 
@@ -99,8 +97,8 @@ public class SelectRoleDialog extends Dialog
         VerticalLayout layout = new VerticalLayout();
         layout.add(roleGrid);
 
-        layout.setWidth("300px");
-        layout.setHeight("200px");
+        layout.setWidth("500px");
+        layout.setHeight("300px");
 
         this.add(layout);
     }

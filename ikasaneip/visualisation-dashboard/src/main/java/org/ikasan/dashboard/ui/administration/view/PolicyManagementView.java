@@ -13,6 +13,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Policy;
@@ -84,10 +85,10 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
             HorizontalLayout horizontalLayout = new HorizontalLayout();
             horizontalLayout.setWidth("100%");
             horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-            Button trash = new Button(VaadinIcon.TRASH.create());
-            trash.getStyle().set("width", "40px");
-            trash.getStyle().set("height", "40px");
-            trash.getStyle().set("font-size", "16pt");
+            Button trash = new TableButton(VaadinIcon.TRASH.create());
+            trash.getStyle().set("width", "30px");
+            trash.getStyle().set("height", "30px");
+            trash.getStyle().set("font-size", "12pt");
 
             trash.addClickListener(buttonClickEvent -> this.securityService.deletePolicy(policy));
 
