@@ -70,7 +70,7 @@ import java.util.Hashtable;
  * @author Ikasan Development Team
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>,EventFactory>,
+    implements Consumer<EventListener<?>,EventFactory>, MessageListener,
         ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<Message,Throwable>,
         ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>, Converter<Message,Object>, MultiThreadedCapable
 {

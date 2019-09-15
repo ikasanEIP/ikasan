@@ -65,6 +65,8 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
 
     JmsConsumerBuilder setMessageProvider(MessageProvider messageProvider);
 
+    JmsConsumerBuilder setReceiveTimeout(Long receiveTimeout);
+
     JmsConsumerBuilder setTransactionManager(JtaTransactionManager transactionManager);
 
     JmsConsumerBuilder setManagedIdentifierService(ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService);
