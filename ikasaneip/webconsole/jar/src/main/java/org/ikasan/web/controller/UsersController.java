@@ -40,27 +40,22 @@
  */
 package org.ikasan.web.controller;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.model.*;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The controller for the various user views
@@ -81,6 +76,8 @@ public class UsersController {
      */
     private static final String AUTHORITY_PARAMETER_NAME = "authority";
 
+    protected static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
+
     /**
      * The user service to use
      */
@@ -91,15 +88,27 @@ public class UsersController {
      */
     private static Logger logger = LoggerFactory.getLogger(UsersController.class);
 
+
     /**
      * Constructor
      *
      * @param userService - The user service to use
+     * @param dashboardService - The dashboard user service to use
+     * @param environment - the spring environment object to get the properties
      */
-    @Autowired
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, UserService dashboardService, Environment environment)
+    {
         super();
-        this.userService = userService;
+        boolean isDashboardServiceEnabled = Boolean
+            .valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
+        if (isDashboardServiceEnabled)
+        {
+            this.userService = dashboardService;
+        }
+        else
+        {
+            this.userService = userService;
+        }
     }
 
     /**
