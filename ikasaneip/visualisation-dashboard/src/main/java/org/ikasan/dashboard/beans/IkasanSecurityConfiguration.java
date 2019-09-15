@@ -74,9 +74,9 @@ public class IkasanSecurityConfiguration
     }
 
     @Bean
-    SystemEventLogger systemEventLogger(SystemEventService systemEventService)
+    SystemEventLogger systemEventLogger()
     {
-        return new SystemEventLogger(systemEventService);
+        return new SystemEventLogger(systemEventService());
     }
 
     @Bean
@@ -108,6 +108,7 @@ public class IkasanSecurityConfiguration
             "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
             "/org/ikasan/security/model/PolicyLink.hbm.xml",
             "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
+            "/org/ikasan/security/model/UserPrincipal.hbm.xml",
             "/org/ikasan/systemevent/model/SystemEvent.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
