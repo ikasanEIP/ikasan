@@ -1,7 +1,12 @@
 package org.ikasan.dashboard.ui.administration.view;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,10 +16,17 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.ui.administration.component.GroupManagementDialog;
+import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
+import org.ikasan.dashboard.ui.administration.component.RoleManagementDialog;
+import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -31,6 +43,12 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
 
     @Resource
     private SecurityService securityService;
+
+    @Resource
+    private SystemEventService systemEventService;
+
+    @Resource
+    private SystemEventLogger systemEventLogger;
 
     private Grid<Role> roleGrid;
 
@@ -50,25 +68,37 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
 
         H2 roleManagementLabel = new H2("Role Management");
 
+        HorizontalLayout labelLayout = new HorizontalLayout();
+        labelLayout.setJustifyContentMode(JustifyContentMode.START);
+        labelLayout.setVerticalComponentAlignment(Alignment.CENTER, roleManagementLabel);
+        labelLayout.setWidth("100%");
+        labelLayout.add(roleManagementLabel);
+
         Button addRoleButton = new Button(VaadinIcon.PLUS.create());
+        addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+            NewRoleDialog newRoleDialog = new NewRoleDialog(this.securityService, this.systemEventLogger);
+            newRoleDialog.open();
 
-        HorizontalLayout leftLayout = new HorizontalLayout();
-        leftLayout.setJustifyContentMode(JustifyContentMode.START);
-        leftLayout.setWidth("100%");
-        leftLayout.add(roleManagementLabel);
-        leftLayout.setVerticalComponentAlignment(Alignment.CENTER, roleManagementLabel);
+            newRoleDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                   this.updateRoles();
+                }
+            });
+        });
 
-        HorizontalLayout rightLayout = new HorizontalLayout();
-        rightLayout.setJustifyContentMode(JustifyContentMode.END);
-        rightLayout.setWidth("100%");
-        rightLayout.add(addRoleButton);
-        rightLayout.setVerticalComponentAlignment(Alignment.CENTER, addRoleButton);
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
+        buttonLayout.setVerticalComponentAlignment(Alignment.CENTER, addRoleButton);
+        buttonLayout.setWidth("100%");
+        buttonLayout.add(addRoleButton);
 
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setWidth("100%");
+        HorizontalLayout wrapperLayout = new HorizontalLayout();
+        wrapperLayout.setWidth("100%");
 
-        layout.add(leftLayout, rightLayout);
-        add(layout);
+        wrapperLayout.add(labelLayout, buttonLayout);
+        add(wrapperLayout);
 
 
         this.roleGrid = new Grid<>();
@@ -82,13 +112,15 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
             HorizontalLayout horizontalLayout = new HorizontalLayout();
             horizontalLayout.setWidth("100%");
             horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-            Button trash = new Button(VaadinIcon.TRASH.create());
-            trash.getStyle().set("width", "40px");
-            trash.getStyle().set("height", "40px");
-            trash.getStyle().set("font-size", "16pt");
+            Button trash = new TableButton(VaadinIcon.TRASH.create());
             trash.addClickListener(buttonClickEvent ->
             {
                 securityService.deleteRole(role);
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_ROLE_DELETED
+                    , "New role " + role.getName() + " added.", null);
+
+                this.updateRoles();
             });
 
             horizontalLayout.add(trash);
@@ -96,14 +128,27 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
             return horizontalLayout;
         }));
 
+        this.roleGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Role>>) userItemDoubleClickEvent ->
+        {
+            RoleManagementDialog dialog = new RoleManagementDialog(userItemDoubleClickEvent.getItem()
+                , this.securityService, this.systemEventService, this.systemEventLogger);
+
+            dialog.open();
+        });
+
         add(this.roleGrid);
+    }
+
+    protected void updateRoles()
+    {
+        List<Role> roles = this.securityService.getAllRoles();
+
+        this.roleGrid.setItems(roles);
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
-        List<Role> roles = this.securityService.getAllRoles();
-
-        this.roleGrid.setItems(roles);
+        this.updateRoles();
     }
 }
