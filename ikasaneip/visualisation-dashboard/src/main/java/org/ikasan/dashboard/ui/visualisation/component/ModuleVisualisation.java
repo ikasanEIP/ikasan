@@ -177,7 +177,8 @@ public class ModuleVisualisation extends PagedTabs
         return networkDiagram;
     }
 
-    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener() {
+    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener()
+    {
         return (ComponentEventListener<ClickEvent<Button>>) selectedChangeEvent ->
     {
         if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
@@ -201,13 +202,20 @@ public class ModuleVisualisation extends PagedTabs
 }
 
 
-    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener() {
+    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener()
+    {
         return (ComponentEventListener<Tabs.SelectedChangeEvent>) selectedChangeEvent ->
         {
             if(flowMap.get(tabs.getSelectedTab()) != null)
             {
-                final NetworkDiagram networkDiagram = createNetworkDiagram(flowMap.get(tabs.getSelectedTab()));
-                networkDiagramMap.put(tabs.getSelectedTab(), networkDiagram);
+//                final NetworkDiagram networkDiagram = createNetworkDiagram(flowMap.get(tabs.getSelectedTab()));
+//                networkDiagramMap.put(tabs.getSelectedTab(), networkDiagram);
+
+                final NetworkDiagram networkDiagram = networkDiagramMap.get(tabs.getSelectedTab());
+
+                Flow flow = flowMap.get(tabs.getSelectedTab());
+                networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
+
 
                 tabsToSuppliers.put(tabs.getSelectedTab(), (SerializableSupplier<Component>) () -> networkDiagram);
             }

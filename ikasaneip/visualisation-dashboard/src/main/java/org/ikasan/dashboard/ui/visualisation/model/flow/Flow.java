@@ -9,6 +9,9 @@ public class Flow
     private String configurationId;
 	private Consumer consumer;
 
+	// flow border values
+	private int x = 0,y = 0,w = 0,h = 0;
+
     /**
      * Constructor
      *
@@ -37,4 +40,32 @@ public class Flow
 	{
 		return consumer;
 	}
+
+	public void setBorder(int x, int y, int w, int h)
+    {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+
+    public int getX()
+    {
+        return x;
+    }
+
+    public int getY()
+    {
+        return y;
+    }
+
+    public int getW()
+    {
+        return w;
+    }
+
+    public int getH()
+    {
+        return h;
+    }
 }

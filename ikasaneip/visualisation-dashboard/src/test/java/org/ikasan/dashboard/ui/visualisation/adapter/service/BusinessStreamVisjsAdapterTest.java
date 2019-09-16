@@ -1,14 +1,25 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.ikasan.dashboard.ui.visualisation.adapter.model.*;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class VisjsAdapterTest
+public class BusinessStreamVisjsAdapterTest
 {
+    @Before
+    public void setup()
+    {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
+    }
+
     @Test
     public void test() throws IOException
     {
@@ -56,13 +67,10 @@ public class VisjsAdapterTest
         graph.setFlows(flows);
 
         BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
-        System.out.println(adapter.toJson(graph));
 
         BusinessStream graph1 = adapter.toBusinessStreamGraph(adapter.toJson(graph));
 
-        System.out.println(graph1);
 
-        // todo some assertions
     }
 
     private Flow createFlow(String id, String name, Integer x, Integer y)

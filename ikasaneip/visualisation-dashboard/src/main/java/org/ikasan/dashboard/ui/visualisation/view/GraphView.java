@@ -33,6 +33,7 @@ import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
+import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
@@ -63,6 +64,7 @@ import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
@@ -95,7 +97,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Resource
     private ExclusionManagementService solrExclusionService;
 
-    @Resource
+    @Autowired
     private ModuleMetaDataService moduleMetadataService;
 
     @Resource
@@ -114,6 +116,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
     private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
+    private ModuleMetaDataDaoImpl moduleMetaDataDao = new ModuleMetaDataDaoImpl();
     private ModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
     private HorizontalLayout hl = new HorizontalLayout();
@@ -328,7 +331,10 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateModulesGrid()
     {
-        modulesGrid.setItems(moduleMetadataService.findAll());
+        // todo this is a temp hack to use the dao tp provide data.
+        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();
+        moduleMetaData.addAll(this.moduleMetaDataDao.getAllModule());
+        modulesGrid.setItems(moduleMetaData);
     }
 
     /**
@@ -350,6 +356,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             .map(flowMetaData -> flowMetaData.getFlowElements()).flatMap(List::stream)
             .map(flowElementMetaData -> flowElementMetaData.getConfigurationId())
             .filter(id -> id != null)
+            .distinct()
             .collect(Collectors.toList());
 
         List<ConfigurationMetaData> configurationMetaData
