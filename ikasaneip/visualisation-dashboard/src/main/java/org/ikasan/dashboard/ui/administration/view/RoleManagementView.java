@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -19,6 +20,8 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.GroupManagementDialog;
 import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
 import org.ikasan.dashboard.ui.administration.component.RoleManagementDialog;
+import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -26,6 +29,7 @@ import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.UserService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +54,10 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
     @Resource
     private SystemEventLogger systemEventLogger;
 
-    private Grid<Role> roleGrid;
+    @Resource
+    private UserService userService;
+
+    private FilteringGrid<Role> roleGrid;
 
     /**
      * Constructor
@@ -100,13 +107,14 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
         wrapperLayout.add(labelLayout, buttonLayout);
         add(wrapperLayout);
 
+        RoleFilter roleFilter = new RoleFilter();
 
-        this.roleGrid = new Grid<>();
+        this.roleGrid = new FilteringGrid<>(roleFilter);
         this.roleGrid.setSizeFull();
         this.roleGrid.setClassName("my-grid");
 
-        this.roleGrid.addColumn(Role::getName).setHeader("Name");
-        this.roleGrid.addColumn(Role::getDescription).setHeader("Description");
+        this.roleGrid.addColumn(Role::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(4);
+        this.roleGrid.addColumn(Role::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(7);
         this.roleGrid.addColumn(new ComponentRenderer<>(role ->
         {
             HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -126,12 +134,16 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
             horizontalLayout.add(trash);
 
             return horizontalLayout;
-        }));
+        })).setFlexGrow(1);
+
+        HeaderRow hr = roleGrid.appendHeaderRow();
+        roleGrid.addGridFiltering(hr, roleFilter::setNameFilter, "name");
+        roleGrid.addGridFiltering(hr, roleFilter::setDescriptionFilter, "description");
 
         this.roleGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Role>>) userItemDoubleClickEvent ->
         {
             RoleManagementDialog dialog = new RoleManagementDialog(userItemDoubleClickEvent.getItem()
-                , this.securityService, this.systemEventService, this.systemEventLogger);
+                , this.securityService, this.userService, this.systemEventService, this.systemEventLogger);
 
             dialog.open();
         });

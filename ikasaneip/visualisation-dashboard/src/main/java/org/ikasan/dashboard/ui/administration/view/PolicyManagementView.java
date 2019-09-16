@@ -2,6 +2,7 @@ package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -13,6 +14,8 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.security.model.IkasanPrincipalLite;
@@ -36,7 +39,7 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
     @Resource
     private SecurityService securityService;
 
-    private Grid<Policy> policyGrid;
+    private FilteringGrid<Policy> policyGrid;
 
     /**
      * Constructor
@@ -74,28 +77,31 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
         layout.add(leftLayout, rightLayout);
         add(layout);
 
-        this.policyGrid = new Grid<>();
+        PolicyFilter policyFilter = new PolicyFilter();
+
+        this.policyGrid = new FilteringGrid<>(policyFilter);
         this.policyGrid.setSizeFull();
         this.policyGrid.setClassName("my-grid");
 
-        this.policyGrid.addColumn(Policy::getName).setHeader("Name");
-        this.policyGrid.addColumn(Policy::getDescription).setHeader("Type");
+        this.policyGrid.addColumn(Policy::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(4);
+        this.policyGrid.addColumn(Policy::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(7);
         this.policyGrid.addColumn(new ComponentRenderer<>(policy ->
         {
             HorizontalLayout horizontalLayout = new HorizontalLayout();
             horizontalLayout.setWidth("100%");
             horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
             Button trash = new TableButton(VaadinIcon.TRASH.create());
-            trash.getStyle().set("width", "30px");
-            trash.getStyle().set("height", "30px");
-            trash.getStyle().set("font-size", "12pt");
 
             trash.addClickListener(buttonClickEvent -> this.securityService.deletePolicy(policy));
 
             horizontalLayout.add(trash);
 
             return horizontalLayout;
-        }));
+        })).setFlexGrow(1);
+
+        HeaderRow hr = this.policyGrid.appendHeaderRow();
+        this.policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
+        this.policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
 
         add(this.policyGrid);
     }

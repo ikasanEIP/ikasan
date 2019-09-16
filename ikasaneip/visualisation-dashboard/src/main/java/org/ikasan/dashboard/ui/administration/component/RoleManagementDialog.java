@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -18,16 +19,25 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
+import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
+import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
+import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class RoleManagementDialog extends Dialog
@@ -36,13 +46,22 @@ public class RoleManagementDialog extends Dialog
     private SecurityService securityService;
     private SystemEventService systemEventService;
     private SystemEventLogger systemEventLogger;
-    private Grid<Role> roleGrid = new Grid<>();
-    Grid<SystemEvent> securityChangesGrid = new Grid<>();
+    private UserService userService;
+
+    private FilteringGrid<Policy> policyGrid;
+    private FilteringGrid<IkasanPrincipalLite> groupGrid;
+    private FilteringGrid<UserLite> userGrid;
 
     /**
      * Constructor
+     *
+     * @param role
+     * @param securityService
+     * @param userService
+     * @param systemEventService
+     * @param systemEventLogger
      */
-    public RoleManagementDialog(Role role, SecurityService securityService,
+    public RoleManagementDialog(Role role, SecurityService securityService, UserService userService,
                                 SystemEventService systemEventService, SystemEventLogger systemEventLogger)
     {
         this.role = role;
@@ -54,6 +73,11 @@ public class RoleManagementDialog extends Dialog
         if(this.securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be null!");
+        }
+        this.userService = userService;
+        if(this.userService == null)
+        {
+            throw new IllegalArgumentException("userService cannot be null!");
         }
         this.systemEventService = systemEventService;
         if(this.systemEventService == null)
@@ -69,17 +93,20 @@ public class RoleManagementDialog extends Dialog
         init();
     }
 
+    /**
+     * Initialise this dialog
+     */
     private void init()
     {
         Accordion accordion = new Accordion();
-        accordion.add("Associated Policies",createIkasanPoliciesGrid());
-        accordion.add("Associated Users",createAssociatedUserGrid());
-        accordion.add("Associated Groups",createAssociatedGroupsGrid());
+        accordion.add("Associated Users", createAssociatedUserLayout());
+        accordion.add("Associated Groups", createAssociatedGroupsLayout());
+        accordion.add("Associated Policies", createIkasanPoliciesLayout());
 
         accordion.close();
 
         FluentGridLayout layout = new FluentGridLayout()
-            .withTemplateRows(new Flex(1), new Flex(2.8))
+            .withTemplateRows(new Flex(1), new Flex(2))
             .withTemplateColumns(new Flex(1))
             .withRowAndColumn(initRoleForm(), 1, 1, 1, 1)
             .withRowAndColumn(accordion, 2, 1, 2, 1)
@@ -93,27 +120,34 @@ public class RoleManagementDialog extends Dialog
 
     }
 
-    private VerticalLayout createIkasanPoliciesGrid()
+    /**
+     * Create the policy layout
+     *
+     * @return layout containing the relevant policy components.
+     */
+    private VerticalLayout createIkasanPoliciesLayout()
     {
-        H3 rolesLabel = new H3("Ikasan Policies");
+        H3 policyLabel = new H3("Ikasan Policies");
 
-        roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("username").setHeader("Name").setSortable(true).setFlexGrow(1);
-        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true).setFlexGrow(4);
-        roleGrid.addColumn(new ComponentRenderer<>(role->
+        PolicyFilter policyFilter = new PolicyFilter();
+
+        this.policyGrid = new FilteringGrid<>(policyFilter);
+        policyGrid.setClassName("my-userGrid");
+        policyGrid.addColumn(Policy::getName).setKey("name").setHeader("Name").setSortable(true).setFlexGrow(1);
+        policyGrid.addColumn(Policy::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        policyGrid.addColumn(new ComponentRenderer<>(policy->
         {
-            Button deleteButton = new Button(VaadinIcon.TRASH.create());
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
             deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
-//                IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
-//                principal.getRoles().remove(role);
-//                securityService.savePrincipal(principal);
-//
-//                String action = "Role " + role.getName() + " removed.";
-//
-//                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action);
-//
-//                this.updateRolesGrid();
+                role.getPolicies().remove(policy);
+                securityService.saveRole(role);
+
+                String action = String.format("Policy [%s] removed from role [%s]", policy.getName(), role.getName());
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
+
+                this.updatePoliciesGrid();
             });
 
             VerticalLayout layout = new VerticalLayout();
@@ -123,114 +157,304 @@ public class RoleManagementDialog extends Dialog
             return layout;
         })).setFlexGrow(1);
 
-        roleGrid.setSizeFull();
+        HeaderRow hr = this.policyGrid.appendHeaderRow();
+        this.policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
+        this.policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
 
-        this.updateRolesGrid();
+        policyGrid.setSizeFull();
 
-        Button addRoleButton = new Button("Add role");
-        addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        Button addPolicyButton = new Button("Add policy");
+        addPolicyButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-//            SelectRoleDialog dialog = new SelectRoleDialog(this.user, this.userService, this.securityService, this.systemEventService);
-//            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-//            {
-//                if(dialogOpenedChangeEvent.isOpened() == false)
-//                {
-//                    this.updateRolesGrid();
-//                }
-//            });
-//
-//            dialog.open();
+            SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger);
+            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updatePoliciesGrid();
+                }
+            });
+
+            dialog.open();
         });
 
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        this.updatePoliciesGrid();
 
-        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-            authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
-            || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
+        return this.layoutAssociatedEntityComponents(policyGrid, addPolicyButton, policyLabel);
+    }
+
+    /**
+     * Helper method to update the policies grid.
+     */
+    private void updatePoliciesGrid()
+    {
+        this.policyGrid.setItems(role.getPolicies());
+    }
+
+    /**
+     * Create the associated users layout
+     *
+     * @return layout containing the relevant assoicated users components.
+     */
+    private VerticalLayout createAssociatedUserLayout()
+    {
+        H3 associatedUsersLabel = new H3("Associated Users");
+
+        UserLiteFilter userLiteFilter = new UserLiteFilter();
+
+        this.userGrid = new FilteringGrid<>(userLiteFilter);
+
+        userGrid.setClassName("my-userGrid");
+        userGrid.addColumn(UserLite::getUsername).setKey("username").setHeader("Username").setSortable(true).setFlexGrow(2);
+        userGrid.addColumn(UserLite::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true).setFlexGrow(2);
+        userGrid.addColumn(UserLite::getSurname).setKey("surname").setHeader("Surname").setSortable(true).setFlexGrow(4);
+        userGrid.addColumn(UserLite::getEmail).setKey("email").setHeader("Email").setSortable(true).setFlexGrow(4);
+        userGrid.addColumn(UserLite::getDepartment).setKey("department").setHeader("Department").setSortable(true);
+        userGrid.addColumn(new ComponentRenderer<>(userLite->
         {
-            addRoleButton.setVisible(true);
-        }
-        else
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(userLite.getUsername());
+                ikasanPrincipal.getRoles().remove(this.role);
+
+                this.securityService.savePrincipal(ikasanPrincipal);
+
+                String action = String.format("User [%s] removed from role [%s]", userLite.getUsername(), role.getName());
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
+
+                this.updateAssociatedUsersGrid();
+            });
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
+            return layout;
+        })).setFlexGrow(1);
+
+        HeaderRow hr = userGrid.appendHeaderRow();
+        this.userGrid.addGridFiltering(hr, userLiteFilter::setUsernameFilter, "username");
+        this.userGrid.addGridFiltering(hr, userLiteFilter::setNameFilter, "firstname");
+        this.userGrid.addGridFiltering(hr, userLiteFilter::setLastNameFilter, "surname");
+        this.userGrid.addGridFiltering(hr, userLiteFilter::setEmailFilter, "email");
+        this.userGrid.addGridFiltering(hr, userLiteFilter::setDepartmentFilter, "department");
+
+        Button addUser = new Button("Add user");
+        addUser.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            addRoleButton.setVisible(false);
+            SelectUserForRoleDialog dialog = new SelectUserForRoleDialog(this.role, this.userService, this.getAssociatedUsers(),
+                this.securityService, this.systemEventLogger);
+            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updateAssociatedUsersGrid();
+                }
+            });
+
+            dialog.open();
+        });
+
+        userGrid.setSizeFull();
+
+        this.updateAssociatedUsersGrid();
+
+        return this.layoutAssociatedEntityComponents(userGrid, addUser, associatedUsersLabel);
+    }
+
+    /**
+     * Helper method to get the associated users.
+     *
+     * @return users associated with the role.
+     */
+    private List<UserLite> getAssociatedUsers()
+    {
+        List<IkasanPrincipal> principals = this.securityService.getAllPrincipalsWithRole(role.getName());
+
+        List<UserLite> users = this.userService.getUserLites();
+        HashMap<String, UserLite> userMap = new HashMap<String, UserLite>();
+
+        for(UserLite user: users)
+        {
+            userMap.put(user.getUsername(), user);
         }
+
+        users = new ArrayList<>();
+        for(IkasanPrincipal principal: principals)
+        {
+            if(principal.getType().equals("user"))
+            {
+                UserLite user = userMap.get(principal.getName());
+
+                if(user != null)
+                {
+                    users.add(user);
+                }
+            }
+        }
+
+        return users;
+    }
+
+    /**
+     * Helper method to update the associated users grid.
+     */
+    private void updateAssociatedUsersGrid()
+    {
+        this.userGrid.setItems(this.getAssociatedUsers());
+    }
+
+    /**
+     * Create the associated groups layout
+     *
+     * @return layout containing the relevant associated groups components.
+     */
+    private VerticalLayout createAssociatedGroupsLayout()
+    {
+        H3 associatedGroupsLabel = new H3("Associated Groups");
+
+        GroupFilter groupFilter = new GroupFilter();
+
+        groupGrid = new FilteringGrid<>(groupFilter);
+        groupGrid.setClassName("my-userGrid");
+        groupGrid.addColumn(IkasanPrincipalLite::getName).setKey("name").setHeader("Name").setSortable(true);
+        groupGrid.addColumn(IkasanPrincipalLite::getDescription).setKey("description").setHeader("Description").setSortable(true);
+        groupGrid.addColumn(new ComponentRenderer<>(principalLite->
+        {
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(principalLite.getName());
+                ikasanPrincipal.getRoles().remove(this.role);
+
+                this.securityService.savePrincipal(ikasanPrincipal);
+
+                String action = String.format("Group [%s] removed from role [%s]", principalLite.getName(), role.getName());
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
+
+                this.updateAssociatedGroupsGrid();
+            });
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
+            return layout;
+        })).setFlexGrow(1);
+
+        HeaderRow hr = groupGrid.appendHeaderRow();
+        this.groupGrid.addGridFiltering(hr, groupFilter::setNameFilter, "name");
+        this.groupGrid.addGridFiltering(hr, groupFilter::setDescriptionFilter, "description");
+
+        Button addGroup = new Button("Add group");
+        addGroup.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            SelectGroupForRoleDialog dialog = new SelectGroupForRoleDialog(this.role, getAssociatedGroups()
+                , this.securityService, this.systemEventLogger);
+            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updateAssociatedGroupsGrid();
+                }
+            });
+
+            dialog.open();
+        });
+
+        groupGrid.setSizeFull();
+
+        this.updateAssociatedGroupsGrid();
+
+        return this.layoutAssociatedEntityComponents(groupGrid, addGroup, associatedGroupsLabel);
+    }
+
+    /**
+     * Helper method to get the associated groups.
+     *
+     * @return list of associated groups
+     */
+    private List<IkasanPrincipalLite> getAssociatedGroups()
+    {
+        List<IkasanPrincipal> principals = this.securityService.getAllPrincipalsWithRole(role.getName());
+
+        List<IkasanPrincipalLite> principalLites = this.securityService.getAllPrincipalLites();
+        HashMap<String, IkasanPrincipalLite> principalMap = new HashMap<String, IkasanPrincipalLite>();
+
+        for(IkasanPrincipalLite principalLite: principalLites)
+        {
+            principalMap.put(principalLite.getName(), principalLite);
+        }
+
+        principalLites = new ArrayList<>();
+        for(IkasanPrincipal principal: principals)
+        {
+            if(principal.getType().equals("application"))
+            {
+                IkasanPrincipalLite ikasanPrincipalLite = principalMap.get(principal.getName());
+
+                if(ikasanPrincipalLite != null)
+                {
+                    principalLites.add(ikasanPrincipalLite);
+                }
+            }
+        }
+
+        return principalLites;
+    }
+
+    /**
+     * Helper method to update the associated groups grid.
+     */
+    private void updateAssociatedGroupsGrid()
+    {
+        this.groupGrid.setItems(this.getAssociatedGroups());
+    }
+
+    /**
+     * General layout for all associated entities.
+     *
+     * @param grid
+     * @param button
+     * @param label
+     *
+     * @return the general layout
+     */
+    private VerticalLayout layoutAssociatedEntityComponents(Grid grid, Button button, H3 label)
+    {
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.add(button);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttonLayout.setVerticalComponentAlignment(FlexComponent.Alignment.END, button);
+
+        ComponentSecurityVisibility.applySecurity(button, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.USER_ADMINISTRATION_ADMIN
+            , SecurityConstants.USER_ADMINISTRATION_WRITE);
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setWidthFull();
-        labelLayout.add(rolesLabel);
-
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(addRoleButton);
-        buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        buttonLayout.setVerticalComponentAlignment(FlexComponent.Alignment.END, addRoleButton);
+        labelLayout.add(label);
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.setWidthFull();
         headerLayout.add(labelLayout, buttonLayout);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(headerLayout, this.roleGrid);
+        layout.add(headerLayout, grid);
         layout.setWidth("100%");
         layout.setHeight("400px");
         return layout;
     }
 
-    private void updateRolesGrid()
-    {
-        IkasanPrincipal principal = securityService.findPrincipalByName(this.role.getName());
-        if(principal!=null)
-        {
-            roleGrid.setItems(principal.getRoles());
-        }
-    }
-
-    private VerticalLayout createAssociatedUserGrid()
-    {
-        H3 associatedUsersLabel = new H3("Associated Users");
-        Grid<User> grid = new Grid<>();
-
-        grid.setClassName("my-grid");
-        grid.addColumn(User::getName).setKey("username").setHeader("Username").setSortable(true);
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-
-//        grid.setItems(ldapGroups);
-
-        grid.setSizeFull();
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.add(associatedUsersLabel, grid);
-        layout.setWidth("100%");
-        layout.setHeight("400px");
-        return layout;
-    }
-
-    private VerticalLayout createAssociatedGroupsGrid()
-    {
-        H3 associatedUsersLabel = new H3("Associated Groups");
-        Grid<User> grid = new Grid<>();
-
-        grid.setClassName("my-grid");
-        grid.addColumn(User::getName).setKey("username").setHeader("Username").setSortable(true);
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-
-//        grid.setItems(ldapGroups);
-
-        grid.setSizeFull();
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.add(associatedUsersLabel, grid);
-        layout.setWidth("100%");
-        layout.setHeight("400px");
-        return layout;
-    }
-
+    /**
+     * Init the role form.
+     *
+     * @return
+     */
     private VerticalLayout initRoleForm()
     {
         H3 userProfileLabel = new H3("Role Profile - " + this.role.getName());
@@ -244,6 +468,7 @@ public class RoleManagementDialog extends Dialog
 
         TextArea description = new TextArea("Description");
         description.setValue(this.role.getDescription());
+        description.setHeight("130px");
         formLayout.add(description);
         formLayout.setColspan(description, 2);
 
