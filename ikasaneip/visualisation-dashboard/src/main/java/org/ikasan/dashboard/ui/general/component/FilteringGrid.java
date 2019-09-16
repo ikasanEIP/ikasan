@@ -69,7 +69,6 @@ public class FilteringGrid<T> extends Grid<T>
 
         dataProvider = DataProvider.fromFilteringCallbacks(query ->
         {
-
             Optional<Filter> filter = query.getFilter();
             Stream<T> stream;
 
