@@ -4,7 +4,6 @@ import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -20,55 +19,42 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
-import org.ikasan.dashboard.ui.administration.filter.UserFilter;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.IkasanPrincipalLite;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
 
-
-public class GroupManagementDialog extends Dialog
+public class PolicyManagementDialog extends Dialog
 {
-    private IkasanPrincipalLite group;
+    private Policy policy;
     private SecurityService securityService;
-    private SystemEventService systemEventService;
     private SystemEventLogger systemEventLogger;
     private FilteringGrid<Role> roleGrid;
 
     /**
      * Constructor
      */
-    public GroupManagementDialog(IkasanPrincipalLite group, SecurityService securityService,
-                                 SystemEventService systemEventService, SystemEventLogger systemEventLogger)
+    public PolicyManagementDialog(Policy policy, SecurityService securityService,
+                                  SystemEventLogger systemEventLogger)
     {
-        this.group = group;
-        if(this.group == null)
+        this.policy = policy;
+        if(this.policy == null)
         {
-            throw new IllegalArgumentException("Group cannot be null!");
+            throw new IllegalArgumentException("policy cannot be null!");
         }
         this.securityService = securityService;
         if(this.securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be null!");
-        }
-        this.systemEventService = systemEventService;
-        if(this.systemEventService == null)
-        {
-            throw new IllegalArgumentException("systemEventService cannot be null!");
         }
         this.systemEventLogger = systemEventLogger;
         if(this.systemEventLogger == null)
@@ -81,17 +67,11 @@ public class GroupManagementDialog extends Dialog
 
     private void init()
     {
-        Accordion accordion = new Accordion();
-        accordion.add("Associated Roles", createRolesAccessGrid());
-        accordion.add("Associated Users", createAssociatedUserGrid());
-
-        accordion.close();
-
         FluentGridLayout layout = new FluentGridLayout()
             .withTemplateRows(new Flex(1.5), new Flex(2.5))
             .withTemplateColumns(new Flex(1))
-            .withRowAndColumn(initGroupForm(), 1, 1, 1, 1)
-            .withRowAndColumn(accordion, 2, 1, 2, 1)
+            .withRowAndColumn(initPolicyForm(), 1, 1, 1, 1)
+            .withRowAndColumn(createRolesAccessGrid(), 2, 1, 2, 1)
             .withPadding(true)
             .withSpacing(true)
             .withOverflow(FluentGridLayout.Overflow.AUTO);
@@ -117,11 +97,10 @@ public class GroupManagementDialog extends Dialog
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
             deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
-                IkasanPrincipal principal = securityService.findPrincipalByName(group.getName());
-                principal.getRoles().remove(role);
-                securityService.savePrincipal(principal);
+                policy.getRoles().remove(role);
+                securityService.savePolicy(policy);
 
-                String action = String.format("Role [%s] removed from group [%s].", role.getName(), principal.getName());
+                String action = String.format("Role [%s] removed from policy [%s].", role.getName(), policy.getName());
 
                 this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
@@ -143,12 +122,10 @@ public class GroupManagementDialog extends Dialog
 
         this.updateRolesGrid();
 
-        Button addRoleButton = new Button("Add role");
+        Button addRoleButton = new Button("Associate policy with role");
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            IkasanPrincipal principal = securityService.findPrincipalByName(group.getName());
-
-            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger);
+            SelectRoleForPolicyDialog dialog = new SelectRoleForPolicyDialog(policy, this.securityService, this.systemEventLogger);
             dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
             {
                 if(dialogOpenedChangeEvent.isOpened() == false)
@@ -180,77 +157,31 @@ public class GroupManagementDialog extends Dialog
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, this.roleGrid);
-        layout.setWidth("100%");
-        layout.setHeight("400px");
         return layout;
     }
 
     private void updateRolesGrid()
     {
-        IkasanPrincipal principal = securityService.findPrincipalByName(this.group.getName());
-        if(principal!=null)
-        {
-            roleGrid.setItems(principal.getRoles());
-        }
+        roleGrid.setItems(this.policy.getRoles());
     }
 
-    private VerticalLayout createAssociatedUserGrid()
+
+    private VerticalLayout initPolicyForm()
     {
-        H3 associatedUsersLabel = new H3("Associated Users");
-
-        UserFilter userFilter = new UserFilter();
-
-        FilteringGrid<User> grid = new FilteringGrid<>(userFilter);
-
-        grid.setClassName("my-grid");
-        grid.addColumn(User::getName).setKey("username").setHeader("Username").setSortable(true);
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-
-        HeaderRow hr = grid.appendHeaderRow();
-        grid.addGridFiltering(hr, userFilter::setUsernameFilter, "username");
-        grid.addGridFiltering(hr, userFilter::setNameFilter, "firstname");
-        grid.addGridFiltering(hr, userFilter::setLastNameFilter, "surname");
-        grid.addGridFiltering(hr, userFilter::setEmailFilter, "email");
-        grid.addGridFiltering(hr, userFilter::setDepartmentFilter, "department");
-
-        grid.setSizeFull();
-
-        List<User> userList = this.securityService.getUsersAssociatedWithPrincipal(group.getId());
-
-        grid.setItems(userList);
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.add(associatedUsersLabel, grid);
-        layout.setWidth("100%");
-        layout.setHeight("400px");
-        return layout;
-    }
-
-    private VerticalLayout initGroupForm()
-    {
-        H3 userProfileLabel = new H3("Group Profile - " + this.group.getName());
+        H3 userProfileLabel = new H3("Policy Profile - " + this.policy.getName());
 
         FormLayout formLayout = new FormLayout();
 
-        TextField groupName = new TextField("Group name");
-        groupName.setReadOnly(true);
-        groupName.setValue(this.group.getName());
-        formLayout.add(groupName);
-        formLayout.setColspan(groupName, 1);
-
-        TextField groupType = new TextField("Group type");
-        groupType.setReadOnly(true);
-        groupType.setValue(this.group.getType());
-        formLayout.add(groupType);
-        formLayout.setColspan(groupType, 1);
+        TextField policyName = new TextField("Name");
+        policyName.setValue(this.policy.getName());
+        policyName.setReadOnly(true);
+        formLayout.add(policyName);
+        formLayout.setColspan(policyName, 1);
 
         TextArea description = new TextArea("Description");
-        description.setReadOnly(true);
+        description.setValue(this.policy.getDescription());
         description.setHeight("150px");
-        description.setValue(this.group.getDescription());
+        description.setReadOnly(true);
         formLayout.add(description);
         formLayout.setColspan(description, 2);
 

@@ -1,8 +1,10 @@
 package org.ikasan.dashboard.ui.administration.view;
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -14,10 +16,13 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import org.ikasan.dashboard.ui.administration.component.PolicyManagementDialog;
+import org.ikasan.dashboard.ui.administration.component.RoleManagementDialog;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -39,6 +44,9 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
     @Resource
     private SecurityService securityService;
 
+    @Resource
+    private SystemEventLogger systemEventLogger;
+
     private FilteringGrid<Policy> policyGrid;
 
     /**
@@ -57,24 +65,16 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
 
         H2 policyManagementLabel = new H2("Policy Management");
 
-        Button addPolicyButton = new Button(VaadinIcon.PLUS.create());
-
         HorizontalLayout leftLayout = new HorizontalLayout();
         leftLayout.setJustifyContentMode(JustifyContentMode.START);
         leftLayout.setWidth("100%");
         leftLayout.add(policyManagementLabel);
         leftLayout.setVerticalComponentAlignment(Alignment.CENTER, policyManagementLabel);
 
-        HorizontalLayout rightLayout = new HorizontalLayout();
-        rightLayout.setJustifyContentMode(JustifyContentMode.END);
-        rightLayout.setWidth("100%");
-        rightLayout.add(addPolicyButton);
-        rightLayout.setVerticalComponentAlignment(Alignment.CENTER, addPolicyButton);
-
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidth("100%");
 
-        layout.add(leftLayout, rightLayout);
+        layout.add(leftLayout);
         add(layout);
 
         PolicyFilter policyFilter = new PolicyFilter();
@@ -85,23 +85,18 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
 
         this.policyGrid.addColumn(Policy::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(4);
         this.policyGrid.addColumn(Policy::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(7);
-        this.policyGrid.addColumn(new ComponentRenderer<>(policy ->
-        {
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-            horizontalLayout.setWidth("100%");
-            horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-            Button trash = new TableButton(VaadinIcon.TRASH.create());
-
-            trash.addClickListener(buttonClickEvent -> this.securityService.deletePolicy(policy));
-
-            horizontalLayout.add(trash);
-
-            return horizontalLayout;
-        })).setFlexGrow(1);
 
         HeaderRow hr = this.policyGrid.appendHeaderRow();
         this.policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
         this.policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
+
+        this.policyGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Policy>>) userItemDoubleClickEvent ->
+        {
+            PolicyManagementDialog dialog = new PolicyManagementDialog(userItemDoubleClickEvent.getItem()
+                , this.securityService, this.systemEventLogger);
+
+            dialog.open();
+        });
 
         add(this.policyGrid);
     }

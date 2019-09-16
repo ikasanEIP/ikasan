@@ -19,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -193,18 +194,9 @@ public class UserManagementDialog extends Dialog
             dialog.open();
         });
 
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-            authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
-            || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
-        {
-            addRoleButton.setVisible(true);
-        }
-        else
-        {
-            addRoleButton.setVisible(false);
-        }
+        ComponentSecurityVisibility.applySecurity(addRoleButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.USER_ADMINISTRATION_ADMIN
+            , SecurityConstants.USER_ADMINISTRATION_WRITE);
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setWidthFull();
@@ -297,18 +289,22 @@ public class UserManagementDialog extends Dialog
         FormLayout formLayout = new FormLayout();
 
         TextField firstnameTf = new TextField("First name");
+        firstnameTf.setReadOnly(true);
         firstnameTf.setValue(this.user.getFirstName());
         formLayout.add(firstnameTf);
 
         TextField surnameTf = new TextField("Surname");
+        surnameTf.setReadOnly(true);
         surnameTf.setValue(this.user.getSurname());
         formLayout.add(surnameTf);
 
         TextField departmentTf = new TextField("Department");
+        departmentTf.setReadOnly(true);
         departmentTf.setValue(this.user.getDepartment() == null ? "" : this.user.getDepartment());
         formLayout.add(departmentTf);
 
         TextField emailTf = new TextField("Email");
+        emailTf.setReadOnly(true);
         formLayout.add(emailTf);
         emailTf.setValue(this.user.getEmail()== null ? "" : this.user.getEmail());
         formLayout.setSizeFull();

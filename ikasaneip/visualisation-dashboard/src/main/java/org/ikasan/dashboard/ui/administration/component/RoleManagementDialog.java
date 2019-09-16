@@ -462,11 +462,13 @@ public class RoleManagementDialog extends Dialog
         FormLayout formLayout = new FormLayout();
 
         TextField groupName = new TextField("Group name");
+        groupName.setReadOnly(true);
         groupName.setValue(this.role.getName());
         formLayout.add(groupName);
         formLayout.setColspan(groupName, 2);
 
         TextArea description = new TextArea("Description");
+        description.setReadOnly(true);
         description.setValue(this.role.getDescription());
         description.setHeight("130px");
         formLayout.add(description);

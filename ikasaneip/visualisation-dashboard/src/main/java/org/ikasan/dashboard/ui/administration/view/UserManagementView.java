@@ -7,12 +7,14 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
@@ -82,7 +84,11 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         this.userGrid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
         this.userGrid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
         this.userGrid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
-        this.userGrid.addColumn(User::getPreviousAccessTimestamp).setKey("lastaccess").setHeader("Last Access").setSortable(true);
+        this.userGrid.addColumn(TemplateRenderer.<User>of(
+            "<div>[[item.date]]</div>")
+            .withProperty("date",
+                user -> DateFormatter.getFormattedDate(user.getPreviousAccessTimestamp())))
+            .setKey("lastaccess").setHeader("Last Access").setSortable(true);
 
         HeaderRow hr = userGrid.appendHeaderRow();
         this.userGrid.addGridFiltering(hr, userFilter::setUsernameFilter, "username");
