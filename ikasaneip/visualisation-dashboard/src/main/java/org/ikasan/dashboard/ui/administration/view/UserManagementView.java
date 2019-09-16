@@ -81,7 +81,6 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         userFilter = new UserFilter();
 
         this.userGrid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
-
         this.userGrid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
         this.userGrid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
         this.userGrid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
