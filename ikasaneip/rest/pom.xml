@@ -57,6 +57,7 @@
 
     <modules>
         <module>rest-module</module>
+        <module>rest-module-client</module>
         <module>rest-dashboard</module>
         <module>rest-dashboard-client</module>
     </modules>
