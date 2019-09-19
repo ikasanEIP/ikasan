@@ -1,9 +1,6 @@
 package org.ikasan.rest.module;
 
-import org.ikasan.rest.module.dto.ChangeFlowStateDto;
-import org.ikasan.rest.module.dto.ErrorDto;
-import org.ikasan.rest.module.dto.FlowDto;
-import org.ikasan.rest.module.dto.ModuleDto;
+import org.ikasan.rest.module.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.Flow;
@@ -104,6 +101,7 @@ public class ModuleControlApplication
     }
 
 
+    @Deprecated
     @RequestMapping(method = RequestMethod.PUT,
         value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -123,6 +121,39 @@ public class ModuleControlApplication
                 throw new IllegalArgumentException("Comment must be provided when disabling Flow startup");
             }
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
+        }
+    }
+
+    @Deprecated
+    @RequestMapping(method = RequestMethod.PUT,
+        value = "/startupMode")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity changeFlowStartupMode(
+        @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
+    {
+        String user = getUser();
+
+        String startupType = changeFlowStartupModeDto.getStartupType();
+        String moduleName = changeFlowStartupModeDto.getModuleName();
+        String flowName = changeFlowStartupModeDto.getFlowName();
+        String startupComment = changeFlowStartupModeDto.getComment();
+
+        if ("manual".equalsIgnoreCase(startupType)
+            || "automatic".equalsIgnoreCase(startupType)
+            || "disabled".equalsIgnoreCase(startupType))
+        {
+            //crude check to ensure comment is supplied when disabling
+            if (startupType.equalsIgnoreCase("disabled") && (startupComment == null || ""
+                .equals(startupComment.trim())))
+            {
+                return new ResponseEntity(new ErrorDto("Comment must be provided when disabling Flow startup"), HttpStatus.BAD_REQUEST);
+            }
+            moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType.toUpperCase()), startupComment, user);
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(new ErrorDto("Invalid startupType["+startupType+"]."), HttpStatus.BAD_REQUEST);
+
         }
     }
 

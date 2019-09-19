@@ -1,4 +1,4 @@
-package org.ikasan.dashboard;
+package org.ikasan.rest.client;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -111,7 +111,7 @@ public class ModuleControlRestServiceImplTest
     public void updateFlowStatus()
     {
 
-        stubFor(put(urlEqualTo("/rest/moduleControl"))
+        stubFor(put(urlEqualTo(ModuleControlRestServiceImpl.CHANGE_FLOW_STATE_URL))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withRequestBody(containing("{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"action\":\"start\"}"))
@@ -127,7 +127,7 @@ public class ModuleControlRestServiceImplTest
     public void updateFlowStatus_returns400()
     {
 
-        stubFor(put(urlEqualTo("/rest/moduleControl"))
+        stubFor(put(urlEqualTo(ModuleControlRestServiceImpl.CHANGE_FLOW_STATE_URL))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withRequestBody(containing("{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"action\":\"T\"}"))
@@ -137,5 +137,21 @@ public class ModuleControlRestServiceImplTest
             ));
         boolean result = uut.changeFlowState(contexBaseUrl,"test Module Name","flow Test","T");
         assertEquals(false, result);
+    }
+
+    @Test
+    public void changeFlowStartup()
+    {
+
+        stubFor(put(urlEqualTo(ModuleControlRestServiceImpl.CHANGE_FLOW_STARTUP_MODE_URL))
+                    .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+                    .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+                    .withRequestBody(containing("{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"startupType\":\"automatic\",\"comment\":null}"))
+                    .willReturn(aResponse()
+                                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                    .withStatus(200)
+                               ));
+        boolean result = uut.changeFlowStartupType(contexBaseUrl,"test Module Name","flow Test","automatic",null);
+        assertEquals(true, result);
     }
 }

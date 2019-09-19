@@ -1,6 +1,7 @@
 package org.ikasan.rest.client;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.client.dto.ChangeFlowStateDto;
 import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.rest.client.dto.ModuleDto;
@@ -21,6 +22,7 @@ public class ModuleControlRestServiceImpl
     Logger logger = LoggerFactory.getLogger(ModuleControlRestServiceImpl.class);
 
     protected final static String CHANGE_FLOW_STATE_URL= "/rest/moduleControl";
+    protected final static String CHANGE_FLOW_STARTUP_MODE_URL= "/rest/moduleControl/startupMode";
     protected final static String FLOWS_STATUS_URL= "/rest/moduleControl/{moduleName}";
     protected final static String SINGLE_FLOW_STATUS_URL= "/rest/moduleControl/{moduleName}/{flowName}";
 
@@ -80,9 +82,9 @@ public class ModuleControlRestServiceImpl
 
     public boolean changeFlowState(String contextUrl, String moduleName, String flowName, String action)
     {
-        ChangeFlowStateDto changeFlowStateDto = new ChangeFlowStateDto(moduleName,flowName,action);
+        ChangeFlowStateDto dto = new ChangeFlowStateDto(moduleName,flowName,action);
         HttpHeaders headers = createHttpHeaders();
-        HttpEntity entity = new HttpEntity(changeFlowStateDto,headers);
+        HttpEntity entity = new HttpEntity(dto,headers);
         String url = contextUrl+CHANGE_FLOW_STATE_URL;
         try
         {
@@ -100,6 +102,27 @@ public class ModuleControlRestServiceImpl
         }
     }
 
+    public boolean changeFlowStartupType(String contextUrl, String moduleName, String flowName, String startupType,
+                                         String comment)
+    {
+        ChangeFlowStartupModeDto dto = new ChangeFlowStartupModeDto(moduleName, flowName, startupType, comment);
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(dto, headers);
+        String url = contextUrl + CHANGE_FLOW_STARTUP_MODE_URL;
+        try
+        {
+            restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+            return true;
+        }
+        catch (RestClientException e)
+        {
+            logger.warn(
+                "Issue updating flow startup type [" + url + "] with module [" + moduleName + "] " + "and flows ["
+                    + flowName + "] and startup [" + startupType + "]" + " with response [{" + e.getLocalizedMessage()
+                    + "}]");
+            return false;
+        }
+    }
 
 
     private HttpHeaders createHttpHeaders()

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.module.SimpleModule;
+import org.ikasan.rest.module.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.module.dto.ChangeFlowStateDto;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.module.StartupType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -165,10 +167,64 @@ public class ModuleControlApplicationTest
 
     }
 
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void changeFlowStartupMode() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
+            .content(createChangeFlowStartupModeDto("automatic", "comment" ))
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleService).setStartupType(Mockito.eq("testModule"),Mockito.eq("testFlow"),Mockito.eq(
+            StartupType.AUTOMATIC),Mockito.eq("comment"),Mockito.anyString());
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(200, result.getResponse().getStatus());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void changeFlowStartupMode_withInvalidStartupType() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
+            .content(createChangeFlowStartupModeDto("invalid", "comment" ))
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(400, result.getResponse().getStatus());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void changeFlowStartupMode_toDisabled_withoutComment() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
+            .content(createChangeFlowStartupModeDto("disabled", "" ))
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(400, result.getResponse().getStatus());
+
+    }
+
+
     private String createChangeStateDto(String action) throws JsonProcessingException
     {
-
         ChangeFlowStateDto changeFlowStateDto = new ChangeFlowStateDto("testModule","testFlow",action);
         return mapper.writeValueAsString(changeFlowStateDto);
+    }
+
+    private String createChangeFlowStartupModeDto(String action,String comment) throws JsonProcessingException
+    {
+        ChangeFlowStartupModeDto dto = new ChangeFlowStartupModeDto("testModule","testFlow",action, comment);
+        return mapper.writeValueAsString(dto);
     }
 }
