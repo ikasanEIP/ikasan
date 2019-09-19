@@ -9,10 +9,10 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>h2-server-stress</artifactId>
+    <artifactId>h2-server-transaction-fail</artifactId>
     <version>2.2.0-SNAPSHOT</version>
-    <name>H2 Server Stress Integration Module</name>
-    <description>Stress test the H2 server persistence with soak tests.</description>
+    <name>H2 Server Transaction Fail Integration Module</name>
+    <description>Stress test the H2 server persistence with transaction failure.</description>
 
     <dependencies>
 
@@ -54,13 +54,18 @@
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-            <version>5.15.8</version>
+            <artifactId>activemq-broker</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
+            <artifactId>activemq-kahadb-store</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.4</version>
         </dependency>
 
     </dependencies>
@@ -131,7 +136,49 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-         </plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.10</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}"/org/aspectj/aspectjweaver/1.9.4/aspectjweaver-1.9.4.jar
+                    </argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <forkMode>always</forkMode>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.11</version>
+                <configuration>
+                    <complianceLevel>1.8</complianceLevel>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <verbose>true</verbose>
+                    <Xlint>ignore</Xlint>
+                    <encoding>UTF-8</encoding>
+                    <weaveDependencies>
+                        <weaveDependency>
+                            <groupId>org.ikasan</groupId>
+                            <artifactId>ikasan-eip-standalone</artifactId>
+                        </weaveDependency>
+                    </weaveDependencies>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- use this goal to weave all your main classes -->
+                            <goal>compile</goal>
+                            <!-- use this goal to weave all your test classes -->
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <properties>
