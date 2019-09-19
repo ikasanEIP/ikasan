@@ -62,10 +62,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import javax.print.attribute.URISyntax;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -78,7 +76,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -112,7 +110,7 @@ public class ApplicationTest
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
-        server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+        server =  Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
     }
 
     @Before
@@ -162,12 +160,30 @@ public class ApplicationTest
         {
             flow1TestRule.consumer("Event Generating Consumer")
                     .producer("JMS Producer");
-            flow2TestRule.consumer("Event Generating Consumer")
-                    .broker("Configuration Updater")
-                    .producer("Dev Null Producer");
             flow3TestRule.consumer("JMS Consumer")
                     .producer("Dev Null Producer");
             flow4TestRule.consumer("JMS Consumer")
+                    .producer("Dev Null Producer");
+        }
+
+        // expectations on flow that is throwing exceptions
+        for(int x = 0; x < ModuleConfig.REPEAT; x++)
+        {
+            // first 9 invocations of cycle is all components
+            for (int i = 0; i < ModuleConfig.EVENTS_PER_CYCLE-1; i++)
+            {
+                flow2TestRule.consumer("Event Generating Consumer")
+                        .broker("Configuration Updater")
+                        .producer("Dev Null Producer");
+            }
+
+            // 10th invocation has exception on broker
+            flow2TestRule.consumer("Event Generating Consumer")
+                    .broker("Configuration Updater");
+
+            // then we have retry of the exception rollback
+            flow2TestRule.consumer("Event Generating Consumer")
+                    .broker("Configuration Updater")
                     .producer("Dev Null Producer");
         }
 
@@ -219,11 +235,11 @@ public class ApplicationTest
         int waitCounter = 0;
         while( waitCounter < 10 &&
                 getWiretaps(
-                "Transaction Test Module",
-                "jmsToDevNullFlow1",
-                TriggerRelationship.AFTER,
-                "JMS Consumer",
-                ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
+                        "Transaction Test Module",
+                        "jmsToDevNullFlow1",
+                        TriggerRelationship.AFTER,
+                        "JMS Consumer",
+                        ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
         {
             waitCounter=waitCounter+2;
             logger.info("Waiting for jmsToDevNullFlow1 flow to complete (circa 10 seconds). Waiting for " + waitCounter + " seconds");
