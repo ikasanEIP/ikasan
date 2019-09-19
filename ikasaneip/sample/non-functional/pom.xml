@@ -53,6 +53,8 @@
 
     <modules>
         <module>h2-server-stress</module>
+        <module>h2-server-component-fail</module>
+        <module>h2-server-transaction-fail</module>
     </modules>
 
 </project>

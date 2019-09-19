@@ -62,10 +62,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import javax.print.attribute.URISyntax;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -79,7 +76,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ApplicationTest
+public class ApplicationTransactionFailTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -106,13 +103,13 @@ public class ApplicationTest
     SimpleTimer stopWatch;
 
     // AMQ Broker
-    BrokerService broker;
+    static BrokerService broker;
 
     @BeforeClass
-    public static void setup() throws SQLException
+    public static void setup() throws Exception
     {
         // TODO can we use a random port and tie back to the application.properties url?
-        server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+        server =  Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
     }
 
     @Before
@@ -148,7 +145,7 @@ public class ApplicationTest
     public void test_happy_flows_with_concurrent_db_updates() throws Exception
     {
         // event generator publishing to JMS topic
-        flow1TestRule.withFlow(moduleUnderTest.getFlow("eventGeneratorToJMSFlow"));
+        flow1TestRule.withFlow(moduleUnderTest.getFlow("eventGeneratorToJMSFlow")).withErrorEndState();
 
         // jms consumer flow continually updating configuration in DB for dynamic configuration
         flow2TestRule.withFlow(moduleUnderTest.getFlow("configurationUpdaterFlow"));
@@ -165,6 +162,11 @@ public class ApplicationTest
             flow2TestRule.consumer("Event Generating Consumer")
                     .broker("Configuration Updater")
                     .producer("Dev Null Producer");
+        }
+
+        // Setup component expectations
+        for (int i = 0; i < ModuleConfig.FAILON_EVENT_COUNT-1; i++)
+        {
             flow3TestRule.consumer("JMS Consumer")
                     .producer("Dev Null Producer");
             flow4TestRule.consumer("JMS Consumer")
@@ -182,70 +184,13 @@ public class ApplicationTest
         flow2TestRule.startFlow();
         flow1TestRule.startFlow();
 
-        // wait for event generating flows to complete
-        stopWatch.start();
-        logger.info("Waiting for 'configurationUpdaterFlow' flow to complete (circa 70 seconds).");
-        while (flow2TestRule.getFlowState().equals(Flow.RUNNING))
-        {
-            // log if it takes longer than 70 seconds
-            if(stopWatch.elapsedInSeconds() > 70)
-            {
-                logger.info("Still waiting for 'configurationUpdaterFlow' flow to complete. Waiting for " + stopWatch.elapsedInSeconds() + " seconds");
-            }
-            Thread.sleep(2000);
-        }
-
-        // wait for event generating flows to complete
-
-        stopWatch.reset();
-        stopWatch.start();
-        logger.info("Waiting for 'eventGeneratorToJMSFlow' flow to complete (circa 24 seconds).");
-        while (flow1TestRule.getFlowState().equals(Flow.RUNNING))
-        {
-            // log if it takes longer than 24 seconds
-            if(stopWatch.elapsedInSeconds() > 24)
-            {
-                logger.info("Still waiting for 'eventGeneratorToJMSFlow' flow to complete (circa 24 seconds). Waiting for " + stopWatch.elapsedInSeconds() + " seconds");
-            }
-            Thread.sleep(2000);
-        }
-
         //
         // check the results of the test
-        assertWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        Thread.sleep(2000);
+        assertWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.FAILON_EVENT_COUNT-1);
         assertWiretaps("Transaction Test Module", "configurationUpdaterFlow", TriggerRelationship.AFTER, "Configuration Updater", ModuleConfig.EVENT_GENERATOR_COUNT);
-
-        // wait for JMS flows to catch up for a max of 10 seconds
-        int waitCounter = 0;
-        while( waitCounter < 10 &&
-                getWiretaps(
-                "Transaction Test Module",
-                "jmsToDevNullFlow1",
-                TriggerRelationship.AFTER,
-                "JMS Consumer",
-                ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
-        {
-            waitCounter=waitCounter+2;
-            logger.info("Waiting for jmsToDevNullFlow1 flow to complete (circa 10 seconds). Waiting for " + waitCounter + " seconds");
-            Thread.sleep(2000);
-        }
-        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
-
-        // wait for JMS flows to catch up for a max of 10 seconds
-        waitCounter = 0;
-        while( waitCounter < 10 &&
-                getWiretaps(
-                        "Transaction Test Module",
-                        "jmsToDevNullFlow2",
-                        TriggerRelationship.AFTER,
-                        "JMS Consumer",
-                        ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
-        {
-            waitCounter=waitCounter+2;
-            logger.info("Waiting for jmsToDevNullFlow2 flow to complete (circa 2 seconds).  Waiting for " + waitCounter + " seconds");
-            Thread.sleep(2000);
-        }
-        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.FAILON_EVENT_COUNT-1);
+        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.FAILON_EVENT_COUNT-1);
 
         flow1TestRule.assertIsSatisfied();
         flow2TestRule.assertIsSatisfied();
@@ -267,8 +212,13 @@ public class ApplicationTest
         Set<String> moduleNames = new HashSet<String>();
         moduleNames.add(moduleName);
         String location = relationship.name().toLowerCase() + " " + componentName;
+        int pageSize = expectedWiretapCount;
+        if(pageSize < 1)
+        {
+            pageSize = 1;
+        }
 
-        PagedSearchResult<WiretapEvent> wiretaps = wiretapService.findWiretapEvents(0, expectedWiretapCount, null,
+        PagedSearchResult<WiretapEvent> wiretaps = wiretapService.findWiretapEvents(0, pageSize, null,
                 true, moduleNames, flowName, location, null, null,
                 null,null, null );
 

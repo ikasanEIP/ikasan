@@ -9,10 +9,10 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>h2-server-stress</artifactId>
+    <artifactId>h2-server-component-fail</artifactId>
     <version>2.2.0-SNAPSHOT</version>
-    <name>H2 Server Stress Integration Module</name>
-    <description>Stress test the H2 server persistence with soak tests.</description>
+    <name>H2 Server Component Fail Integration Module</name>
+    <description>Stress test the H2 server persistence with component failure.</description>
 
     <dependencies>
 
@@ -54,13 +54,12 @@
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-            <version>5.15.8</version>
+            <artifactId>activemq-broker</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
+            <artifactId>activemq-kahadb-store</artifactId>
         </dependency>
 
     </dependencies>
