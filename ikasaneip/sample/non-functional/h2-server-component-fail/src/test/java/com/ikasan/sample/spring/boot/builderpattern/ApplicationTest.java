@@ -42,6 +42,7 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.commons.io.FileUtils;
 import org.h2.tools.Server;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -62,7 +63,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.io.IOException;
+import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.*;
@@ -106,6 +107,10 @@ public class ApplicationTest
     // AMQ Broker
     BrokerService broker;
 
+    // AMQ persistence
+    String amqPersistenceBaseDir = "./activemq-data";
+    String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
+
     @BeforeClass
     public static void setup() throws SQLException
     {
@@ -120,6 +125,7 @@ public class ApplicationTest
 
         // start a AMQ broker
         broker = BrokerFactory.createBroker(new URI("broker:(" + brokerUrl + ")"));
+        broker.getPersistenceAdapter().setDirectory( new File(amqPersistenceDir) );
         broker.start();
     }
 
@@ -133,10 +139,14 @@ public class ApplicationTest
 
         Thread.sleep(1000);
         broker.stop();
+        Thread.sleep(1000);
+        File amqPersistenceBase = new File(amqPersistenceBaseDir);
+        FileUtils.deleteDirectory(amqPersistenceBase);
+        Assert.assertTrue("Failed to delete AMQ Persistence " + amqPersistenceBase.getAbsolutePath(), !amqPersistenceBase.exists() );
     }
 
     @AfterClass
-    public static void teardown() throws SQLException
+    public static void teardown()
     {
         server.shutdown();
     }
