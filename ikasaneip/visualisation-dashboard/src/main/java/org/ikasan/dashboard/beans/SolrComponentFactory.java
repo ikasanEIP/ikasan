@@ -10,11 +10,15 @@ import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
 import org.ikasan.module.metadata.service.SolrModuleMetadataServiceImpl;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.service.SolrReplayServiceImpl;
+import org.ikasan.solr.dao.SolrGeneralDao;
+import org.ikasan.solr.dao.SolrGeneralDaoImpl;
+import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
+import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
@@ -35,6 +39,20 @@ public class SolrComponentFactory
 
     @Value("${solr.password}")
     private String solrPassword;
+
+
+
+    @Bean
+    public SolrSearchService solrSearchService()
+    {
+        SolrGeneralDaoImpl dao = new SolrGeneralDaoImpl();
+        dao.initStandalone(solrUrl, 30);
+        SolrGeneralServiceImpl service = new SolrGeneralServiceImpl(dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
 
     @Bean("wiretapEventBatchInsert")
     public WiretapService solrWiretapService()

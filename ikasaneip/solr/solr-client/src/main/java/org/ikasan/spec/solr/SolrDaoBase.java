@@ -129,79 +129,31 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         StringBuffer eventIdBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();
 
-        String delim = "";
-
         if(moduleNames != null && moduleNames.size() > 0)
         {
-            moduleNamesBuffer.append(MODULE_NAME + COLON);
-
-            moduleNamesBuffer.append(OPEN_BRACKET);
-
-            for (String moduleName : moduleNames)
-            {
-                moduleNamesBuffer.append(delim).append("\"").append(moduleName).append("\" ");
-                delim = OR;
-            }
-
-            moduleNamesBuffer.append(CLOSE_BRACKET);
+            moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, moduleNames));
         }
 
         if(flowNames != null && flowNames.size() > 0)
         {
-            delim = "";
-
-            flowNamesBuffer.append(FLOW_NAME + COLON);
-
-            flowNamesBuffer.append(OPEN_BRACKET);
-
-            for (String moduleFlowName : flowNames)
-            {
-                flowNamesBuffer.append(delim).append("\"").append(moduleFlowName).append("\" ");
-                delim = OR;
-            }
-
-            flowNamesBuffer.append(CLOSE_BRACKET);
+            flowNamesBuffer.append(this.buildPredicate(FLOW_NAME, flowNames));
         }
 
         if(componentNames != null)
         {
-            delim = "";
-
-            componentNamesBuffer.append(COMPONENT_NAME + COLON);
-
-            componentNamesBuffer.append(OPEN_BRACKET);
-
-            for (String componentName : componentNames)
-            {
-                componentNamesBuffer.append(delim).append("\"").append(componentName).append("\" ");
-                delim = OR;
-            }
-
-            componentNamesBuffer.append(CLOSE_BRACKET);
+            componentNamesBuffer.append(this.buildPredicate(COMPONENT_NAME, componentNames));
         }
 
         if(eventId != null && !eventId.trim().isEmpty())
         {
             eventIdBuffer.append(EVENT + COLON);
 
-            eventIdBuffer.append("\"").append(eventId).append("\" ");
+            eventIdBuffer.append(eventId).append(" ");
         }
 
         if(types != null && !types.isEmpty())
         {
-            delim = "";
-
-            typeBuffer.append(TYPE + COLON);
-
-            typeBuffer.append(OPEN_BRACKET);
-
-            for (String type : types)
-            {
-                typeBuffer.append(delim).append("\"").append(type).append("\" ");
-                delim = OR;
-            }
-
-            typeBuffer.append(CLOSE_BRACKET);
+            typeBuffer.append(this.buildPredicate(TYPE, types));
         }
 
         if(fromDate != null && untilDate != null)
@@ -291,6 +243,33 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         }
 
         return bufferFinalQuery.toString();
+    }
+
+    /**
+     * Helper method to build a field predicate.
+     *
+     * @param field
+     * @param predicateValues
+     * @return
+     */
+    private StringBuffer buildPredicate(String field, Collection<String> predicateValues)
+    {
+        String delim = "";
+
+        StringBuffer predicate = new StringBuffer();
+        predicate.append(field + COLON);
+
+        predicate.append(OPEN_BRACKET);
+
+        for (String predicateValue : predicateValues)
+        {
+            predicate.append(delim).append(predicateValue).append(" ");
+            delim = OR;
+        }
+
+        predicate.append(CLOSE_BRACKET);
+
+        return predicate;
     }
 
     /**

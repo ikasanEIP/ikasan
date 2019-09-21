@@ -1,10 +1,12 @@
-package org.ikasan.dashboard.ui.component;
+package org.ikasan.dashboard.ui.general.component;
 
 
 import com.juicy.JuicyAceEditor;
 import com.juicy.mode.JuicyAceMode;
 import com.juicy.theme.JuicyAceTheme;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -18,13 +20,18 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class EventViewDialog extends Dialog
+public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 {
-    private DocumentBuilder documentBuilder;
-    private Transformer transformer;
-    private JuicyAceEditor juicyAceEditor;
+    protected DocumentBuilder documentBuilder;
+    protected Transformer transformer;
+    protected JuicyAceEditor juicyAceEditor;
+    protected boolean initialised = false;
 
-    public EventViewDialog()
+    public abstract Component getEntityDetailsLayout();
+
+    public abstract void populate(ENTITY entity);
+
+    public AbstractEntityViewDialog()
     {
         try
         {
@@ -43,20 +50,32 @@ public class EventViewDialog extends Dialog
         juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
         juicyAceEditor.setMode(JuicyAceMode.xml);
         juicyAceEditor.setWidth("1400px");
-        juicyAceEditor.setHeight("1000px");
+        juicyAceEditor.setHeight("55vh");
         juicyAceEditor.setFontsize(12);
         juicyAceEditor.setSofttabs(false);
         juicyAceEditor.setTabsize(12);
         juicyAceEditor.setReadonly(true);
         juicyAceEditor.setWrapmode(true);
+    }
 
-        add(juicyAceEditor);
-        setWidth("80%");
-        setHeight("80%");
+    private void init()
+    {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("100%");
+
+        layout.add(this.getEntityDetailsLayout(), juicyAceEditor);
+
+        this.add(layout);
     }
 
     public void open(String event)
     {
+        if(!initialised)
+        {
+            init();
+            initialised = true;
+        }
+
         String xmlString = null;
         try
         {

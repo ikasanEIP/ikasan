@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
@@ -72,23 +73,23 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 userDirectories = new H2("User Management");
+        H2 userDirectories = new H2(getTranslation("label.user-management", UI.getCurrent().getLocale(), null));
         add(userDirectories);
 
         this.userGrid = new FilteringGrid<>(userFilter);
         this.userGrid.setSizeFull();
         this.userGrid.setClassName("my-grid");
 
-        this.userGrid.addColumn(User::getUsername).setKey("username").setHeader("Username").setSortable(true);
-        this.userGrid.addColumn(User::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true);
-        this.userGrid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        this.userGrid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        this.userGrid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
+        this.userGrid.addColumn(User::getUsername).setKey("username").setHeader(getTranslation("table-header.username", UI.getCurrent().getLocale(), null)).setSortable(true);
+        this.userGrid.addColumn(User::getFirstName).setKey("firstname").setHeader(getTranslation("table-header.firstname", UI.getCurrent().getLocale(), null)).setSortable(true);
+        this.userGrid.addColumn(User::getSurname).setKey("surname").setHeader(getTranslation("table-header.surname", UI.getCurrent().getLocale(), null)).setSortable(true);
+        this.userGrid.addColumn(User::getEmail).setKey("email").setHeader(getTranslation("table-header.email", UI.getCurrent().getLocale(), null)).setSortable(true);
+        this.userGrid.addColumn(User::getDepartment).setKey("department").setHeader(getTranslation("table-header.department", UI.getCurrent().getLocale(), null)).setSortable(true);
         this.userGrid.addColumn(TemplateRenderer.<User>of(
             "<div>[[item.date]]</div>")
             .withProperty("date",
                 user -> DateFormatter.getFormattedDate(user.getPreviousAccessTimestamp())))
-            .setKey("lastaccess").setHeader("Last Access").setSortable(true);
+            .setKey("lastaccess").setHeader(getTranslation("table-header.last-access", UI.getCurrent().getLocale(), null)).setSortable(true);
 
         HeaderRow hr = userGrid.appendHeaderRow();
         this.userGrid.addGridFiltering(hr, userFilter::setUsernameFilter, "username");

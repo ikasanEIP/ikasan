@@ -103,6 +103,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Resource
     private ConfigurationMetaDataService configurationMetadataService;
 
+    private EventViewDialog eventViewDialog = new EventViewDialog();
+
     private BusinessStream graph = null;
     private Upload upload;
     private List<Node> nodes = new ArrayList<>();
@@ -269,8 +271,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             {
                 if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
                 {
-                    EventViewDialog eventViewDialog = new EventViewDialog(flow.getWireapEvent());
-                    eventViewDialog.open();
+                    eventViewDialog.open(flow.getWireapEvent());
                 }
             }
         });
@@ -332,8 +333,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     protected void populateModulesGrid()
     {
         // todo this is a temp hack to use the dao tp provide data.
-        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();
-        moduleMetaData.addAll(this.moduleMetaDataDao.getAllModule());
+        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();;
         modulesGrid.setItems(moduleMetaData);
     }
 

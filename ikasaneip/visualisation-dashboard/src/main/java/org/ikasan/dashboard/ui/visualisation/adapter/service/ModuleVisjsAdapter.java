@@ -1,6 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -320,7 +320,7 @@ public class ModuleVisjsAdapter
                 .withId(flowElement.getComponentName() + identifier++)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
-                .withTransition(new MessageChannel("channel"+identifier++, destinationName, false))
+                .withTransition(new MessageChannel("channel"+identifier++, WordUtils.wrap(destinationName, 25, "\n", true, "\\."), false))
                 .build();
         }
         else if(flowElement.getImplementingClass().equals("org.ikasan.endpoint.ftp.producer.FtpProducer"))
@@ -418,7 +418,7 @@ public class ModuleVisjsAdapter
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
-            .withSource(new MessageChannel("messageChannel"+ identifier++, destinationName, false))
+            .withSource(new MessageChannel("messageChannel"+ identifier++, WordUtils.wrap(destinationName, 25, "\n", true, "\\."), false))
             .build();
     }
 

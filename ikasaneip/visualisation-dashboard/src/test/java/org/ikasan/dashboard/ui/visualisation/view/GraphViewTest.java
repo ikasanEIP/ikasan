@@ -115,7 +115,7 @@ public class GraphViewTest
         Map<Class<? extends RouterLayout>, List<RouteData>> routesByParent = router.getRoutesByParent();
         List<RouteData> myRoutes = routesByParent.get(IkasanAppLayout.class);
 
-        Assertions.assertEquals(8, myRoutes.size(), "Number of Routes is 1!");
+        Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!");
         Assertions.assertEquals("", myRoutes.get(0).getUrl(), "URL is empty string!");
         Assertions.assertEquals(HomeView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
     }
