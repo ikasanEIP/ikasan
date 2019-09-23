@@ -1,25 +1,22 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
-import org.ikasan.dashboard.ui.administration.filter.UserFilter;
 import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
-import org.ikasan.security.model.*;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class SelectUserForRoleDialog extends Dialog
@@ -64,6 +61,8 @@ public class SelectUserForRoleDialog extends Dialog
 
     private void init()
     {
+        H3 selectUserLabel = new H3(getTranslation("label.select-user", UI.getCurrent().getLocale(), null));
+
         List<UserLite> usersList = this.userService.getUserLites();
         usersList.removeAll(associatedUsers);
 
@@ -72,34 +71,45 @@ public class SelectUserForRoleDialog extends Dialog
         FilteringGrid<UserLite> userGrid = new FilteringGrid<>(userFilter);
         userGrid.setSizeFull();
 
-        userGrid.addColumn(UserLite::getUsername).setKey("username").setHeader("Username").setSortable(true).setFlexGrow(2);
-        userGrid.addColumn(UserLite::getFirstName).setKey("firstname").setHeader("First Name").setSortable(true).setFlexGrow(2);
-        userGrid.addColumn(UserLite::getSurname).setKey("surname").setHeader("Surname").setSortable(true).setFlexGrow(2);
-        userGrid.addColumn(UserLite::getEmail).setKey("email").setHeader("Email").setSortable(true).setFlexGrow(4);
-        userGrid.addColumn(UserLite::getDepartment).setKey("department").setHeader("Department").setSortable(true).setFlexGrow(4);
-        userGrid.addColumn(new ComponentRenderer<>(userLite ->
+        userGrid.addColumn(UserLite::getUsername)
+            .setKey("username")
+            .setHeader(getTranslation("table-header.username", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(2);
+        userGrid.addColumn(UserLite::getFirstName)
+            .setKey("firstname")
+            .setHeader(getTranslation("table-header.firstname", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(2);
+        userGrid.addColumn(UserLite::getSurname)
+            .setKey("surname")
+            .setHeader(getTranslation("table-header.surname", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(2);
+        userGrid.addColumn(UserLite::getEmail)
+            .setKey("email")
+            .setHeader(getTranslation("table-header.email", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(4);
+        userGrid.addColumn(UserLite::getDepartment)
+            .setKey("department")
+            .setHeader(getTranslation("table-header.department", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(4);
+
+        userGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<UserLite>>) userLiteItemDoubleClickEvent ->
         {
-            Button addUserButton = new Button(VaadinIcon.PLUS.create());
+            IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(userLiteItemDoubleClickEvent.getItem().getUsername());
+            ikasanPrincipal.addRole(this.role);
 
-            addUserButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-                IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(userLite.getUsername());
-                ikasanPrincipal.addRole(this.role);
+            this.securityService.savePrincipal(ikasanPrincipal);
 
-                this.securityService.savePrincipal(ikasanPrincipal);
+            String action = String.format("Role [%s] added to user [%s].", role.getName(), ikasanPrincipal.getName());
 
-                String action = String.format("Role [%s] added to user [%s].", role.getName(), ikasanPrincipal.getName());
+            this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
-
-                this.close();
-            });
-
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.add(addUserButton);
-            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, addUserButton);
-            return verticalLayout;
-        })).setFlexGrow(1);
+            this.close();
+        });
 
         HeaderRow hr = userGrid.appendHeaderRow();
         userGrid.addGridFiltering(hr, userFilter::setUsernameFilter, "username");
@@ -113,7 +123,7 @@ public class SelectUserForRoleDialog extends Dialog
         userGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userGrid);
+        layout.add(selectUserLabel, userGrid);
 
         layout.setWidth("1200px");
         layout.setHeight("500px");

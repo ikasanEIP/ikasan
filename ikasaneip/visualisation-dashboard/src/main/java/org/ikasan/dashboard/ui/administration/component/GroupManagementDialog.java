@@ -4,6 +4,7 @@ import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -82,8 +83,8 @@ public class GroupManagementDialog extends Dialog
     private void init()
     {
         Accordion accordion = new Accordion();
-        accordion.add("Associated Roles", createRolesAccessGrid());
-        accordion.add("Associated Users", createAssociatedUserGrid());
+        accordion.add(getTranslation("accordian-label.associated-roles", UI.getCurrent().getLocale(), null), createRolesAccessGrid());
+        accordion.add(getTranslation("accordian-label.associated-users", UI.getCurrent().getLocale(), null), createAssociatedUserGrid());
 
         accordion.close();
 
@@ -104,14 +105,14 @@ public class GroupManagementDialog extends Dialog
 
     private VerticalLayout createRolesAccessGrid()
     {
-        H3 rolesLabel = new H3("Ikasan Roles");
+        H3 rolesLabel = new H3(getTranslation("label.group-ikasan-roles", UI.getCurrent().getLocale(), null));
 
         RoleFilter roleFilter = new RoleFilter();
 
         roleGrid = new FilteringGrid<>(roleFilter);
         roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("name").setHeader("Name").setSortable(true).setFlexGrow(1);
-        roleGrid.addColumn(Role::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        roleGrid.addColumn(Role::getName).setKey("name").setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
+        roleGrid.addColumn(Role::getDescription).setKey("description").setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
         roleGrid.addColumn(new ComponentRenderer<>(role->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -143,7 +144,7 @@ public class GroupManagementDialog extends Dialog
 
         this.updateRolesGrid();
 
-        Button addRoleButton = new Button("Add role");
+        Button addRoleButton = new Button(getTranslation("button.add-role", UI.getCurrent().getLocale(), null));
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             IkasanPrincipal principal = securityService.findPrincipalByName(group.getName());
@@ -196,18 +197,18 @@ public class GroupManagementDialog extends Dialog
 
     private VerticalLayout createAssociatedUserGrid()
     {
-        H3 associatedUsersLabel = new H3("Associated Users");
+        H3 associatedUsersLabel = new H3(getTranslation("label.group-associated-users", UI.getCurrent().getLocale(), null));
 
         UserFilter userFilter = new UserFilter();
 
         FilteringGrid<User> grid = new FilteringGrid<>(userFilter);
 
         grid.setClassName("my-grid");
-        grid.addColumn(User::getName).setKey("username").setHeader("Username").setSortable(true);
-        grid.addColumn(User::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true);
-        grid.addColumn(User::getSurname).setKey("surname").setHeader("Surname").setSortable(true);
-        grid.addColumn(User::getEmail).setKey("email").setHeader("Email").setSortable(true);
-        grid.addColumn(User::getDepartment).setKey("department").setHeader("Department").setSortable(true);
+        grid.addColumn(User::getName).setKey("username").setHeader(getTranslation("table-header.username", UI.getCurrent().getLocale(), null)).setSortable(true);
+        grid.addColumn(User::getFirstName).setKey("firstname").setHeader(getTranslation("table-header.firstname", UI.getCurrent().getLocale(), null)).setSortable(true);
+        grid.addColumn(User::getSurname).setKey("surname").setHeader(getTranslation("table-header.surname", UI.getCurrent().getLocale(), null)).setSortable(true);
+        grid.addColumn(User::getEmail).setKey("email").setHeader(getTranslation("table-header.email", UI.getCurrent().getLocale(), null)).setSortable(true);
+        grid.addColumn(User::getDepartment).setKey("department").setHeader(getTranslation("table-header.department", UI.getCurrent().getLocale(), null)).setSortable(true);
 
         HeaderRow hr = grid.appendHeaderRow();
         grid.addGridFiltering(hr, userFilter::setUsernameFilter, "username");
@@ -231,23 +232,23 @@ public class GroupManagementDialog extends Dialog
 
     private VerticalLayout initGroupForm()
     {
-        H3 userProfileLabel = new H3("Group Profile - " + this.group.getName());
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.group-profile", UI.getCurrent().getLocale(), null), this.group.getName()));
 
         FormLayout formLayout = new FormLayout();
 
-        TextField groupName = new TextField("Group name");
+        TextField groupName = new TextField(getTranslation("text-field.group-name", UI.getCurrent().getLocale(), null));
         groupName.setReadOnly(true);
         groupName.setValue(this.group.getName());
         formLayout.add(groupName);
         formLayout.setColspan(groupName, 1);
 
-        TextField groupType = new TextField("Group type");
+        TextField groupType = new TextField(getTranslation("text-field.group-type", UI.getCurrent().getLocale(), null));
         groupType.setReadOnly(true);
         groupType.setValue(this.group.getType());
         formLayout.add(groupType);
         formLayout.setColspan(groupType, 1);
 
-        TextArea description = new TextArea("Description");
+        TextArea description = new TextArea(getTranslation("text-field.group-description", UI.getCurrent().getLocale(), null));
         description.setReadOnly(true);
         description.setHeight("150px");
         description.setValue(this.group.getDescription());

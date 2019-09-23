@@ -4,6 +4,7 @@ import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -99,9 +100,9 @@ public class RoleManagementDialog extends Dialog
     private void init()
     {
         Accordion accordion = new Accordion();
-        accordion.add("Associated Users", createAssociatedUserLayout());
-        accordion.add("Associated Groups", createAssociatedGroupsLayout());
-        accordion.add("Associated Policies", createIkasanPoliciesLayout());
+        accordion.add(getTranslation("accordian-label.associated-users", UI.getCurrent().getLocale(), null), createAssociatedUserLayout());
+        accordion.add(getTranslation("accordian-label.associated-groups", UI.getCurrent().getLocale(), null), createAssociatedGroupsLayout());
+        accordion.add(getTranslation("accordian-label.associated-policies", UI.getCurrent().getLocale(), null), createIkasanPoliciesLayout());
 
         accordion.close();
 
@@ -127,14 +128,14 @@ public class RoleManagementDialog extends Dialog
      */
     private VerticalLayout createIkasanPoliciesLayout()
     {
-        H3 policyLabel = new H3("Ikasan Policies");
+        H3 policyLabel = new H3(getTranslation("label.role-ikasan-policies", UI.getCurrent().getLocale(), null));
 
         PolicyFilter policyFilter = new PolicyFilter();
 
         this.policyGrid = new FilteringGrid<>(policyFilter);
         policyGrid.setClassName("my-userGrid");
-        policyGrid.addColumn(Policy::getName).setKey("name").setHeader("Name").setSortable(true).setFlexGrow(1);
-        policyGrid.addColumn(Policy::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        policyGrid.addColumn(Policy::getName).setKey("name").setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
+        policyGrid.addColumn(Policy::getDescription).setKey("description").setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
         policyGrid.addColumn(new ComponentRenderer<>(policy->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -163,7 +164,7 @@ public class RoleManagementDialog extends Dialog
 
         policyGrid.setSizeFull();
 
-        Button addPolicyButton = new Button("Add policy");
+        Button addPolicyButton = new Button(getTranslation("button.add-policy", UI.getCurrent().getLocale(), null));
         addPolicyButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger);
@@ -198,18 +199,18 @@ public class RoleManagementDialog extends Dialog
      */
     private VerticalLayout createAssociatedUserLayout()
     {
-        H3 associatedUsersLabel = new H3("Associated Users");
+        H3 associatedUsersLabel = new H3(getTranslation("label.role-associated-users", UI.getCurrent().getLocale(), null));
 
         UserLiteFilter userLiteFilter = new UserLiteFilter();
 
         this.userGrid = new FilteringGrid<>(userLiteFilter);
 
         userGrid.setClassName("my-userGrid");
-        userGrid.addColumn(UserLite::getUsername).setKey("username").setHeader("Username").setSortable(true).setFlexGrow(2);
-        userGrid.addColumn(UserLite::getFirstName).setKey("firstname").setHeader("Firstname").setSortable(true).setFlexGrow(2);
-        userGrid.addColumn(UserLite::getSurname).setKey("surname").setHeader("Surname").setSortable(true).setFlexGrow(4);
-        userGrid.addColumn(UserLite::getEmail).setKey("email").setHeader("Email").setSortable(true).setFlexGrow(4);
-        userGrid.addColumn(UserLite::getDepartment).setKey("department").setHeader("Department").setSortable(true);
+        userGrid.addColumn(UserLite::getUsername).setKey("username").setHeader(getTranslation("table-header.username", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(2);
+        userGrid.addColumn(UserLite::getFirstName).setKey("firstname").setHeader(getTranslation("table-header.firstname", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(2);
+        userGrid.addColumn(UserLite::getSurname).setKey("surname").setHeader(getTranslation("table-header.surname", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        userGrid.addColumn(UserLite::getEmail).setKey("email").setHeader(getTranslation("table-header.email", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        userGrid.addColumn(UserLite::getDepartment).setKey("department").setHeader(getTranslation("table-header.department", UI.getCurrent().getLocale(), null)).setSortable(true);
         userGrid.addColumn(new ComponentRenderer<>(userLite->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -241,7 +242,7 @@ public class RoleManagementDialog extends Dialog
         this.userGrid.addGridFiltering(hr, userLiteFilter::setEmailFilter, "email");
         this.userGrid.addGridFiltering(hr, userLiteFilter::setDepartmentFilter, "department");
 
-        Button addUser = new Button("Add user");
+        Button addUser = new Button(getTranslation("button.add-user", UI.getCurrent().getLocale(), null));
         addUser.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectUserForRoleDialog dialog = new SelectUserForRoleDialog(this.role, this.userService, this.getAssociatedUsers(),
@@ -313,14 +314,14 @@ public class RoleManagementDialog extends Dialog
      */
     private VerticalLayout createAssociatedGroupsLayout()
     {
-        H3 associatedGroupsLabel = new H3("Associated Groups");
+        H3 associatedGroupsLabel = new H3(getTranslation("label.role-associated-groups", UI.getCurrent().getLocale(), null));
 
         GroupFilter groupFilter = new GroupFilter();
 
         groupGrid = new FilteringGrid<>(groupFilter);
         groupGrid.setClassName("my-userGrid");
-        groupGrid.addColumn(IkasanPrincipalLite::getName).setKey("name").setHeader("Name").setSortable(true);
-        groupGrid.addColumn(IkasanPrincipalLite::getDescription).setKey("description").setHeader("Description").setSortable(true);
+        groupGrid.addColumn(IkasanPrincipalLite::getName).setKey("name").setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null)).setSortable(true);
+        groupGrid.addColumn(IkasanPrincipalLite::getDescription).setKey("description").setHeader(getTranslation("table-header.group-description", UI.getCurrent().getLocale(), null)).setSortable(true);
         groupGrid.addColumn(new ComponentRenderer<>(principalLite->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -349,7 +350,7 @@ public class RoleManagementDialog extends Dialog
         this.groupGrid.addGridFiltering(hr, groupFilter::setNameFilter, "name");
         this.groupGrid.addGridFiltering(hr, groupFilter::setDescriptionFilter, "description");
 
-        Button addGroup = new Button("Add group");
+        Button addGroup = new Button(getTranslation("button.add-group", UI.getCurrent().getLocale(), null));
         addGroup.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectGroupForRoleDialog dialog = new SelectGroupForRoleDialog(this.role, getAssociatedGroups()
@@ -457,17 +458,17 @@ public class RoleManagementDialog extends Dialog
      */
     private VerticalLayout initRoleForm()
     {
-        H3 userProfileLabel = new H3("Role Profile - " + this.role.getName());
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.role-profile", UI.getCurrent().getLocale(), null), this.role.getName()));
 
         FormLayout formLayout = new FormLayout();
 
-        TextField groupName = new TextField("Group name");
+        TextField groupName = new TextField(getTranslation("text-field.group-name", UI.getCurrent().getLocale(), null));
         groupName.setReadOnly(true);
         groupName.setValue(this.role.getName());
         formLayout.add(groupName);
         formLayout.setColspan(groupName, 2);
 
-        TextArea description = new TextArea("Description");
+        TextArea description = new TextArea(getTranslation("text-field.group-description", UI.getCurrent().getLocale(), null));
         description.setReadOnly(true);
         description.setValue(this.role.getDescription());
         description.setHeight("130px");
