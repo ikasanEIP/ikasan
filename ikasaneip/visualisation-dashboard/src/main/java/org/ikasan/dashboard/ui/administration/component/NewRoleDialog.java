@@ -3,6 +3,7 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -42,22 +43,22 @@ public class NewRoleDialog extends Dialog
 
     private void init()
     {
-        H3 newRoleLabel = new H3("Create a New Role");
+        H3 newRoleLabel = new H3(getTranslation("label.new-role", UI.getCurrent().getLocale(), null));
 
         FormLayout formLayout = new FormLayout();
 
         Binder<Role> binder = new Binder<>(Role.class);
 
-        TextField nameTf = new TextField("Name");
+        TextField nameTf = new TextField(getTranslation("text-field.new-role-name", UI.getCurrent().getLocale(), null));
         binder.forField(nameTf)
-            .withValidator(name -> name != null && name.length() > 0, "Name is required!")
+            .withValidator(name -> name != null && name.length() > 0, getTranslation("message.new-role-name-missing", UI.getCurrent().getLocale(), null))
             .bind(Role::getName, Role::setName);
         formLayout.add(nameTf);
         formLayout.setColspan(nameTf, 2);
 
-        TextArea descriptionTf = new TextArea("Description");
+        TextArea descriptionTf = new TextArea(getTranslation("text-field.new-role-description", UI.getCurrent().getLocale(), null));
         binder.forField(descriptionTf)
-            .withValidator(description -> description != null && description.length() > 0, "Description is required!")
+            .withValidator(description -> description != null && description.length() > 0, getTranslation("message.new-role-description-missing", UI.getCurrent().getLocale(), null))
             .bind(Role::getDescription, Role::setDescription);
         descriptionTf.setHeight("150px");
 
@@ -73,7 +74,7 @@ public class NewRoleDialog extends Dialog
 
         formLayout.setSizeFull();
 
-        Button save = new Button("Save");
+        Button save = new Button(getTranslation("button.save", UI.getCurrent().getLocale(), null));
         save.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             try
@@ -89,14 +90,15 @@ public class NewRoleDialog extends Dialog
             }
             catch (ValidationException e)
             {
+                // Ignore as the form will provide feedback to the user via the validation mechanism.
             }
             catch (Exception e)
             {
-                NotificationHelper.showErrorNotification(String.format("An error has occurred attempting to create a new role. Role names must be unique."));
+                NotificationHelper.showErrorNotification(String.format(getTranslation("message.role-name-must-be-unique", UI.getCurrent().getLocale(), null)));
             }
         });
 
-        Button cancel = new Button("Cancel");
+        Button cancel = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale(), null));
         cancel.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
             this.close();
         });

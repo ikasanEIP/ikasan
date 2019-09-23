@@ -5,6 +5,7 @@ import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.data.Item;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
@@ -112,13 +113,13 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout createLastAccessGrid()
     {
-        H3 dashboardActivityLabel = new H3("Dashboard Activity");
+        H3 dashboardActivityLabel = new H3(getTranslation("label.dashboard-activity", UI.getCurrent().getLocale(), null));
 
         Grid<SystemEvent> dashboardActivityGrid = new Grid<>();
 
         dashboardActivityGrid.setClassName("my-grid");
-        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true).setFlexGrow(4);
-        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true).setFlexGrow(1);
+        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader(getTranslation("table-header.action", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader(getTranslation("table-header.date-time", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
 
         dashboardActivityGrid.setSizeFull();
 
@@ -148,8 +149,8 @@ public class UserManagementDialog extends Dialog
         H3 rolesLabel = new H3("Ikasan Roles");
 
         roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("username").setHeader("Name").setSortable(true).setFlexGrow(1);
-        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true).setFlexGrow(6);
+        roleGrid.addColumn(Role::getName).setKey("username").setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
+        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(6);
         roleGrid.addColumn(new ComponentRenderer<>(role->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -177,7 +178,7 @@ public class UserManagementDialog extends Dialog
 
         this.updateRolesGrid();
 
-        Button addRoleButton = new Button("Add role");
+        Button addRoleButton = new Button(getTranslation("button.add-role", UI.getCurrent().getLocale(), null));
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             IkasanPrincipal principal = securityService.findPrincipalByName(this.user.getUsername());
@@ -228,13 +229,12 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout createLdapGroupGrid()
     {
-        H3 ldapGroupsLabel = new H3("LDAP Groups");
+        H3 ldapGroupsLabel = new H3(getTranslation("label.ldap-groups", UI.getCurrent().getLocale(), null));
         Grid<IkasanPrincipal> grid = new Grid<>();
 
         grid.setClassName("my-grid");
-        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader("LDAP Group").setSortable(true).setFlexGrow(4);
-        grid.addColumn(IkasanPrincipal::getType).setKey("type").setHeader("Type").setSortable(true).setFlexGrow(1);
-        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader(getTranslation("table-header.group-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
 
         List<IkasanPrincipal> ldapGroups = new ArrayList<>();
 
@@ -257,11 +257,11 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout createSecurityChangesGrid()
     {
-        H3 userSecurityChangesLabel = new H3("User Security Changes");
+        H3 userSecurityChangesLabel = new H3(getTranslation("label.user-security-changes", UI.getCurrent().getLocale(), null));
 
         securityChangesGrid.setClassName("my-grid");
-        securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true).setFlexGrow(4);
-        securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true).setFlexGrow(1);
+        securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader(getTranslation("table-header.action", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader(getTranslation("table-header.date-time", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
 
         securityChangesGrid.setSizeFull();
 
@@ -284,26 +284,26 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout initUserForm()
     {
-        H3 userProfileLabel = new H3("User Profile - " + this.user.getUsername());
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.user-profile", UI.getCurrent().getLocale(), null),  this.user.getUsername()));
 
         FormLayout formLayout = new FormLayout();
 
-        TextField firstnameTf = new TextField("First name");
+        TextField firstnameTf = new TextField(getTranslation("text-field.first-name", UI.getCurrent().getLocale(), null));
         firstnameTf.setReadOnly(true);
         firstnameTf.setValue(this.user.getFirstName());
         formLayout.add(firstnameTf);
 
-        TextField surnameTf = new TextField("Surname");
+        TextField surnameTf = new TextField(getTranslation("text-field.surname", UI.getCurrent().getLocale(), null));
         surnameTf.setReadOnly(true);
         surnameTf.setValue(this.user.getSurname());
         formLayout.add(surnameTf);
 
-        TextField departmentTf = new TextField("Department");
+        TextField departmentTf = new TextField(getTranslation("text-field.department", UI.getCurrent().getLocale(), null));
         departmentTf.setReadOnly(true);
         departmentTf.setValue(this.user.getDepartment() == null ? "" : this.user.getDepartment());
         formLayout.add(departmentTf);
 
-        TextField emailTf = new TextField("Email");
+        TextField emailTf = new TextField(getTranslation("text-field.email", UI.getCurrent().getLocale(), null));
         emailTf.setReadOnly(true);
         formLayout.add(emailTf);
         emailTf.setValue(this.user.getEmail()== null ? "" : this.user.getEmail());
