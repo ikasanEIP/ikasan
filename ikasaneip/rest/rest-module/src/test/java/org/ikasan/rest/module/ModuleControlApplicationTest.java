@@ -54,9 +54,6 @@ public class ModuleControlApplicationTest
     protected WebApplicationContext webApplicationContext;
 
     @MockBean
-    protected ModuleService moduleServiceAuto;
-
-    @Mock
     protected ModuleService moduleService;
 
     @Autowired
@@ -70,7 +67,6 @@ public class ModuleControlApplicationTest
     public void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        moduleControlApplication.setModuleService(moduleService);
     }
 
     @Test

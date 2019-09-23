@@ -124,7 +124,6 @@ public class ModuleControlApplication
         }
     }
 
-    @Deprecated
     @RequestMapping(method = RequestMethod.PUT,
         value = "/startupMode")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -276,8 +275,4 @@ public class ModuleControlApplication
         return user;
     }
 
-    protected void setModuleService(ModuleService moduleService)
-    {
-        this.moduleService = moduleService;
-    }
 }
