@@ -41,6 +41,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -63,7 +64,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.*
 @Configuration
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-jms.xml",
-//        "classpath:ikasan-transaction-pointcut-quartz.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml",
         "classpath:ikasan-transaction-pointcut-resubmission.xml",
         "classpath:h2-datasource-conf.xml"
 } )
@@ -113,6 +114,9 @@ public class ComponentFactory
     {
         ActiveMQXAConnectionFactory connectionFactory =
                 new ActiveMQXAConnectionFactory(jmsProviderUrl);
+        RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+        redeliveryPolicy.setMaximumRedeliveries(-1);
+        connectionFactory.setRedeliveryPolicy(redeliveryPolicy);
 
         return builderFactory.getComponentBuilder().jmsProducer()
                 .setConfiguredResourceId(jmsProducerConfiguredResourceId)

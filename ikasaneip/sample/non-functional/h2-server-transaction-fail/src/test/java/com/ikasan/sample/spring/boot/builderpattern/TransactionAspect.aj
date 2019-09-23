@@ -55,8 +55,13 @@ public class TransactionAspect
     {
         if(++callCount == ModuleConfig.FAILON_EVENT_COUNT)
         {
-            System.out.println("############ Called DoCommit()");
-            //throw new RuntimeException("Transaction Fail Exception");
+            System.out.println("############ Called DoCommit() HIT " + callCount);
+            throw new RuntimeException("Transaction Fail Exception");
         }
+        else
+        {
+            System.out.println("############ Called DoCommit() MISS " + callCount);
+        }
+
     }
 }
