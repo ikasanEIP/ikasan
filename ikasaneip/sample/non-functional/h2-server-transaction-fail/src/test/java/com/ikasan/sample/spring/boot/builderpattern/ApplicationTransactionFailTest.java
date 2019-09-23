@@ -42,6 +42,7 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.commons.io.FileUtils;
 import org.h2.tools.Server;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -62,6 +63,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.*;
@@ -103,7 +105,11 @@ public class ApplicationTransactionFailTest
     SimpleTimer stopWatch;
 
     // AMQ Broker
-    static BrokerService broker;
+    BrokerService broker;
+
+    // AMQ persistence
+    String amqPersistenceBaseDir = "./activemq-data";
+    String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
 
     @BeforeClass
     public static void setup() throws Exception
@@ -119,6 +125,7 @@ public class ApplicationTransactionFailTest
 
         // start a AMQ broker
         broker = BrokerFactory.createBroker(new URI("broker:(" + brokerUrl + ")"));
+        broker.getPersistenceAdapter().setDirectory( new File(amqPersistenceDir) );
         broker.start();
     }
 
@@ -130,8 +137,12 @@ public class ApplicationTransactionFailTest
         flow3TestRule.stopFlow();
         flow4TestRule.stopFlow();
 
-        Thread.sleep(1000);
-        broker.stop();
+//        Thread.sleep(1000);
+//        broker.stop();
+//        Thread.sleep(1000);
+//        File amqPersistenceBase = new File(amqPersistenceBaseDir);
+//        FileUtils.deleteDirectory(amqPersistenceBase);
+//        Assert.assertTrue("Failed to delete AMQ Persistence " + amqPersistenceBase.getAbsolutePath(), !amqPersistenceBase.exists() );
     }
 
     @AfterClass
@@ -145,7 +156,7 @@ public class ApplicationTransactionFailTest
     public void test_happy_flows_with_concurrent_db_updates() throws Exception
     {
         // event generator publishing to JMS topic
-        flow1TestRule.withFlow(moduleUnderTest.getFlow("eventGeneratorToJMSFlow")).withErrorEndState();
+        flow1TestRule.withFlow(moduleUnderTest.getFlow("eventGeneratorToJMSFlow"));//.withErrorEndState();
 
         // jms consumer flow continually updating configuration in DB for dynamic configuration
         flow2TestRule.withFlow(moduleUnderTest.getFlow("configurationUpdaterFlow"));
