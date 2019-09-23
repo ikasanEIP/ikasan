@@ -66,7 +66,7 @@ public class ModuleConfig
     private static int REPEAT = 1;  // Change this to up the number of events
     private static int EVENTS_PER_CYCLE = 10;
     public static int  EVENT_GENERATOR_COUNT = EVENTS_PER_CYCLE * REPEAT;
-    public static int  FAILON_EVENT_COUNT = 8;
+    public static int  FAILON_EVENT_COUNT = 18;
 
     @Bean
     public Module getModule()
@@ -87,7 +87,7 @@ public class ModuleConfig
         // dynamic configuration update flow
         Flow configurationUpdaterFlow = moduleBuilder.getFlowBuilder("configurationUpdaterFlow")
                 .withDescription("Flow which constantly updates dynamic configuration and saves back to the DB on each invocation.")
-                .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(100)))
+                .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(1000)))
                 .consumer("Event Generating Consumer", builderFactory.getComponentBuilder()
                         .eventGeneratingConsumer()
                         .setTechEventProvider( getTechEndpointProvider())
@@ -98,6 +98,7 @@ public class ModuleConfig
         // jms consumer flow 1
         Flow jmsConsumer1Flow = moduleBuilder.getFlowBuilder("jmsToDevNullFlow1")
                 .withDescription("First JMS Consuming flow.")
+                .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(1000)))
                 .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumer1"))
                 .producer("Dev Null Producer", builderFactory.getComponentBuilder().devNullProducer().build())
                 .build();
@@ -105,6 +106,7 @@ public class ModuleConfig
         // jms consumer flow 2
         Flow jmsConsumer2Flow = moduleBuilder.getFlowBuilder("jmsToDevNullFlow2")
                 .withDescription("Second JMS Consuming flow.")
+                .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(1000)))
                 .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumer2"))
                 .producer("Dev Null Producer", builderFactory.getComponentBuilder().devNullProducer().build())
                 .build();
@@ -132,6 +134,6 @@ public class ModuleConfig
                 .messageEvent("Test Message 8")
                 .messageEvent("Test Message 9")
                 .messageEvent("Test Message 10")
-                .build();
+        .build();
     }
 }

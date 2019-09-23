@@ -433,7 +433,7 @@ public class IkasanFlowTestRule implements TestRule
             configuration.setEager(false); // do not callback on the provider once complete
         }
         flow.start();
-        Assert.assertEquals("flow should be running", "running", flow.getState());
+        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
     }
 
     /**
@@ -455,7 +455,65 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
-        Assert.assertEquals("flow should be running", "running", flow.getState());
+        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
+    }
+
+    /**
+     * Setup the flow expectations and start and pause the given flow.
+     *
+     */
+    public void startPauseFlow()
+    {
+        flowTestHarness = new FlowTestHarnessImpl(flowExpectations);
+        testHarnessFlowEventListener.removeAllObservers();
+        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
+        testHarnessFlowEventListener.setIgnoreEventCapture(true);
+        if (this.scheduledConsumerName != null)
+        {
+            Object component = getComponent(scheduledConsumerName);
+            ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) component).getConfiguration();
+            configuration.setCronExpression("0/5 * * * * ? 2099"); // set to never run
+            configuration.setEager(false); // do not callback on the provider once complete
+        }
+        flow.addFlowListener(testHarnessFlowEventListener);
+        flow.startPause();
+        Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState());
+    }
+
+    /**
+     * Resume a paused flow.
+     *
+     */
+    public void resumeFlow()
+    {
+        if(flow.getState().equals(Flow.PAUSED))
+        {
+            flow.resume();
+        }
+        else
+        {
+            throw new RuntimeException("Flow not is a paused state to be resumed");
+        }
+
+        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
+    }
+
+    /**
+     * Pause a running flow.
+     *
+     */
+    public void pauseFlow()
+    {
+        if(flow.getState().equals(Flow.RUNNING))
+        {
+            flow.pause();
+        }
+        else
+        {
+            throw new RuntimeException("Flow not is a running state to be paused");
+        }
+
+        Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState());
     }
 
     public void stopFlow()
