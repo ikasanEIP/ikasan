@@ -1,0 +1,7 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.ikasan.sample.spring.boot.builderpattern.TransactionAspect"/>
+        <weaver options="-Xlint:ignore -showWeaveInfo">
+        </weaver>
+    </aspects>
+</aspectj>
