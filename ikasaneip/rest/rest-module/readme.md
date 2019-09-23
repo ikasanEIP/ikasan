@@ -13,6 +13,7 @@ The set of REST endpoints which allows you to:
  - change flow state
  - change flow startup type
  
+ 
 ### GET Flows state
 
 | Parameter | Value  | 
@@ -21,7 +22,9 @@ The set of REST endpoints which allows you to:
 | Service Context | {module-root-context}/rest/moduleControl/{moduleName} |
 | Requires Path parameter moduleName | Module Name |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Returns | HTTP 200 status and  json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java)  <details>
+| Returns | HTTP 200 status and  json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java) |
+ 
+ <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
 <p>
 
@@ -42,7 +45,6 @@ The set of REST endpoints which allows you to:
 ````
 </p>
 </details>
-|
 
 
 ### GET Flow state
@@ -54,7 +56,9 @@ The set of REST endpoints which allows you to:
 | Requires Path parameter moduleName | Module Name |
 | Requires Path parameter flowName | Flow Name |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Returns | HTTP 200 status with below payload. A json serialised [FlowDto](src/main/java/org/ikasan/rest/module/dto/FlowDto.java) <details>
+| Returns | HTTP 200 status with below payload. A json serialised [FlowDto](src/main/java/org/ikasan/rest/module/dto/FlowDto.java) |
+
+<details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
 <p>
 
@@ -67,7 +71,6 @@ The set of REST endpoints which allows you to:
  
 </p>
 </details>
-|
 
 
 ### Change Flow state
@@ -77,7 +80,10 @@ The set of REST endpoints which allows you to:
 | Request Method | PUT |
 | Service Context | {module-root-context}/rest/moduleControl |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ChangeFlowStateDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStateDto.java) <details>
+| Payload | A json serialised [ChangeFlowStateDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStateDto.java) |
+| Returns | HTTP 200 status if state was changed successfully. |
+
+<details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
 <p>
 
@@ -90,8 +96,7 @@ The set of REST endpoints which allows you to:
 ````
  
 </p>
-</details>|
-| Returns | HTTP 200 status if state was changed successfully. |
+</details>
 
 ### Change Flow startup type
 
@@ -100,7 +105,9 @@ The set of REST endpoints which allows you to:
 | Request Method | PUT |
 | Service Context | {module-root-context}/rest/moduleControl/startupMode |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ChangeFlowStartupModeDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStartupModeDto.java) 
+| Payload | A json serialised [ChangeFlowStartupModeDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStartupModeDto.java) |
+| Returns | HTTP 200 status if startup type was changed successfully. |
+
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
 <p>
@@ -115,8 +122,7 @@ The set of REST endpoints which allows you to:
 ````
  
 </p>
-</details> |
-| Returns | HTTP 200 status if startup type was changed successfully. |
+</details> 
 
 ## Resubmission Service
 REST endpoints which allows user to resubmit or ignore excluded events.
@@ -128,20 +134,21 @@ REST endpoints which allows user to resubmit or ignore excluded events.
 | Request Method | PUT |
 | Service Context | {module-root-context}/rest/resubmission |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ResubmissionRequestDto](src/main/java/org/ikasan/rest/module/dto/ResubmissionRequestDto.java) <details>
-                                                                                                                                 <summary>Click to view the sample JSON payload expected by the service.</summary>
-                                                                                                                             <p>
-                                                                                                                             
-                                                                                                                             ````json
-                                                                                                                             {
-                                                                                                                               "action": "string",
-                                                                                                                               "errorUri": "string",
-                                                                                                                               "flowName": "string",
-                                                                                                                               "moduleName": "string"
-                                                                                                                             }
-                                                                                                                             ````
-                                                                                                                              
-                                                                                                                             </p>
-                                                                                                                             </details> |
+| Payload | A json serialised [ResubmissionRequestDto](src/main/java/org/ikasan/rest/module/dto/ResubmissionRequestDto.java) |
 | Returns | HTTP 200 status if startup type was changed successfully. |
 
+<details>
+    <summary>Click to view the sample JSON payload expected by the service.</summary>
+<p>
+
+````json
+{
+  "action": "resubmit|ignore",
+  "errorUri": "string",
+  "flowName": "string",
+  "moduleName": "string"
+}
+````
+ 
+</p>
+</details>
