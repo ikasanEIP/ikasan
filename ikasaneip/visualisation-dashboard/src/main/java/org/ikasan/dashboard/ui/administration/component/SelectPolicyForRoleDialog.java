@@ -1,14 +1,12 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -48,6 +46,8 @@ public class SelectPolicyForRoleDialog extends Dialog
 
     private void init()
     {
+        H3 selectGroupLabel = new H3(getTranslation("label.select-policy", UI.getCurrent().getLocale(), null));
+
         List<Policy> policiesList = this.securityService.getAllPolicies();
 
         policiesList.removeAll(role.getPolicies());
@@ -58,30 +58,21 @@ public class SelectPolicyForRoleDialog extends Dialog
         policyGrid.setSizeFull();
 
         policyGrid.setClassName("my-grid");
-        policyGrid.addColumn(Policy::getName).setHeader("Name").setKey("name").setFlexGrow(2).setSortable(true);
-        policyGrid.addColumn(Policy::getDescription).setHeader("Description").setKey("description").setFlexGrow(3).setSortable(true);
-        policyGrid.addColumn(new ComponentRenderer<>(policy ->
+        policyGrid.addColumn(Policy::getName).setHeader(getTranslation("table-header.policy-name", UI.getCurrent().getLocale(), null)).setKey("name").setFlexGrow(2).setSortable(true);
+        policyGrid.addColumn(Policy::getDescription).setHeader(getTranslation("table-header.policy-description", UI.getCurrent().getLocale(), null)).setKey("description").setFlexGrow(3).setSortable(true);
+
+        policyGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Policy>>) policyItemDoubleClickEvent ->
         {
-            Button addRoleButton = new Button(VaadinIcon.PLUS.create());
+            role.addPolicy(policyItemDoubleClickEvent.getItem());
 
-            addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-                role.addPolicy(policy);
+            this.securityService.saveRole(role);
 
-                this.securityService.saveRole(role);
+            String action = String.format("Policy [%s] added to role [%s].", policyItemDoubleClickEvent.getItem().getName(), role.getName());
 
-                String action = String.format("Policy [%s] added to role [%s].", policy.getName(), role.getName());
+            this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
-
-                this.close();
-            });
-
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.add(addRoleButton);
-            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, addRoleButton);
-            return verticalLayout;
-        })).setFlexGrow(1);
+            this.close();
+        });
 
         HeaderRow hr = policyGrid.appendHeaderRow();
         policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
@@ -92,7 +83,7 @@ public class SelectPolicyForRoleDialog extends Dialog
         policyGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(policyGrid);
+        layout.add(selectGroupLabel, policyGrid);
 
         layout.setWidth("600px");
         layout.setHeight("300px");

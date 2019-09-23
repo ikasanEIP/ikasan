@@ -2,9 +2,12 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -57,6 +60,8 @@ public class SelectGroupForRoleDialog extends Dialog
 
     private void init()
     {
+        H3 selectGroupLabel = new H3(getTranslation("label.select-group", UI.getCurrent().getLocale(), null));
+
         List<IkasanPrincipalLite> principals = this.securityService.getAllPrincipalLites();
         principals.removeAll(associatedGroups);
 
@@ -66,15 +71,20 @@ public class SelectGroupForRoleDialog extends Dialog
         groupGrid.setSizeFull();
         groupGrid.setClassName("my-grid");
 
-        groupGrid.addColumn(IkasanPrincipalLite::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(2);
-        groupGrid.addColumn(IkasanPrincipalLite::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(8);
-        groupGrid.addColumn(new ComponentRenderer<>(principalLite ->
-        {
-            Button addGroupButton = new Button(VaadinIcon.PLUS.create());
+        groupGrid.addColumn(IkasanPrincipalLite::getName)
+            .setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null))
+            .setKey("name")
+            .setSortable(true)
+            .setFlexGrow(2);
+        groupGrid.addColumn(IkasanPrincipalLite::getDescription)
+            .setHeader(getTranslation("table-header.group-description", UI.getCurrent().getLocale(), null))
+            .setKey("description")
+            .setSortable(true)
+            .setFlexGrow(8);
 
-            addGroupButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-            {
-                IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(principalLite.getName());
+        groupGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<IkasanPrincipalLite>>) ikasanPrincipalLiteItemDoubleClickEvent ->
+        {
+                IkasanPrincipal ikasanPrincipal = this.securityService.findPrincipalByName(ikasanPrincipalLiteItemDoubleClickEvent.getItem().getName());
                 ikasanPrincipal.addRole(this.role);
 
                 this.securityService.savePrincipal(ikasanPrincipal);
@@ -84,13 +94,7 @@ public class SelectGroupForRoleDialog extends Dialog
                 this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
                 this.close();
-            });
-
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.add(addGroupButton);
-            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, addGroupButton);
-            return verticalLayout;
-        })).setFlexGrow(1);
+        });
 
         HeaderRow hr = groupGrid.appendHeaderRow();
         groupGrid.addGridFiltering(hr, groupFilter::setNameFilter, "name");
@@ -103,7 +107,7 @@ public class SelectGroupForRoleDialog extends Dialog
         groupGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(groupGrid);
+        layout.add(selectGroupLabel, groupGrid);
 
         layout.setWidth("1000px");
         layout.setHeight("500px");

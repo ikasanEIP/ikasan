@@ -26,6 +26,4 @@
         <property name="maxActive" value="${datasource.max.pool.size}" />
     </bean>
 
-
-
 </beans>

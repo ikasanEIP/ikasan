@@ -4,6 +4,7 @@ import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -84,14 +85,14 @@ public class PolicyManagementDialog extends Dialog
 
     private VerticalLayout createRolesAccessGrid()
     {
-        H3 rolesLabel = new H3("Ikasan Roles");
+        H3 rolesLabel = new H3(getTranslation("label.policy-roles", UI.getCurrent().getLocale(), null));
 
         RoleFilter roleFilter = new RoleFilter();
 
         roleGrid = new FilteringGrid<>(roleFilter);
         roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("name").setHeader("Name").setSortable(true).setFlexGrow(1);
-        roleGrid.addColumn(Role::getDescription).setKey("description").setHeader("Description").setSortable(true).setFlexGrow(4);
+        roleGrid.addColumn(Role::getName).setKey("name").setHeader(getTranslation("table-header.policy-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
+        roleGrid.addColumn(Role::getDescription).setKey("description").setHeader(getTranslation("table-header.policy-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
         roleGrid.addColumn(new ComponentRenderer<>(role->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -122,7 +123,7 @@ public class PolicyManagementDialog extends Dialog
 
         this.updateRolesGrid();
 
-        Button addRoleButton = new Button("Associate policy with role");
+        Button addRoleButton = new Button(getTranslation("button-associate-policy-with-role", UI.getCurrent().getLocale(), null));
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectRoleForPolicyDialog dialog = new SelectRoleForPolicyDialog(policy, this.securityService, this.systemEventLogger);
@@ -168,17 +169,17 @@ public class PolicyManagementDialog extends Dialog
 
     private VerticalLayout initPolicyForm()
     {
-        H3 userProfileLabel = new H3("Policy Profile - " + this.policy.getName());
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.policy-profile", UI.getCurrent().getLocale(), null) ,this.policy.getName()));
 
         FormLayout formLayout = new FormLayout();
 
-        TextField policyName = new TextField("Name");
+        TextField policyName = new TextField(getTranslation("test-field.policy-name", UI.getCurrent().getLocale(), null));
         policyName.setValue(this.policy.getName());
         policyName.setReadOnly(true);
         formLayout.add(policyName);
         formLayout.setColspan(policyName, 1);
 
-        TextArea description = new TextArea("Description");
+        TextArea description = new TextArea(getTranslation("test-field.policy-description", UI.getCurrent().getLocale(), null));
         description.setValue(this.policy.getDescription());
         description.setHeight("150px");
         description.setReadOnly(true);
