@@ -5,20 +5,18 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
 
-public class ResubmissionRestServiceImplTest
+public class ReplayRestServiceImplTest
 {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
-    private ResubmissionRestServiceImpl uut;
+    private ReplayRestServiceImpl uut = new ReplayRestServiceImpl();
 
     private String contexBaseUrl;
 
@@ -26,46 +24,44 @@ public class ResubmissionRestServiceImplTest
     public void setup()
     {
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
-        Environment environment = new StandardEnvironment();
-        uut = new ResubmissionRestServiceImpl(environment);
     }
 
     @Test
-    public void resubmit()
+    public void replay()
     {
-        stubFor(put(urlEqualTo(ResubmissionRestServiceImpl.RESUBMSSION_URL))
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                     .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).withRequestBody(
                 containing(
-                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"errorUri\":\"testErrorURI\",\"action\":\"resubmit\"}"))
+                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(200)));
-        boolean result = uut.resubmit(contexBaseUrl, "test Module Name", "flow Test", "resubmit", "testErrorURI");
+        boolean result = uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes());
         assertEquals(true, result);
     }
 
     @Test
-    public void resubmit_returns400()
+    public void replay_returns400()
     {
-        stubFor(put(urlEqualTo(ResubmissionRestServiceImpl.RESUBMSSION_URL))
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                     .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).withRequestBody(
                 containing(
-                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"errorUri\":\"testErrorURI\",\"action\":\"resubmit\"}"))
+                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(400)));
-        boolean result = uut.resubmit(contexBaseUrl, "test Module Name", "flow Test", "resubmit", "testErrorURI");
+        boolean result = uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes());
         assertEquals(false, result);
     }
 
     @Test
     public void resubmit_returns404()
     {
-        stubFor(put(urlEqualTo(ResubmissionRestServiceImpl.RESUBMSSION_URL))
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                     .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).withRequestBody(
                 containing(
-                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"errorUri\":\"testErrorURI\",\"action\":\"resubmit\"}"))
+                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(404)));
-        boolean result = uut.resubmit(contexBaseUrl, "test Module Name", "flow Test", "resubmit", "testErrorURI");
+        boolean result = uut.replay(contexBaseUrl,  null, null,"test Module Name", "flow Test", "resubmit".getBytes());
         assertEquals(false, result);
     }
 
@@ -73,15 +69,15 @@ public class ResubmissionRestServiceImplTest
     public void resubmit_returns500()
     {
 
-        stubFor(put(urlEqualTo(ResubmissionRestServiceImpl.RESUBMSSION_URL))
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                     .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
-                    .withRequestBody(containing("{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"errorUri\":\"testErrorURI\",\"action\":\"resubmit\"}"))
+                    .withRequestBody(containing("{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse()
                                     .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                                     .withStatus(500)
                                ));
-        boolean result = uut.resubmit(contexBaseUrl,"test Module Name","flow Test","resubmit","testErrorURI");
+        boolean result = uut.replay(contexBaseUrl, null, null,"test Module Name","flow Test","resubmit".getBytes());
         assertEquals(false, result);
 
 

@@ -1,27 +1,28 @@
 package org.ikasan.rest.client;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+
 /**
- *  Dashboard Client configuration required by every module.
+ * Module Rest Client configuration required by ikasan dashboard in order to communicate with modules.
  * This autoconfig should be excluded from dashboard.
  */
 public class ModuleRestClientAutoConfiguration
 {
-    private String ERROR_PATH = "/rest/harvest/errors";
 
-    private String EXCLUSION_PATH = "/rest/harvest/exclusions";
+    @Bean
+    public ReplayRestServiceImpl replayRestService(){
+        return new ReplayRestServiceImpl();
+    }
 
-    private String METRICS_PATH = "/rest/harvest/metrics";
+    @Bean
+    public ResubmissionRestServiceImpl resubmissionRestService(Environment environment){
+        return new ResubmissionRestServiceImpl(environment);
+    }
 
-    private String REPLAY_PATH = "/rest/harvest/replay";
-
-    private String WIRETAP_PATH = "/rest/harvest/wiretaps";
-
-    private String METADATA_PATH = "/rest/module/metadata";
-
-    private String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
-
-
-
-
+    @Bean
+    public ModuleControlRestServiceImpl moduleControlRestService(Environment environment){
+        return new ModuleControlRestServiceImpl(environment);
+    }
 
 }

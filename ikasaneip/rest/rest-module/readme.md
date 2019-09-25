@@ -152,3 +152,32 @@ REST endpoints which allows user to resubmit or ignore excluded events.
  
 </p>
 </details>
+
+
+## Replay Service
+REST endpoints which allows user to replay given recorded event.
+
+### Replay Endpoint
+
+| Parameter | Value  | 
+|--- | --- |
+| Request Method | PUT |
+| Service Context | {module-root-context}/rest/replay |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
+| Payload | A json serialised [ReplayRequestDto](src/main/java/org/ikasan/rest/module/dto/ReplayRequestDto.java) |
+| Returns | HTTP 200 status if startup type was changed successfully. |
+
+<details>
+    <summary>Click to view the sample JSON payload expected by the service.</summary>
+<p>
+
+````json
+{
+  "action": "resubmit|ignore",
+  "errorUri": "string",
+  "event": "byteArray"
+}
+````
+ 
+</p>
+</details>

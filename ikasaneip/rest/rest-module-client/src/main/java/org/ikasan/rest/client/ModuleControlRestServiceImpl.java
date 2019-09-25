@@ -1,23 +1,23 @@
 package org.ikasan.rest.client;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.client.dto.ChangeFlowStateDto;
 import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.rest.client.dto.ModuleDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ModuleControlRestServiceImpl
+public class ModuleControlRestServiceImpl extends ModuleRestService
 {
     Logger logger = LoggerFactory.getLogger(ModuleControlRestServiceImpl.class);
 
@@ -26,17 +26,10 @@ public class ModuleControlRestServiceImpl
     protected final static String FLOWS_STATUS_URL= "/rest/moduleControl/{moduleName}";
     protected final static String SINGLE_FLOW_STATUS_URL= "/rest/moduleControl/{moduleName}/{flowName}";
 
-    private RestTemplate restTemplate;
 
-
-
-    public ModuleControlRestServiceImpl()
+    public ModuleControlRestServiceImpl(Environment environment)
     {
-        restTemplate = new RestTemplate();
-        MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-        jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-
+        super(environment);
     }
 
     public Optional<ModuleDto> getFlowStates(String contextUrl, String moduleName)
@@ -124,13 +117,4 @@ public class ModuleControlRestServiceImpl
         }
     }
 
-
-    private HttpHeaders createHttpHeaders()
-    {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-        return headers;
-    }
 }

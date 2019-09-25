@@ -7,6 +7,8 @@ import org.ikasan.rest.client.dto.ModuleDto;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -21,7 +23,7 @@ public class ModuleControlRestServiceImplTest
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
-    private ModuleControlRestServiceImpl uut = new ModuleControlRestServiceImpl();
+    private ModuleControlRestServiceImpl uut;
 
     private String contexBaseUrl;
 
@@ -29,6 +31,8 @@ public class ModuleControlRestServiceImplTest
     public void setup()
     {
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
+        Environment environment = new StandardEnvironment();
+        uut = new ModuleControlRestServiceImpl(environment);
 
     }
 

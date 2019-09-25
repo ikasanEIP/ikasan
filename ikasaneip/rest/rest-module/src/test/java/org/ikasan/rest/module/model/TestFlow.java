@@ -8,9 +8,11 @@ import java.util.List;
 
 public class TestFlow implements Flow, ConfiguredResource
 {
-    String name;
-    String moduleName;
-    String state;
+    private String name;
+    private String moduleName;
+    private String state;
+    private FlowConfiguration flowConfiguration;
+    private SerialiserFactory serialiserFactory;
 
 
     public TestFlow(String name, String moduleName, String state)
@@ -18,6 +20,15 @@ public class TestFlow implements Flow, ConfiguredResource
         this.name = name;
         this.moduleName = moduleName;
         this.state = state;
+    }
+
+    public TestFlow(String name, String moduleName, String state, FlowConfiguration flowConfiguration,SerialiserFactory serialiserFactory)
+    {
+        this.name = name;
+        this.moduleName = moduleName;
+        this.state = state;
+        this.flowConfiguration = flowConfiguration;
+        this.serialiserFactory = serialiserFactory;
     }
 
     @Override
@@ -47,7 +58,7 @@ public class TestFlow implements Flow, ConfiguredResource
     @Override
     public FlowConfiguration getFlowConfiguration()
     {
-        throw new UnsupportedOperationException();
+        return flowConfiguration;
     }
 
     @Override
@@ -119,7 +130,7 @@ public class TestFlow implements Flow, ConfiguredResource
     @Override
     public SerialiserFactory getSerialiserFactory()
     {
-        throw new UnsupportedOperationException();
+        return serialiserFactory;
     }
 
     @Override
