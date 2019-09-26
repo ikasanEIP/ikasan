@@ -59,10 +59,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implementation of the <code>UserService</code> utilising Dashboard
@@ -71,15 +68,15 @@ import java.util.Map;
  */
 public class DashboardUserServiceImpl implements UserService
 {
-    private static final String SERVICE_USER_PATH = "/rest/user?username={username}";
+    protected static final String SERVICE_USER_PATH = "/rest/user?username={username}";
 
-    private static final String SERVICE_USERS_PATH = "/rest/users";
+    protected static final String SERVICE_USERS_PATH = "/rest/users";
 
-    private static final String MODULE_NAME_PROPERTY = "module.name";
+    protected static final String MODULE_NAME_PROPERTY = "module.name";
 
-    private static final String DASHBOARD_BASE_URL_PROPERTY = "ikasan.dashboard.extract.base.url";
+    protected static final String DASHBOARD_BASE_URL_PROPERTY = "ikasan.dashboard.extract.base.url";
 
-    private static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
+    protected static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
 
     Logger logger = LoggerFactory.getLogger(DashboardUserServiceImpl.class);
 
@@ -360,6 +357,7 @@ public class DashboardUserServiceImpl implements UserService
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, moduleName);
         if (token != null)
         {

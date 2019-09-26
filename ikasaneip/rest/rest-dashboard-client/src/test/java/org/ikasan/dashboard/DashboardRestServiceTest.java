@@ -56,10 +56,7 @@ public class DashboardRestServiceTest
             will(returnValue("testModule"));
         }});
         uut = new DashboardRestServiceImpl(environment, "/rest/harvest/wiretaps");
-        wireMockRule.addMockServiceRequestListener((request, response) -> {
-            System.out.println(request);
-            System.out.println(response);
-        });
+
     }
 
     @Test

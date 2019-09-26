@@ -52,10 +52,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -94,28 +96,11 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
         if(dashboardUserService.authenticate(userName,password)){
 
             User user = dashboardUserService.loadUserByUsername(userName);
-
-            Set<IkasanPrincipal> principals = user.getPrincipals();
-
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-            for(IkasanPrincipal principal: principals)
-            {
-                Set<Role> roles = principal.getRoles();
-
-                for(Role role: roles)
-                {
-                    Set<Policy> policies = role.getPolicies();
-
-                    for(Policy policy: policies)
-                    {
-                        if(!authorities.contains(policy))
-                        {
-                            authorities.add(policy);
-                        }
-                    }
-                }
-            }
+            List<GrantedAuthority> authorities = user.getPrincipals().stream()
+                        .flatMap(principal -> principal.getRoles().stream())
+                        .flatMap(r -> r.getPolicies().stream())
+                        .distinct().
+                        collect(Collectors.toList());
 
             IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
                 , user.getPreviousAccessTimestamp());
@@ -124,7 +109,9 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
         }
         else
         {
-            return null;
+            return new IkasanAuthentication(false, null, null, (String)authentication.getCredentials()
+            , 1l);
+
         }
     }
 

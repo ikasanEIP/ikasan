@@ -1,0 +1,9 @@
+{
+  "username": "testUser",
+  "email": "test@test.com",
+  "firstName": "TestName",
+  "surname": "TestSurname",
+  "department": "department",
+  "enabled": true
+
+}

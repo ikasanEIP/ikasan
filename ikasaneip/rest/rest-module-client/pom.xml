@@ -48,22 +48,34 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-security-parent</artifactId>
+        <artifactId>ikasan-rest</artifactId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>ikasan-security-rest</artifactId>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-rest-module-client</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Security REST</name>
-    <description>The security library for the Ikasan Enterprise Integration Platform using REST</description>
+    <name>Ikasan Rest Module client</name>
+    <description>The rest module client library for the Ikasan Enterprise Integration Platform</description>
+    <version>2.2.0-SNAPSHOT</version>
 
     <dependencies>
 
+
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security-db</artifactId>
+            <artifactId>ikasan-spec-metadata</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -80,25 +92,12 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
 
-
-        <!-- Test Dependencies -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- Test Dependencies -->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -107,39 +106,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- TODO:  Upgrade to 3.12.0 at some stage -->
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -152,12 +126,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -202,6 +170,20 @@
             <artifactId>jetty-util</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
 
     </dependencies>
 

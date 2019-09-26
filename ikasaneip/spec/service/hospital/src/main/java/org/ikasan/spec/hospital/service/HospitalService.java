@@ -60,9 +60,21 @@ public interface HospitalService<EVENT>
 	 * @param event The event we are resubmitting.
 	 * @param principal The principal object of the user we are resubmitting on behalf of.
 	 */
-	public void resubmit(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
+	@Deprecated
+	void resubmit(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
 
-	/**
+    /**
+     * Method to resubmit an event to the appropriate module flow.
+     *
+     * @param moduleName The name of the module we are re-submitting to.
+     * @param flowName The name of the flow we are re-submitting to.
+     * @param errorUri The error uri of the event being resubmitted.
+     * @param principal The the user name we are resubmitting on behalf of.
+     */
+    void resubmit(String moduleName, String flowName, String errorUri, String userName);
+
+
+    /**
 	 * Method to ignore an excluded event
 	 * 
 	 * @param moduleName The name of the module we are re-submitting to.
@@ -71,5 +83,16 @@ public interface HospitalService<EVENT>
 	 * @param event The event we are resubmitting.
 	 * @param principal The principal object of the user we are resubmitting on behalf of.
 	 */
-	public void ignore(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
+    @Deprecated
+	void ignore(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
+
+    /**
+     * Method to ignore an excluded event
+     *
+     * @param moduleName The name of the module we are re-submitting to.
+     * @param flowName The name of the flow we are re-submitting to.
+     * @param errorUri The error uri of the event being resubmitted.
+     * @param principal The principal object of the user we are resubmitting on behalf of.
+     */
+    void ignore(String moduleName, String flowName, String errorUri, String userName);
 }

@@ -122,9 +122,9 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
         return new SystemEventLogController(systemEventService);
     }
 
-    @Bean public UsersController usersController()
+    @Bean public UsersController usersController(Environment environment)
     {
-        return new UsersController(userService());
+        return new UsersController(userService(),dashboardUserService(environment),environment);
     }
 
     @Bean public WiretapEventsSearchFormController wiretapEventsSearchFormController()
