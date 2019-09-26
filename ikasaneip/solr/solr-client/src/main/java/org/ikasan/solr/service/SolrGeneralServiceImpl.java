@@ -3,6 +3,7 @@ package org.ikasan.solr.service;
 import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.housekeeping.HousekeepService;
+import org.ikasan.spec.solr.SolrDeleteService;
 import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 26/08/2017.
  */
-public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>, HousekeepService
+public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>, HousekeepService, SolrDeleteService
 {
     private SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao;
 
@@ -97,5 +98,13 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearc
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
         // not relevant for solr housekeeping
+    }
+
+    @Override
+    public void removeById(String type, String id)
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        this.solrGeneralSearchDao.removeById(type, id);
     }
 }

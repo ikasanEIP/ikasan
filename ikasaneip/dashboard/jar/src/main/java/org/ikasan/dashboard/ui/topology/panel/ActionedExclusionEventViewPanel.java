@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.topology.service.TopologyService;
@@ -85,15 +85,15 @@ public class ActionedExclusionEventViewPanel extends Panel
 	private TextField roleName;
 	private TextField roleDescription;
 	private ErrorOccurrence errorOccurrence;
-	private ExclusionEventAction action;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private SolrExclusionEventActionImpl action;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 
 	/**
 	 * @param policy
 	 */
-	public ActionedExclusionEventViewPanel(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-                                           HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
+	public ActionedExclusionEventViewPanel(ErrorOccurrence errorOccurrence, SolrExclusionEventActionImpl action,
+                                           HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
@@ -245,7 +245,7 @@ public class ActionedExclusionEventViewPanel extends Panel
 
 		if(this.action.getEvent() != null)
 		{
-			eventEditor.setValue(new String((byte[])this.action.getEvent()));
+			eventEditor.setValue(this.action.getEvent());
 		}
 		
 		eventEditor.setReadOnly(true);

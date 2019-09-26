@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui;
 import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -76,7 +76,7 @@ public class CategorisedErrorOccurrencePopup extends UI
 		 ErrorReportingManagementService errorReportingManagementService 
 		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
 		 
-		 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService 
+		 HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService
 		 	= (HospitalManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
 			
 		 TopologyService topologyService = (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");

@@ -50,7 +50,7 @@ import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.AuthenticationService;
@@ -95,7 +95,7 @@ public class CategorisedErrorsByFilterDeepLinkPanel extends UI
 	private TopologyService topologyService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private ErrorCategorisationService errorCategorisationService;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	
 	/**
 	 * @param errorOccurrence
@@ -103,7 +103,7 @@ public class CategorisedErrorsByFilterDeepLinkPanel extends UI
 	 */
 	public CategorisedErrorsByFilterDeepLinkPanel(ErrorCategorisationService errorCategorisationService,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			PlatformConfigurationService platformConfigurationService, NavigationPanel navigationPanel,
 			AuthenticationService authenticationService, VisibilityGroup visibilityGroup, UserService userService)

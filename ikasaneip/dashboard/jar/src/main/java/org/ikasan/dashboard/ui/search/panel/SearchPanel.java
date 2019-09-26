@@ -28,7 +28,7 @@ import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.service.SolrReplayServiceImpl;
@@ -79,7 +79,7 @@ public class SearchPanel extends Panel implements View
     private ReplayService replayService;
     private TopologyService topologyService;
     private SolrExclusionServiceImpl exclusionManagementService;
-    private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+    private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
     private ErrorReportingManagementService errorReportingManagementService;
     private HospitalService<byte[]> hospitalService;
     private String solrUsername;
@@ -92,7 +92,7 @@ public class SearchPanel extends Panel implements View
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
                        SolrWiretapServiceImpl wiretapService,SolrErrorReportingManagementServiceImpl errorReportingService, SolrReplayServiceImpl replayManagementService,
                        ReplayService replayService, TopologyService topologyService, SolrExclusionServiceImpl exclusionManagementService,
-                       HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+                       HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
                        ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
     {
         this.solrSearchService = solrSearchService;
@@ -164,7 +164,7 @@ public class SearchPanel extends Panel implements View
                     {
                         ExclusionEvent exclusionEvent = exclusionManagementService.find(ikasanSolrDocument.getId());
                         ErrorOccurrence errorOccurrence = errorReportingService.find(ikasanSolrDocument.getId());
-                        ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
+                        SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
                         ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
                                 , action, hospitalManagementService, topologyService, (ErrorReportingManagementService) errorReportingManagementService, hospitalService);
 

@@ -60,14 +60,12 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellSty
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
@@ -116,7 +114,7 @@ public class ActionedExclusionTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	private ErrorReportingService errorReportingService;
 	private TopologyService topologyService;
 	
@@ -132,8 +130,8 @@ public class ActionedExclusionTab extends TopologyTab
 	
 	
 	public ActionedExclusionTab(ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,ErrorReportingService errorReportingService,
-			TopologyService topologyService, ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
+                                HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, ErrorReportingService errorReportingService,
+                                TopologyService topologyService, ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
 	{
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
@@ -187,10 +185,10 @@ public class ActionedExclusionTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		    		ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
+		    		SolrExclusionEventActionImpl exclusionEventAction = (SolrExclusionEventActionImpl)itemClickEvent.getItemId();
 			    	
 			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
-			    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
+			    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
 			    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, 
 			    			action, hospitalManagementService, topologyService);
 			    
@@ -244,7 +242,7 @@ public class ActionedExclusionTab extends TopologyTab
             	}
             	
             	logger.info("Trying to search for ExclusionEventAction");
-            	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
+            	List<SolrExclusionEventActionImpl> exclusionEventActions = hospitalManagementService.getActionedExclusions
             			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
             	
             	logger.info("Results ExclusionEventAction: " + exclusionEventActions.size());
@@ -276,7 +274,7 @@ public class ActionedExclusionTab extends TopologyTab
             		notif.show(Page.getCurrent());
             	}
             	
-            	for(final ExclusionEventAction exclusionEventAction: exclusionEventActions)
+            	for(final SolrExclusionEventActionImpl exclusionEventAction: exclusionEventActions)
             	{
             		Date date = new Date(exclusionEventAction.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

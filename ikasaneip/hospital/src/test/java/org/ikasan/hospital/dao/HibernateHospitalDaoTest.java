@@ -42,7 +42,7 @@ package org.ikasan.hospital.dao;
 
 import javax.annotation.Resource;
 
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,7 +69,7 @@ public class HibernateHospitalDaoTest
 	@Test
 	public void testSaveExclusionEvent_success()
 	{
-		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
+		ExclusionEventActionImpl action = new ExclusionEventActionImpl("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
 		
 		this.hospitalDao.saveOrUpdate(action);
 	}

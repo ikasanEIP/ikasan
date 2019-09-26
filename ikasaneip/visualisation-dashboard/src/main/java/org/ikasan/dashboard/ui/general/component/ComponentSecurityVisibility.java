@@ -17,6 +17,11 @@ public class ComponentSecurityVisibility
 
         component.setVisible(false);
 
+        if(authentication == null)
+        {
+            return;
+        }
+
         for(String securityConstant: securityConstants)
         {
             if(authentication.hasGrantedAuthority(securityConstant))

@@ -99,4 +99,11 @@ public interface SolrGeneralDao<RESULTS>
      * Method to remove expired records from the solr index.
      */
     public void removeExpired();
+
+    /**
+     * Method to remove records from the solr index by type and id.
+     *
+     * @param type
+     */
+    public void removeById(String type, String id);
 }

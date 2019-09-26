@@ -64,7 +64,7 @@ import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -131,7 +131,7 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	
 	private TopologyService topologyService;
 	
@@ -165,7 +165,7 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			PlatformConfigurationService platformConfigurationService, boolean showFilter)
 	{

@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.topology.window;
 import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -67,7 +67,7 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	
 	private TopologyService topologyService;
 	
@@ -78,7 +78,7 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 
 	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			Container container)
 	{

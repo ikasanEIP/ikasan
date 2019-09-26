@@ -43,8 +43,8 @@ package org.ikasan.hospital.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 
 
 /**
@@ -67,7 +67,7 @@ public interface HospitalDao
 	 * @param errorUri
 	 * @return
 	 */
-	public ExclusionEventAction getExclusionEventActionByErrorUri(String errorUri);
+	public ExclusionEventActionImpl getExclusionEventActionByErrorUri(String errorUri);
 	
 	/**
 	 * Get actioned exclusions
@@ -79,7 +79,7 @@ public interface HospitalDao
 	 * @param size
 	 * @return
 	 */
-	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size);
+	public List<ExclusionEventActionImpl> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size);
 	
 	/**
 	 * Helper method to return the row count based on the criteria.
