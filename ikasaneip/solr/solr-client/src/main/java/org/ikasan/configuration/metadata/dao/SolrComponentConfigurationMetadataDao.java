@@ -150,6 +150,8 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
         logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
+        query.setStart(0);
+        query.setRows(1000);
         query.setQuery(queryString);
 
         List<SolrComponentConfiguration> beans = null;

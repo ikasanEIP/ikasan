@@ -2,6 +2,7 @@ package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
@@ -73,7 +74,7 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 roleManagementLabel = new H2("Role Management");
+        H2 roleManagementLabel = new H2(getTranslation("label.role-management", UI.getCurrent().getLocale(), null));
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setJustifyContentMode(JustifyContentMode.START);
@@ -113,8 +114,8 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
         this.roleGrid.setSizeFull();
         this.roleGrid.setClassName("my-grid");
 
-        this.roleGrid.addColumn(Role::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(4);
-        this.roleGrid.addColumn(Role::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(7);
+        this.roleGrid.addColumn(Role::getName).setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setKey("name").setSortable(true).setFlexGrow(4);
+        this.roleGrid.addColumn(Role::getDescription).setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setKey("description").setSortable(true).setFlexGrow(7);
         this.roleGrid.addColumn(new ComponentRenderer<>(role ->
         {
             HorizontalLayout horizontalLayout = new HorizontalLayout();

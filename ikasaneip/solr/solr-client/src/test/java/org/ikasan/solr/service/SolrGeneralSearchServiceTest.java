@@ -76,6 +76,50 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
     @Test
     @DirtiesContext
+    public void test_search_with_offset_success() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
+
+            assertEquals(2, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
     public void test_search_entity_types_success() throws Exception {
         Path path = createTempDir();
 
@@ -118,6 +162,54 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes)
                     .getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_search_entity_types_no_module_or_flow_success() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
+
+            ArrayList<String> entityTypes = new ArrayList<>();
+            entityTypes.add("test");
+
+            assertEquals(3, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes)
+                .getResultList().size());
 
         }
     }

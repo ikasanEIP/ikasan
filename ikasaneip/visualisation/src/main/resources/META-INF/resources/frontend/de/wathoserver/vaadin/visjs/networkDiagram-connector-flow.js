@@ -100,54 +100,52 @@ window.Vaadin.Flow.networkDiagramConnector = {
 							});
 		}
 
-        var currentRadius = 0;
-		var animateRadius = true;
-        var colorCircle = 'rgba(0, 255, 0, 0.8)';
-        var colorBorder = 'rgba(0, 255, 0, 0.2)';
-        var updateFrameVar = setInterval(function() { updateFrameTimer(); }, 60);
-
-        function updateFrameTimer() {
-            if (animateRadius) {
-                graph.$connector.diagram.redraw();
-                currentRadius += 0.05;
-            }
-        }
-
-        graph.$connector.diagram.on("beforeDrawing", function(ctx) {
-            if (animateRadius) {
-                var inode;
-                var nodePositions = graph.$connector.diagram.getPositions();
-                var arrayLength = graph.nodes.length;
-                for (inode = 0; inode < arrayLength; inode++) {
-                    var radius = Math.abs(50 * Math.sin(currentRadius + inode / 50.0));
-                    var node = nodesParent[inode];
-                    ctx.strokeStyle = node.edgeColour;
-                    ctx.fillStyle = node.fillColour;
-                    var nodePosition = nodePositions[node.id];
-                    ctx.circle(nodePosition.x, nodePosition.y, radius);
-                    ctx.fill();
-                    ctx.stroke();
-                }
-            };
-        });
+        // var currentRadius = 0;
+        // var animateRadius = true;
+        // var colorCircle = 'rgba(0, 255, 0, 0.8)';
+        // var colorBorder = 'rgba(0, 255, 0, 0.2)';
+        // var updateFrameVar = setInterval(function() { updateFrameTimer(); }, 60);
+        //
+        // function updateFrameTimer() {
+        //     if (animateRadius) {
+        //         graph.$connector.diagram.redraw();
+        //         currentRadius += 0.05;
+        //     }
+        // }
+        //
+        // graph.$connector.diagram.on("beforeDrawing", function(ctx) {
+        //     if (animateRadius) {
+        //         var inode;
+        //         var nodePositions = graph.$connector.diagram.getPositions();
+        //         var arrayLength = graph.nodes.length;
+        //         for (inode = 0; inode < arrayLength; inode++) {
+        //             var radius = Math.abs(50 * Math.sin(currentRadius + inode / 50.0));
+        //             var node = nodesParent[inode];
+        //             ctx.strokeStyle = node.edgeColour;
+        //             ctx.fillStyle = node.fillColour;
+        //             var nodePosition = nodePositions[node.id];
+        //             ctx.circle(nodePosition.x, nodePosition.y, radius);
+        //             ctx.fill();
+        //             ctx.stroke();
+        //         }
+        //     };
+        // });
 
         graph.$connector.diagram.on("afterDrawing", function(ctx) {
-            if (animateRadius) {
-                var inode;
-                var nodePositions = graph.$connector.diagram.getPositions();
-                var arrayLength = graph.nodes.length;
-                for (inode = 0; inode < arrayLength; inode++) {
-                    var node = nodesParent[inode];
-                    var nodePosition = nodePositions[node.id];
+            var inode;
+            var nodePositions = graph.$connector.diagram.getPositions();
+            var arrayLength = graph.nodes.length;
+            for (inode = 0; inode < arrayLength; inode++) {
+                var node = nodesParent[inode];
+                var nodePosition = nodePositions[node.id];
 
-                    if(node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND")
-                    {
-                        var img = new Image();
-                        img.src = node.foundImage;
-                        ctx.drawImage(img, nodePosition.x + 35, nodePosition.y - 15, 15, 15);
-                    }
+                if(node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND")
+                {
+                    var img = new Image();
+                    img.src = node.foundImage;
+                    ctx.drawImage(img, nodePosition.x + 35, nodePosition.y - 15, 15, 15);
                 }
-            };
+            }
         });
 
         graph.$connector.drawModuleSquare = function (x, y, width, height, text) {
@@ -204,11 +202,11 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.font = '18px sans-serif';
                 ctx.textAlign = 'center';
 
-                ctx.lineWidth=2.0
+                ctx.lineWidth=1.0
                 ctx.beginPath();
                 ctx.setLineDash([10, 10]);
                 ctx.strokeStyle = '#000';
-                ctx.fillStyle = "#D4D4D4";
+                ctx.fillStyle = 'rgba(224,224,224,0.5)';
                 // ctx.back
 
                 var stroke = true;
@@ -243,6 +241,9 @@ window.Vaadin.Flow.networkDiagramConnector = {
 
                 ctx.fillStyle = '#000';
                 ctx.fillText(text, x + (width / 2) , y + 25);
+
+                ctx.lineWidth=2.0
+                ctx.setLineDash([0, 0]);
             });
 
             // graph.draw();

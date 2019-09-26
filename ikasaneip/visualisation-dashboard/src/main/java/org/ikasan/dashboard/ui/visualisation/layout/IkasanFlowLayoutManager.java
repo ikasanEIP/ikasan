@@ -15,35 +15,16 @@ import java.util.List;
 /**
  * Created by stewmi on 08/11/2018.
  */
-public class IkasanFlowLayoutManager
+public class IkasanFlowLayoutManager extends LayoutManagerBase implements LayoutManager
 {
     Logger logger = LoggerFactory.getLogger(IkasanFlowLayoutManager.class);
 
     private Flow flow;
-    private NetworkDiagram networkDiagram;
-    private List<Edge> edgeList;
-    private List<Node> nodeList;
-    private List<MessageChannel> channels;
-    private Logo logo;
-    int xExtent = 0;
-    int yExtent = 0;
-    int xExtentFinal = 0;
-
-    int xSpacing = 200;
-    int ySpacing = 150;
-
-    int flowSpacing = 300;
-    int xStart = 0;
-    int yStart = 0;
 
     public IkasanFlowLayoutManager(Flow flow, NetworkDiagram networkDiagram, Logo logo)
     {
+        super(networkDiagram, logo);
         this.flow = flow;
-        this.networkDiagram = networkDiagram;
-        this.edgeList = new ArrayList<>();
-        this.nodeList = new ArrayList<>();
-        this.channels = new ArrayList<>();
-        this.logo = logo;
     }
 
     public void layout()
@@ -55,109 +36,22 @@ public class IkasanFlowLayoutManager
         flow.getConsumer().getSource().setX(x);
         flow.getConsumer().getSource().setY(y);
 
-        logger.info("Add consumer " + flow.getConsumer());
+        logger.debug("Adding consumer [{}] for flow [{}]. ", flow.getConsumer().getLabel(), flow.getName());
 
         nodeList.add(flow.getConsumer().getSource());
 
         addEdge(flow.getConsumer().getSource().getId(), flow.getConsumer().getId(), "");
 
-        manageTransition(flow.getConsumer(), x, y, networkDiagram);
-
-        this.networkDiagram.drawFlow(x + 100, y - 100, xExtent - x , yExtent + 200 - y , flow.getName());
-
-        x = xStart;
-        xExtent = x;
-        y = yExtent + flowSpacing;
-
+        manageTransition(flow.getConsumer(), x, y);
 
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
+        flow.setBorder(x + 100, y - 100, xExtent - x , yExtent + 200 - y);
+
+        this.networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
+
         this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 200));
     }
 
-    private void manageTransition(Node transition, int x, int y, NetworkDiagram networkDiagram)
-    {
-        nodeList.add(transition);
-        logger.info("Add node " + transition.getId() + " x=" + x + " y=" + y + " yExtent=" + yExtent);
-
-
-        if (transition instanceof SingleTransition && ((SingleTransition) transition).getTransition() != null)
-        {
-            transition.setX(x + xSpacing);
-            transition.setY(y);
-
-            addEdge(transition.getId(), ((SingleTransition) transition).getTransition().getId(), ((SingleTransition) transition).getTransitionLabel());
-
-            manageTransition(((SingleTransition) transition).getTransition(), x + xSpacing, y, networkDiagram);
-        }
-        else if (transition instanceof MultiTransition)
-        {
-
-            transition.setX(x + xSpacing);
-            transition.setY(y);
-
-            int i=0;
-
-            for (String key: ((MultiTransition) transition).getTransitions().keySet())
-            {
-                if(key.equals(((MultiTransition) transition).getTransitions().get(key)))
-                {
-                   key = "";
-                }
-
-                addEdge(transition.getId(), ((MultiTransition) transition).getTransitions().get(key).getId(), key);
-
-                if(i++ > 0)
-                {
-                    y = y + (ySpacing);
-                }
-
-                if(yExtent >= y)
-                {
-                     y = yExtent + ySpacing;
-                }
-
-                manageTransition(((MultiTransition) transition).getTransitions().get(key), x + xSpacing, y, networkDiagram);
-            }
-
-            if(y > yExtent)
-            {
-                yExtent = y;
-            }
-        }
-        else if(transition instanceof Node)
-        {
-            transition.setX(x + xSpacing);
-            transition.setY(y);
-
-            if(transition instanceof MessageChannel)
-            {
-                this.channels.add((MessageChannel)transition);
-            }
-        }
-
-        if(x > xExtent)
-        {
-            xExtent = x;
-        }
-
-        if(x >  xExtentFinal)
-        {
-            xExtentFinal = x;
-        }
-
-        if(y > yExtent)
-        {
-            yExtent = y;
-        }
-    }
-
-    private void addEdge(String fromId, String toId, String label)
-    {
-        logger.info("Add edge " + fromId + "-->" + toId);
-        Edge edge = new Edge(fromId, toId);
-        edge.setLabel(label);
-        this.edgeList.add(edge);
-    }
 }

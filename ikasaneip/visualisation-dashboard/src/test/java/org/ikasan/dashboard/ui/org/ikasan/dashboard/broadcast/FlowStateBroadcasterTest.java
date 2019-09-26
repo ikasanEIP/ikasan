@@ -1,10 +1,14 @@
 package org.ikasan.dashboard.ui.org.ikasan.dashboard.broadcast;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +16,13 @@ import java.util.function.Consumer;
 
 public class FlowStateBroadcasterTest
 {
+    @Before
+    public void setup()
+    {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
+    }
+
     @Test
     public void test_broadcast() throws InterruptedException
     {

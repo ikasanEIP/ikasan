@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -193,6 +194,90 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             dao.setSolrClient(server);
 
             assertEquals(3, dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_search_with_offset_success() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            assertEquals(2, dao.search(new HashSet<>(), new HashSet<>(),new HashSet<>(), null,"test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_search_success_no_module_or_flow() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            assertEquals(3, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 100, new ArrayList<>()).getResultList().size());
 
         }
     }

@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
@@ -59,16 +60,16 @@ public class GroupManagementView extends VerticalLayout implements BeforeEnterOb
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 groupManagementLabel = new H2("Group Management");
+        H2 groupManagementLabel = new H2(getTranslation("label.group-management", UI.getCurrent().getLocale(), null));
         add(groupManagementLabel);
 
         this.groupGrid = new FilteringGrid<>(groupFilter);
         this.groupGrid.setSizeFull();
         this.groupGrid.setClassName("my-grid");
 
-        this.groupGrid.addColumn(IkasanPrincipalLite::getName).setHeader("Name").setKey("name").setSortable(true);
-        this.groupGrid.addColumn(IkasanPrincipalLite::getType).setHeader("Type").setKey("type").setSortable(true);
-        this.groupGrid.addColumn(IkasanPrincipalLite::getDescription).setHeader("Description").setKey("description").setSortable(true);
+        this.groupGrid.addColumn(IkasanPrincipalLite::getName).setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null)).setKey("name").setSortable(true);
+        this.groupGrid.addColumn(IkasanPrincipalLite::getType).setHeader(getTranslation("table-header.group-type", UI.getCurrent().getLocale(), null)).setKey("type").setSortable(true);
+        this.groupGrid.addColumn(IkasanPrincipalLite::getDescription).setHeader(getTranslation("table-header.group-description", UI.getCurrent().getLocale(), null)).setKey("description").setSortable(true);
 
         HeaderRow hr = groupGrid.appendHeaderRow();
         this.groupGrid.addGridFiltering(hr, groupFilter::setNameFilter, "name");

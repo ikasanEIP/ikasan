@@ -127,7 +127,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
     {
         this.authentication = (IkasanAuthentication)SecurityContextHolder.getContext().getAuthentication();
 
-    	H2 userDirectories = new H2("User Directories");
+    	H2 userDirectories = new H2(getTranslation("label.user-directories", UI.getCurrent().getLocale(), null));
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setWidth("100%");
@@ -138,16 +138,14 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
         hl.add(icon);
 
 
-        Text instructions = new Text(
-            "The table below shows the user directories currently configured for Ikasan. The order of the directory is the order in which it will be searched for users and groups." +
-            " It is recommended that each user exists in a single directory.");
+        Text instructions = new Text(getTranslation("text.user-directories-instructions", UI.getCurrent().getLocale(), null));
 
         hl.add(instructions);
 
         add(userDirectories);
         add(hl);
 
-        newDirectoryButton = new Button("Add Directory");
+        newDirectoryButton = new Button(getTranslation("button.add-user-directory", UI.getCurrent().getLocale(), null));
         newDirectoryButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent
             -> openUserDirectoryDialog(new AuthenticationMethod()));
 
@@ -161,8 +159,8 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 		this.directoryTable.setSizeFull();
 		this.directoryTable.setClassName("my-grid");
 
-        this.directoryTable.addColumn(AuthenticationMethod::getName).setHeader("Directory Name").setFlexGrow(3);
-        this.directoryTable.addColumn(AuthenticationMethod::getMethod).setHeader("Type").setFlexGrow(3);
+        this.directoryTable.addColumn(AuthenticationMethod::getName).setHeader(getTranslation("table-header.user-directory-name", UI.getCurrent().getLocale(), null)).setFlexGrow(3);
+        this.directoryTable.addColumn(AuthenticationMethod::getMethod).setHeader(getTranslation("table-header.user-directory-type", UI.getCurrent().getLocale(), null)).setFlexGrow(3);
         this.directoryTable.addColumn(new ComponentRenderer<>(authenticationMethod ->
         {
             HorizontalLayout layout = new HorizontalLayout();
@@ -223,21 +221,22 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
             return layout;
 
-        })).setHeader("Order").setFlexGrow(1);
+        })).setHeader(getTranslation("table-header.user-directory-order", UI.getCurrent().getLocale(), null)).setFlexGrow(1);
         this.directoryTable.addColumn(new ComponentRenderer<>(authenticationMethod ->
         {
             HorizontalLayout layout = new HorizontalLayout();
+            layout.setWidthFull();
             createUserDirectoryManagementCell(authenticationMethod, layout);
 
             TextArea synchronisedTextArea = new TextArea();
             synchronisedTextArea.setSizeFull();
             if(authenticationMethod.getLastSynchronised() != null)
             {
-                synchronisedTextArea.setValue("This directory was last synchronised at " + authenticationMethod.getLastSynchronised());
+                synchronisedTextArea.setValue(String.format(getTranslation("message.user-directory-last-synchronised", UI.getCurrent().getLocale(), null), authenticationMethod.getLastSynchronised()));
             }
             else
             {
-                synchronisedTextArea.setValue("This directory has not been synchronised");
+                synchronisedTextArea.setValue(String.format(getTranslation("message.user-directory-not-synchronised", UI.getCurrent().getLocale(), null)));
             }
 
             VerticalLayout verticalLayout = new VerticalLayout();
@@ -246,7 +245,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
             return verticalLayout;
 
-        })).setHeader("State").setFlexGrow(6);
+        })).setHeader(getTranslation("table-header.user-directory-state", UI.getCurrent().getLocale(), null)).setFlexGrow(6);
 
 		add(this.directoryTable);
     }
@@ -270,11 +269,11 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
      */
 	protected void createUserDirectoryManagementCell(final AuthenticationMethod authenticationMethod, HorizontalLayout layout)
 	{
-        Button disable = new Button("Disable");
-        Button edit = new Button("Edit");
-        Button delete = new Button("Delete");
-        Button test = new Button("Test");
-        Button synchronise = new Button("Synchronise");
+        Button disable = new Button(getTranslation("button.user-directory-disable", UI.getCurrent().getLocale(), null));
+        Button edit = new Button(getTranslation("button.user-directory-edit", UI.getCurrent().getLocale(), null));
+        Button delete = new Button(getTranslation("button.user-directory-delete", UI.getCurrent().getLocale(), null));
+        Button test = new Button(getTranslation("button.user-directory-test", UI.getCurrent().getLocale(), null));
+        Button synchronise = new Button(getTranslation("button.user-directory-synchronise", UI.getCurrent().getLocale(), null));
 
         layout.add(disable, edit, delete, test, synchronise);
 
@@ -305,11 +304,11 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
 		if(authenticationMethod.isEnabled())
 		{
-			disable.setText("Disable");
+			disable.setText(getTranslation("button.user-directory-disable", UI.getCurrent().getLocale(), null));
 		}
 		else
 		{
-			disable.setText("Enable");
+			disable.setText(getTranslation("button.user-directory-enable", UI.getCurrent().getLocale(), null));
 		}
 
         disable.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
