@@ -20,4 +20,19 @@ public class ComponentSecurityVisibility
             }
         }
     }
+
+    public static boolean hasAuthorisation(String ... securityConstants)
+    {
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
+        for(String securityConstant: securityConstants)
+        {
+            if(authentication.hasGrantedAuthority(securityConstant))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

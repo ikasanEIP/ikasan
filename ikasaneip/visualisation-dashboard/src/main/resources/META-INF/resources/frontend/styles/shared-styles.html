@@ -138,4 +138,18 @@
     </template>
 </dom-module>
 
+<dom-module id="my-grid-styles" theme-for="vaadin-grid">
+    <template>
+        <style>
+            /* Background needs a stronger selector to not be overridden */
+            [part~="cell"].success {
+                background: rgba(204, 255, 229, 0.5);
+            }
+            .error {
+                color: red;
+            }
+        </style>
+    </template>
+</dom-module>
+
 

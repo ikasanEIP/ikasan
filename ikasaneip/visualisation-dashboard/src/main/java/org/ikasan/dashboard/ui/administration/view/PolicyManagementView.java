@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.administration.view;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -63,7 +64,7 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 policyManagementLabel = new H2("Policy Management");
+        H2 policyManagementLabel = new H2(getTranslation("label.policy-management", UI.getCurrent().getLocale(), null));
 
         HorizontalLayout leftLayout = new HorizontalLayout();
         leftLayout.setJustifyContentMode(JustifyContentMode.START);
@@ -83,8 +84,8 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
         this.policyGrid.setSizeFull();
         this.policyGrid.setClassName("my-grid");
 
-        this.policyGrid.addColumn(Policy::getName).setHeader("Name").setKey("name").setSortable(true).setFlexGrow(4);
-        this.policyGrid.addColumn(Policy::getDescription).setHeader("Description").setKey("description").setSortable(true).setFlexGrow(7);
+        this.policyGrid.addColumn(Policy::getName).setHeader(getTranslation("table-header.policy-name", UI.getCurrent().getLocale(), null)).setKey("name").setSortable(true).setFlexGrow(4);
+        this.policyGrid.addColumn(Policy::getDescription).setHeader(getTranslation("table-header.policy-description", UI.getCurrent().getLocale(), null)).setKey("description").setSortable(true).setFlexGrow(7);
 
         HeaderRow hr = this.policyGrid.appendHeaderRow();
         this.policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");

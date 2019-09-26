@@ -11,6 +11,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
@@ -35,7 +37,7 @@ import org.vaadin.tabs.PagedTabs;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModuleVisualisation extends PagedTabs
+public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserver
 {
     Logger logger = LoggerFactory.getLogger(ModuleVisualisation.class);
     private Map<Tab, NetworkDiagram> networkDiagramMap;
@@ -64,6 +66,7 @@ public class ModuleVisualisation extends PagedTabs
 
     protected void add(Flow flow)
     {
+        logger.info("Adding flow [{}] to visualisation.", flow.getName());
         NetworkDiagram networkDiagram = this.createNetworkDiagram(flow);
 
         Icon icon = new Icon(VaadinIcon.CIRCLE_THIN);
@@ -79,6 +82,8 @@ public class ModuleVisualisation extends PagedTabs
         this.flowMap.put(tab, flow);
 
         this.flowIconMap.put(tab, icon);
+
+        logger.info("Finished adding flow [{}] to visualisation.", flow.getName());
     }
 
     /**
@@ -88,6 +93,8 @@ public class ModuleVisualisation extends PagedTabs
      */
     protected NetworkDiagram createNetworkDiagram(Flow flow)
     {
+        logger.info("Creating network diagram for flow [{}] to visualisation.", flow.getName());
+
         Physics physics = new Physics();
         physics.setEnabled(false);
 
@@ -126,6 +133,7 @@ public class ModuleVisualisation extends PagedTabs
             logger.info(onContextEvent.getParams().toString());
         });
 
+        logger.info("Finished creating network diagram for flow [{}] to visualisation.", flow.getName());
         return networkDiagram;
     }
 
@@ -136,6 +144,7 @@ public class ModuleVisualisation extends PagedTabs
      */
     protected NetworkDiagram createNetworkDiagram(Module module)
     {
+        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
         Physics physics = new Physics();
         physics.setEnabled(false);
 
@@ -174,10 +183,13 @@ public class ModuleVisualisation extends PagedTabs
             logger.info(onContextEvent.getParams().toString());
         });
 
+        logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
+
         return networkDiagram;
     }
 
-    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener() {
+    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener()
+    {
         return (ComponentEventListener<ClickEvent<Button>>) selectedChangeEvent ->
     {
         if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
@@ -201,17 +213,36 @@ public class ModuleVisualisation extends PagedTabs
 }
 
 
-    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener() {
+    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener()
+    {
         return (ComponentEventListener<Tabs.SelectedChangeEvent>) selectedChangeEvent ->
         {
             if(flowMap.get(tabs.getSelectedTab()) != null)
             {
-                final NetworkDiagram networkDiagram = createNetworkDiagram(flowMap.get(tabs.getSelectedTab()));
-                networkDiagramMap.put(tabs.getSelectedTab(), networkDiagram);
+                logger.info("Switching to tab {}", tabs.getSelectedTab().getLabel());
+                this.redrawFlow();
 
+                NetworkDiagram networkDiagram = networkDiagramMap.get(tabs.getSelectedTab());
                 tabsToSuppliers.put(tabs.getSelectedTab(), (SerializableSupplier<Component>) () -> networkDiagram);
+                logger.info("Finished switching to tab {}", tabs.getSelectedTab().getLabel());
             }
         };
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    {
+        this.redrawFlow();
+    }
+
+    protected void redrawFlow()
+    {
+        if(flowMap.get(tabs.getSelectedTab()) != null)
+        {
+            NetworkDiagram networkDiagram = networkDiagramMap.get(tabs.getSelectedTab());
+
+            Flow flow = flowMap.get(tabs.getSelectedTab());
+            networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
+        }
+    }
 }
