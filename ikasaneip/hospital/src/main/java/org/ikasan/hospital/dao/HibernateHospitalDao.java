@@ -43,7 +43,8 @@ package org.ikasan.hospital.dao;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
@@ -91,22 +92,22 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	 * @see org.ikasan.hospital.dao.HospitalDao#getExclusionEventActionByErrorUri(java.lang.String)
 	 */
 	@Override
-	public ExclusionEventAction getExclusionEventActionByErrorUri(
+	public ExclusionEventActionImpl getExclusionEventActionByErrorUri(
 			String errorUri)
 	{
 		return getHibernateTemplate().execute((session) -> {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+            CriteriaQuery<ExclusionEventActionImpl> criteriaQuery = builder.createQuery(ExclusionEventActionImpl.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("errorUri"),errorUri));
 
-            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
-            List<ExclusionEventAction> results = query.getResultList();
+            org.hibernate.query.Query<ExclusionEventActionImpl> query = session.createQuery(criteriaQuery);
+            List<ExclusionEventActionImpl> results = query.getResultList();
 
             if(results == null || results.size() == 0)
             {
@@ -123,7 +124,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExclusionEventAction> getActionedExclusions(
+	public List<ExclusionEventActionImpl> getActionedExclusions(
 			List<String> moduleName, List<String> flowName, Date startDate,
 			Date endDate, int size)
 	{
@@ -131,9 +132,9 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+            CriteriaQuery<ExclusionEventActionImpl> criteriaQuery = builder.createQuery(ExclusionEventActionImpl.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
             List<Predicate> predicates = new ArrayList<>();
 
             if(moduleName != null && moduleName.size() > 0)
@@ -160,7 +161,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
                 .where(predicates.toArray(new Predicate[predicates.size()]))
                 .orderBy(builder.desc(root.get("timestamp")));
 
-            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
+            org.hibernate.query.Query<ExclusionEventActionImpl> query = session.createQuery(criteriaQuery);
             query.setFirstResult(0);
             query.setMaxResults(size);
             return query.getResultList();
@@ -181,7 +182,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
             List<Predicate> predicates = new ArrayList<>();
 
             if(moduleName != null && moduleName.size() > 0)

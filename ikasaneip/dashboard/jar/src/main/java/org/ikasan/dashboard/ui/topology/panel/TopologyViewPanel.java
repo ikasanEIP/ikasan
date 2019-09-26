@@ -45,7 +45,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,10 +56,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.event.FieldEvents;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +67,6 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
@@ -88,7 +82,7 @@ import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
 import org.ikasan.dashboard.ui.topology.window.*;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -103,8 +97,6 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
@@ -193,7 +185,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupDateField systemEventToDate;
 
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	private HospitalService<byte[]> hospitalService;
 	private TopologyService topologyService;
 
@@ -233,8 +225,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-							 WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-                             HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
+                             WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                             HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
                              ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
                              StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
                              PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,

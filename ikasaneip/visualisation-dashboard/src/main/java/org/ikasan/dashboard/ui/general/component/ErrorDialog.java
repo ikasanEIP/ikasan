@@ -133,7 +133,11 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.eventIdTf.setValue(errorEvent.getEventId());
         this.errorUriTf.setValue(errorEvent.getErrorUri());
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(errorEvent.getTimestamp()));
-        this.errorClassTf.setValue(errorEvent.getExceptionClass());
+
+        if (errorEvent.getExceptionClass() != null)
+        {
+            this.errorClassTf.setValue(errorEvent.getExceptionClass());
+        }
 
         this.errorEvent = errorEvent.getEvent();
         this.errorDetails = errorEvent.getErrorDetail();

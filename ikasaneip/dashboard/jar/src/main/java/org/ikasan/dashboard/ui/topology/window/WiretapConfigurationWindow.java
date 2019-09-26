@@ -40,7 +40,6 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -58,10 +57,8 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
-import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.service.TriggerManagementService;
@@ -69,7 +66,6 @@ import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;

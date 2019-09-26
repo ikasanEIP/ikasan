@@ -60,7 +60,7 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
@@ -111,17 +111,17 @@ public class ExclusionEventViewPanel extends Panel
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
-	private ExclusionEventAction action;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private SolrExclusionEventActionImpl action;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private HospitalService<byte[]> hospitalService;
 	private TextArea comments;
 
 
-	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-								   HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
-								   ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
+	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SolrExclusionEventActionImpl action,
+                                   HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+                                   ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
@@ -391,7 +391,7 @@ public class ExclusionEventViewPanel extends Panel
         	    	resubmitButton.setVisible(false);
         	    	ignoreButton.setVisible(false);
         	    	
-        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+        	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
         	    	tf6.setReadOnly(false);
         			tf7.setReadOnly(false);
         			tf8.setReadOnly(false);
@@ -455,7 +455,7 @@ public class ExclusionEventViewPanel extends Panel
     	    	resubmitButton.setVisible(false);
     	    	ignoreButton.setVisible(false);
     	    	
-    	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+    	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
     	    	tf6.setReadOnly(false);
     			tf7.setReadOnly(false);
     			tf8.setReadOnly(false);
@@ -508,7 +508,7 @@ public class ExclusionEventViewPanel extends Panel
 		}
 		else if(this.action != null && this.action.getEvent() != null)
 		{
-			eventEditor.setValue(new String((byte[])this.action.getEvent()));
+			eventEditor.setValue(this.action.getEvent());
 		}
 		
 		eventEditor.setReadOnly(true);

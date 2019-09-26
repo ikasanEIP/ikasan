@@ -6,6 +6,8 @@ import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
+import org.ikasan.hospital.dao.SolrHospitalDao;
+import org.ikasan.hospital.service.SolrHospitalServiceImpl;
 import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
 import org.ikasan.module.metadata.service.SolrModuleMetadataServiceImpl;
 import org.ikasan.replay.dao.SolrReplayDao;
@@ -15,6 +17,7 @@ import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
@@ -97,6 +100,19 @@ public class SolrComponentFactory
         dao.initStandalone(solrUrl, 30);
 
         SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao, dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean
+    public HospitalAuditService hospitalAuditService()
+    {
+        SolrHospitalDao dao = new SolrHospitalDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrHospitalServiceImpl service = new SolrHospitalServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 

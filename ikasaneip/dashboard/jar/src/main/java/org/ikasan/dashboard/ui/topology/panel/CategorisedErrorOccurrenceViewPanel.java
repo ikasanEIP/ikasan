@@ -68,7 +68,7 @@ import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -127,7 +127,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private Container container;
@@ -145,7 +145,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
      */
 	public CategorisedErrorOccurrenceViewPanel(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			Container container)
 	{
@@ -284,7 +284,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		systemAction.setWidth("80%");
 		layout.addComponent(systemAction, 3, 2);
 		
-		ExclusionEventAction action = this.hospitalManagementService.getExclusionEventActionByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
+		SolrExclusionEventActionImpl action = this.hospitalManagementService.getExclusionEventActionByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
 		
 		label = new Label("User Action:");
 		label.setSizeUndefined();		
@@ -384,7 +384,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	resubmitButton.setVisible(false);
 	        	    	ignoreButton.setVisible(false);
 	        	    	
-	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+	        	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());
@@ -458,7 +458,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	resubmitButton.setVisible(false);
 	        	    	ignoreButton.setVisible(false);
 	        	    	
-	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+	        	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());

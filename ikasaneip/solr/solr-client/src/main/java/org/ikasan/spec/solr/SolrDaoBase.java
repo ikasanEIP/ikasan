@@ -331,7 +331,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     }
 
     /**
-     * Method to remove expired records from the solr index by type.
+     * Method to remove records from the solr index by type and id.
      *
      * @param type
      */

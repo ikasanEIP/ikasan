@@ -22,7 +22,7 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.home.view.HomeView;
-import org.ikasan.dashboard.ui.search.SearchView;
+import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.ikasan.dashboard.ui.visualisation.view.MapView;
 import org.ikasan.dashboard.ui.visualisation.view.ModuleView;

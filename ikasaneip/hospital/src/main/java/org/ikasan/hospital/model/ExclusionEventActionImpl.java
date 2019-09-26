@@ -40,6 +40,8 @@
  */
 package org.ikasan.hospital.model;
 
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -63,22 +65,23 @@ public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
 	 * Default constructor for Hibernate
 	 */
 	@SuppressWarnings("unused")
-	private ExclusionEventAction()
+	private ExclusionEventActionImpl()
 	{
 		
 	}
 
-	/**
-	 * Constructor 
-	 * 
-	 * @param id
-	 * @param errorUri
-	 * @param actionedBy
-	 * @param state
-	 * @param timestamp
-	 */
-	public ExclusionEventAction(String errorUri, String actionedBy,
-			String action, byte[] event, String moduleName, String flowName)
+    /**
+     * Constructor
+     *
+     * @param errorUri
+     * @param actionedBy
+     * @param action
+     * @param event
+     * @param moduleName
+     * @param flowName
+     */
+	public ExclusionEventActionImpl(String errorUri, String actionedBy,
+                                    String action, byte[] event, String moduleName, String flowName)
 	{
 		super();
 		this.errorUri = errorUri;
@@ -218,7 +221,20 @@ public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
 		return timestamp;
 	}
 
-	/* (non-Javadoc)
+    @Override
+    public void setComment(String comment)
+    {
+        // not required for relational DB implementation.
+    }
+
+    @Override
+    public String getComment()
+    {
+        // not required for relational DB implementation.
+        return null;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -253,7 +269,7 @@ public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExclusionEventAction other = (ExclusionEventAction) obj;
+		ExclusionEventActionImpl other = (ExclusionEventActionImpl) obj;
 		if (action == null)
 		{
 			if (other.action != null)

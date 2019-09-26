@@ -64,6 +64,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
@@ -125,9 +126,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
     protected void init()
     {
-        this.authentication = (IkasanAuthentication)SecurityContextHolder.getContext().getAuthentication();
-
-    	H2 userDirectories = new H2(getTranslation("label.user-directories", UI.getCurrent().getLocale(), null));
+    	H2 userDirectories = new H2(getTranslation("label.user-directories", UI.getCurrent().getLocale()));
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setWidth("100%");
@@ -388,7 +387,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
 		synchronise.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog();
+            ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(false);
 
             progressIndicatorDialog.open("Synchronising User Directory");
 
@@ -434,16 +433,8 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
     {
         for(com.vaadin.flow.component.Component component: components)
         {
-            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_WRITE))
-            {
-                component.setVisible(true);
-            }
-            else
-            {
-                component.setVisible(false);
-            }
+            ComponentSecurityVisibility.applySecurity(component, SecurityConstants.ALL_AUTHORITY,
+                SecurityConstants.USER_DIRECTORY_ADMIN, SecurityConstants.USER_DIRECTORY_WRITE);
         }
     }
 
@@ -456,15 +447,8 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
     {
         for(com.vaadin.flow.component.Component component: components)
         {
-            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-                authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN))
-            {
-                component.setVisible(true);
-            }
-            else
-            {
-                component.setVisible(false);
-            }
+            ComponentSecurityVisibility.applySecurity(component, SecurityConstants.ALL_AUTHORITY,
+                SecurityConstants.USER_DIRECTORY_ADMIN);
         }
     }
 

@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.Application;
 import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
@@ -26,6 +27,7 @@ import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -152,7 +154,9 @@ public class GraphViewTest
             , "There should be 27 nodes in the network diagram!");
     }
 
+
     @Test
+    @Ignore
     public void testBadFileUpload() throws IOException
     {
 //        GraphView upload = _get(GraphView.class);
@@ -177,6 +181,7 @@ public class GraphViewTest
     }
 
     @Test
+    @Ignore
     public void testBadXmlFileUpload() throws IOException
     {
 //        GraphView upload = _get(GraphView.class);
