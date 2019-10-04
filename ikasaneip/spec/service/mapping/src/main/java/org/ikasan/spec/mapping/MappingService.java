@@ -127,7 +127,7 @@ public interface MappingService<CONFIGURATION>
     public List<NamedResult> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
 
     /**
-     * Set the configuration on the service.
+     * Set the configuration on the listener.
      *
      * @param configuration
      */

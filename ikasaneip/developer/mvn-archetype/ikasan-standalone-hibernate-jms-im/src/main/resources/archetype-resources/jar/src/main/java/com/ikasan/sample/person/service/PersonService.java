@@ -45,7 +45,7 @@ import com.ikasan.sample.person.model.Person;
 import java.util.List;
 
 /**
- * Person service contract
+ * Person listener contract
  *
  * @author Ikasan Development Team
  */

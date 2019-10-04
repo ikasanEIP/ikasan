@@ -58,14 +58,14 @@ import java.util.Map;
  */
 public class JmsPostProcessor<T> implements PostProcessor<T, Message>, Configured<GenericJmsProducerConfiguration>
 {
-    /** default event identifier service - can be overridden via the setter */
+    /** default event identifier listener - can be overridden via the setter */
     private ManagedRelatedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** configuration for this post processor */
     private GenericJmsProducerConfiguration configuration;
 
     /**
-     * Allow override of the default managed identifier service
+     * Allow override of the default managed identifier listener
      * @param managedEventIdentifierService
      */
     public void setManagedEventIdentifierService(ManagedRelatedEventIdentifierService<String, Message> managedEventIdentifierService)

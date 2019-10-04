@@ -44,7 +44,7 @@ import org.springframework.binding.convert.converters.Converter;
 import org.springframework.binding.convert.service.DefaultConversionService;
 
 /**
- * Simple Spring based conversion service supporting custom converters
+ * Simple Spring based conversion listener supporting custom converters
  * @author Ikasan Development Team.
  */
 public class SpringConversionService extends DefaultConversionService

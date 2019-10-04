@@ -1,12 +1,15 @@
 package org.ikasan.dashboard.ui.general.component;
 
+import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
@@ -40,7 +43,14 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public Component getEntityDetailsLayout()
     {
-        H3 userProfileLabel = new H3(getTranslation("label.wiretap-event-details", UI.getCurrent().getLocale(), null));
+        Image wiretapImage = new Image("/frontend/images/wiretap-service.png", "");
+        wiretapImage.setHeight("70px");
+
+        H3 wiretapLabel = new H3(getTranslation("label.wiretap-event-details", UI.getCurrent().getLocale(), null));
+
+        HorizontalLayout headerLayout = new HorizontalLayout();
+        headerLayout.setSpacing(true);
+        headerLayout.add(wiretapImage, wiretapLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -62,7 +72,7 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         formLayout.setSizeFull();
 
         Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButton.getElement().setProperty("title",  getTranslation("help-message.download-wiretap", UI.getCurrent().getLocale(), null));
+        Tooltip allButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-wiretap-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("wiretap.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
@@ -71,7 +81,7 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         buttonWrapper.wrapComponent(downloadButton);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userProfileLabel, formLayout, buttonWrapper);
+        layout.add(headerLayout, formLayout, buttonWrapper, allButtonTooltip);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
 
         return layout;

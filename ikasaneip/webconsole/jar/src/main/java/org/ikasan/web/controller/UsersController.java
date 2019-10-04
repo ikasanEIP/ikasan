@@ -79,7 +79,7 @@ public class UsersController {
     protected static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
 
     /**
-     * The user service to use
+     * The user listener to use
      */
     private UserService userService;
 
@@ -92,8 +92,8 @@ public class UsersController {
     /**
      * Constructor
      *
-     * @param userService - The user service to use
-     * @param dashboardService - The dashboard user service to use
+     * @param userService - The user listener to use
+     * @param dashboardService - The dashboard user listener to use
      * @param environment - the spring environment object to get the properties
      */
     public UsersController(UserService userService, UserService dashboardService, Environment environment)

@@ -87,13 +87,13 @@ public abstract class AbstractFlowConfiguration
     protected List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements =
             new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
 
-    /** handle to configuration service */
+    /** handle to configuration listener */
     protected ConfigurationService configurationService;
     
-    /** handle to the re-submission service */
+    /** handle to the re-submission listener */
     protected ResubmissionService resubmissionService;
     
-    /** handle to the replay service */
+    /** handle to the replay listener */
     protected ReplayRecordService replayRecordService;
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbstractFlowConfiguration
             throw new IllegalArgumentException("configurationService cannot be 'null'");
         }
         
-        // It is possible that the re-submission service is NULL.
+        // It is possible that the re-submission listener is NULL.
         this.resubmissionService = resubmisionService;
         
         // It is possible that the replayRecordService is NULL.

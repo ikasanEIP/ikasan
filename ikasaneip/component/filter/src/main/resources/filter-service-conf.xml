@@ -12,7 +12,7 @@
         <constructor-arg ref="duplicateFilterDao"/>
     </bean>
 
-    <!-- As this service is stateful managing a cache per client id, it is defined as scope = prototype -->
+    <!-- As this listener is stateful managing a cache per client id, it is defined as scope = prototype -->
     <bean id="entityAgeFilterService" class="org.ikasan.filter.duplicate.service.DefaultEntityAgeFilterService" scope="prototype">
         <constructor-arg ref="duplicateFilterDao"/>
     </bean>

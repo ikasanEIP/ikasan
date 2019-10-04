@@ -116,7 +116,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#getUsers()
+     * @see org.ikasan.framework.security.listener.UserService#getUsers()
      */
     public List<User> getUsers()
     {
@@ -138,7 +138,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#getUserLites()
+     * @see org.ikasan.framework.security.listener.UserService#getUserLites()
      */
     public List<UserLite> getUserLites()
     {
@@ -182,7 +182,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#disableUser(java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#disableUser(java.lang.String)
      */
     public void disableUser(String username)
     {
@@ -192,7 +192,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#enableUser(java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#enableUser(java.lang.String)
      */
     public void enableUser(String username)
     {
@@ -224,7 +224,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#loadUserByUsername(java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#loadUserByUsername(java.lang.String)
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException
     {
@@ -255,7 +255,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#getAuthorities()
+     * @see org.ikasan.framework.security.listener.UserService#getAuthorities()
      */
     public List<Policy> getAuthorities()
     {
@@ -266,7 +266,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#grantAuthority(java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#grantAuthority(java.lang.String, java.lang.String)
      */
     public void grantAuthority(String username, String authority)
     {
@@ -276,7 +276,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#revokeAuthority(java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#revokeAuthority(java.lang.String, java.lang.String)
      */
     public void revokeAuthority(String username, String authority)
     {
@@ -286,7 +286,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#changeUsersPassword(java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#changeUsersPassword(java.lang.String, java.lang.String)
      */
     public void changeUsersPassword(String username, String newPassword, String confirmNewPassword)
         throws IllegalArgumentException
@@ -297,7 +297,7 @@ public class DashboardUserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      *
-     * @see org.ikasan.framework.security.service.UserService#changeUsersEmail(java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.security.listener.UserService#changeUsersEmail(java.lang.String, java.lang.String)
      */
     public void changeUsersEmail(String username, String newEmail) throws IllegalArgumentException
     {
@@ -305,7 +305,7 @@ public class DashboardUserServiceImpl implements UserService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.security.service.UserService#getUserByUsernameLike(java.lang.String)
+     * @see org.ikasan.security.listener.UserService#getUserByUsernameLike(java.lang.String)
      */
     @Override
     public List<User> getUserByUsernameLike(String username)
@@ -314,7 +314,7 @@ public class DashboardUserServiceImpl implements UserService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.security.service.UserService#getUserByFirstnameLike(java.lang.String)
+     * @see org.ikasan.security.listener.UserService#getUserByFirstnameLike(java.lang.String)
      */
     @Override
     public List<User> getUserByFirstnameLike(String firstname)
@@ -323,7 +323,7 @@ public class DashboardUserServiceImpl implements UserService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.security.service.UserService#getUserBySurnameLike(java.lang.String)
+     * @see org.ikasan.security.listener.UserService#getUserBySurnameLike(java.lang.String)
      */
     @Override
     public List<User> getUserBySurnameLike(String surname)

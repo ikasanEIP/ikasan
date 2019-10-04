@@ -65,7 +65,7 @@ public class LoggingEventJob implements FlowEventJob
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.flow.event.service.FlowEventJob#execute(java.lang
+     * org.ikasan.framework.flow.event.listener.FlowEventJob#execute(java.lang
      * .String, java.lang.String, java.lang.String,
      * org.ikasan.spec.flow.event.FlowEvent, java.util.Map)
      */
@@ -77,7 +77,7 @@ public class LoggingEventJob implements FlowEventJob
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.flow.event.service.FlowEventJob#getParameters()
+     * @see org.ikasan.framework.flow.event.listener.FlowEventJob#getParameters()
      */
     public List<String> getParameters()
     {
@@ -88,7 +88,7 @@ public class LoggingEventJob implements FlowEventJob
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.flow.event.service.FlowEventJob#validateParameters
+     * org.ikasan.framework.flow.event.listener.FlowEventJob#validateParameters
      * (java.util.Map)
      */
     public Map<String, String> validateParameters(Map<String, String> params)

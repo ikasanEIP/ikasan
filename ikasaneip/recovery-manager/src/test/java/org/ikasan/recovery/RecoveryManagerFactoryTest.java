@@ -77,10 +77,10 @@ public class RecoveryManagerFactoryTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
-    /** Mock exclusion service */
+    /** Mock exclusion listener */
     final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
 
-    /** Mock error reporting service */
+    /** Mock error reporting listener */
     final ErrorReportingService errorReportingService = mockery.mock(ErrorReportingService.class, "mockErrorReportingService");
 
     /** Mock scheduledJobFactory */

@@ -83,7 +83,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /** The currently executing transaction */
     protected Xid xid;
 
-    /** Journaling service for logging all significant state changes to commands */
+    /** Journaling listener for logging all significant state changes to commands */
     protected TransactionJournal transactionJournal;
 
     /** Debug counter for monitoring instance count */

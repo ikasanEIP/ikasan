@@ -75,7 +75,7 @@ public class InitialisePermission implements InitializingBean
     /** default User authority */
     private static Authority USER_AUTHORITY = new Authority(ROLE_USER, ROLE_USER_DESC);
 
-    /** user service against which to permission */
+    /** user listener against which to permission */
     private UserService userService;
 
     /** name of the module being permissioned */

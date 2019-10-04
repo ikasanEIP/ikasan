@@ -101,7 +101,7 @@ public class FilterWindow extends Window
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
 		{
-			throw new IllegalArgumentException("topology service cannot be null!");
+			throw new IllegalArgumentException("topology listener cannot be null!");
 		}
 		
 		this.components = components;

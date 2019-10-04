@@ -51,7 +51,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 /**
- * User and Authority service interface
+ * User and Authority listener interface
  * 
  * @author Ikasan Development Team
  * 

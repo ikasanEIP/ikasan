@@ -51,7 +51,7 @@ import org.ikasan.systemevent.model.SystemEvent;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * SystemFlowEvent service implementation
+ * SystemFlowEvent listener implementation
  * 
  * @author Ikasan Development Team
  * 
@@ -89,7 +89,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#
+     * @see org.ikasan.framework.systemevent.listener.SystemFlowEventService#
      * logSystemFlowEvent(java.lang.String, java.lang.String, java.util.Date,
      * java.lang.String)
      */
@@ -107,7 +107,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#
+     * @see org.ikasan.framework.systemevent.listener.SystemFlowEventService#
      * listSystemFlowEvents(java.lang.String, java.lang.String, java.util.Date,
      * java.util.Date, java.lang.String)
      */
@@ -141,7 +141,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.systemevent.service.SystemEventService#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 * @see org.ikasan.systemevent.listener.SystemEventService#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@Override
 	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor,
@@ -172,7 +172,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.systemevent.service.SystemEventService#housekeep()
+     * @see org.ikasan.systemevent.listener.SystemEventService#housekeep()
      */
 	@Override
 	public void housekeep()

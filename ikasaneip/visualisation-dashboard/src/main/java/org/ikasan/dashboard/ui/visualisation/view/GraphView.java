@@ -1,14 +1,15 @@
 package org.ikasan.dashboard.ui.visualisation.view;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,8 +22,10 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import elemental.json.JsonArray;
+import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
@@ -32,11 +35,12 @@ import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjs
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
+import org.ikasan.dashboard.ui.visualisation.component.StatusPanel;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
-import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
-import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
+import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
+import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
+import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -53,15 +57,13 @@ import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
-import org.ikasan.vaadin.visjs.network.listener.ClickListener;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
-import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
-import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
-import org.ikasan.vaadin.visjs.network.options.edges.*;
-import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
+import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
+import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
+import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
+import org.ikasan.vaadin.visjs.network.options.edges.Edges;
 import org.ikasan.vaadin.visjs.network.options.physics.Physics;
-import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,11 +120,20 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
     private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
-    private ModuleMetaDataDaoImpl moduleMetaDataDao = new ModuleMetaDataDaoImpl();
     private ModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
     private HorizontalLayout hl = new HorizontalLayout();
+    private ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow> flowComboBox;
     private ControlPanel controlPanel = new ControlPanel();
+
+    private Registration broadcasterRegistration;
+
+    private StatusPanel statusPanel;
+
+    private Module currentModule;
+    private Flow currentFlow;
+
+    private List<GraphViewChangeListener> graphViewChangeListeners;
 
     /**
      * Constructor
@@ -131,6 +142,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.setMargin(true);
         this.setSizeFull();
+
+        this.graphViewChangeListeners = new ArrayList<>();
 
         this.createNetworkDiagram();
         this.createToolsSlider();
@@ -190,7 +203,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 catch (IOException e)
                 {
                     e.printStackTrace();
-                };
+                }
             });
 
             return view;
@@ -212,20 +225,75 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
 
-        Image ikasan = new Image("frontend/images/mr-squid-head.png", "");
-        ikasan.setHeight("50px");
+        flowComboBox = new ComboBox<>();
+        flowComboBox.setItemLabelGenerator(org.ikasan.dashboard.ui.visualisation.model.flow.Flow::getName);
+        flowComboBox.setHeight("40px");
+        flowComboBox.setWidth("600px");
 
+        flowComboBox.setRenderer(new ComponentRenderer<>(item ->
+        {
+            HorizontalLayout container = new HorizontalLayout();
+
+            Icon icon = new Icon(VaadinIcon.CIRCLE);
+            icon.setColor("green");
+            icon.setSize("15px");
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.setWidth("20px");
+            verticalLayout.add(icon);
+            verticalLayout.setHorizontalComponentAlignment(Alignment.END, icon);
+
+            Label namelabel = new Label(item.getName());
+            namelabel.setWidth("500px");
+
+            container.setVerticalComponentAlignment(Alignment.CENTER, namelabel);
+            container.add(namelabel, verticalLayout);
+
+            return container;
+        }));
+
+        this.flowComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow>, org.ikasan.dashboard.ui.visualisation.model.flow.Flow>>) comboBoxFlowComponentValueChangeEvent -> {
+            logger.info("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+            this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
+            this.moduleVisualisation.redraw();
+
+            this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
+
+            this.fireModuleFlowChangeEvent();
+            logger.info("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+        });
+
+        HorizontalLayout moduleNameLayout = new HorizontalLayout();
+        moduleNameLayout.setMargin(false);
+        moduleNameLayout.setSpacing(false);
+        moduleNameLayout.add(moduleLabel);
+
+        HorizontalLayout comboBoxLayout = new HorizontalLayout();
+        comboBoxLayout.setMargin(false);
+        comboBoxLayout.setSpacing(false);
+        comboBoxLayout.add(flowComboBox);
 
         hl.setWidth("100%");
-        hl.add(ikasan, moduleLabel, controlPanel);
-        hl.setVerticalComponentAlignment(Alignment.CENTER, moduleLabel, ikasan, controlPanel);
+        hl.setMargin(false);
+
+        statusPanel = new StatusPanel();
+
+        hl.setFlexGrow(1, moduleNameLayout);
+        hl.setFlexGrow(1, statusPanel);
+        hl.setFlexGrow(5, comboBoxLayout);
+        hl.setFlexGrow(3, controlPanel);
+
+        hl.add(moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
+        hl.setVerticalComponentAlignment(Alignment.BASELINE, moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
 
         hl.setVisible(false);
 
-        moduleVisualisation = new ModuleVisualisation(controlPanel);
+        moduleVisualisation = new ModuleVisualisation();
 
         this.add(hl);
         this.add(moduleVisualisation);
+
+        this.graphViewChangeListeners.add(statusPanel);
+        this.graphViewChangeListeners.add(controlPanel);
     }
 
     /**
@@ -267,64 +335,15 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
             logger.info(nodeId);
 
-            for(Flow flow: graph.getFlows())
-            {
-                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
-                {
-                    eventViewDialog.open(flow.getWireapEvent());
-                }
-            }
+//            for(Flow flow: graph.getFlows())
+//            {
+//                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
+//                {
+//                    eventViewDialog.open(flow.getWireapEvent());
+//                }
+//            }
         });
 
-    }
-
-    /**
-     * Method to update the network diagram with the node and edge lists.
-     *
-     * @param module to render.
-     */
-    protected void updateNetworkDiagram(Module module)
-    {
-        Physics physics = new Physics();
-        physics.setEnabled(false);
-
-        networkDiagram = new NetworkDiagram
-            (Options.builder()
-                .withAutoResize(true)
-                .withPhysics(physics)
-                .withInteraction(Interaction.builder().withDragNodes(false) .build())
-                .withEdges(
-                    Edges.builder()
-                        .withArrows(new Arrows(new ArrowHead()))
-                        .withColor(EdgeColor.builder()
-                            .withColor("#000000")
-                            .build())
-                        .withDashes(false)
-                        .withFont(Font.builder().withSize(9).build())
-                        .build())
-                .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
-                .build());
-
-        networkDiagram.setSizeFull();
-
-//        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
-//        layoutManager.layout();
-
-        IkasanFlowLayoutManager layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(0), networkDiagram, null);
-        layoutManager.layout();
-
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
-        {
-            logger.info(doubleClickEvent.getParams().toString());
-        });
-
-        networkDiagram.addClickListener((ClickListener) clickEvent -> {
-            logger.info(clickEvent.getParams().toString());
-        });
-
-        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
-            logger.info(onContextEvent.getParams().toString());
-        });
     }
 
     /**
@@ -333,7 +352,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     protected void populateModulesGrid()
     {
         // todo this is a temp hack to use the dao tp provide data.
-        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();;
+        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();
         modulesGrid.setItems(moduleMetaData);
     }
 
@@ -368,8 +387,17 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.remove(moduleVisualisation);
         this.remove(networkDiagram);
 
-        this.moduleVisualisation = new ModuleVisualisation(this.controlPanel);
+        this.currentModule = module;
+        this.currentFlow = module.getFlows().get(0);
+
+        this.fireModuleFlowChangeEvent();
+
+        this.moduleVisualisation = new ModuleVisualisation();
         moduleVisualisation.addModule(module);
+        moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
+        moduleVisualisation.redraw();
+        this.flowComboBox.setItems(module.getFlows());
+        this.flowComboBox.setValue(module.getFlows().get(0));
         this.add(moduleVisualisation);
     }
 
@@ -543,97 +571,97 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     protected void performWiretapSearch(String searchTerm, Date startDate, Date endDate)
     {
-        Set<String> moduleNames = new HashSet<>();
-        Set<String> flowNames = new HashSet<>();
-
-        boolean userDotSeperator = false;
-        for(Node node: this.graph.getFlows())
-        {
-            if (node.getId().contains("."))
-            {
-                String[] moduleFlowPair = node.getId().split(Pattern.quote("."));
-                moduleNames.add(moduleFlowPair[0]);
-                flowNames.add(moduleFlowPair[1]);
-                userDotSeperator = true;
-            }
-            else
-            {
-                moduleNames.add(node.getId());
-            }
-        }
-
-        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
-            null, null, null, startDate, endDate, searchTerm);
-
-        logger.info("Found:" + results.getResultSize());
-
-        HashMap<String, Node> nodeMap = new HashMap<>();
-
-        for(Node node: nodes)
-        {
-            node.setFoundStatus(NodeFoundStatus.NOT_FOUND);
-            nodeMap.put(node.getId(), node);
-        }
-
-        HashSet<String> correlationValues = new HashSet<>();
-        HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
-        for(WiretapEvent<String> result: results.getPagedResults())
-        {
-            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
-
-            if(node != null)
-            {
-                node.setFoundStatus(NodeFoundStatus.FOUND);
-                ((Flow)node).setWireapEvent(result.getEvent());
-                uniqueResults.put(result.getEvent(), result);
-
-                if(((Flow)node).getCorrelator() != null)
-                {
-                    String correlationValue = (String)((Flow)node).getCorrelator().correlate(result.getEvent());
-
-                    correlationValues.add(correlationValue);
-                    logger.info("Correlation value = " + correlationValue);
-                }
-            }
-        }
-
-        logger.info("Number of unique correlations values = " + correlationValues.size());
-
-        for(String value: correlationValues)
-        {
-            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
-                null, null, null, startDate, endDate, value);
-
-            logger.info("Found correlating:" + secondResults.getResultSize());
-
-            for(WiretapEvent<String> result: secondResults.getPagedResults())
-            {
-                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
-
-                if(node != null)
-                {
-                    node.setFoundStatus(NodeFoundStatus.FOUND);
-                    ((Flow)node).setWireapEvent(result.getEvent());
-                    uniqueResults.put(result.getEvent(), result);
-                }
-            }
-        }
-
-        logger.info("Number of unique events = " + uniqueResults.size());
-
-        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
-
-        if(uniqueResults.size() > 0)
-        {
-            this.viewListButton.setVisible(true);
-        }
-        else
-        {
-            this.viewListButton.setVisible(false);
-        }
-
-        current.access(() ->
-            networkDiagram.updateNodesStates(nodes));
+//        Set<String> moduleNames = new HashSet<>();
+//        Set<String> flowNames = new HashSet<>();
+//
+//        boolean userDotSeperator = false;
+//        for(Node node: this.graph.getFlows())
+//        {
+//            if (node.getId().contains("."))
+//            {
+//                String[] moduleFlowPair = node.getId().split(Pattern.quote("."));
+//                moduleNames.add(moduleFlowPair[0]);
+//                flowNames.add(moduleFlowPair[1]);
+//                userDotSeperator = true;
+//            }
+//            else
+//            {
+//                moduleNames.add(node.getId());
+//            }
+//        }
+//
+//        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
+//            null, null, null, startDate, endDate, searchTerm);
+//
+//        logger.info("Found:" + results.getResultSize());
+//
+//        HashMap<String, Node> nodeMap = new HashMap<>();
+//
+//        for(Node node: nodes)
+//        {
+//            node.setFoundStatus(NodeFoundStatus.NOT_FOUND);
+//            nodeMap.put(node.getId(), node);
+//        }
+//
+//        HashSet<String> correlationValues = new HashSet<>();
+//        HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
+//        for(WiretapEvent<String> result: results.getPagedResults())
+//        {
+//            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
+//
+//            if(node != null)
+//            {
+//                node.setFoundStatus(NodeFoundStatus.FOUND);
+//                ((Flow)node).setWireapEvent(result.getEvent());
+//                uniqueResults.put(result.getEvent(), result);
+//
+//                if(((Flow)node).getCorrelator() != null)
+//                {
+//                    String correlationValue = (String)((Flow)node).getCorrelator().correlate(result.getEvent());
+//
+//                    correlationValues.add(correlationValue);
+//                    logger.info("Correlation value = " + correlationValue);
+//                }
+//            }
+//        }
+//
+//        logger.info("Number of unique correlations values = " + correlationValues.size());
+//
+//        for(String value: correlationValues)
+//        {
+//            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
+//                null, null, null, startDate, endDate, value);
+//
+//            logger.info("Found correlating:" + secondResults.getResultSize());
+//
+//            for(WiretapEvent<String> result: secondResults.getPagedResults())
+//            {
+//                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
+//
+//                if(node != null)
+//                {
+//                    node.setFoundStatus(NodeFoundStatus.FOUND);
+//                    ((Flow)node).setWireapEvent(result.getEvent());
+//                    uniqueResults.put(result.getEvent(), result);
+//                }
+//            }
+//        }
+//
+//        logger.info("Number of unique events = " + uniqueResults.size());
+//
+//        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
+//
+//        if(uniqueResults.size() > 0)
+//        {
+//            this.viewListButton.setVisible(true);
+//        }
+//        else
+//        {
+//            this.viewListButton.setVisible(false);
+//        }
+//
+//        current.access(() ->
+//            networkDiagram.updateNodesStates(nodes));
     }
 
     protected void performErrorSearch(String searchTerm, Date startDate, Date endDate)
@@ -747,6 +775,37 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 //
 //        current.access(() ->
 //            networkDiagram.updateNodesStates(nodes));
+    }
+
+    protected void fireModuleFlowChangeEvent()
+    {
+        GraphViewChangeEvent graphViewChangeEvent = new GraphViewChangeEvent(this.currentModule, this.currentFlow);
+
+        for(GraphViewChangeListener graphViewChangeListener: this.graphViewChangeListeners)
+        {
+            graphViewChangeListener.onChange(graphViewChangeEvent);
+        }
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        UI ui = attachEvent.getUI();
+        broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
+        {
+            ui.access(() ->
+            {
+                // do something interesting here.
+               logger.info("Received flow state: " + flowState);
+            });
+        });
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent)
+    {
+        broadcasterRegistration.remove();
+        broadcasterRegistration = null;
     }
 }
 

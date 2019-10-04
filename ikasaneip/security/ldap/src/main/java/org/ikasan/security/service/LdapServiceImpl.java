@@ -345,7 +345,7 @@ public class LdapServiceImpl implements LdapService
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.ikasan.security.service.LdapService#synchronize()
+	 * @see org.ikasan.security.listener.LdapService#synchronize()
 	 */
 	@Override
 	public void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException

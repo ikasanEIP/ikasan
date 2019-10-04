@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
      * <!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
      * <intercept-url pattern="/rest/**" access="permitAll"/>
      * <intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
-     * <!--<intercept-url pattern="/org/ikasan/trigger/service" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>-->
+     * <!--<intercept-url pattern="/org/ikasan/trigger/listener" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>-->
      * <intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole')"/>
      * <p>
      * <form-login login-page="/login.jsp"

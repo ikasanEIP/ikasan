@@ -86,7 +86,7 @@ public class ModuleInitialisationServiceImplTest {
     }};
 
     /**
-     * mocked container, service and dao
+     * mocked container, listener and dao
      */
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
@@ -220,7 +220,7 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("public.service.address");
+            oneOf(environment).getProperty("public.listener.address");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.address");
@@ -293,7 +293,7 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("public.service.address");
+            oneOf(environment).getProperty("public.listener.address");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.address");
@@ -365,13 +365,13 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("public.service.address");
+            oneOf(environment).getProperty("public.listener.address");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.address");
             will(returnValue("myServerName"));
 
-            oneOf(environment).getProperty("public.service.port");
+            oneOf(environment).getProperty("public.listener.port");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.port");
@@ -448,13 +448,13 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("public.service.address");
+            oneOf(environment).getProperty("public.listener.address");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.address");
             will(returnValue("myServerName"));
 
-            oneOf(environment).getProperty("public.service.port");
+            oneOf(environment).getProperty("public.listener.port");
             will(returnValue(null));
 
             oneOf(environment).getProperty("server.port");
@@ -531,10 +531,10 @@ public class ModuleInitialisationServiceImplTest {
             atLeast(2).of(platformContext).getEnvironment();
             will(returnValue(environment));
 
-            oneOf(environment).getProperty("public.service.address");
+            oneOf(environment).getProperty("public.listener.address");
             will(returnValue("myServerName"));
 
-            oneOf(environment).getProperty("public.service.port");
+            oneOf(environment).getProperty("public.listener.port");
             will(returnValue(80));
 
             atLeast(1).of(platformContext).getApplicationName();

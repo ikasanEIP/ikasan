@@ -1,16 +1,18 @@
 package org.ikasan.dashboard.ui.general.component;
 
+import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.util.DateFormatter;
@@ -49,7 +51,14 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public Component getEntityDetailsLayout()
     {
-        H3 userProfileLabel = new H3(getTranslation("label.error-event-details", UI.getCurrent().getLocale(), null));
+        Image errorImage = new Image("/frontend/images/error-service.png", "");
+        errorImage.setHeight("70px");
+
+        H3 errorLabel = new H3(getTranslation("label.error-event-details", UI.getCurrent().getLocale(), null));
+
+        HorizontalLayout headerLayout = new HorizontalLayout();
+        headerLayout.setSpacing(true);
+        headerLayout.add(errorImage, errorLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -78,7 +87,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         formLayout.setSizeFull();
 
         Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButton.getElement().setProperty("title", getTranslation("help-message.download-error", UI.getCurrent().getLocale(), null));
+        Tooltip downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("error.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
@@ -87,9 +96,9 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         buttonWrapper.wrapComponent(downloadButton);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userProfileLabel, formLayout, buttonWrapper);
+        layout.add(headerLayout, formLayout, buttonWrapper, downloadButtonTooltip);
 
-        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
+        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper, downloadButtonTooltip);
 
         Tab errorTab = new Tab(getTranslation("tab-label.error", UI.getCurrent().getLocale(), null));
         Tab errorEventTab = new Tab(getTranslation("tab-label.error-event", UI.getCurrent().getLocale(), null));
@@ -106,6 +115,8 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                 super.juicyAceEditor.setValue(this.errorEvent);
             }
         });
+
+        juicyAceEditor.setHeight("45vh");
 
         layout.add(tabs);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.START, tabs);

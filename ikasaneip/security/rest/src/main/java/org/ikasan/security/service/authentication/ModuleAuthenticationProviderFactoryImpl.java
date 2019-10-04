@@ -100,7 +100,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#getAuthenticationProvider(java.lang.Object)
+     * @see org.ikasan.security.listener.authentication.AuthenticationProviderFactory#getAuthenticationProvider(java.lang.Object)
      */
     @Override
     public AuthenticationProvider getAuthenticationProvider(AuthenticationMethod authMethod)
@@ -129,7 +129,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#getLocalAuthenticationProvider()
+     * @see org.ikasan.security.listener.authentication.AuthenticationProviderFactory#getLocalAuthenticationProvider()
      */
     @Override
     public AuthenticationProvider getLocalAuthenticationProvider()
@@ -145,7 +145,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#testAuthenticationConnection(org.ikasan.security.window.AuthenticationMethod)
+     * @see org.ikasan.security.listener.authentication.AuthenticationProviderFactory#testAuthenticationConnection(org.ikasan.security.window.AuthenticationMethod)
      */
     public void testAuthenticationConnection(AuthenticationMethod authMethod) throws Exception
     {

@@ -88,7 +88,6 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-login-flow</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -167,12 +166,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.appreciated</groupId>
-            <artifactId>apexcharts</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-solr-client</artifactId>
             <version>2.2.0-SNAPSHOT</version>
@@ -237,6 +230,12 @@
             <groupId>org.vaadin.tabs</groupId>
             <artifactId>paged-tabs</artifactId>
             <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>tooltip</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
@@ -374,12 +373,7 @@
 
     <profiles>
         <profile>
-            <id>productionMode</id>
-            <activation>
-                <property>
-                    <name>vaadin.productionMode</name>
-                </property>
-            </activation>
+            <id>production-mode</id>
 
             <dependencies>
                 <dependency>
@@ -403,32 +397,9 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <jvmArguments>-Dvaadin.productionMode</jvmArguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.19.1</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.junit.platform</groupId>
-                                <artifactId>junit-platform-surefire-provider</artifactId>
-                                <version>1.1.0</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.junit.jupiter</groupId>
-                                <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.1.0</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
+
 </project>

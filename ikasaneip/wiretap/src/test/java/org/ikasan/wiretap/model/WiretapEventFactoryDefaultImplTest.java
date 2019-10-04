@@ -59,10 +59,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WiretapEventFactoryDefaultImplTest
 {
-    /** serialisers to be supported by the service */
+    /** serialisers to be supported by the listener */
     private Map serialisers;
 
-    /** serialiser service instance */
+    /** serialiser listener instance */
     private WiretapSerialiser<Object,String> serialiser;
 
     @Before
@@ -72,7 +72,7 @@ public class WiretapEventFactoryDefaultImplTest
         this.serialisers = new ConcurrentHashMap();
         serialisers.put(Integer.class, new DefaultSerialiser());
 
-        // create a persistence serialiser service instance passing the supported serialisers
+        // create a persistence serialiser listener instance passing the supported serialisers
         this.serialiser = new WiretapSerialiserService(serialisers);
     }
 
@@ -94,7 +94,7 @@ public class WiretapEventFactoryDefaultImplTest
         WiretapEventFactory wiretapEventFactory = new WiretapEventFactoryDefaultImpl(this.serialiser);
         FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", new Integer(1));
 
-        // test the serialiser service
+        // test the serialiser listener
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent("moduleName", "flowName",
                 "componentName", flowEvent, 0L);
 
@@ -117,7 +117,7 @@ public class WiretapEventFactoryDefaultImplTest
         WiretapSerialiser serialiser = new NewDefaultSerialiser();
         wiretapEventFactory.setSerialiser(serialiser);
 
-        // test the serialiser service
+        // test the serialiser listener
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent("moduleName", "flowName",
                 "componentName", flowEvent, 0L);
 
@@ -142,7 +142,7 @@ public class WiretapEventFactoryDefaultImplTest
         wiretapEventFactory.setSerialiser(moduleSerialiser);
         wiretapEventFactory.setSerialiser("componentName", componentSerialiser);
 
-        // test the serialiser service
+        // test the serialiser listener
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent("moduleName", "flowName",
                 "componentName", flowEvent, 0L);
 

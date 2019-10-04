@@ -237,8 +237,8 @@ public class ReplayApplicationTest
                                         );
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorCode\":null,\"errorMessage\":\"The resubmission service on the flow you are "
-                + "resubmitting to is null. This is most likely due to the resubmission service not being set on the "
+        assertEquals("{\"errorCode\":null,\"errorMessage\":\"The resubmission listener on the flow you are "
+                + "resubmitting to is null. This is most likely due to the resubmission listener not being set on the "
                 + "flow factory for the flow you are resubmitting to.\"}",
             result.getResponse().getContentAsString()
                     );

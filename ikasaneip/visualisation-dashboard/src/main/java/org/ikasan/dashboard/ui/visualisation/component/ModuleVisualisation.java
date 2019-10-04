@@ -1,26 +1,21 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import com.github.appreciated.apexcharts.config.tooltip.X;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.shared.Registration;
+import org.ikasan.dashboard.broadcast.FlowState;
+import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.ikasan.dashboard.broadcast.State;
+import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
-import org.ikasan.vaadin.visjs.network.listener.ClickListener;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
-import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
@@ -32,27 +27,25 @@ import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.tabs.PagedTabs;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserver
+public class ModuleVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
-    Logger logger = LoggerFactory.getLogger(ModuleVisualisation.class);
-    private Map<Tab, NetworkDiagram> networkDiagramMap;
-    private Map<Tab, Flow> flowMap;
-    private ControlPanel controlPanel;
-    private Map<Tab, Icon> flowIconMap = new HashMap<>();
+    private Logger logger = LoggerFactory.getLogger(ModuleVisualisation.class);
+    private Map<String, Flow> flowMap;
+    private NetworkDiagram networkDiagram;
+    private Flow currentFlow;
+    private Module module;
+    private boolean moduleView = false;
 
-    public ModuleVisualisation(ControlPanel controlPanel)
+    private Registration broadcasterRegistration;
+
+    public ModuleVisualisation()
     {
         this.setSizeFull();
-        this.controlPanel = controlPanel;
-        this.controlPanel.registerListener(this.asButtonClickedListener());
 
-        super.tabs.addSelectedChangeListener(this.asTabSelectedListener());
-        this.networkDiagramMap = new HashMap<>();
         this.flowMap = new HashMap<>();
     }
 
@@ -62,27 +55,14 @@ public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserve
         {
             add(flow);
         }
+
+        this.module = module;
     }
 
     protected void add(Flow flow)
     {
         logger.info("Adding flow [{}] to visualisation.", flow.getName());
-        NetworkDiagram networkDiagram = this.createNetworkDiagram(flow);
-
-        Icon icon = new Icon(VaadinIcon.CIRCLE_THIN);
-        icon.setColor("grey");
-        icon.setSize("20px");
-
-
-        this.controlPanel.setFlowStatus("stopped");
-
-        Tab tab = new Tab(new Label(flow.getName()), icon);
-        this.add(networkDiagram, tab);
-        this.networkDiagramMap.put(tab, networkDiagram);
-        this.flowMap.put(tab, flow);
-
-        this.flowIconMap.put(tab, icon);
-
+        this.flowMap.put(flow.getName(), flow);
         logger.info("Finished adding flow [{}] to visualisation.", flow.getName());
     }
 
@@ -95,43 +75,10 @@ public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserve
     {
         logger.info("Creating network diagram for flow [{}] to visualisation.", flow.getName());
 
-        Physics physics = new Physics();
-        physics.setEnabled(false);
-
-        NetworkDiagram networkDiagram = new NetworkDiagram
-            (Options.builder()
-                .withAutoResize(true)
-                .withPhysics(physics)
-                .withInteraction(Interaction.builder().withDragNodes(false) .build())
-                .withEdges(
-                    Edges.builder()
-                        .withArrows(new Arrows(new ArrowHead()))
-                        .withColor(EdgeColor.builder()
-                            .withColor("#000000")
-                            .build())
-                        .withDashes(false)
-                        .withFont(Font.builder().withSize(9).build())
-                        .build())
-                .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
-                .build());
-
-        networkDiagram.setSizeFull();
+        NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
 
         IkasanFlowLayoutManager layoutManager = new IkasanFlowLayoutManager(flow, networkDiagram, null);
         layoutManager.layout();
-
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
-        {
-            logger.info(doubleClickEvent.getParams().toString());
-        });
-
-        networkDiagram.addClickListener((ClickListener) clickEvent -> {
-            logger.info(clickEvent.getParams().toString());
-        });
-
-        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
-            logger.info(onContextEvent.getParams().toString());
-        });
 
         logger.info("Finished creating network diagram for flow [{}] to visualisation.", flow.getName());
         return networkDiagram;
@@ -143,6 +90,17 @@ public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserve
      * @param module to render.
      */
     protected NetworkDiagram createNetworkDiagram(Module module)
+    {
+        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
+        NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
+
+        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
+        layoutManager.layout();
+
+        return networkDiagram;
+    }
+
+    protected NetworkDiagram initialiseNetworkDiagram()
     {
         logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
         Physics physics = new Physics();
@@ -167,21 +125,21 @@ public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserve
 
         networkDiagram.setSizeFull();
 
-        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
-        layoutManager.layout();
-
         networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
         {
             logger.info(doubleClickEvent.getParams().toString());
+            String node = doubleClickEvent.getParams().getArray("nodes").get(0);
+
+            logger.info("Node: " + node);
         });
 
-        networkDiagram.addClickListener((ClickListener) clickEvent -> {
-            logger.info(clickEvent.getParams().toString());
-        });
-
-        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
-            logger.info(onContextEvent.getParams().toString());
-        });
+//        networkDiagram.addClickListener((ClickListener) clickEvent -> {
+//            logger.info(clickEvent.getParams().toString());
+//        });
+//
+//        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
+//            logger.info(onContextEvent.getParams().toString());
+//        });
 
         logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
 
@@ -191,58 +149,105 @@ public class ModuleVisualisation extends PagedTabs implements BeforeEnterObserve
     public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener()
     {
         return (ComponentEventListener<ClickEvent<Button>>) selectedChangeEvent ->
-    {
-        if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
         {
-            controlPanel.setFlowStatus("running");
-
-            if(tabs.getSelectedTab() != null)
+            if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
             {
-                tabs.getSelectedTab().removeAll();
-
-                Flow flow = flowMap.get(tabs.getSelectedTab());
-
-                Icon icon = new Icon(VaadinIcon.CIRCLE);
-                icon.setColor("green");
-                icon.setSize("20px");
-
-                tabs.getSelectedTab().add(new Label(flow.getName()), icon);
+                this.currentFlow.setStatus(State.RUNNING_STATE);
+                this.drawFlowStatus(State.RUNNING_STATE);
             }
-        }
-    };
-}
-
-
-    public ComponentEventListener<Tabs.SelectedChangeEvent> asTabSelectedListener()
-    {
-        return (ComponentEventListener<Tabs.SelectedChangeEvent>) selectedChangeEvent ->
-        {
-            if(flowMap.get(tabs.getSelectedTab()) != null)
+            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.STOP))
             {
-                logger.info("Switching to tab {}", tabs.getSelectedTab().getLabel());
-                this.redrawFlow();
-
-                NetworkDiagram networkDiagram = networkDiagramMap.get(tabs.getSelectedTab());
-                tabsToSuppliers.put(tabs.getSelectedTab(), (SerializableSupplier<Component>) () -> networkDiagram);
-                logger.info("Finished switching to tab {}", tabs.getSelectedTab().getLabel());
+                this.currentFlow.setStatus(State.STOPPED_STATE);
+                this.drawFlowStatus(State.STOPPED_STATE);
+            }
+            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.PAUSE))
+            {
+                this.currentFlow.setStatus(State.PAUSED_STATE);
+                this.drawFlowStatus(State.PAUSED_STATE);
+            }
+            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START_PAUSE))
+            {
+                this.currentFlow.setStatus(State.START_PAUSE_STATE);
+                this.drawFlowStatus(State.START_PAUSE_STATE);
             }
         };
     }
 
+    private void drawFlowStatus(State state)
+    {
+        this.networkDiagram.drawStatusBorder(this.currentFlow.getX() -20, this.currentFlow.getY() -20, this.currentFlow.getW() + 40
+            , this.currentFlow.getH() + 40, state.getStateColour());
+        this.networkDiagram.diagamRedraw();
+    }
+
+
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
-        this.redrawFlow();
+        this.redraw();
     }
 
-    protected void redrawFlow()
+    public void redraw()
     {
-        if(flowMap.get(tabs.getSelectedTab()) != null)
+        if (!this.moduleView && this.currentFlow != null)
         {
-            NetworkDiagram networkDiagram = networkDiagramMap.get(tabs.getSelectedTab());
+            this.networkDiagram = this.createNetworkDiagram(this.currentFlow);
 
-            Flow flow = flowMap.get(tabs.getSelectedTab());
-            networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
+            this.networkDiagram.drawFlow(this.currentFlow.getX(), this.currentFlow.getY(), this.currentFlow.getW(), this.currentFlow.getH(), this.currentFlow.getName());
+
+            FlowState flowState = FlowStateCache.instance().get(this.module.getName()+this.currentFlow.getName());
+
+            if(flowState != null)
+            {
+                this.drawFlowStatus(flowState.getState());
+            }
+            else
+            {
+                this.drawFlowStatus(this.currentFlow.getStatus());
+            }
+
+            this.removeAll();
+
+            this.add(networkDiagram);
         }
+        else if(this.moduleView && this.module != null)
+        {
+            this.networkDiagram = this.createNetworkDiagram(this.module);
+
+            this.removeAll();
+
+            this.add(networkDiagram);
+        }
+    }
+
+    public void setCurrentFlow(Flow currentFlow)
+    {
+        this.currentFlow = currentFlow;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        UI ui = attachEvent.getUI();
+        broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
+        {
+            logger.info("Received flow state: " + flowState);
+
+            ui.access(() ->
+            {
+                if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
+                    && module != null && flowState.getModuleName().equals(module.getName()))
+                {
+                    this.drawFlowStatus(flowState.getState());
+                }
+            });
+        });
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent)
+    {
+        broadcasterRegistration.remove();
+        broadcasterRegistration = null;
     }
 }

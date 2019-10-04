@@ -74,7 +74,7 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#isDuplicate(java.lang.String)
+     * @see org.ikasan.filter.duplicate.listener.DuplicateFilterService#isDuplicate(java.lang.String)
      */
     public boolean isDuplicate(FilterEntry message)
     {
@@ -91,7 +91,7 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#persistMessage(java.lang.String)
+     * @see org.ikasan.filter.duplicate.listener.DuplicateFilterService#persistMessage(java.lang.String)
      */
     public void persistMessage(FilterEntry message)
     {

@@ -89,7 +89,7 @@ public class GenericJmsProducer<T>
     /** JMS consumer configuration - default to vanilla instance */
     protected GenericJmsProducerConfiguration configuration = new GenericJmsProducerConfiguration();
     
-    /** default event identifier service - can be overridden via the setter */
+    /** default event identifier listener - can be overridden via the setter */
     protected ManagedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** session has to be closed prior to connection being closed */
@@ -249,7 +249,7 @@ public class GenericJmsProducer<T>
     }
     
     /**
-     * Override the default producer event life identifier service
+     * Override the default producer event life identifier listener
      * @param managedEventIdentifierService
      */
     public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)

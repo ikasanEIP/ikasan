@@ -77,7 +77,7 @@ public class DashboardNotifier implements Notifier<String>
     private String dashboardBaseUrl;
 
     /**
-     * the platform configuration service
+     * the platform configuration listener
      */
     protected PlatformConfigurationService platformConfigurationService;
 

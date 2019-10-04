@@ -95,7 +95,7 @@ public class GenericJmsConsumer
     /** consumer event listener */
     protected EventListener eventListener;
 
-    /** default event identifier service - can be overridden via the setter */
+    /** default event identifier listener - can be overridden via the setter */
     protected ManagedRelatedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** configured resource id */
@@ -351,7 +351,7 @@ public class GenericJmsConsumer
     }
 
     /**
-     * Override the default consumer event life identifier service
+     * Override the default consumer event life identifier listener
      * @param managedEventIdentifierService
      */
     @SuppressWarnings("unchecked")

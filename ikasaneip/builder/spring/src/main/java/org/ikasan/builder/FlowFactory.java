@@ -114,16 +114,16 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     /** allow override of recovery manager instance */
     RecoveryManager recoveryManager;
 
-    /** exclusion service */
+    /** exclusion listener */
     ExclusionService exclusionService;
 
-    /** error reporting service */
+    /** error reporting listener */
     ErrorReportingService errorReportingService;
 
     /** exception resolver to be registered with recovery manager */
     ExceptionResolver exceptionResolver;
 
-    /** default configuration service which can be overridden */
+    /** default configuration listener which can be overridden */
     ConfigurationService configurationService;
 
     SerialiserFactory ikasanSerialiserFactory;
@@ -140,7 +140,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     /** head flow element of the exclusion flow */
     FlowElement<?> exclusionFlowHeadElement;
 
-    /** handle to the re-submission service */
+    /** handle to the re-submission listener */
     ResubmissionService resubmissionService;
     
     /** the replayRecordService **/
@@ -149,7 +149,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     /** persistent flow configuration */
     FlowPersistentConfiguration flowPersistentConfiguration;
 
-    /** the message history service **/
+    /** the message history listener **/
     MessageHistoryService messageHistoryService;
 
 
@@ -349,7 +349,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     }
 
     /**
-     * Helper method to set the exclusion service on the relevant components.
+     * Helper method to set the exclusion listener on the relevant components.
      * 
      * @param flowElements
      * @param exclusionService
