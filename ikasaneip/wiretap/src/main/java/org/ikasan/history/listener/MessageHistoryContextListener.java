@@ -58,7 +58,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
 {
     private static final Logger logger = LoggerFactory.getLogger(MessageHistoryContextListener.class);
 
-    /** the delegate service used to save the flowInvocationContext */
+    /** the delegate listener used to save the flowInvocationContext */
     protected MessageHistoryService<FlowInvocationContext, FlowEvent, T, ComponentInvocationMetricImpl> messageHistoryService;
 
     /** the module and flow name */
@@ -68,7 +68,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     protected FlowInvocationContextWriteStrategy writeStrategy = new DefaultFlowInvocationContextWriteStrategy();
 
 
-    /** boolean to determine whether to rethrow any caught exceptions thrown by the underlying service, defaults to false */
+    /** boolean to determine whether to rethrow any caught exceptions thrown by the underlying listener, defaults to false */
     protected boolean rethrowServiceExceptions = false;
 
     public MessageHistoryContextListener(MessageHistoryService<FlowInvocationContext, FlowEvent, T, ComponentInvocationMetricImpl> messageHistoryService, String moduleName, String flowName)

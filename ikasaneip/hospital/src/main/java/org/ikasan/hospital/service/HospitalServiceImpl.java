@@ -59,7 +59,7 @@ import org.ikasan.hospital.model.ExclusionEventActionImpl;
 
 
 /**
- * User and Authority service interface
+ * User and Authority listener interface
  *
  * @author Ikasan Development Team
  */
@@ -125,7 +125,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.hospital.service.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.Object, java.security.Principal)
+     * @see org.ikasan.hospital.listener.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.Object, java.security.Principal)
      */
     @Override
     public void resubmit(String moduleName, String flowName, String errorUri, byte[] event, Principal principal)
@@ -144,7 +144,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.hospital.service.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.hospital.listener.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public void resubmit(String moduleName, String flowName, String errorUri, String userName)
@@ -182,14 +182,14 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         if (resubmissionService == null)
         {
             throw new RuntimeException(
-                "The resubmission service on the flow you are resubmitting to is null. This is most liekly due to "
-                    + "the resubmission service not being set on the flow factory for the flow you are resubmitting to.");
+                "The resubmission listener on the flow you are resubmitting to is null. This is most liekly due to "
+                    + "the resubmission listener not being set on the flow factory for the flow you are resubmitting to.");
         }
         return resubmissionService;
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.hospital.service.HospitalService#ignore(java.lang.String, java.security.Principal)
+     * @see org.ikasan.hospital.listener.HospitalService#ignore(java.lang.String, java.security.Principal)
      */
     @Override
     public void ignore(String moduleName, String flowName, String errorUri, byte[] event, Principal principal)
@@ -202,7 +202,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.hospital.service.HospitalService#ignore(java.lang.String, java.security.Principal)
+     * @see org.ikasan.hospital.listener.HospitalService#ignore(java.lang.String, java.security.Principal)
      */
     @Override
     public void ignore(String moduleName, String flowName, String errorUri, String userName)

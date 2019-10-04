@@ -50,7 +50,7 @@ import java.util.List;
 public interface PlatformConfigurationService
 {
 	/**
-	 * Method to get a platform configuration value from the configuration service.
+	 * Method to get a platform configuration value from the configuration listener.
 	 *
 	 * @param paramName
 	 * @return
@@ -58,7 +58,7 @@ public interface PlatformConfigurationService
 	public String getConfigurationValue(String paramName);
 
 	/**
-	 * Method to save a platform configuration value to the configuration service.
+	 * Method to save a platform configuration value to the configuration listener.
 	 *
 	 * @param paramName
 	 * @param value
@@ -66,28 +66,28 @@ public interface PlatformConfigurationService
 	public void saveConfigurationValue(String paramName, String value);
 
 	/**
-	 * The the username for the account that is used to validate web service calls.
+	 * The the username for the account that is used to validate web listener calls.
 	 * 
 	 * @return
 	 */
 	public String getWebServiceUsername();
 
 	/**
-	 * Save the web service username.
+	 * Save the web listener username.
 	 *
 	 * @param username
      */
 	public void saveWebServiceUsername(String username);
 	
 	/**
-	  * The the password for the account that is used to validate web service calls.
+	  * The the password for the account that is used to validate web listener calls.
 	 *
 	 * @return
 	 */
 	public String getWebServicePassword();
 
 	/**
-	 * Save the web service password.
+	 * Save the web listener password.
 	 *
 	 * @param password
      */

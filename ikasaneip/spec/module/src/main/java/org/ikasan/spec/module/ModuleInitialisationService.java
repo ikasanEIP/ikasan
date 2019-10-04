@@ -43,7 +43,7 @@ package org.ikasan.spec.module;
 import java.util.List;
 
 /**
- * Marker interface identifying service responsible for <code>Module</code> Initialisation
+ * Marker interface identifying listener responsible for <code>Module</code> Initialisation
  * 
  * @author Ikasan Development Team
  *

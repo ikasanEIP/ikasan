@@ -65,7 +65,7 @@ public abstract class AbstractListExpectation implements FlowExpectation
     private AtomicInteger expectionIndexCounter = new AtomicInteger(0);
 
     /**
-     * comparator service for expectations
+     * comparator listener for expectations
      */
     protected ComparatorService comparatorService;
 
@@ -75,7 +75,7 @@ public abstract class AbstractListExpectation implements FlowExpectation
     }
 
     /**
-     * Constructor allowing an alternate comparator service.
+     * Constructor allowing an alternate comparator listener.
      *
      * @param comparatorService
      */
@@ -85,7 +85,7 @@ public abstract class AbstractListExpectation implements FlowExpectation
     }
 
     /**
-     * Default comparator service
+     * Default comparator listener
      *
      * @return
      */

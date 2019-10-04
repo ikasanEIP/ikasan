@@ -116,8 +116,8 @@ public class ReplayApplication
             if ( resubmissionService == null )
             {
                 throw new RuntimeException(
-                    "The resubmission service on the flow you are resubmitting to is null. This is most liekly due to "
-                        + "the resubmission service not being set on the flow factory for the flow you are "
+                    "The resubmission listener on the flow you are resubmitting to is null. This is most liekly due to "
+                        + "the resubmission listener not being set on the flow factory for the flow you are "
                         + "resubmitting to.");
             }
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
@@ -177,8 +177,8 @@ public class ReplayApplication
             if ( resubmissionService == null )
             {
                 return new ResponseEntity(new ErrorDto(
-                    "The resubmission service on the flow you are resubmitting to is null. This is most likely due to "
-                        + "the resubmission service not being set on the flow factory for the flow you are "
+                    "The resubmission listener on the flow you are resubmitting to is null. This is most likely due to "
+                        + "the resubmission listener not being set on the flow factory for the flow you are "
                         + "resubmitting "
                         + "to."), HttpStatus.BAD_REQUEST);
             }

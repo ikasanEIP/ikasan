@@ -56,7 +56,7 @@ import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 
 /**
- * Replay management service implementatiom.
+ * Replay management listener implementatiom.
  *
  * @author Ikasan Development Team
  *

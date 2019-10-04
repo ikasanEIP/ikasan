@@ -619,13 +619,13 @@ import org.slf4j.LoggerFactory;
              {
                  userParam = parameter;
                  userPanel = this.createTextFieldPanel(parameter,
-                         new NonZeroLengthStringValidator("The web service user account must be entered!"));
+                         new NonZeroLengthStringValidator("The web listener user account must be entered!"));
              }
              else if(parameter.getName().equals("webServiceUserPassword"))
              {
                  passwordParam = parameter;
                  passwordPanel = this.createPasswordFieldPanel(parameter,
-                         new NonZeroLengthStringValidator("The web service user password must be entered!"));
+                         new NonZeroLengthStringValidator("The web listener user password must be entered!"));
              }
              if(parameter.getName().equals("configurationMap"))
              {

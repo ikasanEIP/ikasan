@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This contract represents a platform level service for the heavyweight logging of
+ * This contract represents a platform level listener for the heavyweight logging of
  * Errors
  * 
  * @author Ikasan Development Team

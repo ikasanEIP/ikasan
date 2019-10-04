@@ -72,7 +72,7 @@ public class ModuleConverterTest
     }};
 
     /**
-     * mocked container, service and dao
+     * mocked container, listener and dao
      */
     FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class);
     RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class);

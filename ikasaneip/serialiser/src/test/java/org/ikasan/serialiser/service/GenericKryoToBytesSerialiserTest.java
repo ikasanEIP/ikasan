@@ -71,7 +71,7 @@ import com.esotericsoftware.kryo.Serializer;
  */
 public class GenericKryoToBytesSerialiserTest
 {
-    /** one serialiser service should provide all serialiser instances */
+    /** one serialiser listener should provide all serialiser instances */
 
     /**
      * Test

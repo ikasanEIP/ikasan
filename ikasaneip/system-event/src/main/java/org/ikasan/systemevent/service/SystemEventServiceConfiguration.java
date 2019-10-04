@@ -41,7 +41,7 @@
 package org.ikasan.systemevent.service;
 
 /**
- * Configuration bean for the System Event service
+ * Configuration bean for the System Event listener
  */
 public class SystemEventServiceConfiguration
 {

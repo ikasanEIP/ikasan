@@ -37,7 +37,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem,
@@ -66,7 +66,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, String configurationType, String sourceSystem, String targetSystem,
@@ -85,7 +85,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
 
 
     /* (non-Javadoc)
-	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+	 * @see com.mizuho.cmi2.mappingConfiguration.listener.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
 	 */
     public String getTargetConfigurationValueWithIgnores(String clientName,
                                                          String configurationTypeName, String sourceContext,
@@ -125,7 +125,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
                         }
                         sourceSystemValuesSB.append("]");
 
-                        String errorMessage = "Multiple sub results returned from the mapping configuration service. " +
+                        String errorMessage = "Multiple sub results returned from the mapping configuration listener. " +
                                 "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
                                 "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
 
@@ -152,7 +152,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+     * @see com.mizuho.cmi2.mappingConfiguration.listener.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
     public String getTargetConfigurationValueWithIgnoresWithOrdinality(String clientName,
                                                                        String configurationTypeName, String sourceContext,
@@ -192,7 +192,7 @@ public class MappingServiceImpl implements MappingService<MappingConfigurationSe
                         }
                         sourceSystemValuesSB.append("]");
 
-                        String errorMessage = "Multiple sub results returned from the mapping configuration service. " +
+                        String errorMessage = "Multiple sub results returned from the mapping configuration listener. " +
                                 "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
                                 "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
 

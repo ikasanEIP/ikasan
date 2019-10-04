@@ -841,7 +841,7 @@ public class MappingConfigurationPanel extends Panel implements View
                 {
                     Notification.show("This mapping has been saved with the following warnings!\r\n\r\n" +
                             "The following source system values are duplicated. This has the effect of calls to the mapping " +
-                            "service resolving multiple results. \r\n\r\n"
+                            "listener resolving multiple results. \r\n\r\n"
                             + this.mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
                 }
 

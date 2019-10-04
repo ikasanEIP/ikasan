@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -143,7 +144,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty())
         {
             moduleNames = new HashSet<>();
-            moduleNames.add(filter.getModuleNameFilter() + "*");
+            moduleNames.add(ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
         }
 
         HashSet<String> flowNames = null;
@@ -151,7 +152,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getFlowNameFilter() != null && !filter.getFlowNameFilter().isEmpty())
         {
             flowNames = new HashSet<>();
-            flowNames.add(filter.getFlowNameFilter() + "*");
+            flowNames.add(ClientUtils.escapeQueryChars(filter.getFlowNameFilter()) + "*");
         }
 
         HashSet<String> componentNames = null;
@@ -159,14 +160,14 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getComponentNameFilter() != null && !filter.getComponentNameFilter().isEmpty())
         {
             componentNames = new HashSet<>();
-            componentNames.add(filter.getComponentNameFilter() + "*");
+            componentNames.add(ClientUtils.escapeQueryChars(filter.getComponentNameFilter()) + "*");
         }
 
         String eventId = null;
 
         if(filter.getEventIdFilter() != null && !filter.getEventIdFilter().isEmpty())
         {
-            eventId = "*" + filter.getEventIdFilter() + "*";
+            eventId = "*" + ClientUtils.escapeQueryChars(filter.getEventIdFilter()) + "*";
         }
 
         return this.solrSearchService.search(moduleNames, flowNames, componentNames, eventId, searchTerm,

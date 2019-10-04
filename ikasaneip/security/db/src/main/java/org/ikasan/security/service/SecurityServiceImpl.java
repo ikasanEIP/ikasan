@@ -76,7 +76,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
+     * @see org.ikasan.security.listener.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
      */
     @Override
     public IkasanPrincipal createNewPrincipal(String name, String type)
@@ -93,7 +93,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#savePrincipal(org.ikasan.security.window.IkasanPrincipal)
+     * @see org.ikasan.security.listener.SecurityService#savePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void savePrincipal(IkasanPrincipal principal)
@@ -103,7 +103,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#createNewRole(java.lang.String, java.lang.String)
+     * @see org.ikasan.security.listener.SecurityService#createNewRole(java.lang.String, java.lang.String)
      */
     @Override
     public Role createNewRole(String name, String description)
@@ -118,7 +118,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#createNewPolicy(java.lang.String, java.lang.String)
+     * @see org.ikasan.security.listener.SecurityService#createNewPolicy(java.lang.String, java.lang.String)
      */
     @Override
     public Policy createNewPolicy(String name, String description)
@@ -134,7 +134,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#saveRole(org.ikasan.security.window.Role)
+     * @see org.ikasan.security.listener.SecurityService#saveRole(org.ikasan.security.window.Role)
      */
     @Override
     public void saveRole(Role role) 
@@ -144,7 +144,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#savePolicy(org.ikasan.security.window.Policy)
+     * @see org.ikasan.security.listener.SecurityService#savePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void savePolicy(Policy policy) 
@@ -154,7 +154,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#findPrincipalByName(java.lang.String)
+     * @see org.ikasan.security.listener.SecurityService#findPrincipalByName(java.lang.String)
      */
     @Override
     public IkasanPrincipal findPrincipalByName(String name) 
@@ -164,7 +164,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
+     * @see org.ikasan.security.listener.SecurityService#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void deletePrincipal(IkasanPrincipal principal) 
@@ -174,7 +174,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deleteRole(org.ikasan.security.window.Role)
+     * @see org.ikasan.security.listener.SecurityService#deleteRole(org.ikasan.security.window.Role)
      */
     @Override
     public void deleteRole(Role role) 
@@ -184,7 +184,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deletePolicy(org.ikasan.security.window.Policy)
+     * @see org.ikasan.security.listener.SecurityService#deletePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void deletePolicy(Policy policy) 
@@ -194,7 +194,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#getAllPrincipals()
+     * @see org.ikasan.security.listener.SecurityService#getAllPrincipals()
      */
     @Override
     public List<IkasanPrincipal> getAllPrincipals() 
@@ -209,7 +209,7 @@ public class SecurityServiceImpl implements SecurityService
     }
 
     /* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getPrincipalByNameLike(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#getPrincipalByNameLike(java.lang.String)
 	 */
 	@Override
 	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
@@ -219,7 +219,7 @@ public class SecurityServiceImpl implements SecurityService
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAllRoles()
+	 * @see org.ikasan.security.listener.SecurityService#getAllRoles()
 	 */
     @Override
     public List<Role> getAllRoles() 
@@ -229,7 +229,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#getAllPolicies()
+     * @see org.ikasan.security.listener.SecurityService#getAllPolicies()
      */
     @Override
     public List<Policy> getAllPolicies() 
@@ -239,7 +239,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
+     * @see org.ikasan.security.listener.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
      */
     public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) 
     {
@@ -248,7 +248,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
+     * @see org.ikasan.security.listener.SecurityService#getAuthenticationMethod(java.lang.Long)
      */
     public List<AuthenticationMethod> getAuthenticationMethods() 
     {
@@ -256,7 +256,7 @@ public class SecurityServiceImpl implements SecurityService
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#findRoleByName(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#findRoleByName(java.lang.String)
 	 */
 	@Override
 	public Role findRoleByName(String name)
@@ -265,7 +265,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#findPolicyByName(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#findPolicyByName(java.lang.String)
 	 */
 	@Override
 	public Policy findPolicyByName(String name)
@@ -274,7 +274,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAllPrincipalsWithRole(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#getAllPrincipalsWithRole(java.lang.String)
 	 */
 	@Override
 	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
@@ -283,7 +283,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getPrincipalsByName(java.util.List)
+	 * @see org.ikasan.security.listener.SecurityService#getPrincipalsByName(java.util.List)
 	 */
 	@Override
 	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
@@ -292,7 +292,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAllPolicyLinkTypes()
+	 * @see org.ikasan.security.listener.SecurityService#getAllPolicyLinkTypes()
 	 */
 	@Override
 	public List<PolicyLinkType> getAllPolicyLinkTypes()
@@ -301,7 +301,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getPolicyByNameLike(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#getPolicyByNameLike(java.lang.String)
 	 */
 	@Override
 	public List<Policy> getPolicyByNameLike(String name)
@@ -310,7 +310,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#savePolicyLink(org.ikasan.security.window.PolicyLink)
+	 * @see org.ikasan.security.listener.SecurityService#savePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void savePolicyLink(PolicyLink policyLink)
@@ -319,7 +319,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#deletePolicyLink(org.ikasan.security.window.PolicyLink)
+	 * @see org.ikasan.security.listener.SecurityService#deletePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void deletePolicyLink(PolicyLink policyLink)
@@ -328,7 +328,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAllPoliciesWithRole(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#getAllPoliciesWithRole(java.lang.String)
 	 */
 	@Override
 	public List<Policy> getAllPoliciesWithRole(String roleName)
@@ -337,7 +337,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getRoleByNameLike(java.lang.String)
+	 * @see org.ikasan.security.listener.SecurityService#getRoleByNameLike(java.lang.String)
 	 */
 	@Override
 	public List<Role> getRoleByNameLike(String name)
@@ -346,7 +346,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
+	 * @see org.ikasan.security.listener.SecurityService#getAuthenticationMethod(java.lang.Long)
 	 */
 	@Override
 	public AuthenticationMethod getAuthenticationMethod(Long id)
@@ -355,7 +355,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#deleteAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
+	 * @see org.ikasan.security.listener.SecurityService#deleteAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
 	 */
 	@Override
 	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)
@@ -364,7 +364,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
+	 * @see org.ikasan.security.listener.SecurityService#getNumberOfAuthenticationMethods()
 	 */
 	@Override
 	public long getNumberOfAuthenticationMethods()
@@ -373,7 +373,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethodByOrder(int)
+	 * @see org.ikasan.security.listener.SecurityService#getAuthenticationMethodByOrder(int)
 	 */
 	@Override
 	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
@@ -382,7 +382,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getUsersAssociatedWithPrincipal(long)
+	 * @see org.ikasan.security.listener.SecurityService#getUsersAssociatedWithPrincipal(long)
 	 */
 	@Override
 	public List<User> getUsersAssociatedWithPrincipal(long principalId)

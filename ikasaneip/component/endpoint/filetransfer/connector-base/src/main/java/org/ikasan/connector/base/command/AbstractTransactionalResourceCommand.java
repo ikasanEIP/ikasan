@@ -88,7 +88,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
     /** Context object for encapsulating execution parameters */
     protected ExecutionContext executionContext;
     
-    /** Journaling service for logging all significant state changes */
+    /** Journaling listener for logging all significant state changes */
     private TransactionJournal transactionJournal;
     
     // State Definitions

@@ -98,7 +98,7 @@ public class DefaultManagementFilterService implements ManagementFilterService, 
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeep()
+     * @see org.ikasan.filter.duplicate.listener.DuplicateFilterService#housekeep()
      */
     @Override
     public void housekeep()

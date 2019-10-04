@@ -1,12 +1,15 @@
 package org.ikasan.dashboard.ui.general.component;
 
+import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
@@ -40,7 +43,14 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public Component getEntityDetailsLayout()
     {
-        H3 userProfileLabel = new H3(getTranslation("label.replay-event-details", UI.getCurrent().getLocale(), null));
+        Image replayImage = new Image("/frontend/images/replay-service.png", "");
+        replayImage.setHeight("70px");
+
+        H3 replayLabel = new H3(getTranslation("label.replay-event-details", UI.getCurrent().getLocale(), null));
+
+        HorizontalLayout headerLayout = new HorizontalLayout();
+        headerLayout.setSpacing(true);
+        headerLayout.add(replayImage, replayLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -59,7 +69,7 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         formLayout.setSizeFull();
 
         Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButton.getElement().setProperty("title", getTranslation("help-message.download-replay", UI.getCurrent().getLocale(), null));
+        Tooltip downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-replay-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("replay.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
@@ -70,8 +80,8 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         Button replayButton = new Button(getTranslation("button.replay", UI.getCurrent().getLocale(), null));
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userProfileLabel, formLayout, buttonWrapper, replayButton);
-        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
+        layout.add(headerLayout, formLayout, buttonWrapper, replayButton, downloadButtonTooltip);
+        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper, downloadButtonTooltip);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, replayButton);
 
         return layout;

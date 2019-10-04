@@ -57,7 +57,7 @@ public class StartupControlServiceImpl implements StartupControlService
 {
 
 	/**
-     * service to log significant system happenings
+     * listener to log significant system happenings
      */
     private SystemEventService systemEventService;
 

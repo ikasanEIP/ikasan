@@ -17,7 +17,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
-import com.vaadin.flow.shared.ui.Transport;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
@@ -29,11 +29,12 @@ import org.ikasan.dashboard.ui.visualisation.view.ModuleView;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
-@Push(transport = Transport.LONG_POLLING)
+@Push
 @HtmlImport("frontend://styles/shared-styles.html")
 @HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @Theme(Lumo.class)
+@PreserveOnRefresh
 public class IkasanAppLayout extends AppLayoutRouterLayout
 {
 

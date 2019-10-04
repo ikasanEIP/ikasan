@@ -62,7 +62,7 @@ import java.util.Map;
  * <code>FlowEventJob</code> instances.
  * 
  * Each <code>FlowEventJob</code> represents some sort of executable platform
- * service
+ * listener
  * 
  * Whether not a particular <code>FlowEventJob</code> need be called at a given
  * life-cycle point will depend on the existence of <code>Trigger</code> bound to

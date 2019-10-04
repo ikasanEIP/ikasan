@@ -277,7 +277,7 @@
     -->
   <!-- <jmx agentId="myAgent" /> -->
   <!-- If you want to start a new MBeanServer, specify the serviceUrl -->
-  <!-- <jmx serviceUrl="service:jmx:rmi:///jndi/rmi://localhost:9999/solr"/>
+  <!-- <jmx serviceUrl="listener:jmx:rmi:///jndi/rmi://localhost:9999/solr"/>
     -->
 
   <!-- The default high-performance update handler -->

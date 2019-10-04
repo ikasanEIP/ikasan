@@ -69,7 +69,7 @@ public class MonitorBuilder
     // allow override of default monitor
     Monitor monitor;
 
-    // platform configuration service
+    // platform configuration listener
     PlatformConfigurationService platformConfigurationService;
 
 	/**

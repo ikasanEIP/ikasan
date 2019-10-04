@@ -81,7 +81,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisation)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisation)
      */
     @Override
     public void save(ErrorCategorisation errorCategorisation)
@@ -90,7 +90,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public List<ErrorCategorisationLink> find(String moduleName, String flowName, String flowElementName)
@@ -99,7 +99,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public ErrorCategorisationLink find(String moduleName, String flowName, String flowElementName, String action)
@@ -108,7 +108,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisation)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisation)
      */
     @Override
     public void delete(ErrorCategorisation errorCategorisation)
@@ -117,7 +117,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisationLink)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisationLink)
      */
     @Override
     public void save(ErrorCategorisationLink errorCategorisationLink)
@@ -126,7 +126,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisationLink)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisationLink)
      */
     @Override
     public void delete(ErrorCategorisationLink errorCategorisationLink)
@@ -135,7 +135,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#findCategorisedErrorOccurences(java.util.List, java.util.List, java.util.List, java.lang.String, java.util.Date, java.util.Date)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#findCategorisedErrorOccurences(java.util.List, java.util.List, java.util.List, java.lang.String, java.util.Date, java.util.Date)
      */
     @Override
     public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames,
@@ -470,7 +470,7 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.service.ErrorCategorisationService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+     * @see org.ikasan.error.reporting.listener.ErrorCategorisationService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
      */
     @Override
     public Long rowCount(List<String> moduleNames, List<String> flowNames,

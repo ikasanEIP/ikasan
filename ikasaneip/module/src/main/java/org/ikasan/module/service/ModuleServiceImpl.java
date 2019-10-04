@@ -58,7 +58,7 @@ import java.util.List;
 public class ModuleServiceImpl implements ModuleService
 {
     /**
-     * service to log significant system happenings
+     * listener to log significant system happenings
      */
     private SystemEventService systemEventService;
 
@@ -135,7 +135,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#getModules()
+     * @see org.ikasan.framework.module.listener.ModuleService#getModules()
      */
     public List<Module> getModules()
     {
@@ -143,7 +143,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#getModule(java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#getModule(java.lang.String)
      */
     public Module getModule(String moduleName)
     {
@@ -152,7 +152,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void stopFlow(String moduleName, String flowName, String actor)
     {
@@ -172,7 +172,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void pauseFlow(String moduleName, String flowName, String actor)
     {
@@ -192,7 +192,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void startPauseFlow(String moduleName, String flowName, String actor)
     {
@@ -212,7 +212,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void resumeFlow(String moduleName, String flowName, String actor)
     {
@@ -239,7 +239,7 @@ public class ModuleServiceImpl implements ModuleService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.module.service.ModuleService#startInitiator(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.framework.module.listener.ModuleService#startInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void startFlow(String moduleName, String flowName, String actor)
     {

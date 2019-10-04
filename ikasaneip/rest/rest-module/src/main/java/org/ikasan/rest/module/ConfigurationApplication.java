@@ -30,7 +30,7 @@ public class ConfigurationApplication
     @Autowired
     private ConfigurationMetaDataExtractor<String> configurationMetaDataExtractor;
 
-    /** The module service */
+    /** The module listener */
     @Autowired
     private ModuleService moduleService;
 

@@ -74,7 +74,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-         * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
+         * @see org.ikasan.mapping.listener.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
          */
     @Override
     public Long saveMappingConfiguration(MappingConfiguration mappingConfiguration) throws MappingConfigurationServiceException
@@ -95,7 +95,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public Long saveSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -104,7 +104,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -113,7 +113,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationTypes()
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationTypes()
      */
     @Override
     public List<ConfigurationType> getAllConfigurationTypes()
@@ -122,7 +122,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationContexts()
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationContexts()
      */
     @Override
     public List<ConfigurationContext> getAllConfigurationContexts()
@@ -131,7 +131,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationServiceClients()
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationServiceClients()
      */
     @Override
     public List<ConfigurationServiceClient> getAllConfigurationServiceClients()
@@ -140,7 +140,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationType(org.ikasan.mapping.window.ConfigurationType)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#addConfigurationType(org.ikasan.mapping.window.ConfigurationType)
      */
     @Override
     public Long saveConfigurationType(ConfigurationType configurationType)
@@ -149,7 +149,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationConext(org.ikasan.mapping.window.ConfigurationContext)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#addConfigurationConext(org.ikasan.mapping.window.ConfigurationContext)
      */
     @Override
     public Long saveConfigurationConext(ConfigurationContext configurationContext)
@@ -158,7 +158,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#addConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
      */
     @Override
     public Long saveConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
@@ -167,7 +167,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addMappingConfiguration(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.util.List, java.util.List, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#addMappingConfiguration(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.util.List, java.util.List, java.lang.String)
      */
     @Override
     public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, int numberOfParams,
@@ -234,7 +234,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
 	/* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationById(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfigurationById(java.lang.Long)
      */
     @Override
     public MappingConfiguration getMappingConfigurationById(Long id)
@@ -243,7 +243,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public MappingConfiguration getMappingConfiguration(String clientName, String mappingConfigurationType,
@@ -253,7 +253,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationServiceClientId(
@@ -263,7 +263,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationTypeId(Long configurationTypeId)
@@ -272,7 +272,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsBySourceContextId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfigurationsBySourceContextId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsBySourceContextId(Long sourceContextId)
@@ -281,7 +281,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByTargetContextId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getMappingConfigurationsByTargetContextId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByTargetContextId(Long targetContextId)
@@ -290,7 +290,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationContextById(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getConfigurationContextById(java.lang.Long)
      */
     @Override
     public ConfigurationContext getConfigurationContextById(Long id)
@@ -299,7 +299,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationServiceClientById(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getConfigurationServiceClientById(java.lang.Long)
      */
     @Override
     public ConfigurationServiceClient getConfigurationServiceClientById(Long id)
@@ -308,7 +308,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationTypeById(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getConfigurationTypeById(java.lang.Long)
      */
     @Override
     public ConfigurationType getConfigurationTypeById(Long id)
@@ -317,7 +317,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getParameterNameByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getParameterNameByMappingConfigurationId(java.lang.Long)
      */
     @Override
     public List<ParameterName> getParameterNamesByMappingConfigurationId(Long mappingConfigurationId)
@@ -326,7 +326,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
      */
     @Override
     public List<SourceConfigurationValue> getSourceConfigurationValueByMappingConfigurationId(
@@ -336,7 +336,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValueById(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getTargetConfigurationValueById(java.lang.Long)
      */
     @Override
     public TargetConfigurationValue getTargetConfigurationValueById(Long id)
@@ -345,7 +345,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationValuesByTargetConfigurationValueId(java.lang.Long)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getSourceConfigurationValuesByTargetConfigurationValueId(java.lang.Long)
      */
     @Override
     public List<SourceConfigurationValue> getSourceConfigurationValuesByTargetConfigurationValueId(
@@ -355,7 +355,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#deleteSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -364,7 +364,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#deleteTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -374,7 +374,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getNextSequenceNumber()
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getNextSequenceNumber()
      */
     @Override
     public Long getNextSequenceNumber()
@@ -393,7 +393,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(
@@ -403,7 +403,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
      */
     @Override
     public Long saveParameterName(ParameterName parameterName)
@@ -412,7 +412,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public boolean mappingConfigurationExists(String clientName, String mappingConfigurationType,
@@ -433,7 +433,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#deleteMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)
@@ -442,7 +442,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationTypeByName(java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationTypeByName(java.lang.String)
      */
     @Override
     public ConfigurationType getAllConfigurationTypeByName(String name)
@@ -451,7 +451,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationContextByName(java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationContextByName(java.lang.String)
      */
     @Override
     public ConfigurationContext getAllConfigurationContextByName(String name)
@@ -460,7 +460,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationClientByName(java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getAllConfigurationClientByName(java.lang.String)
      */
     @Override
     public ConfigurationServiceClient getAllConfigurationClientByName(String name)
@@ -469,7 +469,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationTypesByClientName(java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getConfigurationTypesByClientName(java.lang.String)
      */
     @Override
     public List<ConfigurationType> getConfigurationTypesByClientName(String clientname)
@@ -478,7 +478,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
      */
     @Override
     public List<ConfigurationContext> getSourceConfigurationContextsByClientNameAndType(String clientName, String type)
@@ -487,7 +487,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.listener.MappingConfigurationService#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(String clientName,
@@ -497,7 +497,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.mapping.service.MappingConfigurationService#setConfiguration(org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration)
+	 * @see org.ikasan.mapping.listener.MappingConfigurationService#setConfiguration(org.ikasan.mapping.listener.configuration.MappingConfigurationServiceConfiguration)
 	 */
 	@Override
 	public void setConfiguration(

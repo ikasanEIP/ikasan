@@ -476,7 +476,7 @@ public class ModuleInitialisationServiceImpl
     {
         try
         {
-            String port = platformContext.getEnvironment().getProperty("public.service.port");
+            String port = platformContext.getEnvironment().getProperty("public.listener.port");
             if (port != null)
             {
                 return Integer.valueOf(port);
@@ -515,7 +515,7 @@ public class ModuleInitialisationServiceImpl
         try
         {
 
-            String host = platformContext.getEnvironment().getProperty("public.service.address");
+            String host = platformContext.getEnvironment().getProperty("public.listener.address");
             if (host != null)
             {
                 return host;
