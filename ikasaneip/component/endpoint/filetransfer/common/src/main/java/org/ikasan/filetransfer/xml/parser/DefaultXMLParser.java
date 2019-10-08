@@ -108,6 +108,10 @@ public class DefaultXMLParser implements CommonXMLParser
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(DefaultXMLParser.class);
 
+    private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+    private static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+
     /** The document builder factory */
     private DocumentBuilderFactory factory;
 
@@ -243,8 +247,8 @@ public class DefaultXMLParser implements CommonXMLParser
         if (this.schemaType == XMLConstants.W3C_XML_SCHEMA_NS_URI)
         {
             logger.debug("Setting attribute for XMLSchema validation..."); //$NON-NLS-1$
-            this.factory.setAttribute(org.apache.xerces.jaxp.JAXPConstants.JAXP_SCHEMA_LANGUAGE,
-                org.apache.xerces.jaxp.JAXPConstants.W3C_XML_SCHEMA);
+            this.factory.setAttribute(JAXP_SCHEMA_LANGUAGE,
+                W3C_XML_SCHEMA);
         }
         DocumentBuilder builder = this.factory.newDocumentBuilder();
         builder.setErrorHandler(new DefaultErrorHandler());
