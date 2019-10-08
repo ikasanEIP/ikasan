@@ -422,7 +422,7 @@
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
         <version.org.jboss.narayana.jta>5.8.2.Final</version.org.jboss.narayana.jta>
         <version.commons.net>3.3</version.commons.net>
-        <version.com.thoughtworks.xstream>1.4.10</version.com.thoughtworks.xstream>
+        <version.com.thoughtworks.xstream>1.4.10-java7</version.com.thoughtworks.xstream>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
         <version.org.jboss.logging.jboss-logging>3.3.1.Final</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
