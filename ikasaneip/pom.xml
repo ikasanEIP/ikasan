@@ -363,12 +363,12 @@
         <version.kryo>4.0.2</version.kryo>
         <version.org.hibernate>5.2.17.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.13.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.0.12.RELEASE</version.org.springframework>
-        <version.org.springframework.security>5.0.11.RELEASE</version.org.springframework.security>
+        <version.org.springframework>5.0.13.RELEASE</version.org.springframework>
+        <version.org.springframework.security>5.0.13.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
-        <version.spring.cloud.config.client>2.0.4.RELEASE</version.spring.cloud.config.client>
-        <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
+        <version.spring.cloud.config.client>2.0.5.RELEASE</version.spring.cloud.config.client>
+        <version.org.springboot>2.0.9.RELEASE</version.org.springboot>
         <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.4.0</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.9.10</version.net.bytebuddy.byte-buddy>
@@ -390,10 +390,10 @@
         <version.javax.mail>1.4.3</version.javax.mail>
         <version.xmlunit>1.5</version.xmlunit>
         <version.net.sf.json-lib>2.4</version.net.sf.json-lib>
-        <version.xerces>2.11.0</version.xerces>
+        <version.xerces>2.12.0</version.xerces>
         <version.com.io7m.xom>1.2.10</version.com.io7m.xom>
         <version.commons-codec>1.4</version.commons-codec>
-        <version.commons-collections>3.2.1</version.commons-collections>
+        <version.commons-collections>3.2.2</version.commons-collections>
         <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
@@ -401,12 +401,12 @@
         <version.commons-io>2.5</version.commons-io>
         <version.commons-dbcp2>2.6.0</version.commons-dbcp2>
         <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
-        <version.com.h2database>1.4.197</version.com.h2database>
+        <version.com.h2database>1.4.199</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.liquibase>3.6.3</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.19</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>9.4.14.v20181114</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>9.4.21.v20190926</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
@@ -416,15 +416,15 @@
         <version.javax.servlet>3.1.0</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
-        <version.activemq>5.15.8</version.activemq>
+        <version.activemq>5.15.10</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
         <version.org.jboss.narayana.jta>5.8.2.Final</version.org.jboss.narayana.jta>
         <version.commons.net>3.3</version.commons.net>
-        <version.com.thoughtworks.xstream>1.4.10</version.com.thoughtworks.xstream>
+        <version.com.thoughtworks.xstream>1.4.11.1</version.com.thoughtworks.xstream>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
-        <version.org.jboss.logging.jboss-logging>3.3.1.Final</version.org.jboss.logging.jboss-logging>
+        <version.org.jboss.logging.jboss-logging>3.3.2.Final</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
         <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
         <version.com.jcraft.jsch>0.1.55</version.com.jcraft.jsch>
@@ -433,7 +433,7 @@
 		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
 		<version.org.glassfish.json>1.0</version.org.glassfish.json>
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
-        <version.com.fasterxml.jackson.core>2.9.7</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.9.10</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
 		<version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
 		<version.vaadin>7.7.0</version.vaadin>
@@ -1677,6 +1677,16 @@
                 <artifactId>json-lib</artifactId>
                 <version>${version.net.sf.json-lib}</version>
                 <classifier>jdk15</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -2210,6 +2220,12 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${version.org.quartz-scheduler}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>c3p0</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
