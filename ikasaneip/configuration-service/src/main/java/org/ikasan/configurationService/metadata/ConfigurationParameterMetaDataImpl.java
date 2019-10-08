@@ -2,6 +2,8 @@ package org.ikasan.configurationService.metadata;
 
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 
+import java.util.StringJoiner;
+
 public class ConfigurationParameterMetaDataImpl<T> implements ConfigurationParameterMetaData<T>
 {
     protected Long id;
@@ -78,5 +80,13 @@ public class ConfigurationParameterMetaDataImpl<T> implements ConfigurationParam
     public void setImplementingClass(String implementingClass)
     {
         this.implementingClass = implementingClass;
+    }
+
+    @Override
+    public String toString()
+    {
+        return new StringJoiner(", ", ConfigurationParameterMetaDataImpl.class.getSimpleName() + "[", "]")
+            .add("id=" + id).add("name='" + name + "'").add("value=" + value).add("description='" + description + "'")
+            .add("implementingClass='" + implementingClass + "'").toString();
     }
 }
