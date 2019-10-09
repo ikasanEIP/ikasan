@@ -411,12 +411,13 @@
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
         <version.org.aspectj>1.8.13</version.org.aspectj>
+        <version.org.aspectjrt>1.9.4</version.org.aspectjrt>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.6</version.commons-lang3>
         <version.javax.servlet>3.1.0</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
-        <version.activemq>5.15.8</version.activemq>
+        <version.activemq>5.15.10</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
@@ -2304,6 +2305,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${version.org.aspectjrt}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.glassfish.main.external</groupId>
                 <artifactId>jmxremote_optional-repackaged</artifactId>
                 <version>${version.org.glassfish.main.external.jmxremote_optional-repackaged}</version>
@@ -2355,6 +2362,11 @@
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-all</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-kahadb-store</artifactId>
                 <version>${version.activemq}</version>
             </dependency>
             <dependency>

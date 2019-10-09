@@ -52,9 +52,13 @@
     <name>Ikasan Enterprise Integration Spring Boot non functional</name>
 
     <modules>
+        <module>nft-util</module>
         <module>h2-server-stress</module>
         <module>h2-server-component-fail</module>
-        <module>h2-server-txn-fail-before-precommits</module>
+        <module>h2-server-txn-fail-precommit-db-resource</module>
+        <module>h2-server-txn-fail-precommit-amq-resource</module>
+        <module>h2-server-txn-fail-commit-db-resource</module>
+        <module>h2-server-txn-fail-commit-amq-resource</module>
     </modules>
 
 </project>
