@@ -136,11 +136,11 @@
             <version>5.1.47</version>
         </dependency>
 
-        <dependency>
-            <groupId>sybase</groupId>
-            <artifactId>jconn4</artifactId>
-            <version>7.07_build_26846</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>sybase</groupId>-->
+            <!--<artifactId>jconn4</artifactId>-->
+            <!--<version>7.07_build_26846</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.liquibase</groupId>
