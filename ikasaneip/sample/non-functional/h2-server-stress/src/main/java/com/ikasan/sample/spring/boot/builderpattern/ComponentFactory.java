@@ -85,7 +85,10 @@ public class ComponentFactory
     {
         ActiveMQXAConnectionFactory connectionFactory =
                 new ActiveMQXAConnectionFactory(jmsProviderUrl);
-       connectionFactory.setClientID(clientId);
+        connectionFactory.setClientID(clientId);
+        RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+        redeliveryPolicy.setMaximumRedeliveries(-1);
+        connectionFactory.setRedeliveryPolicy(redeliveryPolicy);
 
        return builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
