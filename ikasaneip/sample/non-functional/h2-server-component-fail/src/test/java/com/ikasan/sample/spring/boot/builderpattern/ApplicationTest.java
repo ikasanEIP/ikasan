@@ -42,15 +42,16 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.commons.io.FileUtils;
 import org.h2.tools.Server;
+import org.ikasan.nonfunctional.test.util.FileTestUtil;
+import org.ikasan.nonfunctional.test.util.SimpleTimer;
+import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
@@ -66,12 +67,15 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
 /**
- * Stress testing of Ikasan persistence.
+ * Ikasan component failure.
+ *
+ * Publish 20 messages and have a broker compoent fail on the 10th and the 20th.
+ * Flow should rollback and replay on failure.
+ * Result should be 20 messages wiretapped successfully.
  *
  * @author Ikasan Development Team
  */
@@ -102,10 +106,15 @@ public class ApplicationTest
     // h2 server instance
     static Server server;
 
+    // test utils
+    WiretapTestUtil wiretapTestUtil;
     SimpleTimer stopWatch;
 
     // AMQ Broker
     BrokerService broker;
+
+    // Arjuna transaction logs
+    String objectStoreDir = "./ObjectStore";
 
     // AMQ persistence
     String amqPersistenceBaseDir = "./activemq-data";
@@ -123,10 +132,16 @@ public class ApplicationTest
     {
         stopWatch = SimpleTimer.getInstance();
 
+        // clean up any previous failures that left persisted state
+        FileTestUtil.deleteFile(new File(amqPersistenceBaseDir));
+        FileTestUtil.deleteFile(new File(objectStoreDir));
+
         // start a AMQ broker
         broker = BrokerFactory.createBroker(new URI("broker:(" + brokerUrl + ")"));
         broker.getPersistenceAdapter().setDirectory( new File(amqPersistenceDir) );
         broker.start();
+
+        wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
     @After
@@ -139,10 +154,6 @@ public class ApplicationTest
 
         Thread.sleep(1000);
         broker.stop();
-        Thread.sleep(1000);
-        File amqPersistenceBase = new File(amqPersistenceBaseDir);
-        FileUtils.deleteDirectory(amqPersistenceBase);
-        Assert.assertTrue("Failed to delete AMQ Persistence " + amqPersistenceBase.getAbsolutePath(), !amqPersistenceBase.exists() );
     }
 
     @AfterClass
@@ -197,10 +208,10 @@ public class ApplicationTest
                     .producer("Dev Null Producer");
         }
 
-        addWiretapTrigger("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer");
-        addWiretapTrigger("Transaction Test Module", "configurationUpdaterFlow", TriggerRelationship.AFTER, "Configuration Updater");
-        addWiretapTrigger("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer");
-        addWiretapTrigger("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer");
+        wiretapTestUtil.addWiretapTrigger("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer");
+        wiretapTestUtil.addWiretapTrigger("Transaction Test Module", "configurationUpdaterFlow", TriggerRelationship.AFTER, "Configuration Updater");
+        wiretapTestUtil.addWiretapTrigger("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer");
+        wiretapTestUtil.addWiretapTrigger("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer");
 
         // start flows right to left
         flow4TestRule.startFlow();
@@ -238,106 +249,54 @@ public class ApplicationTest
 
         //
         // check the results of the test
-        assertWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
-        assertWiretaps("Transaction Test Module", "configurationUpdaterFlow", TriggerRelationship.AFTER, "Configuration Updater", ModuleConfig.EVENT_GENERATOR_COUNT);
+        PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        assertTrue("Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
+                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
+
+        wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "configurationUpdaterFlow", TriggerRelationship.AFTER, "Configuration Updater", ModuleConfig.EVENT_GENERATOR_COUNT);
+        assertTrue("Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
+                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
 
         // wait for JMS flows to catch up for a max of 10 seconds
         int waitCounter = 0;
         while( waitCounter < 10 &&
-                getWiretaps(
+                (wiretaps = wiretapTestUtil.getWiretaps(
                         "Transaction Test Module",
                         "jmsToDevNullFlow1",
                         TriggerRelationship.AFTER,
                         "JMS Consumer",
-                        ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
+                        ModuleConfig.EVENT_GENERATOR_COUNT)).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
         {
             waitCounter=waitCounter+2;
             logger.info("Waiting for jmsToDevNullFlow1 flow to complete (circa 10 seconds). Waiting for " + waitCounter + " seconds");
             Thread.sleep(2000);
         }
-        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        assertTrue("Expected " + "jmsToDevNullFlow1" + " flow wiretap count "
+                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
 
         // wait for JMS flows to catch up for a max of 10 seconds
         waitCounter = 0;
         while( waitCounter < 10 &&
-                getWiretaps(
+                (wiretaps = wiretapTestUtil.getWiretaps(
                         "Transaction Test Module",
                         "jmsToDevNullFlow2",
                         TriggerRelationship.AFTER,
                         "JMS Consumer",
-                        ModuleConfig.EVENT_GENERATOR_COUNT).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
+                        ModuleConfig.EVENT_GENERATOR_COUNT)).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
         {
             waitCounter=waitCounter+2;
             logger.info("Waiting for jmsToDevNullFlow2 flow to complete (circa 2 seconds).  Waiting for " + waitCounter + " seconds");
             Thread.sleep(2000);
         }
-        assertWiretaps("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "jmsToDevNullFlow2", TriggerRelationship.AFTER, "JMS Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
+        assertTrue("Expected " + "jmsToDevNullFlow2" + " flow wiretap count "
+                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
 
         flow1TestRule.assertIsSatisfied();
         flow2TestRule.assertIsSatisfied();
         flow3TestRule.assertIsSatisfied();
         flow4TestRule.assertIsSatisfied();
-    }
-
-    /**
-     * Assert wiretap expectations.
-     *
-     * @param moduleName
-     * @param flowName
-     * @param relationship
-     * @param componentName
-     * @param expectedWiretapCount
-     */
-    protected void assertWiretaps(String moduleName, String flowName, TriggerRelationship relationship, String componentName, int expectedWiretapCount)
-    {
-        Set<String> moduleNames = new HashSet<String>();
-        moduleNames.add(moduleName);
-        String location = relationship.name().toLowerCase() + " " + componentName;
-
-        PagedSearchResult<WiretapEvent> wiretaps = wiretapService.findWiretapEvents(0, expectedWiretapCount, null,
-                true, moduleNames, flowName, location, null, null,
-                null,null, null );
-
-        assertTrue("Expected " + flowName + " flow wiretap count "
-                + expectedWiretapCount + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == expectedWiretapCount);
-    }
-
-    protected PagedSearchResult<WiretapEvent> getWiretaps(String moduleName, String flowName, TriggerRelationship relationship, String componentName, int pageSize)
-    {
-        Set<String> moduleNames = new HashSet<String>();
-        moduleNames.add(moduleName);
-        String location = relationship.name().toLowerCase() + " " + componentName;
-
-        return wiretapService.findWiretapEvents(0, pageSize, null,
-                true, moduleNames, flowName, location, null, null,
-                null,null, null );
-    }
-
-    /**
-     * Add wiretap listeners with default time to live of 10,0000 minutes.
-     * @param moduleName
-     * @param flowName
-     * @param relationship
-     * @param componentName
-     */
-    protected void addWiretapTrigger(String moduleName, String flowName, TriggerRelationship relationship, String componentName)
-    {
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("timeToLive", "100000");
-        addWiretapTrigger(moduleName, flowName, relationship, componentName, params);
-    }
-
-    /**
-     * Add wiretap listeners
-     * @param moduleName
-     * @param flowName
-     * @param relationship
-     * @param componentName
-     * @param params
-     */
-    protected void addWiretapTrigger(String moduleName, String flowName, TriggerRelationship relationship, String componentName, Map<String,String> params)
-    {
-        jobAwareFlowEventListener.addDynamicTrigger( new Trigger(moduleName, flowName, relationship.name(), "wiretapJob", componentName, params) );
     }
 }
 

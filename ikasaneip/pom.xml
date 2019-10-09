@@ -415,6 +415,9 @@
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
         <version.org.aspectj>1.8.13</version.org.aspectj>
+        <version.org.aspectjrt>1.9.4</version.org.aspectjrt>
+        <version.commons-lang>2.6</version.commons-lang>
+        <version.commons-lang3>3.6</version.commons-lang3>
         <version.javax.servlet>3.1.0</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
@@ -2336,6 +2339,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${version.org.aspectjrt}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.glassfish.main.external</groupId>
                 <artifactId>jmxremote_optional-repackaged</artifactId>
                 <version>${version.org.glassfish.main.external.jmxremote_optional-repackaged}</version>
@@ -2387,6 +2396,11 @@
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-all</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-kahadb-store</artifactId>
                 <version>${version.activemq}</version>
             </dependency>
             <dependency>
