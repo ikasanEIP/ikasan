@@ -11,9 +11,11 @@ import com.github.appreciated.app.layout.router.AppLayoutRouterLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
@@ -27,6 +29,8 @@ import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.ikasan.dashboard.ui.visualisation.view.MapView;
 import org.ikasan.dashboard.ui.visualisation.view.ModuleView;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Locale;
 
 
 @Push
@@ -53,10 +57,27 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
             UI.getCurrent().getSession().close();
         });
 
+        Button jpButton = new Button("JP", new Icon(VaadinIcon.ARROW_RIGHT));
+        jpButton.setIconAfterText(true);
+
+        Button enButton = new Button("EN", new Icon(VaadinIcon.ARROW_RIGHT));
+        enButton.setIconAfterText(true);
+
+        Button deButton = new Button("DE", new Icon(VaadinIcon.ARROW_RIGHT));
+        deButton.setIconAfterText(true);
+
+
+        jpButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->UI.getCurrent().setLocale(Locale.JAPAN));
+        enButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->UI.getCurrent().setLocale(Locale.ENGLISH));
+        deButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->UI.getCurrent().setLocale(Locale.GERMAN));
+
         init(AppLayoutBuilder
             .get(Behaviour.LEFT_HYBRID_SMALL)
             .withIconComponent(ikasan)
             .withAppBar(AppBarBuilder.get()
+                .add(enButton)
+                .add(jpButton)
+                .add(deButton)
                 .add(logout)
                 .build())
             .withAppMenu(LeftAppMenuBuilder.get()

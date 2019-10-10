@@ -52,7 +52,7 @@ public class IkasanI18NProvider implements I18NProvider
             resourceBundle = RESOURCE_BUNDLE_JP;
         }
 
-        resourceBundle = RESOURCE_BUNDLE_JP;
+        //resourceBundle = RESOURCE_BUNDLE_JP;
 
         if (!resourceBundle.containsKey(key))
         {
