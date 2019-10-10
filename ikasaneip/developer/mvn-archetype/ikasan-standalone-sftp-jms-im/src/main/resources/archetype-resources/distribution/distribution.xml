@@ -10,6 +10,14 @@
         <filtered>true</filtered>
         <outputDirectory>\${artifactId}-${project.version}</outputDirectory>
     </fileSet>
+    <fileSet>
+        <directory>../jar/src/main/resources</directory>
+        <filtered>true</filtered>
+        <includes>
+            <include>application.properties</include>
+        </includes>
+        <outputDirectory>\${artifactId}-${project.version}/config</outputDirectory>
+    </fileSet>
 </fileSets>
 
 <includeBaseDirectory>false</includeBaseDirectory>

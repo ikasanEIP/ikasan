@@ -1,12 +1,12 @@
 #!/bin/bash
 #set -u
 
-SCRIPT_DIR=$(dirname "$(readlink -f $0)")
+SCRIPT_DIR=$(pwd)
 
 
 # Ikasan Module settings
 
-MODULE_NAME=`cut config/application.properties|grep "module.name"|cut -d'=' -f2`
+MODULE_NAME=`cat config/application.properties|grep "module.name"|head -1|cut -d'=' -f2`
 MODULE_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=*"
 MODULE_OTHER_OPTS=""
 MODULE_JAVA_OPTS="$MODULE_JVM_OPTS  $MODULE_OTHER_OPTS"
@@ -14,12 +14,12 @@ MODULE_JAVA_OPTS="$MODULE_JVM_OPTS  $MODULE_OTHER_OPTS"
 APPLICATION_JAR=$MODULE_NAME-${project.version}.jar
 
 # H2 Persistence settings
-H2_VERSION=1.4.197
+H2_VERSION=1.4.199
 H2_MODULE_NAME=h2-$MODULE_NAME
 H2_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m"
-H2_PORT=`cut config/application.properties|grep "h2.db.port"|cut -d'=' -f2`
+H2_PORT=`cat config/application.properties|grep "h2.db.port"||head -1|cut -d'=' -f2`
 # check the port was parsed
-[ ${#H2_PORT} -lt 1 ] && echo "Cannot locate h2.db.port in config repo: $SPRING_CONFIG_SERVER_URL/$MODULE_NAME-default.properties" && exit 1
+[ ${#H2_PORT} -lt 1 ] && echo "Cannot locate h2.db.port in config/application.properties" && exit 1
 
 JAVA=$JAVA_HOME/bin/java
 
