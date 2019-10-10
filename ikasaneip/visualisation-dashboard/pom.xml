@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependencies -->
-        <vaadin.version>14.0.6</vaadin.version>
+        <vaadin.version>14.0.8</vaadin.version>
     </properties>
 
     <parent>
@@ -379,15 +379,16 @@
 
     <profiles>
         <profile>
-            <id>production-mode</id>
-
+            <id>production</id>
+            <properties>
+                <vaadin.productionMode>true</vaadin.productionMode>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
@@ -397,8 +398,8 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>copy-production-files</goal>
-                                    <goal>package-for-production</goal>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
                                 </goals>
                             </execution>
                         </executions>

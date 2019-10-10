@@ -143,15 +143,15 @@ public class GraphViewTest
         Assertions.assertEquals(7, networkDiagram.getEdgesDataProvider().size(new Query<>())
             , "There should be 12 nodes in the network diagram!");
 
-        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
-
-        networkDiagram = _get(NetworkDiagram.class);
-        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-
-        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
-            , "There should be 28 nodes in the network diagram!");
-        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
-            , "There should be 27 nodes in the network diagram!");
+//        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
+//
+//        networkDiagram = _get(NetworkDiagram.class);
+//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
+//
+//        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
+//            , "There should be 28 nodes in the network diagram!");
+//        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
+//            , "There should be 27 nodes in the network diagram!");
     }
 
 
