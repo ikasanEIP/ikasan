@@ -17,7 +17,7 @@ APPLICATION_JAR=$MODULE_NAME-${project.version}.jar
 H2_VERSION=1.4.199
 H2_MODULE_NAME=h2-$MODULE_NAME
 H2_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m"
-H2_PORT=`cat config/application.properties|grep "h2.db.port"||head -1|cut -d'=' -f2`
+H2_PORT=`cat config/application.properties|grep "h2.db.port"|head -1|cut -d'=' -f2`
 # check the port was parsed
 [ ${#H2_PORT} -lt 1 ] && echo "Cannot locate h2.db.port in config/application.properties" && exit 1
 
