@@ -2379,11 +2379,6 @@
                 <artifactId>activemq-broker</artifactId>
                 <version>${version.activemq}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-kahadb-store</artifactId>
-                <version>${version.activemq}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.activemq.tooling</groupId>
