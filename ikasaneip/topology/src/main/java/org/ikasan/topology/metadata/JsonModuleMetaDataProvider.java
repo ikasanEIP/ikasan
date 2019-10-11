@@ -42,6 +42,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
         try
         {
             ModuleMetaData moduleMetaData = new ModuleMetaDataImpl();
+            moduleMetaData.setUrl(module.getUrl());
             moduleMetaData.setName(module.getName());
             moduleMetaData.setDescription(module.getDescription());
             moduleMetaData.setVersion(module.getVersion());

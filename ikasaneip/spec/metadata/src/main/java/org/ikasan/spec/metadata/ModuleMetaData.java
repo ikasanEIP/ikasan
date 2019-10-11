@@ -5,6 +5,20 @@ import java.util.List;
 public interface ModuleMetaData
 {
     /**
+     * Returns the url of the module.
+     *
+     * @return
+     */
+    public String getUrl();
+
+    /**
+     * Set the url of the module.
+     *
+     * @return
+     */
+    public void setUrl(String url);
+
+    /**
      * Set the flow name.
      *
      * @param name the flow name

@@ -50,4 +50,16 @@ public class TestModule implements Module<Flow>
     {
 
     }
+
+    @Override
+    public String getUrl()
+    {
+        return "url";
+    }
+
+    @Override
+    public void setUrl(String url)
+    {
+
+    }
 }
