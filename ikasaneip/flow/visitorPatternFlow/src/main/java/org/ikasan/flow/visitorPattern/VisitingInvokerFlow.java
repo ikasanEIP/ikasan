@@ -685,7 +685,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     {
         long currentTimeMillis = System.currentTimeMillis();
 
-        logger.info("Checking if threads are inactive.");
+        logger.debug("Checking if threads are inactive.");
 
         while(true)
         {
@@ -704,7 +704,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
             if(allInactive)
             {
-                logger.info("All threads are inactive.");
+                logger.debug("All threads are inactive.");
                 this.activeThreads = new ConcurrentHashMap<>();
                 return true;
             }

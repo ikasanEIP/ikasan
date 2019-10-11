@@ -130,7 +130,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
             .findByConfigurationId(configuredResource.getConfiguredResourceId());
         if (persistedConfiguration == null)
         {
-            logger.warn("No persisted dao for configuredResource [" + configuredResource.getConfiguredResourceId()
+            logger.debug("No persisted dao for configuredResource [" + configuredResource.getConfiguredResourceId()
                     + "]. Default programmatic dao will be used.");
 
             Configured.validate( configuredResource.getConfiguration() );
