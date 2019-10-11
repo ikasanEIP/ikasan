@@ -8,7 +8,7 @@
     <fileSet>
         <directory>../bin</directory>
         <filtered>true</filtered>
-        <outputDirectory>\${artifactId}-${project.version}</outputDirectory>
+        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
     </fileSet>
     <fileSet>
         <directory>../jar/src/main/resources</directory>
@@ -16,7 +16,7 @@
         <includes>
             <include>application.properties</include>
         </includes>
-        <outputDirectory>\${artifactId}-${project.version}/config</outputDirectory>
+        <outputDirectory>\${artifactId}-\${version}/config</outputDirectory>
     </fileSet>
 </fileSets>
 
@@ -31,7 +31,7 @@
             <include>\${groupId}:\${artifactId}</include>
             <include>com.h2database:h2:jar:${version.com.h2database}</include>
         </includes>
-        <outputDirectory>\${artifactId}-${project.version}</outputDirectory>
+        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
     </dependencySet>
 </dependencySets>
 </assembly>

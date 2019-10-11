@@ -59,7 +59,7 @@ function start_h2
     check_h2
     if [[ ${#h2pid} -lt 1 ]];then
       echo "Starting H2"
-      nohup $JAVA -cp h2-$H2_VERSION.jar $H2_JVM_OPTS -Dmodule.name=$H2_MODULE_NAME org.h2.tools.Server -tcp -tcpAllowOthers -tcpPort $H2_PORT &
+      nohup $JAVA -cp h2-$H2_VERSION.jar $H2_JVM_OPTS -Dmodule.name=$H2_MODULE_NAME org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort $H2_PORT &
     else
       echo "H2 already running on PID $h2pid, will not start"
     fi
