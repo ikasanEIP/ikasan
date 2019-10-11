@@ -50,6 +50,20 @@ import java.util.List;
 public interface Module<FLOW>
 {
     /**
+     * Returns the url of the module.
+     *
+     * @return
+     */
+    public String getUrl();
+
+    /**
+     * Set the url of the module.
+     *
+     * @return
+     */
+    public void setUrl(String url);
+
+    /**
      * Returns the runtime version of the module
      *
      * @return version of the module

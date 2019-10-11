@@ -8,6 +8,7 @@ import java.util.List;
 
 public class SolrModuleMetaDataImpl implements ModuleMetaData
 {
+    private String url;
     private String name;
     private String description;
     private String version;
@@ -64,5 +65,17 @@ public class SolrModuleMetaDataImpl implements ModuleMetaData
         }
 
         return flows;
+    }
+
+    @Override
+    public String getUrl()
+    {
+        return this.url;
+    }
+
+    @Override
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 }

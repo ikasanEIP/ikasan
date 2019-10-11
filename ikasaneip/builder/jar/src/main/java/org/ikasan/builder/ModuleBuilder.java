@@ -56,6 +56,11 @@ import java.util.List;
  */
 public class ModuleBuilder
 {
+    public static final String URL_PROTOCOL = "server.url.protocol";
+    public static final String SERVER_PORT = "server.port";
+    public static final String SERVER_ADDRESS = "server.address";
+    public static final String SERVER_CONTEXT_PATH = "server.servlet.context-path";
+
 	/** name of the module being instantiated */
 	String name;
 
@@ -138,7 +143,7 @@ public class ModuleBuilder
 	
 	public Module build()
 	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
+		Module module = new SimpleModule(this.name, this.version, this.flows, getUrl());
 		module.setDescription(this.description);
 		return module;
 	}
@@ -151,5 +156,13 @@ public class ModuleBuilder
 		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;
 	}
+
+	private String getUrl()
+    {
+        return this.context.getEnvironment().getProperty(URL_PROTOCOL) + "//:" +
+            this.context.getEnvironment().getProperty(SERVER_ADDRESS) + ":" +
+            this.context.getEnvironment().getProperty(SERVER_PORT) +
+            this.context.getEnvironment().getProperty(SERVER_CONTEXT_PATH);
+    }
 }
 
