@@ -54,6 +54,6 @@
 
     <bean id="batchInsert" class="org.ikasan.rest.dashboard.util.TestBatchInsert" />
 
-	
+    <bean id="cacheAdapter" class="org.ikasan.rest.dashboard.util.TestCacheAdapter" />
 
 </beans>

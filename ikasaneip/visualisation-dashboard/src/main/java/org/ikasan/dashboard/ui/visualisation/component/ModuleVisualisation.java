@@ -9,11 +9,14 @@ import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
+import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -28,8 +31,10 @@ import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ModuleVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
@@ -40,12 +45,15 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private Module module;
     private boolean moduleView = false;
 
-    private Registration broadcasterRegistration;
+    private Registration flowStateBroadcasterRegistration;
+    private Registration cacheStateBroadcasterRegistration;
 
-    public ModuleVisualisation()
+    private ModuleControlRestServiceImpl moduleControlRestService;
+
+    public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService)
     {
+        this.moduleControlRestService = moduleControlRestService;
         this.setSizeFull();
-
         this.flowMap = new HashMap<>();
     }
 
@@ -197,13 +205,14 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             FlowState flowState = FlowStateCache.instance().get(this.module.getName()+this.currentFlow.getName());
 
+            if(flowState == null)
+            {
+                flowState = this.refreshFromSource(module.getName(), currentFlow.getName(), module.getUrl());
+            }
+
             if(flowState != null)
             {
                 this.drawFlowStatus(flowState.getState());
-            }
-            else
-            {
-                this.drawFlowStatus(this.currentFlow.getStatus());
             }
 
             this.removeAll();
@@ -220,6 +229,20 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         }
     }
 
+    public FlowState refreshFromSource(String moduleName, String flowName, String contextUrl)
+    {
+        Optional<FlowDto> flowDto =  this.moduleControlRestService.getFlowState(contextUrl, moduleName, flowName);
+
+        FlowState state = null;
+        if(flowDto.isPresent())
+        {
+            state = new FlowState(moduleName, flowName, State.getState(flowDto.get().getState()));
+            FlowStateCache.instance().put(state);
+        }
+
+        return state;
+    }
+
     public void setCurrentFlow(Flow currentFlow)
     {
         this.currentFlow = currentFlow;
@@ -229,25 +252,37 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     protected void onAttach(AttachEvent attachEvent)
     {
         UI ui = attachEvent.getUI();
-        broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
+        flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
             logger.info("Received flow state: " + flowState);
+            this.drawFlowStatus(ui, flowState);
+        });
 
-            ui.access(() ->
-            {
-                if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
-                    && module != null && flowState.getModuleName().equals(module.getName()))
-                {
-                    this.drawFlowStatus(flowState.getState());
-                }
-            });
+        cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
+        {
+            logger.info("Received flow state: " + flowState);
+            this.drawFlowStatus(ui, flowState);
         });
     }
 
     @Override
     protected void onDetach(DetachEvent detachEvent)
     {
-        broadcasterRegistration.remove();
-        broadcasterRegistration = null;
+        this.flowStateBroadcasterRegistration.remove();
+        this.flowStateBroadcasterRegistration = null;
+        this.cacheStateBroadcasterRegistration.remove();
+        this.cacheStateBroadcasterRegistration = null;
+    }
+
+    protected void drawFlowStatus(UI ui, FlowState flowState)
+    {
+        ui.access(() ->
+        {
+            if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
+                && module != null && flowState.getModuleName().equals(module.getName()))
+            {
+                this.drawFlowStatus(flowState.getState());
+            }
+        });
     }
 }

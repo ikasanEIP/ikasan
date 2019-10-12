@@ -2,6 +2,7 @@ package org.ikasan.dashboard.beans;
 
 import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
 import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetadataServiceImpl;
+import org.ikasan.dashboard.ui.util.DashboardCacheAdapter;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
@@ -15,6 +16,7 @@ import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
+import org.ikasan.spec.cache.FlowStateCacheAdapter;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
@@ -32,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Configuration
-public class SolrComponentFactory
+public class ComponentFactory
 {
     @Value("${solr.url}")
     private String solrUrl;
@@ -167,4 +169,9 @@ public class SolrComponentFactory
         return service;
     }
 
+    @Bean
+    public FlowStateCacheAdapter dashboardCacheAdapter()
+    {
+        return new DashboardCacheAdapter();
+    }
 }

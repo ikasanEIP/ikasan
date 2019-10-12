@@ -8,12 +8,14 @@ import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
+import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     public static final String SELECT = "SELECT";
 
     private HorizontalLayout controlPanelLayout = new HorizontalLayout();
+    private ModuleControlRestServiceImpl moduleControlRestService;
 
     private Button startButton;
     private Button stopButton;
@@ -48,13 +51,15 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     private Image startPauseImageDisabled;
     private Image selectAllImageOff;
 
-    private Registration broadcasterRegistration;
+    private Registration flowStateBroadcasterRegistration;
+    private Registration cacheStateBroadcasterRegistration;
 
     private Module module;
     private Flow currentFlow;
 
-    public ControlPanel()
+    public ControlPanel(ModuleControlRestServiceImpl moduleControlRestService)
     {
+        this.moduleControlRestService = moduleControlRestService;
         playImage = new Image("/frontend/images/start-control-small.png", "");
         playImage.setHeight("40px");
         playImageDisabled = new Image("/frontend/images/start-grey-control-small.png", "");
@@ -198,29 +203,64 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
             try
             {
                 Thread.sleep(2000);
-                State state;
+                State state = null;
+
                 if(action.equals(ControlPanel.START))
                 {
-                    state = State.RUNNING_STATE;
+                    if(this.moduleControlRestService.changeFlowState(module.getUrl(),
+                        module.getName(), currentFlow.getName(), "start"))
+                    {
+                        state = State.RUNNING_STATE;
+                        FlowStateBroadcaster.broadcast(new FlowState(this.module.getName(), this.currentFlow.getName(), state));
+                    }
+                    else
+                    {
+                        //
+                    }
                 }
                 else if(action.equals(ControlPanel.STOP))
                 {
-                    state = State.STOPPED_STATE;
+                    if(this.moduleControlRestService.changeFlowState(module.getUrl(),
+                        module.getName(), currentFlow.getName(), "stop"))
+                    {
+                        state = State.STOPPED_STATE;
+                        FlowStateBroadcaster.broadcast(new FlowState(this.module.getName(), this.currentFlow.getName(), state));
+                    }
+                    else
+                    {
+                        //
+                    }
                 }
                 else if(action.equals(ControlPanel.PAUSE))
                 {
-                    state = State.PAUSED_STATE;
+                    if(this.moduleControlRestService.changeFlowState(module.getUrl(),
+                        module.getName(), currentFlow.getName(), "pause"))
+                    {
+                        state = State.PAUSED_STATE;
+                        FlowStateBroadcaster.broadcast(new FlowState(this.module.getName(), this.currentFlow.getName(), state));
+                    }
+                    else
+                    {
+                        //
+                    }
                 }
                 else if(action.equals(ControlPanel.START_PAUSE))
                 {
-                    state = State.START_PAUSE_STATE;
+                    if(this.moduleControlRestService.changeFlowState(module.getUrl(),
+                        module.getName(), currentFlow.getName(), "startPause"))
+                    {
+                        state = State.START_PAUSE_STATE;
+                        FlowStateBroadcaster.broadcast(new FlowState(this.module.getName(), this.currentFlow.getName(), state));
+                    }
+                    else
+                    {
+                        //
+                    }
                 }
                 else
                 {
                     throw new IllegalArgumentException(String.format("Received illegal action [%s] ", action));
                 }
-
-                FlowStateBroadcaster.broadcast(new FlowState(this.module.getName(), this.currentFlow.getName(), state));
 
                 current.access(() ->
                 {
@@ -244,25 +284,38 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     protected void onAttach(AttachEvent attachEvent)
     {
         UI ui = attachEvent.getUI();
-        broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
+        flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
             logger.info("Received flow state: " + flowState);
-            ui.access(() ->
+            setFlowState(ui, flowState);
+        });
+
+        cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
+        {
+            logger.info("Received flow state: " + flowState);
+            setFlowState(ui, flowState);
+        });
+    }
+
+    protected void setFlowState(UI ui, FlowState flowState)
+    {
+        ui.access(() ->
+        {
+            if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
+                && module != null && flowState.getModuleName().equals(module.getName()))
             {
-                if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
-                    && module != null && flowState.getModuleName().equals(module.getName()))
-                {
-                    this.setFlowStatus(flowState.getState());
-                }
-            });
+                this.setFlowStatus(flowState.getState());
+            }
         });
     }
 
     @Override
     protected void onDetach(DetachEvent detachEvent)
     {
-        broadcasterRegistration.remove();
-        broadcasterRegistration = null;
+        this.flowStateBroadcasterRegistration.remove();
+        this.flowStateBroadcasterRegistration = null;
+        this.cacheStateBroadcasterRegistration.remove();
+        this.cacheStateBroadcasterRegistration = null;
     }
 
     @Override

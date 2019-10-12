@@ -38,7 +38,7 @@ public class ModuleVisjsAdapter
      */
     public Module adapt(ModuleMetaData moduleMetaData, List<ConfigurationMetaData> configurationMetaData)
     {
-        Module module = new Module(moduleMetaData.getName(), moduleMetaData.getDescription(), moduleMetaData.getVersion());
+        Module module = new Module(moduleMetaData.getUrl(), moduleMetaData.getName(), moduleMetaData.getDescription(), moduleMetaData.getVersion());
 
         Map<String, ConfigurationMetaData> configurationMetaDataMap = configurationMetaData.stream().
             collect(Collectors.toMap(metaData -> metaData.getConfigurationId(), metaData -> metaData));

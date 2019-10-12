@@ -2,13 +2,20 @@ package org.ikasan.dashboard.cache;
 
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.ikasan.dashboard.broadcast.State;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.rest.client.dto.FlowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class FlowStateCache implements Consumer<FlowState>
 {
     private Logger logger = LoggerFactory.getLogger(FlowStateCache.class);
@@ -49,6 +56,11 @@ public class FlowStateCache implements Consumer<FlowState>
     public FlowState get(String key)
     {
         return this.cache.get(key);
+    }
+
+    public boolean contains(String key)
+    {
+        return this.cache.contains(key);
     }
 
     @Override

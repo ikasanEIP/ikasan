@@ -28,6 +28,24 @@ public class State
     private String flowState;
     private String stateColour;
 
+    public static State getState(String state)
+    {
+        if(state.equals(RUNNING))
+            return RUNNING_STATE;
+        else if(state.equals(STOPPED))
+            return STOPPED_STATE;
+        else if(state.equals(STOPPED_IN_ERROR))
+            return STOPPED_IN_ERROR_STATE;
+        else if(state.equals(RECOVERING))
+            return RECOVERING_STATE;
+        else if(state.equals(PAUSED))
+            return PAUSED_STATE;
+        else if(state.equals(START_PAUSE))
+            return START_PAUSE_STATE;
+
+        throw new IllegalArgumentException(String.format("Unknown state [%s]", state));
+    }
+
     private State(String flowState, String stateColour)
     {
         this.flowState = flowState;

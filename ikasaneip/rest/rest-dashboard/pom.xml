@@ -53,6 +53,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ikasan-rest-dashboard</artifactId>
+    <name>Ikasan Rest Dashboard</name>
+    <description>The rest dashboard library for the Ikasan Enterprise Integration Platform</description>
     <packaging>jar</packaging>
 
     <build>
@@ -145,6 +147,16 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-history</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-cache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
         </dependency>
 
         <dependency>

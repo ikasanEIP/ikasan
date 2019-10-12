@@ -42,6 +42,7 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -99,6 +100,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Resource
     private ExclusionManagementService solrExclusionService;
 
+    @Resource
+    private ModuleControlRestServiceImpl moduleControlRestService;
+
     @Autowired
     private ModuleMetaDataService moduleMetadataService;
 
@@ -124,7 +128,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private H2 moduleLabel = new H2();
     private HorizontalLayout hl = new HorizontalLayout();
     private ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow> flowComboBox;
-    private ControlPanel controlPanel = new ControlPanel();
+    private ControlPanel controlPanel;
 
     private Registration broadcasterRegistration;
 
@@ -145,15 +149,18 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         this.graphViewChangeListeners = new ArrayList<>();
 
+        session = UI.getCurrent().getSession();
+        current = UI.getCurrent();
+    }
+
+    private void init()
+    {
         this.createNetworkDiagram();
         this.createToolsSlider();
         this.createSearchSlider();
 
         this.createModuleGrid();
         this.createdBusinessStreamGrid();
-
-        session = UI.getCurrent().getSession();
-        current = UI.getCurrent();
     }
 
     protected void createModuleGrid()
@@ -287,7 +294,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         hl.setVisible(false);
 
-        moduleVisualisation = new ModuleVisualisation();
+        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService);
 
         this.add(hl);
         this.add(moduleVisualisation);
@@ -351,7 +358,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateModulesGrid()
     {
-        // todo this is a temp hack to use the dao tp provide data.
         List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();
         modulesGrid.setItems(moduleMetaData);
     }
@@ -392,7 +398,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         this.fireModuleFlowChangeEvent();
 
-        this.moduleVisualisation = new ModuleVisualisation();
+        this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService);
         moduleVisualisation.addModule(module);
         moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
         moduleVisualisation.redraw();
@@ -791,6 +797,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     protected void onAttach(AttachEvent attachEvent)
     {
         UI ui = attachEvent.getUI();
+        this.controlPanel = new ControlPanel(this.moduleControlRestService);
+        this.init();
         broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
             ui.access(() ->

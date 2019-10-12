@@ -47,6 +47,7 @@ import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 
@@ -69,18 +70,17 @@ public class MonitorBuilder
     // allow override of default monitor
     Monitor monitor;
 
-    // platform configuration listener
-    PlatformConfigurationService platformConfigurationService;
+    DashboardRestService flowCacheStateRestService;
 
 	/**
      * Constuctor
      *
      * @param monitorFactory
      * @param notifierFactory
-     * @param platformConfigurationService
+     * @param flowCacheStateRestService
      */
     public MonitorBuilder(MonitorFactory monitorFactory, NotifierFactory notifierFactory
-        , PlatformConfigurationService platformConfigurationService)
+        , DashboardRestService flowCacheStateRestService)
     {
         this.monitorFactory = monitorFactory;
         if(monitorFactory == null)
@@ -94,10 +94,10 @@ public class MonitorBuilder
             throw new IllegalArgumentException("notifierFactory cannot be 'null'");
         }
 
-        this.platformConfigurationService = platformConfigurationService;
-        if(platformConfigurationService == null)
+        this.flowCacheStateRestService = flowCacheStateRestService;
+        if(flowCacheStateRestService == null)
         {
-            throw new IllegalArgumentException("notifierFactory cannot be 'null'");
+            throw new IllegalArgumentException("flowCacheStateRestService cannot be 'null'");
         }
     }
 
@@ -177,8 +177,7 @@ public class MonitorBuilder
          */
         public NotifierBuilder withDashboardNotifier()
         {
-            Notifier notifier = notifierFactory.getDashboardNotifier();
-            ((DashboardNotifier)notifier).setPlatformConfigurationService(platformConfigurationService);
+            Notifier notifier = notifierFactory.getDashboardNotifier(flowCacheStateRestService);
             return withNotifier(notifier);
         }
 

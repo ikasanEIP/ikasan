@@ -100,5 +100,6 @@
        <module>solr</module>
        <module>dashboard-client</module>
        <module>persistence</module>
+       <module>cache</module>
     </modules>
 </project>

@@ -53,6 +53,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ikasan-rest-module</artifactId>
+    <name>Ikasan Rest Module</name>
+    <description>The rest module library for the Ikasan Enterprise Integration Platform</description>
     <packaging>jar</packaging>
 
     <build>

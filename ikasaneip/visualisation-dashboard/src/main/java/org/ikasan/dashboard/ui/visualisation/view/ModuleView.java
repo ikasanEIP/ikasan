@@ -192,7 +192,7 @@ public class ModuleView extends VerticalLayout implements BeforeEnterObserver
         })).setHeader("Status").setKey("status");
         flowGrid.addColumn(new ComponentRenderer<>((FlowMetaData node) ->
         {
-            ControlPanel controlPanel = new ControlPanel();
+            ControlPanel controlPanel = new ControlPanel(null);
 
             return controlPanel;
 
