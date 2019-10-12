@@ -69,6 +69,7 @@
     <!-- standard modules -->
     <modules>
         <module>jar</module>
+        <module>distribution</module>
     </modules>
 
     <!-- SCM URLS -->
@@ -84,6 +85,7 @@
         <version.org.springboot>${version.org.springboot}</version.org.springboot>
         <version.activemq>${version.activemq}</version.activemq>
         <version.org.mockftpserver>${version.org.mockftpserver}</version.org.mockftpserver>
+        <version.com.h2database>${version.com.h2database}</version.com.h2database>
     </properties>
 
     <dependencyManagement>
