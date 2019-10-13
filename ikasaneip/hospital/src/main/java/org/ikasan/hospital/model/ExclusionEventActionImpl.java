@@ -50,7 +50,7 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class ExclusionEventAction
+public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
 {
 	public static final String RESUBMIT = "re-submitted";
 	public static final String IGNORED = "ignored";

@@ -42,9 +42,9 @@
                       expression="execution(* org.ikasan.security.service.authentication.CustomAuthenticationProvider.authenticate(..))" />
 
         <!--<aop:pointcut id="mappingServiceMethods"-->
-                <!--expression="execution(* org.ikasan.mapping.service.*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.mapping.listener.*.*(..))"/>-->
         <!--<aop:pointcut id="configurationServiceMethods"-->
-                <!--expression="execution(* org.ikasan.configurationService.service.*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.configurationService.listener.*.*(..))"/>-->
         <!--<aop:pointcut id="topologyDaoSaveMethods"-->
                 <!--expression="execution(* org.ikasan.topology.dao.*.save*(..))"/>-->
         <!--<aop:pointcut id="topologyDaoDeleteMethods"-->
@@ -58,15 +58,15 @@
         <aop:pointcut id="systemEventServiceMethods"
                 expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
         <!--<aop:pointcut id="errorCategorisationServiceMethods"-->
-                <!--expression="execution(* org.ikasan.error.reporting.service.*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.error.reporting.listener.*.*(..))"/>-->
         <!--<aop:pointcut id="startupControlServiceMethods"-->
-                <!--expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.module.listener.StartupControlService*.*(..))"/>-->
         <!--<aop:pointcut id="hospitalServiceMethods"-->
-                <!--expression="execution(* org.ikasan.spec.hospital.service.HospitalService.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.spec.hospital.listener.HospitalService.*(..))"/>-->
         <!--<aop:pointcut id="hospitalManagementServiceMethods"-->
-                <!--expression="execution(* org.ikasan.spec.hospital.service.HospitalManagementService.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.spec.hospital.listener.HospitalManagementService.*(..))"/>-->
         <!--<aop:pointcut id="replayServiceMethods"-->
-                <!--expression="execution(* org.ikasan.replay.service.*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.replay.listener.*.*(..))"/>-->
         <!--<aop:pointcut id="housekeepingServiceMethods"-->
                       <!--expression="execution(* org.ikasan.spec.housekeeping.HousekeepService.*(..))"/>-->
         <!--<aop:pointcut id="platformConfigurationServiceMethods"-->

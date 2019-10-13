@@ -18,7 +18,7 @@ public class SystemEventLogger
         this.systemEventService = systemEventService;
         if(this.systemEventService == null)
         {
-            throw new IllegalArgumentException("The system event service cannot be null!");
+            throw new IllegalArgumentException("The system event listener cannot be null!");
         }
     }
 

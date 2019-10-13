@@ -35,7 +35,7 @@ public class IkasanFlowLayoutManagerTest
     }};
 
     /**
-     * mocked container, service and dao
+     * mocked container, listener and dao
      */
     NetworkDiagram networkDiagram = mockery.mock(NetworkDiagram.class);
 

@@ -75,7 +75,7 @@ public class PersistenceSetupView extends VerticalLayout implements BeforeEnterO
 //     * @param authenticationService
 //     * @param configurationManagement
 //     */
-//    public PersistanceSetupPanel(org.ikasan.setup.persistence.service.PersistenceService persistenceService,
+//    public PersistanceSetupPanel(org.ikasan.setup.persistence.listener.PersistenceService persistenceService,
 //                                 UserService userService, AuthenticationService authenticationService,
 //                                 ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 //    {
