@@ -406,10 +406,6 @@ public class NetworkDiagram extends Component implements HasSize {
 
   public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) { getElement().callFunction("$connector.drawFlowBorder", x, y ,w, h, text);}
 
-  public void drawStatus(Integer x, Integer y, Integer radius, String colour) { getElement().callFunction("$connector.drawStatus", x, y ,radius, colour);}
-
-  public void drawStatusBorder(Integer x, Integer y, Integer w, Integer h, String colour) { getElement().callFunction("$connector.drawStatusBorder", x, y ,w, h, colour);}
-
   // ==== Events ====
   private void enableEventDispatching(Class<? extends Event> clazz) {
     runBeforeClientResponse(ui -> {

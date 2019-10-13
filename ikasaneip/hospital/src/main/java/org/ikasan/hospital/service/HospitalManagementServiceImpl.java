@@ -76,7 +76,7 @@ public class HospitalManagementServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.hospital.listener.HospitalManagementService#getExclusionEventActionByErrorUri(java.lang.String)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#getExclusionEventActionByErrorUri(java.lang.String)
 	 */
 	@Override
 	public ExclusionEventActionImpl getExclusionEventActionByErrorUri(String errorUri)
@@ -85,7 +85,7 @@ public class HospitalManagementServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.hospital.listener.HospitalManagementService#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
 	public List<ExclusionEventActionImpl> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size)
@@ -113,7 +113,7 @@ public class HospitalManagementServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.hospital.listener.HospitalManagementService#actionedExclusionsRowCount(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#actionedExclusionsRowCount(java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
 	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate) 

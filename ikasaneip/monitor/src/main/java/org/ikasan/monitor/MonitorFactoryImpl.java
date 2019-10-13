@@ -54,7 +54,7 @@ import java.util.concurrent.Executors;
  */
 public class MonitorFactoryImpl implements MonitorFactory
 {
-    /** default executor listener is a single thread executor */
+    /** default executor service is a single thread executor */
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorFactoryImpl.class);
@@ -79,7 +79,7 @@ public class MonitorFactoryImpl implements MonitorFactory
     }
 
     /**
-     * Provision the override of the default executor listener
+     * Provision the override of the default executor service
      * @param executorService
      */
     public void setExecutorService(ExecutorService executorService)

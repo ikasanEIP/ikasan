@@ -72,7 +72,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     private ConfigurationFactory configurationFactory = ConfigurationFactoryDefaultImpl.getInstance();
 
     /**
-     * Default configuration listener returns a cached based instance.
+     * Default configuration service returns a cached based instance.
      * 
      * @return
      */
@@ -122,7 +122,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.configuration.listener.ConfigurationService#configure(java.lang.Object)
+     * @see org.ikasan.framework.configuration.service.ConfigurationService#configure(java.lang.Object)
      */
     public void configure(ConfiguredResource configuredResource)
     {
@@ -200,7 +200,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.dao.listener.ConfigurationService#update(org.ikasan.framework.dao.window.Configuration)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#update(org.ikasan.framework.dao.window.Configuration)
      */
     public void update(ConfiguredResource configuredResource)
     {
@@ -245,7 +245,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.dao.listener.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.window.
+     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.window.
      * Configuration)
      */
     public void deleteConfiguration(Configuration configuration)
@@ -257,7 +257,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.dao.listener.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.window.Configuration
+     * org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.window.Configuration
      * )
      */
     public void saveConfiguration(Configuration configuration)
@@ -268,7 +268,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.dao.listener.ConfigurationService#getConfiguration(java.lang.Object)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#getConfiguration(java.lang.Object)
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
     {

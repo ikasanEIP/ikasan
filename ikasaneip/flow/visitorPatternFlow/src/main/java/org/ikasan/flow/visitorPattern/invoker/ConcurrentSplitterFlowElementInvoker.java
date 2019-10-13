@@ -71,7 +71,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(ConcurrentSplitterFlowElementInvoker.class);
 
-    /** executor listener for thread dispatching */
+    /** executor service for thread dispatching */
     private ListeningExecutorService executorService;
 
     /** does this component require the full flowEvent or just the payload */

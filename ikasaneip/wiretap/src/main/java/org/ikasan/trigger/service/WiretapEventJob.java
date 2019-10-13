@@ -60,7 +60,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 public class WiretapEventJob implements FlowEventJob
 {  
     /**
-     * underlying listener
+     * underlying service
      */
     private WiretapService wiretapService;
 
@@ -92,7 +92,7 @@ public class WiretapEventJob implements FlowEventJob
     /**
      * Constructor
      * 
-     * @param wiretapService The wiretap listener to use
+     * @param wiretapService The wiretap service to use
      */
     public WiretapEventJob(WiretapService wiretapService)
     {
@@ -104,7 +104,7 @@ public class WiretapEventJob implements FlowEventJob
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.flow.event.listener.FlowEventJob#execute(java.lang
+     * org.ikasan.framework.flow.event.service.FlowEventJob#execute(java.lang
      * .String, java.lang.String, java.lang.String,
      * org.ikasan.spec.flow.event.FlowEvent, java.util.Map)
      */
@@ -133,7 +133,7 @@ public class WiretapEventJob implements FlowEventJob
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.flow.event.listener.FlowEventJob#getParameters()
+     * @see org.ikasan.framework.flow.event.service.FlowEventJob#getParameters()
      */
     public List<String> getParameters()
     {
@@ -144,7 +144,7 @@ public class WiretapEventJob implements FlowEventJob
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.flow.event.listener.FlowEventJob#validateParameters
+     * org.ikasan.framework.flow.event.service.FlowEventJob#validateParameters
      * (java.util.Map)
      */
     public Map<String, String> validateParameters(Map<String, String> params)

@@ -72,7 +72,7 @@ public class OrderedExpectation extends AbstractListExpectation
     }
 
     /**
-     * Contructor allowing an alternate comparator listener.
+     * Contructor allowing an alternate comparator service.
      *
      * @param comparatorService
      */

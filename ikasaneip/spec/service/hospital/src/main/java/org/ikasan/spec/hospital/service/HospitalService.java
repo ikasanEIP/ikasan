@@ -44,7 +44,7 @@ import java.security.Principal;
 
 
 /**
- * Hospital listener interface
+ * Hospital service interface
  * 
  * @author Ikasan Development Team
  * 

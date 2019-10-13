@@ -55,7 +55,7 @@ import java.util.List;
  */
 public class PersonMessageProvider implements MessageProvider<List<Person>>
 {
-    /** listener accessor */
+    /** service accessor */
     PersonService personService;
 
     /**

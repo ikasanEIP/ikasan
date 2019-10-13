@@ -49,7 +49,7 @@ package org.ikasan.spec.management;
 public interface ManagedService
 {
     /**
-     * Shutdown and destroy this listener.
+     * Shutdown and destroy this service.
      */
     public void destroy();
 

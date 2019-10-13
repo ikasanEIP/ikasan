@@ -203,7 +203,7 @@ public class ComponentFactory
 
     class DBProducer implements Producer<Person>
     {
-        /** required listener */
+        /** required service */
         PersonService personService;
 
         /**

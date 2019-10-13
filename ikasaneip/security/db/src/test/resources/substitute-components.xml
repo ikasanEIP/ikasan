@@ -78,7 +78,7 @@
 
 "/>
         <!--<aop:pointcut id="serviceMethods"-->
-                <!--expression="execution(* org.ikasan.security.dao.listener*.*(..))"/>-->
+                <!--expression="execution(* org.ikasan.security.dao.service*.*(..))"/>-->
                 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
 

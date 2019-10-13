@@ -56,10 +56,10 @@ import org.junit.Test;
  */
 public class WiretapSerialiserServiceTest
 {
-    /** serialisers to be supported by the listener */
+    /** serialisers to be supported by the service */
     private Map serialisers;
     
-    /** serialiser listener instance */
+    /** serialiser service instance */
     private WiretapSerialiser<Object,String> serialiserService;
 
     @Before 
@@ -69,7 +69,7 @@ public class WiretapSerialiserServiceTest
         this.serialisers = new ConcurrentHashMap();
         serialisers.put(Integer.class, IntegerSerialiser.getInstance());
         
-        // create a persistence serialiser listener instance passing the supported serialisers
+        // create a persistence serialiser service instance passing the supported serialisers
         this.serialiserService = new WiretapSerialiserService(serialisers);
     }
     
@@ -82,7 +82,7 @@ public class WiretapSerialiserServiceTest
         // create example object for serialisation
         Integer integer = new Integer(10);
         
-        // test the serialiser listener
+        // test the serialiser service
         Assert.assertTrue("10".equals( serialiserService.serialise(integer) ) );
     }
 
@@ -96,7 +96,7 @@ public class WiretapSerialiserServiceTest
         // create example object for serialisation
         StringBuilder stringBuilder = new StringBuilder(10);
         
-        // test the serialiser listener
+        // test the serialiser service
         String result = serialiserService.serialise(stringBuilder);
         Assert.assertNotNull(result);
     }
@@ -111,7 +111,7 @@ public class WiretapSerialiserServiceTest
         // create example object for serialisation
         NotSerialisable notSerialisable = new NotSerialisable("a value");
         
-        // test the serialiser listener
+        // test the serialiser service
         String result = serialiserService.serialise(notSerialisable);
         Assert.assertNotNull(result);
     }

@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 /**
- * Replay listener implementation.
+ * Replay service implementation.
  *
  * @author Ikasan Development Team
  *

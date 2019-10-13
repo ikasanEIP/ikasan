@@ -8,11 +8,6 @@ public class ComponentSecurityVisibility
 {
     public static void applySecurity(Component component, String ... securityConstants)
     {
-        if(component == null)
-        {
-            return;
-        }
-
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
         component.setVisible(false);

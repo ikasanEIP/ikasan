@@ -126,10 +126,10 @@ public class ScheduledRecoveryManagerIntegrationTest
     /** module name */
     private String moduleName = "moduleName";
 
-    /** exclusion listener */
+    /** exclusion service */
     private ExclusionService exclusionService;
 
-    /** error reporting listener */
+    /** error reporting service */
     private ErrorReportingService errorReportingService;
 
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");

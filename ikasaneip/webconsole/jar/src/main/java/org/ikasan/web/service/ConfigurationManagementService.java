@@ -70,13 +70,13 @@ public class ConfigurationManagementService
     /** constant for logging deleted configuration */
     public static final String CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION = "Configuration deleted";
 
-    /** configuration listener */
+    /** configuration service */
     private ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement;
     
-    /** system event listener records all changes to configurations */
+    /** system event service records all changes to configurations */
     private SystemEventService systemEventService;
     
-    /** module listener */
+    /** module service */
     private ModuleService moduleService;
     
     /**

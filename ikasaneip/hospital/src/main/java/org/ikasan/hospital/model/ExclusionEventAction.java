@@ -50,9 +50,12 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
+public class ExclusionEventAction
 {
-    private Long id;
+	public static final String RESUBMIT = "re-submitted";
+	public static final String IGNORED = "ignored";
+
+	private Long id;
     private String moduleName;
     private String flowName;
 	private String errorUri;

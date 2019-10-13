@@ -47,7 +47,7 @@ import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
- * Replay record listener implementation.
+ * Replay record service implementation.
  * 
  * @author Ikasan Development Team
  * 

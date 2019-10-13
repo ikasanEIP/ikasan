@@ -62,7 +62,7 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(DefaultMonitorImpl.class);
 
-    // executor listener for thread dispatching
+    // executor service for thread dispatching
     private final ExecutorService executorService;
 
     /** configuration instance for this monitor */

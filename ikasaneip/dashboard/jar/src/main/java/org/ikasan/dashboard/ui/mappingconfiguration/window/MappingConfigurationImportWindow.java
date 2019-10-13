@@ -496,7 +496,7 @@ public class MappingConfigurationImportWindow extends Window
             {
                 Notification.show("An error has occurred importing a mapping! Please rectify.\r\n\r\n" +
                         "The following source system values are duplicated. This has the effect of calls to the mapping " +
-                        "listener resolving multiple results. \r\n\r\n"
+                        "service resolving multiple results. \r\n\r\n"
                         + mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
 
                 this.mappingConfigurationService.deleteMappingConfiguration(mappingConfiguration);

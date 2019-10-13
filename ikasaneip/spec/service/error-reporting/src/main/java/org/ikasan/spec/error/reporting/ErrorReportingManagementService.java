@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This contract represents a platform level listener for the management or errors.
+ * This contract represents a platform level service for the management or errors.
  * 
  * @author Ikasan Development Team
  * 

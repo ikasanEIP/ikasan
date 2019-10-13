@@ -68,7 +68,7 @@ public class UnorderedExpectation extends AbstractListExpectation
     }
 
     /**
-     * Constructor allowing an alternate comparator listener.
+     * Constructor allowing an alternate comparator service.
      *
      * @param comparatorService
      */

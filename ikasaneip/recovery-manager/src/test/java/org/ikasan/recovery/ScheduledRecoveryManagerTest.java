@@ -122,10 +122,10 @@ public class ScheduledRecoveryManagerTest
     /** Mock managedResource */
     private final ManagedResource managedResource = mockery.mock(ManagedResource.class, "ManagedResource");
 
-    /** Mock exclusion listener */
+    /** Mock exclusion service */
     private final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
 
-    /** Mock error reporting listener */
+    /** Mock error reporting service */
     private final ErrorReportingService errorReportingService = mockery.mock(ErrorReportingService.class, "mockErrorReportingService");
 
     /** Mock flowEvent */

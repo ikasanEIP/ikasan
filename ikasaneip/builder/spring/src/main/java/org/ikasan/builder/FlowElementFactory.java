@@ -102,14 +102,14 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     /** allow concurrency to be specified */
     int concurrentThreads;
 
-    /** allow override of executor listener */
+    /** allow override of executor service */
     ExecutorService executorService;
 
     /** allow turning off context listeners at the component level */
     Boolean ignoreContextInvocation = false;
 
     /**
-     * Setter for executor listener override
+     * Setter for executor service override
      * @param executorService
      */
     public void setExecutorService(ExecutorService executorService)

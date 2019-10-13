@@ -42,7 +42,7 @@ package org.ikasan.spec.configuration;
 
 /**
  * ConfigurationService defines the operational contract of any configuration
- * listener in Ikasan.
+ * service in Ikasan.
  * 
  * @author Ikasan Development Team
  */

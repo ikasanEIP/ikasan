@@ -1,7 +1,5 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
-import org.ikasan.dashboard.broadcast.State;
-
 /**
  * Created by stewmi on 08/11/2018.
  */
@@ -10,7 +8,6 @@ public class Flow
 	private String name;
     private String configurationId;
 	private Consumer consumer;
-	private State status = State.RUNNING_STATE;
 
 	// flow border values
 	private int x = 0,y = 0,w = 0,h = 0;
@@ -70,15 +67,5 @@ public class Flow
     public int getH()
     {
         return h;
-    }
-
-    public State getStatus()
-    {
-        return status;
-    }
-
-    public void setStatus(State status)
-    {
-        this.status = status;
     }
 }

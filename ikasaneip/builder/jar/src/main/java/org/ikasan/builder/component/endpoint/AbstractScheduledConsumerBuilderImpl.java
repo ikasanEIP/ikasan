@@ -84,7 +84,7 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
     /** is this consumer critical on startup */
     Boolean criticalOnStartup;
 
-    /** managed identifer listener */
+    /** managed identifer service */
     ManagedEventIdentifierService managedEventIdentifierService;
 
     /** recovery manager isntance */
@@ -175,7 +175,7 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
     }
 
     /**
-     * Implementation of the managed event identifier listener - sets the life identifier based on the incoming event.
+     * Implementation of the managed event identifier service - sets the life identifier based on the incoming event.
      * @param managedEventIdentifierService
      * @return
      */

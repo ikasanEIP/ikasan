@@ -95,7 +95,7 @@ public class ScheduledConsumer<T>
     private EventFactory<FlowEvent<?, ?>> flowEventFactory;
 
     /**
-     * default event identifier listener - can be overridden via the setter
+     * default event identifier service - can be overridden via the setter
      */
     protected ManagedEventIdentifierService<?, T> managedEventIdentifierService = new HashedEventIdentifierServiceImpl();
 

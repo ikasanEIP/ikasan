@@ -22,7 +22,7 @@ import javax.jms.ConnectionFactory;
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:ikasan-transaction-pointcut-jms.xml",
         "classpath:ikasan-transaction-pointcut-resubmission.xml",
-        "classpath:filetransfer-listener-conf.xml",
+        "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
 
 } )

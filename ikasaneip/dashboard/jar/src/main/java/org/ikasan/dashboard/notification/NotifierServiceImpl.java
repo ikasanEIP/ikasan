@@ -161,7 +161,7 @@ public class NotifierServiceImpl implements NotifierService
 					" Using default value of " + this.notificationIntervalMinutes + " minutes.");
 		}
 		
-		logger.info("Starting dashboard notification listener with a notificaiton interval of "
+		logger.info("Starting dashboard notification service with a notificaiton interval of " 
 				+ this.notificationIntervalMinutes + " minutes.");
 		
 		executor = Executors.newScheduledThreadPool(1);
@@ -176,7 +176,7 @@ public class NotifierServiceImpl implements NotifierService
 	@Override
 	public void stop()
 	{
-		logger.info("Stopping dashboard notification listener");
+		logger.info("Stopping dashboard notification service");
 		executor.shutdown();
 		this.state = STATE_STOPPED;
 		
@@ -199,7 +199,7 @@ public class NotifierServiceImpl implements NotifierService
 
 	public static void shutdown()
 	{
-		logger.info("Stopping dashboard notification listener");
+		logger.info("Stopping dashboard notification service");
 		executor.shutdown();
 	}
 

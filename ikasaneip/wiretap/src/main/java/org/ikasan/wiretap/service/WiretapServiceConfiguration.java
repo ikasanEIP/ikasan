@@ -41,7 +41,7 @@
 package org.ikasan.wiretap.service;
 
 /**
- * Configuration bean for the Wiretap listener
+ * Configuration bean for the Wiretap service
  */
 public class WiretapServiceConfiguration
 {

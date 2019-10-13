@@ -66,7 +66,7 @@ public class ModuleServiceImplTest
             setThreadingPolicy(new Synchroniser());
     }};
 
-    /** mocked container, listener and dao */
+    /** mocked container, service and dao */
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     SystemEventService systemEventService = mockery.mock(SystemEventService.class);
     StartupControlDao startupControlDao = mockery.mock(StartupControlDao.class);

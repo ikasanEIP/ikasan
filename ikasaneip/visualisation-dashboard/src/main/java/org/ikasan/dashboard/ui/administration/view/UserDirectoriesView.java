@@ -137,7 +137,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
         hl.add(icon);
 
 
-        Text instructions = new Text(getTranslation("text.user-directories-instructions", UI.getCurrent().getLocale()));
+        Text instructions = new Text(getTranslation("text.user-directories-instructions", UI.getCurrent().getLocale(), null));
 
         hl.add(instructions);
 

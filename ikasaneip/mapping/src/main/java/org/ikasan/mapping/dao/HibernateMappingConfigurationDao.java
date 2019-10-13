@@ -127,7 +127,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     }
                     sourceSystemValuesSB.append("]");
 
-                    String errorMessage = "Multiple results returned from the mapping configuration listener. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
                             "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString();
                     
@@ -196,7 +196,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     }
                     sourceSystemValuesSB.append("]");
 
-                    String errorMessage = "Multiple results returned from the mapping configuration listener. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
                             "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString();
 
@@ -238,7 +238,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 }
                 else if(results.size() > 1)
                 {                    
-                	String errorMessage = "Multiple results returned from the mapping configuration listener. " +
+                	String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
                             "[TargetContext = " + targetSystem + "] " + "[TargetSystemValue = " + targetSystemValue + "]";
                     
@@ -289,7 +289,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 }
                 else if(results.size() > 1)
                 {
-                    String errorMessage = "Multiple results returned from the mapping configuration listener. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem
                             + "] [SourceSystemValues = ";
 
@@ -353,7 +353,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 }
                 else if(results.size() > 1)
                 {
-                    String errorMessage = "Multiple results returned from the mapping configuration listener. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceContext
                             + "] [SourceSystemValues = ";
 

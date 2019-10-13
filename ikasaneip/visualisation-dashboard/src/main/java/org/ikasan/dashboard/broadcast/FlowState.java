@@ -4,7 +4,7 @@ public class FlowState
 {
     private String moduleName;
     private String flowName;
-    private State state;
+    private String state;
 
     /**
      * Constructor
@@ -13,7 +13,7 @@ public class FlowState
      * @param flowName
      * @param state
      */
-    public FlowState(String moduleName, String flowName, State state)
+    public FlowState(String moduleName, String flowName, String state)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -30,7 +30,7 @@ public class FlowState
         return flowName;
     }
 
-    public State getState()
+    public String getState()
     {
         return state;
     }
@@ -45,7 +45,7 @@ public class FlowState
 
         if (moduleName != null ? !moduleName.equals(flowState.moduleName) : flowState.moduleName != null) return false;
         if (flowName != null ? !flowName.equals(flowState.flowName) : flowState.flowName != null) return false;
-        return state != null ? state.getFlowState().equals(flowState.state.getFlowState()) : flowState.state == null;
+        return state != null ? state.equals(flowState.state) : flowState.state == null;
     }
 
     @Override
@@ -53,18 +53,7 @@ public class FlowState
     {
         int result = moduleName != null ? moduleName.hashCode() : 0;
         result = 31 * result + (flowName != null ? flowName.hashCode() : 0);
-        result = 31 * result + (state.getFlowState() != null ? state.getFlowState().hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString()
-    {
-        final StringBuffer sb = new StringBuffer("FlowState{");
-        sb.append("moduleName='").append(moduleName).append('\'');
-        sb.append(", flowName='").append(flowName).append('\'');
-        sb.append(", state=").append(state);
-        sb.append('}');
-        return sb.toString();
     }
 }

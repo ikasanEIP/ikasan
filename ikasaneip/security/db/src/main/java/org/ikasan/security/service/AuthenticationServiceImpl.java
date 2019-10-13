@@ -84,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.listener.AuthenticationService#login(java.lang.String, java.lang.String)
+	 * @see org.ikasan.security.service.AuthenticationService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Authentication login(String username, String password)
@@ -145,7 +145,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.listener.AuthenticationService#authenticateLocal(java.lang.String, java.lang.String)
+	 * @see org.ikasan.security.service.AuthenticationService#authenticateLocal(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Authentication authenticateLocal(String username, String password)

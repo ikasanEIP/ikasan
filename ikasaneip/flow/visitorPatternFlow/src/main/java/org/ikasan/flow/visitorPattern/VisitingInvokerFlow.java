@@ -397,10 +397,10 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             
             this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
-            // set error reporting listener on aware flow elements
+            // set error reporting service on aware flow elements
             this.flowConfiguration.getErrorReportingServiceAwareFlowElements().forEach(fe -> fe.getFlowComponent().setErrorReportingService(this.errorReportingService));
 
-            // set exclusion listener on aware flow elements
+            // set exclusion service on aware flow elements
             injectExclusionService(flowElements, exclusionService);
         }
         catch(RuntimeException e)

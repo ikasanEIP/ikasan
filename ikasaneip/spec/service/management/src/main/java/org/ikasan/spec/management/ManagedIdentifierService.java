@@ -41,14 +41,14 @@
 package org.ikasan.spec.management;
 
 /**
- * Interface provisioning the setting of a managed identifier listener.
+ * Interface provisioning the setting of a managed identifier service.
  * 
  * @author Ikasan Development Team
  */
 public interface ManagedIdentifierService<MANAGED_IDENTIFIER_SERVICE>
 {
     /**
-     * Set the mananaged identifier listener on the implementing class.
+     * Set the mananaged identifier service on the implementing class.
      * @param managedIdentifierService
      */
     public void setManagedIdentifierService(MANAGED_IDENTIFIER_SERVICE managedIdentifierService);

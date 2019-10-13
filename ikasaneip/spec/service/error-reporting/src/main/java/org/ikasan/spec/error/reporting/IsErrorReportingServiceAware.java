@@ -42,7 +42,7 @@
 package org.ikasan.spec.error.reporting;
 
 /**
- * This contract allows the error reporting listener to be registered with
+ * This contract allows the error reporting service to be registered with
  * specific components at runtime.
  * 
  * @author Ikasan Development Team

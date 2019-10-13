@@ -256,7 +256,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
                 {
                     // we have exclusions, but are we treating the batch as one event which should not be auto split
 
-                    // batch msgs until no more available or batch size limit hit or it matches an id registered in the exclusion listener
+                    // batch msgs until no more available or batch size limit hit or it matches an id registered in the exclusion service
                     while ( !append(listMessage, super.receiveMessage(consumer)) && !exclusionService.isBlackListed(listMessage.get(0).getJMSMessageID() + ":" + listMessage.size()) );
                 }
             }

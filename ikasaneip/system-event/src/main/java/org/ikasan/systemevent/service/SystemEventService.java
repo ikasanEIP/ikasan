@@ -48,7 +48,7 @@ import org.ikasan.systemevent.model.SystemEvent;
 
 
 /**
- * SystemFlowEvent listener interface
+ * SystemFlowEvent service interface
  * 
  * @author Ikasan Development Team
  *

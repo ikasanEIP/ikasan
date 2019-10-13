@@ -72,7 +72,7 @@ public class WiretapApplication {
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     @Autowired
-    /** The wiretap listener */
+    /** The wiretap service */
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
 
     @Autowired

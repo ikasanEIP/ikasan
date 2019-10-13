@@ -81,7 +81,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#createPersistence()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#createPersistence()
 	 */
 	@Override
 	public void createBaselinePersistence() throws PersistenceServiceException
@@ -101,7 +101,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#createFileTransferPersistence()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#createFileTransferPersistence()
 	 */
 	@Override
 	public void createFileTransferPersistence() throws PersistenceServiceException
@@ -122,7 +122,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#createPostBaselinePersistence()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#createPostBaselinePersistence()
 	 */
 	@Override
 	public void createPostBaselinePersistence() throws PersistenceServiceException
@@ -142,7 +142,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#getStatus()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#getStatus()
 	 */
 	@Override
 	public String getBaselineStatus() throws PersistenceServiceException
@@ -165,7 +165,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#getPostBaselineStatus()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#getPostBaselineStatus()
 	 */
 	@Override
 	public String getPostBaselineStatus() throws PersistenceServiceException
@@ -188,7 +188,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#baselinePersistenceChangesRequired()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#baselinePersistenceChangesRequired()
 	 */
 	@Override
 	public boolean baselinePersistenceChangesRequired()
@@ -219,7 +219,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#postBaselinePersistenceChangesRequired()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#postBaselinePersistenceChangesRequired()
 	 */
 	@Override
 	public boolean postBaselinePersistenceChangesRequired()
@@ -250,7 +250,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#fileTransferPersistenceChangesRequired()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#fileTransferPersistenceChangesRequired()
 	 */
 	@Override
 	public boolean fileTransferPersistenceChangesRequired()
@@ -281,7 +281,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.setup.persistence.listener.PersistenceService#getFileTransferStatus()
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#getFileTransferStatus()
 	 */
 	@Override
 	public String getFileTransferStatus() throws PersistenceServiceException

@@ -83,7 +83,7 @@ public class DefaultDuplicateFilterServiceTest
     }
 
     /**
-     * Test case: if message not found, listener must return false
+     * Test case: if message not found, service must return false
      */
     @Test public void return_false_when_message_not_found()
     {
@@ -99,7 +99,7 @@ public class DefaultDuplicateFilterServiceTest
     }
 
     /**
-     * Test case: if message is found, listener must resturn true
+     * Test case: if message is found, service must resturn true
      */
     @Test public void return_true_when_message_not_found()
     {

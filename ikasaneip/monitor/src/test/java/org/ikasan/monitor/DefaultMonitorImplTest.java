@@ -109,7 +109,7 @@ public class DefaultMonitorImplTest
                 exactly(1).of(executorService).shutdown();
                 exactly(1).of(executorService).isShutdown();
                 will(returnValue(true));
-                // executor listener execute should not be called
+                // executor service execute should not be called
                 exactly(0).of(executorService).execute(with(any(Runnable.class)));
             }
         });

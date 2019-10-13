@@ -25,12 +25,12 @@ public class ModuleControlPanel extends Panel implements View
         this.topologyService = topologyService;
         if(this.topologyService == null)
         {
-            throw new IllegalArgumentException("topology listener cannot be null!");
+            throw new IllegalArgumentException("topology service cannot be null!");
         }
         this.topologyCache = topologyCache;
         if(this.topologyCache == null)
         {
-            throw new IllegalArgumentException("topologyCache listener cannot be null!");
+            throw new IllegalArgumentException("topologyCache service cannot be null!");
         }
 
         init();

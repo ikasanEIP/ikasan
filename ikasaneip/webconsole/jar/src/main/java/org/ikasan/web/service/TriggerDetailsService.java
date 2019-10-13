@@ -59,7 +59,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * The listener layer for the trigger details
+ * The service layer for the trigger details
  * 
  * @author Ikasan Development Team
  */
@@ -75,7 +75,7 @@ public class TriggerDetailsService
      * Constructor
      * 
      * @param jobAwareFlowEventListener - The job aware flow event listener
-     * @param moduleService - The provider listener for the modules
+     * @param moduleService - The provider service for the modules
      */
     public TriggerDetailsService(JobAwareFlowEventListener jobAwareFlowEventListener, ModuleService moduleService)
     {

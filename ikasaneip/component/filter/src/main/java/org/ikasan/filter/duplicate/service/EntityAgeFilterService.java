@@ -16,12 +16,12 @@ public interface EntityAgeFilterService
     public boolean isOlderEntity(FilterEntry message);
 
     /**
-     * Method to initialise the internals of the listener.
+     * Method to initialise the internals of the service.
      */
     public void initialise(String clientId);
 
     /**
-     * Method to destroy internals of the listener.
+     * Method to destroy internals of the service.
      */
     public void destroy();
 

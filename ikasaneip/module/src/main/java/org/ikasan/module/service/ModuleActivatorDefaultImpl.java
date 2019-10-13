@@ -79,7 +79,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     }
     
     /* (non-Javadoc)
-     * @see org.ikasan.module.listener.ModuleActivation#activate(org.ikasan.spec.module.Module)
+     * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
      */
     public void activate(Module<Flow> module)
     {
@@ -105,7 +105,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.module.listener.ModuleActivation#deactivate(org.ikasan.spec.module.Module)
+     * @see org.ikasan.module.service.ModuleActivation#deactivate(org.ikasan.spec.module.Module)
      */
     public void deactivate(Module<Flow> module)
     {

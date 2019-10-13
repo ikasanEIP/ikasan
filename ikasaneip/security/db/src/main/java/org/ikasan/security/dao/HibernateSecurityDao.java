@@ -522,7 +522,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.listener.SecurityService#getNumberOfAuthenticationMethods()
+	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
+import com.github.appreciated.apexcharts.config.states.builder.FilterBuilder;
 import org.ikasan.vaadin.visjs.network.Node;
 
 /**

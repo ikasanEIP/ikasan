@@ -96,7 +96,7 @@ public class ModulesController
     /**
      * Constructor
      * 
-     * @param moduleService - The module listener
+     * @param moduleService - The module service
      * @param monitor - A moitor of module's flows
      */
     @Autowired

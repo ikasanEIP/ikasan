@@ -189,7 +189,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
     }
 
     /**
-     * Implementation of the managed event identifier listener - sets the life identifier based on the incoming event.
+     * Implementation of the managed event identifier service - sets the life identifier based on the incoming event.
      *
      * @param managedRelatedEventIdentifierService
      * @return

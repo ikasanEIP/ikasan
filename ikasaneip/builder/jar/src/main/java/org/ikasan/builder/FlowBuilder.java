@@ -109,7 +109,7 @@ public class FlowBuilder implements ApplicationContextAware
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
-    // constants used to generate identifiers for configuration listener if ids not provided
+    // constants used to generate identifiers for configuration service if ids not provided
     private static String INVOKER = "_I";
     private static String COMPONENT = "_C";
 
@@ -137,26 +137,26 @@ public class FlowBuilder implements ApplicationContextAware
     @Autowired
     ExceptionResolver exceptionResolver;
 
-    /** configuration listener */
+    /** configuration service */
     @Autowired
     ConfigurationService configurationService;
 
-    /** exclusion listener factory */
+    /** exclusion service factory */
     @Autowired
     ExclusionServiceFactory exclusionServiceFactory;
 
-    /** exclusion listener */
+    /** exclusion service */
     ExclusionService exclusionService;
 
-    /** error reporting listener factory */
+    /** error reporting service factory */
     @Autowired
     ErrorReportingServiceFactory errorReportingServiceFactory;
 
-    /** error reporting listener */
+    /** error reporting service */
     @Autowired
     ErrorReportingService errorReportingService;
 
-    /** message history listener */
+    /** message history service */
     @Autowired
     MessageHistoryService messageHistoryService;
 
@@ -169,7 +169,7 @@ public class FlowBuilder implements ApplicationContextAware
     /** head flow element of the exclusion flow */
     FlowElement<?> exclusionFlowHeadElement;
 
-    /** handle to the re-submission listener */
+    /** handle to the re-submission service */
     ResubmissionService resubmissionService;
 
     /** the serialiser factory */
@@ -269,7 +269,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Allow override of default configuration listener
+     * Allow override of default configuration service
      *
      * @param configurationService
      * @return
@@ -293,7 +293,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Set the error reporting listener factory
+     * Set the error reporting service factory
      *
      * @param errorReportingServiceFactory
      * @return
@@ -305,7 +305,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Override the default exclusion listener
+     * Override the default exclusion service
      *
      * @param exclusionService
      * @return
@@ -317,7 +317,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Override the default exclusion listener factory
+     * Override the default exclusion service factory
      *
      * @param exclusionServiceFactory
      * @return
@@ -329,7 +329,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Override the default error reporting listener
+     * Override the default error reporting service
      *
      * @param errorReportingService
      * @return
@@ -418,7 +418,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Setter for re-submission listener
+     * Setter for re-submission service
      * @param resubmissionService
      */
     public FlowBuilder withResubmissionService(ResubmissionService resubmissionService)
@@ -428,7 +428,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Setter for recoveryManager listener
+     * Setter for recoveryManager service
      * @param recoveryManager
      */
     public FlowBuilder withRecoveryManager(RecoveryManager recoveryManager)
@@ -847,7 +847,7 @@ public class FlowBuilder implements ApplicationContextAware
         Flow flow = new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setFlowListener(flowEventListener);
 
-        // pass handle to the error reporting listener if flow needs to be aware of this
+        // pass handle to the error reporting service if flow needs to be aware of this
         if(flow instanceof IsErrorReportingServiceAware)
         {
             ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);

@@ -440,7 +440,7 @@ public class TCPSocket extends java.net.Socket
     /* Utility methods */
     /**
      * This method is ensuring that give string is encoded 
-     * according to external listener requirements.
+     * according to external service requirements.
      * More complex conversion of <code>String</code>s to <code>byte[]</code>
      * could be performed here.
      *

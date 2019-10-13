@@ -41,7 +41,7 @@
 package org.ikasan.spec.wiretap;
 
 /**
- * Wiretap Serialiser listener.
+ * Wiretap Serialiser service.
  * 
  * @author Ikasan Development Team
  *

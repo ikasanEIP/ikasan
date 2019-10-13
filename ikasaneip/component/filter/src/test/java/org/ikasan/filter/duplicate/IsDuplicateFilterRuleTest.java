@@ -64,7 +64,7 @@ public class IsDuplicateFilterRuleTest
     private Mockery mockery = new Mockery();
 
     /** A mocked {@link DuplicateFilterService}*/
-    private final DuplicateFilterService service = this.mockery.mock(DuplicateFilterService.class, "listener");
+    private final DuplicateFilterService service = this.mockery.mock(DuplicateFilterService.class, "service");
 
     /** A mocked {@link FilterEntryConverter} with {@link String} parameter*/
     private final FilterEntryConverter<String> converter = this.mockery.mock(FilterEntryConverter.class, "converter");

@@ -166,7 +166,7 @@ public class FlowFactoryTest
     }
 
     /**
-     * Exclusion listener should be injected into isExclusionServiceAware exclusion flow elements
+     * Exclusion service should be injected into isExclusionServiceAware exclusion flow elements
      * that exist in the exclusion flow.
      */
     @DirtiesContext

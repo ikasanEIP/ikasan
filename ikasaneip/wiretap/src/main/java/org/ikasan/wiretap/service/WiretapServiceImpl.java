@@ -77,7 +77,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(WiretapServiceImpl.class);
 
-    /** Optional listener configuration for the persistence listener */
+    /** Optional service configuration for the persistence service */
     private WiretapServiceConfiguration wiretapServiceConfiguration;
 
     /**
@@ -95,7 +95,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
      * Constructor
      * 
      * @param wiretapDao - The wire tap DAO
-     * @param moduleService - The module listener to use
+     * @param moduleService - The module service to use
      */
     public WiretapServiceImpl(WiretapDao wiretapDao, ModuleService moduleService, WiretapEventFactory wiretapEventFactory)
     {
