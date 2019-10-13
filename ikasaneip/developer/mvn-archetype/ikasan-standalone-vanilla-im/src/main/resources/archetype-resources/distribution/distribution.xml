@@ -1,0 +1,37 @@
+<assembly>
+<id>dist</id>
+<formats>
+    <format>zip</format>
+</formats>
+
+<fileSets>
+    <fileSet>
+        <directory>../bin</directory>
+        <filtered>true</filtered>
+        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>../jar/src/main/resources</directory>
+        <filtered>true</filtered>
+        <includes>
+            <include>application.properties</include>
+        </includes>
+        <outputDirectory>\${artifactId}-\${version}/config</outputDirectory>
+    </fileSet>
+</fileSets>
+
+<includeBaseDirectory>false</includeBaseDirectory>
+
+<dependencySets>
+    <dependencySet>
+        <!-- Enable access to all projects in the current multimodule build! -->
+        <useProjectArtifact>false</useProjectArtifact>
+        <!-- Now, select which projects to include in this module-set. -->
+        <includes>
+            <include>\${groupId}:\${artifactId}</include>
+            <include>com.h2database:h2:jar:${version.com.h2database}</include>
+        </includes>
+        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
+    </dependencySet>
+</dependencySets>
+</assembly>

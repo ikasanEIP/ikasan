@@ -69,6 +69,7 @@
     <!-- standard modules -->
     <modules>
         <module>jar</module>
+        <module>distribution</module>
     </modules>
 
     <!-- SCM URLS -->
@@ -83,6 +84,7 @@
         <version.ikasan>${project.version}</version.ikasan>
         <version.org.springboot>${version.org.springboot}</version.org.springboot>
         <version.activemq>${version.activemq}</version.activemq>
+        <version.com.h2database>${version.com.h2database}</version.com.h2database>
     </properties>
 
     <dependencyManagement>

@@ -69,6 +69,7 @@
     <!-- standard modules -->
     <modules>
         <module>jar</module>
+        <module>distribution</module>
     </modules>
 
     <!-- SCM URLS -->
@@ -82,6 +83,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ikasan>${project.version}</version.ikasan>
         <version.org.springboot>${version.org.springboot}</version.org.springboot>
+        <version.com.h2database>${version.com.h2database}</version.com.h2database>
     </properties>
 
     <dependencyManagement>

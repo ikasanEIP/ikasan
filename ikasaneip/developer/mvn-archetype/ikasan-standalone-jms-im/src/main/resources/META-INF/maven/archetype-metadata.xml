@@ -55,6 +55,12 @@
         <fileSet filtered="true" packaged="false">
             <directory>jar</directory>
         </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>bin</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>distribution</directory>
+        </fileSet>
     </fileSets>
 
     <modules>
