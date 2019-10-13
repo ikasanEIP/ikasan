@@ -85,7 +85,17 @@ public class FlowStateCache implements Consumer<FlowState>
 
     private FlowState refreshFromSource(String moduleName, String flowName, String contextUrl)
     {
-        Optional<FlowDto> flowDto =  this.moduleControlRestService.getFlowState(contextUrl, moduleName, flowName);
+        Optional<FlowDto> flowDto;
+
+        try
+        {
+            flowDto = this.moduleControlRestService.getFlowState(contextUrl, moduleName, flowName);
+        }
+        catch (Exception e)
+        {
+            logger.warn(String.format("Could not load flow state for module[%s], flow[%s] using URL[%s].", moduleName, flowName, contextUrl));
+            return null;
+        }
 
         FlowState state = null;
         if(flowDto.isPresent())

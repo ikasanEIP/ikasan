@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.IntStream;
 
-@Route(value = "", layout = IkasanAppLayout.class)
+@Route(value = "home", layout = IkasanAppLayout.class)
 @UIScope
 @Component
 public class HomeView extends HorizontalLayout

@@ -299,7 +299,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         hl.setWidth("100%");
         hl.setMargin(false);
 
-        statusPanel = new StatusPanel();
+        statusPanel = new StatusPanel(this.moduleControlRestService);
 
         hl.setFlexGrow(1, moduleNameLayout);
         hl.setFlexGrow(1, statusPanel);

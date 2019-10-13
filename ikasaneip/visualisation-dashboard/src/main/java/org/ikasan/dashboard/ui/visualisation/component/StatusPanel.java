@@ -1,8 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -13,10 +12,12 @@ import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,17 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Flow currentFlow;
 
     private Registration broadcasterRegistration;
+    private ModuleControlRestServiceImpl moduleControlRestService;
 
-    public StatusPanel()
+    private Tooltip runningButtonTooltip;
+    private Tooltip stoppedButtonTooltip;
+    private Tooltip stoppedInErrorButtonTooltip;
+    private Tooltip recoveringButtonTooltip;
+    private Tooltip pauseButtonTooltip;
+
+    public StatusPanel(ModuleControlRestServiceImpl moduleControlRestService)
     {
+        this.moduleControlRestService = moduleControlRestService;
         init();
     }
 
@@ -55,28 +64,38 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
         runningButton = this.createStatusButton();
         runningButton.setText("0");
+        runningButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(runningButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout runningButtonLayout = this.createStatusButtonLayout(runningButton, runningLabel);
+        runningButtonLayout.add(runningButtonTooltip);
 
         stoppedButton = this.createStatusButton();
         stoppedButton.setText("0");
+        stoppedButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stoppedButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout stoppedButtonLayout = this.createStatusButtonLayout(stoppedButton, stoppedLabel);
+        stoppedButtonLayout.add(stoppedButtonTooltip);
 
         stoppedInErrorButton = this.createStatusButton();
         stoppedInErrorButton.setText("0");
+        stoppedInErrorButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stoppedInErrorButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout stoppedInErrorButtonLayout = this.createStatusButtonLayout(stoppedInErrorButton, stoppedInErrorLabel);
+        stoppedInErrorButtonLayout.add(stoppedInErrorButtonTooltip);
 
         recoveringButton = this.createStatusButton();
         recoveringButton.setText("0");
+        recoveringButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(recoveringButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout recoveringButtonLayout = this.createStatusButtonLayout(recoveringButton, recoveringLabel);
+        recoveringButtonLayout.add(recoveringButtonTooltip);
 
         pauseButton = this.createStatusButton();
         pauseButton.setText("0");
+        pauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(pauseButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout pauseButtonLayout = this.createStatusButtonLayout(pauseButton, pausedLabel);
+        pauseButtonLayout.add(pauseButtonTooltip);
 
         this.setSpacing(false);
         this.setMargin(false);
@@ -95,7 +114,14 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         statusButton.getStyle().set("border-color", "rgb(241,90,35)");
         statusButton.setHeight("35px");
         statusButton.setWidth("35px");
-        statusButton.setEnabled(false);
+        statusButton.setEnabled(true);
+
+        statusButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            ModuleStatusDialog moduleStatusDialog = new ModuleStatusDialog(currentModule
+                , this.moduleControlRestService);
+            moduleStatusDialog.open();
+        });
 
         return statusButton;
     }
@@ -138,6 +164,12 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
                 calculateStatus();
             });
         });
+
+        this.stoppedButtonTooltip.attachToComponent(stoppedButton);
+        this.recoveringButtonTooltip.attachToComponent(recoveringButton);
+        this.runningButtonTooltip.attachToComponent(runningButton);
+        this.stoppedInErrorButtonTooltip.attachToComponent(stoppedInErrorButton);
+        this.pauseButtonTooltip.attachToComponent(pauseButton);
     }
 
     protected void calculateStatus()

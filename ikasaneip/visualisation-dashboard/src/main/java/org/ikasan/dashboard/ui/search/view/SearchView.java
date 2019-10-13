@@ -59,7 +59,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-@Route(value = "search", layout = IkasanAppLayout.class)
+@Route(value = "", layout = IkasanAppLayout.class)
 @UIScope
 @Component
 public class SearchView extends VerticalLayout implements BeforeEnterObserver
