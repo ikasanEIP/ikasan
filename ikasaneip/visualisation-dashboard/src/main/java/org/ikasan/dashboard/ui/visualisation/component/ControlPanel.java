@@ -324,7 +324,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         this.module = event.getModule();
         this.currentFlow = event.getFlow();
 
-        FlowState flowState = FlowStateCache.instance().get(module.getName()+currentFlow.getName());
+        FlowState flowState = FlowStateCache.instance().get(module, currentFlow);
 
         if(flowState != null)
         {

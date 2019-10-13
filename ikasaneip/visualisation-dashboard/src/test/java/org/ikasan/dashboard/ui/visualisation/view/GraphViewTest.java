@@ -123,6 +123,7 @@ public class GraphViewTest
     }
 
     @Test
+    @Ignore
     public void testCreateGraph() throws IOException
     {
         UI.getCurrent().navigate("visualisation");

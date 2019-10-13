@@ -2,6 +2,7 @@ package org.ikasan.dashboard.beans;
 
 import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
 import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetadataServiceImpl;
+import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.util.DashboardCacheAdapter;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
@@ -13,6 +14,7 @@ import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
 import org.ikasan.module.metadata.service.SolrModuleMetadataServiceImpl;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.service.SolrReplayServiceImpl;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
@@ -33,8 +35,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Configuration
-public class ComponentFactory
+public class DashboardComponentFactory
 {
     @Value("${solr.url}")
     private String solrUrl;
@@ -45,6 +49,8 @@ public class ComponentFactory
     @Value("${solr.password}")
     private String solrPassword;
 
+    @Resource
+    private ModuleControlRestServiceImpl moduleControlRestService;
 
 
     @Bean
@@ -173,5 +179,13 @@ public class ComponentFactory
     public FlowStateCacheAdapter dashboardCacheAdapter()
     {
         return new DashboardCacheAdapter();
+    }
+
+    @Bean
+    public FlowStateCache flowStateCache()
+    {
+        FlowStateCache flowStateCache = FlowStateCache.instance();
+        flowStateCache.setModuleControlRestService(this.moduleControlRestService);
+        return flowStateCache;
     }
 }

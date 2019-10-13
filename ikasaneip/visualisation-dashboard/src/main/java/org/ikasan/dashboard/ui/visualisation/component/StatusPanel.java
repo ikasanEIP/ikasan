@@ -150,9 +150,13 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
         for(Flow flow: currentModule.getFlows())
         {
-            FlowState flowState = FlowStateCache.instance().get(currentModule.getName()+flow.getName());
+            FlowState flowState = FlowStateCache.instance().get(currentModule, flow);
 
-            if(flowState == null || flowState.getState().equals(State.RUNNING_STATE))
+            if(flowState == null)
+            {
+                continue;
+            }
+            else if(flowState.getState().equals(State.RUNNING_STATE))
             {
                 running++;
             }

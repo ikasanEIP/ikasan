@@ -203,12 +203,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             this.networkDiagram.drawFlow(this.currentFlow.getX(), this.currentFlow.getY(), this.currentFlow.getW(), this.currentFlow.getH(), this.currentFlow.getName());
 
-            FlowState flowState = FlowStateCache.instance().get(this.module.getName()+this.currentFlow.getName());
-
-            if(flowState == null)
-            {
-                flowState = this.refreshFromSource(module.getName(), currentFlow.getName(), module.getUrl());
-            }
+            FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
 
             if(flowState != null)
             {
@@ -227,20 +222,6 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             this.add(networkDiagram);
         }
-    }
-
-    public FlowState refreshFromSource(String moduleName, String flowName, String contextUrl)
-    {
-        Optional<FlowDto> flowDto =  this.moduleControlRestService.getFlowState(contextUrl, moduleName, flowName);
-
-        FlowState state = null;
-        if(flowDto.isPresent())
-        {
-            state = new FlowState(moduleName, flowName, State.getState(flowDto.get().getState()));
-            FlowStateCache.instance().put(state);
-        }
-
-        return state;
     }
 
     public void setCurrentFlow(Flow currentFlow)

@@ -25,7 +25,9 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import elemental.json.JsonArray;
+import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
@@ -34,6 +36,7 @@ import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
+import org.ikasan.dashboard.ui.visualisation.component.FlowComboBox;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
 import org.ikasan.dashboard.ui.visualisation.component.StatusPanel;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
@@ -127,7 +130,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private ModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
     private HorizontalLayout hl = new HorizontalLayout();
-    private ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow> flowComboBox;
+    private FlowComboBox flowComboBox;
     private ControlPanel controlPanel;
 
     private Registration broadcasterRegistration;
@@ -138,6 +141,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private Flow currentFlow;
 
     private List<GraphViewChangeListener> graphViewChangeListeners;
+
+    private boolean initialised = false;
 
     /**
      * Constructor
@@ -232,7 +237,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
 
-        flowComboBox = new ComboBox<>();
+        flowComboBox = new FlowComboBox();
         flowComboBox.setItemLabelGenerator(org.ikasan.dashboard.ui.visualisation.model.flow.Flow::getName);
         flowComboBox.setHeight("40px");
         flowComboBox.setWidth("600px");
@@ -242,8 +247,16 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             HorizontalLayout container = new HorizontalLayout();
 
             Icon icon = new Icon(VaadinIcon.CIRCLE);
-            icon.setColor("green");
+
+            FlowState flowState = FlowStateCache.instance().get(currentModule, item);
+
+            if(flowState != null)
+            {
+                icon.setColor(flowState.getState().getStateColour());
+            }
+
             icon.setSize("15px");
+            icon.setVisible(true);
             VerticalLayout verticalLayout = new VerticalLayout();
             verticalLayout.setWidth("20px");
             verticalLayout.add(icon);
@@ -258,15 +271,19 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             return container;
         }));
 
-        this.flowComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow>, org.ikasan.dashboard.ui.visualisation.model.flow.Flow>>) comboBoxFlowComponentValueChangeEvent -> {
-            logger.info("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
-            this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
-            this.moduleVisualisation.redraw();
+        this.flowComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow>, org.ikasan.dashboard.ui.visualisation.model.flow.Flow>>) comboBoxFlowComponentValueChangeEvent ->
+        {
+            if(comboBoxFlowComponentValueChangeEvent.getValue() != null)
+            {
+                logger.info("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+                this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
+                this.moduleVisualisation.redraw();
 
-            this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
+                this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
 
-            this.fireModuleFlowChangeEvent();
-            logger.info("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+                this.fireModuleFlowChangeEvent();
+                logger.info("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+            }
         });
 
         HorizontalLayout moduleNameLayout = new HorizontalLayout();
@@ -292,7 +309,10 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         hl.add(moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
         hl.setVerticalComponentAlignment(Alignment.BASELINE, moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
 
-        hl.setVisible(false);
+        if(this.currentModule == null)
+        {
+            hl.setVisible(false);
+        }
 
         moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService);
 
@@ -402,8 +422,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         moduleVisualisation.addModule(module);
         moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
         moduleVisualisation.redraw();
-        this.flowComboBox.setItems(module.getFlows());
-        this.flowComboBox.setValue(module.getFlows().get(0));
+        this.flowComboBox.setCurrentModule(module);
         this.add(moduleVisualisation);
     }
 
@@ -798,7 +817,13 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         UI ui = attachEvent.getUI();
         this.controlPanel = new ControlPanel(this.moduleControlRestService);
-        this.init();
+
+        if(!initialised)
+        {
+            this.init();
+            initialised = true;
+        }
+
         broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
             ui.access(() ->
@@ -807,6 +832,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                logger.info("Received flow state: " + flowState);
             });
         });
+
     }
 
     @Override
