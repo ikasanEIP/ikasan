@@ -24,6 +24,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.*;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
@@ -35,6 +36,7 @@ import org.ikasan.dashboard.ui.search.listener.ReplayEventSubmissionListener;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.DateTimeUtil;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.replay.dao.SolrReplayDao;
@@ -117,6 +119,22 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private Registration ignoreHospitalEventRegistration;
     private IgnoreHospitalEventSubmissionListener ignoreHospitalEventSubmissionListener;
 
+    private Button allButton;
+    private Tooltip allButtonTooltip;
+    private Button wiretapButton;
+    private Tooltip wiretapButtonTooltip;
+    private Button hospitalButton;
+    private Tooltip hospitalButtonTooltip;
+    private Button errorButton;
+    private Tooltip errorButtonTooltip;
+    private Button replaySearchButton;
+    private Tooltip replaySearchButtonTooltip;
+    private Tooltip replayButtonTooltip;
+    private Tooltip selectAllTooltip;
+    private Tooltip resubmitButtonTooltip;
+    private Tooltip ignoreButtonTooltip;
+
+
     String currentSearchType = "";
 
     /**
@@ -188,18 +206,20 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         Image allButtonImage = new Image("frontend/images/all-services-icon.png", "");
         allButtonImage.setHeight("40px");
-        Button allButton = new Button(allButtonImage);
-        Tooltip allButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(allButton, getTranslation("tooltip.search-all-event-types", UI.getCurrent().getLocale()));
+        allButton = new Button(allButtonImage);
 
         addButtonSearchListener(ALL, allButton, allButtonLabel, wiretapButtonLabel, errorButtonLabel, replayButtonLabel, hospitalButtonLabel);
+
+        allButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(allButton, getTranslation("tooltip.search-all-event-types"
+            , UI.getCurrent().getLocale()));
 
         VerticalLayout allButtonLayout = createSearchButtonLayout(allButton, allButtonLabel);
         allButtonLayout.add(allButtonTooltip);
 
         Image wiretapImage = new Image("frontend/images/wiretap-service.png", "");
         wiretapImage.setHeight("40px");
-        Button wiretapButton = new Button(wiretapImage);
-        Tooltip wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(wiretapButton, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
+        wiretapButton = new Button(wiretapImage);
+        wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(wiretapButton, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
 
         addButtonSearchListener(WIRETAP, wiretapButton, allButtonLabel, errorButtonLabel, replayButtonLabel, hospitalButtonLabel);
 
@@ -208,8 +228,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         Image errorImage = new Image("frontend/images/error-service.png", "");
         errorImage.setHeight("40px");
-        Button errorButton = new Button(errorImage);
-        Tooltip errorButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(errorButton, getTranslation("tooltip.search-error-events", UI.getCurrent().getLocale()));
+        errorButton = new Button(errorImage);
+        errorButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(errorButton, getTranslation("tooltip.search-error-events", UI.getCurrent().getLocale()));
 
         addButtonSearchListener(ERROR, errorButton, errorButtonLabel, allButtonLabel, wiretapButtonLabel, replayButtonLabel, hospitalButtonLabel);
 
@@ -218,8 +238,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         Image hospitalImage = new Image("frontend/images/hospital-service.png", "");
         hospitalImage.setHeight("40px");
-        Button hospitalButton = new Button(hospitalImage);
-        Tooltip hospitalButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(hospitalButton, getTranslation("tooltip.search-hospital-events", UI.getCurrent().getLocale()));
+        hospitalButton = new Button(hospitalImage);
+        hospitalButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(hospitalButton, getTranslation("tooltip.search-hospital-events", UI.getCurrent().getLocale()));
 
         addButtonSearchListener(EXCLUSION, hospitalButton,  allButtonLabel, wiretapButtonLabel, replayButtonLabel, errorButtonLabel);
 
@@ -228,13 +248,13 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         Image replayImage = new Image("frontend/images/replay-service.png", "");
         replayImage.setHeight("40px");
-        Button replayButton = new Button(replayImage);
-        Tooltip replayButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replayButton, getTranslation("tooltip.search-replay-events", UI.getCurrent().getLocale()));
+        replaySearchButton = new Button(replayImage);
+        replaySearchButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replaySearchButton, getTranslation("tooltip.search-replay-events", UI.getCurrent().getLocale()));
 
-        addButtonSearchListener(REPLAY, replayButton, allButtonLabel, wiretapButtonLabel, hospitalButtonLabel, errorButtonLabel);
+        addButtonSearchListener(REPLAY, replaySearchButton, allButtonLabel, wiretapButtonLabel, hospitalButtonLabel, errorButtonLabel);
 
-        VerticalLayout replayButtonLayout = createSearchButtonLayout(replayButton, replayButtonLabel);
-        replayButtonLayout.add(replayButtonTooltip);
+        VerticalLayout replayButtonLayout = createSearchButtonLayout(replaySearchButton, replayButtonLabel);
+        replayButtonLayout.add(replaySearchButtonTooltip);
 
         HorizontalLayout checkBoxLayout = new HorizontalLayout();
         checkBoxLayout.setSpacing(true);
@@ -271,6 +291,11 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         Image ignoreImage = new Image("/frontend/images/ignore-icon.png", "");
         ignoreImage.setHeight("30px");
         ignoreButton = new Button(ignoreImage);
+
+        selectAllTooltip = TooltipHelper.getTooltipForComponentTopRight(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
+        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
+        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
+        replayButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
 
@@ -379,14 +404,27 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             "<div>[[item.event]]</div>")
             .withProperty("event",
                 ikasanSolrDocument -> {
-                    if(ikasanSolrDocument.getEvent() == null)
+                    if(ikasanSolrDocument.getType().equals("error"))
                     {
-                        return "";
+                        if (ikasanSolrDocument.getErrorMessage() == null)
+                        {
+                            return "";
+                        } else
+                        {
+                            int endIndex = ikasanSolrDocument.getErrorMessage().length() > 200 ? 200 : ikasanSolrDocument.getErrorMessage().length();
+                            return ikasanSolrDocument.getErrorMessage().substring(0, endIndex);
+                        }
                     }
                     else
                     {
-                        int endIndex = ikasanSolrDocument.getEvent().length() > 200 ? 200 : ikasanSolrDocument.getEvent().length();
-                        return ikasanSolrDocument.getEvent().substring(0, endIndex);
+                        if (ikasanSolrDocument.getEvent() == null)
+                        {
+                            return "";
+                        } else
+                        {
+                            int endIndex = ikasanSolrDocument.getEvent().length() > 200 ? 200 : ikasanSolrDocument.getEvent().length();
+                            return ikasanSolrDocument.getEvent().substring(0, endIndex);
+                        }
                     }
                 }))
             .setKey("event")
@@ -615,8 +653,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         if(this.currentSearchType.equals(REPLAY))
         {
-            Tooltip replayButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
-            Tooltip selectAllTooltip = TooltipHelper.getTooltipForComponentTopRight(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
             buttonLayout.add(replayButton, replayButtonTooltip, selectAllButton, selectAllTooltip);
 
             ComponentSecurityVisibility.applySecurity(replayButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
@@ -626,9 +662,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         }
         else if(this.currentSearchType.equals(EXCLUSION))
         {
-            Tooltip resubmitButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
-            Tooltip ignoreButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
-            Tooltip selectAllTooltip = TooltipHelper.getTooltipForComponentTopRight(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
             buttonLayout.add(this.resubmitButton, resubmitButtonTooltip, this.ignoreButton, ignoreButtonTooltip, this.selectAllButton, selectAllTooltip);
 
             ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
@@ -764,6 +797,20 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         {
             this.term = term;
         }
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.allButtonTooltip.attachToComponent(this.allButton);
+        this.wiretapButtonTooltip.attachToComponent(this.wiretapButton);
+        this.errorButtonTooltip.attachToComponent(this.errorButton);
+        this.hospitalButtonTooltip.attachToComponent(this.hospitalButton);
+        this.replaySearchButtonTooltip.attachToComponent(this.replaySearchButton);
+        this.replayButtonTooltip.attachToComponent(this.replayButton);
+        this.selectAllTooltip.attachToComponent(this.selectAllButton);
+        this.resubmitButtonTooltip.attachToComponent(this.resubmitButton);
+        this.ignoreButtonTooltip.attachToComponent(this.ignoreButton);
     }
 }
 

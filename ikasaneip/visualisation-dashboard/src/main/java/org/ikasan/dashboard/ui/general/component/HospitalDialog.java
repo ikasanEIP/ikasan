@@ -2,10 +2,7 @@ package org.ikasan.dashboard.ui.general.component;
 
 
 import com.vaadin.componentfactory.Tooltip;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
@@ -35,6 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.olli.FileDownloadWrapper;
 
 import java.io.ByteArrayInputStream;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -59,6 +57,9 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private HospitalAuditService hospitalAuditService;
 
     private IkasanSolrDocument ikasanSolrDocument;
+
+    private Button downloadButton;
+    private Tooltip downloadButtonTooltip;
 
 
     public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService)
@@ -112,8 +113,8 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         formLayout.setSizeFull();
 
-        Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        Tooltip downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-hospital-event", UI.getCurrent().getLocale()));
+        downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-hospital-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("exclusion.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
@@ -223,11 +224,11 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         {
             if(tabs.getSelectedTab().equals(exclusionTab))
             {
-                super.juicyAceEditor.setValue(this.exclusionPayload);
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.exclusionPayload)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(this.errorOccurrence.getErrorDetail());
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.errorOccurrence.getErrorDetail())).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });
 
@@ -269,17 +270,23 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
      */
     protected ExclusionEventAction getExclusionEventAction(String comment, String action, IkasanSolrDocument document, String user)
     {
-        ExclusionEventAction recordedEventAction = new ExclusionEventActionImpl();
-        recordedEventAction.setComment(comment);
-        recordedEventAction.setAction(action);
-        recordedEventAction.setActionedBy(user);
+        ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
+        exclusionEventAction.setComment(comment);
+        exclusionEventAction.setAction(action);
+        exclusionEventAction.setActionedBy(user);
         // the error uri is in fact the id of excluded events
-        recordedEventAction.setErrorUri(document.getId());
-        recordedEventAction.setEvent(document.getEvent());
-        recordedEventAction.setModuleName(document.getModuleName());
-        recordedEventAction.setFlowName(document.getFlowName());
-        recordedEventAction.setTimestamp(System.currentTimeMillis());
+        exclusionEventAction.setErrorUri(document.getId());
+        exclusionEventAction.setEvent(document.getEvent());
+        exclusionEventAction.setModuleName(document.getModuleName());
+        exclusionEventAction.setFlowName(document.getFlowName());
+        exclusionEventAction.setTimestamp(System.currentTimeMillis());
 
-        return recordedEventAction;
+        return exclusionEventAction;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.downloadButtonTooltip.attachToComponent(downloadButton);
     }
 }

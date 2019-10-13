@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -30,6 +31,8 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private StreamResource streamResource;
     private FileDownloadWrapper buttonWrapper;
 
+    private Button downloadButton;
+    private Tooltip downloadButtonTooltip;
 
     public ReplayDialog()
     {
@@ -68,8 +71,8 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         formLayout.setSizeFull();
 
-        Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        Tooltip downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-replay-event", UI.getCurrent().getLocale()));
+        downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-replay-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("replay.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
@@ -96,5 +99,11 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(replayEvent.getTimestamp()));
 
         super.open(replayEvent.getEvent());
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.downloadButtonTooltip.attachToComponent(downloadButton);
     }
 }

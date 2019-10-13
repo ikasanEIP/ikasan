@@ -26,6 +26,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     protected Transformer transformer;
     protected JuicyAceEditor juicyAceEditor;
     protected boolean initialised = false;
+    protected VerticalLayout layout = new VerticalLayout();
 
     public abstract Component getEntityDetailsLayout();
 
@@ -33,6 +34,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
     public AbstractEntityViewDialog()
     {
+        this.setSizeFull();
         try
         {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -45,22 +47,11 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
             throw  new IllegalStateException("Could not construct EventViewDialog!", e);
         }
 
-
-        juicyAceEditor = new JuicyAceEditor();
-        juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
-        juicyAceEditor.setMode(JuicyAceMode.xml);
-        juicyAceEditor.setWidth("1400px");
-        juicyAceEditor.setHeight("55vh");
-        juicyAceEditor.setFontsize(12);
-        juicyAceEditor.setSofttabs(false);
-        juicyAceEditor.setTabsize(12);
-        juicyAceEditor.setReadonly(true);
-        juicyAceEditor.setWrapmode(true);
+        initialiseEditor();
     }
 
     private void init()
     {
-        VerticalLayout layout = new VerticalLayout();
         layout.setWidth("100%");
 
         layout.add(this.getEntityDetailsLayout(), juicyAceEditor);
@@ -76,7 +67,16 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
             initialised = true;
         }
 
-        String xmlString = null;
+        String xmlString = formatXml(event);
+
+        juicyAceEditor.setValue(xmlString);
+
+        open();
+    }
+
+    protected String formatXml(String event)
+    {
+        String xmlString;
         try
         {
             Document doc = this.documentBuilder
@@ -92,8 +92,20 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
             xmlString = event;
         }
 
-        juicyAceEditor.setValue(xmlString);
+        return xmlString;
+    }
 
-        open();
+    protected void initialiseEditor()
+    {
+        juicyAceEditor = new JuicyAceEditor();
+        juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
+        juicyAceEditor.setMode(JuicyAceMode.xml);
+        juicyAceEditor.setWidth("1400px");
+        juicyAceEditor.setHeight("55vh");
+        juicyAceEditor.setFontsize(12);
+        juicyAceEditor.setSofttabs(false);
+        juicyAceEditor.setTabsize(12);
+        juicyAceEditor.setReadonly(true);
+        juicyAceEditor.setWrapmode(true);
     }
 }

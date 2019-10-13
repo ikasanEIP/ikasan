@@ -1,6 +1,10 @@
 package org.ikasan.dashboard.ui.general.component;
 
+import com.juicy.JuicyAceEditor;
+import com.juicy.mode.JuicyAceMode;
+import com.juicy.theme.JuicyAceTheme;
 import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -20,6 +24,7 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.vaadin.olli.FileDownloadWrapper;
 
 import java.io.ByteArrayInputStream;
+import java.util.Optional;
 
 public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 {
@@ -33,6 +38,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
     private StreamResource streamResource;
     private FileDownloadWrapper buttonWrapper;
+    private Tooltip downloadButtonTooltip;
 
     private String errorEvent;
     private String errorDetails;
@@ -87,7 +93,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         formLayout.setSizeFull();
 
         Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        Tooltip downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("error.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
@@ -108,11 +114,11 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         {
             if(tabs.getSelectedTab().equals(errorTab))
             {
-                super.juicyAceEditor.setValue(this.errorDetails);
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorDetails)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(this.errorEvent);
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorEvent)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });
 
@@ -127,21 +133,23 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public void populate(IkasanSolrDocument errorEvent)
     {
-        this.moduleNameTf.setValue(errorEvent.getModuleName());
-        this.flowNameTf.setValue(errorEvent.getFlowName());
-        this.componentNameTf.setValue(errorEvent.getComponentName());
-        this.eventIdTf.setValue(errorEvent.getEventId());
-        this.errorUriTf.setValue(errorEvent.getErrorUri());
+        this.moduleNameTf.setValue(Optional.ofNullable(errorEvent.getModuleName()).orElse(""));
+        this.flowNameTf.setValue(Optional.ofNullable(errorEvent.getFlowName()).orElse(""));
+        this.componentNameTf.setValue(Optional.ofNullable(errorEvent.getComponentName()).orElse(""));
+        this.eventIdTf.setValue(Optional.ofNullable(errorEvent.getEventId()).orElse(""));
+        this.errorUriTf.setValue(Optional.ofNullable(errorEvent.getErrorUri()).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(errorEvent.getTimestamp()));
-
-        if (errorEvent.getExceptionClass() != null)
-        {
-            this.errorClassTf.setValue(errorEvent.getExceptionClass());
-        }
+        this.errorClassTf.setValue(Optional.ofNullable(errorEvent.getExceptionClass()).orElse(""));
 
         this.errorEvent = errorEvent.getEvent();
         this.errorDetails = errorEvent.getErrorDetail();
 
         super.open(errorEvent.getErrorDetail());
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.downloadButtonTooltip.attachToComponent(buttonWrapper);
     }
 }

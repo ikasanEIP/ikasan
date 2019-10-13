@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -30,6 +31,8 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private StreamResource streamResource;
     private  FileDownloadWrapper buttonWrapper;
 
+    private Button downloadButton;
+    private Tooltip downloadButtonTooltip;
 
     public WiretapDialog()
     {
@@ -71,8 +74,8 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         formLayout.setSizeFull();
 
-        Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        Tooltip allButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-wiretap-event", UI.getCurrent().getLocale()));
+        downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-wiretap-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("wiretap.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
@@ -81,7 +84,7 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         buttonWrapper.wrapComponent(downloadButton);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(headerLayout, formLayout, buttonWrapper, allButtonTooltip);
+        layout.add(headerLayout, formLayout, buttonWrapper, downloadButtonTooltip);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
 
         return layout;
@@ -97,5 +100,11 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(wiretapEvent.getTimestamp()));
 
         super.open(wiretapEvent.getEvent());
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.downloadButtonTooltip.attachToComponent(downloadButton);
     }
 }
