@@ -23,10 +23,12 @@ public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
     private static final String MODULE_SIX = "/data/graph/module-six.json";
 
     private Map<String, String> moduleMetadata;
+    private JsonModuleMetaDataProvider provider;
 
     public ModuleMetaDataDaoImpl()
     {
         this.moduleMetadata = new HashMap<>();
+        provider = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
 
         init();
     }
@@ -58,8 +60,6 @@ public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
     @Override
     public List<ModuleMetaData> getAllModule()
     {
-        JsonModuleMetaDataProvider provider = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
-
         return this.moduleMetadata.values().stream()
             .map(moduleMetadata -> provider.deserialiseModule(moduleMetadata))
             .collect(Collectors.toList());
