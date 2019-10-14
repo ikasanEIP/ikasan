@@ -40,17 +40,16 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
+import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -68,11 +67,11 @@ public class ActionedExcludedEventPopup extends UI
 	{		
 		ErrorOccurrence errorOccurrence
 		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
-		SolrExclusionEventActionImpl exclusionEventAction
-	 		= (SolrExclusionEventActionImpl)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
+        ExclusionEventAction exclusionEventAction
+	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
 		
-		HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService
- 			= (HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService
+ 			= (HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
  		
 		TopologyService topologyService
  			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");

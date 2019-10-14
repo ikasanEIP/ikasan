@@ -12,8 +12,6 @@ import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
@@ -28,7 +26,6 @@ import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.service.SolrReplayServiceImpl;
@@ -39,6 +36,7 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -50,12 +48,14 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Calendar;
+import java.util.*;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -79,7 +79,7 @@ public class SearchPanel extends Panel implements View
     private ReplayService replayService;
     private TopologyService topologyService;
     private SolrExclusionServiceImpl exclusionManagementService;
-    private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+    private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
     private ErrorReportingManagementService errorReportingManagementService;
     private HospitalService<byte[]> hospitalService;
     private String solrUsername;
@@ -92,7 +92,7 @@ public class SearchPanel extends Panel implements View
     public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
                        SolrWiretapServiceImpl wiretapService,SolrErrorReportingManagementServiceImpl errorReportingService, SolrReplayServiceImpl replayManagementService,
                        ReplayService replayService, TopologyService topologyService, SolrExclusionServiceImpl exclusionManagementService,
-                       HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
+                       HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
                        ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
     {
         this.solrSearchService = solrSearchService;
@@ -164,7 +164,7 @@ public class SearchPanel extends Panel implements View
                     {
                         ExclusionEvent exclusionEvent = exclusionManagementService.find(ikasanSolrDocument.getId());
                         ErrorOccurrence errorOccurrence = errorReportingService.find(ikasanSolrDocument.getId());
-                        SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
+                        ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(ikasanSolrDocument.getId());
                         ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
                                 , action, hospitalManagementService, topologyService, (ErrorReportingManagementService) errorReportingManagementService, hospitalService);
 

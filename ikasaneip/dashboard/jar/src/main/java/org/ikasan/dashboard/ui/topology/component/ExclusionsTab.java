@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response;
 
 import com.vaadin.server.*;
 import com.vaadin.shared.Position;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
@@ -72,7 +73,6 @@ import org.ikasan.dashboard.ui.topology.panel.ResubmitIgnoreStatusPanel;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
@@ -131,7 +131,7 @@ public class ExclusionsTab extends TopologyTab
 	private ErrorReportingService errorReportingService;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 
 	private PlatformConfigurationService platformConfigurationService;
@@ -146,7 +146,7 @@ public class ExclusionsTab extends TopologyTab
 
 
 	public ExclusionsTab(ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-                         HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo, HospitalService<byte[]> hospitalService,
+                         HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo, HospitalService<byte[]> hospitalService,
                          PlatformConfigurationService platformConfigurationService)
 	{
 		this.errorReportingService = errorReportingService;
@@ -211,7 +211,7 @@ public class ExclusionsTab extends TopologyTab
 				{
 					ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
 					ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-					SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+                    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 					ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
 							, action, hospitalManagementService, topologyService, errorReportingManagementService, hospitalService);
 
@@ -728,7 +728,7 @@ public class ExclusionsTab extends TopologyTab
 				{
 					VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvent", exclusionEvent);
 
-					SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+                    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 
 					VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorOccurrence", errorOccurrence);
 

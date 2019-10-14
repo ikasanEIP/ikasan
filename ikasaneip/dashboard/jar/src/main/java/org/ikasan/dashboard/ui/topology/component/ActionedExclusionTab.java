@@ -40,6 +40,40 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.*;
+import com.vaadin.shared.Position;
+import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.dashboard.ui.ActionedExcludedEventPopup;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
+import org.ikasan.dashboard.ui.framework.window.TextWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tepi.filtertable.FilterTable;
+import org.vaadin.teemu.VaadinIcons;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,51 +82,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.vaadin.server.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.ActionedExcludedEventPopup;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
-import org.ikasan.dashboard.ui.framework.window.TextWindow;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.service.TopologyService;
-import org.tepi.filtertable.FilterTable;
-import org.vaadin.teemu.VaadinIcons;
-
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.shared.Position;
-import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -114,7 +103,7 @@ public class ActionedExclusionTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private ErrorReportingService errorReportingService;
 	private TopologyService topologyService;
 	
@@ -130,7 +119,7 @@ public class ActionedExclusionTab extends TopologyTab
 	
 	
 	public ActionedExclusionTab(ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-                                HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, ErrorReportingService errorReportingService,
+                                HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, ErrorReportingService errorReportingService,
                                 TopologyService topologyService, ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
 	{
 		this.exclusionManagementService = exclusionManagementService;
@@ -185,10 +174,10 @@ public class ActionedExclusionTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		    		SolrExclusionEventActionImpl exclusionEventAction = (SolrExclusionEventActionImpl)itemClickEvent.getItemId();
+                    ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
 			    	
 			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
-			    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
+                    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
 			    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, 
 			    			action, hospitalManagementService, topologyService);
 			    
@@ -242,7 +231,7 @@ public class ActionedExclusionTab extends TopologyTab
             	}
             	
             	logger.info("Trying to search for ExclusionEventAction");
-            	List<SolrExclusionEventActionImpl> exclusionEventActions = hospitalManagementService.getActionedExclusions
+            	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
             			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
             	
             	logger.info("Results ExclusionEventAction: " + exclusionEventActions.size());
@@ -274,7 +263,7 @@ public class ActionedExclusionTab extends TopologyTab
             		notif.show(Page.getCurrent());
             	}
             	
-            	for(final SolrExclusionEventActionImpl exclusionEventAction: exclusionEventActions)
+            	for(final ExclusionEventAction exclusionEventAction: exclusionEventActions)
             	{
             		Date date = new Date(exclusionEventAction.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

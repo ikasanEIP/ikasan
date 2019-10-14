@@ -40,21 +40,20 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Container;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
+import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -76,7 +75,7 @@ public class CategorisedErrorOccurrencePopup extends UI
 		 ErrorReportingManagementService errorReportingManagementService 
 		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
 		 
-		 HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService
+		 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService
 		 	= (HospitalManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
 			
 		 TopologyService topologyService = (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");

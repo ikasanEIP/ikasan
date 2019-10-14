@@ -40,28 +40,6 @@
  */
 package org.ikasan.dashboard.ui.topology.panel.deeplink;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.window.LoginDialog;
-import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
-import org.ikasan.dashboard.ui.topology.util.FilterMap;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.model.Filter;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.Page;
@@ -73,6 +51,27 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
+import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.LoginDialog;
+import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
+import org.ikasan.dashboard.ui.topology.util.FilterMap;
+import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.model.Filter;
+import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -95,7 +94,7 @@ public class CategorisedErrorsByFilterDeepLinkPanel extends UI
 	private TopologyService topologyService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private ErrorCategorisationService errorCategorisationService;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	
 	/**
 	 * @param errorOccurrence
@@ -103,7 +102,7 @@ public class CategorisedErrorsByFilterDeepLinkPanel extends UI
 	 */
 	public CategorisedErrorsByFilterDeepLinkPanel(ErrorCategorisationService errorCategorisationService,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			PlatformConfigurationService platformConfigurationService, NavigationPanel navigationPanel,
 			AuthenticationService authenticationService, VisibilityGroup visibilityGroup, UserService userService)

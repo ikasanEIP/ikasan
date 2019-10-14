@@ -40,21 +40,17 @@
  */
 package org.ikasan.dashboard.ui.topology.panel;
 
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.data.Container;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.server.VaadinService;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Window.CloseEvent;
+import com.vaadin.ui.themes.ValoTheme;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -66,17 +62,19 @@ import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -87,32 +85,17 @@ import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
 import org.xwiki.rendering.renderer.printer.WikiPrinter;
 import org.xwiki.rendering.syntax.Syntax;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HasComponents;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.CloseEvent;
-import com.vaadin.ui.themes.ValoTheme;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -127,7 +110,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private Container container;
@@ -145,7 +128,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
      */
 	public CategorisedErrorOccurrenceViewPanel(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			Container container)
 	{
@@ -283,8 +266,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		systemAction.setReadOnly(true);
 		systemAction.setWidth("80%");
 		layout.addComponent(systemAction, 3, 2);
-		
-		SolrExclusionEventActionImpl action = this.hospitalManagementService.getExclusionEventActionByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
+
+        ExclusionEventAction action = this.hospitalManagementService.getExclusionEventActionByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
 		
 		label = new Label("User Action:");
 		label.setSizeUndefined();		
@@ -383,8 +366,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	Notification.show("Event resumitted successfully.");
 	        	    	resubmitButton.setVisible(false);
 	        	    	ignoreButton.setVisible(false);
-	        	    	
-	        	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+
+                        ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());
@@ -457,8 +440,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	Notification.show("Event ignored successfully.");
 	        	    	resubmitButton.setVisible(false);
 	        	    	ignoreButton.setVisible(false);
-	        	    	
-	        	    	SolrExclusionEventActionImpl action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+
+                        ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());

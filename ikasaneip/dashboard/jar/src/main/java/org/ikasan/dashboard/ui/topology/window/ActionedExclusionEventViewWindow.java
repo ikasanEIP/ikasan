@@ -40,18 +40,17 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -70,8 +69,8 @@ public class ActionedExclusionEventViewWindow extends Window
 	private TextField roleName;
 	private TextField roleDescription;
 	private ErrorOccurrence errorOccurrence;
-	private SolrExclusionEventActionImpl action;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private ExclusionEventAction action;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 
 	/**
@@ -82,8 +81,8 @@ public class ActionedExclusionEventViewWindow extends Window
 	 * @param hospitalManagementService
 	 * @param topologyService
      */
-	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, SolrExclusionEventActionImpl action,
-                                            HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
+	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
+                                            HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;

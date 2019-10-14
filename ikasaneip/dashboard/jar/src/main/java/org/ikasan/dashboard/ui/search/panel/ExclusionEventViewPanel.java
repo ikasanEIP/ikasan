@@ -44,17 +44,17 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -80,16 +80,16 @@ public class ExclusionEventViewPanel extends Panel
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
-	private SolrExclusionEventActionImpl action;
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private ExclusionEventAction action;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private HospitalService<byte[]> hospitalService;
 	private TextArea comments;
 
 
-	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SolrExclusionEventActionImpl action,
-                                   HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
+                                   HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
                                    ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
@@ -234,7 +234,7 @@ public class ExclusionEventViewPanel extends Panel
 		}
 		else if(this.action != null && this.action.getEvent() != null)
 		{
-			eventEditor.setValue(this.action.getEvent());
+			eventEditor.setValue(this.action.getEvent().toString());
 		}
 		
 		eventEditor.setReadOnly(true);

@@ -40,44 +40,6 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.window.TextWindow;
-import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceCloseWindow;
-import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceCommentWindow;
-import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.SolrExclusionEventActionImpl;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.service.TopologyService;
-import org.tepi.filtertable.FilterTable;
-import org.vaadin.teemu.VaadinIcons;
-
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Item;
@@ -88,26 +50,44 @@ import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CustomTable;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.TextWindow;
+import org.ikasan.dashboard.ui.topology.window.*;
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tepi.filtertable.FilterTable;
+import org.vaadin.teemu.VaadinIcons;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -131,7 +111,7 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
-	private HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	
 	private TopologyService topologyService;
 	
@@ -165,7 +145,7 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
 			ErrorReportingManagementService errorReportingManagementService,
-			HospitalManagementService<SolrExclusionEventActionImpl, ModuleActionedExclusionCount> hospitalManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			PlatformConfigurationService platformConfigurationService, boolean showFilter)
 	{
