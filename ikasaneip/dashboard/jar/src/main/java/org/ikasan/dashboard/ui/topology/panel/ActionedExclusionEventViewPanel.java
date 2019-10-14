@@ -236,7 +236,7 @@ public class ActionedExclusionEventViewPanel extends Panel
 
 		if(this.action.getEvent() != null)
 		{
-			eventEditor.setValue(this.action.getEvent().toString());
+			eventEditor.setValue(new String((byte[])this.action.getEvent()));
 		}
 		
 		eventEditor.setReadOnly(true);
