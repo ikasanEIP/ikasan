@@ -42,17 +42,17 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
-import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 

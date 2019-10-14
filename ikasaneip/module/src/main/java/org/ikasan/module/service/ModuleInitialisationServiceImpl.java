@@ -428,9 +428,14 @@ public class ModuleInitialisationServiceImpl
      */
     public void initialiseModuleMetaData(Module module)
     {
-        topologyService.initialiseModuleMetaData(getServer().orElse(null), platformContext.getApplicationName()
+        Optional<Server> server = this.getServer();
+        topologyService.initialiseModuleMetaData(server.orElse(null), platformContext.getApplicationName()
             , this.moduleConverter.convert(module));
 
+        if(server.isPresent())
+        {
+            module.setUrl(server.get().getDescription());
+        }
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
 

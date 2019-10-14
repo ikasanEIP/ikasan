@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * HttpSessionRequestCache that avoids saving internal framework requests.
  */
-class CustomRequestCache extends HttpSessionRequestCache {
+class CustomRequestCache extends HttpSessionRequestCache
+{
+
     /**
      * {@inheritDoc}
      *
@@ -18,7 +20,8 @@ class CustomRequestCache extends HttpSessionRequestCache {
      * @see SecurityUtils#isFrameworkInternalRequest(HttpServletRequest)
      */
     @Override
-    public void saveRequest(HttpServletRequest request, HttpServletResponse response) {
+    public void saveRequest(HttpServletRequest request, HttpServletResponse response)
+    {
         if (!SecurityUtils.isFrameworkInternalRequest(request)) {
             super.saveRequest(request, response);
         }

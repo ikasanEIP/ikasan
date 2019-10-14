@@ -54,7 +54,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-rest-module-client</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Rest Module client</name>
+    <name>Ikasan Rest Module Client</name>
     <description>The rest module client library for the Ikasan Enterprise Integration Platform</description>
     <version>2.2.0-SNAPSHOT</version>
 

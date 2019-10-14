@@ -45,8 +45,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.ikasan.hospital.dao.HospitalDao;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.housekeeping.HousekeepService;
 

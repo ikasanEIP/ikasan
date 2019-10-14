@@ -46,7 +46,6 @@ import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.hospital.dao.HospitalDao;
-import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
@@ -55,6 +54,9 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
+
 
 /**
  * User and Authority service interface
@@ -134,8 +136,8 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         Object deserialisedEvent = serialiser.deserialise(event);
         logger.debug("deserialisedEvent " + deserialisedEvent);
         resubmissionService.onResubmission(deserialisedEvent);
-        ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
-                                                               ExclusionEventAction.RESUBMIT, event, moduleName,
+        ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, principal.getName(),
+            ExclusionEventActionImpl.RESUBMIT, event, moduleName,
                                                                flowName);
         exclusionManagementService.delete(errorUri);
         this.hospitalDao.saveOrUpdate(action);
@@ -154,7 +156,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         Object deserialisedEvent = serialiser.deserialise(exclusionEvent.getEvent());
         logger.debug("deserialisedEvent " + deserialisedEvent);
         resubmissionService.onResubmission(deserialisedEvent);
-        ExclusionEventAction action = new ExclusionEventAction(errorUri, userName, ExclusionEventAction.RESUBMIT,
+        ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, userName, ExclusionEventActionImpl.RESUBMIT,
                                                                exclusionEvent.getEvent(), moduleName, flowName);
         exclusionManagementService.delete(errorUri);
         this.hospitalDao.saveOrUpdate(action);
@@ -192,8 +194,8 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     @Override
     public void ignore(String moduleName, String flowName, String errorUri, byte[] event, Principal principal)
     {
-        ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
-                                                               ExclusionEventAction.IGNORED, event, moduleName,
+        ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, principal.getName(),
+            ExclusionEventActionImpl.IGNORED, event, moduleName,
                                                                flowName);
         exclusionManagementService.delete(errorUri);
         this.hospitalDao.saveOrUpdate(action);
@@ -206,7 +208,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     public void ignore(String moduleName, String flowName, String errorUri, String userName)
     {
         ExclusionEvent exclusionEvent = exclusionManagementService.find(errorUri);
-        ExclusionEventAction action = new ExclusionEventAction(errorUri, userName, ExclusionEventAction.IGNORED,
+        ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, userName, ExclusionEventActionImpl.IGNORED,
                                                                exclusionEvent.getEvent(), moduleName, flowName);
         exclusionManagementService.delete(errorUri);
         this.hospitalDao.saveOrUpdate(action);

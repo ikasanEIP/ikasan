@@ -76,7 +76,7 @@
                 <version>1.4.2</version>
                 <executions>
                     <execution>
-                        <id>install-jbpm</id>
+                        <id>install-solr</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>wget</goal>

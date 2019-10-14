@@ -444,7 +444,7 @@
 		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
         <version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
-        <version.org.apache.solr>7.7.0</version.org.apache.solr>
+        <version.org.apache.solr>8.2.0</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
@@ -1039,6 +1039,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-security-db</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1619,6 +1625,18 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${version.commons-beanutils}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${version.commons-logging}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>${version.xmlunit}</version>
@@ -1679,12 +1697,6 @@
                 <artifactId>json-lib</artifactId>
                 <version>${version.net.sf.json-lib}</version>
                 <classifier>jdk15</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -2218,12 +2230,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${version.org.quartz-scheduler}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>c3p0</groupId>
-                        <artifactId>c3p0</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -2340,18 +2346,6 @@
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${version.commons-lang}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${version.commons-logging}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${version.commons-beanutils}</version>
             </dependency>
 
             <dependency>
@@ -2629,6 +2623,10 @@
                     <exclusion>
                         <groupId>org.apache.httpcomponents</groupId>
                         <artifactId>httpcore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-http</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependencies -->
-        <vaadin.version>14.0.2</vaadin.version>
+        <vaadin.version>14.0.8</vaadin.version>
     </properties>
 
     <parent>
@@ -88,7 +88,6 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-login-flow</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -99,6 +98,12 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-data</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.olli</groupId>
+            <artifactId>file-download-wrapper</artifactId>
+            <version>1.1.0</version>
         </dependency>
 
         <dependency>
@@ -120,10 +125,22 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.47</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>sybase</groupId>-->
+            <!--<artifactId>jconn4</artifactId>-->
+            <!--<version>7.07_build_26846</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -149,12 +166,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.appreciated</groupId>
-            <artifactId>apexcharts</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-solr-client</artifactId>
             <version>2.2.0-SNAPSHOT</version>
@@ -169,6 +180,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-metadata</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-hospital</artifactId>
             <version>2.2.0-SNAPSHOT</version>
         </dependency>
 
@@ -208,6 +225,11 @@
             <version>2.2.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-rest-module-client</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.vaadin.erik</groupId>
@@ -219,6 +241,12 @@
             <groupId>org.vaadin.tabs</groupId>
             <artifactId>paged-tabs</artifactId>
             <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>tooltip</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
@@ -237,20 +265,6 @@
             <groupId>com.ximpleware</groupId>
             <artifactId>vtd-xml</artifactId>
             <version>2.13.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.4.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.mvysny.kaributesting</groupId>
-            <artifactId>karibu-testing-v10</artifactId>
-            <version>1.1.8</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -275,6 +289,59 @@
             <version>0.8.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.4.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.mvysny.kaributesting</groupId>
+            <artifactId>karibu-testing-v10</artifactId>
+            <version>1.1.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>2.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <version>2.5.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>2.0.7.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.28.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -287,19 +354,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.1.0</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>5.1.0</version>
-                    </dependency>
-                </dependencies>
+                <version>2.20.1</version>
                 <configuration>
                     <argLine>${argLine} -Dvaadin.compatibilityMode=true</argLine>
                 </configuration>
@@ -329,20 +384,16 @@
 
     <profiles>
         <profile>
-            <id>productionMode</id>
-            <activation>
-                <property>
-                    <name>vaadin.productionMode</name>
-                </property>
-            </activation>
-
+            <id>production</id>
+            <properties>
+                <vaadin.productionMode>true</vaadin.productionMode>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
@@ -352,38 +403,15 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>copy-production-files</goal>
-                                    <goal>package-for-production</goal>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <jvmArguments>-Dvaadin.productionMode</jvmArguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.19.1</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.junit.platform</groupId>
-                                <artifactId>junit-platform-surefire-provider</artifactId>
-                                <version>1.1.0</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.junit.jupiter</groupId>
-                                <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.1.0</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
+
 </project>

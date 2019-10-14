@@ -66,7 +66,6 @@ public class FilteringGrid<T> extends Grid<T>
     {
         this.filter.setItems(items);
 
-
         dataProvider = DataProvider.fromFilteringCallbacks(query ->
         {
             Optional<Filter> filter = query.getFilter();
@@ -131,28 +130,7 @@ public class FilteringGrid<T> extends Grid<T>
 
         });
 
-//        DataProvider.fromCallbacks(query -> {
-//
-//                for(SortOrder<String> queryOrder :
-//                    query.getSortOrders()) {
-//                    PersonSort sort = getPersonService()
-//                        .createSort(
-//                            // The name of the sorted property
-//                            queryOrder.getSorted(),
-//                            // The sort direction for this property
-//                            queryOrder.getDirection() ==
-//                                SortDirection.DESCENDING);
-//                    sortOrders.add(sort);
-//                }
-//
-//                return items.stream();
-//            },
-//
-//            // The number of persons is the same
-//            // regardless of ordering
-//            query -> items.size()
-//
-//        );
+
 
         filteredDataProvider = dataProvider.withConfigurableFilter();
         filteredDataProvider.setFilter(filter);

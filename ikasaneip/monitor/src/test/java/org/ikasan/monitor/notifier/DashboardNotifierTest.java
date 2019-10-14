@@ -43,14 +43,16 @@ package org.ikasan.monitor.notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.http.HttpHeaders;
-
+import org.ikasan.dashboard.DashboardRestServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.mock.env.MockEnvironment;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static org.ikasan.spec.dashboard.DashboardRestService.DASHBOARD_BASE_URL_PROPERTY;
+import static org.ikasan.spec.dashboard.DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY;
 
 /**
  * This test class supports the <code>DashboardNotifier</code> class.
@@ -66,35 +68,35 @@ public class DashboardNotifierTest
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
+
+    private MockEnvironment environment = new MockEnvironment();
+
     @Before
     public void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
-        uut = new DashboardNotifier();
-        uut.setDashboardBaseUrl(dashboardBaseUrl);
+        environment.setProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "true");
+        environment.setProperty(DASHBOARD_BASE_URL_PROPERTY, dashboardBaseUrl);
+        uut = new DashboardNotifier(new DashboardRestServiceImpl(environment, FLOW_STATES_CACHE_PATH));
     }
 
     @Test
     public void test_running(){
 
-        stubFor(put(urlEqualTo("/rest/topologyCache/updateCache/sampleModule/flowName"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("sampleModule"))
-
+        stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody("running")));
 
         uut.invoke("dev","sampleModule","flowName","running");
-
     }
 
     @Test
     public void test_running_whenFlow_name_has_space(){
 
-        stubFor(put(urlEqualTo("/rest/topologyCache/updateCache/sampleModule/flow%20Name"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("sampleModule"))
-
+        stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
@@ -107,38 +109,30 @@ public class DashboardNotifierTest
     @Test
     public void test_when_rest_returns_404(){
 
-        stubFor(put(urlEqualTo("/rest/topologyCache/updateCache/sampleModule/flowName"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("sampleModule"))
-
+        stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
                 .withStatus(404)
                 .withHeader("Content-Type", "application/json")
                 .withBody("Bad Request")));
 
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("An exception occurred trying to notify the dashboard!");
-
 
         uut.invoke("dev","sampleModule","flowName","running");
 
+        // fails silently
     }
 
     @Test
     public void test_when_rest_returns_500(){
 
-        stubFor(put(urlEqualTo("/rest/topologyCache/updateCache/sampleModule/flowName"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("sampleModule"))
-
+        stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
                 .withStatus(500)
                 .withHeader("Content-Type", "application/json")
                 .withBody("Bad Request")));
 
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("An exception occurred trying to notify the dashboard!");
-
 
         uut.invoke("dev","sampleModule","flowName","running");
 
+        // fails silently
     }
 }

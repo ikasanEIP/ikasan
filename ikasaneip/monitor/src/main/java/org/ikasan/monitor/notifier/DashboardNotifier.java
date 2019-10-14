@@ -40,6 +40,8 @@
  */
 package org.ikasan.monitor.notifier;
 
+import org.ikasan.monitor.notifier.model.FlowStateImpl;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.springframework.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,20 +76,16 @@ public class DashboardNotifier implements Notifier<String>
     /**
      * the base url of the dashboard
      */
-    private String dashboardBaseUrl;
+    private DashboardRestService dashboardRestService;
 
-    /**
-     * the platform configuration service
-     */
-    protected PlatformConfigurationService platformConfigurationService;
 
-    private RestTemplate restTemplate;
-
-    public DashboardNotifier()
+    public DashboardNotifier(DashboardRestService dashboardRestService)
     {
-        restTemplate = new RestTemplate();
-        restTemplate
-            .setMessageConverters(Arrays.asList(new ByteArrayHttpMessageConverter(), new StringHttpMessageConverter()));
+        this.dashboardRestService = dashboardRestService;
+        if(this.dashboardRestService == null)
+        {
+            throw new IllegalArgumentException("dashboardRestService cannot be null!");
+        }
     }
 
     @Override public void invoke(String environment, String moduleName, String flowName, String state)
@@ -105,37 +103,6 @@ public class DashboardNotifier implements Notifier<String>
         return this.notifyStateChangesOnly;
     }
 
-    /**
-     * @return the dashboardBaseUrl
-     */
-    public void setDashboardBaseUrl(String dashboardBaseUrl)
-    {
-        this.dashboardBaseUrl = dashboardBaseUrl;
-    }
-
-    /**
-     * @param platformConfigurationService
-     */
-    public void setPlatformConfigurationService(PlatformConfigurationService platformConfigurationService)
-    {
-        this.platformConfigurationService = platformConfigurationService;
-    }
-
-    /**
-     * @return the dashboardBaseUrl
-     */
-    public String getDashboardBaseUrl()
-    {
-        return dashboardBaseUrl;
-    }
-
-    /**
-     * @return the platformConfigurationService
-     */
-    public PlatformConfigurationService getPlatformConfigurationService()
-    {
-        return platformConfigurationService;
-    }
 
     /**
      * Internal notify method
@@ -147,60 +114,22 @@ public class DashboardNotifier implements Notifier<String>
      */
     protected void notify(String environment, String moduleName, String flowName, String state)
     {
-        String url = null;
-        try
-        {
-            logger.info("this.platformConfigurationService: " + this.platformConfigurationService);
-            // We are trying to get the database configuration resource first
-            if (this.platformConfigurationService != null)
-            {
-                url = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
-            }
-            logger.debug("url: " + url);
-            // If we do not have a database persisted configuration value we will try to get the one from the file system/
-            if ((url == null || url.length() == 0) && this.dashboardBaseUrl != null
-                && this.dashboardBaseUrl.length() > 0)
-            {
-                url = this.dashboardBaseUrl;
-            }
-            // Otherwise we'll throw an exception!
-            if (url == null || url.length() == 0)
-            {
-                throw new RuntimeException("Cannot notify dashboard. The dashboard URL is null or empty string!");
-            }
-            url = url + "/rest/topologyCache/updateCache/"
-                + moduleName.replace(" ", "%20")
-                + "/"
-                +  flowName.replace(" ", "%20");
+        FlowStateImpl flowState = new FlowStateImpl();
+        flowState.setModuleName(moduleName);
+        flowState.setFlowName(flowName);
+        flowState.setState(state);
 
-            logger.info(String.format("Notifiy Ikasan Dashboard of flow state change with call to URL[%s] and State[%s].", url, state));
-            HttpEntity request = initRequest(state, moduleName, null, null);
-            ResponseEntity<String> respose = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+        boolean success = this.dashboardRestService.publish(flowState);
 
-            logger.info(String.format("Notifiy Ikasan Dashboard response. HTTP Status Code[%s], HTTP Response Message[%s]"
-                , respose.getStatusCode().toString(), respose.getBody()));
-        }
-        catch (final HttpClientErrorException e)
+        if(success)
         {
-            throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
+            logger.info(String.format("Notify Ikasan Dashboard SUCCESS. Flow Name[%s], State[%s]"
+                , flowName, state));
         }
-        catch (Exception e)
+        else
         {
-            throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
+            logger.info(String.format("Notify Ikasan Dashboard FAILED. Flow Name[%s], State[%s]"
+                , flowName, state));
         }
-    }
-
-    private HttpEntity initRequest(String body, String module, String user, String password)
-    {
-        HttpHeaders headers = new HttpHeaders();
-        if (user != null && password != null)
-        {
-            String credentials = user + ":" + password;
-            String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-            headers.set(HttpHeaders.AUTHORIZATION, "Basic " + encodedCredentials);
-        }
-        headers.set(HttpHeaders.USER_AGENT, module);
-        headers.set(HttpHeaders.CONTENT_TYPE,"application/json");
-        return new HttpEntity(body, headers);
     }
 }

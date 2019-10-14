@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.ui.visualisation.model.ConfigurationMetaDataImpl;
@@ -8,8 +10,10 @@ import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +45,12 @@ public class ModuleVisjsAdapterTest
     JsonModuleMetaDataProvider jsonModuleMetaDataProvider
         = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
 
+    @Before
+    public void setup()
+    {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
+    }
 
     @Test
     public void test_adapt_module_no_configurations() throws IOException

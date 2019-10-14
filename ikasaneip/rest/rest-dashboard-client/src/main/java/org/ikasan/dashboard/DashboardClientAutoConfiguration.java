@@ -28,6 +28,8 @@ public class DashboardClientAutoConfiguration
 
     private String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
 
+    private String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
+
     @Bean
     public DashboardRestService replyDashboardRestService(Environment environment)
     {
@@ -78,6 +80,10 @@ public class DashboardClientAutoConfiguration
 
     }
 
+    @Bean
+    public DashboardRestService flowCacheStateRestService(Environment environment)
+    {
+        return new DashboardRestServiceImpl(environment, FLOW_STATES_CACHE_PATH);
 
-
+    }
 }

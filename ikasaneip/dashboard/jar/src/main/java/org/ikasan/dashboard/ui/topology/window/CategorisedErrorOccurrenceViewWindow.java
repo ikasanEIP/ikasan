@@ -40,19 +40,18 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.data.Container;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Window;
+import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 

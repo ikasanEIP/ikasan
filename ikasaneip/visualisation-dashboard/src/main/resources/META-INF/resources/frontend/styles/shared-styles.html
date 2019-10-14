@@ -1,13 +1,14 @@
 <link rel="import" href="version.html">
 <link rel="import" href="../polymer/lib/elements/custom-style.html">
 <link rel="import" href="../polymer/lib/elements/dom-module.html">
+<link rel="icon" sizes="96x96" href="../images/mr-squid-head.png" >
 
 <custom-style>
     <style>
         html {
-            --lumo-primary-color-10pct: rgba(240, 89, 36, 0.1);
-            --lumo-primary-color-50pct: rgba(240, 89, 36, 0.5);
-            --lumo-primary-color: rgba(240, 89, 36, 1.0);
+            --lumo-primary-color-10pct: rgba(241, 90, 35, 0.1);
+            --lumo-primary-color-50pct: rgba(241, 90, 35, 0.5);
+            --lumo-primary-color: rgba(241, 90, 35, 1.0);
             --lumo-primary-contrast-color: #FFF;
             --lumo-font-family: "Arial Bold", sans-serif;
         }
@@ -72,7 +73,7 @@
         <style>
             [part~="row"]:hover [part~="body-cell"]{
                 color: red;
-                background-color: rgba(240, 89, 36, 0.1);
+                background-color: rgba(241, 90, 35, 0.1);
             }
 
             /*vaadin-text-field {*/
@@ -135,6 +136,64 @@
             }
 
         </style>
+    </template>
+</dom-module>
+
+<dom-module id="my-grid-styles" theme-for="vaadin-grid">
+    <template>
+        <style>
+            /* Background needs a stronger selector to not be overridden */
+            [part~="cell"].running {
+                background-color: rgba(5,227,108, 0.3);
+                /*background-clip: padding-box; !* this has been added *!*/
+                /*border-radius: 5px;*/
+                /*color: white;*/
+                /*border: 5px solid white;*/
+            }
+
+            [part~="cell"].stoppedInError {
+                background-color: rgba(255, 0, 0, 0.3);
+                /*!*background-clip: padding-box; !* this has been added *!*!*/
+                /*border-radius: 5px;*/
+                /*color: rgba(255, 0, 0, 0.3);*/
+                /*border: 5px solid rgba(255, 0, 0, 0.3);*/
+            }
+
+            [part~="cell"].recovering {
+                background-color: rgba(253,185,19, 0.3);
+                /*background-clip: padding-box; !* this has been added *!*/
+                /*border-radius: 5px;*/
+                /*color: white;*/
+                /*border: 5px solid white;*/
+            }
+
+            [part~="cell"].paused {
+                background-color: rgba(133,181,225, 0.3);
+                /*background-clip: padding-box; !* this has been added *!*/
+                /*border-radius: 5px;*/
+                /*color: white;*/
+                /*border: 5px solid white;*/
+            }
+
+            [part~="cell"].startPause {
+                background-color: rgba(133,181,225, 0.3);
+                /*background-clip: padding-box; !* this has been added *!*/
+                /*border-radius: 5px;*/
+                /*color: white;*/
+                /*border: 5px solid white;*/
+            }
+
+            [part~="cell"].stopped {
+                background-color: rgba(211,211,211, 0.3);
+                /*background-clip: padding-box; !* this has been added *!*/
+                /*border-radius: 5px;*/
+                /*color: white;*/
+                /*border: 5px solid white;*/
+            }
+
+        </style>
+
+
     </template>
 </dom-module>
 

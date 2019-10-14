@@ -3,6 +3,7 @@ package org.ikasan.solr.service;
 import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.housekeeping.HousekeepService;
+import org.ikasan.spec.solr.SolrDeleteService;
 import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 26/08/2017.
  */
-public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>, HousekeepService
+public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearchService<IkasanSolrDocumentSearchResults>, HousekeepService, SolrDeleteService
 {
     private SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao;
 
@@ -50,6 +51,30 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearc
     }
 
     @Override
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes)
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        return this.solrGeneralSearchDao.search(searchString, startTime, endTime, resultSize, entityTypes);
+    }
+
+    @Override
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes)
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        return this.solrGeneralSearchDao.search(searchString, startTime, endTime, offset, resultSize, entityTypes);
+    }
+
+    @Override
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes)
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        return this.solrGeneralSearchDao.search(moduleNames, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes);
+    }
+
+    @Override
     public void housekeep()
     {
         this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
@@ -73,5 +98,13 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrSearc
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
         // not relevant for solr housekeeping
+    }
+
+    @Override
+    public void removeById(String type, String id)
+    {
+        this.solrGeneralSearchDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralSearchDao.setSolrPassword(this.solrPassword);
+        this.solrGeneralSearchDao.removeById(type, id);
     }
 }

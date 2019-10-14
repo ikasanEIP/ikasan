@@ -40,80 +40,6 @@
  */
 package org.ikasan.dashboard.ui.topology.panel;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.event.FieldEvents;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.dashboard.ui.IkasanUI;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
-import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
-import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
-import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
-import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
-import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
-import org.ikasan.dashboard.ui.topology.component.TopologyTab;
-import org.ikasan.dashboard.ui.topology.component.WiretapTab;
-import org.ikasan.dashboard.ui.topology.util.FilterMap;
-import org.ikasan.dashboard.ui.topology.util.FilterUtil;
-import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
-import org.ikasan.dashboard.ui.topology.window.*;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.module.StartupControlService;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.systemevent.model.SystemEvent;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.TopologyService;
-import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
-import org.ikasan.wiretap.service.TriggerManagementService;
-import org.vaadin.teemu.VaadinIcons;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.util.BeanItem;
@@ -124,6 +50,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PopupView.Content;
@@ -133,6 +60,58 @@ import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.themes.ValoTheme;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.IkasanUI;
+import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.component.*;
+import org.ikasan.dashboard.ui.topology.util.FilterMap;
+import org.ikasan.dashboard.ui.topology.util.FilterUtil;
+import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
+import org.ikasan.dashboard.ui.topology.window.*;
+import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.spec.module.StartupControlService;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.systemevent.model.SystemEvent;
+import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
+import org.ikasan.topology.service.TopologyService;
+import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
+import org.ikasan.wiretap.service.TriggerManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vaadin.teemu.VaadinIcons;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -233,7 +212,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-							 WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                             WiretapService wiretapService, SolrWiretapServiceImpl solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
                              HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
                              ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
                              StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
