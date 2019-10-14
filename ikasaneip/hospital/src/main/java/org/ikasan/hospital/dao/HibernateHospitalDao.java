@@ -92,22 +92,22 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	 * @see org.ikasan.hospital.dao.HospitalDao#getExclusionEventActionByErrorUri(java.lang.String)
 	 */
 	@Override
-	public ExclusionEventActionImpl getExclusionEventActionByErrorUri(
+	public ExclusionEventAction getExclusionEventActionByErrorUri(
 			String errorUri)
 	{
 		return getHibernateTemplate().execute((session) -> {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-            CriteriaQuery<ExclusionEventActionImpl> criteriaQuery = builder.createQuery(ExclusionEventActionImpl.class);
+            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
             Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("errorUri"),errorUri));
 
-            org.hibernate.query.Query<ExclusionEventActionImpl> query = session.createQuery(criteriaQuery);
-            List<ExclusionEventActionImpl> results = query.getResultList();
+            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
+            List<ExclusionEventAction> results = query.getResultList();
 
             if(results == null || results.size() == 0)
             {
@@ -124,7 +124,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExclusionEventActionImpl> getActionedExclusions(
+	public List<ExclusionEventAction> getActionedExclusions(
 			List<String> moduleName, List<String> flowName, Date startDate,
 			Date endDate, int size)
 	{
@@ -132,7 +132,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-            CriteriaQuery<ExclusionEventActionImpl> criteriaQuery = builder.createQuery(ExclusionEventActionImpl.class);
+            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
             Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
             List<Predicate> predicates = new ArrayList<>();
@@ -161,7 +161,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
                 .where(predicates.toArray(new Predicate[predicates.size()]))
                 .orderBy(builder.desc(root.get("timestamp")));
 
-            org.hibernate.query.Query<ExclusionEventActionImpl> query = session.createQuery(criteriaQuery);
+            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
             query.setFirstResult(0);
             query.setMaxResults(size);
             return query.getResultList();

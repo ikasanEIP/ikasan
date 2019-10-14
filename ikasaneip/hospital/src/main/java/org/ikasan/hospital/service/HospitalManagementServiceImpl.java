@@ -47,6 +47,7 @@ import java.util.List;
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventActionImpl;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.housekeeping.HousekeepService;
 
@@ -56,7 +57,7 @@ import org.ikasan.spec.housekeeping.HousekeepService;
  *
  */
 public class HospitalManagementServiceImpl implements
-		HospitalManagementService<ExclusionEventActionImpl, ModuleActionedExclusionCount>, HousekeepService
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>, HousekeepService
 {
 	private HospitalDao hospitalDao;
 
@@ -79,7 +80,7 @@ public class HospitalManagementServiceImpl implements
 	 * @see org.ikasan.hospital.service.HospitalManagementService#getExclusionEventActionByErrorUri(java.lang.String)
 	 */
 	@Override
-	public ExclusionEventActionImpl getExclusionEventActionByErrorUri(String errorUri)
+	public ExclusionEventAction getExclusionEventActionByErrorUri(String errorUri)
 	{
 		return hospitalDao.getExclusionEventActionByErrorUri(errorUri);
 	}
@@ -88,7 +89,7 @@ public class HospitalManagementServiceImpl implements
 	 * @see org.ikasan.hospital.service.HospitalManagementService#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ExclusionEventActionImpl> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size)
+	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size)
 	{
 		return this.hospitalDao.getActionedExclusions(moduleName, flowName, startDate, endDate, size);
 	}
