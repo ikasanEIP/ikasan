@@ -128,7 +128,7 @@ public class ApplicationTest
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
-        server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+        server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
     @Before
