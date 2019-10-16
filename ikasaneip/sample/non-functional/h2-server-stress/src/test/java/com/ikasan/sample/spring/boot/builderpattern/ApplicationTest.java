@@ -244,7 +244,7 @@ public class ApplicationTest
 
         // wait for JMS flows to catch up for a max of 10 seconds
         int waitCounter = 0;
-        while( waitCounter < 10 &&
+        while( waitCounter < 20 &&
                 (wiretaps = wiretapTestUtil.getWiretaps(
                 "Transaction Test Module",
                 "jmsToDevNullFlow1",
@@ -261,7 +261,7 @@ public class ApplicationTest
 
         // wait for JMS flows to catch up for a max of 10 seconds
         waitCounter = 0;
-        while( waitCounter < 10 &&
+        while( waitCounter < 20 &&
                 (wiretaps = wiretapTestUtil.getWiretaps(
                         "Transaction Test Module",
                         "jmsToDevNullFlow2",
