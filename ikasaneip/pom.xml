@@ -1389,6 +1389,13 @@
                 <type>war</type>
             </dependency>
 
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-standalone-persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-setup</artifactId>

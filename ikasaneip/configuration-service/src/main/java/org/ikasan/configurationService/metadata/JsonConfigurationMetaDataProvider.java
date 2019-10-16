@@ -69,7 +69,6 @@ public class JsonConfigurationMetaDataProvider implements ConfigurationMetaDataP
         try
         {
             //JSON file to Java object
-            //result = this.mapper.readValue(metaData, List.class);
             result = mapper.readValue(metaData, mapper.getTypeFactory().constructCollectionType(List.class, ConfigurationMetaDataImpl.class));
 
         }
