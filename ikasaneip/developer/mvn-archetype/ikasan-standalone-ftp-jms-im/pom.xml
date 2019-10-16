@@ -66,6 +66,8 @@
                             <excludes>
                                 <exclude>archetype-resources/pom.xml</exclude>
                                 <exclude>archetype-resources/jar/pom.xml</exclude>
+                                <exclude>archetype-resources/distribution/pom.xml</exclude>
+                                <exclude>archetype-resources/distribution/distribution.xml</exclude>
                             </excludes>
                         </resource>
                         <resource>
@@ -73,6 +75,8 @@
                             <includes>
                                 <include>archetype-resources/pom.xml</include>
                                 <include>archetype-resources/jar/pom.xml</include>
+                                <include>archetype-resources/distribution/pom.xml</include>
+                                <include>archetype-resources/distribution/distribution.xml</include>
                             </includes>
                             <filtering>true</filtering>
                         </resource>

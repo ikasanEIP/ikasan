@@ -1,9 +1,6 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,6 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import org.ikasan.dashboard.security.SecurityConfiguration;
+import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.SecurityService;
@@ -109,87 +107,81 @@ public class UserDirectoryDialog extends Dialog
     protected void init()
     {
 
-        final H2 configureUserDirectories = new H2("Configure User Directory");
+        final H2 configureUserDirectories = new H2(getTranslation("label.configure-user-directory", UI.getCurrent().getLocale(), null));
         this.add(configureUserDirectories);
 
 
         FormLayout formLayout = new FormLayout();
 
-        final H3 serverSettings = new H3("Server Settings");
+        final H3 serverSettings = new H3(getTranslation("label.user-directory-server-settings", UI.getCurrent().getLocale(), null));
 
         formLayout.add(serverSettings);
         formLayout.add(new Div());
 
-        this.directoryName = new TextField();
+        this.directoryName = new TextField(getTranslation("text-field.user-directory-name", UI.getCurrent().getLocale(), null));
         this.directoryName.setWidth("600px");
         this.directoryName.setRequired(true);
-        this.directoryName.setLabel("Directory Name");
 
         Div directoryNameDiv = new Div();
         directoryNameDiv.add(this.directoryName);
 
         formLayout.add(directoryNameDiv);
 
-        this.ldapServerUrl = new TextField();
+        this.ldapServerUrl = new TextField(getTranslation("text-field.user-directory-server-url", UI.getCurrent().getLocale(), null));
         this.ldapServerUrl.setWidth("600px");
         this.ldapServerUrl.setRequired(true);
-        this.ldapServerUrl.setLabel("LDAP Server URL");
-        H6 hostnameExample = new H6("Hostname of server running LDAP. Example: ldap://ldap.example.com:389");
+        H6 hostnameExample = new H6(getTranslation("label.user-directory-server-url-help", UI.getCurrent().getLocale(), null));
 
         Div ldapServerUrlDiv = new Div();
         ldapServerUrlDiv.add(ldapServerUrl, hostnameExample);
         formLayout.add(ldapServerUrlDiv);
 
-        this.ldapBindUserDn = new TextField();
+        this.ldapBindUserDn = new TextField(getTranslation("text-field.user-directory-username", UI.getCurrent().getLocale(), null));
         this.ldapBindUserDn.setWidth("600px");
         this.ldapBindUserDn.setRequired(true);
-        this.ldapBindUserDn.setLabel("Username");
 
-        H6 usernameExample = new H6("User to log into LDAP. Example: cn=user,DC=domain,DC=name");
+        H6 usernameExample = new H6(getTranslation("label.user-directory-username-help", UI.getCurrent().getLocale(), null));
 
         Div ldapBindUserDnDiv = new Div();
         ldapBindUserDnDiv.add(this.ldapBindUserDn, usernameExample);
 
         formLayout.add(ldapBindUserDnDiv);
 
-        this.ldapBindUserPassword = new PasswordField();
+        this.ldapBindUserPassword = new PasswordField(getTranslation("text-field.user-directory-password", UI.getCurrent().getLocale(), null));
         this.ldapBindUserPassword.setWidth("300px");
         this.ldapBindUserPassword.setRequired(true);
-        this.ldapBindUserPassword.setLabel("Password");
 
         formLayout.add(new Div(this.ldapBindUserPassword));
 
-        final H3 ldapSchema = new H3("LDAP Schema");
+        final H3 ldapSchema = new H3(getTranslation("label.user-directory-ldap-schema", UI.getCurrent().getLocale(), null));
         formLayout.add(ldapSchema, new Div());
 
-        this.ldapUserSearchDn = new TextField();
+        this.ldapUserSearchDn = new TextField(getTranslation("text-field.user-directory-user-dn", UI.getCurrent().getLocale(), null));
         this.ldapUserSearchDn.setRequired(true);
         this.ldapUserSearchDn.setWidth("600px");
-        this.ldapUserSearchDn.setLabel("User DN");
 
-        H6 userDnExample = new H6("The base DN to use when searching for users.");
+        H6 userDnExample = new H6(getTranslation("label.user-directory-base-dn-help", UI.getCurrent().getLocale(), null));
 
         Div ldapUserSearchDnDiv = new Div();
         ldapUserSearchDnDiv.add(this.ldapUserSearchDn, userDnExample);
 
         formLayout.add(ldapUserSearchDnDiv);
 
-        this.applicationSecurityBaseDn = new TextField();
+        this.applicationSecurityBaseDn = new TextField(getTranslation("text-field.user-directory-group-dn", UI.getCurrent().getLocale(), null));
         this.applicationSecurityBaseDn.setRequired(true);
         this.applicationSecurityBaseDn.setWidth("600px");
-        this.applicationSecurityBaseDn.setLabel("Group DN");
 
-        H6 groupDnExample = new H6("The base DN to use when searching for groups.");
+        H6 groupDnExample = new H6(getTranslation("label.user-directory-group-dn-help", UI.getCurrent().getLocale(), null));
 
         Div applicationSecurityBaseDnDiv = new Div();
         applicationSecurityBaseDnDiv.add(this.applicationSecurityBaseDn, groupDnExample);
 
         formLayout.add(applicationSecurityBaseDnDiv);
 
-        final H3 ldapAttributes = new H3("LDAP Attributes");
+        final H3 ldapAttributes = new H3(getTranslation("label.user-directory-group-ldap-attributes", UI.getCurrent().getLocale(), null));
         formLayout.add(ldapAttributes, new Div());
 
-        Checkbox checkbox = new Checkbox("Populate default attributes");
+        Checkbox checkbox = new Checkbox(getTranslation("label.user-directory-group-populate-ldap-attributes", UI.getCurrent().getLocale(), null));
         checkbox.setValue(false);
 
         formLayout.add(checkbox, new Div());
@@ -232,88 +224,75 @@ public class UserDirectoryDialog extends Dialog
             }
         });
 
-        this.userSynchronisationFilter = new TextField();
+        this.userSynchronisationFilter = new TextField(getTranslation("text-field.user-directory-user-synchronisation-filter", UI.getCurrent().getLocale(), null));
         this.userSynchronisationFilter.setWidth("300px");
         this.userSynchronisationFilter.setRequired(true);
-        this.userSynchronisationFilter.setLabel("User Synchronisation Filter");
         formLayout.add(new Div(this.userSynchronisationFilter));
 
-        this.groupSynchronisationFilter = new TextField();
+        this.groupSynchronisationFilter = new TextField(getTranslation("text-field.user-directory-group-synchronisation-filter", UI.getCurrent().getLocale(), null));
         this.groupSynchronisationFilter.setWidth("300px");
         this.groupSynchronisationFilter.setRequired(true);
-        this.groupSynchronisationFilter.setLabel("Group Synchronisation Filter");
         formLayout.add(new Div(this.groupSynchronisationFilter));
 
-        this.ldapUserSearchFilter = new TextField();
+        this.ldapUserSearchFilter = new TextField(getTranslation("text-field.user-directory-ldap-user-search-filter", UI.getCurrent().getLocale(), null));
         this.ldapUserSearchFilter.setWidth("300px");
         this.ldapUserSearchFilter.setRequired(true);
-        this.ldapUserSearchFilter.setLabel("Group Synchronisation Filter");
         formLayout.add(new Div(this.ldapUserSearchFilter));
 
-        this.emailAttributeName = new TextField();
+        this.emailAttributeName = new TextField(getTranslation("text-field.user-directory-email", UI.getCurrent().getLocale(), null));
         this.emailAttributeName.setWidth("300px");
         this.emailAttributeName.setRequired(true);
-        this.emailAttributeName.setLabel("Email");
         formLayout.add(new Div(this.emailAttributeName));
 
-        this.userAccountNameAttributeName = new TextField();
+        this.userAccountNameAttributeName = new TextField(getTranslation("text-field.user-directory-account-name", UI.getCurrent().getLocale(), null));
         this.userAccountNameAttributeName.setWidth("300px");
         this.userAccountNameAttributeName.setRequired(true);
-        this.userAccountNameAttributeName.setLabel("Account Name");
         formLayout.add(new Div(this.userAccountNameAttributeName));
 
-        this.accountTypeAttributeName = new TextField();
+        this.accountTypeAttributeName = new TextField(getTranslation("text-field.user-directory-account-type", UI.getCurrent().getLocale(), null));
         this.accountTypeAttributeName.setWidth("300px");
         this.accountTypeAttributeName.setRequired(true);
-        this.accountTypeAttributeName.setLabel("Account Type");
         formLayout.add(new Div(this.accountTypeAttributeName));
 
-        this.firstNameAttributeName = new TextField();
+        this.firstNameAttributeName = new TextField(getTranslation("text-field.user-directory-first-name", UI.getCurrent().getLocale(), null));
         this.firstNameAttributeName.setWidth("300px");
-        this.firstNameAttributeName.setLabel("First Name");
         this.firstNameAttributeName.setRequired(true);
         formLayout.add(new Div(this.firstNameAttributeName));
 
-        this.surnameAttributeName = new TextField();
+        this.surnameAttributeName = new TextField(getTranslation("text-field.user-directory-surname", UI.getCurrent().getLocale(), null));
         this.surnameAttributeName.setWidth("300px");
         this.surnameAttributeName.setRequired(true);
-        this.surnameAttributeName.setLabel("Surname");
         formLayout.add(new Div(this.surnameAttributeName));
 
-        this.departmentAttributeName = new TextField();
+        this.departmentAttributeName = new TextField(getTranslation("text-field.user-directory-user-department", UI.getCurrent().getLocale(), null));
         this.departmentAttributeName.setWidth("300px");
         this.departmentAttributeName.setRequired(true);
-        this.departmentAttributeName.setLabel("User Department");
         formLayout.add(new Div(this.departmentAttributeName));
 
-        this.ldapUserDescriptionAttributeName = new TextField();
+        this.ldapUserDescriptionAttributeName = new TextField(getTranslation("text-field.user-directory-user-description", UI.getCurrent().getLocale(), null));
         this.ldapUserDescriptionAttributeName.setWidth("300px");
         this.ldapUserDescriptionAttributeName.setRequired(true);
-        this.ldapUserDescriptionAttributeName.setLabel("User Description");
         formLayout.add(new Div(this.ldapUserDescriptionAttributeName));
 
-        this.memberofAttributeName = new TextField();
+        this.memberofAttributeName = new TextField(getTranslation("text-field.user-directory-member-of", UI.getCurrent().getLocale(), null));
         this.memberofAttributeName.setWidth("300px");
         this.memberofAttributeName.setRequired(true);
-        this.memberofAttributeName.setLabel("Member Of");
         formLayout.add(new Div(this.memberofAttributeName));
 
-        this.applicationSecurityGroupAttributeName = new TextField();
+        this.applicationSecurityGroupAttributeName = new TextField(getTranslation("text-field.user-directory-group-name", UI.getCurrent().getLocale(), null));
         this.applicationSecurityGroupAttributeName.setWidth("300px");
         this.applicationSecurityGroupAttributeName.setRequired(true);
-        this.applicationSecurityGroupAttributeName.setLabel("Group Name");
         formLayout.add(new Div(this.applicationSecurityGroupAttributeName));
 
-        this.applicationSecurityDescriptionAttributeName = new TextField();
+        this.applicationSecurityDescriptionAttributeName = new TextField(getTranslation("text-field.user-directory-group-description", UI.getCurrent().getLocale(), null));
         this.applicationSecurityDescriptionAttributeName.setWidth("300px");
         this.applicationSecurityDescriptionAttributeName.setRequired(true);
-        this.applicationSecurityDescriptionAttributeName.setLabel("Group Description");
         formLayout.add(new Div(this.applicationSecurityDescriptionAttributeName), new Div());
 
 
         Binder<AuthenticationMethod> binder = this.setupBinderAndValidation();
 
-        Button save = new Button("Save");
+        Button save = new Button(getTranslation("button.save", UI.getCurrent().getLocale(), null));
         save.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             if(binder.writeBeanIfValid(this.authenticationMethod))
@@ -334,22 +313,22 @@ public class UserDirectoryDialog extends Dialog
                 {
                     logger.error("An error occurred saving an authentication method", e);
 
-                    Notification.show("Error trying to save the authentication method!" + e.getMessage());
+                    NotificationHelper.showErrorNotification(String.format(getTranslation("message.error-saving-auth-method", UI.getCurrent().getLocale(), null), e.getMessage()));
 
                     return;
                 }
 
-                Notification.show("Saved", 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showUserNotification(getTranslation("message.saved", UI.getCurrent().getLocale(), null));
                 close();
             }
             else
             {
                 binder.validate();
-                Notification.show("Please check forms for errors", 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showErrorNotification(getTranslation("message.auth-method-check-form", UI.getCurrent().getLocale(), null));
             }
         });
 
-        Button cancel = new Button("Cancel");
+        Button cancel = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale(), null));
         cancel.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> close());
 
         HorizontalLayout actions = new HorizontalLayout();
@@ -374,97 +353,97 @@ public class UserDirectoryDialog extends Dialog
 
         binder.forField(this.directoryName)
             .withValidator(new StringLengthValidator(
-                "Please add the directory name!", 1, null))
+                getTranslation("form-validation.user-directory-name", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getName, AuthenticationMethod::setName);
 
         binder.forField(this.accountTypeAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the account type attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-account-type", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getAccountTypeAttributeName, AuthenticationMethod::setAccountTypeAttributeName);
 
         binder.forField(this.applicationSecurityBaseDn)
             .withValidator(new StringLengthValidator(
-                "Please add the group dn!", 1, null))
+                getTranslation("form-validation.user-directory-group-dn", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getApplicationSecurityBaseDn, AuthenticationMethod::setApplicationSecurityBaseDn);
 
         binder.forField(this.applicationSecurityDescriptionAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the group description attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-group-description", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getApplicationSecurityDescriptionAttributeName, AuthenticationMethod::setApplicationSecurityDescriptionAttributeName);
 
         binder.forField(this.applicationSecurityGroupAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the group name attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-group-name", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getApplicationSecurityGroupAttributeName, AuthenticationMethod::setApplicationSecurityGroupAttributeName);
 
         binder.forField(this.departmentAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the user department attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-user-department", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getDepartmentAttributeName, AuthenticationMethod::setDepartmentAttributeName);
 
         binder.forField(this.emailAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the email attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-email", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getEmailAttributeName, AuthenticationMethod::setEmailAttributeName);
 
         binder.forField(this.firstNameAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the first name attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-first-name", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getFirstNameAttributeName, AuthenticationMethod::setFirstNameAttributeName);
 
         binder.forField(this.groupSynchronisationFilter)
             .withValidator(new StringLengthValidator(
-                "Please add the group synchronisation filter!", 1, null))
+                getTranslation("form-validation.user-directory-group-sync-filter", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getGroupSynchronisationFilter, AuthenticationMethod::setGroupSynchronisationFilter);
 
         binder.forField(this.ldapBindUserDn)
             .withValidator(new StringLengthValidator(
-                "Please add the ldap username!", 1, null))
+                getTranslation("form-validation.user-directory-group-ldap-username", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapBindUserDn, AuthenticationMethod::setLdapBindUserDn);
 
         binder.forField(this.ldapBindUserPassword)
             .withValidator(new StringLengthValidator(
-                "Please add the ldap password!", 1, null))
+                getTranslation("form-validation.user-directory-group-ldap-password", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapBindUserPassword, AuthenticationMethod::setLdapBindUserPassword);
 
         binder.forField(this.ldapServerUrl)
             .withValidator(new StringLengthValidator(
-                "Please add the ldap server url!", 1, null))
+                getTranslation("form-validation.user-directory-server-url", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapServerUrl, AuthenticationMethod::setLdapServerUrl);
 
         binder.forField(this.ldapUserDescriptionAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the description attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-description", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapUserDescriptionAttributeName, AuthenticationMethod::setLdapUserDescriptionAttributeName);
 
         binder.forField(this.ldapUserSearchDn)
             .withValidator(new StringLengthValidator(
-                "Please add the user dn!", 1, null))
+                getTranslation("form-validation.user-directory-user-dn", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapUserSearchBaseDn, AuthenticationMethod::setLdapUserSearchBaseDn);
 
         binder.forField(this.ldapUserSearchFilter)
             .withValidator(new StringLengthValidator(
-                "Please add the user synchronisation filter!", 1, null))
+                getTranslation("form-validation.user-directory-ldap-user-search-filter", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getLdapUserSearchFilter, AuthenticationMethod::setLdapUserSearchFilter);
 
         binder.forField(this.memberofAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the member of attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-member-of", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getMemberofAttributeName, AuthenticationMethod::setMemberofAttributeName);
 
         binder.forField(this.surnameAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the surname attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-surname", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getSurnameAttributeName, AuthenticationMethod::setSurnameAttributeName);
 
         binder.forField(this.userAccountNameAttributeName)
             .withValidator(new StringLengthValidator(
-                "Please add the user account attribute name!", 1, null))
+                getTranslation("form-validation.user-directory-user-account", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getUserAccountNameAttributeName, AuthenticationMethod::setUserAccountNameAttributeName);
 
         binder.forField(this.userSynchronisationFilter)
             .withValidator(new StringLengthValidator(
-                "Please add the user synchronisation filter!", 1, null))
+                getTranslation("form-validation.user-directory-user-sync-filter", UI.getCurrent().getLocale(), null), 1, null))
             .bind(AuthenticationMethod::getUserSynchronisationFilter, AuthenticationMethod::setUserSynchronisationFilter);
 
         return binder;

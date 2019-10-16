@@ -40,6 +40,7 @@
  */
 package org.ikasan.monitor.notifier;
 
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.Notifier;
 
 /**
@@ -59,5 +60,5 @@ public interface NotifierFactory
     * Get an instance of a dashboard notifier
     * @return
     */
-    public Notifier getDashboardNotifier();
+    public Notifier getDashboardNotifier(DashboardRestService flowCacheStateRestService);
 }

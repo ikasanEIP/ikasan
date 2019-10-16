@@ -53,10 +53,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ikasan-rest</artifactId>
+    <name>Ikasan Rest</name>
+    <description>The rest parent pom for the Ikasan Enterprise Integration Platform</description>
     <packaging>pom</packaging>
 
     <modules>
         <module>rest-module</module>
+        <module>rest-module-client</module>
         <module>rest-dashboard</module>
         <module>rest-dashboard-client</module>
     </modules>

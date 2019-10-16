@@ -3,18 +3,28 @@ package org.ikasan.dashboard.ui.administration.component;
 import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.data.Item;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
@@ -36,6 +46,9 @@ public class UserManagementDialog extends Dialog
     private UserService userService;
     private SecurityService securityService;
     private SystemEventService systemEventService;
+    private SystemEventLogger systemEventLogger;
+    private Grid<Role> roleGrid = new Grid<>();
+    Grid<SystemEvent> securityChangesGrid = new Grid<>();
 
     /**
      * Constructor
@@ -44,9 +57,10 @@ public class UserManagementDialog extends Dialog
      * @param userService
      * @param securityService
      * @param systemEventService
+     * @param systemEventLogger
      */
     public UserManagementDialog(User user, UserService userService,
-        SecurityService securityService, SystemEventService systemEventService)
+        SecurityService securityService, SystemEventService systemEventService, SystemEventLogger systemEventLogger)
     {
         this.user = user;
         if(this.user == null)
@@ -59,7 +73,7 @@ public class UserManagementDialog extends Dialog
             throw new IllegalArgumentException("User Service cannot be null!");
         }
         this.securityService = securityService;
-        if(this.userService == null)
+        if(this.securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be null!");
         }
@@ -68,6 +82,11 @@ public class UserManagementDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventService cannot be null!");
         }
+        this.systemEventLogger = systemEventLogger;
+        if(this.systemEventLogger == null)
+        {
+            throw new IllegalArgumentException("systemEventLogger cannot be null!");
+        }
 
         init();
     }
@@ -75,8 +94,8 @@ public class UserManagementDialog extends Dialog
     private void init()
     {
         FluentGridLayout layout = new FluentGridLayout()
-            .withTemplateRows(new Flex(1), new Flex(1.25), new Flex(1.25))
-            .withTemplateColumns(new Flex(1), new Flex(1), new Flex(1))
+            .withTemplateRows(new Flex(1), new Flex(1.5), new Flex(1.5))
+            .withTemplateColumns(new Flex(1.5), new Flex(1.5), new Flex(2))
             .withRowAndColumn(initUserForm(), 1,1, 1, 3)
             .withRowAndColumn(createLastAccessGrid(), 2,3, 3, 3)
             .withRowAndColumn(createRolesAccessGrid(), 2,1,  2, 3)
@@ -86,19 +105,21 @@ public class UserManagementDialog extends Dialog
             .withSpacing(true)
             .withOverflow(FluentGridLayout.Overflow.AUTO);
         layout.setSizeFull();
-        setSizeFull();
+        this.setWidth("1400px");
+        this.setHeight("100%");
         add(layout);
+
     }
 
     private VerticalLayout createLastAccessGrid()
     {
-        H3 dashboardActivityLabel = new H3("Dashboard Activity");
+        H3 dashboardActivityLabel = new H3(getTranslation("label.dashboard-activity", UI.getCurrent().getLocale(), null));
 
         Grid<SystemEvent> dashboardActivityGrid = new Grid<>();
 
         dashboardActivityGrid.setClassName("my-grid");
-        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
-        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
+        dashboardActivityGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader(getTranslation("table-header.action", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        dashboardActivityGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader(getTranslation("table-header.date-time", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
 
         dashboardActivityGrid.setSizeFull();
 
@@ -127,34 +148,56 @@ public class UserManagementDialog extends Dialog
     {
         H3 rolesLabel = new H3("Ikasan Roles");
 
-        Grid<Role> grid = new Grid<>();
-
-        grid.setClassName("my-grid");
-        grid.addColumn(Role::getName).setKey("username").setHeader("Name").setSortable(true);
-        grid.addColumn(Role::getDescription).setKey("firstname").setHeader("Description").setSortable(true);
-
-        grid.setSizeFull();
-
-        IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
-        if(principal!=null)
+        roleGrid.setClassName("my-grid");
+        roleGrid.addColumn(Role::getName).setKey("username").setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
+        roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(6);
+        roleGrid.addColumn(new ComponentRenderer<>(role->
         {
-            grid.setItems(principal.getRoles());
-        }
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
+                principal.getRoles().remove(role);
+                securityService.savePrincipal(principal);
 
-        Button addRoleButton = new Button("Add role");
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS
+                    , "Role " + role.getName() + " removed.", user.getName());
 
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+                this.updateRolesGrid();
+                this.updateSecurityChangesGrid();
+            });
 
-        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
-            authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
-            || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, deleteButton);
+            return layout;
+        })).setFlexGrow(1);
+
+        roleGrid.setSizeFull();
+
+        this.updateRolesGrid();
+
+        Button addRoleButton = new Button(getTranslation("button.add-role", UI.getCurrent().getLocale(), null));
+        addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            addRoleButton.setVisible(true);
-        }
-        else
-        {
-            addRoleButton.setVisible(false);
-        }
+            IkasanPrincipal principal = securityService.findPrincipalByName(this.user.getUsername());
+            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger);
+            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updateRolesGrid();
+                    this.updateSecurityChangesGrid();
+                }
+            });
+
+            dialog.open();
+        });
+
+        ComponentSecurityVisibility.applySecurity(addRoleButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.USER_ADMINISTRATION_ADMIN
+            , SecurityConstants.USER_ADMINISTRATION_WRITE);
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setWidthFull();
@@ -171,19 +214,27 @@ public class UserManagementDialog extends Dialog
         headerLayout.add(labelLayout, buttonLayout);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(headerLayout, grid);
+        layout.add(headerLayout, this.roleGrid);
         return layout;
+    }
+
+    private void updateRolesGrid()
+    {
+        IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
+        if(principal!=null)
+        {
+            roleGrid.setItems(principal.getRoles());
+        }
     }
 
     private VerticalLayout createLdapGroupGrid()
     {
-        H3 ldapGroupsLabel = new H3("LDAP Groups");
+        H3 ldapGroupsLabel = new H3(getTranslation("label.ldap-groups", UI.getCurrent().getLocale(), null));
         Grid<IkasanPrincipal> grid = new Grid<>();
 
         grid.setClassName("my-grid");
-        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader("LDAP Group").setSortable(true);
-        grid.addColumn(IkasanPrincipal::getType).setKey("type").setHeader("Type").setSortable(true);
-        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader("Description").setSortable(true);
+        grid.addColumn(IkasanPrincipal::getName).setKey("name").setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        grid.addColumn(IkasanPrincipal::getDescription).setKey("description").setHeader(getTranslation("table-header.group-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
 
         List<IkasanPrincipal> ldapGroups = new ArrayList<>();
 
@@ -206,47 +257,54 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout createSecurityChangesGrid()
     {
-        H3 userSecurityChangesLabel = new H3("User Security Changes");
+        H3 userSecurityChangesLabel = new H3(getTranslation("label.user-security-changes", UI.getCurrent().getLocale(), null));
 
-        Grid<SystemEvent> lastAccessGrid = new Grid<>();
+        securityChangesGrid.setClassName("my-grid");
+        securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader(getTranslation("table-header.action", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
+        securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader(getTranslation("table-header.date-time", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
 
-        lastAccessGrid.setClassName("my-grid");
-        lastAccessGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader("Action").setSortable(true);
-        lastAccessGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader("Date/Time").setSortable(true);
+        securityChangesGrid.setSizeFull();
 
-        lastAccessGrid.setSizeFull();
+        this.updateSecurityChangesGrid();
 
-        ArrayList<String> subjects = new ArrayList<String>();
-        subjects.add(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS);
+        VerticalLayout layout = new VerticalLayout();
+        layout.add(userSecurityChangesLabel, securityChangesGrid);
+        return layout;
+    }
+
+    private void updateSecurityChangesGrid()
+    {
+        ArrayList<String> subjects = new ArrayList<>();
+        subjects.add(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS);
 
         List<SystemEvent> events = this.systemEventService.listSystemEvents(subjects, user.getUsername(), null, null);
 
-        lastAccessGrid.setItems(events);
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.add(userSecurityChangesLabel, lastAccessGrid);
-        return layout;
+        securityChangesGrid.setItems(events);
     }
 
     private VerticalLayout initUserForm()
     {
-        H3 userProfileLabel = new H3("User Profile - " + this.user.getUsername());
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.user-profile", UI.getCurrent().getLocale(), null),  this.user.getUsername()));
 
         FormLayout formLayout = new FormLayout();
 
-        TextField firstnameTf = new TextField("First name");
+        TextField firstnameTf = new TextField(getTranslation("text-field.first-name", UI.getCurrent().getLocale(), null));
+        firstnameTf.setReadOnly(true);
         firstnameTf.setValue(this.user.getFirstName());
         formLayout.add(firstnameTf);
 
-        TextField surnameTf = new TextField("Surname");
+        TextField surnameTf = new TextField(getTranslation("text-field.surname", UI.getCurrent().getLocale(), null));
+        surnameTf.setReadOnly(true);
         surnameTf.setValue(this.user.getSurname());
         formLayout.add(surnameTf);
 
-        TextField departmentTf = new TextField("Department");
+        TextField departmentTf = new TextField(getTranslation("text-field.department", UI.getCurrent().getLocale(), null));
+        departmentTf.setReadOnly(true);
         departmentTf.setValue(this.user.getDepartment() == null ? "" : this.user.getDepartment());
         formLayout.add(departmentTf);
 
-        TextField emailTf = new TextField("Email");
+        TextField emailTf = new TextField(getTranslation("text-field.email", UI.getCurrent().getLocale(), null));
+        emailTf.setReadOnly(true);
         formLayout.add(emailTf);
         emailTf.setValue(this.user.getEmail()== null ? "" : this.user.getEmail());
         formLayout.setSizeFull();

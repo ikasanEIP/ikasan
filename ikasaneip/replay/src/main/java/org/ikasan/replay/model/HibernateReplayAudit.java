@@ -6,9 +6,6 @@ import org.ikasan.spec.replay.ReplayAudit;
 public class HibernateReplayAudit implements ReplayAudit
 {
 	private Long id;
-	private String moduleName;
-	private String flowName;
-	private String eventId;
 	private String user;
 	private String replayReason;
 	private String targetServer;

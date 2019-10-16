@@ -40,11 +40,10 @@
  */
 package org.ikasan.hospital.dao;
 
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+
 import java.util.Date;
 import java.util.List;
-
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 
 
 /**

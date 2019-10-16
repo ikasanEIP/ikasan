@@ -1,7 +1,11 @@
 package org.ikasan.dashboard.ui.administration.view;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -13,7 +17,13 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import org.ikasan.dashboard.ui.administration.component.PolicyManagementDialog;
+import org.ikasan.dashboard.ui.administration.component.RoleManagementDialog;
+import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
+import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -35,7 +45,10 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
     @Resource
     private SecurityService securityService;
 
-    private Grid<Policy> policyGrid;
+    @Resource
+    private SystemEventLogger systemEventLogger;
+
+    private FilteringGrid<Policy> policyGrid;
 
     /**
      * Constructor
@@ -51,9 +64,7 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 policyManagementLabel = new H2("Policy Management");
-
-        Button addPolicyButton = new Button(VaadinIcon.PLUS.create());
+        H2 policyManagementLabel = new H2(getTranslation("label.policy-management", UI.getCurrent().getLocale(), null));
 
         HorizontalLayout leftLayout = new HorizontalLayout();
         leftLayout.setJustifyContentMode(JustifyContentMode.START);
@@ -61,40 +72,32 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
         leftLayout.add(policyManagementLabel);
         leftLayout.setVerticalComponentAlignment(Alignment.CENTER, policyManagementLabel);
 
-        HorizontalLayout rightLayout = new HorizontalLayout();
-        rightLayout.setJustifyContentMode(JustifyContentMode.END);
-        rightLayout.setWidth("100%");
-        rightLayout.add(addPolicyButton);
-        rightLayout.setVerticalComponentAlignment(Alignment.CENTER, addPolicyButton);
-
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidth("100%");
 
-        layout.add(leftLayout, rightLayout);
+        layout.add(leftLayout);
         add(layout);
 
-        this.policyGrid = new Grid<>();
+        PolicyFilter policyFilter = new PolicyFilter();
+
+        this.policyGrid = new FilteringGrid<>(policyFilter);
         this.policyGrid.setSizeFull();
         this.policyGrid.setClassName("my-grid");
 
-        this.policyGrid.addColumn(Policy::getName).setHeader("Name");
-        this.policyGrid.addColumn(Policy::getDescription).setHeader("Type");
-        this.policyGrid.addColumn(new ComponentRenderer<>(policy ->
+        this.policyGrid.addColumn(Policy::getName).setHeader(getTranslation("table-header.policy-name", UI.getCurrent().getLocale(), null)).setKey("name").setSortable(true).setFlexGrow(4);
+        this.policyGrid.addColumn(Policy::getDescription).setHeader(getTranslation("table-header.policy-description", UI.getCurrent().getLocale(), null)).setKey("description").setSortable(true).setFlexGrow(7);
+
+        HeaderRow hr = this.policyGrid.appendHeaderRow();
+        this.policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
+        this.policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
+
+        this.policyGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Policy>>) userItemDoubleClickEvent ->
         {
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-            horizontalLayout.setWidth("100%");
-            horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-            Button trash = new Button(VaadinIcon.TRASH.create());
-            trash.getStyle().set("width", "40px");
-            trash.getStyle().set("height", "40px");
-            trash.getStyle().set("font-size", "16pt");
+            PolicyManagementDialog dialog = new PolicyManagementDialog(userItemDoubleClickEvent.getItem()
+                , this.securityService, this.systemEventLogger);
 
-            trash.addClickListener(buttonClickEvent -> this.securityService.deletePolicy(policy));
-
-            horizontalLayout.add(trash);
-
-            return horizontalLayout;
-        }));
+            dialog.open();
+        });
 
         add(this.policyGrid);
     }

@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Module
 {
+    private String url;
 	private String name;
 	private String description;
 	private String version;
@@ -16,19 +17,30 @@ public class Module
     /**
      * Construcior
      *
+     * @param url
      * @param name
      * @param description
      * @param version
      */
-	public Module(String name, String description, String version)
+	public Module(String url, String name, String description, String version)
 	{
+	    this.url = url;
 		this.name = name;
 		this.description = description;
 		this.version = version;
-		this.flows = flows;
 	}
 
-	public String getName()
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
+
+    public String getName()
 	{
 		return name;
 	}

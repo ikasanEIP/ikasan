@@ -40,33 +40,24 @@
  */
 package org.ikasan.dashboard.ui.topology.panel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.topology.service.TopologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 

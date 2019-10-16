@@ -43,7 +43,8 @@ package org.ikasan.hospital.dao;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ExclusionEventActionImpl;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
@@ -69,10 +70,10 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	public static final String EVENT_IDS = "eventIds";
 	public static final String NOW = "now";
 
-	public static final String EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY = "select errorUri from ExclusionEventAction eo " +
+	public static final String EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY = "select errorUri from ExclusionEventActionImpl eo " +
 			" where eo.timestamp < :" + NOW;
 
-	public static final String EXCLUSION_EVENT_ACTIONS_DELETE_QUERY = "delete ExclusionEventAction eo " +
+	public static final String EXCLUSION_EVENT_ACTIONS_DELETE_QUERY = "delete ExclusionEventActionImpl eo " +
 			" where eo.errorUri in(:" + EVENT_IDS + ")";
 
 	private Integer transactionBatchSize;
@@ -100,7 +101,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("errorUri"),errorUri));
@@ -133,7 +134,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
             List<Predicate> predicates = new ArrayList<>();
 
             if(moduleName != null && moduleName.size() > 0)
@@ -181,7 +182,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 
             CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
 
-            Root<ExclusionEventAction> root = criteriaQuery.from(ExclusionEventAction.class);
+            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
             List<Predicate> predicates = new ArrayList<>();
 
             if(moduleName != null && moduleName.size() > 0)

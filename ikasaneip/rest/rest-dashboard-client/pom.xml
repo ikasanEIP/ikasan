@@ -54,9 +54,8 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-rest-dashboard-client</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Rest Dashboard clinet</name>
+    <name>Ikasan Rest Dashboard Client</name>
     <description>The rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
-    <version>2.2.0-SNAPSHOT</version>
 
     <dependencies>
 

@@ -40,20 +40,19 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.spec.hospital.service.HospitalManagementService;
-import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.topology.service.TopologyService;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
+import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
  * 
@@ -73,7 +72,7 @@ public class ExcludedEventPopup extends UI
 		 	= (ExclusionEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEvent");
 		ErrorOccurrence errorOccurrence
 		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
-		ExclusionEventAction exclusionEventAction
+        ExclusionEventAction exclusionEventAction
 	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
 		
 		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService

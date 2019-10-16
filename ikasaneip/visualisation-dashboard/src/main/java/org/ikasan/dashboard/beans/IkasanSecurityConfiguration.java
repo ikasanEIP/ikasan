@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.beans;
 
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.dao.HibernateSecurityDao;
 import org.ikasan.security.dao.HibernateUserDao;
 import org.ikasan.security.dao.SecurityDao;
@@ -8,6 +9,10 @@ import org.ikasan.security.service.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl;
 import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
+import org.ikasan.systemevent.dao.HibernateSystemEventDao;
+import org.ikasan.systemevent.dao.SystemEventDao;
+import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.systemevent.service.SystemEventServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -68,6 +73,23 @@ public class IkasanSecurityConfiguration
         return new UserServiceImpl(userDao(), securityService(), passwordEncoder());
     }
 
+    @Bean
+    SystemEventLogger systemEventLogger()
+    {
+        return new SystemEventLogger(systemEventService());
+    }
+
+    @Bean
+    public SystemEventService systemEventService()
+    {
+        return new SystemEventServiceImpl(systemEventDao(), 10800L);
+    }
+
+    private SystemEventDao systemEventDao(){
+        HibernateSystemEventDao systemEventDao = new HibernateSystemEventDao();
+        systemEventDao.setSessionFactory(securitySessionFactory().getObject());
+        return systemEventDao;
+    }
 
     @Bean
     public LocalSessionFactoryBean securitySessionFactory(
@@ -85,7 +107,9 @@ public class IkasanSecurityConfiguration
             "/org/ikasan/security/model/Authority.hbm.xml",
             "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
             "/org/ikasan/security/model/PolicyLink.hbm.xml",
-            "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
+            "/org/ikasan/security/model/UserPrincipal.hbm.xml",
+            "/org/ikasan/systemevent/model/SystemEvent.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
         sessionFactoryBean.setHibernateProperties(properties);

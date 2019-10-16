@@ -53,6 +53,9 @@ import org.ikasan.spec.module.Module;
  */
 public class SimpleModule implements Module
 {
+    /** The url of the module */
+    private String url;
+
     /** Flows within this module */
     private List<Flow> flows;
 
@@ -88,6 +91,19 @@ public class SimpleModule implements Module
     {
         this(name, version);
         this.flows = new ArrayList<Flow>(flows);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name The name of the module
+     * @param version version of the module
+     * @param flows A list of Flows for the module
+     */
+    public SimpleModule(String name, String version, List<Flow> flows, String url)
+    {
+        this(name, version, flows);
+        this.url = url;
     }
 
     /**
@@ -180,5 +196,17 @@ public class SimpleModule implements Module
     public String getVersion()
     {
         return this.version;
+    }
+
+    @Override
+    public String getUrl()
+    {
+        return url;
+    }
+
+    @Override
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 }

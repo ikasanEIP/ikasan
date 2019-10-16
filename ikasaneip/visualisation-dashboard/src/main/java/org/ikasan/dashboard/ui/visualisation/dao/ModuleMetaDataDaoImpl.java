@@ -1,6 +1,9 @@
 package org.ikasan.dashboard.ui.visualisation.dao;
 
 import org.apache.commons.io.IOUtils;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
+import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
 {
@@ -19,10 +23,12 @@ public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
     private static final String MODULE_SIX = "/data/graph/module-six.json";
 
     private Map<String, String> moduleMetadata;
+    private JsonModuleMetaDataProvider provider;
 
     public ModuleMetaDataDaoImpl()
     {
         this.moduleMetadata = new HashMap<>();
+        provider = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
 
         init();
     }
@@ -49,6 +55,14 @@ public class ModuleMetaDataDaoImpl implements ModuleMetaDataDao
     public List<String> getAllModuleName()
     {
         return new ArrayList<>(this.moduleMetadata.keySet());
+    }
+
+    @Override
+    public List<ModuleMetaData> getAllModule()
+    {
+        return this.moduleMetadata.values().stream()
+            .map(moduleMetadata -> provider.deserialiseModule(moduleMetadata))
+            .collect(Collectors.toList());
     }
 
     @Override

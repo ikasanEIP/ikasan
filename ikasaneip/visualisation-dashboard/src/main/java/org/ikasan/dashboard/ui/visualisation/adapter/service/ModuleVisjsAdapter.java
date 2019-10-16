@@ -1,6 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -38,7 +38,7 @@ public class ModuleVisjsAdapter
      */
     public Module adapt(ModuleMetaData moduleMetaData, List<ConfigurationMetaData> configurationMetaData)
     {
-        Module module = new Module(moduleMetaData.getName(), moduleMetaData.getDescription(), moduleMetaData.getVersion());
+        Module module = new Module(moduleMetaData.getUrl(), moduleMetaData.getName(), moduleMetaData.getDescription(), moduleMetaData.getVersion());
 
         Map<String, ConfigurationMetaData> configurationMetaDataMap = configurationMetaData.stream().
             collect(Collectors.toMap(metaData -> metaData.getConfigurationId(), metaData -> metaData));
@@ -320,7 +320,31 @@ public class ModuleVisjsAdapter
                 .withId(flowElement.getComponentName() + identifier++)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
-                .withTransition(new MessageChannel("channel"+identifier++, destinationName, false))
+                .withTransition(new MessageChannel("channel"+identifier++, WordUtils.wrap(destinationName, 25, "\n", true, "\\."), false))
+                .build();
+        }
+        else if(flowElement.getImplementingClass().equals("org.ikasan.endpoint.ftp.producer.FtpProducer"))
+        {
+            ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
+            String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
+
+            return MessageEndPoint.messageEndPointBuilder()
+                .withId(flowElement.getComponentName() + identifier++)
+                .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
+                .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
+                .withTransition(new FtpLocation("channel"+identifier++, remoteHost))
+                .build();
+        }
+        else if(flowElement.getImplementingClass().equals("org.ikasan.endpoint.sftp.producer.SftpProducer"))
+        {
+            ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
+            String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
+
+            return MessageEndPoint.messageEndPointBuilder()
+                .withId(flowElement.getComponentName() + identifier++)
+                .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
+                .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
+                .withTransition(new SftpLocation("channel"+identifier++, remoteHost))
                 .build();
         }
 
@@ -328,6 +352,7 @@ public class ModuleVisjsAdapter
             .withId(flowElement.getComponentName() + identifier++)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
+            .withTransition(new FileLocation("fileLocation"+ identifier++, ""))
             .build();
     }
 
@@ -370,7 +395,7 @@ public class ModuleVisjsAdapter
                     .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                     .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                     .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
-                    .withSource(new FtpLocation("sftpLocation"+ identifier++, remoteHost))
+                    .withSource(new SftpLocation("sftpLocation"+ identifier++, remoteHost))
                     .build();
             }
             else
@@ -380,7 +405,7 @@ public class ModuleVisjsAdapter
                     .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                     .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                     .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
-                    .withSource(new FtpLocation("sftpLocation"+ identifier++, ""))
+                    .withSource(new FileLocation("fileLocation"+ identifier++, ""))
                     .build();
             }
         }
@@ -393,7 +418,7 @@ public class ModuleVisjsAdapter
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
-            .withSource(new FtpLocation("sftpLocation"+ identifier++, destinationName))
+            .withSource(new MessageChannel("messageChannel"+ identifier++, WordUtils.wrap(destinationName, 25, "\n", true, "\\."), false))
             .build();
     }
 

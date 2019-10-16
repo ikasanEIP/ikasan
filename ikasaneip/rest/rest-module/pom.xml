@@ -53,6 +53,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ikasan-rest-module</artifactId>
+    <name>Ikasan Rest Module</name>
+    <description>The rest module library for the Ikasan Enterprise Integration Platform</description>
     <packaging>jar</packaging>
 
     <build>
@@ -229,12 +231,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
 
