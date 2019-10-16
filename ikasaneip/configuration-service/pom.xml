@@ -93,19 +93,16 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -208,8 +208,6 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
 
-
-
     private Configuration getConfiguration(String configuredResourceId){
         Configuration<List<ConfigurationParameter>> configuration =
             new DefaultConfiguration(configuredResourceId, new ArrayList<ConfigurationParameter>());

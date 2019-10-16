@@ -4,6 +4,7 @@ import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 public class ConfigurationMetaDataImpl implements ConfigurationMetaData<List<ConfigurationParameterMetaData>>
 {
@@ -80,4 +81,11 @@ public class ConfigurationMetaDataImpl implements ConfigurationMetaData<List<Con
         this.implementingClass = implementingClass;
     }
 
+    @Override
+    public String toString()
+    {
+        return new StringJoiner(", ", ConfigurationMetaDataImpl.class.getSimpleName() + "[", "]")
+            .add("configurationId='" + configurationId + "'").add("description='" + description + "'")
+            .add("implementingClass='" + implementingClass + "'").add("parameters=" + parameters).toString();
+    }
 }

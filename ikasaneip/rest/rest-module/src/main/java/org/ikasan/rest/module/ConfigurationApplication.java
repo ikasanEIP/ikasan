@@ -5,17 +5,18 @@ import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
+import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Configuration application implementing the REST contract
@@ -30,10 +31,14 @@ public class ConfigurationApplication
     @Autowired
     private ConfigurationMetaDataExtractor<String> configurationMetaDataExtractor;
 
+    @Autowired
+    private ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
+
     /** The module service */
     @Autowired
     private ModuleService moduleService;
 
+    @Deprecated
     @RequestMapping(method = RequestMethod.GET,
         value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
         produces = { "application/json" })
@@ -75,6 +80,7 @@ public class ConfigurationApplication
      * @param flowName
      * @return
      */
+    @Deprecated
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
@@ -112,6 +118,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuration, HttpStatus.OK);
     }
 
+    @Deprecated
     @RequestMapping(method = RequestMethod.GET,
         value = "/createConfiguration/{moduleName}/{flowName}",
         produces = { "application/json" })
@@ -170,6 +177,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    @Deprecated
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
@@ -255,4 +263,5 @@ public class ConfigurationApplication
         String configuredResources = configurationMetaDataExtractor.getComponentsConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
+
 }
