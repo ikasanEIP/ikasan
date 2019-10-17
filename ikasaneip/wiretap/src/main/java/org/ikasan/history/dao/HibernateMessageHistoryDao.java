@@ -345,7 +345,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
      */
     private void batchHousekeepDelete() 
     {
-        logger.info("Metrics batched housekeeper called");
+        logger.debug("Metrics batched housekeeper called");
 
         int numberDeleted = 0;
 
@@ -384,7 +384,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 rowCount = rowCountList.get(0);
             }
 
-            logger.info(rowCount+", FlowInvocation housekeepables exist");
+            logger.debug(rowCount+", FlowInvocation housekeepables exist");
             return new Boolean(rowCount>0);
         });
     }
@@ -413,7 +413,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 rowCount = rowCountList.get(0);
             }
 
-            logger.info(rowCount+", FlowInvocation harvestable records exist");
+            logger.debug(rowCount+", FlowInvocation harvestable records exist");
             return new Boolean(rowCount>0);
         });
     }

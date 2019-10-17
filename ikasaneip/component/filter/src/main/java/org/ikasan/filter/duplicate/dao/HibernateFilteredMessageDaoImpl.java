@@ -335,7 +335,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      */
     protected void batchDeleteAllExpired()
     {
-        logger.info("MessageFilter batch delete.");
+        logger.debug("MessageFilter batch delete.");
 
         int numberDeleted = 0;
 
@@ -409,7 +409,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             {
                 rowCount = rowCountList.get(0);
             }
-            logger.info(rowCount+", MessageFilter housekeepables exist");
+            logger.debug(rowCount+", MessageFilter housekeepables exist");
             return new Boolean(rowCount > 0);
         });
     }

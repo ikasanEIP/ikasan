@@ -78,7 +78,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
                 .append(startTime).append(TO).append(endTime).append("]");
 
 
-        logger.info("queryString: " + queryBuffer);
+        logger.debug("queryString: " + queryBuffer);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(searchString);
@@ -100,7 +100,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
 
         try
         {
-            logger.info("query: " + query);
+            logger.debug("query: " + query);
 
             QueryRequest req = new QueryRequest(query);
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);

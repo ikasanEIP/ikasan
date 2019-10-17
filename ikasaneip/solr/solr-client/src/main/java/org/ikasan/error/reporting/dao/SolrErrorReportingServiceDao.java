@@ -80,7 +80,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
     {
         String queryString = this.buildQuery(moduleNames, flowNames, componentNames, startDate, endDate, null, null, ERROR);
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
