@@ -159,7 +159,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
 
         String queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY);
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
@@ -167,7 +167,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW);
 
-        logger.info("query: " + query.toString());
+        logger.debug("query: " + query.toString());
 
         try
         {
@@ -203,14 +203,14 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
     {
         String queryString = super.buildIdQuery(id, REPLAY);
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW);
 
-        logger.info("query: " + query.toString());
+        logger.debug("query: " + query.toString());
 
         List<SolrReplayEvent> results = null;
 

@@ -143,7 +143,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 
         String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
@@ -176,7 +176,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     {
         String queryString = "id:" + id;
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
