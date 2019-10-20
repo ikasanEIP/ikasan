@@ -21,8 +21,6 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
 
-
-
     @Override
     public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes)
     {

@@ -41,7 +41,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
         long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
         long expiry = millisecondsInDay + System.currentTimeMillis();
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "" + replayEvent.getId());
+        document.addField(ID, "replay-" + replayEvent.getId());
         document.addField(TYPE, REPLAY);
         document.addField(MODULE_NAME, replayEvent.getModuleName());
         document.addField(FLOW_NAME, replayEvent.getFlowName());
@@ -90,7 +90,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
             for(ReplayEvent replayEvent: replayEvents)
             {
                 SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, "" + replayEvent.getId());
+                document.addField(ID, "replay-" + replayEvent.getId());
                 document.addField(TYPE, REPLAY);
                 document.addField(MODULE_NAME, replayEvent.getModuleName());
                 document.addField(FLOW_NAME, replayEvent.getFlowName());
@@ -116,7 +116,9 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
 
             logger.debug("Solr Response: " + rsp.toString());
 
-            req.commit(solrClient, SolrConstants.CORE);
+            rsp = req.commit(solrClient, SolrConstants.CORE);
+
+            logger.debug("Solr Commit Response: " + rsp.toString());
         }
         catch (Exception e)
         {

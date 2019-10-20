@@ -47,7 +47,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         long expiry = millisecondsInDay + System.currentTimeMillis();
 
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "" + wiretapEvent.getIdentifier());
+        document.addField(ID, "wiretap-" + wiretapEvent.getIdentifier());
         document.addField(TYPE, WIRETAP);
         document.addField(MODULE_NAME, wiretapEvent.getModuleName());
         document.addField(FLOW_NAME, wiretapEvent.getFlowName());
@@ -89,7 +89,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
             for(WiretapEvent wiretapEvent: wiretapEvents)
             {
                 SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, "" + wiretapEvent.getIdentifier());
+                document.addField(ID, "wiretap-" + wiretapEvent.getIdentifier());
                 document.addField(TYPE, WIRETAP);
                 document.addField(MODULE_NAME, wiretapEvent.getModuleName());
                 document.addField(FLOW_NAME, wiretapEvent.getFlowName());
