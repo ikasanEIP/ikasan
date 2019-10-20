@@ -44,6 +44,7 @@ import org.ikasan.builder.component.Builder;
 import org.ikasan.builder.invoker.Configuration;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -336,6 +337,7 @@ public class FlowBuilderTest
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+                .isRecording(true)
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListener(flowInvocationContextListener)
                 .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -350,6 +352,7 @@ public class FlowBuilderTest
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        Assert.assertTrue("flow is recording", true == ((FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration()).getIsRecording());
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
         Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);

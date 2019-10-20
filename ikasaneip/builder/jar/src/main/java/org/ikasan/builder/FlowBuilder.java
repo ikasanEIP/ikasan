@@ -50,6 +50,7 @@ import org.ikasan.configurationService.service.ConfiguredResourceConfigurationSe
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
@@ -191,6 +192,8 @@ public class FlowBuilder implements ApplicationContextAware
     /** Aop Proxy Provider for applying pointcuts */
     @Autowired
     AopProxyProvider aopProxyProvider;
+
+    boolean isRecording = false;
 
     /**
      * Constructor
@@ -474,6 +477,18 @@ public class FlowBuilder implements ApplicationContextAware
     public FlowBuilder withEventFactory(EventFactory eventFactory)
     {
         this.eventFactory = eventFactory;
+        return this;
+    }
+
+    /**
+     * Configure if the flow is recording.
+     *
+     * @param isRecording
+     * @return
+     */
+    public FlowBuilder isRecording(boolean isRecording)
+    {
+        this.isRecording = isRecording;
         return this;
     }
 
@@ -846,6 +861,12 @@ public class FlowBuilder implements ApplicationContextAware
 
         Flow flow = new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setFlowListener(flowEventListener);
+
+        if(flow instanceof ConfiguredResource)
+        {
+            FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration();
+            flowPersistentConfiguration.setIsRecording(true);
+        }
 
         // pass handle to the error reporting service if flow needs to be aware of this
         if(flow instanceof IsErrorReportingServiceAware)
