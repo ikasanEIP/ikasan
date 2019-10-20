@@ -203,7 +203,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
     @Override
     public ReplayEvent getReplayEventById(Long id)
     {
-        String queryString = super.buildIdQuery(id, REPLAY);
+        String queryString = "id:replay-" + id;
 
         logger.debug("queryString: " + queryString);
 

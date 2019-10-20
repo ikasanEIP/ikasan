@@ -174,7 +174,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public WiretapEvent findById(Long id)
     {
-        String queryString = "id:" + id;
+        String queryString = "id:wiretap-" + id;
 
         logger.debug("queryString: " + queryString);
 
