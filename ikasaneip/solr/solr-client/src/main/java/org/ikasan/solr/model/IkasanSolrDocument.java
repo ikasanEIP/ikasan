@@ -189,13 +189,20 @@ public class IkasanSolrDocument
     @Override
     public String toString()
     {
-        return "SolrWiretapEvent{" +
-                "id='" + id + '\'' +
-                ", event='" + event + '\'' +
-                ", moduleName='" + moduleName + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", componentName='" + componentName + '\'' +
-                ", timeStamp=" + timeStamp +
-                '}';
+        return "IkasanSolrDocument{" +
+            "id='" + id + '\'' +
+            ", event='" + event + '\'' +
+            ", type='" + type + '\'' +
+            ", moduleName='" + moduleName + '\'' +
+            ", flowName='" + flowName + '\'' +
+            ", componentName='" + componentName + '\'' +
+            ", timeStamp=" + timeStamp +
+            ", expiry=" + expiry +
+            ", eventId='" + eventId + '\'' +
+            ", errorUri='" + errorUri + '\'' +
+            ", errorDetail='" + errorDetail + '\'' +
+            ", errorMessage='" + errorMessage + '\'' +
+            ", exceptionClass='" + exceptionClass + '\'' +
+            '}';
     }
 }

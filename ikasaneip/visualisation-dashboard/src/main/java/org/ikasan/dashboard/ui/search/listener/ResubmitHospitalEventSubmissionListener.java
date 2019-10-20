@@ -14,10 +14,14 @@ import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.search.component.HospitalCommentsDialog;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
+import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,11 +39,23 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
     private Logger logger = LoggerFactory.getLogger(ResubmitHospitalEventSubmissionListener.class);
 
     private HospitalAuditService hospitalAuditService;
+    private ResubmissionRestServiceImpl resubmissionRestService;
 
-    public ResubmitHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+    public ResubmitHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
+          ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
         , HashMap<String, IkasanSolrDocument> selectionItems)
     {
+        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService);
         this.hospitalAuditService = hospitalAuditService;
+        if(this.hospitalAuditService == null)
+        {
+            throw new IllegalArgumentException("hospitalAuditService cannot be null!");
+        }
+        this.resubmissionRestService = resubmissionRestService;
+        if(this.hospitalAuditService == null)
+        {
+            throw new IllegalArgumentException("hospitalAuditService cannot be null!");
+        }
         this.searchResultsGrid = searchResultsGrid;
         this.selectionBoxes = selectionBoxes;
         this.selectionItems = selectionItems;
@@ -50,7 +66,7 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
     {
         if(!confirmSelectedEvents())
         {
-            NotificationHelper.showErrorNotification("At least one record must be selected!");
+            NotificationHelper.showErrorNotification(getTranslation("message.at-least-one-record-needs-to-be-selected", UI.getCurrent().getLocale()));
             return;
         }
 
@@ -69,11 +85,13 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
 
                 if (selected)
                 {
-                    progressIndicatorDialog.open(String.format("Re-submitting %s exclusions", searchResultsGrid.getResultSize()));
+                    progressIndicatorDialog.open(String.format(String.format(getTranslation("message.resubmitting-exclusions", UI.getCurrent().getLocale())
+                        , searchResultsGrid.getResultSize())));
                 }
                 else
                 {
-                    progressIndicatorDialog.open(String.format("Re-submitting %s exclusions", super.getNumberOfSeletedItems()));
+                    progressIndicatorDialog.open(String.format(String.format(getTranslation("message.resubmitting-exclusions", UI.getCurrent().getLocale())
+                        , super.getNumberOfSeletedItems())));
                 }
 
                 final UI current = UI.getCurrent();
@@ -81,69 +99,61 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
                 executor.execute(() -> {
                     try
                     {
-                        List<ExclusionEventAction> exclusionEventActions = new ArrayList<>();
+                        List<ExclusionEventAction> exclusionEventActions = null;
                         ExclusionEventAction eventAction;
 
                         ObjectMapper mapper = new ObjectMapper();
 
                         if (!selected)
                         {
-                            for (IkasanSolrDocument document : this.selectionItems.values())
-                            {
-                                if (this.shouldActionEvent(document))
-                                {
-                                    logger.info("resubmitting [{}]", document.getEventId());
+                            List<IkasanSolrDocument> resubmissionEvents = this.selectionItems.values()
+                                .stream()
+                                .filter(document -> this.shouldActionEvent(document))
+                                .collect(Collectors.toList());
 
-                                    // This is where we make a call out to the service...
-
-                                    eventAction = getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventActionImpl.RESUBMIT
-                                        , document, authentication.getName());
-
-                                    eventAction.setEvent(mapper.writeValueAsString(eventAction));
-
-                                    exclusionEventActions.add(eventAction);
-                                }
-                            }
+                            exclusionEventActions = super.actionHospitalEvents(resubmissionEvents, exclusionEventAction, progressIndicatorDialog,
+                                "resubmit", authentication.getName(), current);
                         }
                         else
                         {
+                            exclusionEventActions = new ArrayList<>();
+
                             for (int i = 0; i < searchResultsGrid.getResultSize(); i += 100)
                             {
                                 if (progressIndicatorDialog.isCancelled())
                                 {
-                                    return;
+                                    break;
                                 }
 
                                 List<IkasanSolrDocument> docs = (List<IkasanSolrDocument>) searchResultsGrid.getDataProvider().fetch
                                     (new Query<>(i, i + 100, Collections.EMPTY_LIST, null, null)).collect(Collectors.toList());
 
-                                for (IkasanSolrDocument document : docs)
-                                {
-                                    if (this.shouldActionEvent(document))
-                                    {
-                                        logger.info("resubmitting [{}]", document.getEventId());
+                                List<IkasanSolrDocument> resubmissionEvents = docs
+                                    .stream()
+                                    .filter(document -> this.shouldActionEvent(document))
+                                    .collect(Collectors.toList());
 
-                                        // This is where we make a call out to the service...
-
-                                        eventAction = getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventActionImpl.RESUBMIT
-                                            , document, authentication.getName());
-
-                                        eventAction.setEvent(mapper.writeValueAsString(eventAction));
-
-                                        exclusionEventActions.add(eventAction);
-                                    }
-                                }
+                                exclusionEventActions.addAll(super.actionHospitalEvents(resubmissionEvents, exclusionEventAction, progressIndicatorDialog,
+                                    "resubmit", authentication.getName(), current));
                             }
                         }
 
-                        hospitalAuditService.save(exclusionEventActions);
-
-                        current.access(() ->
+                        if(exclusionEventActions.size() > 0)
                         {
-                            progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("Resubmission complete.");
-                            this.searchResultsGrid.getDataProvider().refreshAll();
-                        });
+                            hospitalAuditService.save(exclusionEventActions);
+                        }
+
+                        if(progressIndicatorDialog.isOpened())
+                        {
+                            current.access(() ->
+                            {
+                                selectionBoxes.keySet().forEach(key -> selectionBoxes.get(key).setValue(false));
+                                selectionItems.clear();
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showUserNotification(getTranslation("message.successfully-resubmitted-exclusions", UI.getCurrent().getLocale()));
+                                this.searchResultsGrid.getDataProvider().refreshAll();
+                            });
+                        }
                     }
                     catch(Exception e)
                     {
@@ -151,7 +161,7 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
                         current.access(() ->
                         {
                             progressIndicatorDialog.close();
-                            NotificationHelper.showErrorNotification("Error occurred while resubmitting exclusions! " + e.getLocalizedMessage());
+                            NotificationHelper.showErrorNotification(getTranslation("message.error-bulk-resubmit-exclusions", UI.getCurrent().getLocale()));
                         });
 
                         return;
