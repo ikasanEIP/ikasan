@@ -22,12 +22,15 @@ import org.ikasan.dashboard.ui.search.component.HospitalCommentsDialog;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.olli.FileDownloadWrapper;
 
@@ -61,8 +64,13 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
+    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ModuleMetaDataService moduleMetadataService;
 
-    public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService)
+    private String translatedEventActionMessage;
+
+    public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
+                          ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService)
     {
         this.errorReportingService = errorReportingService;
         if(this.errorReportingService == null)
@@ -74,12 +82,25 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         {
             throw new IllegalArgumentException("hospitalAuditService cannot be null!");
         }
+        this.resubmissionRestService = resubmissionRestService;
+        if(this.resubmissionRestService == null)
+        {
+            throw new IllegalArgumentException("resubmissionRestService cannot be null!");
+        }
+        this.moduleMetadataService = moduleMetadataService;
+        if(this.moduleMetadataService == null)
+        {
+            throw new IllegalArgumentException("moduleMetadataService cannot be null!");
+        }
 
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
         flowNameTf = new TextField(getTranslation("text-field.flow-name", UI.getCurrent().getLocale(), null));
         eventIdTf = new TextField(getTranslation("text-field.event-id", UI.getCurrent().getLocale(), null));
         errorUriTf = new TextField(getTranslation("text-field.error-uri", UI.getCurrent().getLocale(), null));
         dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
+
+        translatedEventActionMessage = getTranslation("message.resubmission-event-action"
+            , UI.getCurrent().getLocale());
     }
 
 
@@ -146,10 +167,23 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                     Executor executor = Executors.newSingleThreadExecutor();
                     executor.execute(() ->
                     {
-                        // need to make call to hospital service
+                        ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
+                        boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
+                            ikasanSolrDocument.getFlowName(), "resubmit", ikasanSolrDocument.getId());
+
+                        if(!result)
+                        {
+                            current.access(() ->
+                            {
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showErrorNotification("An error has occurred resubmitting. Please contact Ikasan support.");
+                            });
+
+                            return;
+                        }
+
                         ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.RESUBMIT,
                             this.ikasanSolrDocument, authentication.getName());
-
                         this.hospitalAuditService.save(eventAction);
 
                         current.access(() ->
@@ -186,8 +220,22 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                     Executor executor = Executors.newSingleThreadExecutor();
                     executor.execute(() ->
                     {
-                        // need to make call to hospital service
-                        ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.RESUBMIT,
+                        ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
+                        boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
+                            ikasanSolrDocument.getFlowName(), "ignore", ikasanSolrDocument.getId());
+
+                        if(!result)
+                        {
+                            current.access(() ->
+                            {
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showErrorNotification("An error has occurred ignoring. Please contact Ikasan support.");
+                            });
+
+                            return;
+                        }
+
+                        ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.IGNORED,
                             this.ikasanSolrDocument, authentication.getName());
 
                         this.hospitalAuditService.save(eventAction);
@@ -272,14 +320,14 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     {
         ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
         exclusionEventAction.setComment(comment);
-        exclusionEventAction.setAction(action);
         exclusionEventAction.setActionedBy(user);
+        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEventAsString()));
         // the error uri is in fact the id of excluded events
         exclusionEventAction.setErrorUri(document.getId());
-        exclusionEventAction.setEvent(document.getEvent());
         exclusionEventAction.setModuleName(document.getModuleName());
         exclusionEventAction.setFlowName(document.getFlowName());
         exclusionEventAction.setTimestamp(System.currentTimeMillis());
+        exclusionEventAction.setEvent(document.getEvent());
 
         return exclusionEventAction;
     }

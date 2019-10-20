@@ -32,7 +32,7 @@ public class ResubmissionRestServiceImpl extends ModuleRestService
             restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
             return true;
         }
-        catch (RestClientException e)
+        catch (Exception e)
         {
             logger.warn("Issue resubmitting event [" + errorUri + "] [" + url + "] with module [" + moduleName + "] "
                             + "and flows [" + flowName + "]" + "and action [" + action + "]" + " with response [{" + e
