@@ -144,7 +144,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private Tooltip ignoreButtonTooltip;
 
 
-    String currentSearchType = "";
+    private String currentSearchType = "";
+    private String translatedEventActionMessage;
 
     /**
      * Constructor
@@ -154,6 +155,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         this.setMargin(true);
         this.setSizeFull();
 
+        translatedEventActionMessage = getTranslation("message.resubmission-event-action"
+            , UI.getCurrent().getLocale());
     }
 
     /**
@@ -308,9 +311,9 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
 
-        this.addReplayButtonEventListener();
-        this.addHospitalResubmitButtonEventListener();
-        this.addIgnoreButtonEventListener();
+//        this.addReplayButtonEventListener();
+//        this.addHospitalResubmitButtonEventListener();
+//        this.addIgnoreButtonEventListener();
         buttonLayout.setWidth("70px");
 
         HorizontalLayout buttonLayoutWrapper = new HorizontalLayout();
@@ -691,7 +694,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.replayEventRegistration.remove();
         }
 
-        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
         this.replayEventRegistration = this.replayButton.addClickListener(this.replayEventSubmissionListener);
     }
 
@@ -705,8 +708,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.resubmitHospitalEventRegistration.remove();
         }
 
-        this.resubmitHospitalEventSubmissionListener = new ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.searchResultsGrid,
-            this.selectionBoxes, this.selectionItems);
+        this.resubmitHospitalEventSubmissionListener = new ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
+            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
         this.resubmitHospitalEventRegistration = this.resubmitButton.addClickListener(this.resubmitHospitalEventSubmissionListener);
     }
 
@@ -720,8 +723,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.ignoreHospitalEventRegistration.remove();
         }
 
-        this.ignoreHospitalEventSubmissionListener = new IgnoreHospitalEventSubmissionListener(this.hospitalAuditService, this.searchResultsGrid,
-            this.selectionBoxes, this.selectionItems);
+        this.ignoreHospitalEventSubmissionListener = new IgnoreHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
+            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
         this.ignoreHospitalEventRegistration = this.ignoreButton.addClickListener(ignoreHospitalEventSubmissionListener);
     }
 
@@ -738,7 +741,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             selectedImage.setHeight("30px");
 
             this.selectAllButton = new Button(selectedImage);
-            this.selectionItems = new HashMap<>();
+            this.selectionItems.clear();
 
             this.selected = Boolean.FALSE;
             this.replayEventSubmissionListener.setSelected(Boolean.FALSE);

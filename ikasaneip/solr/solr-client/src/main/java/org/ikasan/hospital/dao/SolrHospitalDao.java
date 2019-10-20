@@ -77,6 +77,7 @@ public class SolrHospitalDao extends SolrDaoBase
                 document.addField(TYPE, EXCLUSION_EVENT_ACTION);
                 document.addField(MODULE_NAME, exclusionEventAction.getModuleName());
                 document.addField(FLOW_NAME, exclusionEventAction.getFlowName());
+                document.addField(EVENT, exclusionEventAction.getAction());
                 document.addField(PAYLOAD_CONTENT, exclusionEventAction.getEvent());
                 document.addField(CREATED_DATE_TIME, exclusionEventAction.getTimestamp());
                 document.setField(EXPIRY, expiry);

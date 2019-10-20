@@ -17,6 +17,7 @@ import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditEventImpl;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.replay.ReplayAudit;
 import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.slf4j.Logger;
@@ -35,9 +36,11 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
 {
     Logger logger = LoggerFactory.getLogger(ReplayEventSubmissionListener.class);
 
-    public ReplayEventSubmissionListener(SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+    public ReplayEventSubmissionListener(ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
         , HashMap<String, IkasanSolrDocument> selectionItems)
     {
+        // todo
+        super(moduleMetadataService);
         this.searchResultsGrid = searchResultsGrid;
         this.selectionBoxes = selectionBoxes;
         this.selectionItems = selectionItems;
