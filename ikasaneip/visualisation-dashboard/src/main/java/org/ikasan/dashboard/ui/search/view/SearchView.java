@@ -40,14 +40,17 @@ import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.solr.SolrSearchService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -80,6 +83,12 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
     @Resource
     private HospitalAuditService hospitalAuditService;
+
+    @Resource
+    private ResubmissionRestServiceImpl resubmissionRestService;
+
+    @Resource
+    private ModuleMetaDataService moduleMetadataService;
 
     @Value("${render.search.images}")
     private boolean renderSearchImages;
@@ -775,7 +784,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     {
         if(!initialised)
         {
-            this.exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService);
+            this.exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService
+                , this.resubmissionRestService, this.moduleMetadataService);
 
             this.createSearchForm();
             this.createSearchResultGridLayout();

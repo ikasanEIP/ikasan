@@ -37,6 +37,8 @@ public class SolrModuleMetadataServiceImpl extends SolrServiceBase implements Ba
     @Override
     public ModuleMetaData findById(String id)
     {
+        dao.setSolrUsername(super.solrUsername);
+        dao.setSolrPassword(super.solrPassword);
         return this.dao.findById(id);
     }
 
