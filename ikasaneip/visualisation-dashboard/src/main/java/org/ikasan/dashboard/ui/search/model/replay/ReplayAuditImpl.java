@@ -10,6 +10,14 @@ public class ReplayAuditImpl implements ReplayAudit
     private String targetServer;
     private long timestamp;
 
+    public ReplayAuditImpl(String user, String replayReason, String targetServer, long timestamp)
+    {
+        this.user = user;
+        this.replayReason = replayReason;
+        this.targetServer = targetServer;
+        this.timestamp = timestamp;
+    }
+
     @Override
     public Long getId()
     {

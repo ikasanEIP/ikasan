@@ -184,7 +184,7 @@ public class ReplayApplication
             }
 
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
-            Object deserialisedEvent = serialiser.deserialise(event);
+            Object deserialisedEvent = serialiser.deserialise(event.getEvent());
             logger.debug("deserialised event [" + deserialisedEvent + "]");
 
             resubmissionService.onResubmission(deserialisedEvent);
