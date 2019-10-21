@@ -1,5 +1,4 @@
-package org.ikasan.dashboard.ui.search.component;
-
+package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -13,24 +12,22 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
-import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
-import org.ikasan.spec.hospital.model.ExclusionEventAction;
-import org.ikasan.spec.replay.ReplayAudit;
+import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
 
 public class ReplayCommentsDialog extends Dialog
 {
-    private ReplayAudit replayAudit;
+    private ReplayDialogDto replayDialogDto;
     private boolean isSaved;
 
-    public ReplayCommentsDialog(ReplayAudit replayAudit)
+    public ReplayCommentsDialog(ReplayDialogDto replayAudit)
     {
-        this.replayAudit = replayAudit;
-        if(this.replayAudit == null)
+        this.replayDialogDto = replayAudit;
+        if(this.replayDialogDto == null)
         {
             throw new IllegalArgumentException("ReplayAudit cannot be null!");
         }
@@ -50,25 +47,37 @@ public class ReplayCommentsDialog extends Dialog
 
         FormLayout formLayout = new FormLayout();
 
-        Binder<ReplayAudit> binder = new Binder<>(ReplayAudit.class);
+        Binder<ReplayDialogDto> binder = new Binder<>(ReplayDialogDto.class);
 
         TextField targetUrlTf = new TextField(getTranslation("text-field.target-module-url", UI.getCurrent().getLocale(), null));
         binder.forField(targetUrlTf)
             .withValidator(description -> description != null && description.length() > 0, getTranslation("message.comment-target-module-url", UI.getCurrent().getLocale(), null))
-            .bind(ReplayAudit::getTargetServer, ReplayAudit::setTargetServer);
+            .bind(ReplayDialogDto::getTargetServer, ReplayDialogDto::setTargetServer);
+
+        TextField targetUserTf = new TextField(getTranslation("text-field.target-module-username", UI.getCurrent().getLocale(), null));
+        binder.forField(targetUserTf)
+            .withValidator(description -> description != null && description.length() > 0, getTranslation("message.missing-target-username", UI.getCurrent().getLocale(), null))
+            .bind(ReplayDialogDto::getAuthenticationUser, ReplayDialogDto::setAuthenticationUser);
+
+        PasswordField targetPasswordTf = new PasswordField(getTranslation("text-field.target-module-password", UI.getCurrent().getLocale(), null));
+        binder.forField(targetPasswordTf)
+            .withValidator(description -> description != null && description.length() > 0, getTranslation("message.missing-target-password", UI.getCurrent().getLocale(), null))
+            .bind(ReplayDialogDto::getPassword, ReplayDialogDto::setPassword);
 
         TextArea commentTf = new TextArea(getTranslation("text-field.comment", UI.getCurrent().getLocale(), null));
         binder.forField(commentTf)
             .withValidator(description -> description != null && description.length() > 0
                 , getTranslation("message.comment-missing", UI.getCurrent().getLocale(), null))
-            .bind(ReplayAudit::getReplayReason, ReplayAudit::setReplayReason);
+            .bind(ReplayDialogDto::getReplayReason, ReplayDialogDto::setReplayReason);
         commentTf.setHeight("200px");
 
-        ReplayAudit replayAudit = new ReplayAuditImpl();
-        binder.readBean(replayAudit);
+        binder.readBean(this.replayDialogDto);
 
         formLayout.add(targetUrlTf);
         formLayout.setColspan(targetUrlTf, 2);
+
+        formLayout.add(targetUserTf);
+        formLayout.add(targetPasswordTf);
 
         formLayout.add(commentTf);
         formLayout.setColspan(commentTf, 2);
@@ -84,7 +93,7 @@ public class ReplayCommentsDialog extends Dialog
         {
             try
             {
-                binder.writeBean(replayAudit);
+                binder.writeBean(this.replayDialogDto);
                 this.isSaved = true;
                 this.close();
             }

@@ -40,6 +40,7 @@ import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -88,6 +89,9 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private ResubmissionRestServiceImpl resubmissionRestService;
 
     @Resource
+    private ReplayRestServiceImpl replayRestService;
+
+    @Resource
     private ModuleMetaDataService moduleMetadataService;
 
     @Value("${render.search.images}")
@@ -96,7 +100,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private SolrSearchFilteringGrid searchResultsGrid;
     private WiretapDialog wiretapDialog = new WiretapDialog();
     private ErrorDialog errorDialog = new ErrorDialog();
-    private ReplayDialog replayDialog = new ReplayDialog();
+    private ReplayDialog replayDialog;
     private HospitalDialog exclusionDialog;
 
     private TextArea searchText = new TextArea();
@@ -311,9 +315,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
 
-//        this.addReplayButtonEventListener();
-//        this.addHospitalResubmitButtonEventListener();
-//        this.addIgnoreButtonEventListener();
         buttonLayout.setWidth("70px");
 
         HorizontalLayout buttonLayoutWrapper = new HorizontalLayout();
@@ -694,7 +695,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.replayEventRegistration.remove();
         }
 
-        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.replayRestService, this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
         this.replayEventRegistration = this.replayButton.addClickListener(this.replayEventSubmissionListener);
     }
 
@@ -789,6 +790,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         {
             this.exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService
                 , this.resubmissionRestService, this.moduleMetadataService);
+
+            this.replayDialog = new ReplayDialog(replayRestService);
 
             this.createSearchForm();
             this.createSearchResultGridLayout();

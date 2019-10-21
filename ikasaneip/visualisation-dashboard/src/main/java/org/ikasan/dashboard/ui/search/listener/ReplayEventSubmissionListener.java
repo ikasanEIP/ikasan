@@ -11,14 +11,15 @@ import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.data.provider.Query;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
-import org.ikasan.dashboard.ui.search.component.ReplayCommentsDialog;
+import org.ikasan.dashboard.ui.general.component.ReplayCommentsDialog;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditEventImpl;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
+import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
+import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
-import org.ikasan.spec.replay.ReplayAudit;
 import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +37,18 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
 {
     Logger logger = LoggerFactory.getLogger(ReplayEventSubmissionListener.class);
 
-    public ReplayEventSubmissionListener(ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+    private ReplayRestServiceImpl replayRestService;
+
+    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
         , HashMap<String, IkasanSolrDocument> selectionItems)
     {
-        // todo
         super(moduleMetadataService);
+
+        this.replayRestService = replayRestService;
+        if(this.replayRestService == null)
+        {
+            throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
         this.searchResultsGrid = searchResultsGrid;
         this.selectionBoxes = selectionBoxes;
         this.selectionItems = selectionItems;
@@ -57,10 +65,10 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
             return;
         }
 
-        ReplayAudit replayAudit = new ReplayAuditImpl();
-        replayAudit.setUser(authentication.getName());
+        ReplayDialogDto replayDialogDto = new ReplayDialogDto();
+        replayDialogDto.setUser(authentication.getName());
 
-        ReplayCommentsDialog commentsDialog = new ReplayCommentsDialog(replayAudit);
+        ReplayCommentsDialog commentsDialog = new ReplayCommentsDialog(replayDialogDto);
         commentsDialog.open();
 
         commentsDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
@@ -94,13 +102,15 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                                 {
                                     logger.info("replaying [{}]", document.getEventId());
 
-                                    // This is where we make a call out to the listener...
+                                    boolean result = this.replayRestService.replay(replayDialogDto.getTargetServer(), replayDialogDto.getAuthenticationUser(),
+                                        replayDialogDto.getPassword(), document.getModuleName(), document.getFlowName(), document.getPayloadRaw());
 
                                     replayAuditEvent = new ReplayAuditEventImpl();
                                     replayAuditEvent.setId(document.getId());
-                                    replayAuditEvent.setReplayAudit(replayAudit);
+                                    replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
+                                        replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
                                     replayAuditEvent.setResultMessage("get message from rest call");
-                                    replayAuditEvent.setSuccess(true);
+                                    replayAuditEvent.setSuccess(result);
                                     replayAuditEvent.setTimestamp(System.currentTimeMillis());
 
                                     replayAuditEvents.add(replayAuditEvent);
@@ -130,13 +140,15 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                                     {
                                         logger.info("replaying [{}]", document.getEventId());
 
-                                        // This is where we make a call out to the listener...
+                                        boolean result = this.replayRestService.replay(replayDialogDto.getTargetServer(), replayDialogDto.getAuthenticationUser(),
+                                            replayDialogDto.getPassword(), document.getModuleName(), document.getFlowName(), document.getPayloadRaw());
 
                                         replayAuditEvent = new ReplayAuditEventImpl();
                                         replayAuditEvent.setId(document.getId());
-                                        replayAuditEvent.setReplayAudit(replayAudit);
+                                        replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
+                                            replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
                                         replayAuditEvent.setResultMessage("get message from rest call");
-                                        replayAuditEvent.setSuccess(true);
+                                        replayAuditEvent.setSuccess(result);
                                         replayAuditEvent.setTimestamp(System.currentTimeMillis());
 
                                         replayAuditEvents.add(replayAuditEvent);

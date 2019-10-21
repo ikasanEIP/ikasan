@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.util.DateFormatter;
+import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.vaadin.olli.FileDownloadWrapper;
 
@@ -34,8 +35,16 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
-    public ReplayDialog()
+    private ReplayRestServiceImpl replayRestService;
+
+    public ReplayDialog(ReplayRestServiceImpl replayRestService)
     {
+        this.replayRestService = replayRestService;
+        if(this.replayRestService == null)
+        {
+            throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
+
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
         flowNameTf = new TextField(getTranslation("text-field.flow-name", UI.getCurrent().getLocale(), null));
         componentNameTf = new TextField(getTranslation("text-field.component-name", UI.getCurrent().getLocale(), null));

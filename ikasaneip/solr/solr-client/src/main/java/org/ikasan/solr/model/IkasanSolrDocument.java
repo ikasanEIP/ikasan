@@ -46,6 +46,9 @@ public class IkasanSolrDocument
     @Field("exceptionClass")
     private String exceptionClass;
 
+    @Field("payloadRaw")
+    private byte[] payloadRaw;
+
     public String getId()
     {
         return id;
@@ -184,6 +187,16 @@ public class IkasanSolrDocument
     public void setExceptionClass(String exceptionClass)
     {
         this.exceptionClass = exceptionClass;
+    }
+
+    public byte[] getPayloadRaw()
+    {
+        return payloadRaw;
+    }
+
+    public void setPayloadRaw(byte[] payloadRaw)
+    {
+        this.payloadRaw = payloadRaw;
     }
 
     @Override

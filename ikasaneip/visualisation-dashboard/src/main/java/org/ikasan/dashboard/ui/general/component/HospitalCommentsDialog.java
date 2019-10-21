@@ -1,4 +1,4 @@
-package org.ikasan.dashboard.ui.search.component;
+package org.ikasan.dashboard.ui.general.component;
 
 
 import com.vaadin.flow.component.ClickEvent;
