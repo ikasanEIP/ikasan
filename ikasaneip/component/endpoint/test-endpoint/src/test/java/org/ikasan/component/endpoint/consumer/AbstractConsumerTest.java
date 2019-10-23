@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.consumer;
 
-import org.ikasan.component.endpoint.consumer.AbstractConsumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.jmock.Mockery;

@@ -38,17 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.consumer.api.event;
+package org.ikasan.component.endpoint.consumer.api.spec;
+
+import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.MessageListener;
 
 /**
- * Contract for an executable event.
+ * Contract for the tech endpoint providing events to the consumer.
  *
  * @author Ikasan Development Team
  */
-public interface APIExecutableEvent extends APIEvent
+public interface Endpoint extends Runnable
 {
     /**
-     * Call execute on the event.
+     * Set the message listener.
+     * @param messageListener
      */
-    void execute();
+    void setMessageListener(MessageListener messageListener);
+
+    /**
+     * Set the exception listener.
+     * @param exceptionListener
+     */
+    void setExceptionListener(ExceptionListener exceptionListener);
+
+    /**
+     * Set the eventProvider.
+     * @param eventProvider
+     */
+    void setEventProvider(EndpointEventProvider eventProvider);
+
+    /**
+     * Stop the tech endpoint.
+     */
+    void stop();
 }

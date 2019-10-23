@@ -40,8 +40,7 @@
  */
 package org.ikasan.component.endpoint.consumer;
 
-import org.ikasan.component.endpoint.consumer.EventGeneratingConsumer;
-import org.ikasan.component.endpoint.consumer.api.TechEndpoint;
+import org.ikasan.component.endpoint.consumer.api.spec.Endpoint;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
@@ -69,9 +68,8 @@ public class EventGeneratingConsumerTest
 
     private EventFactory flowEventFactory = mockery.mock(EventFactory.class);
     private EventListener eventListener = mockery.mock(EventListener.class);
-    private TechEndpoint apiEventProvider = mockery.mock(TechEndpoint.class);
+    private Endpoint apiEventProvider = mockery.mock(Endpoint.class);
     private ExecutorService executorService = mockery.mock(ExecutorService.class);
-    private FlowEvent flowEvent = mockery.mock(FlowEvent.class);
 
     /**
      * Test failed constructor
@@ -89,34 +87,6 @@ public class EventGeneratingConsumerTest
     public void test_failed_constructor_null_messageListener()
     {
         new EventGeneratingConsumer(executorService, null);
-    }
-
-    /**
-     * Test eventGenerator with a limit of 1 event
-     */
-    @Test
-    public void test_eventGenerator_message_generator_callback()
-    {
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(executorService, this.apiEventProvider);
-        eventGeneratingConsumer.setEventFactory(flowEventFactory);
-        eventGeneratingConsumer.setListener(eventListener);
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // new flowEvent
-                one(flowEventFactory).newEvent("message", "message");
-                will(returnValue(flowEvent));
-
-                // event limit of 1
-                exactly(1).of(eventListener).invoke(flowEvent);
-            }
-        });
-
-       // FIXME  APIEventProvider apiEventProvider = new APIEventProviderImpl();
-       // FIXME  eventGeneratingConsumer.onMessage(apiEventProvider.getEvent());
-       // mockery.assertIsSatisfied();
     }
 
     /**

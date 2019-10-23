@@ -38,50 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.consumer.api;
+package org.ikasan.component.endpoint.consumer.api.provider;
 
-import org.ikasan.component.endpoint.consumer.api.event.TechEndpointEventFactoryImpl;
-
-import java.util.List;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
 
 /**
- * Contract for the tech endpoint event provider.
+ * Default implementation of an Endpoint Event Provider based on a String event.
  *
  * @author Ikasan Development Team
  */
-public interface TechEndpointEventProvider<E>
+public class DefaultEndpointEventProviderImpl implements EndpointEventProvider<String>
 {
-    static With with()
+    long eventCount;
+    String event;
+    boolean rollback;
+
+    @Override
+    public String getEvent()
     {
-        return new DefaultTechEndpointEventProviderImpl(new TechEndpointEventFactoryImpl());
+        if(rollback)
+        {
+            rollback = false;
+            return event;
+        }
+
+        event = "Test Message " + ++eventCount;
+        return event;
     }
 
-    /**
-     * Consume the next event
-     * @return
-     */
-    E consumeEvent();
-
-    /**
-     * Get all events from this provider
-     * @return
-     */
-    List<E> getEvents();
-
-    /**
-     * Rollback the current event being consumed if a message event.
-     */
-    void rollback();
-
-    /**
-     * Clone this instance of the endpoint event provider.
-     * @return
-     */
-    TechEndpointEventProvider clone();
-
-    /**
-     * Do we need to repeast the event cycle.
-     * @return
-     */
-    boolean isRepeatEventCycle();
+    @Override
+    public void rollback()
+    {
+        this.rollback = true;
+    }
 }

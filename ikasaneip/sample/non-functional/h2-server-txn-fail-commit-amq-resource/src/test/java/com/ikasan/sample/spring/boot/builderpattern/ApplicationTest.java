@@ -200,8 +200,6 @@ public class ApplicationTest
             messages.add("Test Message " + i);
         }
 
-//        RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
-//        redeliveryPolicy.setMaximumRedeliveries(0);
         amqTestUtil.publish(messages, "jms.topic.test");
 
         // wait for JMS flows to catch up for a max of 10 seconds

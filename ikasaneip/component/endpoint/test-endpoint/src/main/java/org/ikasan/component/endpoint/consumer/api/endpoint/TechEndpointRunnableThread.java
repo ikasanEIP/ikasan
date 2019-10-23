@@ -1,46 +1,47 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.consumer.api;
+package org.ikasan.component.endpoint.consumer.api.endpoint;
 
-import org.ikasan.component.endpoint.consumer.api.event.APIExecutableEvent;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
+import org.ikasan.component.endpoint.consumer.api.spec.Endpoint;
 import org.ikasan.spec.event.ExceptionListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.MessageListener;
@@ -48,11 +49,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This consumer implementation provides a simple event generator to provision testing of flows quickly and easily.
- * 
+ * TechEndpoint contract implementation as a runnable thread.
+ *
  * @author Ikasan Development Team
  */
-public class TechEndpointRunnableThread implements TechEndpoint
+public class TechEndpointRunnableThread implements Endpoint
 {
     /** Logger instance */
     private static Logger logger = LoggerFactory.getLogger(TechEndpointRunnableThread.class);
@@ -66,7 +67,7 @@ public class TechEndpointRunnableThread implements TechEndpoint
     /** control the thread execution */
     private volatile boolean running;
 
-    protected TechEndpointEventProvider<APIExecutableEvent> techEndpointEventProvider;
+    protected EndpointEventProvider<?> eventProvider;
 
     public void run()
     {
@@ -94,16 +95,16 @@ public class TechEndpointRunnableThread implements TechEndpoint
 
     private void execute()
     {
-        APIExecutableEvent apiEvent = null;
-        while(isRunning() && (apiEvent = techEndpointEventProvider.consumeEvent()) != null)
+        Object event = null;
+        while(isRunning() && (event = eventProvider.getEvent()) != null)
         {
             try
             {
-                apiEvent.execute();
+                this.messageListener.onMessage(event);
             }
             catch (ForceTransactionRollbackException thrownByRecoveryManager)
             {
-                techEndpointEventProvider.rollback();
+                eventProvider.rollback();
             }
             catch (Throwable throwable)
             {
@@ -112,14 +113,13 @@ public class TechEndpointRunnableThread implements TechEndpoint
                     throw throwable;
                 }
 
-
                 this.exceptionListener.onException(throwable);
             }
         }
 
-        if(apiEvent == null)
+        if(event == null)
         {
-            logger.info("EventGenerator stopped, no more events." );
+            logger.info("Endpoint stopped, no more events." );
         }
     }
 
@@ -136,9 +136,9 @@ public class TechEndpointRunnableThread implements TechEndpoint
     }
 
     @Override
-    public void setTechEndpointEventProvider(TechEndpointEventProvider techEndpointEventProvider)
+    public void setEventProvider(EndpointEventProvider eventProvider)
     {
-        this.techEndpointEventProvider = techEndpointEventProvider;
+        this.eventProvider = eventProvider;
     }
 
     @Override

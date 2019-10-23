@@ -41,63 +41,93 @@
 package org.ikasan.component.endpoint.consumer;
 
 import org.ikasan.component.endpoint.consumer.api.spec.Endpoint;
-import org.ikasan.spec.event.*;
-import org.ikasan.spec.management.ManagedIdentifierService;
+import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.MessageListener;
+import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * This consumer implementation provides a simple event generator to provision testing of flows quickly and easily.
  * 
  * @author Ikasan Development Team
  */
-public class EventGeneratingConsumer<T> extends RunnableThreadConsumer<T>
-        implements MessageListener<T>, ExceptionListener<Throwable>, ManagedIdentifierService<ManagedEventIdentifierService>
+public abstract class RunnableThreadConsumer<EVENT> extends AbstractConsumer
+    implements ResubmissionService<EVENT>, MessageListener<EVENT>, ExceptionListener<Throwable>
 {
-    ManagedEventIdentifierService<?,T> managedEventIdentifierService = new SimpleManagedEventIdentifierService();
+    /** allow techEndpoint to execute in a separate thread */
+    ExecutorService executorService;
+
+    /** handle to the future thread */
+    Future apiTechThread;
+
+    /** provider of messages */
+    Endpoint techEndpoint;
+
+    /** resubmission event factory */
+    ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
     /**
      * Constructor
      * @param techEndpoint
      */
-    public EventGeneratingConsumer(ExecutorService executorService, Endpoint techEndpoint)
+    public RunnableThreadConsumer(ExecutorService executorService, Endpoint techEndpoint)
     {
-        super(executorService, techEndpoint);
-    }
-
-    @Override
-    public void onResubmission(T message)
-    {
-        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(
-                flowEventFactory.newEvent(managedEventIdentifierService.getEventIdentifier(message), message) );
-        this.eventListener.invoke(resubmission);
-    }
-
-    @Override
-    public void onMessage(T message)
-    {
-        eventListener.invoke( flowEventFactory.newEvent(managedEventIdentifierService.getEventIdentifier(message), message) );
-    }
-
-    @Override
-    public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
-    {
-        this.managedEventIdentifierService = managedEventIdentifierService;
-    }
-
-    class SimpleManagedEventIdentifierService implements ManagedEventIdentifierService<String,T>
-    {
-
-        @Override
-        public void setEventIdentifier(String string, T t) throws ManagedEventIdentifierException
+        this.executorService = executorService;
+        if(executorService == null)
         {
-            // nothing to do here
+            throw new IllegalArgumentException("executorService cannot be 'null'");
         }
 
-        @Override
-        public String getEventIdentifier(T t) throws ManagedEventIdentifierException
+        this.techEndpoint = techEndpoint;
+        if(techEndpoint == null)
         {
-            return String.valueOf(t.hashCode());
+            throw new IllegalArgumentException("apiTech cannot be 'null'");
         }
+    }
+
+    /**
+     * Start the underlying event generator
+     */
+    public void start()
+    {
+        apiTechThread = this.executorService.submit(techEndpoint);
+    }
+
+    /**
+     * Stop the event generator
+     */
+    public void stop()
+    {
+        if(this.isRunning())
+        {
+            techEndpoint.stop();
+            this.apiTechThread.cancel(true);
+        }
+    }
+
+    /**
+     * Is the underlying event generator actively running
+     * @return isRunning
+     */
+    public boolean isRunning()
+    {
+        if(this.apiTechThread == null || this.apiTechThread.isCancelled() || this.apiTechThread.isDone()) {return false;}
+        return true;
+    }
+
+    @Override
+    public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory)
+    {
+        this.resubmissionEventFactory = resubmissionEventFactory;
+    }
+
+    @Override
+    public void onException(Throwable throwable)
+    {
+        eventListener.invoke(throwable);
     }
 }

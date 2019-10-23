@@ -41,15 +41,15 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.consumer.*;
-import org.ikasan.component.endpoint.consumer.api.*;
-import org.ikasan.component.endpoint.consumer.api.event.TechEndpointExecutableEventFactoryImpl;
+import org.ikasan.component.endpoint.consumer.EventGeneratingConsumer;
+import org.ikasan.component.endpoint.consumer.api.endpoint.TechEndpointRunnableThread;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
+import org.ikasan.component.endpoint.consumer.api.spec.Endpoint;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.ExceptionListener;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.MessageListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
@@ -62,10 +62,13 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
     // aop point cut proxy
     private AopProxyProvider aopProxyProvider;
 
-    private List<TechEndpointEventProvider> techEndpointEventProviders = new ArrayList<TechEndpointEventProvider>();
+    private EndpointEventProvider endpointEventProvider = EndpointEventProvider.defaultInstance();
 
     // API tech endpoint
-    private TechEndpoint techEndpoint;
+    private Endpoint techEndpoint = new TechEndpointRunnableThread();
+
+    // managed event identifier override
+    private ManagedEventIdentifierService managedEventIdentifierService;
 
     /**
      * Constructor
@@ -86,113 +89,36 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
      */
     public Consumer build()
     {
-        // default tech endpoint if not provided
-        if(techEndpoint == null)
-        {
-            this.techEndpoint = new TechEndpointRunnableThread();
-        }
-
-        EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(Executors.newSingleThreadExecutor(), techEndpoint);
-        MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventGeneratingConsumer", eventGeneratingConsumer);
+        EventGeneratingConsumer eventConsumer = new EventGeneratingConsumer(Executors.newSingleThreadExecutor(), techEndpoint);
+        MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventConsumer", eventConsumer);
         techEndpoint.setMessageListener(messageListener);
 
-        if(this.techEndpointEventProviders.isEmpty())
-        {
-            this.techEndpointEventProviders.add( getDefaultTechEndpointProvider() );
-        }
-
-        TechEndpointEventFactory eventFactory;
         if(messageListener instanceof ExceptionListener)
         {
-            eventFactory = new TechEndpointExecutableEventFactoryImpl(messageListener, (ExceptionListener)messageListener);
             techEndpoint.setExceptionListener( (ExceptionListener)messageListener );
         }
-        else
+
+        techEndpoint.setEventProvider(this.endpointEventProvider);
+        if(this.managedEventIdentifierService != null)
         {
-            eventFactory = new TechEndpointExecutableEventFactoryImpl(messageListener, null);
+            eventConsumer.setManagedIdentifierService(managedEventIdentifierService);
         }
 
-        //
-        List<TechEndpointEventProvider> executableProviders =
-                new ArrayList<TechEndpointEventProvider>( this.techEndpointEventProviders.size() );
-        for(TechEndpointEventProvider techEndpointEventProvider:this.techEndpointEventProviders)
-        {
-            executableProviders.add( new DefaultTechEndpointEventProviderImpl(eventFactory, techEndpointEventProvider) );
-        }
-
-        techEndpoint.setTechEndpointEventProvider( new TechEndpointMultipleEventProvidersImpl(executableProviders) );
-
-        return eventGeneratingConsumer;
+        return eventConsumer;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setTechEndpoint(TechEndpoint techEndpoint) {
-        this.techEndpoint = techEndpoint;
+    public EventGeneratingConsumerBuilder setEndpointEventProvider(EndpointEventProvider endpointEventProvider)
+    {
+        this.endpointEventProvider = endpointEventProvider;
         return this;
     }
 
     @Override
-    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
+    public EventGeneratingConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
     {
-        this.techEndpointEventProviders.clear();
-        this.techEndpointEventProviders.add(techEndpointEventProvider);
+        this.managedEventIdentifierService = managedEventIdentifierService;
         return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder setTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
-    {
-        return this.setTechEventProvider(techEndpointProviderBuilder.build());
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointEventProvider techEndpointEventProvider)
-    {
-        this.techEndpointEventProviders.add(techEndpointEventProvider);
-        return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder withTechEventProvider(TechEndpointProviderBuilder techEndpointProviderBuilder)
-    {
-        this.withTechEventProvider(techEndpointProviderBuilder.build());
-        return this;
-    }
-
-    @Override
-    public EventGeneratingConsumerBuilder repeatProvider(int repeatTimes)
-    {
-        if(this.techEndpointEventProviders.isEmpty())
-        {
-            this.techEndpointEventProviders.add( getDefaultTechEndpointProvider() );
-        }
-
-        TechEndpointEventProvider techEndpointEventProvider = this.techEndpointEventProviders.remove( this.techEndpointEventProviders.size()-1 );
-
-        for(int count=0; count<repeatTimes; count++)
-        {
-            this.techEndpointEventProviders.add( techEndpointEventProvider.clone() );
-        }
-
-        return this;
-    }
-
-    protected TechEndpointEventProvider getDefaultTechEndpointProvider()
-    {
-        // default behaviour is to publish 10 messages, one every second, indefinitely
-        return TechEndpointEventProvider.with()
-                .messageEvent("Test Message 1").interval(1000)
-                .messageEvent("Test Message 2").interval(1000)
-                .messageEvent("Test Message 3").interval(1000)
-                .messageEvent("Test Message 4").interval(1000)
-                .messageEvent("Test Message 5").interval(1000)
-                .messageEvent("Test Message 6").interval(1000)
-                .messageEvent("Test Message 7").interval(1000)
-                .messageEvent("Test Message 8").interval(1000)
-                .messageEvent("Test Message 9").interval(1000)
-                .messageEvent("Test Message 10").interval(1000)
-                .repeatEventCycleForever()
-                .build();
     }
 }
 
