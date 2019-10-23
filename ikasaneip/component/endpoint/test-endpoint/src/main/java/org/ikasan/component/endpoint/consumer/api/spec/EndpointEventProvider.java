@@ -38,38 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.consumer.api;
+package org.ikasan.component.endpoint.consumer.api.spec;
 
-import org.ikasan.spec.event.ExceptionListener;
-import org.ikasan.spec.event.MessageListener;
+import org.ikasan.component.endpoint.consumer.api.provider.DefaultEndpointEventProviderImpl;
 
 /**
- * Contract for the tech endpoint providing events to the consumer.
+ * Contract for the tech endpoint event provider.
  *
  * @author Ikasan Development Team
  */
-public interface TechEndpoint extends Runnable
+public interface EndpointEventProvider<E>
 {
-    /**
-     * Set the message listener.
-     * @param messageListener
-     */
-    void setMessageListener(MessageListener messageListener);
+    static EndpointEventProvider defaultInstance()
+    {
+        return new DefaultEndpointEventProviderImpl();
+    }
 
     /**
-     * Set the exception listener.
-     * @param exceptionListener
+     * Get the next event
+     * @return
      */
-    void setExceptionListener(ExceptionListener exceptionListener);
+    E getEvent();
 
     /**
-     * Set the techEndpointEventProvider.
-     * @param techEndpointEventProvider
+     * Rollback the current event being consumed if a message event.
      */
-    void setTechEndpointEventProvider(TechEndpointEventProvider techEndpointEventProvider);
-
-    /**
-     * Stop the tech endpoint.
-     */
-    void stop();
+    void rollback();
 }

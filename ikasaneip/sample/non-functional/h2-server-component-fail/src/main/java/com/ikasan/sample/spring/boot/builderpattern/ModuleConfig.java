@@ -44,7 +44,7 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.OnException;
 import org.ikasan.builder.invoker.Configuration;
-import org.ikasan.component.endpoint.consumer.api.TechEndpointEventProvider;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +65,7 @@ public class ModuleConfig
 
     public static int REPEAT = 2;  // Change this to up the number of events
     public static int EVENTS_PER_CYCLE = 10;
-    public static int EVENT_GENERATOR_COUNT = EVENTS_PER_CYCLE * REPEAT;
+    public static int EVENT_GENERATOR_COUNT = 20;
 
     @Bean
     public Module getModule()
@@ -78,9 +78,7 @@ public class ModuleConfig
                 .getFlowBuilder("eventGeneratorToJMSFlow")
                 .withDescription("Event generating flow.")
                 .consumer("Event Generating Consumer", builderFactory.getComponentBuilder()
-                        .eventGeneratingConsumer()
-                        .setTechEventProvider( getTechEndpointProvider() )
-                        .repeatProvider(REPEAT))
+                        .eventGeneratingConsumer().setEndpointEventProvider( new TechEndpointEventProvider() ))
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
         // dynamic configuration update flow
@@ -88,9 +86,7 @@ public class ModuleConfig
                 .withDescription("Flow which constantly updates dynamic configuration and saves back to the DB on each invocation.")
                 .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(100)))
                 .consumer("Event Generating Consumer", builderFactory.getComponentBuilder()
-                        .eventGeneratingConsumer()
-                        .setTechEventProvider( getTechEndpointProvider())
-                        .repeatProvider(REPEAT))
+                        .eventGeneratingConsumer().setEndpointEventProvider( new TechEndpointEventProvider() ))
                 .broker("Configuration Updater", componentFactory.getDbBroker(), Configuration.brokerInvoker().withDynamicConfiguration(true))
                 .producer("Dev Null Producer", builderFactory.getComponentBuilder().devNullProducer().build()).build();
 
@@ -118,19 +114,29 @@ public class ModuleConfig
         return module;
     }
 
-    TechEndpointEventProvider getTechEndpointProvider()
+    class TechEndpointEventProvider implements EndpointEventProvider<String>
     {
-        return TechEndpointEventProvider.with()
-                .messageEvent("Test Message 1")
-                .messageEvent("Test Message 2")
-                .messageEvent("Test Message 3")
-                .messageEvent("Test Message 4")
-                .messageEvent("Test Message 5")
-                .messageEvent("Test Message 6")
-                .messageEvent("Test Message 7")
-                .messageEvent("Test Message 8")
-                .messageEvent("Test Message 9")
-                .messageEvent("Test Message 10")
-                .build();
+        long count;
+        String event;
+        boolean rollback;
+
+        @Override
+        public String getEvent()
+        {
+            if(rollback)
+            {
+                rollback = false;
+                return event;
+            }
+
+            event = ( (count < EVENT_GENERATOR_COUNT) ? "Test Message " + ++count : null);
+            return event;
+        }
+
+        @Override
+        public void rollback()
+        {
+            this.rollback = true;
+        }
     }
 }

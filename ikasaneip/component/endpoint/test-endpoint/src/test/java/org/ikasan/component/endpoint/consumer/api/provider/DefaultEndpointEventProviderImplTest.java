@@ -38,60 +38,31 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.consumer.api.event;
+package org.ikasan.component.endpoint.consumer.api.provider;
+
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Implementation of the APIRepeatEvent contract.
+ * Test class for DefaultEndpointEventProviderImpl.
  * 
  * @author Ikasan Development Team
  */
-public class APIRepeatEventImpl<PAYLOAD> implements APIRepeatEvent
+public class DefaultEndpointEventProviderImplTest
 {
-    PAYLOAD apiEvent;
-    int repeat;
-    int getPayloadCount;
-
-    public APIRepeatEventImpl(PAYLOAD apiEvent, int repeat)
+    /**
+     * Test
+     */
+    @Test
+    public void test_eventProvider()
     {
-        this.apiEvent = apiEvent;
-        if(apiEvent == null)
-        {
-            throw new IllegalArgumentException("apiEvent cannot be 'null'");
-        }
+        EndpointEventProvider endpointEventProvider = new DefaultEndpointEventProviderImpl();
+        Assert.assertTrue("Test Message 1".equals(endpointEventProvider.getEvent()));
+        Assert.assertTrue("Test Message 2".equals(endpointEventProvider.getEvent()));
+        Assert.assertTrue("Test Message 3".equals(endpointEventProvider.getEvent()));
 
-        this.repeat = repeat;
-    }
-
-    @Override
-    public PAYLOAD getPayload()
-    {
-        if(repeat == INFINITE) return apiEvent;
-
-        if(hasMore())
-        {
-            getPayloadCount++;
-            return apiEvent;
-        }
-
-        return null;
-    }
-
-    protected boolean hasMore()
-    {
-        return (getPayloadCount < repeat);
-    }
-
-    @Override
-    public <APIEVENT> APIEVENT getEvent()
-    {
-        return (APIEVENT)apiEvent;
-    }
-
-    @Override
-    public int getRepeat() {
-        return repeat;
+        endpointEventProvider.rollback();
+        Assert.assertTrue("Test Message 3".equals(endpointEventProvider.getEvent()));
     }
 }
-
-
-

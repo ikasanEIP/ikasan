@@ -43,7 +43,6 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.OnException;
-import org.ikasan.component.endpoint.consumer.api.TechEndpointEventProvider;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
@@ -61,11 +60,6 @@ public class ModuleConfig
     private BuilderFactory builderFactory;
     @Resource
     private ComponentFactory componentFactory;
-
-    private static int REPEAT = 1;  // Change this to up the number of events
-    private static int EVENTS_PER_CYCLE = 10;
-    public static int  EVENT_GENERATOR_COUNT = EVENTS_PER_CYCLE * REPEAT;
-    public static int  FAILON_EVENT_COUNT = 13;
 
     @Bean
     public Module getModule()
@@ -86,21 +80,5 @@ public class ModuleConfig
             .build();
 
         return module;
-    }
-
-    TechEndpointEventProvider getTechEndpointProvider()
-    {
-        return TechEndpointEventProvider.with()
-                .messageEvent("Test Message 1")
-                .messageEvent("Test Message 2")
-                .messageEvent("Test Message 3")
-                .messageEvent("Test Message 4")
-                .messageEvent("Test Message 5")
-                .messageEvent("Test Message 6")
-                .messageEvent("Test Message 7")
-                .messageEvent("Test Message 8")
-                .messageEvent("Test Message 9")
-                .messageEvent("Test Message 10")
-        .build();
     }
 }

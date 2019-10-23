@@ -90,7 +90,7 @@ public class EventGeneratingConsumerBuilderTest
         {
             {
                 // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("eventGeneratingConsumer"), with(any(EventGeneratingConsumer.class)));
+                oneOf(aopProxyProvider).applyPointcut(with("eventConsumer"), with(any(EventGeneratingConsumer.class)));
                 will(returnValue(messageListener));
             }
         });
