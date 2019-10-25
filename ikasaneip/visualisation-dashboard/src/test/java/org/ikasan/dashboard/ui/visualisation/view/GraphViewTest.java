@@ -119,7 +119,7 @@ public class GraphViewTest
 
         Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!");
         Assertions.assertEquals("", myRoutes.get(0).getUrl(), "URL is empty string!");
-        Assertions.assertEquals(HomeView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
+        Assertions.assertEquals(SearchView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
     }
 
     @Test

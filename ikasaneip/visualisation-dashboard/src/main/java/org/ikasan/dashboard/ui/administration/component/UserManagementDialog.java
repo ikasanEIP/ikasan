@@ -2,13 +2,11 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.github.appreciated.css.grid.sizes.Flex;
 import com.github.appreciated.layout.FluentGridLayout;
-import com.vaadin.data.Item;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -17,7 +15,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
@@ -30,12 +27,9 @@ import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

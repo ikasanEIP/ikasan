@@ -14,6 +14,7 @@ import com.vaadin.flow.spring.SpringVaadinServletService;
 import org.ikasan.dashboard.Application;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -90,6 +91,7 @@ public class SearchViewTest
 //        Assertions.assertEquals(HomeView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
 //    }
 
+    @Ignore
     @Test
     public void testSearchView() throws IOException
     {
