@@ -316,6 +316,12 @@
         <!-- TODO - Reviewing functional usage of this reposiory -->
 
 
+         <repository>
+             <id>Vaadin Directory</id>
+             <url>http://maven.vaadin.com/vaadin-addons</url>
+            </repository>
+
+
     </repositories>
     <!-- Plugin repositories -->
     <pluginRepositories>
@@ -440,12 +446,9 @@
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.com.fasterxml.jackson.core>2.9.10</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
-		<version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
 		<version.vaadin>7.7.0</version.vaadin>
 		<version.com.google.guava>23.0</version.com.google.guava>
-		<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
-		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
-        <version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
+		<version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.solr>8.2.0</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
@@ -664,25 +667,6 @@
                                 </pluginExecution>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>com.vaadin</groupId>
-                                        <artifactId>
-                                            vaadin-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [7.5.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>
-                                                update-widgetset
-                                            </goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
                                         <groupId>
                                             org.apache.maven.plugins
                                         </groupId>
@@ -887,9 +871,9 @@
                 <module>replay</module>
 				<module>persistence</module>
                 <module>sample</module>
-                <module>dashboard</module>
+                <!--<module>dashboard</module>-->
                 <module>visualisation</module>
-<!--                <module>visualisation-dashboard</module>-->
+                <module>visualisation-dashboard</module>
             </modules>
 
 
@@ -1320,6 +1304,17 @@
                 <artifactId>ikasan-rest-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-rest-module-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-rest-dashboard</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -1474,6 +1469,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-visualisation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>kryo</artifactId>
                 <version>${version.kryo}</version>
@@ -1619,6 +1620,12 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test</artifactId>
                 <version>${version.org.springboot}</version>
             </dependency>
 
@@ -2036,109 +2043,14 @@
 
             <!-- Vaadin -->
 
-            <dependency>
-                <groupId>com.zybnet</groupId>
-                <artifactId>vaadin-autocomplete</artifactId>
-                <version>${version.com.zybnet.vaadin-autocomplete}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-server</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-client-compiled</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-client</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-push</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-themes</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-testbench</artifactId>
-                <version>4.0.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-lang3</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.code.gson</groupId>
-                        <artifactId>gson</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.yaml</groupId>
-                        <artifactId>snakeyaml</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sourceforge.cssparser</groupId>
-                        <artifactId>cssparser</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpmime</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-websocket</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.netty</groupId>
-                        <artifactId>netty</artifactId>
-                    </exclusion>
 
 
-                </exclusions>
 
-            </dependency>
-
-            <dependency>
-                <groupId>org.vaadin.addons</groupId>
-                <artifactId>aceeditor</artifactId>
-                <version>${version.org.vaadin.addons.aceeditor}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${version.com.google.guava}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ru.xpoft.vaadin</groupId>
-                <artifactId>spring-vaadin-integration</artifactId>
-                <version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
             </dependency>
 
             <!-- TODO: Upgrade to 3.12.0 at some stage -->
