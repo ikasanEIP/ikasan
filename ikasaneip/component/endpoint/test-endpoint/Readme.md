@@ -44,7 +44,7 @@ public class ModuleConfig
   @Resource
   private BuilderFactory builderFactory;
 
-  public Consumer getScheduledConsumer() 
+  public Consumer getEventGeneratingConsumer() 
   {
         return builderFactory.getComponentBuilder().eventGeneratingConsumer()
                             .setEndpointEventProvider(new MyTechEndpointProvider());
@@ -88,7 +88,7 @@ public class ModuleConfig
   @Resource
   private BuilderFactory builderFactory;
 
-  public Consumer getScheduledConsumer() 
+  public Consumer getEventGeneratingConsumer() 
   {
         return builderFactory.getComponentBuilder().eventGeneratingConsumer()
                             .setEndpointEventProvider(new MyTechEndpointProvider())
