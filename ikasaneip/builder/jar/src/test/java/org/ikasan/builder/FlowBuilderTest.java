@@ -56,6 +56,7 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
@@ -731,6 +732,51 @@ public class FlowBuilderTest
 
         Assert.assertTrue("Should have SerialiserFactory", flow.getSerialiserFactory()!=null);
         Assert.assertTrue("Should have ErrorReportingService", ReflectionTestUtils.getField(flow,"errorReportingService")!=null);
+        Assert.assertTrue("Should have ExclusionService", ReflectionTestUtils.getField(flow,"exclusionService")!=null);
+        Assert.assertTrue("Should have RecoveryManager", ReflectionTestUtils.getField(flow,"recoveryManager")!=null);
+        Assert.assertTrue("Should have one FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 1);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_simple_transitions_override_errorReportingServiceTimeToLive()
+    {
+        setupMockExpectations();
+
+        Long timeToLive = new Long(100);
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withDescription("flowDescription")
+                .withExclusionServiceFactory(exclusionServiceFactory)
+                .withErrorReportingServiceTimeToLive(timeToLive)
+                .consumer("consumer", consumer)
+                .producer("producer", producer).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 2);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have SerialiserFactory", flow.getSerialiserFactory()!=null);
+        Assert.assertTrue("Should have ErrorReportingService", ReflectionTestUtils.getField(flow,"errorReportingService")!=null);
+        ErrorReportingService errorReportingService = (ErrorReportingService) ReflectionTestUtils.getField(flow,"errorReportingService");
+        Long actualTimeToLive = (Long) ReflectionTestUtils.getField(errorReportingService,"timeToLive");
+        Assert.assertTrue(actualTimeToLive == timeToLive);
+
         Assert.assertTrue("Should have ExclusionService", ReflectionTestUtils.getField(flow,"exclusionService")!=null);
         Assert.assertTrue("Should have RecoveryManager", ReflectionTestUtils.getField(flow,"recoveryManager")!=null);
         Assert.assertTrue("Should have one FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 1);
