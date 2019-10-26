@@ -70,6 +70,9 @@ public class SolrReplayEvent implements ReplayEvent
 	@Field("payload")
 	private String eventAsString;
 
+    @Field("relatedEventId")
+    private String relatedEventIdentifier;
+
 	@Field("timestamp")
     private long timestamp;
 
@@ -231,8 +234,17 @@ public class SolrReplayEvent implements ReplayEvent
 		this.eventAsString = eventAsString;
 	}
 
+    public String getRelatedEventIdentifier()
+    {
+        return relatedEventIdentifier;
+    }
 
-	/* (non-Javadoc)
+    public void setRelatedEventIdentifier(String relatedEventIdentifier)
+    {
+        this.relatedEventIdentifier = relatedEventIdentifier;
+    }
+
+    /* (non-Javadoc)
                  * @see java.lang.Object#hashCode()
                  */
 	@Override

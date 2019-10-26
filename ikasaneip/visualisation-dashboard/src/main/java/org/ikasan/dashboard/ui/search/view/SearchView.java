@@ -24,8 +24,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.*;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
@@ -36,7 +34,6 @@ import org.ikasan.dashboard.ui.search.listener.ReplayEventSubmissionListener;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.DateTimeUtil;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
-import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.replay.dao.SolrReplayDao;
@@ -47,11 +44,11 @@ import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
-import org.ikasan.spec.solr.SolrSearchService;
+import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -77,7 +74,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     public static final String REPLAY = "Replay";
 
     @Resource
-    private SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
     @Resource
     private ErrorReportingService errorReportingService;
@@ -93,6 +90,9 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
     @Resource
     private ModuleMetaDataService moduleMetadataService;
+
+    @Resource
+    private BatchInsert replayAuditService;
 
     @Value("${render.search.images}")
     private boolean renderSearchImages;
@@ -341,7 +341,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     {
         SearchFilter searchFilter = new SearchFilter();
 
-        this.searchResultsGrid = new SolrSearchFilteringGrid(this.solrSearchService, searchFilter, this.resultsLabel);
+        this.searchResultsGrid = new SolrSearchFilteringGrid(this.solrGeneralService, searchFilter, this.resultsLabel);
 
         // Add the icon column to the grid
         this.searchResultsGrid.addColumn(new ComponentRenderer<>(ikasanSolrDocument ->
@@ -695,7 +695,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.replayEventRegistration.remove();
         }
 
-        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.replayRestService, this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.replayRestService, this.replayAuditService, this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
         this.replayEventRegistration = this.replayButton.addClickListener(this.replayEventSubmissionListener);
     }
 
@@ -791,7 +791,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService
                 , this.resubmissionRestService, this.moduleMetadataService);
 
-            this.replayDialog = new ReplayDialog(replayRestService);
+            this.replayDialog = new ReplayDialog(this.replayRestService, this.replayAuditService);
 
             this.createSearchForm();
             this.createSearchResultGridLayout();

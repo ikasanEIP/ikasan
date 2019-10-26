@@ -9,6 +9,8 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.i18n.I18NProvider;
+import com.vaadin.flow.server.VaadinService;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.general.component.ReplayCommentsDialog;
@@ -20,7 +22,9 @@ import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayAuditEvent;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,8 +42,9 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
     Logger logger = LoggerFactory.getLogger(ReplayEventSubmissionListener.class);
 
     private ReplayRestServiceImpl replayRestService;
+    private BatchInsert replayAuditService;
 
-    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
         , HashMap<String, IkasanSolrDocument> selectionItems)
     {
         super(moduleMetadataService);
@@ -48,6 +53,11 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
         if(this.replayRestService == null)
         {
             throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
+        this.replayAuditService = replayAuditService;
+        if(this.replayAuditService == null)
+        {
+            throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
         this.searchResultsGrid = searchResultsGrid;
         this.selectionBoxes = selectionBoxes;
@@ -58,10 +68,13 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
     public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
     {
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        final UI current = UI.getCurrent();
+        final I18NProvider i18NProvider = VaadinService.getCurrent().getInstantiator().getI18NProvider();
 
         if(!confirmSelectedEvents())
         {
-            NotificationHelper.showErrorNotification("At least one record must be selected!");
+            NotificationHelper.showErrorNotification(current.getTranslation("message.at-least-one-record-needs-to-be-selected"
+                , UI.getCurrent().getLocale()));
             return;
         }
 
@@ -79,19 +92,21 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
 
                 if (selected)
                 {
-                    progressIndicatorDialog.open(String.format("Replaying %s events", searchResultsGrid.getResultSize()));
+                    progressIndicatorDialog.open(String.format(i18NProvider.getTranslation("message.replay-number-of-events"
+                        , current.getLocale()), searchResultsGrid.getResultSize()));
                 }
                 else
                 {
-                    progressIndicatorDialog.open(String.format("Replaying %s events", this.selectionItems.size()));
+                    progressIndicatorDialog.open(String.format(i18NProvider.getTranslation("message.replay-number-of-events"
+                        , current.getLocale()), this.selectionItems.size()));
                 }
 
-                final UI current = UI.getCurrent();
                 Executor executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     try
                     {
                         List<ReplayAuditEvent> replayAuditEvents = new ArrayList<>();
+
                         ReplayAuditEvent replayAuditEvent;
 
                         if (!selected)
@@ -105,22 +120,9 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                                     boolean result = this.replayRestService.replay(replayDialogDto.getTargetServer(), replayDialogDto.getAuthenticationUser(),
                                         replayDialogDto.getPassword(), document.getModuleName(), document.getFlowName(), document.getPayloadRaw());
 
-                                    replayAuditEvent = new ReplayAuditEventImpl();
-                                    replayAuditEvent.setId(document.getId());
-                                    replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
-                                        replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
-                                    replayAuditEvent.setResultMessage("get message from rest call");
-                                    replayAuditEvent.setSuccess(result);
-                                    replayAuditEvent.setTimestamp(System.currentTimeMillis());
-
-                                    replayAuditEvents.add(replayAuditEvent);
+                                    replayAuditEvents.add(createReplayAuditEvent(result, replayDialogDto, document, current, i18NProvider));
                                 }
                             }
-
-                            ObjectMapper mapper = new ObjectMapper();
-                            String json = mapper.writeValueAsString(replayAuditEvents);
-
-                            logger.info("Result json: " + json);
                         }
                         else
                         {
@@ -143,29 +145,19 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                                         boolean result = this.replayRestService.replay(replayDialogDto.getTargetServer(), replayDialogDto.getAuthenticationUser(),
                                             replayDialogDto.getPassword(), document.getModuleName(), document.getFlowName(), document.getPayloadRaw());
 
-                                        replayAuditEvent = new ReplayAuditEventImpl();
-                                        replayAuditEvent.setId(document.getId());
-                                        replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
-                                            replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
-                                        replayAuditEvent.setResultMessage("get message from rest call");
-                                        replayAuditEvent.setSuccess(result);
-                                        replayAuditEvent.setTimestamp(System.currentTimeMillis());
-
-                                        replayAuditEvents.add(replayAuditEvent);
+                                        replayAuditEvents.add(createReplayAuditEvent(result, replayDialogDto, document, current, i18NProvider));
                                     }
                                 }
                             }
-
-                            ObjectMapper mapper = new ObjectMapper();
-                            String json = mapper.writeValueAsString(replayAuditEvents);
-
-                            logger.info("Result json: " + json);
                         }
+
+                        this.replayAuditService.insert(replayAuditEvents);
 
                         current.access(() ->
                         {
                             progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("Replay complete.");
+                            NotificationHelper.showUserNotification(i18NProvider.getTranslation("message.replay-complete"
+                                , current.getLocale()));
                         });
                     }
                     catch(Exception e)
@@ -174,7 +166,8 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                         current.access(() ->
                         {
                             progressIndicatorDialog.close();
-                            NotificationHelper.showErrorNotification("Error occurred while replaying! " + e.getLocalizedMessage());
+                            NotificationHelper.showErrorNotification(i18NProvider.getTranslation("message.replay-error"
+                                , current.getLocale()));
                         });
 
                         return;
@@ -182,5 +175,36 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
                 });
             }
         });
+    }
+
+    /**
+     * Helper method to create replay audit events.
+     *
+     * @param result
+     * @param replayDialogDto
+     * @param document
+     * @param current
+     * @param i18NProvider
+     * @return
+     */
+    private ReplayAuditEventImpl createReplayAuditEvent(boolean result, ReplayDialogDto replayDialogDto, IkasanSolrDocument document, UI current, I18NProvider i18NProvider)
+    {
+        ReplayAuditEventImpl replayAuditEvent = new ReplayAuditEventImpl();
+        replayAuditEvent.setId(document.getId());
+        replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
+            replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
+        if(result)
+        {
+            replayAuditEvent.setResultMessage(String.format(i18NProvider.getTranslation("message.replay-audit-success"
+                , current.getLocale()), document.getId()));
+        }
+        else
+        {
+            replayAuditEvent.setResultMessage(String.format(i18NProvider.getTranslation("message.replay-audit-failure"
+                , current.getLocale()), document.getId()));
+        }
+        replayAuditEvent.setTimestamp(System.currentTimeMillis());
+
+        return replayAuditEvent;
     }
 }

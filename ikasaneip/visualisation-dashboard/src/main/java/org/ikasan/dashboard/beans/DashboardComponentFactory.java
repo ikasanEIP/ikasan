@@ -12,28 +12,26 @@ import org.ikasan.hospital.dao.SolrHospitalDao;
 import org.ikasan.hospital.service.SolrHospitalServiceImpl;
 import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
 import org.ikasan.module.metadata.service.SolrModuleMetadataServiceImpl;
+import org.ikasan.replay.dao.SolrReplayAuditDao;
 import org.ikasan.replay.dao.SolrReplayDao;
+import org.ikasan.replay.service.SolrReplayAuditServiceImpl;
 import org.ikasan.replay.service.SolrReplayServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
-import org.ikasan.solr.dao.SolrGeneralDao;
 import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.cache.FlowStateCacheAdapter;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
-import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
-import org.ikasan.spec.solr.SolrSearchService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -54,7 +52,7 @@ public class DashboardComponentFactory
 
 
     @Bean
-    public SolrSearchService solrSearchService()
+    public SolrGeneralService solrSearchService()
     {
         SolrGeneralDaoImpl dao = new SolrGeneralDaoImpl();
         dao.initStandalone(solrUrl, 30);
@@ -108,6 +106,24 @@ public class DashboardComponentFactory
         dao.initStandalone(solrUrl, 30);
 
         SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao, dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean
+    public BatchInsert replayAuditService()
+    {
+        return createSolrReplayAuditServiceImpl();
+    }
+
+    private SolrReplayAuditServiceImpl createSolrReplayAuditServiceImpl()
+    {
+        SolrReplayAuditDao dao = new SolrReplayAuditDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrReplayAuditServiceImpl service = new SolrReplayAuditServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 

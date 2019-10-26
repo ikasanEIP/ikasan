@@ -2,9 +2,13 @@ package org.ikasan.solr.dao;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
+import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
@@ -12,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -115,5 +120,78 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
         }
 
         return results;
+    }
+
+    @Override
+    public void saveOrUpdate(IkasanSolrDocument ikasanSolrDocument)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+        SolrInputDocument document = new SolrInputDocument();
+        document.addField(ID, ikasanSolrDocument.getId());
+        document.addField(TYPE, ikasanSolrDocument.getType());
+        document.addField(MODULE_NAME, ikasanSolrDocument.getModuleName());
+        document.addField(FLOW_NAME, ikasanSolrDocument.getFlowName());
+        document.addField(EVENT, ikasanSolrDocument.getEventId());
+        document.addField(PAYLOAD_CONTENT, ikasanSolrDocument.getEvent());
+        document.addField(PAYLOAD_CONTENT_RAW, ikasanSolrDocument.getPayloadRaw());
+        document.addField(CREATED_DATE_TIME, ikasanSolrDocument.getTimeStamp());
+        document.setField(EXPIRY, expiry);
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            req.add(document);
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            logger.debug("Adding document: " + document + ". Response: " + rsp.toString());
+
+            req.commit(solrClient, SolrConstants.CORE);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write a document to Solr", e);
+        }
+    }
+
+    @Override
+    public void saveOrUpdate(List<IkasanSolrDocument> ikasanSolrDocuments)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        UpdateRequest req = new UpdateRequest();
+
+        for(IkasanSolrDocument ikasanSolrDocument: ikasanSolrDocuments)
+        {
+            SolrInputDocument document = new SolrInputDocument();
+            document.addField(ID, ikasanSolrDocument.getId());
+            document.addField(TYPE, ikasanSolrDocument.getType());
+            document.addField(MODULE_NAME, ikasanSolrDocument.getModuleName());
+            document.addField(FLOW_NAME, ikasanSolrDocument.getFlowName());
+            document.addField(EVENT, ikasanSolrDocument.getEventId());
+            document.addField(PAYLOAD_CONTENT, ikasanSolrDocument.getEvent());
+            document.addField(PAYLOAD_CONTENT_RAW, ikasanSolrDocument.getPayloadRaw());
+            document.addField(CREATED_DATE_TIME, ikasanSolrDocument.getTimeStamp());
+            document.setField(EXPIRY, expiry);
+
+            req.add(document);
+        }
+
+        try
+        {
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            req.commit(solrClient, SolrConstants.CORE);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write an documents to Solr", e);
+        }
     }
 }

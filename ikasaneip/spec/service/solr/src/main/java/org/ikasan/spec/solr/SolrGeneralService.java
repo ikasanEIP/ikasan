@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development on 27/08/2017.
  */
-public interface SolrSearchService<RESULTS>
+public interface SolrGeneralService<ENTITY, RESULTS>
 {
     /**
      * Perform general search against ikasan solr index.
@@ -76,6 +76,20 @@ public interface SolrSearchService<RESULTS>
      * @return
      */
     public RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
+
+    /**
+     * Save or update an ENTITY
+     *
+     * @param entity
+     */
+    public void saveOrUpdate(ENTITY entity);
+
+    /**
+     * Save or update a list of ENTITY
+     *
+     * @param entity
+     */
+    public void saveOrUpdate(List<ENTITY> entity);
 
     /**
      * Set the solr username

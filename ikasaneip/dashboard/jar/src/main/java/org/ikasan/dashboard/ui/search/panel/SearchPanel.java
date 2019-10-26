@@ -41,7 +41,7 @@ import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayService;
-import org.ikasan.spec.solr.SolrSearchService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
@@ -67,7 +67,7 @@ public class SearchPanel extends Panel implements View
 
     private FilterTable searchResultsTable;
     private IndexedContainer container = null;
-    private SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService = null;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService = null;
     private Label resultsLabel = new Label();
     private GridLayout layout = null;
     private PlatformConfigurationService platformConfigurationService;
@@ -89,8 +89,8 @@ public class SearchPanel extends Panel implements View
     private Button bulkReplayButton;
     private Button selectAllButton;
 
-    public SearchPanel(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
-                       SolrWiretapServiceImpl wiretapService,SolrErrorReportingManagementServiceImpl errorReportingService, SolrReplayServiceImpl replayManagementService,
+    public SearchPanel(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService, PlatformConfigurationService platformConfigurationService,
+                       SolrWiretapServiceImpl wiretapService, SolrErrorReportingManagementServiceImpl errorReportingService, SolrReplayServiceImpl replayManagementService,
                        ReplayService replayService, TopologyService topologyService, SolrExclusionServiceImpl exclusionManagementService,
                        HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
                        ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)

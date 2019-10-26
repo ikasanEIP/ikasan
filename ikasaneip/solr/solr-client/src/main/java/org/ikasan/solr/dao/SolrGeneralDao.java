@@ -1,5 +1,7 @@
 package org.ikasan.solr.dao;
 
+import org.ikasan.solr.model.IkasanSolrDocument;
+
 import java.util.List;
 import java.util.Set;
 
@@ -106,4 +108,18 @@ public interface SolrGeneralDao<RESULTS>
      * @param type
      */
     public void removeById(String type, String id);
+
+    /**
+     * Save or update an IkasanSolrDocument
+     *
+     * @param ikasanSolrDocument
+     */
+    public void saveOrUpdate(IkasanSolrDocument ikasanSolrDocument);
+
+    /**
+     * Save or update a list of IkasanSolrDocument
+     *
+     * @param ikasanSolrDocuments
+     */
+    public void saveOrUpdate(List<IkasanSolrDocument> ikasanSolrDocuments);
 }
