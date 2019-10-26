@@ -885,7 +885,7 @@ public class FlowBuilder implements ApplicationContextAware
         if(flow instanceof ConfiguredResource)
         {
             FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration();
-            flowPersistentConfiguration.setIsRecording(true);
+            flowPersistentConfiguration.setIsRecording(isRecording);
         }
 
         // pass handle to the error reporting service if flow needs to be aware of this
