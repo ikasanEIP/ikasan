@@ -55,6 +55,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:transaction-conf.xml",
         "classpath:ikasan-transaction-conf.xml",
         "classpath:ikasan-transaction-pointcut-resubmission.xml",
+        "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:serialiser-service-conf.xml",
         "classpath:scheduler-service-conf.xml",
         "classpath:error-reporting-service-conf.xml",
