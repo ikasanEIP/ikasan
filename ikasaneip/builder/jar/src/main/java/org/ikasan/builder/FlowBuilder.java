@@ -156,6 +156,9 @@ public class FlowBuilder implements ApplicationContextAware
     @Autowired
     ErrorReportingService errorReportingService;
 
+    /** error reporting service time to live */
+    Long errorReportingServiceTimeToLive;
+
     /** message history service */
     @Autowired
     MessageHistoryService messageHistoryService;
@@ -337,6 +340,18 @@ public class FlowBuilder implements ApplicationContextAware
     public FlowBuilder withErrorReportingService(ErrorReportingService errorReportingService)
     {
         this.errorReportingService = errorReportingService;
+        return this;
+    }
+
+    /**
+     * Override the default error reporting service time to live.
+     *
+     * @param errorReportingServiceTimeToLive
+     * @return
+     */
+    public FlowBuilder withErrorReportingServiceTimeToLive(Long errorReportingServiceTimeToLive)
+    {
+        this.errorReportingServiceTimeToLive = errorReportingServiceTimeToLive;
         return this;
     }
 
@@ -799,6 +814,11 @@ public class FlowBuilder implements ApplicationContextAware
         {
             ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
             ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(flowName);
+        }
+
+        if(this.errorReportingServiceTimeToLive != null)
+        {
+            errorReportingService.setTimeToLive(errorReportingServiceTimeToLive);
         }
 
         if (recoveryManager == null)
