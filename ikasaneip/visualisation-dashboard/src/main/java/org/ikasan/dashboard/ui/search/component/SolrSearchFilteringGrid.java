@@ -11,7 +11,7 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
-import org.ikasan.spec.solr.SolrSearchService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 {
     private Logger logger = LoggerFactory.getLogger(SolrSearchFilteringGrid.class);
 
-    private SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
 
     private DataProvider<IkasanSolrDocument,SearchFilter> dataProvider;
     private ConfigurableFilterDataProvider<IkasanSolrDocument,Void, SearchFilter> filteredDataProvider;
@@ -39,7 +39,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     /**
      * Constructors
      */
-    public SolrSearchFilteringGrid(SolrSearchService<IkasanSolrDocumentSearchResults> solrSearchService, SearchFilter searchFilter, Label resultsLabel)
+    public SolrSearchFilteringGrid(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService, SearchFilter searchFilter, Label resultsLabel)
     {
         this.solrSearchService = solrSearchService;
         if(this.solrSearchService ==  null)

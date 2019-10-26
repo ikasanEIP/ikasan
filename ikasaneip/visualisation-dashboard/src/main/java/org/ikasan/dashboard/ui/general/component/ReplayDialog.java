@@ -1,10 +1,10 @@
 package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.componentfactory.Tooltip;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
@@ -13,16 +13,34 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.i18n.I18NProvider;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.VaadinService;
+import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditEventImpl;
+import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
+import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.replay.ReplayAuditEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.olli.FileDownloadWrapper;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 {
+    Logger logger = LoggerFactory.getLogger(ReplayDialog.class);
+
+    private IkasanSolrDocument replayEvent;
+
     private TextField moduleNameTf;
     private TextField componentNameTf;
     private TextField flowNameTf;
@@ -36,13 +54,19 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private Tooltip downloadButtonTooltip;
 
     private ReplayRestServiceImpl replayRestService;
+    private BatchInsert replayAuditService;
 
-    public ReplayDialog(ReplayRestServiceImpl replayRestService)
+    public ReplayDialog(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
     {
         this.replayRestService = replayRestService;
         if(this.replayRestService == null)
         {
             throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
+        this.replayAuditService = replayAuditService;
+        if(this.replayAuditService == null)
+        {
+            throw new IllegalArgumentException("solrGeneralService cannot be null!");
         }
 
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
@@ -90,6 +114,79 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         buttonWrapper.wrapComponent(downloadButton);
 
         Button replayButton = new Button(getTranslation("button.replay", UI.getCurrent().getLocale(), null));
+        replayButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            final UI current = UI.getCurrent();
+            final I18NProvider i18NProvider = VaadinService.getCurrent().getInstantiator().getI18NProvider();
+
+            ReplayDialogDto replayDialogDto = new ReplayDialogDto();
+            ReplayCommentsDialog replayCommentsDialog = new ReplayCommentsDialog(replayDialogDto);
+
+            replayCommentsDialog.open();
+
+            replayCommentsDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(!dialogOpenedChangeEvent.isOpened() && replayCommentsDialog.isSaved())
+                {
+                    ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
+
+                    progressIndicatorDialog.open(current.getTranslation("message.replaying-event"
+                        , UI.getCurrent().getLocale()));
+
+                    Executor executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> {
+                        try
+                        {
+                            List<ReplayAuditEvent> replayAuditEvents = new ArrayList<>();
+                            ReplayAuditEvent replayAuditEvent;
+
+                            boolean result = this.replayRestService.replay(replayDialogDto.getTargetServer(), replayDialogDto.getAuthenticationUser(),
+                                replayDialogDto.getPassword(), this.replayEvent.getModuleName(), this.replayEvent.getFlowName(), this.replayEvent.getPayloadRaw());
+
+                            replayAuditEvent = new ReplayAuditEventImpl();
+                            replayAuditEvent.setId(this.replayEvent.getId());
+                            replayAuditEvent.setReplayAudit(new ReplayAuditImpl(replayDialogDto.getUser(),
+                                replayDialogDto.getReplayReason(), replayDialogDto.getTargetServer(), System.currentTimeMillis()));
+                            if(result)
+                            {
+                                replayAuditEvent.setResultMessage(String.format(i18NProvider.getTranslation("message.replay-audit-success"
+                                    , current.getLocale()), replayEvent.getId()));
+                            }
+                            else
+                            {
+                                replayAuditEvent.setResultMessage(String.format(i18NProvider.getTranslation("message.replay-audit-failure"
+                                    , current.getLocale()), replayEvent.getId()));
+                            }
+                            replayAuditEvent.setSuccess(result);
+                            replayAuditEvent.setTimestamp(System.currentTimeMillis());
+
+                            replayAuditEvents.add(replayAuditEvent);
+
+                            current.access(() ->
+                            {
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showUserNotification(i18NProvider.getTranslation("message.replay-complete"
+                                    , current.getLocale()));
+                            });
+
+                            this.replayAuditService.insert(replayAuditEvents);
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                            current.access(() ->
+                            {
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showUserNotification(i18NProvider.getTranslation("message.replay-error"
+                                    , current.getLocale()));
+                            });
+
+                            return;
+                        }
+                    });
+                }
+            });
+        });
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, formLayout, buttonWrapper, replayButton, downloadButtonTooltip);
@@ -102,6 +199,7 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public void populate(IkasanSolrDocument replayEvent)
     {
+        this.replayEvent = replayEvent;
         this.moduleNameTf.setValue(replayEvent.getModuleName());
         this.flowNameTf.setValue(replayEvent.getFlowName());
         this.eventIdTf.setValue(replayEvent.getEventId());

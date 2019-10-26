@@ -7,6 +7,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.solr.dao.SolrGeneralDaoImpl;
+import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -257,6 +260,92 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
             assertEquals(3, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_document() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            IkasanSolrDocument doc = new IkasanSolrDocument();
+            doc.setModuleName("test");
+            doc.setExpiry(100l);
+            doc.setTimeStamp(100l);
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            Set<String> moduleNames = new HashSet<String>();
+            moduleNames.add("test");
+
+            SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
+            solrGeneralService.saveOrUpdate(doc);
+
+
+            assertEquals(2, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_documents() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal-dismax");
+            server.request(createRequest);
+
+            IkasanSolrDocument doc1 = new IkasanSolrDocument();
+            doc1.setModuleName("test");
+            doc1.setId("1");
+            doc1.setExpiry(100l);
+            doc1.setTimeStamp(100l);
+
+            IkasanSolrDocument doc2 = new IkasanSolrDocument();
+            doc2.setModuleName("test");
+            doc2.setId("2");
+            doc2.setExpiry(100l);
+            doc2.setTimeStamp(100l);
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            Set<String> moduleNames = new HashSet<String>();
+            moduleNames.add("test");
+
+            List<IkasanSolrDocument> documents = new ArrayList<>();
+            documents.add(doc1);
+            documents.add(doc2);
+
+            SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
+            solrGeneralService.saveOrUpdate(documents);
+
+            IkasanSolrDocumentSearchResults results = solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100);
+
+            assertEquals(4, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
 
         }
     }
