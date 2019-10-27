@@ -1,43 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.ikasan</groupId>
-    <artifactId>visualisation-dashboard</artifactId>
-    <name>Visualisation Dashboard</name>
-    <version>2.2.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>14.0.8</vaadin.version>
-    </properties>
-
-    <!--<parent>-->
-        <!--<groupId>org.springframework.boot</groupId>-->
-        <!--<artifactId>spring-boot-starter-parent</artifactId>-->
-        <!--<version>2.0.2.RELEASE</version>-->
-    <!--</parent>-->
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
-    <!--<parent>-->
-        <!--<groupId>org.ikasan</groupId>-->
-        <!--<artifactId>ikasan-build</artifactId>-->
-        <!--<version>3.0.0-SNAPSHOT</version>-->
-    <!--</parent>-->
+    <artifactId>visualisation-dashboard</artifactId>
+    <name>Visualisation Dashboard</name>
+    <version>2.2.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
-                <version>${vaadin.version}</version>
+                <version>${version.vaadin}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -111,7 +97,6 @@
         <dependency>
             <groupId>org.vaadin.olli</groupId>
             <artifactId>file-download-wrapper</artifactId>
-            <version>1.1.0</version>
         </dependency>
 
         <dependency>
@@ -125,7 +110,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${version.org.springboot}</version>
-
         </dependency>
 
         <dependency>
@@ -141,14 +125,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.8</version>
         </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -163,13 +145,11 @@
         <dependency>
             <groupId>com.github.appreciated</groupId>
             <artifactId>app-layout-addon</artifactId>
-            <version>3.0.0.beta5</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.appreciated</groupId>
             <artifactId>vaadin-css-grid</artifactId>
-            <version>0.8.4</version>
         </dependency>
 
         <dependency>
@@ -230,19 +210,16 @@
         <dependency>
             <groupId>org.vaadin.erik</groupId>
             <artifactId>slidetab</artifactId>
-            <version>1.0.0-beta4</version>
         </dependency>
 
         <dependency>
             <groupId>org.vaadin.tabs</groupId>
             <artifactId>paged-tabs</artifactId>
-            <version>1.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.vaadin.componentfactory</groupId>
             <artifactId>tooltip</artifactId>
-            <version>1.2.1</version>
         </dependency>
 
         <dependency>
@@ -253,7 +230,6 @@
         <dependency>
             <groupId>com.juicy</groupId>
             <artifactId>juicyaceeditor</artifactId>
-            <version>1.0.8</version>
         </dependency>
 
         <dependency>
@@ -285,7 +261,6 @@
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
             <classifier>runtime</classifier>
-            <version>0.8.1</version>
         </dependency>
 
         <dependency>
@@ -296,14 +271,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.4.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.mvysny.kaributesting</groupId>
             <artifactId>karibu-testing-v10</artifactId>
-            <version>1.1.12</version>
             <scope>test</scope>
         </dependency>
 
@@ -355,7 +328,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
                 <configuration>
                     <argLine>${argLine} -Dvaadin.compatibilityMode=true</argLine>
                 </configuration>
@@ -400,7 +372,7 @@
                     <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
-                        <version>${vaadin.version}</version>
+                        <version>${version.vaadin}</version>
                         <executions>
                             <execution>
                                 <goals>

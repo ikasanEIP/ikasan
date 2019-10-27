@@ -406,6 +406,7 @@
         <version.commons-lang3>3.6</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
         <version.commons-beanutils>1.9.4</version.commons-beanutils>
+        <version.commons-text>1.8</version.commons-text>
         <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
@@ -446,7 +447,12 @@
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.com.fasterxml.jackson.core>2.9.10</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
-		<version.vaadin>7.7.0</version.vaadin>
+        <version.vaadin>14.0.8</version.vaadin>
+        <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
+        <version.com.vaadin.componentfactory>1.2.1</version.com.vaadin.componentfactory>
+        <version.org.vaadin.olli>1.1.0</version.org.vaadin.olli>
+        <version.org.vaadin.erik>1.0.0-beta4</version.org.vaadin.erik>
+
 		<version.com.google.guava>23.0</version.com.google.guava>
 		<version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
@@ -454,6 +460,8 @@
         <version.org.apache.httpcomponents>4.5.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
+        <version.org.junit.jupiter>5.4.2</version.org.junit.jupiter>
+        <version.com.juicy>1.0.8</version.com.juicy>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -2043,9 +2051,72 @@
 
             <!-- Vaadin -->
 
+            <dependency>
+                <groupId>org.vaadin.olli</groupId>
+                <artifactId>file-download-wrapper</artifactId>
+                <version>${version.org.vaadin.olli}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${version.commons-text}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.github.appreciated</groupId>
+                <artifactId>app-layout-addon</artifactId>
+                <version>3.0.0.beta5</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.github.appreciated</groupId>
+                <artifactId>vaadin-css-grid</artifactId>
+                <version>0.8.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.mvysny.kaributesting</groupId>
+                <artifactId>karibu-testing-v10</artifactId>
+                <version>1.1.12</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.erik</groupId>
+                <artifactId>slidetab</artifactId>
+                <version>${version.org.vaadin.erik}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.tabs</groupId>
+                <artifactId>paged-tabs</artifactId>
+                <version>${version.org.vaadin.tabs}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin.componentfactory</groupId>
+                <artifactId>tooltip</artifactId>
+                <version>${version.com.vaadin.componentfactory}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.juicy</groupId>
+                <artifactId>juicyaceeditor</artifactId>
+                <version>${version.com.juicy}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.agent</artifactId>
+                <version>0.8.1</version>
+                <classifier>runtime</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${version.org.junit.jupiter}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.google.guava</groupId>
