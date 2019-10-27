@@ -59,7 +59,7 @@
 
     <properties>
         <solr.version>8.2.0</solr.version>
-        <solr.archive.file>${project.build.directory}/ikasan-solr-distribution-${version}.zip</solr.archive.file>
+        <solr.archive.file>${project.build.directory}/ikasan-solr-distribution-${project.version}.zip</solr.archive.file>
     </properties>
 
     <build>
