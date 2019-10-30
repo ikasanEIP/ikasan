@@ -371,20 +371,4 @@
         </plugins>
     </build>
 
-    <!--<profiles>-->
-        <!--<profile>-->
-            <!--<id>production</id>-->
-            <!--<properties>-->
-
-            <!--</properties>-->
-            <!--<dependencies>-->
-               <!---->
-            <!--</dependencies>-->
-            <!--<build>-->
-                <!--<plugins>-->
-                <!--</plugins>-->
-            <!--</build>-->
-        <!--</profile>-->
-    <!--</profiles>-->
-
 </project>
