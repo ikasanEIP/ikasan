@@ -445,7 +445,7 @@
 		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
 		<version.org.glassfish.json>1.0</version.org.glassfish.json>
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
-        <version.com.fasterxml.jackson.core>2.9.10</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
         <version.vaadin>14.0.8</version.vaadin>
         <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
