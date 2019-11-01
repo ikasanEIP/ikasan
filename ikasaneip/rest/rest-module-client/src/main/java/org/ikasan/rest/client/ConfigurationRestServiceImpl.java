@@ -1,5 +1,6 @@
 package org.ikasan.rest.client;
 
+import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
     protected final static String COMPONENTS_CONFIGURATION_URL = "/rest/configuration/components";
     protected final static String FLOW_INVOKERS_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/invokers";
     protected final static String INVOKERS_CONFIGURATION_URL = "/rest/configuration/invokers";
+    protected final static String PUT_CONFIGURATION_URL = "/rest/configuration";
 
     ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
 
@@ -69,6 +71,24 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
 
         String url = contextUrl + FLOW_CONFIGURATION_URL;
         return getConfigurations(url,moduleName,flowName);
+    }
+
+    public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration)
+    {
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(configuration, headers);
+        String url = contextUrl + PUT_CONFIGURATION_URL;
+        try
+        {
+            restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+            return true;
+        }
+        catch (RestClientException e)
+        {
+            logger.warn(
+                "Issue updating configuration [" + url + "] with module [" + configuration + "]");
+            return false;
+        }
     }
 
     private List<ConfigurationMetaData> getConfigurations(String url,String moduleName, String flowName)

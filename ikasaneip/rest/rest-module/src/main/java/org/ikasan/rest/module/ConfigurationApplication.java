@@ -1,13 +1,16 @@
 package org.ikasan.rest.module;
 
+import org.ikasan.configurationService.model.*;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Configuration application implementing the REST contract
@@ -34,29 +39,30 @@ public class ConfigurationApplication
     @Autowired
     private ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
 
-    /** The module service */
+    /**
+     * The module service
+     */
     @Autowired
     private ModuleService moduleService;
 
     @Deprecated
     @RequestMapping(method = RequestMethod.GET,
-        value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
-        produces = { "application/json" })
+                    value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName,
-        @PathVariable("componentName") String componentName)
+    public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
+                                              @PathVariable("flowName") String flowName,
+                                              @PathVariable("componentName") String componentName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         FlowElement<?> flowElement = flow.getFlowElement(componentName);
         Configuration configuration = null;
-        if (flowElement.getFlowComponent() instanceof ConfiguredResource)
+        if ( flowElement.getFlowComponent() instanceof ConfiguredResource )
         {
             ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowComponent();
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if (configuration == null)
+            if ( configuration == null )
             {
                 configuration = this.configurationManagement.createConfiguration(configuredResource);
                 this.configurationManagement.saveConfiguration(configuration);
@@ -81,27 +87,25 @@ public class ConfigurationApplication
      * @return
      */
     @Deprecated
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
-        produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowElementConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName,
-        @PathVariable("componentName") String componentName)
+    public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName,
+                                                         @PathVariable("flowName") String flowName,
+                                                         @PathVariable("componentName") String componentName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         FlowElement<?> flowElement = flow.getFlowElement(componentName);
         Configuration configuration = null;
-        if (flowElement instanceof ConfiguredResource)
+        if ( flowElement instanceof ConfiguredResource )
         {
             ConfiguredResource configuredResource = (ConfiguredResource) flowElement;
             String configurationId = moduleName + flowName + componentName + "_element";
             configuredResource.setConfiguredResourceId(configurationId);
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if (configuration == null)
+            if ( configuration == null )
             {
                 configuration = this.configurationManagement.createConfiguration(configuredResource);
                 this.configurationManagement.saveConfiguration(configuration);
@@ -120,21 +124,20 @@ public class ConfigurationApplication
 
     @Deprecated
     @RequestMapping(method = RequestMethod.GET,
-        value = "/createConfiguration/{moduleName}/{flowName}",
-        produces = { "application/json" })
+                    value = "/createConfiguration/{moduleName}/{flowName}",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName,
+                                                  @PathVariable("flowName") String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         Configuration configuration = null;
-        if (flow instanceof ConfiguredResource)
+        if ( flow instanceof ConfiguredResource )
         {
             ConfiguredResource configuredResource = (ConfiguredResource) flow;
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if (configuration == null)
+            if ( configuration == null )
             {
                 configuration = this.configurationManagement.createConfiguration(configuredResource);
                 this.configurationManagement.saveConfiguration(configuration);
@@ -151,10 +154,9 @@ public class ConfigurationApplication
         return new ResponseEntity(configuration, HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/flows", produces = {
-        "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/flows",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getFlowsConfiguration()
     {
@@ -163,14 +165,12 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/{moduleName}/{flowName}/flow",
-        produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/{moduleName}/{flowName}/flow",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getFlowsConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public ResponseEntity getFlowsConfiguration(@PathVariable("moduleName") String moduleName,
+                                                @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         String configuredResources = configurationMetaDataExtractor.getFlowConfiguration(flow);
@@ -178,25 +178,22 @@ public class ConfigurationApplication
     }
 
     @Deprecated
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
-        produces = {
-        "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createInvokerConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName,
-        @PathVariable("componentName") String componentName)
+    public ResponseEntity createInvokerConfiguration(@PathVariable("moduleName") String moduleName,
+                                                     @PathVariable("flowName") String flowName,
+                                                     @PathVariable("componentName") String componentName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         FlowElement<?> flowElement = flow.getFlowElement(componentName);
         Configuration configuration = null;
-        if (flowElement.getFlowElementInvoker() instanceof ConfiguredResource)
+        if ( flowElement.getFlowElementInvoker() instanceof ConfiguredResource )
         {
             ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowElementInvoker();
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if (configuration == null)
+            if ( configuration == null )
             {
                 configuration = this.configurationManagement.createConfiguration(configuredResource);
                 this.configurationManagement.saveConfiguration(configuration);
@@ -213,10 +210,9 @@ public class ConfigurationApplication
         return new ResponseEntity("Configuration created!", HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/invokers",
-        produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/invokers",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getInvokersConfiguration()
     {
@@ -225,10 +221,9 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/components",
-        produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/components",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getComponentsConfiguration()
     {
@@ -238,30 +233,91 @@ public class ConfigurationApplication
     }
 
     @RequestMapping(method = RequestMethod.GET,
-        value = "/{moduleName}/{flowName}/invokers",
-        produces = { "application/json" })
+                    value = "/{moduleName}/{flowName}/invokers",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getInvokersConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public ResponseEntity getInvokersConfiguration(@PathVariable("moduleName") String moduleName,
+                                                   @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         String configuredResources = configurationMetaDataExtractor.getInvokersConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/{moduleName}/{flowName}/components",
-        produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/{moduleName}/{flowName}/components",
+                    produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getComponentsConfiguration(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public ResponseEntity getComponentsConfiguration(@PathVariable("moduleName") String moduleName,
+                                                     @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         String configuredResources = configurationMetaDataExtractor.getComponentsConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity putConfiguration(@RequestBody String metaData)
+    {
+        ConfigurationMetaData configurationMetaData = configurationMetaDataProvider
+            .deserialiseMetadataConfiguration(metaData);
+
+        Configuration configuration = convert(configurationMetaData);
+        this.configurationManagement.saveConfiguration(configuration);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private Configuration convert(ConfigurationMetaData<List<ConfigurationParameterMetaData>> metaData)
+    {
+
+        List<ConfigurationParameter> list = metaData.getParameters().stream().map(p -> convertParam(p))
+                                                    .collect(Collectors.toList());
+
+        return new DefaultConfiguration(metaData.getConfigurationId(), metaData.getDescription(), list);
+
+    }
+
+    private ConfigurationParameter convertParam(ConfigurationParameterMetaData metaData)
+    {
+        ConfigurationParameter cp = null;
+
+        if ( ConfigurationParameterMapImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterMapImpl(metaData.getName(), (Map) metaData.getValue(),
+                metaData.getDescription());
+        }else if ( ConfigurationParameterListImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterListImpl(metaData.getName(), (List) metaData.getValue(),
+                metaData.getDescription());
+        }else if ( ConfigurationParameterBooleanImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterBooleanImpl(metaData.getName(), (Boolean) metaData.getValue(),
+                metaData.getDescription());
+        }else if ( ConfigurationParameterIntegerImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterIntegerImpl(metaData.getName(), (Integer) metaData.getValue(),
+                metaData.getDescription());
+        }
+        else if ( ConfigurationParameterLongImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterLongImpl(metaData.getName(), (Long) metaData.getValue(),
+                metaData.getDescription());
+        }
+        else if ( ConfigurationParameterMaskedStringImpl.class.getName().equals(metaData.getImplementingClass()) )
+        {
+            cp = new ConfigurationParameterMaskedStringImpl(metaData.getName(), (String) metaData.getValue(),
+                metaData.getDescription());
+        }
+        else
+        {
+            cp = new ConfigurationParameterStringImpl(metaData.getName(), (String) metaData.getValue(),
+                metaData.getDescription());
+        }
+
+        cp.setId(metaData.getId());
+        return cp;
     }
 
 }
