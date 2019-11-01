@@ -109,8 +109,8 @@ In this case we are adding the ikasan-eip-standalone main library; an h2 standal
     <!-- Add project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>2.1.0</version.ikasan>
-        <version.org.springboot>2.0.7.RELEASE</version.org.springboot>
+        <version.ikasan>2.2.0</version.ikasan>
+        <version.org.springboot>2.0.9.RELEASE</version.org.springboot>
     </properties>
 
     <!-- Add project dependencies -->
@@ -304,7 +304,11 @@ server.port=8080
 server.address=localhost
 server.servlet.context-path=/example-im
 server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar
+
+# Spring config
 spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+spring.liquibase.change-log=classpath:db-changelog.xml
+spring.liquibase.enabled=true
 
 # health probs and remote management (optional)
 management.endpoints.web.expose=*
@@ -319,50 +323,9 @@ datasource.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
 datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
 datasource.dialect=org.hibernate.dialect.H2Dialect
 datasource.show-sql=false
-datasource.hbm2ddl.auto=create
+datasource.hbm2ddl.auto=none
 datasource.validationQuery=select 1
 ```
-
-NOTE: To run any of the examples along with the Ikasan Dashboard, then the H2 db will not suffice.
-To change ikasan persistence to another DB simply change the persistence drivers and configuration.
-
-For instance, to change to MySQL update the pom.xml to switch h2 to MySql
-
-```xml
-        *** REMOVE H2 dependency ***
-        <!-- Use Ikasan h2 persistence (Do not use in production) -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${version.ikasan}</version>
-        </dependency>
-        
-        *** ADD MySQL dependency ***
-        <!-- Use Ikasan MySQL persistence (Do not use in production) -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-mysql-standalone-persistence</artifactId>
-            <version>${version.ikasan}</version>
-        </dependency>
-```
-
-Update the application datasource to load that for MySQL.
-```java
-UPDATE --> @ImportResource({ "classpath:h2-datasource-conf.xml" })
-TO --> @ImportResource({ "classpath:mysql-datasource-conf.xml" })
-```
-Upate connection properties to be specific to MySQL instance.
-```properties
-datasource.username=username
-datasource.password=password
-datasource.url=jdbc:mysql://localhost:3306/Ikasan01
-datasource.dialect=org.hibernate.dialect.MySQL5Dialect
-datasource.driver-class-name=com.mysql.jdbc.Driver
-datasource.xadriver-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
-datasource.validationQuery=select 1\
-```
-
-The web binding section in ```application.properties``` is particularly important and you should ensure you choose a free server.port to bind to.
 
 Build and run the application.
 From IntelliJ just right click on Application and select run ```Application.main()```
@@ -469,18 +432,18 @@ View the application logs (either in IntelliJ or the command line, depending on 
 2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration ModuleEvent Generating FlowMy Target Producer_element]. Default programmatic dao will be used.
 2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module-Event Generating Flow]. Default programmatic dao will be used.
 2019-05-24 20:31:39.310  INFO 98339 --- [0.1-8080-exec-2] o.i.f.v.VisitingInvokerFlow              : Started Flow[Event Generating Flow] in Module[My Integration Module]
-2019-05-24 20:31:39.312  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 1, relatedIdentifier=null, timestamp=1558726299311, payload=Test Message 1]
-2019-05-24 20:31:40.317  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 2, relatedIdentifier=null, timestamp=1558726300317, payload=Test Message 2]
-2019-05-24 20:31:41.318  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 3, relatedIdentifier=null, timestamp=1558726301318, payload=Test Message 3]
-2019-05-24 20:31:42.323  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 4, relatedIdentifier=null, timestamp=1558726302323, payload=Test Message 4]
-2019-05-24 20:31:43.328  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 5, relatedIdentifier=null, timestamp=1558726303328, payload=Test Message 5]
-2019-05-24 20:31:44.334  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 6, relatedIdentifier=null, timestamp=1558726304334, payload=Test Message 6]
-2019-05-24 20:31:45.338  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 7, relatedIdentifier=null, timestamp=1558726305338, payload=Test Message 7]
-2019-05-24 20:31:46.343  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 8, relatedIdentifier=null, timestamp=1558726306343, payload=Test Message 8]
-2019-05-24 20:31:47.344  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 9, relatedIdentifier=null, timestamp=1558726307344, payload=Test Message 9]
-2019-05-24 20:31:48.345  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 10, relatedIdentifier=null, timestamp=1558726308345, payload=Test Message 10]
-2019-05-24 20:31:49.347  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 1, relatedIdentifier=null, timestamp=1558726309347, payload=Test Message 1]
-2019-05-24 20:31:50.352  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=Test Message 2, relatedIdentifier=null, timestamp=1558726310352, payload=Test Message 2]
+2019-05-24 20:31:39.312  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131690, relatedIdentifier=null, timestamp=1558726299311, payload=Test Message 1]
+2019-05-24 20:31:40.317  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131691, relatedIdentifier=null, timestamp=1558726300317, payload=Test Message 2]
+2019-05-24 20:31:41.318  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131692, relatedIdentifier=null, timestamp=1558726301318, payload=Test Message 3]
+2019-05-24 20:31:42.323  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131693, relatedIdentifier=null, timestamp=1558726302323, payload=Test Message 4]
+2019-05-24 20:31:43.328  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131694, relatedIdentifier=null, timestamp=1558726303328, payload=Test Message 5]
+2019-05-24 20:31:44.334  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131695, relatedIdentifier=null, timestamp=1558726304334, payload=Test Message 6]
+2019-05-24 20:31:45.338  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131696, relatedIdentifier=null, timestamp=1558726305338, payload=Test Message 7]
+2019-05-24 20:31:46.343  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131697, relatedIdentifier=null, timestamp=1558726306343, payload=Test Message 8]
+2019-05-24 20:31:47.344  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131698, relatedIdentifier=null, timestamp=1558726307344, payload=Test Message 9]
+2019-05-24 20:31:48.345  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131699, relatedIdentifier=null, timestamp=1558726308345, payload=Test Message 10]
+2019-05-24 20:31:49.347  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131700, relatedIdentifier=null, timestamp=1558726309347, payload=Test Message 11]
+2019-05-24 20:31:50.352  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131701, relatedIdentifier=null, timestamp=1558726310352, payload=Test Message 12]
 ```
 Congratulations - your first working Ikasan Integration Module, but what is it doing...
 
@@ -602,9 +565,8 @@ public class MyModule
 So ```componentBuilder.eventGeneratingConsumer()``` returns an off-the-shelf event generating consumer component which will provide the functionality of that consumer named "My Source Consumer";
 ```componentBuilder.logProducer()``` returns an off-the-shelf logProducer producer component which will provide the functionality of the producer named "My Target Producer".
 
-The consumer of this flow will generate an event every second - this is the default behaviour if this component isn't further configured. 
-The event from the consumer to the producer is a simple string message, incrementing from 1 thru 10 continuously;
- which is subsequently logged by the producer.
+The consumer of this flow will continuously generate events as fast as it can - this is the default behaviour if this component isn't further configured by overriding the MessageProvider. 
+The event from the consumer to the producer is a simple string message with an incrementing sequential number. The event is subsequently logged by the producer.
 
 Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
@@ -952,7 +914,7 @@ Changing the content of the configuration is left to the remit of the developer.
 the component using that configuration; or, for off-the-shelf components, as a subsequent translator component.
 
 #### FluentAPI Builder Pattern Usage
-Dynamic Configuration can be programmatically set via the FluentAPI builder pattern.
+Dynamic Configuration can also be set programmatically via the FluentAPI builder pattern.
 ```java
          Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                  .withExceptionResolver(builderFactory

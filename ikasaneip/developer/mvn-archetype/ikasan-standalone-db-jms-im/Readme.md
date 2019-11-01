@@ -46,7 +46,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
-    \-DarchetypeVersion=2.1.0    
+    \-DarchetypeVersion=2.2.0    
     \-DgroupId=com.sample     
     \-DartifactId=db-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -69,7 +69,7 @@ This will build and create a zip binary containing all the required deployments 
 
 Occasionally you might see similar issue when generating an artifact
 ``` 
- mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=2.0.4
+ mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=2.2.0
 [INFO] Scanning for projects...
 [INFO]
 [INFO] ------------------------------------------------------------------------
@@ -84,8 +84,8 @@ Occasionally you might see similar issue when generating an artifact
 [INFO] Generating project in Interactive mode
 [WARNING] Archetype not found in any catalog. Falling back to central repository (http://repo.maven.apache.org/maven2).
 [WARNING] Use -DarchetypeRepository=<your repository> if archetype's repository is elsewhere.
-Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.1.0/maven-metadata.xml
-Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.1.0/ikasan-standalone-filesystem-im-maven-plugin-2.1.0.jar
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.2.0/maven-metadata.xml
+Downloading: http://repo.maven.apache.org/maven2/org/ikasan/ikasan-standalone-filesystem-im-maven-plugin/2.2.0/ikasan-standalone-filesystem-im-maven-plugin-2.2.0.jar
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
