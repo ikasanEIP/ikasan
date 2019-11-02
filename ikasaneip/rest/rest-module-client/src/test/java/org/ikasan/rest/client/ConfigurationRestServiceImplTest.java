@@ -1,9 +1,6 @@
 package org.ikasan.rest.client;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.http.Request;
-import com.github.tomakehurst.wiremock.http.RequestListener;
-import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
@@ -26,7 +23,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,15 +48,6 @@ public class ConfigurationRestServiceImplTest
         Environment environment = new StandardEnvironment();
         uut = new ConfigurationRestServiceImpl(environment, jsonConfigurationMetaDataProvider);
 
-        wireMockRule.addMockServiceRequestListener(new RequestListener()
-        {
-            @Override
-            public void requestReceived(Request request, Response response)
-            {
-                System.out.println(request);
-                System.out.println(response);
-            }
-        });
     }
 
     @Test
