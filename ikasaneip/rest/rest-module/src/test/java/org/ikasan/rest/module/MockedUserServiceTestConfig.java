@@ -1,5 +1,10 @@
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
+import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -43,6 +48,14 @@ public class MockedUserServiceTestConfig implements WebMvcConfigurer
     public void configureMessageConverters(
         List<HttpMessageConverter<?>> converters) {
 
-        converters.add(new MappingJackson2HttpMessageConverter());
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+
+        SimpleModule m = new SimpleModule();
+        m.addAbstractTypeMapping(
+            ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
+        m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
+        converter.getObjectMapper().registerModule(m);
+        converters.add(converter);
     }
+
 }

@@ -90,6 +90,6 @@
 
     <bean id="configurationMetaDataExtractor"
           class="org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor">
-        <constructor-arg name="configurationMetaDataProvider" ref="configurationMetaDataProvider"/>
+        <constructor-arg name="configurationManagement" ref="configurationService"/>
     </bean>
 </beans>

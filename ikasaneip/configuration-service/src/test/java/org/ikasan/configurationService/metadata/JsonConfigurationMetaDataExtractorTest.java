@@ -1,5 +1,7 @@
 package org.ikasan.configurationService.metadata;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.configurationService.metadata.components.ConfiguredConsumer;
 import org.ikasan.configurationService.metadata.components.ConfiguredProducer;
@@ -15,7 +17,8 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -39,6 +42,8 @@ public class JsonConfigurationMetaDataExtractorTest
     {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
+    private ObjectMapper mapper;
+
     ConfigurationManagement configurationManagement = mockery.mock(ConfigurationManagement.class);
 
     JsonConfigurationMetaDataExtractor uut;
@@ -46,8 +51,14 @@ public class JsonConfigurationMetaDataExtractorTest
     @Before
     public void setup() {
 
-        ConfigurationMetaDataProvider<String> jsonConfigurationMetaDataProvider = new JsonConfigurationMetaDataProvider(configurationManagement);
-        uut = new JsonConfigurationMetaDataExtractor(jsonConfigurationMetaDataProvider);
+        uut = new JsonConfigurationMetaDataExtractor(configurationManagement);
+
+        mapper = new ObjectMapper();
+
+        SimpleModule m = new SimpleModule();
+        m.addAbstractTypeMapping(ConfigurationParameterMetaData.class,ConfigurationParameterMetaDataImpl.class);
+        m.addAbstractTypeMapping(ConfigurationMetaData.class,ConfigurationMetaDataImpl.class);
+        this.mapper.registerModule(m);
     }
 
     @Test
@@ -64,8 +75,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(flow);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(flow);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
     }
 
@@ -84,8 +96,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(flow);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(flow);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -112,8 +125,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(flow);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(flow);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -141,8 +155,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("diffConfiguredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(flow);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(flow);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/twoConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -163,8 +178,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(testModule);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(testModule);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -187,8 +203,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getComponentsConfiguration(testModule);
+        List<ConfigurationMetaData> resultConf = uut.getComponentsConfiguration(testModule);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/simpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -207,8 +224,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getInvokersConfiguration(flow);
+        List<ConfigurationMetaData> resultConf = uut.getInvokersConfiguration(flow);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -229,8 +247,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getInvokersConfiguration(testModule);
+        List<ConfigurationMetaData> resultConf = uut.getInvokersConfiguration(testModule);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -249,8 +268,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getFlowConfiguration(flow);
+        ConfigurationMetaData resultConf = uut.getFlowConfiguration(flow);
 
+        String result = describeConfiguredResource(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowDefaultConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
     }
 
@@ -270,8 +290,9 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        String result = uut.getFlowsConfiguration(testModule);
+        List<ConfigurationMetaData> resultConf = uut.getFlowsConfiguration(testModule);
 
+        String result = describeConfiguredResources(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
@@ -322,6 +343,31 @@ public class JsonConfigurationMetaDataExtractorTest
     protected InputStream loadDataFileStream(String fileName) throws IOException
     {
         return getClass().getResourceAsStream(fileName);
+    }
+
+
+    private String describeConfiguredResources(List<ConfigurationMetaData> metadataConfigurations)
+    {
+        try
+        {
+            return this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(metadataConfigurations);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Exception has occurred invoker configuration meta data json!", e);
+        }
+    }
+
+    private String describeConfiguredResource(ConfigurationMetaData metadataConfiguration){
+
+        try
+        {
+            return this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(metadataConfiguration);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Exception has occurred invoker configuration meta data json!", e);
+        }
     }
 
 }

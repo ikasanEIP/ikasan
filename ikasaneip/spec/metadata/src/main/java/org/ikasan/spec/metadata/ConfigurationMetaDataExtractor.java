@@ -3,6 +3,8 @@ package org.ikasan.spec.metadata;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
+import java.util.List;
+
 public interface ConfigurationMetaDataExtractor<T>
 {
     /**
@@ -11,7 +13,7 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param flow to extract the component configurations
      * @return the meta data describing given flow components configuration.
      */
-    T getComponentsConfiguration(Flow flow);
+    List<T> getComponentsConfiguration(Flow flow);
 
     /**
      * Gets all invoker configured resources from runtime flow and provides them in meta data format.
@@ -19,7 +21,7 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param flow to extract the invoker configurations
      * @return the meta data describing given flow invokers configuration.
      */
-    T getInvokersConfiguration(Flow flow);
+    List<T> getInvokersConfiguration(Flow flow);
 
     /**
      * Gets all component configured resources from runtime module aka all flows and provides them in meta data format.
@@ -27,7 +29,7 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param module to extract the component configurations
      * @return the meta data describing given flow components configuration.
      */
-    T getComponentsConfiguration(Module<Flow> module);
+    List<T> getComponentsConfiguration(Module<Flow> module);
 
     /**
      * Gets all invoker configured resources from runtime module aka all flows and provides them in meta data format.
@@ -35,7 +37,7 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param module to extract the invoker configurations
      * @return the meta data describing given flow invokers configuration.
      */
-    T getInvokersConfiguration(Module<Flow> module);
+    List<T> getInvokersConfiguration(Module<Flow> module);
 
     /**
      * Gets flow related configured resource and provides them in meta data format.
@@ -51,5 +53,5 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param module to extract the all flows configured resources
      * @return the meta data describing given module all flows configuration.
      */
-    T getFlowsConfiguration(Module<Flow> module);
+    List<T> getFlowsConfiguration(Module<Flow> module);
 }

@@ -34,10 +34,7 @@ public class ConfigurationApplication
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
     @Autowired
-    private ConfigurationMetaDataExtractor<String> configurationMetaDataExtractor;
-
-    @Autowired
-    private ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
+    private ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataExtractor;
 
     /**
      * The module service
@@ -155,13 +152,12 @@ public class ConfigurationApplication
     }
 
     @RequestMapping(method = RequestMethod.GET,
-                    value = "/flows",
-                    produces = { "application/json" })
+                    value = "/flows")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getFlowsConfiguration()
     {
         Module<Flow> module = moduleService.getModules().get(0);
-        String configuredResources = configurationMetaDataExtractor.getFlowsConfiguration(module);
+        List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor.getFlowsConfiguration(module);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
@@ -173,7 +169,7 @@ public class ConfigurationApplication
                                                 @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
-        String configuredResources = configurationMetaDataExtractor.getFlowConfiguration(flow);
+        ConfigurationMetaData configuredResources = configurationMetaDataExtractor.getFlowConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
@@ -217,7 +213,8 @@ public class ConfigurationApplication
     public ResponseEntity getInvokersConfiguration()
     {
         Module<Flow> module = moduleService.getModules().get(0);
-        String configuredResources = configurationMetaDataExtractor.getInvokersConfiguration(module);
+        List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor
+            .getInvokersConfiguration(module);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
@@ -228,7 +225,8 @@ public class ConfigurationApplication
     public ResponseEntity getComponentsConfiguration()
     {
         Module<Flow> module = moduleService.getModules().get(0);
-        String configuredResources = configurationMetaDataExtractor.getComponentsConfiguration(module);
+        List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor
+            .getComponentsConfiguration(module);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
@@ -240,7 +238,7 @@ public class ConfigurationApplication
                                                    @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
-        String configuredResources = configurationMetaDataExtractor.getInvokersConfiguration(flow);
+        List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor.getInvokersConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
@@ -252,17 +250,15 @@ public class ConfigurationApplication
                                                      @PathVariable("flowName") String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
-        String configuredResources = configurationMetaDataExtractor.getComponentsConfiguration(flow);
+        List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor
+            .getComponentsConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity putConfiguration(@RequestBody String metaData)
+    public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData)
     {
-        ConfigurationMetaData configurationMetaData = configurationMetaDataProvider
-            .deserialiseMetadataConfiguration(metaData);
-
         Configuration configuration = convert(configurationMetaData);
         this.configurationManagement.saveConfiguration(configuration);
 
@@ -286,34 +282,44 @@ public class ConfigurationApplication
         if ( ConfigurationParameterMapImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterMapImpl(metaData.getName(), (Map) metaData.getValue(),
-                metaData.getDescription());
-        }else if ( ConfigurationParameterListImpl.class.getName().equals(metaData.getImplementingClass()) )
+                metaData.getDescription()
+            );
+        }
+        else if ( ConfigurationParameterListImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterListImpl(metaData.getName(), (List) metaData.getValue(),
-                metaData.getDescription());
-        }else if ( ConfigurationParameterBooleanImpl.class.getName().equals(metaData.getImplementingClass()) )
+                metaData.getDescription()
+            );
+        }
+        else if ( ConfigurationParameterBooleanImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterBooleanImpl(metaData.getName(), (Boolean) metaData.getValue(),
-                metaData.getDescription());
-        }else if ( ConfigurationParameterIntegerImpl.class.getName().equals(metaData.getImplementingClass()) )
+                metaData.getDescription()
+            );
+        }
+        else if ( ConfigurationParameterIntegerImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterIntegerImpl(metaData.getName(), (Integer) metaData.getValue(),
-                metaData.getDescription());
+                metaData.getDescription()
+            );
         }
         else if ( ConfigurationParameterLongImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
-            cp = new ConfigurationParameterLongImpl(metaData.getName(), (Long) metaData.getValue(),
-                metaData.getDescription());
+            cp = new ConfigurationParameterLongImpl(metaData.getName(),
+                metaData.getValue() != null ? new Long(metaData.getValue().toString()) : null, metaData.getDescription()
+            );
         }
         else if ( ConfigurationParameterMaskedStringImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterMaskedStringImpl(metaData.getName(), (String) metaData.getValue(),
-                metaData.getDescription());
+                metaData.getDescription()
+            );
         }
         else
         {
             cp = new ConfigurationParameterStringImpl(metaData.getName(), (String) metaData.getValue(),
-                metaData.getDescription());
+                metaData.getDescription()
+            );
         }
 
         cp.setId(metaData.getId());
