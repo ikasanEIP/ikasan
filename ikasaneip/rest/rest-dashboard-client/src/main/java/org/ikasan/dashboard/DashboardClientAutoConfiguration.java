@@ -2,11 +2,14 @@ package org.ikasan.dashboard;
 
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
 
 /**
  *  Dashboard Client configuration required by every module.
@@ -73,10 +76,10 @@ public class DashboardClientAutoConfiguration
 
     @Bean
     public DashboardRestService configurationMetadataDashboardRestService(Environment environment,
-        ConfigurationMetaDataExtractor<String> configurationMetaDataProvider)
+        ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
         return new DashboardRestServiceImpl(environment, CONFIGURATION_METADATA_PATH,
-            (Converter<Module, String>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
+            (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
 
     }
 
