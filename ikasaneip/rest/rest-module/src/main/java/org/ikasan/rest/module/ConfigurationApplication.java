@@ -326,4 +326,22 @@ public class ConfigurationApplication
         return cp;
     }
 
+    @RequestMapping(method = RequestMethod.DELETE,
+                    value = "/{configurationId}")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId)
+    {
+        Configuration configuration = this.configurationManagement.getConfiguration(configurationId);
+        if ( configuration != null )
+        {
+            this.configurationManagement.deleteConfiguration(configuration);
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
 }
