@@ -10,6 +10,7 @@ import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class ModuleVisjsAdapter
     private int identifier;
     private HashMap<String, String> fromTransitionLabelMap = new HashMap<>();
     private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
+    private HashMap<String, ConfigurationMetaData> configurationMetaDataHashMap;
 
     /**
      * Adapt module meta data into a Module structure suitable for rendering to a VisJs visualisation.
@@ -38,7 +40,9 @@ public class ModuleVisjsAdapter
      */
     public Module adapt(ModuleMetaData moduleMetaData, List<ConfigurationMetaData> configurationMetaData)
     {
-        Module module = new Module(moduleMetaData.getUrl(), moduleMetaData.getName(), moduleMetaData.getDescription(), moduleMetaData.getVersion());
+        configurationMetaDataHashMap = new HashMap<>();
+        Module module = new Module(moduleMetaData.getUrl(), moduleMetaData.getName(), moduleMetaData.getDescription()
+            , moduleMetaData.getVersion(), configurationMetaDataHashMap);
 
         Map<String, ConfigurationMetaData> configurationMetaDataMap = configurationMetaData.stream().
             collect(Collectors.toMap(metaData -> metaData.getConfigurationId(), metaData -> metaData));
@@ -303,10 +307,13 @@ public class ModuleVisjsAdapter
      */
     private Node manageProducers(FlowElementMetaData flowElement, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         if(flowElement.getImplementingClass().equals("org.ikasan.component.endpoint.util.producer.DevNull"))
         {
             return DeadEndPoint.deadEndPointBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                 .build();
@@ -317,7 +324,7 @@ public class ModuleVisjsAdapter
             String destinationName = this.getConfigurationParameterMetaData("destinationJndiName", configurationMetaData);
 
             return MessageProducer.messageProducerBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                 .withTransition(new MessageChannel("channel"+identifier++, WordUtils.wrap(destinationName, 25, "\n", true, "\\."), false))
@@ -329,7 +336,7 @@ public class ModuleVisjsAdapter
             String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
 
             return MessageEndPoint.messageEndPointBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                 .withTransition(new FtpLocation("channel"+identifier++, remoteHost))
@@ -341,7 +348,7 @@ public class ModuleVisjsAdapter
             String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
 
             return MessageEndPoint.messageEndPointBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                 .withTransition(new SftpLocation("channel"+identifier++, remoteHost))
@@ -349,7 +356,7 @@ public class ModuleVisjsAdapter
         }
 
         return MessageEndPoint.messageEndPointBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(new FileLocation("fileLocation"+ identifier++, ""))
@@ -371,6 +378,9 @@ public class ModuleVisjsAdapter
     {
         ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
 
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         if(flowElement.getImplementingClass().equals("org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer"))
         {
             if(configurationMetaData != null && configurationMetaData.getImplementingClass().equals("org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration"))
@@ -378,7 +388,7 @@ public class ModuleVisjsAdapter
                 String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
 
                 return FtpConsumer.ftpConsumerBuilder()
-                    .withId(flowElement.getComponentName() + identifier++)
+                    .withId(nodeId)
                     .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                     .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                     .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -391,7 +401,7 @@ public class ModuleVisjsAdapter
                 String remoteHost = this.getConfigurationParameterMetaData("remoteHost", configurationMetaData);
 
                 return SftpConsumer.sftpConsumerBuilder()
-                    .withId(flowElement.getComponentName() + identifier++)
+                    .withId(nodeId)
                     .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                     .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                     .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -401,7 +411,7 @@ public class ModuleVisjsAdapter
             else
             {
                 return PollingConsumer.pollingConsumerBuilder()
-                    .withId(flowElement.getComponentName() + identifier++)
+                    .withId(nodeId)
                     .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                     .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
                     .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -414,7 +424,7 @@ public class ModuleVisjsAdapter
 
 
         return EventDrivenConsumer.sftpConsumerBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -432,11 +442,13 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
-                                 Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
+    private Node manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions, Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         return MessageConverter.messageConverterBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -456,8 +468,11 @@ public class ModuleVisjsAdapter
     private Node manageTranslator(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                  Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         return MessageTranslator.messageConverterBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -477,8 +492,11 @@ public class ModuleVisjsAdapter
     private Node manageSplitter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                   Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         return org.ikasan.dashboard.ui.visualisation.model.flow.Splitter.splitterBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -498,8 +516,11 @@ public class ModuleVisjsAdapter
     private Node manageFilter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                 Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         return org.ikasan.dashboard.ui.visualisation.model.flow.Filter.filterBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -519,8 +540,11 @@ public class ModuleVisjsAdapter
     private Node manageBroker(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                               Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         return org.ikasan.dashboard.ui.visualisation.model.flow.Broker.brokerBuilder()
-            .withId(flowElement.getComponentName() + identifier++)
+            .withId(nodeId)
             .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
             .withTransitionLabel(this.fromTransitionLabelMap.get(flowElement.getComponentName()))
             .withTransition(manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap))
@@ -541,9 +565,12 @@ public class ModuleVisjsAdapter
                                              Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
                                              List<FlowElementMetaData> flowElementMetaDataTransitions)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter router =
             org.ikasan.dashboard.ui.visualisation.model.flow.SingleRecipientRouter.singleRecipientRouterBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .build();
 
@@ -568,9 +595,12 @@ public class ModuleVisjsAdapter
                                              Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
                                              List<FlowElementMetaData> flowElementMetaDataTransitions)
     {
+        String nodeId = flowElement.getComponentName() + identifier++;
+        this.manageConfigurationMetaDataMap(nodeId, configurationMetaDataMap, flowElement);
+
         org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter router =
             org.ikasan.dashboard.ui.visualisation.model.flow.RecipientListRouter.recipientRouterBuilder()
-                .withId(flowElement.getComponentName() + identifier++)
+                .withId(nodeId)
                 .withName(WordUtils.wrap(flowElement.getComponentName(), 25))
                 .build();
 
@@ -606,5 +636,22 @@ public class ModuleVisjsAdapter
         }
 
         return String.valueOf(parameterMetaData.getValue());
+    }
+
+    /**
+     * Helper method to associate configuration meta data with the node identifier.
+     *
+     * @param nodeId
+     * @param configurationMetaDataMap
+     * @param flowElement
+     */
+    private void manageConfigurationMetaDataMap(String nodeId, Map<String, ConfigurationMetaData> configurationMetaDataMap, FlowElementMetaData flowElement)
+    {
+        ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
+
+        if(configurationMetaData != null)
+        {
+            this.configurationMetaDataHashMap.put(nodeId, configurationMetaData);
+        }
     }
 }

@@ -24,4 +24,14 @@ public class SolrComponentConfiguration
     {
         return rawConfigurationMetadata;
     }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("SolrComponentConfiguration{");
+        sb.append("configurationId='").append(configurationId).append('\'');
+        sb.append(", rawConfigurationMetadata='").append(rawConfigurationMetadata).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

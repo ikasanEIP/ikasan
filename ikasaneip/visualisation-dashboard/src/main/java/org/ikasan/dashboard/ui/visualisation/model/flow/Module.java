@@ -1,6 +1,9 @@
 package org.ikasan.dashboard.ui.visualisation.model.flow;
 
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,6 +16,7 @@ public class Module
 	private String description;
 	private String version;
 	private List<Flow> flows;
+	private HashMap<String, ConfigurationMetaData> configurationMap;
 
     /**
      * Construcior
@@ -22,12 +26,13 @@ public class Module
      * @param description
      * @param version
      */
-	public Module(String url, String name, String description, String version)
+	public Module(String url, String name, String description, String version, HashMap<String, ConfigurationMetaData> configurationMap)
 	{
 	    this.url = url;
 		this.name = name;
 		this.description = description;
 		this.version = version;
+		this.configurationMap = configurationMap;
 	}
 
     public String getUrl()
@@ -68,5 +73,10 @@ public class Module
         }
 
         flows.add(flow);
+    }
+
+    public HashMap<String, ConfigurationMetaData> getConfigurationMap()
+    {
+        return configurationMap;
     }
 }
