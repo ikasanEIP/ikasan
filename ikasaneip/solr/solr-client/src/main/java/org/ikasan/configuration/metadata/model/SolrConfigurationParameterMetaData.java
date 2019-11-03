@@ -89,4 +89,17 @@ public class SolrConfigurationParameterMetaData implements ConfigurationParamete
     {
         this.implementingClass = implementingClass;
     }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("SolrConfigurationParameterMetaData{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", value=").append(value);
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", implementingClass='").append(implementingClass).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

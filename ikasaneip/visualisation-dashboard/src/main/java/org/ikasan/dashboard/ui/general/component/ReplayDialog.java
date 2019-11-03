@@ -82,7 +82,7 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         Image replayImage = new Image("/frontend/images/replay-service.png", "");
         replayImage.setHeight("70px");
 
-        H3 replayLabel = new H3(getTranslation("label.replay-event-details", UI.getCurrent().getLocale(), null));
+        H3 replayLabel = new H3(getTranslation("label.replay-event-details", UI.getCurrent().getLocale()));
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.setSpacing(true);
