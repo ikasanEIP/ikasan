@@ -10,6 +10,7 @@ public class State
     private static final String RECOVERING = "recovering";
     private static final String PAUSED = "paused";
     private static final String START_PAUSE = "startPause";
+    private static final String UNKNOWN = "unknown";
 
     private static final String RUNNING_COLOUR = "rgb(5,227,108)";
     private static final String STOPPED_COLOUR= "rgb(0,0,0)";
@@ -24,6 +25,7 @@ public class State
     public static State RECOVERING_STATE = new State(RECOVERING, RECOVERING_COLOUR);
     public static State PAUSED_STATE = new State(PAUSED, PAUSED_COLOUR);
     public static State START_PAUSE_STATE = new State(START_PAUSE, START_PAUSE_COLOUR);
+    public static State UNKNOWN_STATE = new State(UNKNOWN, STOPPED_COLOUR);
 
     private String flowState;
     private String stateColour;
@@ -43,7 +45,7 @@ public class State
         else if(state.equals(START_PAUSE))
             return START_PAUSE_STATE;
 
-        throw new IllegalArgumentException(String.format("Unknown state [%s]", state));
+        return UNKNOWN_STATE;
     }
 
     private State(String flowState, String stateColour)

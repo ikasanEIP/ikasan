@@ -79,10 +79,14 @@ public class ModuleStatusDialog extends Dialog
         flowGrid.addColumn(Flow::getName).setHeader("Name").setFlexGrow(5);
         flowGrid.addColumn(new ComponentRenderer<>((Flow node) ->
         {
-
             FlowState flowState = FlowStateCache.instance().get(this.currentModule, node);
 
-            State state = Optional.ofNullable(flowState.getState()).orElse(null);
+            State state = State.UNKNOWN_STATE;
+
+            if(flowState != null)
+            {
+                state = flowState.getState();
+            }
 
             HorizontalLayout layout = this.getStatusLabelLayout(state);
 
@@ -103,7 +107,12 @@ public class ModuleStatusDialog extends Dialog
         flowGrid.getColumnByKey("status").setClassNameGenerator(item -> {
             FlowState flowState = FlowStateCache.instance().get(this.currentModule, item);
 
-            State state = Optional.ofNullable(flowState.getState()).orElse(null);
+            State state = State.UNKNOWN_STATE;
+
+            if(flowState != null)
+            {
+                state = flowState.getState();
+            }
 
             return Optional.ofNullable(state.getFlowState()).orElse("");
         });

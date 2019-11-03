@@ -11,12 +11,15 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.general.component.ConfigurationDialog;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.dto.FlowDto;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -49,10 +52,13 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private Registration cacheStateBroadcasterRegistration;
 
     private ModuleControlRestServiceImpl moduleControlRestService;
+    private ConfigurationRestServiceImpl configurationRestService;
 
-    public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService)
+    public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
+        , ConfigurationRestServiceImpl configurationRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
+        this.configurationRestService = configurationRestService;
         this.setSizeFull();
         this.flowMap = new HashMap<>();
     }
@@ -136,9 +142,17 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
         {
             logger.info(doubleClickEvent.getParams().toString());
-            String node = doubleClickEvent.getParams().getArray("nodes").get(0);
+            String node = doubleClickEvent.getParams().getArray("nodes").get(0).asString();
 
             logger.info("Node: " + node);
+
+            ConfigurationMetaData configurationMetaData = this.module.getConfigurationMap().get(node);
+
+            logger.info("Configuration Metadata: " + configurationMetaData);
+
+            ConfigurationDialog configurationDialog = new ConfigurationDialog(this.module,
+                configurationMetaData, this.configurationRestService);
+            configurationDialog.open();
         });
 
 //        networkDiagram.addClickListener((ClickListener) clickEvent -> {

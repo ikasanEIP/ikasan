@@ -11,7 +11,6 @@ public class ConfigurationMetaDataImpl implements ConfigurationMetaData<List<Con
     private String description;
     private String implementingClass;
 
-
     @Override
     public String getConfigurationId()
     {
@@ -54,5 +53,17 @@ public class ConfigurationMetaDataImpl implements ConfigurationMetaData<List<Con
     public void setImplementingClass(String implementingClass)
     {
         this.implementingClass = implementingClass;
+    }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("ConfigurationMetaDataImpl{");
+        sb.append("configurationId='").append(configurationId).append('\'');
+        sb.append(", parameters=").append(parameters);
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", implementingClass='").append(implementingClass).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
