@@ -3,6 +3,7 @@ package org.ikasan.rest.client;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
+import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.junit.Before;
@@ -46,6 +47,7 @@ public class ConfigurationRestServiceImplTest
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
         Environment environment = new StandardEnvironment();
         uut = new ConfigurationRestServiceImpl(environment, jsonConfigurationMetaDataProvider);
+
     }
 
     @Test
@@ -174,6 +176,27 @@ public class ConfigurationRestServiceImplTest
         assertEquals(2, result.size());
         assertEquals("consumerConfiguredResourceId", result.get(0).getConfigurationId());
         assertEquals("producerConfiguredResourceId", result.get(1).getConfigurationId());
+
+    }
+
+
+    @Test
+    public void storeConfiguration_returns_200() throws IOException
+    {
+
+        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("consumerConfiguredResourceId","desc","org.ikasan.configurationService.model.DefaultConfiguration", null);
+
+        stubFor(put(urlEqualTo("/rest/configuration"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("\"configurationId\":\"consumerConfiguredResourceId\""))
+            .willReturn(
+                aResponse()
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                    .withStatus(200)));
+        boolean result = uut.storeConfiguration(contexBaseUrl,configurationMetaData);
+
+        assertEquals(true, result);
 
     }
 

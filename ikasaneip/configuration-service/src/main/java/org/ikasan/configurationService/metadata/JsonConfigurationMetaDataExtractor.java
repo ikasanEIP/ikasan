@@ -1,9 +1,13 @@
 package org.ikasan.configurationService.metadata;
 
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
-import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.module.Module;
 
 import java.util.Collection;
@@ -17,22 +21,23 @@ import java.util.stream.Collectors;
  *
  * @author Ikasan Development Team
  */
-public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaDataExtractor<String>
+public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaDataExtractor<ConfigurationMetaData>
 {
+    private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
-    private ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
     /**
      * Constructor
      */
-    public JsonConfigurationMetaDataExtractor(ConfigurationMetaDataProvider configurationMetaDataProvider)
+    public JsonConfigurationMetaDataExtractor(
+        ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
-        this.configurationMetaDataProvider = configurationMetaDataProvider;
+        this.configurationManagement = configurationManagement;
     }
 
     @Override
-    public String getComponentsConfiguration(Flow flow)
+    public List<ConfigurationMetaData> getComponentsConfiguration(Flow flow)
     {
-        String result;
+        List<ConfigurationMetaData> result;
 
         try
         {
@@ -41,18 +46,21 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
             Set<String> nameSet = new HashSet<>();
 
             List<ConfiguredResource> configuredResources = flow.getFlowElements().stream()
-                // extract all components from ever flow stream to single stream
-                .map(flowElement -> flowElement.getFlowComponent())
-                .filter( flowElementComponent -> flowElementComponent instanceof ConfiguredResource )
-                // convert all ConfiguredResource components
-                .map(flowElementComponent -> (ConfiguredResource) flowElementComponent)
+                                                               // extract all components from ever flow stream to
+                                                               // single stream
+                                                               .map(flowElement -> flowElement.getFlowComponent())
+                                                               .filter(
+                                                                   flowElementComponent -> flowElementComponent instanceof ConfiguredResource)
+                                                               // convert all ConfiguredResource components
+                                                               .map(
+                                                                   flowElementComponent -> (ConfiguredResource) flowElementComponent)
 
-                // filter distinctive set of Configurations using configurationId
-                .filter(e -> nameSet.add(e.getConfiguredResourceId()))
-                .collect(Collectors.toList())
-                ;
+                                                               // filter distinctive set of Configurations using
+                                                               // configurationId
+                                                               .filter(e -> nameSet.add(e.getConfiguredResourceId()))
+                                                               .collect(Collectors.toList());
 
-            result = this.configurationMetaDataProvider.describeConfiguredResources(configuredResources);
+            result = this.describeConfiguredResources(configuredResources);
         }
         catch (Exception e)
         {
@@ -63,9 +71,9 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
-    public String getInvokersConfiguration(Flow flow)
+    public List<ConfigurationMetaData> getInvokersConfiguration(Flow flow)
     {
-        String result;
+        List<ConfigurationMetaData> result;
 
         try
         {
@@ -74,15 +82,17 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
             Set<String> nameSet = new HashSet<>();
 
             List<ConfiguredResource> configuredResources = flow.getFlowElements().stream()
-                .map(flowElement -> flowElement.getFlowElementInvoker())
-                .filter( flowElementInvoker -> flowElementInvoker instanceof ConfiguredResource )
-                .map(flowElementInvoker -> (ConfiguredResource) flowElementInvoker)
-                // filter distinctive set of Configurations using configurationId
-                .filter(e -> nameSet.add(e.getConfiguredResourceId()))
-                .collect(Collectors.toList());
+                                                               .map(flowElement -> flowElement.getFlowElementInvoker())
+                                                               .filter(
+                                                                   flowElementInvoker -> flowElementInvoker instanceof ConfiguredResource)
+                                                               .map(
+                                                                   flowElementInvoker -> (ConfiguredResource) flowElementInvoker)
+                                                               // filter distinctive set of Configurations using
+                                                               // configurationId
+                                                               .filter(e -> nameSet.add(e.getConfiguredResourceId()))
+                                                               .collect(Collectors.toList());
 
-
-            result = this.configurationMetaDataProvider.describeConfiguredResources(configuredResources);
+            result = this.describeConfiguredResources(configuredResources);
         }
         catch (Exception e)
         {
@@ -93,9 +103,9 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
-    public String getComponentsConfiguration(Module<Flow> module)
+    public List<ConfigurationMetaData> getComponentsConfiguration(Module<Flow> module)
     {
-        String result;
+        List<ConfigurationMetaData> result;
 
         try
         {
@@ -104,16 +114,19 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
             Set<String> nameSet = new HashSet<>();
 
             List<ConfiguredResource> configuredResources = module.getFlows().stream()
-                .map(flow -> flow.getFlowElements())
-                .flatMap(Collection::stream)
-                .map(flowElement -> flowElement.getFlowComponent())
-                .filter( flowElementComponent -> flowElementComponent instanceof ConfiguredResource )
-                .map(flowElementComponent -> (ConfiguredResource) flowElementComponent)
-                // filter distinctive set of Configurations using configurationId
-                .filter(e -> nameSet.add(e.getConfiguredResourceId()))
-                .collect(Collectors.toList());
+                                                                 .map(flow -> flow.getFlowElements())
+                                                                 .flatMap(Collection::stream)
+                                                                 .map(flowElement -> flowElement.getFlowComponent())
+                                                                 .filter(
+                                                                     flowElementComponent -> flowElementComponent instanceof ConfiguredResource)
+                                                                 .map(
+                                                                     flowElementComponent -> (ConfiguredResource) flowElementComponent)
+                                                                 // filter distinctive set of Configurations using
+                                                                 // configurationId
+                                                                 .filter(e -> nameSet.add(e.getConfiguredResourceId()))
+                                                                 .collect(Collectors.toList());
 
-            result = this.configurationMetaDataProvider.describeConfiguredResources(configuredResources);
+            result = this.describeConfiguredResources(configuredResources);
         }
         catch (Exception e)
         {
@@ -124,9 +137,9 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
-    public String getInvokersConfiguration(Module<Flow> module)
+    public List<ConfigurationMetaData> getInvokersConfiguration(Module<Flow> module)
     {
-        String result;
+        List<ConfigurationMetaData> result;
 
         try
         {
@@ -135,16 +148,17 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
             Set<String> nameSet = new HashSet<>();
 
             List<ConfiguredResource> configuredResources = module.getFlows().stream()
-                .map(flow -> flow.getFlowElements())
-                .flatMap(Collection::stream)
-                .map(flowElement -> flowElement.getFlowElementInvoker())
-                .filter( flowElementInvoker -> flowElementInvoker instanceof ConfiguredResource )
-                .map(flowElementInvoker -> (ConfiguredResource) flowElementInvoker)
-                // filter distinctive set of Configurations using configurationId
-                .filter(e -> nameSet.add(e.getConfiguredResourceId()))
-                .collect(Collectors.toList());
+                                                                 .map(flow -> flow.getFlowElements())
+                                                                 .flatMap(Collection::stream).map(
+                    flowElement -> flowElement.getFlowElementInvoker()).filter(
+                    flowElementInvoker -> flowElementInvoker instanceof ConfiguredResource).map(
+                    flowElementInvoker -> (ConfiguredResource) flowElementInvoker)
+                                                                 // filter distinctive set of Configurations using
+                                                                 // configurationId
+                                                                 .filter(e -> nameSet.add(e.getConfiguredResourceId()))
+                                                                 .collect(Collectors.toList());
 
-            result = this.configurationMetaDataProvider.describeConfiguredResources(configuredResources);
+            result = this.describeConfiguredResources(configuredResources);
 
         }
         catch (Exception e)
@@ -156,16 +170,18 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
-    public String getFlowConfiguration(Flow flow)
+    public ConfigurationMetaData getFlowConfiguration(Flow flow)
     {
 
         try
         {
 
-            if( flow instanceof ConfiguredResource )
+            if ( flow instanceof ConfiguredResource )
             {
-                return this.configurationMetaDataProvider.describeConfiguredResource((ConfiguredResource) flow);
-            }else{
+                return this.convert((ConfiguredResource) flow);
+            }
+            else
+            {
                 throw new RuntimeException("Flow is not a instance of ConfiguredResource");
             }
 
@@ -178,17 +194,17 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
-    public String getFlowsConfiguration(Module<Flow> module)
+    public List<ConfigurationMetaData> getFlowsConfiguration(Module<Flow> module)
     {
 
         try
         {
             List<ConfiguredResource> configuredResources = module.getFlows().stream()
-                .filter( flow -> flow instanceof ConfiguredResource )
-                .map(flow -> (ConfiguredResource) flow)
-                .collect(Collectors.toList());
+                                                                 .filter(flow -> flow instanceof ConfiguredResource)
+                                                                 .map(flow -> (ConfiguredResource) flow)
+                                                                 .collect(Collectors.toList());
 
-            return this.configurationMetaDataProvider.describeConfiguredResources(configuredResources);
+            return this.describeConfiguredResources(configuredResources);
 
         }
         catch (Exception e)
@@ -196,6 +212,47 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
             throw new RuntimeException("Exception has occurred creating flow configuration meta data json!", e);
         }
 
+    }
+
+    public List<ConfigurationMetaData> describeConfiguredResources(List<ConfiguredResource> configuredResource)
+    {
+        return configuredResource.stream().map(r -> convert(r)).collect(Collectors.toList());
+
+    }
+
+    private ConfigurationMetaData convert(ConfiguredResource configuredResource)
+    {
+
+        Configuration<List<ConfigurationParameter>> configuration = this.configurationManagement
+            .getConfiguration(configuredResource.getConfiguredResourceId());
+
+        if ( configuration == null )
+        {
+            configuration = this.configurationManagement.createConfiguration(configuredResource);
+        }
+
+        ConfigurationMetaDataImpl configurationMetaDataImpl = new ConfigurationMetaDataImpl(
+            configuration.getConfigurationId(), configuration.getDescription(),
+            configuredResource.getConfiguration() != null ?
+                configuredResource.getConfiguration().getClass().getName() :
+                configuration.getClass().getName(), getParameters(configuration.getParameters())
+        );
+
+        return configurationMetaDataImpl;
+
+    }
+
+    private List<ConfigurationParameterMetaData> getParameters(List<ConfigurationParameter> parameters)
+    {
+
+        return parameters.stream().map(p -> convert(p)).collect(Collectors.toList());
+    }
+
+    private ConfigurationParameterMetaData convert(ConfigurationParameter p)
+    {
+        return new ConfigurationParameterMetaDataImpl(p.getId(), p.getName(), p.getValue(), p.getDescription(),
+            p.getClass().getName()
+        );
     }
 
 }

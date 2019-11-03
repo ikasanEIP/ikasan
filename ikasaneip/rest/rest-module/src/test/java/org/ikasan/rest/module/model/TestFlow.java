@@ -22,6 +22,14 @@ public class TestFlow implements Flow, ConfiguredResource
         this.state = state;
     }
 
+    public TestFlow(String name, String moduleName, String state, FlowConfiguration flowConfiguration)
+    {
+        this.name = name;
+        this.moduleName = moduleName;
+        this.state = state;
+        this.flowConfiguration = flowConfiguration;
+    }
+
     public TestFlow(String name, String moduleName, String state, FlowConfiguration flowConfiguration,SerialiserFactory serialiserFactory)
     {
         this.name = name;
@@ -178,7 +186,7 @@ public class TestFlow implements Flow, ConfiguredResource
     @Override
     public Object getConfiguration()
     {
-        return null;
+        return flowConfiguration;
     }
 
     @Override

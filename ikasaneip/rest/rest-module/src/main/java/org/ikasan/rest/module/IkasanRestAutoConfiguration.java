@@ -40,14 +40,22 @@
  */
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
+import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
-
-public class IkasanRestAutoConfiguration
+public class IkasanRestAutoConfiguration implements WebMvcConfigurer
 {
-
 
     @Bean
     public ConfigurationApplication configurationApplication(){
@@ -58,11 +66,6 @@ public class IkasanRestAutoConfiguration
     public DiscoveryApplication discoveryApplication(){
         return new DiscoveryApplication();
     }
-
-//    @Bean
-//    public IkasanErrorController ikasanErrorController(){
-//        return new IkasanErrorController();
-//    }
 
     @Bean
     public ModuleControlApplication moduleControlApplication(){
@@ -103,4 +106,20 @@ public class IkasanRestAutoConfiguration
     public FilterApplication filterApplication(){
         return new FilterApplication();
     }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters){
+
+        converters.stream()
+                  .filter(c -> c instanceof MappingJackson2HttpMessageConverter)
+                  .forEach(converter-> {
+                      SimpleModule m = new SimpleModule();
+                      m.addAbstractTypeMapping(
+                          ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
+                      m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
+                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().registerModule(m);
+
+                  } );
+    }
+
 }
