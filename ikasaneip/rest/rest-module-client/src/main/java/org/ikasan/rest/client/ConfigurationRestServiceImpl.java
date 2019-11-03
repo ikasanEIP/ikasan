@@ -1,6 +1,5 @@
 package org.ikasan.rest.client;
 
-import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
 import org.slf4j.Logger;

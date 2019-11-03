@@ -5,6 +5,8 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.i18n.I18NProvider;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
@@ -226,12 +228,12 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     protected void performAction(ProgressIndicatorDialog progressIndicatorDialog, String action)
     {
         final UI current = UI.getCurrent();
+        final I18NProvider i18NProvider = VaadinService.getCurrent().getInstantiator().getI18NProvider();
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try
             {
-                Thread.sleep(2000);
-                State state = null;
+                State state;
 
                 if(action.equals(ControlPanel.START))
                 {
@@ -243,7 +245,10 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
                     }
                     else
                     {
-                        NotificationHelper.showErrorNotification(String.format(getTranslation("message.error-starting-flow", UI.getCurrent().getLocale(), this.currentFlow.getName())));
+                        current.access(() ->
+                        {
+                            NotificationHelper.showErrorNotification(String.format(i18NProvider.getTranslation("message.error-starting-flow", current.getLocale()), this.currentFlow.getName()));
+                        });
                     }
                 }
                 else if(action.equals(ControlPanel.STOP))
@@ -256,7 +261,10 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
                     }
                     else
                     {
-                        NotificationHelper.showErrorNotification(String.format(getTranslation("message.error-stopping-flow", UI.getCurrent().getLocale(), this.currentFlow.getName())));
+                        current.access(() ->
+                        {
+                            NotificationHelper.showErrorNotification(String.format(i18NProvider.getTranslation("message.error-stopping-flow", current.getLocale()), this.currentFlow.getName()));
+                        });
                     }
                 }
                 else if(action.equals(ControlPanel.PAUSE))
@@ -269,7 +277,10 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
                     }
                     else
                     {
-                        NotificationHelper.showErrorNotification(String.format(getTranslation("message.error-pausing-flow", UI.getCurrent().getLocale(), this.currentFlow.getName())));
+                        current.access(() ->
+                        {
+                            NotificationHelper.showErrorNotification(String.format(i18NProvider.getTranslation("message.error-pausing-flow", current.getLocale()), this.currentFlow.getName()));
+                        });
                     }
                 }
                 else if(action.equals(ControlPanel.START_PAUSE))
@@ -282,7 +293,10 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
                     }
                     else
                     {
-                        NotificationHelper.showErrorNotification(String.format(getTranslation("message.error-start-pause-flow", UI.getCurrent().getLocale(), this.currentFlow.getName())));
+                        current.access(() ->
+                        {
+                            NotificationHelper.showErrorNotification(String.format(i18NProvider.getTranslation("message.error-start-pause-flow", current.getLocale()), this.currentFlow.getName()));
+                        });
                     }
                 }
                 else
