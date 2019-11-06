@@ -455,7 +455,7 @@ public class ModuleInitialisationServiceImpl
             Integer port = getPort();
             String pid = getPid();
             String context = platformContext.getApplicationName();
-            String serverName = "http://" + host + ":" + port + "/" + context;
+            String serverName = "http://" + host + ":" + port  + context;
             String serverUrl = "http://" + host;
             logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
             String name =  host + ":" + port;

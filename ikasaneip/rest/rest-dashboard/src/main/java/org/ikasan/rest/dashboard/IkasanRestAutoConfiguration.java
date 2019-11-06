@@ -42,7 +42,9 @@ package org.ikasan.rest.dashboard;
 
 import org.ikasan.security.service.UserService;
 import org.ikasan.spec.cache.FlowStateCacheAdapter;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.persistence.BatchInsert;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -69,6 +71,10 @@ public class IkasanRestAutoConfiguration
 
     @Resource
     private BatchInsert configurationMetadataBatchInsert;
+
+    @Resource
+    @Qualifier("moduleMetadataService")
+    private ModuleMetaDataService moduleMetadataService;
 
     @Resource
     private FlowStateCacheAdapter cacheAdapter;
@@ -102,6 +108,12 @@ public class IkasanRestAutoConfiguration
     {
         return new MetaDataController(this.moduleMetadataBatchInsert,
             this.configurationMetadataBatchInsert);
+    }
+
+    @Bean
+    public ModulesController modulesController( )
+    {
+        return new ModulesController(moduleMetadataService);
     }
 
     @Bean
