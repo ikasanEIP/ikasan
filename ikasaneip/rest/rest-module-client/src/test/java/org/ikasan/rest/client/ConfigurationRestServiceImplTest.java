@@ -179,9 +179,8 @@ public class ConfigurationRestServiceImplTest
 
     }
 
-
     @Test
-    public void storeConfiguration_returns_200() throws IOException
+    public void saveConfiguration_returns_200() throws IOException
     {
 
         ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("consumerConfiguredResourceId","desc","org.ikasan.configurationService.model.DefaultConfiguration", null);
@@ -194,9 +193,43 @@ public class ConfigurationRestServiceImplTest
                 aResponse()
                     .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .withStatus(200)));
-        boolean result = uut.storeConfiguration(contexBaseUrl,configurationMetaData);
+        boolean result = uut.save(contexBaseUrl,configurationMetaData);
 
         assertEquals(true, result);
+
+    }
+
+    @Test
+    public void deleteConfiguration_returns_200() throws IOException
+    {
+
+        stubFor(delete(urlEqualTo("/rest/configuration/testConfigurationId"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(
+                aResponse()
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                    .withStatus(200)));
+        boolean result = uut.delete(contexBaseUrl,"testConfigurationId");
+
+        assertEquals(true, result);
+
+    }
+
+    @Test
+    public void deleteConfiguration_returns_400() throws IOException
+    {
+
+        stubFor(delete(urlEqualTo("/rest/configuration/testConfigurationId"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(
+                aResponse()
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                    .withStatus(400)));
+        boolean result = uut.delete(contexBaseUrl,"testConfigurationId");
+
+        assertEquals(false, result);
 
     }
 

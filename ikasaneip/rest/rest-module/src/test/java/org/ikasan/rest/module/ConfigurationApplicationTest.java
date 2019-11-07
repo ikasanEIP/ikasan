@@ -98,8 +98,7 @@ public class ConfigurationApplicationTest
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
         Mockito.when(moduleService.getModules()).thenReturn(Arrays.asList(module));
 
-        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("test_id",
-            "test descript",
+        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("test_id", "test descript",
             "TestClass", new ArrayList<>()
         );
 
@@ -113,14 +112,13 @@ public class ConfigurationApplicationTest
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
             "[{\"configurationId\":\"test_id\",\"description\":\"test descript\","
-                + "\"implementingClass\":\"TestClass\","
-                + "\"parameters\":[]}]",
-            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}]",
+            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
+                               );
 
         Mockito.verify(moduleService).getModules();
         Mockito.verify(configurationMetaDataExtractor).getFlowsConfiguration(module);
         Mockito.verifyNoMoreInteractions(moduleService, configurationMetaDataExtractor);
-
 
     }
 
@@ -134,13 +132,11 @@ public class ConfigurationApplicationTest
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
         Mockito.when(moduleService.getModule("test-module")).thenReturn(module);
 
-        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("test_id",
-            "test descript",
+        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("test_id", "test descript",
             "TestClass", new ArrayList<>()
         );
 
-        Mockito.when(configurationMetaDataExtractor.getFlowConfiguration(flow))
-               .thenReturn(configurationMetaData);
+        Mockito.when(configurationMetaDataExtractor.getFlowConfiguration(flow)).thenReturn(configurationMetaData);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/configuration/test-module/test Flow/flow")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE);
@@ -149,9 +145,9 @@ public class ConfigurationApplicationTest
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
             "{\"configurationId\":\"test_id\",\"description\":\"test descript\","
-                + "\"implementingClass\":\"TestClass\","
-                + "\"parameters\":[]}",
-            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}",
+            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
+                               );
 
         Mockito.verify(moduleService).getModule("test-module");
         Mockito.verifyNoMoreInteractions(moduleService);
@@ -169,6 +165,46 @@ public class ConfigurationApplicationTest
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
+
+        Mockito.verify(configurationManagement).saveConfiguration(Mockito.any(Configuration.class));
+        Mockito.verifyNoMoreInteractions(configurationManagement);
+
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testDeleteConfiguration() throws Exception
+    {
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(configuration);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/rest/configuration/testConfigId")
+                                                                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(HttpStatus.OK.value(), status);
+
+        Mockito.verify(configurationManagement).getConfiguration("testConfigId");
+        Mockito.verify(configurationManagement).deleteConfiguration(configuration);
+        Mockito.verifyNoMoreInteractions(configurationManagement);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testDeleteConfigurationWhenConfigurationIdNotFound() throws Exception
+    {
+        Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(null);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/rest/configuration/testConfigId")
+                                                                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(HttpStatus.NOT_FOUND.value(), status);
+
+        Mockito.verify(configurationManagement).getConfiguration("testConfigId");
+        Mockito.verifyNoMoreInteractions(configurationManagement);
 
     }
 

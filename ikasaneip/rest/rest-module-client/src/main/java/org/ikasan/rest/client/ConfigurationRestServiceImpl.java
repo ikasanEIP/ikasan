@@ -27,6 +27,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
     protected final static String FLOW_INVOKERS_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/invokers";
     protected final static String INVOKERS_CONFIGURATION_URL = "/rest/configuration/invokers";
     protected final static String PUT_CONFIGURATION_URL = "/rest/configuration";
+    protected final static String DELETE_CONFIGURATION_URL = "/rest/configuration/{configurationId}";
 
     ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
 
@@ -73,7 +74,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
-    public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration)
+    public boolean save(String contextUrl, ConfigurationMetaData configuration)
     {
         HttpHeaders headers = createHttpHeaders();
         HttpEntity entity = new HttpEntity(configuration, headers);
@@ -87,6 +88,28 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         {
             logger.warn(
                 "Issue updating configuration [" + url + "] with module [" + configuration + "]");
+            return false;
+        }
+    }
+
+    public boolean delete(String contextUrl, String configurationId)
+    {
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+        String url = contextUrl + DELETE_CONFIGURATION_URL;
+        try
+        {
+            Map<String, String> parameters = new HashMap<String, String>()
+            {{put("configurationId", configurationId);}};
+
+            restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class,parameters);
+
+            return true;
+        }
+        catch (RestClientException e)
+        {
+            logger.warn(
+                "Issue Deleting configuration [" + url + "] with module [" + configurationId + "]");
             return false;
         }
     }
