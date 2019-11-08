@@ -297,6 +297,26 @@ public class JsonConfigurationMetaDataExtractorTest
 
     }
 
+    @Test
+    public void getIndividualConfiguredResourceConfiguration() throws IOException, JSONException
+    {
+        Flow flow = createSimpleFlow();
+        FlowElement flowElement = flow.getFlowElement("Test Consumer");
+
+        mockery.checking(new Expectations()
+        {
+            {
+
+                exactly(1).of(configurationManagement).getConfiguration("CONFIGURATION_ID");
+                will(returnValue(getConfiguration("configuredResourceId")));
+            }
+        });
+        ConfigurationMetaData resultConf = uut.getConfiguredResourceConfiguration((ConfiguredResource)flowElement.getFlowComponent());
+
+        String result = describeConfiguredResource(resultConf);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/individual-component-configuration.json"), result, JSONCompareMode.STRICT);
+    }
+
         private Flow createSimpleFlow()
     {
         FlowElement producer = new TestFlowElement(new TestProducer(), "Test Producer"
