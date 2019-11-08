@@ -146,12 +146,9 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             logger.info("Node: " + node);
 
-            ConfigurationMetaData configurationMetaData = this.module.getConfigurationMap().get(node);
-
-            logger.info("Configuration Metadata: " + configurationMetaData);
-
             ConfigurationDialog configurationDialog = new ConfigurationDialog(this.module,
-                configurationMetaData, this.configurationRestService);
+                this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName()
+                , this.configurationRestService);
             configurationDialog.open();
         });
 
