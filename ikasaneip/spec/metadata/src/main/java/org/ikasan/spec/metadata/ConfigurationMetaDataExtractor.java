@@ -1,5 +1,6 @@
 package org.ikasan.spec.metadata;
 
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
@@ -7,6 +8,14 @@ import java.util.List;
 
 public interface ConfigurationMetaDataExtractor<T>
 {
+    /**
+     * Get the meta data for an individual configured resource.
+     *
+     * @param component
+     * @return
+     */
+    public T getConfiguredResourceConfiguration(ConfiguredResource component);
+
     /**
      * Gets all component configured resources from runtime flow and provides them in meta data format.
      *

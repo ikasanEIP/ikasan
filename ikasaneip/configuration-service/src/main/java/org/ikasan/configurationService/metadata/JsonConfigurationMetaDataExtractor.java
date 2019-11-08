@@ -41,7 +41,6 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
 
         try
         {
-
             // distinctive set of configurationId names used by stream filtering
             Set<String> nameSet = new HashSet<>();
 
@@ -64,11 +63,12 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Exception has occurred creating component configuration meta data json!", e);
+            throw new RuntimeException("Exception has occurred creating configuredResource configuration meta data json!", e);
         }
 
         return result;
     }
+
 
     @Override
     public List<ConfigurationMetaData> getInvokersConfiguration(Flow flow)
@@ -97,6 +97,23 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
         catch (Exception e)
         {
             throw new RuntimeException("Exception has occurred invoker configuration meta data json!", e);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ConfigurationMetaData getConfiguredResourceConfiguration(ConfiguredResource configuredResource)
+    {
+        ConfigurationMetaData result;
+
+        try
+        {
+            result = this.convert(configuredResource);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Exception has occurred creating components configuration meta data json!", e);
         }
 
         return result;

@@ -22,6 +22,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
 
     protected final static String FLOW_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/flow";
     protected final static String FLOW_COMPONENTS_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/components";
+    protected final static String CONFIGURED_RESOURCE_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/{componentName}";
     protected final static String COMPONENTS_CONFIGURATION_URL = "/rest/configuration/components";
     protected final static String FLOW_INVOKERS_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/invokers";
     protected final static String INVOKERS_CONFIGURATION_URL = "/rest/configuration/invokers";
@@ -72,6 +73,12 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
+    public ConfigurationMetaData getConfiguredResourceConfigurations(String contextUrl, String moduleName, String flowName, String componentName)
+    {
+        String url = contextUrl + CONFIGURED_RESOURCE_CONFIGURATION_URL;
+        return getConfiguration(url,moduleName,flowName, componentName);
+    }
+
     public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration)
     {
         HttpHeaders headers = createHttpHeaders();
@@ -115,6 +122,29 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
             logger.warn("Issue getting configuration for url [" + url + "]  with response [{" + e
                 .getLocalizedMessage() + "}]");
             return Collections.emptyList();
+        }
+    }
+
+    private ConfigurationMetaData getConfiguration(String url,String moduleName, String flowName, String componentName)
+    {
+
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+        try
+        {
+            Map<String, String> parameters = new HashMap<String, String>()
+            {{put("moduleName", moduleName);put("flowName", flowName);put("componentName", componentName);}};
+
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, parameters);
+
+            ConfigurationMetaData data = configurationMetaDataProvider.deserialiseMetadataConfiguration(response.getBody());
+            return data;
+        }
+        catch (RestClientException e)
+        {
+            logger.warn("Issue getting configuration for url [" + url + "]  with response [{" + e
+                .getLocalizedMessage() + "}]");
+            return null;
         }
     }
 
