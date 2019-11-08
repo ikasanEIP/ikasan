@@ -17,8 +17,10 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
+import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.slf4j.Logger;
@@ -36,14 +38,17 @@ public class ConfigurationDialog extends Dialog
     private ConfigurationRestServiceImpl configurationRestService;
     private ConfigurationMetaData configurationMetaData;
     private Module module;
+    private String flowName;
+    private String componentName;
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
-    public ConfigurationDialog(Module module, ConfigurationMetaData configurationMetaData
+    public ConfigurationDialog(Module module, String flowName, String componentName
         , ConfigurationRestServiceImpl configurationRestService)
     {
         this.module = module;
-        this.configurationMetaData = configurationMetaData;
+        this.flowName = flowName;
+        this.componentName = componentName;
         this.configurationRestService = configurationRestService;
         init();
     }
@@ -55,6 +60,8 @@ public class ConfigurationDialog extends Dialog
 
         Image replayImage = new Image("/frontend/images/configuration-service.png", "");
         replayImage.setHeight("70px");
+
+        this.loadConfigurationMetaDataFromModule();
 
         H3 replayLabel = new H3(String.format(getTranslation("label.configuration-management", UI.getCurrent().getLocale())
             , this.configurationMetaData.getConfigurationId()));
@@ -78,12 +85,12 @@ public class ConfigurationDialog extends Dialog
             return null;
         });
 
-        FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
-        buttonWrapper.wrapComponent(downloadButton);
+//        FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
+//        buttonWrapper.wrapComponent(downloadButton);
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.setSpacing(true);
-        headerLayout.add(replayImage, replayLabel, buttonWrapper, downloadButtonTooltip);
+        headerLayout.add(replayImage, replayLabel, downloadButtonTooltip);
 
         layout.add(headerLayout);
         layout.add(new Divider());
@@ -134,7 +141,16 @@ public class ConfigurationDialog extends Dialog
         Button saveButton = new Button(getTranslation("button.save", UI.getCurrent().getLocale()));
         saveButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            this.configurationRestService.storeConfiguration(this.module.getUrl(), this.configurationMetaData);
+            boolean success = this.configurationRestService.storeConfiguration(this.module.getUrl(), this.configurationMetaData);
+            if(success)
+            {
+                this.loadConfigurationMetaDataFromModule();
+                NotificationHelper.showUserNotification(getTranslation("message.configuration-save-successful", UI.getCurrent().getLocale()));
+            }
+            else
+            {
+                NotificationHelper.showErrorNotification(getTranslation("message.configuration-save-unsuccessful", UI.getCurrent().getLocale()));
+            }
         });
 
         Button cancelButton = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale()));
@@ -147,6 +163,12 @@ public class ConfigurationDialog extends Dialog
 
         this.setWidth("700px");
         this.add(layout);
+    }
+
+    private void loadConfigurationMetaDataFromModule()
+    {
+        this.configurationMetaData = this.configurationRestService
+            .getConfiguredResourceConfigurations(module.getUrl(), module.getName(), flowName, componentName);
     }
 
     private Component manageBooleanConfiguration(ConfigurationParameterMetaData configurationParameterMetaData)
