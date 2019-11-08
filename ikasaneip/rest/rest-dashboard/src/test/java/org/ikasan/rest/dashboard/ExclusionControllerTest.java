@@ -40,6 +40,7 @@ public class ExclusionControllerTest extends  AbstractRestMvcTest
     public static final String EXCLUSIONS_JSON = "/data/exclusions.json";
 
     protected MockMvc mvc;
+
     @Autowired
     WebApplicationContext webApplicationContext;
 

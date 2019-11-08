@@ -41,7 +41,15 @@ public class TestFlow implements Flow, ConfiguredResource
     @Override
     public FlowElement<?> getFlowElement(String name)
     {
-        throw new UnsupportedOperationException();
+        for(FlowElement flowElement: flowElements)
+        {
+            if(flowElement.getComponentName().equals(name))
+            {
+                return flowElement;
+            }
+        }
+
+        return null;
     }
 
     @Override
