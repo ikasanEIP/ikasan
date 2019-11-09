@@ -105,7 +105,17 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-system-event</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-persistence</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
@@ -116,19 +126,16 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <!--<scope>provided</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <!--<scope>provided</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <!--<scope>provided</scope>-->
         </dependency>
 
         <!-- required for unit tests -->
@@ -147,7 +154,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -193,8 +199,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -41,12 +41,13 @@
 package org.ikasan.systemevent.dao;
 
 import java.util.Date;
-
+import java.util.List;
 import javax.annotation.Resource;
 
-import org.ikasan.systemevent.model.SystemEvent;
+import org.ikasan.spec.systemevent.SystemEvent;
+import org.ikasan.spec.systemevent.SystemEventDao;
+import org.ikasan.systemevent.model.SystemEventImpl;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -54,6 +55,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Ikasan Development Team
@@ -61,9 +63,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
+@ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
         "/systemevent-service-conf.xml"
 })
 public class HibernateSystemEventDaoTest
@@ -71,54 +71,79 @@ public class HibernateSystemEventDaoTest
     /** Object being tested */
     @Resource private SystemEventDao systemEventDao;
 
-    /**
-     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-     * being tested
-     */
-    @Before public void setup()
-    {    	
-    	
-    	for(int i=0; i< 10000; i++)
-    	{
-	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
-    	}
-    	
+
+
+
+    @Test
+    @DirtiesContext
+    public void test_deleteExpieredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
+    {
+        systemEventDao.setBatchHousekeepDelete(true);
+        systemEventDao.setHousekeepingBatchSize(100);
+        systemEventDao.setTransactionBatchSize(2000);
+
+        for(int i=0; i< 10000; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+
+        while(systemEventDao.housekeepablesExist())
+        {
+            this.systemEventDao.deleteExpired();
+        }
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(0, result.size());
+
+
     }
 
-    /**
-     * Putting an instance of SystemEvent into the db store
-     * 
-     */
-    @Test 
+
+
+    @Test
     @DirtiesContext
-    public void test_success_no_results()
+    public void test_deleteExpieredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
     {
-    	systemEventDao.setBatchHousekeepDelete(true);
-    	systemEventDao.setHousekeepingBatchSize(100);
-    	systemEventDao.setTransactionBatchSize(2000);
-    	
-    	while(systemEventDao.housekeepablesExist())
-    	{
-    		this.systemEventDao.deleteExpired();
-    	}
-    	
-    	
-    	for(int i=0; i< 13456; i++)
-    	{
-	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
-    	}
-    	
-    	systemEventDao.setHousekeepingBatchSize(1000);
-    	systemEventDao.setTransactionBatchSize(20000);
-    	
-    	this.systemEventDao.deleteExpired();
-    	
-    	for(int i=0; i< 79; i++)
-    	{
-	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
-    	}
-    	
-    	this.systemEventDao.deleteExpired();
+        systemEventDao.setBatchHousekeepDelete(true);
+        systemEventDao.setHousekeepingBatchSize(1000);
+        systemEventDao.setTransactionBatchSize(20000);
+
+        for(int i=0; i< 23456; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+
+        this.systemEventDao.deleteExpired();
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(3456, result.size());
+
     }
+
+
+    @Test
+    @DirtiesContext
+    public void test_harvesting()
+    {
+
+        for(int i=0; i< 20; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+
+        List<SystemEvent> events = this.systemEventDao.getHarvestableRecords(15);
+
+        this.systemEventDao.updateAsHarvested(events);
+
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(15, result.stream()
+                               .filter(systemEvent -> ((SystemEventImpl)systemEvent).isHarvested()).count());
+
+    }
+
 
 }

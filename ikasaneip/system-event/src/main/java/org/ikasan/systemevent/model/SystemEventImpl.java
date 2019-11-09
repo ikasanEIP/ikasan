@@ -40,7 +40,11 @@
  */
 package org.ikasan.systemevent.model;
 
+import org.ikasan.spec.systemevent.SystemEvent;
+
 import java.util.Date;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Simple JavaBean encapsulating system event information
@@ -51,7 +55,8 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class SystemEvent {
+public class SystemEventImpl implements SystemEvent
+{
 	
 	/**
 	 * What happened?
@@ -83,12 +88,19 @@ public class SystemEvent {
 	 */
 	private Date expiry;
 
+    /**
+     * Flag to indicate if the entity has been harvested.
+     */
+    private boolean harvested;
+
+    /** the time the record was harvested */
+    private long harvestedDateTime;
 	
 	/**
 	 * no args constructor required for ORM
 	 */
 	@SuppressWarnings("unused")
-	private SystemEvent(){}
+	private SystemEventImpl(){}
 
 	/**
 	 * Constructor
@@ -99,8 +111,8 @@ public class SystemEvent {
 	 * @param actor
 	 * @param expiry 
 	 */
-	public SystemEvent(String subject, String action, Date timestamp,
-			String actor, Date expiry) {
+	public SystemEventImpl(String subject, String action, Date timestamp,
+                           String actor, Date expiry) {
 		super();
 		this.subject = subject;
 		this.action = action;
@@ -109,44 +121,14 @@ public class SystemEvent {
 		this.expiry = expiry;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SystemEvent other = (SystemEvent) obj;
-		if (action == null) {
-			if (other.action != null)
-				return false;
-		} else if (!action.equals(other.action))
-			return false;
-		if (actor == null) {
-			if (other.actor != null)
-				return false;
-		} else if (!actor.equals(other.actor))
-			return false;
-		if (subject == null) {
-			if (other.subject != null)
-				return false;
-		} else if (!subject.equals(other.subject))
-			return false;
-		if (timestamp == null) {
-			if (other.timestamp != null)
-				return false;
-		} else if (!timestamp.equals(other.timestamp))
-			return false;
-		return true;
-	}
 
 	/**
 	 * Accessor for action
 	 * 
 	 * @return action
 	 */
-	public String getAction() {
+	@Override
+    public String getAction() {
 		return action;
 	}
 
@@ -155,7 +137,8 @@ public class SystemEvent {
 	 * 
 	 * @return actor
 	 */
-	public String getActor() {
+	@Override
+    public String getActor() {
 		return actor;
 	}
 
@@ -164,7 +147,8 @@ public class SystemEvent {
 	 * 
 	 * @return id
 	 */
-	public Long getId() {
+	@Override
+    public Long getId() {
 		return id;
 	}
 
@@ -173,7 +157,8 @@ public class SystemEvent {
 	 * 
 	 * @return subject
 	 */
-	public String getSubject() {
+	@Override
+    public String getSubject() {
 		return subject;
 	}
 
@@ -182,7 +167,8 @@ public class SystemEvent {
 	 * 
 	 * @return timestamp
 	 */
-	public Date getTimestamp() {
+	@Override
+    public Date getTimestamp() {
 		return timestamp;
 	}
 	
@@ -191,23 +177,52 @@ public class SystemEvent {
 	 * 
 	 * @return expiry
 	 */
-	public Date getExpiry() {
+	@Override
+    public Date getExpiry() {
 		return expiry;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((actor == null) ? 0 : actor.hashCode());
-		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
-		result = prime * result
-				+ ((timestamp == null) ? 0 : timestamp.hashCode());
-		return result;
-	}
+    /**
+     * Accessor for harvested
+     *
+     * @return harvested
+     */
+    public boolean isHarvested()
+    {
+        return harvested;
+    }
 
-	@SuppressWarnings("unused")
+    /**
+     * Accessor for harvestedDateTime
+     *
+     * @return
+     */
+    public long getHarvestedDateTime()
+    {
+        return harvestedDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if ( this == o )
+        { return true; }
+        if ( o == null || getClass() != o.getClass() )
+        { return false; }
+        SystemEventImpl that = (SystemEventImpl) o;
+        return harvested == that.harvested && harvestedDateTime == that.harvestedDateTime && Objects
+            .equals(action, that.action) && Objects.equals(actor, that.actor) && Objects.equals(id, that.id) && Objects
+            .equals(subject, that.subject) && Objects.equals(timestamp, that.timestamp) && Objects
+            .equals(expiry, that.expiry);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(action, actor, id, subject, timestamp, expiry, harvested, harvestedDateTime);
+    }
+
+    @SuppressWarnings("unused")
 	private void setAction(String action) {
 		this.action = action;
 	}
@@ -237,4 +252,28 @@ public class SystemEvent {
 		this.expiry = expiry;
 	}
 
+    public void setHarvested(boolean harvested)
+    {
+        this.harvested = harvested;
+    }
+
+    public void setHarvestedDateTime(long harvestedDateTime)
+    {
+        this.harvestedDateTime = harvestedDateTime;
+    }
+
+    @Override
+    public String toString()
+    {
+        return new StringJoiner(", ", SystemEventImpl.class.getSimpleName() + "[", "]").add("action='" + action + "'")
+                                                                                       .add("actor='" + actor + "'")
+                                                                                       .add("id=" + id)
+                                                                                       .add("subject='" + subject + "'")
+                                                                                       .add("timestamp=" + timestamp)
+                                                                                       .add("expiry=" + expiry)
+                                                                                       .add("harvested=" + harvested)
+                                                                                       .add("harvestedDateTime="
+                                                                                           + harvestedDateTime)
+                                                                                       .toString();
+    }
 }
