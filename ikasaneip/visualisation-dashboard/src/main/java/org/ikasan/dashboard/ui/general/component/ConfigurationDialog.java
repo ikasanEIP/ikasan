@@ -20,7 +20,6 @@ import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.slf4j.Logger;
@@ -28,8 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.olli.FileDownloadWrapper;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigurationDialog extends Dialog
 {
@@ -42,6 +40,11 @@ public class ConfigurationDialog extends Dialog
     private String componentName;
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
+    private Tooltip addMapItemButtonTooltip;
+    private List<Tooltip> removeMapItemButtonTooltips;
+    private Tooltip addListItemButtonTooltip;
+    private List<Tooltip> removeListItemButtonTooltips;
+    private Map<ConfigurationParameterMetaData, Object> parameterMetaDataComponentMap;
 
     public ConfigurationDialog(Module module, String flowName, String componentName
         , ConfigurationRestServiceImpl configurationRestService)
@@ -50,6 +53,9 @@ public class ConfigurationDialog extends Dialog
         this.flowName = flowName;
         this.componentName = componentName;
         this.configurationRestService = configurationRestService;
+        this.parameterMetaDataComponentMap = new HashMap<>();
+        this.removeListItemButtonTooltips = new ArrayList<>();
+        this.removeMapItemButtonTooltips = new ArrayList<>();
         init();
     }
 
@@ -58,21 +64,20 @@ public class ConfigurationDialog extends Dialog
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
 
-        Image replayImage = new Image("/frontend/images/configuration-service.png", "");
-        replayImage.setHeight("70px");
+        Image configurationImage = new Image("/frontend/images/configuration-service.png", "");
+        configurationImage.setHeight("70px");
 
         this.loadConfigurationMetaDataFromModule();
 
-        H3 replayLabel = new H3(String.format(getTranslation("label.configuration-management", UI.getCurrent().getLocale())
+        H3 configurationLabel = new H3(String.format(getTranslation("label.configuration-management", UI.getCurrent().getLocale())
             , this.configurationMetaData.getConfigurationId()));
 
 
         downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-hospital-event", UI.getCurrent().getLocale()));
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-configuration", UI.getCurrent().getLocale()));
 
         ObjectMapper objectMapper = new ObjectMapper();
-        StreamResource streamResource = new StreamResource("configuration-"+ this.configurationMetaData.getConfigurationId() + ".txt"
-            , () ->
+        StreamResource streamResource = new StreamResource("configuration-"+ this.configurationMetaData.getConfigurationId() + ".txt", () ->
         {
             try
             {
@@ -85,12 +90,14 @@ public class ConfigurationDialog extends Dialog
             return null;
         });
 
-//        FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
-//        buttonWrapper.wrapComponent(downloadButton);
+        FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
+        buttonWrapper.wrapComponent(downloadButton);
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.setSpacing(true);
-        headerLayout.add(replayImage, replayLabel, downloadButtonTooltip);
+        headerLayout.add(configurationImage, configurationLabel, buttonWrapper, downloadButtonTooltip);
+        headerLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, configurationLabel, buttonWrapper);
+
 
         layout.add(headerLayout);
         layout.add(new Divider());
@@ -134,24 +141,8 @@ public class ConfigurationDialog extends Dialog
             }
         }
 
-//        Div div = new Div();
-//        div.setText(configurationMetaData.toString());
-//        layout.add(div);
-
         Button saveButton = new Button(getTranslation("button.save", UI.getCurrent().getLocale()));
-        saveButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-        {
-            boolean success = this.configurationRestService.storeConfiguration(this.module.getUrl(), this.configurationMetaData);
-            if(success)
-            {
-                this.loadConfigurationMetaDataFromModule();
-                NotificationHelper.showUserNotification(getTranslation("message.configuration-save-successful", UI.getCurrent().getLocale()));
-            }
-            else
-            {
-                NotificationHelper.showErrorNotification(getTranslation("message.configuration-save-unsuccessful", UI.getCurrent().getLocale()));
-            }
-        });
+        saveButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> save());
 
         Button cancelButton = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale()));
 
@@ -165,6 +156,116 @@ public class ConfigurationDialog extends Dialog
         this.add(layout);
     }
 
+    private void save()
+    {
+        boolean formIsValid = true;
+        for(ConfigurationParameterMetaData metaData: this.parameterMetaDataComponentMap.keySet())
+        {
+            Object component = this.parameterMetaDataComponentMap.get(metaData);
+
+            if(component instanceof TextField)
+            {
+                if(metaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterStringImpl"))
+                {
+                    metaData.setValue(((TextField) component).getValue());
+                }
+                else if(metaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"))
+                {
+                    if(((TextField) component).getValue() != null && !((TextField) component).getValue().isEmpty())
+                    {
+                        try
+                        {
+                            metaData.setValue(Integer.parseInt(((TextField) component).getValue()));
+                            ((TextField) component).setInvalid(false);
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            ((TextField) component).setErrorMessage(getTranslation("error.configuration-must-be-an-integer", UI.getCurrent().getLocale()));
+                            ((TextField) component).setInvalid(true);
+                            formIsValid = false;
+                        }
+                    }
+
+                }
+                else if(metaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterLongImpl"))
+                {
+                    if(((TextField) component).getValue() != null && !((TextField) component).getValue().isEmpty())
+                    {
+                        try
+                        {
+                            metaData.setValue(Long.parseLong(((TextField) component).getValue()));
+                            ((TextField) component).setInvalid(false);
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            ((TextField) component).setErrorMessage(getTranslation("error.configuration-must-be-a-long", UI.getCurrent().getLocale()));
+                            ((TextField) component).setInvalid(true);
+                            formIsValid = false;
+                        }
+                    }
+                }
+            }
+            else if(component instanceof RadioButtonGroup)
+            {
+               metaData.setValue(((RadioButtonGroup)component).getValue());
+            }
+            else if(component instanceof PasswordField)
+            {
+                metaData.setValue(((PasswordField) component).getValue());
+            }
+            else if(component instanceof List)
+            {
+                if(metaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterMapImpl"))
+                {
+                    HashMap<String, String> value = new HashMap<>();
+
+                    for(TextFieldNVP textFieldNVP: ((List<TextFieldNVP>)component))
+                    {
+                        if(textFieldNVP.getNameTextField().getValue() == null || textFieldNVP.getNameTextField().getValue().isEmpty())
+                        {
+                            textFieldNVP.getNameTextField().setErrorMessage(getTranslation("error.configuration-map-name-cannot-be-empty", UI.getCurrent().getLocale()));
+                            textFieldNVP.getNameTextField().setInvalid(true);
+                            formIsValid = false;
+                        }
+
+                        value.put(textFieldNVP.getNameTextField().getValue(), textFieldNVP.getValueTextField().getValue());
+                    }
+
+                    metaData.setValue(value);
+                }
+                else if(metaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterListImpl"))
+                {
+                    List<String> value = new ArrayList<>();
+
+                    for(TextField textField: ((List<TextField>)component))
+                    {
+
+                        value.add(textField.getValue());
+                    }
+
+                    metaData.setValue(value);
+                }
+            }
+        }
+
+        if(!formIsValid)
+        {
+            NotificationHelper.showErrorNotification(getTranslation("message.error-on-form", UI.getCurrent().getLocale()));
+            return;
+        }
+
+        boolean success = this.configurationRestService.storeConfiguration(this.module.getUrl(), this.configurationMetaData);
+        if(success)
+        {
+            this.loadConfigurationMetaDataFromModule();
+            NotificationHelper.showUserNotification(getTranslation("message.configuration-save-successful", UI.getCurrent().getLocale()));
+        }
+        else
+        {
+            NotificationHelper.showErrorNotification(getTranslation("message.configuration-save-unsuccessful", UI.getCurrent().getLocale()));
+        }
+    }
+
     private void loadConfigurationMetaDataFromModule()
     {
         this.configurationMetaData = this.configurationRestService
@@ -176,12 +277,14 @@ public class ConfigurationDialog extends Dialog
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
 
-        RadioButtonGroup radioButtonGroup = new RadioButtonGroup();
+        RadioButtonGroup<Boolean> radioButtonGroup = new RadioButtonGroup();
         radioButtonGroup.setItems(true, false);
         radioButtonGroup.setLabel(configurationParameterMetaData.getName());
-        radioButtonGroup.setValue(configurationParameterMetaData.getValue());
+        radioButtonGroup.setValue((Boolean) configurationParameterMetaData.getValue());
 
         layout.add(radioButtonGroup);
+
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, radioButtonGroup);
 
         return layout;
     }
@@ -201,6 +304,8 @@ public class ConfigurationDialog extends Dialog
 
         layout.add(textField);
 
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, textField);
+
         return layout;
     }
 
@@ -218,6 +323,8 @@ public class ConfigurationDialog extends Dialog
         }
 
         layout.add(textField);
+
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, textField);
 
         return layout;
     }
@@ -237,6 +344,8 @@ public class ConfigurationDialog extends Dialog
 
         layout.add(passwordField);
 
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, passwordField);
+
         return layout;
     }
 
@@ -255,6 +364,8 @@ public class ConfigurationDialog extends Dialog
 
         layout.add(textField);
 
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, textField);
+
         return layout;
     }
 
@@ -265,9 +376,65 @@ public class ConfigurationDialog extends Dialog
         verticalLayout.setSpacing(false);
         verticalLayout.setWidthFull();
 
-        Label mapLabel = new Label(configurationParameterMetaData.getName());
-        verticalLayout.add(mapLabel);
+        Button addButton = new Button(VaadinIcon.PLUS.create());
+        this.addMapItemButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(addButton, getTranslation("tooltip.add-configuration-map-item", UI.getCurrent().getLocale()));
+        addButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            HorizontalLayout layout = new HorizontalLayout();
+            layout.setWidthFull();
 
+            final TextField nameTextField;
+            final TextField valueField;
+
+            if(((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).size() == 0)
+            {
+                nameTextField = new TextField(getTranslation("label.name", UI.getCurrent().getLocale()));
+                valueField = new TextField(getTranslation("label.value", UI.getCurrent().getLocale()));
+            }
+            else
+            {
+                nameTextField = new TextField();
+                valueField = new TextField();
+            }
+
+            nameTextField.setWidth("100%");
+            layout.add(nameTextField);
+
+            valueField.setWidth("100%");
+            layout.add(valueField);
+
+            ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).add(new TextFieldNVP(nameTextField, valueField));
+
+            Button removeButton = new Button(VaadinIcon.MINUS.create());
+            removeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent1 ->
+            {
+                layout.remove(nameTextField);
+                layout.remove(valueField);
+                layout.remove(removeButton);
+
+                ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).remove(new TextFieldNVP(nameTextField, valueField));
+            });
+
+            Tooltip tooltip = TooltipHelper.getTooltipForComponentTopLeft(removeButton, getTranslation("tooltip.remove-configuration-map-item", UI.getCurrent().getLocale()));
+            this.removeMapItemButtonTooltips.add(tooltip);
+
+            layout.add(removeButton, tooltip);
+            layout.setVerticalComponentAlignment(FlexComponent.Alignment.END, removeButton);
+
+            verticalLayout.add(layout);
+        });
+
+        Label mapLabel = new Label(configurationParameterMetaData.getName());
+
+        HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.add(mapLabel, addButton, this.addMapItemButtonTooltip);
+        topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, mapLabel, addButton);
+
+        verticalLayout.add(topLayout);
+
+        List<TextFieldNVP> textFieldNVPS = new ArrayList<>();
+
+        int count = 0;
         if(configurationParameterMetaData.getValue() != null)
         {
             Map<String, String> configurationMap = (Map<String, String>)configurationParameterMetaData.getValue();
@@ -277,19 +444,51 @@ public class ConfigurationDialog extends Dialog
                 HorizontalLayout layout = new HorizontalLayout();
                 layout.setWidthFull();
 
-                TextField nameTextField = new TextField(getTranslation("label.name", UI.getCurrent().getLocale()));
+                final TextField nameTextField;
+                final TextField valueField;
+
+                if(count == 0)
+                {
+                    nameTextField = new TextField(getTranslation("label.name", UI.getCurrent().getLocale()));
+                    valueField = new TextField(getTranslation("label.value", UI.getCurrent().getLocale()));
+                }
+                else
+                {
+                    nameTextField = new TextField();
+                    valueField = new TextField();
+                }
+
                 nameTextField.setWidth("100%");
                 nameTextField.setValue(key);
                 layout.add(nameTextField);
 
-                TextField valueField = new TextField(getTranslation("label.value", UI.getCurrent().getLocale()));
                 valueField.setWidth("100%");
                 valueField.setValue(configurationMap.get(key));
                 layout.add(valueField);
 
+                Button removeButton = new Button(VaadinIcon.MINUS.create());
+                removeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent1 ->
+                {
+                    layout.remove(nameTextField);
+                    layout.remove(valueField);
+                    layout.remove(removeButton);
+
+                    ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).remove(new TextFieldNVP(nameTextField, valueField));
+                });
+
+                Tooltip tooltip = TooltipHelper.getTooltipForComponentTopLeft(removeButton, getTranslation("tooltip.remove-configuration-map-item", UI.getCurrent().getLocale()));
+                this.removeMapItemButtonTooltips.add(tooltip);
+
+                layout.add(removeButton, tooltip);
+                layout.setVerticalComponentAlignment(FlexComponent.Alignment.END, removeButton);
+
+                textFieldNVPS.add(new TextFieldNVP(nameTextField, valueField));
+
                 verticalLayout.add(layout);
             }
         }
+
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, textFieldNVPS);
 
         return verticalLayout;
     }
@@ -302,7 +501,41 @@ public class ConfigurationDialog extends Dialog
         verticalLayout.setWidthFull();
 
         Label listLabel = new Label(configurationParameterMetaData.getName());
-        verticalLayout.add(listLabel);
+        Button addButton = new Button(VaadinIcon.PLUS.create());
+        this.addListItemButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(addButton, getTranslation("tooltip.add-configuration-list-item", UI.getCurrent().getLocale()));
+        addButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            HorizontalLayout layout = new HorizontalLayout();
+            layout.setWidthFull();
+
+            TextField valueField = new TextField();
+            valueField.setWidth("100%");
+            layout.add(valueField);
+
+            Button removeButton = new Button(VaadinIcon.MINUS.create());
+            removeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent1 ->
+            {
+                layout.remove(valueField);
+                layout.remove(removeButton);
+                ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).remove(valueField);
+            });
+
+            Tooltip tooltip = TooltipHelper.getTooltipForComponentTopLeft(removeButton, getTranslation("tooltip.remove-configuration-list-item", UI.getCurrent().getLocale()));
+            this.removeMapItemButtonTooltips.add(tooltip);
+
+            layout.add(removeButton, tooltip);
+
+            ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).add(valueField);
+
+            verticalLayout.add(layout);
+        });
+
+        HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.add(listLabel, addButton, this.addListItemButtonTooltip);
+        topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, listLabel, addButton);
+        verticalLayout.add(topLayout);
+
+        List<TextField> textFields = new ArrayList<>();
 
         if(configurationParameterMetaData.getValue() != null)
         {
@@ -318,9 +551,26 @@ public class ConfigurationDialog extends Dialog
                 valueField.setValue(value);
                 layout.add(valueField);
 
+                Button removeButton = new Button(VaadinIcon.MINUS.create());
+                removeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent1 ->
+                {
+                    layout.remove(valueField);
+                    layout.remove(removeButton);
+                    ((List)this.parameterMetaDataComponentMap.get(configurationParameterMetaData)).remove(valueField);
+                });
+
+                Tooltip tooltip = TooltipHelper.getTooltipForComponentTopLeft(removeButton, getTranslation("tooltip.remove-configuration-list-item", UI.getCurrent().getLocale()));
+                this.removeMapItemButtonTooltips.add(tooltip);
+
+                layout.add(removeButton, tooltip);
+
                 verticalLayout.add(layout);
+
+                textFields.add(valueField);
             }
         }
+
+        this.parameterMetaDataComponentMap.put(configurationParameterMetaData, textFields);
 
         return verticalLayout;
     }
@@ -329,5 +579,43 @@ public class ConfigurationDialog extends Dialog
     protected void onAttach(AttachEvent attachEvent)
     {
         this.downloadButtonTooltip.attachToComponent(downloadButton);
+    }
+
+    private class TextFieldNVP
+    {
+        private TextField nameTextField;
+        private TextField valueTextField;
+
+        public TextFieldNVP(TextField nameTextField, TextField valueTextField)
+        {
+            this.nameTextField = nameTextField;
+            this.valueTextField = valueTextField;
+        }
+
+        public TextField getNameTextField()
+        {
+            return nameTextField;
+        }
+
+        public TextField getValueTextField()
+        {
+            return valueTextField;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TextFieldNVP that = (TextFieldNVP) o;
+            return Objects.equals(nameTextField, that.nameTextField) &&
+                Objects.equals(valueTextField, that.valueTextField);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(nameTextField, valueTextField);
+        }
     }
 }
