@@ -32,9 +32,7 @@ import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.ikasan.spec.systemevent.SystemEventService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

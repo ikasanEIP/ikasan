@@ -46,7 +46,7 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
