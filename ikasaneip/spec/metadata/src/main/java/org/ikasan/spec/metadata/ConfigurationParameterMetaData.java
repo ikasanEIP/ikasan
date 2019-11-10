@@ -8,6 +8,7 @@ public interface ConfigurationParameterMetaData<T>
      */
     Long getId();
 
+
     /**
      * Get the configuration parameter name
      * @return
@@ -20,6 +21,13 @@ public interface ConfigurationParameterMetaData<T>
      * @return
      */
     T getValue();
+
+    /**
+     * Set the configuration parameter value
+     *
+     * @param value
+     */
+    void setValue(T value);
 
     /**
      * Get the configuration parameter description
