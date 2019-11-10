@@ -82,6 +82,7 @@ rest.module.password=admin
 
 
 ```
+- Set JAVA_HOME to JDK8
 - Add runscript 
 ```$xslt
 

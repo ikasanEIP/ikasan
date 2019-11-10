@@ -472,7 +472,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         Div card = new Div();
         card.setSizeFull();
-        card.setWidth("680px");
+        card.setWidth("360px");
         card.setHeight("100%");
         card.getStyle().set("background", "white");
         card.add(transparent, tabs);
@@ -483,7 +483,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             .mode(SlideMode.RIGHT)
             .caption("Tools")
             .tabPosition(SlideTabPosition.MIDDLE)
-            .fixedContentSize(700)
+            .fixedContentSize(360)
             .zIndex(1)
             .flowInContent(true)
             .build();
