@@ -25,6 +25,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
     protected final static String CONFIGURED_RESOURCE_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/{componentName}";
     protected final static String COMPONENTS_CONFIGURATION_URL = "/rest/configuration/components";
     protected final static String FLOW_INVOKERS_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/invokers";
+    protected final static String COMPONENT_INVOKER_CONFIGURATION_URL = "/rest/configuration/{moduleName}/{flowName}/{componentName}/invoker";
     protected final static String INVOKERS_CONFIGURATION_URL = "/rest/configuration/invokers";
     protected final static String PUT_CONFIGURATION_URL = "/rest/configuration";
     protected final static String DELETE_CONFIGURATION_URL = "/rest/configuration/{configurationId}";
@@ -58,6 +59,13 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
 
         String url = contextUrl + INVOKERS_CONFIGURATION_URL;
         return getConfigurations(url,null,null);
+    }
+
+    public ConfigurationMetaData getComponentInvoker(String contextUrl, String moduleName, String flowName, String componentName)
+    {
+
+        String url = contextUrl + COMPONENT_INVOKER_CONFIGURATION_URL;
+        return getConfiguration(url,moduleName,flowName, componentName);
     }
 
     public List<ConfigurationMetaData> getFlowInvokers(String contextUrl, String moduleName, String flowName)
