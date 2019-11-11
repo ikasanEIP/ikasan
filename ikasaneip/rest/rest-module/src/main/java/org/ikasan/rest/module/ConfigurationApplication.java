@@ -243,6 +243,23 @@ public class ConfigurationApplication
     }
 
     @RequestMapping(method = RequestMethod.GET,
+        value = "/{moduleName}/{flowName}/{componentName}/invoker",
+        produces = { "application/json" })
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getInvokerConfiguration(@PathVariable("moduleName") String moduleName,
+                                                   @PathVariable("flowName") String flowName,
+                                                   @PathVariable("componentName") String componentname)
+    {
+        Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
+        FlowElement flowElement = flow.getFlowElement(componentname);
+
+        ConfigurationMetaData configuredResource = configurationMetaDataExtractor
+            .getConfiguredResourceConfiguration((ConfiguredResource)flowElement.getFlowElementInvoker());
+
+        return new ResponseEntity(configuredResource, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
                     value = "/{moduleName}/{flowName}/components",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

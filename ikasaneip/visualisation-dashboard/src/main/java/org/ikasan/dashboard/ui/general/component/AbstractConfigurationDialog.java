@@ -29,24 +29,24 @@ import org.vaadin.olli.FileDownloadWrapper;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
-public class ConfigurationDialog extends Dialog
+public abstract class AbstractConfigurationDialog extends Dialog
 {
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationDialog.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractConfigurationDialog.class);
 
-    private ConfigurationRestServiceImpl configurationRestService;
-    private ConfigurationMetaData configurationMetaData;
-    private Module module;
-    private String flowName;
-    private String componentName;
-    private Button downloadButton;
-    private Tooltip downloadButtonTooltip;
-    private Tooltip addMapItemButtonTooltip;
-    private List<Tooltip> removeMapItemButtonTooltips;
-    private Tooltip addListItemButtonTooltip;
-    private List<Tooltip> removeListItemButtonTooltips;
-    private Map<ConfigurationParameterMetaData, Object> parameterMetaDataComponentMap;
+    protected ConfigurationRestServiceImpl configurationRestService;
+    protected ConfigurationMetaData configurationMetaData;
+    protected Module module;
+    protected String flowName;
+    protected String componentName;
+    protected Button downloadButton;
+    protected Tooltip downloadButtonTooltip;
+    protected Tooltip addMapItemButtonTooltip;
+    protected List<Tooltip> removeMapItemButtonTooltips;
+    protected Tooltip addListItemButtonTooltip;
+    protected List<Tooltip> removeListItemButtonTooltips;
+    protected Map<ConfigurationParameterMetaData, Object> parameterMetaDataComponentMap;
 
-    public ConfigurationDialog(Module module, String flowName, String componentName
+    protected AbstractConfigurationDialog(Module module, String flowName, String componentName
         , ConfigurationRestServiceImpl configurationRestService)
     {
         this.module = module;
@@ -67,7 +67,7 @@ public class ConfigurationDialog extends Dialog
         Image configurationImage = new Image("/frontend/images/configuration-service.png", "");
         configurationImage.setHeight("70px");
 
-        this.loadConfigurationMetaDataFromModule();
+        this.loadConfigurationMetaData();
 
         H3 configurationLabel = new H3(String.format(getTranslation("label.configuration-management", UI.getCurrent().getLocale())
             , this.configurationMetaData.getConfigurationId()));
@@ -144,10 +144,14 @@ public class ConfigurationDialog extends Dialog
         Button saveButton = new Button(getTranslation("button.save", UI.getCurrent().getLocale()));
         saveButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> save());
 
-        Button cancelButton = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale()));
+        Button deleteButton = new Button(getTranslation("button.delete", UI.getCurrent().getLocale()));
+        deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            // todo need to implement delete.
+        });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(saveButton, cancelButton);
+        buttonLayout.add(saveButton, deleteButton);
 
         layout.add(buttonLayout);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
@@ -257,7 +261,7 @@ public class ConfigurationDialog extends Dialog
         boolean success = this.configurationRestService.storeConfiguration(this.module.getUrl(), this.configurationMetaData);
         if(success)
         {
-            this.loadConfigurationMetaDataFromModule();
+            this.loadConfigurationMetaData();
             NotificationHelper.showUserNotification(getTranslation("message.configuration-save-successful", UI.getCurrent().getLocale()));
         }
         else
@@ -266,11 +270,7 @@ public class ConfigurationDialog extends Dialog
         }
     }
 
-    private void loadConfigurationMetaDataFromModule()
-    {
-        this.configurationMetaData = this.configurationRestService
-            .getConfiguredResourceConfigurations(module.getUrl(), module.getName(), flowName, componentName);
-    }
+    protected abstract void loadConfigurationMetaData();
 
     private Component manageBooleanConfiguration(ConfigurationParameterMetaData configurationParameterMetaData)
     {

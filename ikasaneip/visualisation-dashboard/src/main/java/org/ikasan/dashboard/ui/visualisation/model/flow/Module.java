@@ -91,4 +91,19 @@ public class Module
     {
         return componentMap;
     }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("Module{");
+        sb.append("url='").append(url).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", version='").append(version).append('\'');
+        sb.append(", flows=").append(flows);
+        sb.append(", configurationMap=").append(configurationMap);
+        sb.append(", componentMap=").append(componentMap);
+        sb.append('}');
+        return sb.toString();
+    }
 }
