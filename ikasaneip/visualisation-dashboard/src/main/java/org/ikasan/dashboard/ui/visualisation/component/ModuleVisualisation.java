@@ -11,15 +11,13 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
-import org.ikasan.dashboard.ui.general.component.ConfigurationDialog;
+import org.ikasan.dashboard.ui.general.component.AbstractConfigurationDialog;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
-import org.ikasan.rest.client.dto.FlowDto;
-import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -34,10 +32,8 @@ import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ModuleVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
@@ -146,19 +142,12 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             logger.info("Node: " + node);
 
-            ConfigurationDialog configurationDialog = new ConfigurationDialog(this.module,
-                this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName()
-                , this.configurationRestService);
-            configurationDialog.open();
-        });
+            ComponentNodeActionDialog componentNodeActionDialog = new ComponentNodeActionDialog(this.module,
+                this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
+                this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService);
 
-//        networkDiagram.addClickListener((ClickListener) clickEvent -> {
-//            logger.info(clickEvent.getParams().toString());
-//        });
-//
-//        networkDiagram.addOnContextListener((OnContextListener) onContextEvent -> {
-//            logger.info(onContextEvent.getParams().toString());
-//        });
+            componentNodeActionDialog.open();
+        });
 
         logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
 

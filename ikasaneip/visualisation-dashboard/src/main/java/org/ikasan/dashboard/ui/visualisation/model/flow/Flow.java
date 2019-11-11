@@ -81,4 +81,20 @@ public class Flow
     {
         this.status = status;
     }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("Flow{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", configurationId='").append(configurationId).append('\'');
+        sb.append(", consumer=").append(consumer);
+        sb.append(", status=").append(status);
+        sb.append(", x=").append(x);
+        sb.append(", y=").append(y);
+        sb.append(", w=").append(w);
+        sb.append(", h=").append(h);
+        sb.append('}');
+        return sb.toString();
+    }
 }
