@@ -193,7 +193,7 @@ public class ConfigurationRestServiceImplTest
                 aResponse()
                     .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .withStatus(200)));
-        boolean result = uut.save(contexBaseUrl,configurationMetaData);
+        boolean result = uut.storeConfiguration(contexBaseUrl,configurationMetaData);
 
         assertEquals(true, result);
 

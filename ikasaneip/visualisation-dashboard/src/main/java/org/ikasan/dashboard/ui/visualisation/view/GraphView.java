@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -61,7 +62,6 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
-import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
@@ -148,6 +148,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     private boolean initialised = false;
 
+    private SlideTab toolSlider;
+
     /**
      * Constructor
      */
@@ -181,19 +183,19 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         modulesGrid.setWidth("100%");
 
         modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name");
-        modulesGrid.addColumn(new ComponentRenderer<>((ModuleMetaData node) ->
-        {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+
+        modulesGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>)
+            doubleClickEvent ->
             {
-                this.moduleLabel.setText(node.getName());
+                this.moduleLabel.setText(doubleClickEvent.getItem().getName());
                 this.hl.setVisible(true);
-                createGraph(node);
+                createGraph(doubleClickEvent.getItem());
+
+                if(this.toolSlider.isExpanded())
+                {
+                    this.toolSlider.collapse();
+                }
             });
-
-            return view;
-
-        }));
     }
 
     protected void createdBusinessStreamGrid()
@@ -205,26 +207,26 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         businessStreamGrid.setWidth("100%");
 
         businessStreamGrid.addColumn(String::toString).setHeader("Name");
-        businessStreamGrid.addColumn(new ComponentRenderer<>((String node) ->
-        {
-            Button view = new Button(VaadinIcon.EYE.create());
-            view.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        businessStreamGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<String>>)
+            doubleClickEvent ->
             {
                 try
                 {
-                    this.moduleLabel.setText(node);
+                    this.moduleLabel.setText(doubleClickEvent.getItem());
                     this.hl.setVisible(true);
-                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao.getBusinessStreamMetaData(node));
+                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao
+                        .getBusinessStreamMetaData(doubleClickEvent.getItem()));
                 }
                 catch (IOException e)
                 {
-                    e.printStackTrace();
+                   NotificationHelper.showErrorNotification(getTranslation("error.could-not-open-business-stream", UI.getCurrent().getLocale()));
+                }
+
+                if(this.toolSlider.isExpanded())
+                {
+                    this.toolSlider.collapse();
                 }
             });
-
-            return view;
-
-        }));
     }
 
     @Override
@@ -482,7 +484,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         card.add(transparent, tabs);
 
 
-        SlideTab gridSlider = new SlideTabBuilder(card)
+        toolSlider = new SlideTabBuilder(card)
             .expanded(false)
             .mode(SlideMode.RIGHT)
             .caption("Tools")
@@ -492,7 +494,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             .flowInContent(true)
             .build();
 
-        super.add(gridSlider);
+        super.add(toolSlider);
     }
 
     /**
