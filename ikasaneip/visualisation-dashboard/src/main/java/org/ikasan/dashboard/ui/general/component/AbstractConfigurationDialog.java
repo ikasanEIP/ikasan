@@ -447,7 +447,7 @@ public abstract class AbstractConfigurationDialog extends Dialog
                 final TextField nameTextField;
                 final TextField valueField;
 
-                if(count == 0)
+                if(count++ == 0)
                 {
                     nameTextField = new TextField(getTranslation("label.name", UI.getCurrent().getLocale()));
                     valueField = new TextField(getTranslation("label.value", UI.getCurrent().getLocale()));

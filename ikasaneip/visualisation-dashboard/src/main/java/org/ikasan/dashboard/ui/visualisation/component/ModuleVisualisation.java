@@ -6,15 +6,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
-import org.ikasan.dashboard.ui.general.component.AbstractConfigurationDialog;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
+import org.ikasan.dashboard.ui.visualisation.model.flow.MessageChannel;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
@@ -138,15 +140,44 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
         {
             logger.info(doubleClickEvent.getParams().toString());
-            String node = doubleClickEvent.getParams().getArray("nodes").get(0).asString();
+
+            JsonArray nodes = doubleClickEvent.getParams().getArray("nodes");
+
+            if(nodes.length() == 0)
+            {
+                JsonObject pointer = doubleClickEvent.getParams().getObject("pointer");
+                logger.info("pointer: " + pointer);
+
+                JsonObject canvas = pointer.getObject("canvas");
+
+                Double x = canvas.getNumber("x");
+                Double y = canvas.getNumber("y");
+
+                logger.info(currentFlow.toString());
+
+                if((x > currentFlow.getX() && x < (currentFlow.getX() + currentFlow.getW()))
+                    && (y > currentFlow.getY() && y < (currentFlow.getY() + currentFlow.getH())))
+                {
+                    logger.info("Inside flow!");
+                    FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService);
+                    flowOptionsDialog.open();
+                }
+
+                return;
+            }
+
+            String node = nodes.get(0).asString();
 
             logger.info("Node: " + node);
 
-            ComponentNodeActionDialog componentNodeActionDialog = new ComponentNodeActionDialog(this.module,
-                this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
-                this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService);
+            if(this.module.getComponentMap().get(node) != null)
+            {
+                ComponentOptionsDialog componentNodeActionDialog = new ComponentOptionsDialog(this.module,
+                    this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
+                    this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService);
 
-            componentNodeActionDialog.open();
+                componentNodeActionDialog.open();
+            }
         });
 
         logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
