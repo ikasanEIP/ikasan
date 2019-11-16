@@ -67,6 +67,9 @@ public class IkasanRestAutoConfiguration
     private BatchInsert wiretapEventBatchInsert;
 
     @Resource
+    private BatchInsert systemEventBatchInsert;
+
+    @Resource
     private BatchInsert moduleMetadataBatchInsert;
 
     @Resource
@@ -108,6 +111,12 @@ public class IkasanRestAutoConfiguration
     {
         return new MetaDataController(this.moduleMetadataBatchInsert,
             this.configurationMetadataBatchInsert);
+    }
+
+    @Bean
+    public SystemEventController systemEventController()
+    {
+        return new SystemEventController(this.systemEventBatchInsert);
     }
 
     @Bean

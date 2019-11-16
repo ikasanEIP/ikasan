@@ -67,7 +67,7 @@ public class HarvestingAutoConfiguration
     public HarvestingJob systemEventJob(HarvestService systemEventService, Environment environment, DashboardRestService systemEventsDashboardRestService)
     {
 
-        return new HarvestingJobImpl("messageHistoryHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
+        return new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
     }
 
 

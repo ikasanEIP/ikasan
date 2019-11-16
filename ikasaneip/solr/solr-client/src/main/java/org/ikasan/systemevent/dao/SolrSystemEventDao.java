@@ -261,7 +261,7 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
         if ( systemEvent.getAction() != null )
         {
             sb.append("action:");
-            sb.append(systemEvent.getSubject());
+            sb.append(systemEvent.getAction());
         }
         sb.append("}");
         return sb.toString();

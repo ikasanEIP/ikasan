@@ -27,6 +27,8 @@ import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.systemevent.dao.SolrSystemEventDao;
+import org.ikasan.systemevent.service.SolrSystemEventServiceImpl;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -161,6 +163,25 @@ public class DashboardComponentFactory
         dao.initStandalone(solrUrl, 30);
 
         SolrModuleMetadataServiceImpl service = new SolrModuleMetadataServiceImpl(dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean
+    public BatchInsert systemEventBatchInsert()
+    {
+        return this.createSolrSystemEventServiceImpl();
+    }
+
+
+    private SolrSystemEventServiceImpl createSolrSystemEventServiceImpl()
+    {
+        SolrSystemEventDao dao = new SolrSystemEventDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrSystemEventServiceImpl service = new SolrSystemEventServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 
