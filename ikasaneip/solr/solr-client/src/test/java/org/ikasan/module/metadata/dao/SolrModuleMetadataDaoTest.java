@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
-import org.ikasan.configuration.metadata.model.SolrConfigurationMetaData;
-import org.ikasan.configuration.metadata.model.SolrConfigurationParameterMetaData;
 import org.ikasan.module.metadata.model.SolrFlowElementMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrFlowMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrModuleMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrTransitionImpl;
-import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.metadata.FlowElementMetaData;
+import org.ikasan.spec.metadata.FlowMetaData;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.Transition;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -32,27 +34,42 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
 {
     public static final String MODULE_RESULT_JSON = "/data/module.json";
 
-    @Test
-    @DirtiesContext
-    public void test_save_component_metadata_list() throws Exception {
+    private SolrModuleMetadataDao dao;
+
+    private NodeConfig config;
+
+    @Before
+    public void setup()
+    {
+
         Path path = createTempDir();
 
         SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrModuleMetadataDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_component_metadata_list() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
-
+            init(server);
             ObjectMapper objectMapper = new ObjectMapper();
 
             SimpleModule m = new SimpleModule();
@@ -83,24 +100,10 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_by_id() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
-
+            init(server);
             ObjectMapper objectMapper = new ObjectMapper();
 
             SimpleModule m = new SimpleModule();
@@ -130,24 +133,10 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_all() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
-
+            init(server);
             ObjectMapper objectMapper = new ObjectMapper();
 
             SimpleModule m = new SimpleModule();

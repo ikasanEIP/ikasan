@@ -2,7 +2,7 @@ package org.ikasan.systemevent.dao;
 
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
@@ -11,13 +11,17 @@ import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.replay.model.SolrReplayEvent;
 import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.systemevent.SystemEvent;
+import org.ikasan.systemevent.model.SolrSystemEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,517 +45,105 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
+    private NodeConfig config;
+
+    private SolrSystemEventDao dao;
+
     @Before
-    public void setup(){
+    public void setup()
+    {
+
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
 
 
     }
 
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrSystemEventDao();
+        dao.setSolrClient(server);
+    }
+
+
     @Test
     @DirtiesContext
-    public void test_query_replay_events() throws Exception
+    public void test_query_system_events() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
+            init(server);
 
+            SolrSystemEvent systemEvent = new SolrSystemEvent();
+            systemEvent.setModuleName("moduleName");
+            systemEvent.setTimestampLong(System.currentTimeMillis());
+            systemEvent.setActor("TestUser");
+            systemEvent.setExpiryLong(0);
+            systemEvent.setId("1");
 
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            dao.save(systemEvent);
 
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
+            List<SystemEvent> systemEvents = dao.list(new ArrayList<>(), null, null, null);
 
-            dao.saveOrUpdate(replayEvent);
+            assertEquals(2, systemEvents.size());
 
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
         }
     }
 
+    @Ignore
     @Test
     @DirtiesContext
-    public void test_query_replay_events_null_module_names_and_flow_names() throws Exception
+    public void test_query_system_events_with_payload_content() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
+            init(server);
 
+            SolrSystemEvent systemEvent = new SolrSystemEvent();
+            systemEvent.setModuleName("moduleName");
+            systemEvent.setTimestampLong(System.currentTimeMillis());
+            systemEvent.setActor("testUser");
+            systemEvent.setExpiryLong(0);
+            systemEvent.setId("1");
 
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            dao.save(systemEvent);
 
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
+            SolrSystemEvent systemEvent1 = new SolrSystemEvent();
+            systemEvent1.setModuleName("moduleName");
+            systemEvent1.setTimestampLong(System.currentTimeMillis());
+            systemEvent1.setActor("adminUser");
+            systemEvent1.setExpiryLong(0);
+            systemEvent1.setId("2");
 
-            dao.saveOrUpdate(replayEvent);
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(null, null
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_with_module_name() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ArrayList moduleNames = new ArrayList<>();
-            moduleNames.add("moduleName");
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(moduleNames, new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_with_flow_name() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
+            dao.save(systemEvent1);
 
             ArrayList flowNames = new ArrayList<>();
             flowNames.add("flowName");
 
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
+            List<SystemEvent> systemEvents = dao.list(null, "*test*",null,null);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(2, systemEvents.size());
 
-            server.close();
         }
     }
 
-    @Test
-    @DirtiesContext
-    public void test_restrict_result_size() throws Exception
-    {
-        Path path = createTempDir();
 
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ArrayList flowNames = new ArrayList<>();
-            flowNames.add("flowName");
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 1);
-
-            assertEquals(1, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_with_payload_content() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("data".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(2l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ArrayList flowNames = new ArrayList<>();
-            flowNames.add("flowName");
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , null,"data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_with_event_id() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setEventId("eventId1");
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEvent("data".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setEventId("eventId2");
-            replayEvent.setId(2l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ArrayList flowNames = new ArrayList<>();
-            flowNames.add("flowName");
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , "eventId2","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
-                    , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(0, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_event_as_string() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEventAsString("event");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_find_by_id() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEventAsString("event");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ReplayEvent replayEvent1 = dao.getReplayEventById(1l);
-
-            assertNotNull(replayEvent1);
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_find_by_id_null_result() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEventAsString("event");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            ReplayEvent replayEvent1 = dao.getReplayEventById(2l);
-
-            assertNull(replayEvent1);
-
-            server.close();
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_query_replay_events_event_as_string_empty() throws Exception
-    {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
-
-        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
-        {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEventAsString("");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(0);
-            replayEvent.setId(1l);
-
-            dao.saveOrUpdate(replayEvent);
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-
-            assertEquals(2, replayEventList.size());
-
-            server.close();
-        }
-    }
 
     @Test
     @DirtiesContext
     public void test_housekeep_success() throws Exception
     {
-        Path path = createTempDir();
 
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
@@ -559,7 +151,6 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("ikasan");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
-
 
             SolrReplayDao dao = new SolrReplayDao();
             dao.setSolrClient(server);
@@ -576,19 +167,19 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
+            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>(), null, null,
+                new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
+                                                                   );
 
             assertEquals(2, replayEventList.size());
 
             dao.housekeep(100);
 
-            replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
+            replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>(), null, null,
+                new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
+                                                 );
 
             assertEquals(0, replayEventList.size());
-
-            server.close();
         }
     }
 
@@ -606,68 +197,26 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
             }
         });
 
-        SolrReplayDao dao = new SolrReplayDao();
+        dao = new SolrSystemEventDao();
         dao.setSolrClient(server);
 
-        SolrReplayEvent replayEvent = new SolrReplayEvent();
-        replayEvent.setModuleName("moduleName");
-        replayEvent.setFlowName("flowName");
-        replayEvent.setEventAsString("");
-        replayEvent.setEvent("event".getBytes());
-        replayEvent.setTimestamp(System.currentTimeMillis());
-        replayEvent.setExpiry(0);
-        replayEvent.setId(1l);
+        SolrSystemEvent systemEvent = new SolrSystemEvent();
+        systemEvent.setModuleName("moduleName");
+        systemEvent.setTimestampLong(System.currentTimeMillis());
+        systemEvent.setExpiryLong(0);
+        systemEvent.setId("1");
 
-
-        dao.saveOrUpdate(replayEvent);
+        dao.save(systemEvent);
     }
 
-    @Test(expected = RuntimeException.class)
-    @DirtiesContext
-    public void test_find_by_id_exception() throws Exception
+
+    public static String TEST_HOME()
     {
-        mockery.checking(new Expectations()
-        {
-            {
-                // set event factory
-                oneOf(server).request(with(any(SolrRequest.class)));
-                will(throwException(new RuntimeException("Error")));
-
-            }
-        });
-
-        SolrReplayDao dao = new SolrReplayDao();
-        dao.setSolrClient(server);
-
-        dao.getReplayEventById(1l);
-    }
-
-    @Test(expected = RuntimeException.class)
-    @DirtiesContext
-    public void test_get_replay_events_exception() throws Exception
-    {
-        mockery.checking(new Expectations()
-        {
-            {
-                // set event factory
-                oneOf(server).request(with(any(SolrRequest.class)));
-                will(throwException(new RuntimeException("Error")));
-
-            }
-        });
-
-        SolrReplayDao dao = new SolrReplayDao();
-        dao.setSolrClient(server);
-
-        dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
-                , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
-    }
-
-    public static String TEST_HOME() {
         return getFile("solr/ikasan").getParent();
     }
 
-    public static Path TEST_PATH() {
+    public static Path TEST_PATH()
+    {
         return getFile("solr/ikasan").getParentFile().toPath();
     }
 }

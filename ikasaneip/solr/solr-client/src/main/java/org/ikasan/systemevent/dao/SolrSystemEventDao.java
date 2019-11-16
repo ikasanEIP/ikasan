@@ -4,6 +4,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
@@ -33,7 +34,10 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
         document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getId());
         document.addField(TYPE, SYSTEM_EVENT);
         document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
-        document.addField(CREATED_DATE_TIME, systemEvent.getTimestamp());
+        if(systemEvent instanceof SolrSystemEvent){
+            document.addField(MODULE_NAME, ((SolrSystemEvent) systemEvent).getModuleName());
+        }
+        document.addField(CREATED_DATE_TIME, systemEvent.getTimestamp().getTime());
         document.setField(EXPIRY, expiry);
         return document;
     }
@@ -53,21 +57,18 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
 
         Set<String> moduleNamesSet = new HashSet<String>();
 
-        Set<String> flowNamesSet = new HashSet<String>();
 
         String queryString = this
-            .buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, null, null, SYSTEM_EVENT);
+            .buildQuery(moduleNamesSet, fromDate, toDate, subjects, actor, SYSTEM_EVENT);
 
-        logger.debug("queryString: " + queryString);
+        logger.info("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
-        query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT,
-            PAYLOAD_CONTENT_RAW
-                       );
+        query.setFields(ID, MODULE_NAME, CREATED_DATE_TIME, PAYLOAD_CONTENT);
 
-        logger.debug("query: " + query.toString());
+        logger.info("query: " + query.toString());
 
         try
         {
@@ -85,6 +86,99 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
 
         return new ArrayList<>(results);
     }
+
+    protected String buildQuery(Collection<String> moduleNames, Date fromDate
+        , Date untilDate, List<String> subjects, String actor, String type)
+    {
+        StringBuffer moduleNamesBuffer = new StringBuffer();
+        StringBuffer dateBuffer = new StringBuffer();
+        StringBuffer actorBuffer = new StringBuffer();
+        StringBuffer typeBuffer = new StringBuffer();
+        StringBuffer subjectsBuffer = new StringBuffer();
+
+        if(moduleNames != null && moduleNames.size() > 0)
+        {
+            moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, moduleNames));
+        }
+
+        if(type != null && !type.isEmpty())
+        {
+            typeBuffer.append(this.buildPredicate(TYPE, Arrays.asList(type)));
+        }
+
+        if(fromDate != null && untilDate != null)
+        {
+            dateBuffer.append(CREATED_DATE_TIME + COLON).append("[").append(fromDate.getTime()).append(TO).append(untilDate.getTime()).append("]");
+        }
+
+        if(actor != null && !actor.trim().isEmpty())
+        {
+            actorBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(
+                SolrSpecialCharacterEscapeUtil.escape(actor)).append("\"");
+
+        }
+
+//        if(subjects != null && !subjects.isEmpty())
+//        {
+//            subjectsBuffer.append(this.buildPredicate(PAYLOAD_CONTENT, subjects));
+//        }
+
+
+        StringBuffer bufferFinalQuery = new StringBuffer();
+
+        boolean hasPrevious = false;
+
+        if(moduleNames != null && moduleNames.size() > 0)
+        {
+            bufferFinalQuery.append(moduleNamesBuffer);
+            hasPrevious = true;
+        }
+
+        if(actor != null && actor.length() > 0)
+        {
+            if(hasPrevious)
+            {
+                bufferFinalQuery.append(AND);
+            }
+
+            bufferFinalQuery.append(actorBuffer);
+            hasPrevious = true;
+        }
+
+//        if(subjects != null && !subjects.isEmpty()){
+//            if(hasPrevious)
+//            {
+//                bufferFinalQuery.append(AND);
+//            }
+//
+//            bufferFinalQuery.append(subjectsBuffer);
+//            hasPrevious = true;
+//        }
+
+        if(typeBuffer.length() > 0)
+        {
+            if(hasPrevious)
+            {
+                bufferFinalQuery.append(AND);
+            }
+
+            bufferFinalQuery.append(typeBuffer);
+            hasPrevious = true;
+        }
+
+        if(fromDate != null && untilDate != null)
+        {
+            if(hasPrevious)
+            {
+                bufferFinalQuery.append(AND);
+            }
+
+            bufferFinalQuery.append(dateBuffer);
+        }
+
+        return bufferFinalQuery.toString();
+    }
+
 
     @Override
     public void deleteExpired()

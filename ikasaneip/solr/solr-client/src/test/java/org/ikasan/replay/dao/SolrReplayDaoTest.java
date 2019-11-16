@@ -2,27 +2,23 @@ package org.ikasan.replay.dao;
 
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.replay.model.SolrReplayEvent;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.wiretap.dao.SolrWiretapDao;
-import org.ikasan.wiretap.model.SolrWiretapEvent;
-import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -47,29 +43,43 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
+    private NodeConfig config;
+
+    private SolrReplayDao dao;
+
+    @Before
+    public void setup()
+    {
+
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrReplayDao();
+        dao.setSolrClient(server);
+    }
+
 
     @Test
     @DirtiesContext
     public void test_query_replay_events() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
+            init(server);
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
             replayEvent.setFlowName("flowName");
@@ -85,7 +95,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(2, replayEventList.size());
 
-            server.close();
         }
     }
 
@@ -93,24 +102,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_null_module_names_and_flow_names() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
+            init(server);
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
             replayEvent.setFlowName("flowName");
@@ -125,8 +120,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
-
-            server.close();
         }
     }
 
@@ -134,24 +127,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_with_module_name() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-
+            init(server);
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
             replayEvent.setFlowName("flowName");
@@ -165,12 +144,11 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             ArrayList moduleNames = new ArrayList<>();
             moduleNames.add("moduleName");
 
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(moduleNames, new ArrayList<>()
-                    , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
+            List<ReplayEvent> replayEventList = dao.getReplayEvents(moduleNames, new ArrayList<>(), null, null,
+                new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
+                                                                   );
 
             assertEquals(2, replayEventList.size());
-
-            server.close();
         }
     }
 
@@ -178,23 +156,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_with_flow_name() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -213,8 +178,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(2, replayEventList.size());
-
-            server.close();
         }
     }
 
@@ -222,23 +185,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_restrict_result_size() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -258,7 +208,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(1, replayEventList.size());
 
-            server.close();
         }
     }
 
@@ -266,23 +215,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_with_payload_content() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -312,7 +248,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(2, replayEventList.size());
 
-            server.close();
         }
     }
 
@@ -320,23 +255,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_with_event_id() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -372,8 +294,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
                     , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
             assertEquals(0, replayEventList.size());
-
-            server.close();
         }
     }
 
@@ -381,23 +301,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_event_as_string() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -415,7 +322,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(2, replayEventList.size());
 
-            server.close();
         }
     }
 
@@ -423,23 +329,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_find_by_id() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -456,7 +349,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertNotNull(replayEvent1);
 
-            server.close();
         }
     }
 
@@ -464,23 +356,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_find_by_id_null_result() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -497,7 +376,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertNull(replayEvent1);
 
-            server.close();
         }
     }
 
@@ -505,23 +383,11 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_query_replay_events_event_as_string_empty() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
 
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
             replayEvent.setModuleName("moduleName");
@@ -539,7 +405,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(2, replayEventList.size());
 
-            server.close();
         }
     }
 
@@ -547,23 +412,10 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_housekeep_success() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
+            init(server);
             dao.setDaysToKeep(0);
 
             SolrReplayEvent replayEvent = new SolrReplayEvent();
@@ -589,7 +441,6 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             assertEquals(0, replayEventList.size());
 
-            server.close();
         }
     }
 

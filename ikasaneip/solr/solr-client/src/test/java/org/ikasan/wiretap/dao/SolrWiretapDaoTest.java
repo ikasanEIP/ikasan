@@ -4,10 +4,10 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -17,13 +17,14 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -44,32 +45,48 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
-    @Test
-    @DirtiesContext
-    public void test_delete_expired_records() throws Exception {
+    private NodeConfig config;
+
+    private SolrWiretapDao dao;
+
+    @Before
+    public void setup()
+    {
+
         Path path = createTempDir();
 
         SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrWiretapDao();
+        dao.setSolrClient(server);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_delete_expired_records() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                 "eventId", "relatedEventId", 12345l, "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
@@ -77,12 +94,10 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             Thread.sleep(2000);
 
-            solrCloudBase.deleteAllExpired();
+            dao.deleteAllExpired();
 
             assertEquals(0, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(0, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
-
-            server.close();
 
         }
     }
@@ -90,53 +105,41 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_search_with_moduleName_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
@@ -144,13 +147,11 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             HashSet<String> componentNames = new HashSet<String>();
 
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     componentNames, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
 
         }
     }
@@ -158,53 +159,41 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_search_with_moduleName_componentNames_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
@@ -212,13 +201,11 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             HashSet<String> flowNames = new HashSet<String>();
             flowNames.add("flowName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     flowNames, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
 
         }
     }
@@ -226,53 +213,41 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_search_with_moduleName_componentNames_flowNames_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
@@ -283,13 +258,11 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             HashSet<String> flowNames = new HashSet<String>();
             flowNames.add("flowName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     flowNames, componentNames, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
 
         }
     }
@@ -297,53 +270,41 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_search_with_moduleName_componentNames_flowNames_keyword_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
@@ -354,13 +315,11 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             HashSet<String> flowNames = new HashSet<String>();
             flowNames.add("flowName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     flowNames, componentNames, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "odd one out");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 2);
-
-            server.close();
 
         }
     }
@@ -368,173 +327,131 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_by_id_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
-            WiretapEvent wiretapEvent = solrCloudBase.findById(3l);
+            WiretapEvent wiretapEvent = dao.findById(3l);
 
             Assert.assertEquals("Results must equal", wiretapEvent.getEvent(), "odd one out");
-
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_find_by_id_not_found() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
-            WiretapEvent wiretapEvent = solrCloudBase.findById(20l);
+            WiretapEvent wiretapEvent = dao.findById(20l);
 
             Assert.assertEquals("Results must equal", wiretapEvent, null);
-
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_with_moduleNames_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
@@ -542,13 +459,11 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             String flowName = null;
 
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     flowName, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
 
         }
     }
@@ -556,194 +471,150 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_search_with_moduleNames_componentName_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     "flowName", null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_with_moduleNames_componentName_flowName_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     "flowName", "componentName", null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 10);
-
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_with_moduleNames_componentName_flowName_keyword_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-            solrCloudBase.setSolrClient(server);
-            solrCloudBase.setDaysToKeep(0);
+            init(server);
+            dao.setDaysToKeep(0);
 
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(2l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(3l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "odd one out");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(4l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             event = new SolrWiretapEvent(5l, "moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-            solrCloudBase.save(event);
+            dao.save(event);
 
             HashSet<String> moduleNames = new HashSet<String>();
             moduleNames.add("moduleName");
 
-            PagedSearchResult<WiretapEvent> results =  solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+            PagedSearchResult<WiretapEvent> results =  dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     "flowName", "componentName", null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "odd one out");
 
             Assert.assertEquals("Results must equal", results.getResultSize(), 2);
-
-            server.close();
 
         }
     }
@@ -762,15 +633,15 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             }
         });
 
-        SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-        solrCloudBase.setSolrClient(server);
-        solrCloudBase.setDaysToKeep(0);
+        SolrWiretapDao dao = new SolrWiretapDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
 
         SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                 "eventId", "relatedEventId", System.currentTimeMillis(), "event");
 
 
-        solrCloudBase.save(event);
+        dao.save(event);
     }
 
     @Test(expected = RuntimeException.class)
@@ -787,12 +658,12 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             }
         });
 
-        SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-        solrCloudBase.setSolrClient(server);
-        solrCloudBase.setDaysToKeep(0);
+        SolrWiretapDao dao = new SolrWiretapDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
 
 
-        solrCloudBase.findById(1l);
+        dao.findById(1l);
     }
 
     @Test(expected = RuntimeException.class)
@@ -810,14 +681,14 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             }
         });
 
-        SolrWiretapDao solrCloudBase = new SolrWiretapDao();
-        solrCloudBase.setSolrClient(server);
-        solrCloudBase.setDaysToKeep(0);
+        SolrWiretapDao dao = new SolrWiretapDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
 
         HashSet<String> moduleNames = new HashSet<String>();
         moduleNames.add("moduleName");
 
-        solrCloudBase.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
+        dao.findWiretapEvents(0,10,"timestamp", true,  moduleNames,
                     "flowName", "componentName", null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "odd one out");
 

@@ -4,30 +4,25 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.exclusion.model.SolrExclusionEventImpl;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -47,26 +42,42 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
-    @Test
-    @DirtiesContext
-    public void test_delete_expired_records() throws Exception {
+    private NodeConfig config;
+
+    private SolrExclusionEventDao dao;
+
+    @Before
+    public void setup()
+    {
+
         Path path = createTempDir();
 
         SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrExclusionEventDao ();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_delete_expired_records() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                 "event".getBytes(), "uri");
@@ -94,23 +105,10 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_delete_by_error_uri() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                     "event".getBytes(), "uri");
@@ -218,23 +216,10 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_find_uri_success() throws Exception
     {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrExclusionEventDao  dao = new SolrExclusionEventDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             ExclusionEvent event = new SolrExclusionEventImpl("moduleName", "flowName", "componentName",
                     "event".getBytes(), "uri");

@@ -257,7 +257,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @param predicateValues
      * @return
      */
-    private StringBuffer buildPredicate(String field, Collection<String> predicateValues)
+    protected StringBuffer buildPredicate(String field, Collection<String> predicateValues)
     {
         String delim = "";
 
