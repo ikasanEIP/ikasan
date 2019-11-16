@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<IkasanSolrDocumentSearchResults>
+public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implements SolrGeneralDao<IkasanSolrDocumentSearchResults>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
@@ -125,8 +125,18 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
     @Override
     public void saveOrUpdate(IkasanSolrDocument ikasanSolrDocument)
     {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
+        super.save(ikasanSolrDocument);
+    }
+
+    @Override
+    public void saveOrUpdate(List<IkasanSolrDocument> ikasanSolrDocuments)
+    {
+        super.save(ikasanSolrDocuments);
+    }
+
+    @Override
+    protected SolrInputDocument getSolrInputFields(Long expiry, IkasanSolrDocument ikasanSolrDocument)
+    {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, ikasanSolrDocument.getId());
         document.addField(TYPE, ikasanSolrDocument.getType());
@@ -138,60 +148,6 @@ public class SolrGeneralDaoImpl extends SolrDaoBase implements SolrGeneralDao<Ik
         document.addField(CREATED_DATE_TIME, ikasanSolrDocument.getTimeStamp());
         document.setField(EXPIRY, expiry);
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.add(document);
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Adding document: " + document + ". Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write a document to Solr", e);
-        }
-    }
-
-    @Override
-    public void saveOrUpdate(List<IkasanSolrDocument> ikasanSolrDocuments)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        UpdateRequest req = new UpdateRequest();
-
-        for(IkasanSolrDocument ikasanSolrDocument: ikasanSolrDocuments)
-        {
-            SolrInputDocument document = new SolrInputDocument();
-            document.addField(ID, ikasanSolrDocument.getId());
-            document.addField(TYPE, ikasanSolrDocument.getType());
-            document.addField(MODULE_NAME, ikasanSolrDocument.getModuleName());
-            document.addField(FLOW_NAME, ikasanSolrDocument.getFlowName());
-            document.addField(EVENT, ikasanSolrDocument.getEventId());
-            document.addField(PAYLOAD_CONTENT, ikasanSolrDocument.getEvent());
-            document.addField(PAYLOAD_CONTENT_RAW, ikasanSolrDocument.getPayloadRaw());
-            document.addField(CREATED_DATE_TIME, ikasanSolrDocument.getTimeStamp());
-            document.setField(EXPIRY, expiry);
-
-            req.add(document);
-        }
-
-        try
-        {
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            req.commit(solrClient, SolrConstants.CORE);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an documents to Solr", e);
-        }
+        return document;
     }
 }

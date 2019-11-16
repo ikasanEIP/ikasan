@@ -2,12 +2,8 @@ package org.ikasan.systemevent.dao;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
-import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.ikasan.replay.model.SolrReplayEvent;
-import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
@@ -18,9 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-public class SolrSystemEventDao extends SolrDaoBase implements SystemEventDao<SystemEvent>
+public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements SystemEventDao<SystemEvent>
 {
     /**
      * Logger for this class
@@ -32,72 +27,7 @@ public class SolrSystemEventDao extends SolrDaoBase implements SystemEventDao<Sy
      */
     public static final String SYSTEM_EVENT = "systemEvent";
 
-    @Override
-    public void save(SystemEvent systemEvent)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        SolrInputDocument document = getSolrInputFields(expiry, systemEvent);
-
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.add(document);
-
-            commitSolrRequest(req);
-
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
-
-    }
-
-    public void save(List<SystemEvent> systemEvents)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            for (SystemEvent systemEvent : systemEvents)
-            {
-                SolrInputDocument document = getSolrInputFields(expiry, systemEvent);
-
-                req.add(document);
-
-                logger.debug("Adding document: " + document);
-            }
-
-            commitSolrRequest(req);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
-    }
-
-    private void commitSolrRequest(UpdateRequest req)
-        throws org.apache.solr.client.solrj.SolrServerException, java.io.IOException
-    {
-        UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-        logger.debug("Solr Response: " + rsp.toString());
-
-        rsp = req.commit(solrClient, SolrConstants.CORE);
-
-        logger.debug("Solr Commit Response: " + rsp.toString());
-
-    }
-
-    private SolrInputDocument getSolrInputFields(long expiry, SystemEvent systemEvent)
+    protected SolrInputDocument getSolrInputFields(Long expiry, SystemEvent systemEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getId());

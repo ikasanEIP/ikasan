@@ -1,5 +1,6 @@
 package org.ikasan.configuration.metadata.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Ikasan Development Team on 14/02/2017.
  */
-public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
+public class SolrComponentConfigurationMetadataDao extends SolrDaoBase<ConfigurationMetaData>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrComponentConfigurationMetadataDao.class);
@@ -53,27 +54,38 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase
             {
                 super.removeById(COMPONENT_CONFIGURATION, configurationMetaData.getConfigurationId());
 
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, configurationMetaData.getConfigurationId());
-                document.addField(TYPE, COMPONENT_CONFIGURATION);
-                document.addField(PAYLOAD_CONTENT, objectMapper.writeValueAsString(configurationMetaData));
-                document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
-
+                SolrInputDocument document = getSolrInputFields(null,configurationMetaData);
                 req.add(document);
 
                 logger.debug("Adding document: " + document);
             }
 
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
 
-            logger.debug("Solr Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
+            commitSolrRequest(req);
         }
         catch (Exception e)
         {
             throw new RuntimeException("An exception has occurred attempting to write a component configuration to Solr", e);
         }
+    }
+
+    @Override
+    protected SolrInputDocument getSolrInputFields(Long expiry, ConfigurationMetaData configurationMetaData)
+    {
+        SolrInputDocument document = new SolrInputDocument();
+        document.addField(ID, configurationMetaData.getConfigurationId());
+        document.addField(TYPE, COMPONENT_CONFIGURATION);
+        try
+        {
+            document.addField(PAYLOAD_CONTENT, objectMapper.writeValueAsString(configurationMetaData));
+        }
+        catch (JsonProcessingException e)
+        {
+            throw new RuntimeException("Unable to convert ["+configurationMetaData+"] to json format.");
+        }
+        document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
+
+        return document;
     }
 
     public ConfigurationMetaData findById(String id)

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 05/08/2017.
  */
-public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEventDao<String, ExclusionEvent>
+public class SolrExclusionEventDao extends SolrDaoBase<ExclusionEvent> implements ExclusionEventDao<String, ExclusionEvent>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrExclusionEventDao.class);
@@ -34,11 +34,8 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
     public static final String EXCLUSION = "exclusion";
 
     @Override
-    public void save(ExclusionEvent exclusionEvent)
+    protected SolrInputDocument getSolrInputFields(Long expiry, ExclusionEvent exclusionEvent)
     {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "" + exclusionEvent.getErrorUri());
         document.addField(TYPE, EXCLUSION);
@@ -49,61 +46,7 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
         document.addField(CREATED_DATE_TIME, exclusionEvent.getTimestamp());
         document.setField(EXPIRY, expiry);
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.add(document);
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Adding document: " + document + ". Response: " + rsp.toString());
-            req.commit(solrClient, "ikasan");
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
-    }
-
-
-    public void save(List<ExclusionEvent> exclusionEvents)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            for(ExclusionEvent exclusionEvent: exclusionEvents)
-            {
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, "" + exclusionEvent.getErrorUri());
-                document.addField(TYPE, EXCLUSION);
-                document.addField(MODULE_NAME, exclusionEvent.getModuleName());
-                document.addField(FLOW_NAME, exclusionEvent.getFlowName());
-                document.addField(EVENT, exclusionEvent.getIdentifier());
-                document.addField(PAYLOAD_CONTENT, new String(exclusionEvent.getEvent()));
-                document.addField(CREATED_DATE_TIME, exclusionEvent.getTimestamp());
-                document.setField(EXPIRY, expiry);
-
-                req.add(document);
-
-                logger.debug("Adding document: " + document);
-            }
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-            logger.debug("Response: " + rsp.toString());
-
-            req.commit(solrClient, "ikasan");
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
+        return document;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ikasan.module.metadata.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Ikasan Development Team on 14/02/2017.
  */
-public class SolrModuleMetadataDao extends SolrDaoBase
+public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrModuleMetadataDao.class);
@@ -59,27 +60,38 @@ public class SolrModuleMetadataDao extends SolrDaoBase
             {
                 super.removeById(MODULE_METADATA, moduleMetaData.getName());
 
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, moduleMetaData.getName());
-                document.addField(TYPE, MODULE_METADATA);
-                document.addField(PAYLOAD_CONTENT, objectMapper.writeValueAsString(moduleMetaData));
-                document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
-
+                SolrInputDocument document = getSolrInputFields(null,moduleMetaData);
                 req.add(document);
 
                 logger.debug("Adding document: " + document);
             }
 
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
+            commitSolrRequest(req);
         }
         catch (Exception e)
         {
             throw new RuntimeException("An exception has occurred attempting to write a module metadata to Solr", e);
         }
+    }
+
+    @Override
+    protected SolrInputDocument getSolrInputFields(Long expiry, ModuleMetaData moduleMetaData)
+    {
+        SolrInputDocument document = new SolrInputDocument();
+        document.addField(ID, moduleMetaData.getName());
+        document.addField(TYPE, MODULE_METADATA);
+        try
+        {
+            document.addField(PAYLOAD_CONTENT, objectMapper.writeValueAsString(moduleMetaData));
+        }
+        catch (JsonProcessingException e)
+        {
+            throw new RuntimeException("Unable to convert ["+moduleMetaData+"] to json format.");
+        }
+
+        document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
+
+        return document;
     }
 
     public ModuleMetaData findById(String id)
