@@ -24,6 +24,6 @@ public class ComponentConfigurationDialog extends AbstractConfigurationDialog
     protected void loadConfigurationMetaData()
     {
         this.configurationMetaData = this.configurationRestService
-            .getConfiguredResourceConfigurations(module.getUrl(), module.getName(), flowName, componentName);
+            .getConfiguredResourceConfiguration(module.getUrl(), module.getName(), flowName, componentName);
     }
 }

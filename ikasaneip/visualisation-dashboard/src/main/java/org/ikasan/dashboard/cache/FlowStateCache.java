@@ -68,14 +68,14 @@ public class FlowStateCache implements Consumer<FlowState>
 
     public boolean contains(Module module, Flow flow)
     {
-        logger.info("Check contains: " + module + flow);
+        logger.debug("Check contains: " + module + flow);
         return this.cache.containsKey(module.getName()+flow.getName());
     }
 
     @Override
     public void accept(FlowState flowState)
     {
-        logger.info("Received state change: " + flowState);
+        logger.debug("Received state change: " + flowState);
         this.put(flowState);
     }
 
