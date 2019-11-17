@@ -82,7 +82,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
-    public ConfigurationMetaData getConfiguredResourceConfigurations(String contextUrl, String moduleName, String flowName, String componentName)
+    public ConfigurationMetaData getConfiguredResourceConfiguration(String contextUrl, String moduleName, String flowName, String componentName)
     {
         String url = contextUrl + CONFIGURED_RESOURCE_CONFIGURATION_URL;
         return getConfiguration(url,moduleName,flowName, componentName);
