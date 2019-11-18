@@ -66,8 +66,6 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
             assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
-            server.close();
-
         }
     }
 
@@ -107,8 +105,6 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
             assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
-            server.close();
-
         }
     }
 
@@ -147,8 +143,6 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
 
             assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
-
-            server.close();
 
         }
     }

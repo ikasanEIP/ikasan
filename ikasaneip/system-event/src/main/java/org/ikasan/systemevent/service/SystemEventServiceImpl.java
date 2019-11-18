@@ -40,14 +40,18 @@
  */
 package org.ikasan.systemevent.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.ikasan.systemevent.model.SystemEventImpl;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.systemevent.dao.SystemEventDao;
-import org.ikasan.systemevent.model.SystemEvent;
+import org.ikasan.spec.systemevent.SystemEventDao;
+import org.ikasan.spec.systemevent.SystemEvent;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -56,7 +60,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Ikasan Development Team
  * 
  */
-public class SystemEventServiceImpl implements SystemEventService, InitializingBean, HousekeepService
+public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, InitializingBean, HousekeepService, HarvestService<SystemEvent>
 {
     private static Logger logger = LoggerFactory.getLogger(SystemEventServiceImpl.class);
 
@@ -76,7 +80,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     /**
      * Constructor
      * 
-     * @param systemFlowEventDao
+     * @param systemEventDao
      * @param eventExpiryMinutes - no of minutes for this event to be kept until
      *            eligible for housekeep
      */
@@ -101,7 +105,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
         {
             expiry = new Date(now.getTime() + (60000 * eventExpiryMinutes));
         }
-        systemEventDao.save(new SystemEvent(subject, action, now, actor, expiry));
+        systemEventDao.save(new SystemEventImpl(subject, action, now, actor, expiry));
     }
 
     /*
@@ -141,13 +145,13 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.systemevent.service.SystemEventService#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 * @see org.ikasan.spec.systemevent.SystemEventService#list(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@Override
 	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor,
 			Date timestampFrom, Date timestampTo)
 	{
-		return this.systemEventDao.listSystemEvents(subjects, actor, timestampFrom, timestampTo);
+		return this.systemEventDao.list(subjects, actor, timestampFrom, timestampTo);
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +176,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.systemevent.service.SystemEventService#housekeep()
+     * @see org.ikasan.spec.systemevent.SystemEventService#housekeep()
      */
 	@Override
 	public void housekeep()
@@ -180,6 +184,32 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
 		long before = System.currentTimeMillis();
         systemEventDao.deleteExpired();
         long after = System.currentTimeMillis();
-        logger.info("housekeep completed in [" + (after - before) + "]ms");
+        logger.debug("housekeep completed in [" + (after - before) + "]ms");
 	}
+
+    @Override
+    public List<SystemEvent> harvest(int transactionBatchSize)
+    {
+        return new ArrayList<>(this.systemEventDao.getHarvestableRecords(transactionBatchSize));
+    }
+
+    @Override
+    public boolean harvestableRecordsExist()
+    {
+        return true;
+    }
+
+    @Override
+    public void saveHarvestedRecord(SystemEvent harvestedRecord)
+    {
+        this.systemEventDao.save(harvestedRecord);
+
+    }
+
+    @Override
+    public void updateAsHarvested(List<SystemEvent> events)
+    {
+        this.systemEventDao.updateAsHarvested(events);
+
+    }
 }

@@ -38,13 +38,12 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.systemevent.dao;
+package org.ikasan.spec.systemevent;
+
+import org.ikasan.spec.search.PagedSearchResult;
 
 import java.util.Date;
 import java.util.List;
-
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.systemevent.model.SystemEvent;
 
 /**
  * Data access interface for persistence of <code>SystemFlowEventDao</code>
@@ -52,14 +51,14 @@ import org.ikasan.systemevent.model.SystemEvent;
  * @author Ikasan Development Team
  *
  */
-public interface SystemEventDao {
+public interface SystemEventDao<EVENT> {
 
 	/**
 	 * Persists a new system event
 	 *
-	 * @param systemEvent
+	 * @param event
 	 */
-	public void save(SystemEvent systemEvent);
+	void save(EVENT event);
 
 
 	/**
@@ -75,48 +74,64 @@ public interface SystemEventDao {
 	 * @param timestampTo - criteria field - filter for events with timestamp less than this value
 	 * @param actor - criteria field - filter for exact match on actor
 	 *
-	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
+	 * @return PagedSearchResult<EVENT> - page friendly search result subset
 	 */
-	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,String subject, String action,
+	PagedSearchResult<EVENT> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,String subject, String action,
 			Date timestampFrom, Date timestampTo, String actor);
 
 
 	/**
-	 * This method returns a list of SystemEvents based on subjects and actor within a certain date range.
+	 * This method returns a list of Events based on subjects and actor within a certain date range.
 	 *
-	 * @param subject
+	 * @param subjects
 	 * @param actor
 	 * @param timestampFrom
 	 * @param timestampTo
 	 * @return
 	 */
-	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo);
+	List<EVENT> list(List<String> subjects, String actor, Date timestampFrom, Date timestampTo);
 
 
 	/**
 	 * Deletes all expired system events
 	 */
-	public void deleteExpired();
+	void deleteExpired();
 
-	public boolean isBatchHousekeepDelete();
+	boolean isBatchHousekeepDelete();
 
-	public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
+	void setBatchHousekeepDelete(boolean batchHousekeepDelete);
 
-	public Integer getHousekeepingBatchSize();
+	Integer getHousekeepingBatchSize();
 
-	public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+	void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 
 	/**
 	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
 	 *
 	 * @return true if there is at least 1 expired WiretapFlowEvent
 	 */
-	public boolean housekeepablesExist();
+	boolean housekeepablesExist();
 
 	/**
 	 * @param transactionBatchSize the transactionBatchSize to set
 	 */
-	public void setTransactionBatchSize(Integer transactionBatchSize);
+	void setTransactionBatchSize(Integer transactionBatchSize);
 
 	void setHousekeepQuery(String housekeepQuery);
+
+    /**
+     * Get (housekeepingBatchSize) harvestable records.
+     *
+     * @param housekeepingBatchSize
+     * @return
+     */
+    List<EVENT> getHarvestableRecords(final int housekeepingBatchSize);
+
+    /**
+     * Update entity as being harvested.
+     *
+     * @param events
+     */
+    void updateAsHarvested(List<EVENT> events);
+
 }

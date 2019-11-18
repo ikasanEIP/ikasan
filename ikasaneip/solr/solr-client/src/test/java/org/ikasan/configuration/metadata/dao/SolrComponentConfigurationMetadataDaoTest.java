@@ -2,6 +2,7 @@ package org.ikasan.configuration.metadata.dao;
 
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.core.NodeConfig;
@@ -11,9 +12,11 @@ import org.ikasan.configuration.metadata.model.SolrConfigurationParameterMetaDat
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,27 +24,42 @@ import java.util.List;
 
 public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
 {
-    @Test
-    @DirtiesContext
-    public void test_save_component_metadata_list() throws Exception {
+    private NodeConfig config;
+
+    private SolrComponentConfigurationMetadataDao dao;
+
+    @Before
+    public void setup()
+    {
+
         Path path = createTempDir();
 
         SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrComponentConfigurationMetadataDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_component_metadata_list() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
-
+            init(server);
             SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
                 = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
             List<SolrConfigurationParameterMetaData> solrConfigurationParameterMetaDataList = new ArrayList<>();
@@ -66,23 +84,10 @@ public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_by_id() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
                 = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
@@ -111,23 +116,10 @@ public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_all() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
                 = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
@@ -156,23 +148,10 @@ public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
     @Test
     @DirtiesContext
     public void test_find_by_ids() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-            .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao ();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
                 = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");

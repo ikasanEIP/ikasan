@@ -31,7 +31,7 @@ import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

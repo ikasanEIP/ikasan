@@ -8,7 +8,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -26,13 +25,9 @@ import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
-import org.ikasan.security.model.*;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.model.SystemEvent;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 
 public class PolicyManagementDialog extends Dialog
 {

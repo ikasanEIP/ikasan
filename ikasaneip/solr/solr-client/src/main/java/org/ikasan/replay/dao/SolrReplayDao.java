@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 25/08/2017.
  */
-public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAuditDao<ReplayAudit, ReplayAuditEvent>
+public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao, ReplayAuditDao<ReplayAudit, ReplayAuditEvent>
 {
     private static Logger logger = LoggerFactory.getLogger(SolrReplayDao.class);
 
@@ -38,8 +38,13 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
     @Override
     public void saveOrUpdate(ReplayEvent replayEvent)
     {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
+        super.save(replayEvent);
+
+    }
+
+    @Override
+    protected SolrInputDocument getSolrInputFields(Long expiry, ReplayEvent replayEvent)
+    {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "replay-" + replayEvent.getId());
         document.addField(TYPE, REPLAY);
@@ -58,72 +63,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao, ReplayAudit
         document.addField(CREATED_DATE_TIME, replayEvent.getTimestamp());
         document.setField(EXPIRY, expiry);
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.add(document);
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Adding document: " + document + ". Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
-    }
-
-    public void save(List<ReplayEvent> replayEvents)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            for(ReplayEvent replayEvent: replayEvents)
-            {
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, "replay-" + replayEvent.getId());
-                document.addField(TYPE, REPLAY);
-                document.addField(MODULE_NAME, replayEvent.getModuleName());
-                document.addField(FLOW_NAME, replayEvent.getFlowName());
-                document.addField(EVENT, replayEvent.getEventId());
-                if(replayEvent.getEventAsString() != null && !replayEvent.getEventAsString().isEmpty())
-                {
-                    document.addField(PAYLOAD_CONTENT, replayEvent.getEventAsString());
-                }
-                else
-                {
-                    document.addField(PAYLOAD_CONTENT, new String(replayEvent.getEvent()));
-                }
-                document.addField(PAYLOAD_CONTENT_RAW, replayEvent.getEvent());
-                document.addField(CREATED_DATE_TIME, replayEvent.getTimestamp());
-                document.setField(EXPIRY, expiry);
-
-                req.add(document);
-
-                logger.debug("Adding document: " + document);
-            }
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Response: " + rsp.toString());
-
-            rsp = req.commit(solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Commit Response: " + rsp.toString());
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
-        }
+        return document;
     }
 
     @Override

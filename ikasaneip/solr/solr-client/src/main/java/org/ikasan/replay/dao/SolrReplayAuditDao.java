@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SolrReplayAuditDao extends SolrDaoBase implements BatchInsert<SolrReplayAuditEvent>
+public class SolrReplayAuditDao extends SolrDaoBase<SolrReplayAuditEvent> implements BatchInsert<SolrReplayAuditEvent>
 {
     private static Logger logger = LoggerFactory.getLogger(SolrReplayAuditDao.class);
 
@@ -44,7 +44,7 @@ public class SolrReplayAuditDao extends SolrDaoBase implements BatchInsert<SolrR
             SolrInputDocument document = new SolrInputDocument();
             document.addField(ID, "replay-audit-" + System.currentTimeMillis());
             document.addField(TYPE, REPLAY_AUDIT);
-            document.addField(PAYLOAD_CONTENT, new String(json));
+            document.addField(PAYLOAD_CONTENT, json);
             document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
             document.setField(EXPIRY, expiry);
 
@@ -53,17 +53,18 @@ public class SolrReplayAuditDao extends SolrDaoBase implements BatchInsert<SolrR
             logger.debug("Adding document: " + document);
 
 
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Response: " + rsp.toString());
-
-            rsp = req.commit(solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Commit Response: " + rsp.toString());
+            commitSolrRequest(req);
         }
         catch (Exception e)
         {
             throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
         }
+    }
+
+    @Override
+    protected SolrInputDocument getSolrInputFields(Long expiry, SolrReplayAuditEvent event)
+    {
+
+        throw new UnsupportedOperationException();
     }
 }

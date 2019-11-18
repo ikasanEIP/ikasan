@@ -40,13 +40,13 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.spec.module.StartupType;
-import org.ikasan.systemevent.service.SystemEventService;
 
 /**
  * 
@@ -80,8 +80,8 @@ public class StartupControlServiceImpl implements StartupControlService
     /**
      * Constructor
      * 
-     * @param moduleContainer
-     * @param systemEventService 
+     * @param systemEventService
+     * @param startupControlDao
      */
     public StartupControlServiceImpl(SystemEventService systemEventService, StartupControlDao startupControlDao)
     {

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorReportingServiceDao<ErrorOccurrence, String>
+public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> implements ErrorReportingServiceDao<ErrorOccurrence, String>
 {
     private static Logger logger = LoggerFactory.getLogger(SolrErrorReportingServiceDao.class);
 
@@ -126,11 +126,8 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
     }
 
     @Override
-    public void save(ErrorOccurrence errorOccurrence)
+    protected SolrInputDocument getSolrInputFields(Long expiry, ErrorOccurrence errorOccurrence)
     {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "error-" + errorOccurrence.getUri());
         document.addField(ERROR_URI, errorOccurrence.getUri());
@@ -147,68 +144,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
         document.addField(EXCEPTION_CLASS, errorOccurrence.getExceptionClass());
         document.setField(EXPIRY, expiry);
 
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            req.add(document);
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Adding document: " + document + ". Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an error occurrence to Solr", e);
-        }
-    }
-
-    public void save(List<ErrorOccurrence> errorOccurrences)
-    {
-        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
-        long expiry = millisecondsInDay + System.currentTimeMillis();
-
-        try
-        {
-            UpdateRequest req = new UpdateRequest();
-            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
-
-            for(ErrorOccurrence errorOccurrence: errorOccurrences)
-            {
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField(ID, "error-" + errorOccurrence.getUri());
-                document.addField(ERROR_URI, errorOccurrence.getUri());
-                document.addField(TYPE, ERROR);
-                document.addField(MODULE_NAME, errorOccurrence.getModuleName());
-                document.addField(FLOW_NAME, errorOccurrence.getFlowName());
-                document.addField(COMPONENT_NAME, errorOccurrence.getFlowElementName());
-                document.addField(EVENT, errorOccurrence.getEventLifeIdentifier());
-                document.addField(RELATED_EVENT, errorOccurrence.getEventRelatedIdentifier());
-                document.addField(PAYLOAD_CONTENT, errorOccurrence.getEventAsString());
-                document.addField(CREATED_DATE_TIME, errorOccurrence.getTimestamp());
-                document.addField(ERROR_DETAIL, errorOccurrence.getErrorDetail());
-                document.addField(ERROR_MESSAGE, errorOccurrence.getErrorMessage());
-                document.addField(EXCEPTION_CLASS, errorOccurrence.getExceptionClass());
-                document.setField(EXPIRY, expiry);
-
-                req.add(document);
-
-                logger.debug("Adding document: " + document);
-            }
-
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
-            logger.debug("Solr Response: " + rsp.toString());
-
-            req.commit(solrClient, SolrConstants.CORE);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("An exception has occurred attempting to write an error occurrence to Solr", e);
-        }
+        return document;
     }
 
     @Override

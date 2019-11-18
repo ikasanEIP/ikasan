@@ -4,30 +4,28 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.dao.SolrWiretapDao;
-import org.ikasan.wiretap.model.SolrWiretapEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -47,26 +45,44 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
     private SolrClient server = mockery.mock(SolrClient.class);
 
+    private NodeConfig config;
+
+    private SolrErrorReportingServiceDao dao;
+
+    @Before
+    public void setup()
+    {
+
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
+
+
+    }
+
+    private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
+    {
+        CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+        createRequest.setCoreName("ikasan");
+        createRequest.setConfigSet("minimal");
+        server.request(createRequest);
+
+        dao = new SolrErrorReportingServiceDao();
+        dao.setSolrClient(server);
+        dao.setDaysToKeep(0);
+    }
+
     @Test
     @DirtiesContext
     public void test_delete_expired_records() throws Exception {
         Path path = createTempDir();
 
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                 "eventId", "relatedEventId", "event", 12345l);
@@ -85,31 +101,16 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             assertEquals(0, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(0, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_with_uri_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", "event", 12345l);
@@ -119,31 +120,16 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             Assert.assertNotNull(dao.find("uri"));
 
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", "event", 12345l);
@@ -179,31 +165,16 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             Assert.assertEquals(result.size(), 10);
 
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_success_null_result() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", "event", 12345l);
@@ -239,31 +210,16 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             Assert.assertNull(result);
 
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_module_name_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", "event", 12345l);
@@ -302,31 +258,16 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             Assert.assertEquals(result.size(), 2);
 
-            server.close();
-
         }
     }
 
     @Test
     @DirtiesContext
     public void test_search_flow_name_success() throws Exception {
-        Path path = createTempDir();
-
-        SolrResourceLoader loader = new SolrResourceLoader(path);
-        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
-                .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
-                .build();
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
-
-            SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            init(server);
 
             SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
                     "eventId", "relatedEventId", "event", 12345l);
@@ -364,8 +305,6 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
             List<ErrorOccurrence> result = dao.find(null, flowNames, null, null, null, 100);
 
             Assert.assertEquals(result.size(), 10);
-
-            server.close();
 
         }
     }

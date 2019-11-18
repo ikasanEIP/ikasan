@@ -50,8 +50,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
-        <constructor-arg ref="systemEventDao" />
-        <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
+        <constructor-arg name="systemEventDao" ref="systemEventDao" />
+        <constructor-arg name="eventExpiryMinutes" value="10080" /> <!-- system events expire after 1 week -->
     </bean>
     
     <bean id="systemEventDao"

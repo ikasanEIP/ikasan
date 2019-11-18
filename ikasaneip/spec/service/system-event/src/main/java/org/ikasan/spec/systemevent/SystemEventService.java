@@ -38,13 +38,12 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.systemevent.service;
+package org.ikasan.spec.systemevent;
+
+import org.ikasan.spec.search.PagedSearchResult;
 
 import java.util.Date;
 import java.util.List;
-
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.systemevent.model.SystemEvent;
 
 
 /**
@@ -53,7 +52,7 @@ import org.ikasan.systemevent.model.SystemEvent;
  * @author Ikasan Development Team
  *
  */
-public interface SystemEventService 
+public interface SystemEventService<EVENT>
 {
 	/**
 	 * Logs some system level happening
@@ -62,7 +61,7 @@ public interface SystemEventService
 	 * @param action - what has happened
 	 * @param actor - who/what was driving the happening
 	 */
-	public void logSystemEvent(String subject, String action, String actor);
+	void logSystemEvent(String subject, String action, String actor);
 
 
 	/**
@@ -80,18 +79,18 @@ public interface SystemEventService
 	 * 
 	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
 	 */
-	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
+	PagedSearchResult<EVENT> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
 
 	/**
 	 * This method returns a list of SystemEvents based on subjects and actor within a certain date range.
 	 * 
-	 * @param subject
+	 * @param subjects
 	 * @param actor
 	 * @param timestampFrom
 	 * @param timestampTo
 	 * @return
 	 */
-	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo); 
+	List<EVENT> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo);
 	
 	/**
 	 * Cleanup all expired system events

@@ -2,7 +2,7 @@ package org.ikasan.dashboard.ui.util;
 
 import org.ikasan.dashboard.ui.administration.view.UserManagementView;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;

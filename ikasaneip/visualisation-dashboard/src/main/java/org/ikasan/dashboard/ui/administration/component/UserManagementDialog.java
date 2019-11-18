@@ -27,8 +27,8 @@ import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.systemevent.model.SystemEvent;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.systemevent.SystemEvent;
+import org.ikasan.spec.systemevent.SystemEventService;
 
 import java.util.ArrayList;
 import java.util.List;

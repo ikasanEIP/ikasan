@@ -5,16 +5,21 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.
  */
-public abstract class SolrDaoBase implements SolrInitialisationService
+public abstract class SolrDaoBase<T> implements SolrInitialisationService
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrDaoBase.class);
@@ -252,7 +257,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param predicateValues
      * @return
      */
-    private StringBuffer buildPredicate(String field, Collection<String> predicateValues)
+    protected StringBuffer buildPredicate(String field, Collection<String> predicateValues)
     {
         String delim = "";
 
@@ -404,14 +409,80 @@ public abstract class SolrDaoBase implements SolrInitialisationService
                 return;
             }
 
-            UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-            req.commit(solrClient, SolrConstants.CORE);
-
-            logger.info("Deleted solr records using query [{}]. Response [" + rsp + "].", query);
+            commitSolrRequest(req);
         }
         catch (Exception e)
         {
             throw new RuntimeException("An error has occurred deleting using query [" + query + "].: " + e.getMessage(), e);
         }
     }
+
+    public void save(T event)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        SolrInputDocument document = getSolrInputFields(expiry, event);
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            req.add(document);
+
+            commitSolrRequest(req);
+
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
+        }
+
+    }
+
+    public void save(List<T> events)
+    {
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
+
+        try
+        {
+            UpdateRequest req = new UpdateRequest();
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            for (T event : events)
+            {
+                SolrInputDocument document = getSolrInputFields(expiry, event);
+
+                req.add(document);
+
+                logger.debug("Adding document: " + document);
+            }
+
+            commitSolrRequest(req);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
+        }
+    }
+
+    protected void commitSolrRequest(UpdateRequest req)
+        throws org.apache.solr.client.solrj.SolrServerException, java.io.IOException
+    {
+        UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+        logger.debug("Solr Response: " + rsp.toString());
+
+        rsp = req.commit(solrClient, SolrConstants.CORE);
+
+        logger.debug("Solr Commit Response: " + rsp.toString());
+
+    }
+
+
+    protected abstract SolrInputDocument getSolrInputFields(Long expiry, T event);
+
+
 }

@@ -40,7 +40,6 @@
  */
 package org.ikasan.module;
 
-import org.ikasan.topology.service.TopologyService;
 import org.ikasan.module.container.ModuleContainerImpl;
 import org.ikasan.module.service.ModuleActivatorDefaultImpl;
 import org.ikasan.module.service.ModuleInitialisationServiceImpl;
@@ -54,7 +53,8 @@ import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.ikasan.topology.service.TopologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

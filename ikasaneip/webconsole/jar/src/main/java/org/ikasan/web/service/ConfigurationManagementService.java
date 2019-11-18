@@ -41,13 +41,13 @@
 package org.ikasan.web.service;
 
 import org.ikasan.spec.module.ModuleService;
-import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -27,6 +27,8 @@ public class DashboardClientAutoConfiguration
 
     private String WIRETAP_PATH = "/rest/harvest/wiretaps";
 
+    private String SYSTEM_EVENTS_PATH = "/rest/harvest/systemevents";
+
     private String METADATA_PATH = "/rest/module/metadata";
 
     private String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
@@ -64,6 +66,13 @@ public class DashboardClientAutoConfiguration
     {
         return new DashboardRestServiceImpl(environment, METRICS_PATH);
     }
+
+    @Bean
+    public DashboardRestService systemEventsDashboardRestService(Environment environment)
+    {
+        return new DashboardRestServiceImpl(environment, SYSTEM_EVENTS_PATH);
+    }
+
 
     @Bean
     public DashboardRestService moduleMetadataDashboardRestService(Environment environment,

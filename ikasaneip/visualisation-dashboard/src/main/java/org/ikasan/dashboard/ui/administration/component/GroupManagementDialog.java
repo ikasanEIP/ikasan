@@ -9,7 +9,6 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -33,11 +32,7 @@ import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.model.SystemEvent;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.ikasan.spec.systemevent.SystemEventService;
 
 import java.util.List;
 
