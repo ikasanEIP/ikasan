@@ -35,6 +35,30 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
     }
 
     @Override
+    public ConfigurationMetaData getConfiguration(ConfiguredResource configuredResource)
+    {
+
+        Configuration<List<ConfigurationParameter>> configuration = this.configurationManagement
+            .getConfiguration(configuredResource.getConfiguredResourceId());
+
+        if ( configuration == null )
+        {
+            configuration = this.configurationManagement.createConfiguration(configuredResource);
+        }
+
+        ConfigurationMetaDataImpl configurationMetaDataImpl = new ConfigurationMetaDataImpl(
+            configuration.getConfigurationId(), configuration.getDescription(),
+            configuredResource.getConfiguration() != null ?
+                configuredResource.getConfiguration().getClass().getName() :
+                configuration.getClass().getName(), getParameters(configuration.getParameters())
+        );
+
+        return configurationMetaDataImpl;
+
+    }
+
+
+    @Override
     public List<ConfigurationMetaData> getComponentsConfiguration(Flow flow)
     {
         List<ConfigurationMetaData> result;
@@ -102,22 +126,6 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
         return result;
     }
 
-    @Override
-    public ConfigurationMetaData getConfiguredResourceConfiguration(ConfiguredResource configuredResource)
-    {
-        ConfigurationMetaData result;
-
-        try
-        {
-            result = this.convert(configuredResource);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Exception has occurred creating components configuration meta data json!", e);
-        }
-
-        return result;
-    }
 
     @Override
     public List<ConfigurationMetaData> getComponentsConfiguration(Module<Flow> module)
@@ -195,7 +203,7 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
 
             if ( flow instanceof ConfiguredResource )
             {
-                return this.convert((ConfiguredResource) flow);
+                return this.getConfiguration((ConfiguredResource) flow);
             }
             else
             {
@@ -233,31 +241,10 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
 
     public List<ConfigurationMetaData> describeConfiguredResources(List<ConfiguredResource> configuredResource)
     {
-        return configuredResource.stream().map(r -> convert(r)).collect(Collectors.toList());
+        return configuredResource.stream().map(r -> getConfiguration(r)).collect(Collectors.toList());
 
     }
 
-    private ConfigurationMetaData convert(ConfiguredResource configuredResource)
-    {
-
-        Configuration<List<ConfigurationParameter>> configuration = this.configurationManagement
-            .getConfiguration(configuredResource.getConfiguredResourceId());
-
-        if ( configuration == null )
-        {
-            configuration = this.configurationManagement.createConfiguration(configuredResource);
-        }
-
-        ConfigurationMetaDataImpl configurationMetaDataImpl = new ConfigurationMetaDataImpl(
-            configuration.getConfigurationId(), configuration.getDescription(),
-            configuredResource.getConfiguration() != null ?
-                configuredResource.getConfiguration().getClass().getName() :
-                configuration.getClass().getName(), getParameters(configuration.getParameters())
-        );
-
-        return configurationMetaDataImpl;
-
-    }
 
     private List<ConfigurationParameterMetaData> getParameters(List<ConfigurationParameter> parameters)
     {

@@ -14,7 +14,7 @@ public interface ConfigurationMetaDataExtractor<T>
      * @param component
      * @return
      */
-    public T getConfiguredResourceConfiguration(ConfiguredResource component);
+    public T getConfiguration(ConfiguredResource component);
 
     /**
      * Gets all component configured resources from runtime flow and provides them in meta data format.

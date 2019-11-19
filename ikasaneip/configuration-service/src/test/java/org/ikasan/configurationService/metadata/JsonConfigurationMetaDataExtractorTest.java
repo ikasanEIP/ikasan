@@ -311,7 +311,7 @@ public class JsonConfigurationMetaDataExtractorTest
                 will(returnValue(getConfiguration("configuredResourceId")));
             }
         });
-        ConfigurationMetaData resultConf = uut.getConfiguredResourceConfiguration((ConfiguredResource)flowElement.getFlowComponent());
+        ConfigurationMetaData resultConf = uut.getConfiguration((ConfiguredResource)flowElement.getFlowComponent());
 
         String result = describeConfiguredResource(resultConf);
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/individual-component-configuration.json"), result, JSONCompareMode.STRICT);
