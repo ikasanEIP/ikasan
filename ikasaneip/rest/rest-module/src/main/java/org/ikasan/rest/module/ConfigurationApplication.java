@@ -9,7 +9,6 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
-import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
@@ -254,7 +253,7 @@ public class ConfigurationApplication
         FlowElement flowElement = flow.getFlowElement(componentname);
 
         ConfigurationMetaData configuredResource = configurationMetaDataExtractor
-            .getConfiguredResourceConfiguration((ConfiguredResource)flowElement.getFlowElementInvoker());
+            .getConfiguration((ConfiguredResource)flowElement.getFlowElementInvoker());
 
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
@@ -283,7 +282,7 @@ public class ConfigurationApplication
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         FlowElement flowElement = flow.getFlowElement(componentName);
         ConfigurationMetaData configuredResource = configurationMetaDataExtractor
-            .getConfiguredResourceConfiguration((ConfiguredResource)flowElement.getFlowComponent());
+            .getConfiguration((ConfiguredResource)flowElement.getFlowComponent());
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
 
