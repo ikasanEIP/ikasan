@@ -1,5 +1,6 @@
 package org.ikasan.configurationService.metadata.flow;
 
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 
@@ -22,7 +23,7 @@ public class TestFlowInvoker implements FlowElementInvoker, ConfiguredResource
     @Override
     public Object getConfiguration()
     {
-        return null;
+        return new DefaultConfiguration("FLOW_INVOKER_CONFIGURATION_ID");
     }
 
     @Override

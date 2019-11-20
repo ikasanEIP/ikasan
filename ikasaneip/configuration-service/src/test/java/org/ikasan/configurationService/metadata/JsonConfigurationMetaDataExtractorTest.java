@@ -8,6 +8,7 @@ import org.ikasan.configurationService.metadata.components.ConfiguredProducer;
 import org.ikasan.configurationService.metadata.components.TestProducer;
 import org.ikasan.configurationService.metadata.configuration.DummyConfiguration;
 import org.ikasan.configurationService.metadata.flow.TestFlow;
+import org.ikasan.configurationService.metadata.flow.TestFlowConfiguration;
 import org.ikasan.configurationService.metadata.flow.TestFlowElement;
 import org.ikasan.configurationService.metadata.module.TestModule;
 import org.ikasan.configurationService.model.*;
@@ -221,13 +222,13 @@ public class JsonConfigurationMetaDataExtractorTest
             {
                
                 exactly(2).of(configurationManagement).getConfiguration("FLOW_INVOKER_CONFIGURATION_ID");
-                will(returnValue(getConfiguration("configuredResourceId")));
+                will(returnValue(getConfiguration("FLOW_INVOKER_CONFIGURATION_ID")));
             }
         });
         List<ConfigurationMetaData> resultConf = uut.getInvokersConfiguration(flow);
 
         String result = describeConfiguredResources(resultConf);
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/invokerSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
 
@@ -244,13 +245,13 @@ public class JsonConfigurationMetaDataExtractorTest
             {
                
                 exactly(2).of(configurationManagement).getConfiguration("FLOW_INVOKER_CONFIGURATION_ID");
-                will(returnValue(getConfiguration("configuredResourceId")));
+                will(returnValue(getConfiguration("FLOW_INVOKER_CONFIGURATION_ID")));
             }
         });
         List<ConfigurationMetaData> resultConf = uut.getInvokersConfiguration(testModule);
 
         String result = describeConfiguredResources(resultConf);
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/flowSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile("/data/invokerSimpleConfigurationMetadata.json"), result, JSONCompareMode.STRICT);
 
     }
 
@@ -327,6 +328,7 @@ public class JsonConfigurationMetaDataExtractorTest
 
         Flow flow = new TestFlow("Flow Name", "Module Name",
             Arrays.asList(consumer,producer));
+        ((TestFlow) flow).setConfiguration(new TestFlowConfiguration(consumer));
 
         return flow;
     }

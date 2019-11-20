@@ -6,7 +6,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 
 import java.util.List;
 
-public class TestFlow implements Flow, ConfiguredResource
+public class TestFlow implements Flow, ConfiguredResource<FlowConfiguration>
 {
     String name;
     String moduleName;
@@ -173,14 +173,14 @@ public class TestFlow implements Flow, ConfiguredResource
     }
 
     @Override
-    public Object getConfiguration()
+    public FlowConfiguration getConfiguration()
     {
-        return null;
+        return this.flowConfiguration;
     }
 
     @Override
-    public void setConfiguration(Object configuration)
+    public void setConfiguration(FlowConfiguration configuration)
     {
-
+        this.flowConfiguration = configuration;
     }
 }
