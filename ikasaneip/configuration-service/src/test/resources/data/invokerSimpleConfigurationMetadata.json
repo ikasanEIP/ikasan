@@ -1,7 +1,7 @@
 [ {
-  "configurationId" : "configuredResourceId",
+  "configurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
   "description" : null,
-  "implementingClass" : "org.ikasan.configurationService.metadata.flow.TestFlowConfiguration",
+  "implementingClass" : "org.ikasan.configurationService.model.DefaultConfiguration",
   "parameters" : [ {
     "id" : null,
     "name" : "name",

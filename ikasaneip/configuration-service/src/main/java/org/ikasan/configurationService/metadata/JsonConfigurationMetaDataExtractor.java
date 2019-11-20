@@ -241,7 +241,10 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
 
     public List<ConfigurationMetaData> describeConfiguredResources(List<ConfiguredResource> configuredResource)
     {
-        return configuredResource.stream().map(r -> getConfiguration(r)).collect(Collectors.toList());
+        return configuredResource.stream()
+                                 .filter(r -> r.getConfiguredResourceId()!=null && r.getConfiguration()!=null)
+                                 .map(r -> getConfiguration(r))
+                                 .collect(Collectors.toList());
 
     }
 
