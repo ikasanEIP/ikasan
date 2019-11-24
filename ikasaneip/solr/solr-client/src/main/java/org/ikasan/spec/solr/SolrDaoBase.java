@@ -279,6 +279,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
     /**
      * Query solr index by id for a given type
+     *
      * @param id
      * @param type
      * @return String
