@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.beans;
 
+import org.ikasan.business.stream.metadata.dao.SolrBusinessStreamMetadataDao;
+import org.ikasan.business.stream.metadata.service.SolrBusinessStreamMetaDataServiceImpl;
 import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
 import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetadataServiceImpl;
 import org.ikasan.dashboard.cache.FlowStateCache;
@@ -23,6 +25,7 @@ import org.ikasan.spec.cache.FlowStateCacheAdapter;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
+import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.solr.SolrGeneralService;
@@ -163,6 +166,19 @@ public class DashboardComponentFactory
         dao.initStandalone(solrUrl, 30);
 
         SolrModuleMetadataServiceImpl service = new SolrModuleMetadataServiceImpl(dao);
+        service.setSolrUsername(solrUsername);
+        service.setSolrPassword(solrPassword);
+
+        return service;
+    }
+
+    @Bean
+    public BusinessStreamMetaDataService businessStreamMetaDataService()
+    {
+        SolrBusinessStreamMetadataDao dao = new SolrBusinessStreamMetadataDao();
+        dao.initStandalone(solrUrl, 30);
+
+        SolrBusinessStreamMetaDataServiceImpl service = new SolrBusinessStreamMetaDataServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 

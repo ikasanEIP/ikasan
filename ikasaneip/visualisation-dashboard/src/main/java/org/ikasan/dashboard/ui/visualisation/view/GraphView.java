@@ -1,9 +1,12 @@
 package org.ikasan.dashboard.ui.visualisation.view;
 
+import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Div;
@@ -12,11 +15,13 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -33,13 +38,13 @@ import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.component.WiretapListDialog;
+import org.ikasan.dashboard.ui.general.component.TableButton;
+import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
-import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
-import org.ikasan.dashboard.ui.visualisation.component.FlowComboBox;
-import org.ikasan.dashboard.ui.visualisation.component.ModuleVisualisation;
-import org.ikasan.dashboard.ui.visualisation.component.StatusPanel;
+import org.ikasan.dashboard.ui.visualisation.component.*;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
@@ -48,14 +53,12 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.ConfigurationMetaDataService;
-import org.ikasan.spec.metadata.ModuleMetaData;
-import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
@@ -81,6 +84,7 @@ import org.vaadin.tabs.PagedTabs;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -116,16 +120,18 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Resource
     private ConfigurationMetaDataService configurationMetadataService;
 
+    @Resource
+    private BusinessStreamMetaDataService<BusinessStreamMetaData> businessStreamMetaDataService;
+
     private EventViewDialog eventViewDialog = new EventViewDialog();
 
     private BusinessStream graph = null;
-    private Upload upload;
     private List<Node> nodes = new ArrayList<>();
     private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
     private Grid<ModuleMetaData> modulesGrid = new Grid<>();
-    private Grid<String> businessStreamGrid = new Grid<>();
+    private Grid<BusinessStreamMetaData> businessStreamGrid = new Grid<>();
     private Button viewListButton;
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private List<WiretapEvent> wiretapSearchResults;
@@ -149,6 +155,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private boolean initialised = false;
 
     private SlideTab toolSlider;
+    private Button uploadBusinssStreamButton;
+    private Tooltip uploadBusinssStreamButtonTooltip;
 
     /**
      * Constructor
@@ -189,6 +197,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             {
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
                 this.hl.setVisible(true);
+                this.flowComboBox.setVisible(true);
+                this.controlPanel.setVisible(true);
+                this.statusPanel.setVisible(true);
                 createGraph(doubleClickEvent.getItem());
 
                 if(this.toolSlider.isExpanded())
@@ -206,27 +217,46 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         businessStreamGrid.setHeight("800px");
         businessStreamGrid.setWidth("100%");
 
-        businessStreamGrid.addColumn(String::toString).setHeader("Name");
-        businessStreamGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<String>>)
-            doubleClickEvent ->
+        businessStreamGrid.addColumn(BusinessStreamMetaData::getName).setHeader("Name");
+        businessStreamGrid.addColumn(new ComponentRenderer<>(businessStreamMetaData->
+        {
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
-                try
-                {
-                    this.moduleLabel.setText(doubleClickEvent.getItem());
-                    this.hl.setVisible(true);
-                    this.createBusinessStreamGraphGraph(this.businessStreamMetaDataDao
-                        .getBusinessStreamMetaData(doubleClickEvent.getItem()));
-                }
-                catch (IOException e)
-                {
-                   NotificationHelper.showErrorNotification(getTranslation("error.could-not-open-business-stream", UI.getCurrent().getLocale()));
-                }
-
-                if(this.toolSlider.isExpanded())
-                {
-                    this.toolSlider.collapse();
-                }
+                this.businessStreamMetaDataService.delete(businessStreamMetaData.getId());
+                this.populateBusinessStreamGrid();
             });
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
+            return layout;
+        })).setFlexGrow(1);
+
+        businessStreamGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<BusinessStreamMetaData>>) doubleClickEvent ->
+        {
+            try
+            {
+                this.createBusinessStreamGraphGraph(doubleClickEvent.getItem().getJson());
+
+                this.moduleLabel.setText(doubleClickEvent.getItem().getName());
+                this.hl.setVisible(true);
+                this.flowComboBox.setVisible(false);
+                this.controlPanel.setVisible(false);
+                this.statusPanel.setVisible(false);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                NotificationHelper.showErrorNotification(getTranslation("error.could-not-open-business-stream", UI.getCurrent().getLocale()));
+            }
+
+            if(this.toolSlider.isExpanded())
+            {
+                this.toolSlider.collapse();
+            }
+        });
     }
 
     @Override
@@ -234,6 +264,11 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.populateModulesGrid();
         this.populateBusinessStreamGrid();
+
+        if(uploadBusinssStreamButtonTooltip != null && this.uploadBusinssStreamButton != null)
+        {
+            this.uploadBusinssStreamButtonTooltip.attachToComponent(this.uploadBusinssStreamButton);
+        }
     }
 
     /**
@@ -384,8 +419,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateModulesGrid()
     {
-        List<ModuleMetaData> moduleMetaData = moduleMetadataService.findAll();
-        modulesGrid.setItems(moduleMetaData);
+        List<ModuleMetaData> moduleMetaData = this.moduleMetadataService.findAll();
+        this.modulesGrid.setItems(moduleMetaData);
     }
 
     /**
@@ -393,7 +428,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateBusinessStreamGrid()
     {
-        businessStreamGrid.setItems(this.businessStreamMetaDataDao.getAllBusinessStreamNames());
+        List<BusinessStreamMetaData> businessStreamMetaData = this.businessStreamMetaDataService.findAll();
+        this.businessStreamGrid.setItems(businessStreamMetaData);
     }
 
     /**
@@ -463,15 +499,38 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         VerticalLayout modulesLayout = new VerticalLayout();
         modulesLayout.setSizeFull();
-        modulesLayout.add(modulesGrid);
+        modulesLayout.add(this.modulesGrid);
 
 
         VerticalLayout businessStreamLayout = new VerticalLayout();
         businessStreamLayout.setSizeFull();
-        businessStreamLayout.add(businessStreamGrid);
+
+        uploadBusinssStreamButton = new Button(VaadinIcon.UPLOAD.create());
+        uploadBusinssStreamButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            BusinessStreamUploadDialog uploadDialog = new  BusinessStreamUploadDialog(this.businessStreamMetaDataService);
+            uploadDialog.open();
+
+            uploadDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>)
+                dialogOpenedChangeEvent -> populateBusinessStreamGrid());
+        });
+
+        uploadBusinssStreamButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(uploadBusinssStreamButton, getTranslation("tooltip.upload-business-stream", UI.getCurrent().getLocale()));
+
+        businessStreamLayout.add(uploadBusinssStreamButtonTooltip, uploadBusinssStreamButton, this.businessStreamGrid);
+        businessStreamLayout.setHorizontalComponentAlignment(Alignment.END, uploadBusinssStreamButton);
+
+        businessStreamLayout.addAttachListener((ComponentEventListener<AttachEvent>) attachEvent ->
+        {
+            if(uploadBusinssStreamButtonTooltip != null && this.uploadBusinssStreamButton != null)
+            {
+                this.uploadBusinssStreamButtonTooltip.attachToComponent(this.uploadBusinssStreamButton);
+            }
+        });
 
         tabs.add((SerializableSupplier<com.vaadin.flow.component.Component>) () -> businessStreamLayout, "Business Streams");
         tabs.add((SerializableSupplier<com.vaadin.flow.component.Component>) () -> modulesLayout, "Modules");
+
 
         Image transparent = new Image("frontend/images/transparent.png", "");
         transparent.setHeight("60px");

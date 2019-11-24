@@ -97,6 +97,11 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
                     .collect(Collectors.toList());
     }
 
+    public void delete(String id)
+    {
+        this.removeById(BUSINESS_STREAM_METADATA, id);
+    }
+
     /**
      * Helper method to find by query.
      *

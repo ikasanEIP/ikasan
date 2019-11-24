@@ -26,4 +26,11 @@ public interface  BusinessStreamMetaDataService<T>
      * @param metaData
      */
     public void save(T metaData);
+
+    /**
+     * Delete meta data.
+     *
+     * @param id
+     */
+    public void delete(String id);
 }
