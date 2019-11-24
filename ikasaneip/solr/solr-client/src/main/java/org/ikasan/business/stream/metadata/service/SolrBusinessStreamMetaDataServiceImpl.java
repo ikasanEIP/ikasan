@@ -45,4 +45,12 @@ public class SolrBusinessStreamMetaDataServiceImpl extends SolrServiceBase imple
         dao.setSolrPassword(super.solrPassword);
         this.dao.save(solrBusinessStream);
     }
+
+    @Override
+    public void delete(String id)
+    {
+        dao.setSolrUsername(super.solrUsername);
+        dao.setSolrPassword(super.solrPassword);
+        this.dao.delete(id);
+    }
 }

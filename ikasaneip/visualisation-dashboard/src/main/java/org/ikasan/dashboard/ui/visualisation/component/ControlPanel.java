@@ -379,4 +379,15 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
             this.setFlowStatus(flowState.getState());
         }
     }
+
+    @Override
+    public void setVisible(boolean visible)
+    {
+        super.setVisible(visible);
+
+        this.startButton.setVisible(visible);
+        this.stopButton.setVisible(visible);
+        this.startPauseButton.setVisible(visible);
+        this.pauseButton.setVisible(visible);
+    }
 }
