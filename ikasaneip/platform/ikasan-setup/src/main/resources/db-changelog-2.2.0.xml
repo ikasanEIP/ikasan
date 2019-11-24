@@ -16,6 +16,7 @@
     <!-- 2.1.x data creation -->
 
     <!-- 2.1.x index creation -->
+    <include file="db/index/db-changeLog-createIndexErrorOccurrenceExpiry.xml" relativeToChangelogFile="true" />
 
     <!-- 2.1.x table drop -->
 
