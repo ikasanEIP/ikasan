@@ -883,6 +883,7 @@
                 <!--<module>dashboard</module>-->
                 <module>visualisation</module>
                 <module>visualisation-dashboard</module>
+                <module>visualisation-dashboard-dist</module>
             </modules>
 
 
