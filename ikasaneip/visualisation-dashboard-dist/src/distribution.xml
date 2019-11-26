@@ -1,0 +1,52 @@
+<assembly>
+    <id>dist</id>
+
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>etc/</directory>
+            <includes>
+                <include>README.txt</include>
+                <include>LICENSE.txt</include>
+            </includes>
+            <fileMode>644</fileMode>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>bin/</directory>
+            <includes>
+                <include>ikasan.sh</include>
+            </includes>
+            <filtered>true</filtered>
+            <fileMode>755</fileMode>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources/</directory>
+            <includes>
+                <include>application.properties</include>
+            </includes>
+            <fileMode>644</fileMode>
+            <outputDirectory>config/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>target/solr-dist/</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <outputDirectory>solr/</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>
