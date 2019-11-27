@@ -35,4 +35,9 @@ public class ModuleRestClientAutoConfiguration
         return new ModuleControlRestServiceImpl(environment);
     }
 
+    @Bean
+    public TriggerRestServiceImpl triggerRestService(Environment environment){
+        return new TriggerRestServiceImpl(environment);
+    }
+
 }
