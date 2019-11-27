@@ -57,6 +57,19 @@
     <name>Ikasan Dashboard Distribution</name>
     <description>Packaged Ikasan Dashboard Distribution</description>
 
+    <!-- Required otherwise Maven enforcer will fail due to Dependency convergence errors for com.vaadin & org.webjars.bowergithub.vaadin -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${version.vaadin}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -74,15 +87,6 @@
 
     <build>
         <plugins>
-            <plugin><!-- TODO -->
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
