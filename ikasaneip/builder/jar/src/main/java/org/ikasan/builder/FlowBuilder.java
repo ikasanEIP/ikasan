@@ -1180,68 +1180,68 @@ public class FlowBuilder implements ApplicationContextAware
             return this.broker(name, broker, brokerInvokerConfigurationBuilder.build());
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter)
         {
             this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationOtherwiseImpl(route);
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, InvokerConfiguration invokerConfiguration)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, InvokerConfiguration invokerConfiguration)
         {
             SingleRecipientRouterFlowElementInvoker singleRecipientRouterFlowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
             singleRecipientRouterFlowElementInvoker.setConfiguration(invokerConfiguration);
             this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, singleRecipientRouterFlowElementInvoker));
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationOtherwiseImpl(route);
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
         {
             return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build());
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, InvokerConfiguration invokerConfiguration)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, InvokerConfiguration invokerConfiguration)
         {
             return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build(), invokerConfiguration);
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, VanillaInvokerConfigurationBuilder invokerConfigurationBuilder)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, VanillaInvokerConfigurationBuilder invokerConfigurationBuilder)
         {
             return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build(), invokerConfigurationBuilder.build());
         }
 
-        public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, VanillaInvokerConfigurationBuilder invokerConfigurationBuilder)
+        public EvaluationOtherwise<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, VanillaInvokerConfigurationBuilder invokerConfigurationBuilder)
         {
             return this.singleRecipientRouter(name, singleRecipientRouter, invokerConfigurationBuilder.build());
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
             this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationWhenImpl(route);
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder) {
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder) {
             return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build());
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
         {
             MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker =
                     new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
             this.route.addFlowElement( new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker) );
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationWhenImpl(route);
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
         {
             return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfiguration);
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
         {
             return this.multiRecipientRouter(name, multiRecipientRouter, invokerConfigurationBuilder.build());
         }
 
-        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
+        public EvaluationWhen<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
         {
             return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfigurationBuilder.build());
         }
@@ -1288,11 +1288,11 @@ public class FlowBuilder implements ApplicationContextAware
         }
     }
 
-    public class PrimaryEvaluationImpl implements Evaluation<Flow>
+    public class PrimaryEvaluationWhenImpl implements EvaluationWhen<Flow>
     {
         Route route;
 
-        public PrimaryEvaluationImpl(Route route)
+        public PrimaryEvaluationWhenImpl(Route route)
         {
             this.route = route;
             if(route == null)
@@ -1301,22 +1301,60 @@ public class FlowBuilder implements ApplicationContextAware
             }
         }
 
-        public Evaluation<Flow> when(String name, Route evaluatedRoute)
+        public EvaluationWhen<Flow> when(String name, Route evaluatedRoute)
         {
             // create shallow copy of Route before adding When joining
             Route shallowCopy = new RouteImpl(evaluatedRoute);
             shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
             this.route.addNestedRoute(shallowCopy);
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationWhenImpl(route);
         }
 
-        public Evaluation<Flow> otherwise(Route evaluatedRoute)
+        public EvaluationWhen<Flow> otherwise(Route evaluatedRoute)
         {
             // create shallow copy of Route before adding Otherwise joining
             Route shallowCopy = new RouteImpl(evaluatedRoute);
             shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
             this.route.addNestedRoute(shallowCopy);
-            return new PrimaryEvaluationImpl(route);
+            return new PrimaryEvaluationWhenImpl(route);
+        }
+
+        public Flow build()
+        {
+            return _build(route);
+        }
+
+    }
+
+    public class PrimaryEvaluationOtherwiseImpl implements EvaluationOtherwise<Flow>
+    {
+        Route route;
+
+        public PrimaryEvaluationOtherwiseImpl(Route route)
+        {
+            this.route = route;
+            if(route == null)
+            {
+                throw new IllegalArgumentException("route cannot be 'null'");
+            }
+        }
+
+        public EvaluationOtherwise<Flow> when(String name, Route evaluatedRoute)
+        {
+            // create shallow copy of Route before adding When joining
+            Route shallowCopy = new RouteImpl(evaluatedRoute);
+            shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
+            this.route.addNestedRoute(shallowCopy);
+            return new PrimaryEvaluationOtherwiseImpl(route);
+        }
+
+        public EvaluationOtherwise<Flow> otherwise(Route evaluatedRoute)
+        {
+            // create shallow copy of Route before adding Otherwise joining
+            Route shallowCopy = new RouteImpl(evaluatedRoute);
+            shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
+            this.route.addNestedRoute(shallowCopy);
+            return new PrimaryEvaluationOtherwiseImpl(route);
         }
 
         public Flow build()
