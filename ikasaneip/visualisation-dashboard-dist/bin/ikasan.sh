@@ -11,7 +11,7 @@ MODULE_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dorg.apach
 MODULE_OTHER_OPTS=""
 MODULE_JAVA_OPTS="$MODULE_JVM_OPTS  $MODULE_OTHER_OPTS"
 
-APPLICATION_JAR=$MODULE_NAME-${project.version}.jar
+APPLICATION_JAR=${MODULE_NAME}*.jar
 
 # H2 Persistence settings
 H2_VERSION=${version.com.h2database}

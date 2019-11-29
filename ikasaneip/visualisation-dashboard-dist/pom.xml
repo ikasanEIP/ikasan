@@ -75,13 +75,11 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-dashboard</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${version.com.h2database}</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 
