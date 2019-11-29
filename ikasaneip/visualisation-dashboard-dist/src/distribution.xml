@@ -44,8 +44,11 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>lib/</outputDirectory>
+            <includes>
+                <include>org.ikasan:ikasan-dashboard</include>
+                <include>com.h2database:h2</include>
+            </includes>
             <useProjectArtifact>false</useProjectArtifact>
-            <unpack>false</unpack>
         </dependencySet>
     </dependencySets>
 
