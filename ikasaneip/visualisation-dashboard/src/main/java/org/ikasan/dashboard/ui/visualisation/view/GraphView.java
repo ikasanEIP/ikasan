@@ -53,6 +53,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -116,6 +117,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     @Autowired
     private ConfigurationRestServiceImpl configurationRestService;
+
+    @Autowired
+    private TriggerRestServiceImpl triggerRestService;
 
     @Resource
     private ConfigurationMetaDataService configurationMetadataService;
@@ -355,7 +359,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             hl.setVisible(false);
         }
 
-        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService, this.configurationRestService);
+        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
+            this.configurationRestService,
+            this.triggerRestService);
 
         this.add(hl);
         this.add(moduleVisualisation);
@@ -460,7 +466,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         this.fireModuleFlowChangeEvent();
 
-        this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService, this.configurationRestService);
+        this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
+            this.configurationRestService,
+            this.triggerRestService);
         moduleVisualisation.addModule(module);
         moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
         moduleVisualisation.redraw();

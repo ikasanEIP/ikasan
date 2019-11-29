@@ -20,6 +20,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.MessageChannel;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -51,12 +52,15 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
     private ModuleControlRestServiceImpl moduleControlRestService;
     private ConfigurationRestServiceImpl configurationRestService;
+    private TriggerRestServiceImpl triggerRestService;
 
     public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService)
+        , ConfigurationRestServiceImpl configurationRestService
+        ,TriggerRestServiceImpl triggerRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
+        this.triggerRestService = triggerRestService;
         this.setSizeFull();
         this.flowMap = new HashMap<>();
     }
@@ -174,7 +178,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
             {
                 ComponentOptionsDialog componentNodeActionDialog = new ComponentOptionsDialog(this.module,
                     this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
-                    this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService);
+                    this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService,
+                    this.triggerRestService);
 
                 componentNodeActionDialog.open();
             }
