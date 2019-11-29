@@ -50,7 +50,7 @@ import org.ikasan.flow.visitorPattern.FlowElementImpl;
  * @author Ikasan Development Team
  *
  */
-public class EvaluationImpl implements Evaluation<Route>
+public class EvaluationOtherwiseImpl implements EvaluationOtherwise<Route>
 {
 	Route route;
 
@@ -58,7 +58,7 @@ public class EvaluationImpl implements Evaluation<Route>
      * Constructor
      * @param route
      */
-	public EvaluationImpl(Route route)
+	public EvaluationOtherwiseImpl(Route route)
 	{
 		this.route = route;
 		if(route == null)
@@ -67,22 +67,22 @@ public class EvaluationImpl implements Evaluation<Route>
 		}
 	}
 
-	public Evaluation when(String name, Route evaluatedRoute)
+	public EvaluationOtherwise when(String name, Route evaluatedRoute)
 	{
         // create shallow copy of Route before adding When joining
         Route shallowCopy = new RouteImpl(evaluatedRoute);
         shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
         this.route.addNestedRoute(shallowCopy);
-		return new EvaluationImpl(route);
+		return new EvaluationOtherwiseImpl(route);
 	}
 
-	public Evaluation<Route> otherwise(Route evaluatedRoute)
+	public EvaluationOtherwise<Route> otherwise(Route evaluatedRoute)
 	{
 		// create shallow copy of Route before adding Otherwise joining
         Route shallowCopy = new RouteImpl(evaluatedRoute);
         shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
         this.route.addNestedRoute(shallowCopy);
-		return new EvaluationImpl(route);
+		return new EvaluationOtherwiseImpl(route);
 	}
 
     /**

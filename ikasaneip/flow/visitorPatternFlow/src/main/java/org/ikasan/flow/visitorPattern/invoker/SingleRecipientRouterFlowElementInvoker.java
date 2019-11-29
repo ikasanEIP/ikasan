@@ -91,19 +91,31 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
             unsetInvocationOnComponent(flowElementInvocation, router);
             endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        if (targetName == null)
-        {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
-                    + "All Routers must result in at least one transition.");
-        }
 
         notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEvent, flowElement);
-        final FlowElement nextFlowElement = flowElement.getTransition(targetName);
+
+        FlowElement nextFlowElement;
+        if (targetName == null)
+        {
+            // if no target name returned then try default transition
+            nextFlowElement = flowElement.getTransition(SingleRecipientRouter.DEFAULT_RESULT);
+        }
+        else
+        {
+            nextFlowElement = flowElement.getTransition(targetName);
+            if(nextFlowElement == null)
+            {
+                // if no target name matched then try default transition
+                nextFlowElement = flowElement.getTransition(SingleRecipientRouter.DEFAULT_RESULT);
+            }
+        }
+
+        // no transition available then throw exception
         if (nextFlowElement == null)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                    + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
-                    + "All Router targets must be mapped to transitions in their enclosing FlowElement");
+                    + "] contains a Router, but it does not have a named or default transition for that Router's target[" + targetName + "] "
+                    + "All Router targets must have transitions in their enclosing FlowElement");
         }
 
         return nextFlowElement;

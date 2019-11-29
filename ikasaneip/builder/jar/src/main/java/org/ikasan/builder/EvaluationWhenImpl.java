@@ -40,25 +40,48 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.conditional.When;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+
 /**
- * A simple Evaluation contract providing the interaction for the builder pattern.
- * 
+ * Implementation of the Evaluation contract for a Route being built through the builder pattern.
+ *
  * @author Ikasan Development Team
+ *
  */
-public interface Evaluation<T> extends Endpoint<T>
+public class EvaluationWhenImpl implements EvaluationWhen<Route>
 {
-    /**
-     * Evaluate a when clause
-     * @param name
-     * @param route
-     * @return
-     */
-    public Evaluation<T> when(String name, Route route);
+	Route route;
 
     /**
-     * Evaluate an otherwise clause
+     * Constructor
      * @param route
+     */
+	public EvaluationWhenImpl(Route route)
+	{
+		this.route = route;
+		if(route == null)
+		{
+			throw new IllegalArgumentException("route cannot be 'null'");
+		}
+	}
+
+	public EvaluationWhen when(String name, Route evaluatedRoute)
+	{
+        // create shallow copy of Route before adding When joining
+        Route shallowCopy = new RouteImpl(evaluatedRoute);
+        shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new When(name), null));
+        this.route.addNestedRoute(shallowCopy);
+		return new EvaluationWhenImpl(route);
+	}
+
+    /**
+     * Return the route thats been built using the builder pattern
      * @return
      */
-    public Evaluation<T> otherwise(Route route);
+	public Route build()
+	{
+		return route;
+	}
+
 }

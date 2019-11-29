@@ -277,69 +277,69 @@ public class RouteBuilder
 		return this.broker(name, broker, brokerInvokerConfigurationBuilder.build());
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
-		return new EvaluationImpl(route);
+		return new EvaluationOtherwiseImpl(route);
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, InvokerConfiguration singleRecipientRouterInvokerConfiguration)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, InvokerConfiguration singleRecipientRouterInvokerConfiguration)
 	{
 		SingleRecipientRouterFlowElementInvoker singleRecipientRouterFlowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
 		singleRecipientRouterFlowElementInvoker.setConfiguration(singleRecipientRouterInvokerConfiguration);
 		this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, singleRecipientRouterFlowElementInvoker));
-		return new EvaluationImpl(route);
+		return new EvaluationOtherwiseImpl(route);
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
 	{
 		return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build());
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, InvokerConfiguration singleRecipientRouterInvokerConfiguration)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, InvokerConfiguration singleRecipientRouterInvokerConfiguration)
 	{
 		return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build(), singleRecipientRouterInvokerConfiguration);
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, VanillaInvokerConfigurationBuilder singleRecipientRouterInvokerConfigurationBuilder)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter, VanillaInvokerConfigurationBuilder singleRecipientRouterInvokerConfigurationBuilder)
 	{
 		return this.singleRecipientRouter(name, singleRecipientRouter, singleRecipientRouterInvokerConfigurationBuilder.build());
 	}
 
-	public Evaluation<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, VanillaInvokerConfigurationBuilder singleRecipientRouterInvokerConfigurationBuilder)
+	public EvaluationOtherwise<Route> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder, VanillaInvokerConfigurationBuilder singleRecipientRouterInvokerConfigurationBuilder)
 	{
 		return this.singleRecipientRouter(name, singleRecipientRouterBuilder.build(), singleRecipientRouterInvokerConfigurationBuilder.build());
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterInvokerConfiguration())));
-		return new EvaluationImpl(route);
+		return new EvaluationWhenImpl(route);
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder)
 	{
 		return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build());
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
 	{
 		MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
 		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker));
-		return new EvaluationImpl(route);
+		return new EvaluationWhenImpl(route);
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
 	{
 		return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfiguration);
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
 	{
 		return this.multiRecipientRouter(name, multiRecipientRouterBuilder.build(), invokerConfigurationBuilder.build());
 	}
 
-	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
+	public EvaluationWhen<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfigurationBuilder invokerConfigurationBuilder)
 	{
 		return this.multiRecipientRouter(name, multiRecipientRouter, invokerConfigurationBuilder.build());
 	}

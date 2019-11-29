@@ -1,6 +1,6 @@
 /* 
- * $Id: Router.java 3464 2011-01-27 16:05:49Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/spec/component/routing/src/main/java/org/ikasan/spec/component/routing/Router.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,25 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.component.routing;
-
-import java.util.List;
+package org.ikasan.builder;
 
 /**
- * Contract for a Routing operation.
+ * A simple Evaluation contract providing the interaction for the builder pattern.
  * 
  * @author Ikasan Development Team
- * @param <T> message to route
  */
-public interface MultiRecipientRouter<T>
+public interface EvaluationOtherwise<T> extends Endpoint<T>
 {
     /**
-     * Handles the <code>messageToRoute<code> in a read-only fashion, returning an ordered List of
-     * paths/routes for this <code>messageToRoute</code> to take next.
-     *
-     * @param messageToRoute Event to handle
-     * @return List<String> of paths/routes for this <code>Event</code> to take next
-     * @throws org.ikasan.spec.component.routing.RouterException - if the result cannot be calculated for any reason
+     * Evaluate a when clause
+     * @param name
+     * @param route
+     * @return
      */
-    List<String> route(final T messageToRoute) throws RouterException;
+    EvaluationOtherwise<T> when(String name, Route route);
+
+    /**
+     * Evaluate an otherwise clause
+     * @param route
+     * @return
+     */
+    EvaluationOtherwise<T> otherwise(Route route);
 }
