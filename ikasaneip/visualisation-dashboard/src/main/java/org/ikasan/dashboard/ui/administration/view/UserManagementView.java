@@ -1,16 +1,10 @@
 package org.ikasan.dashboard.ui.administration.view;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -19,7 +13,6 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
 import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.util.DateFormatter;
@@ -80,40 +73,8 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 userDirectoriesLabel = new H2(getTranslation("label.user-management", UI.getCurrent().getLocale(), null));
-
-        HorizontalLayout labelLayout = new HorizontalLayout();
-        labelLayout.setJustifyContentMode(JustifyContentMode.START);
-        labelLayout.setVerticalComponentAlignment(Alignment.CENTER, userDirectoriesLabel);
-        labelLayout.setWidth("100%");
-        labelLayout.add(userDirectoriesLabel);
-
-        Button addNewUserButton = new Button(VaadinIcon.PLUS.create());
-        addNewUserButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-//            NewRoleDialog newRoleDialog = new NewRoleDialog(this.securityService, this.systemEventLogger);
-//            newRoleDialog.open();
-//
-//            newRoleDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-//            {
-//                if(dialogOpenedChangeEvent.isOpened() == false)
-//                {
-//                    this.updateRoles();
-//                }
-//            });
-        });
-
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
-        buttonLayout.setMargin(true);
-        buttonLayout.setVerticalComponentAlignment(Alignment.CENTER, addNewUserButton);
-        buttonLayout.setWidth("100%");
-        buttonLayout.add(addNewUserButton);
-
-        HorizontalLayout wrapperLayout = new HorizontalLayout();
-        wrapperLayout.setWidth("100%");
-
-        wrapperLayout.add(labelLayout, buttonLayout);
-        add(wrapperLayout);
+        H2 userDirectories = new H2(getTranslation("label.user-management", UI.getCurrent().getLocale(), null));
+        add(userDirectories);
 
         this.userGrid = new FilteringGrid<>(userFilter);
         this.userGrid.setSizeFull();
