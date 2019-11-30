@@ -10,6 +10,8 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
@@ -47,13 +49,23 @@ public class FlowOptionsDialog extends Dialog
 
         Button invokerConfigurationButton = new Button(getTranslation("button.flow-configuration", UI.getCurrent().getLocale()));
         invokerConfigurationButton.setWidthFull();
-        invokerConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-        {
-            this.close();
-        });
+        invokerConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>)
+            buttonClickEvent -> openFlowConfigurationDialog());
+
+        ComponentSecurityVisibility.applySecurity(invokerConfigurationButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.PLATORM_CONFIGURATON_ADMIN
+            , SecurityConstants.PLATORM_CONFIGURATON_READ
+            , SecurityConstants.PLATORM_CONFIGURATON_WRITE);
 
         verticalLayout.add(invokerConfigurationButton);
 
         this.add(verticalLayout);
+    }
+
+    private void openFlowConfigurationDialog()
+    {
+        FlowConfigurationDialog flowConfigurationDialog = new FlowConfigurationDialog(module, flow.getName(), configurationRestService);
+        flowConfigurationDialog.open();
+        this.close();
     }
 }

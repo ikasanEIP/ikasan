@@ -11,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
@@ -66,32 +68,29 @@ public class ComponentOptionsDialog extends Dialog
             Button componentConfigurationButton = new Button(
                 getTranslation("button.component-configuration", UI.getCurrent().getLocale()));
             componentConfigurationButton.setWidthFull();
-            componentConfigurationButton
-                .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-                    ComponentConfigurationDialog componentConfigurationDialog = new ComponentConfigurationDialog(module,
-                        flowName, componentName, configurationRestService
-                    );
-
-                    this.close();
-                    componentConfigurationDialog.open();
-                });
+            componentConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>)
+                buttonClickEvent -> openComponentConfiguration());
 
             verticalLayout.add(componentConfigurationButton);
+
+            ComponentSecurityVisibility.applySecurity(componentConfigurationButton, SecurityConstants.ALL_AUTHORITY
+                , SecurityConstants.PLATORM_CONFIGURATON_ADMIN
+                , SecurityConstants.PLATORM_CONFIGURATON_READ
+                , SecurityConstants.PLATORM_CONFIGURATON_WRITE);
         }
 
         Button invokerConfigurationButton = new Button(
             getTranslation("button.invoker-configuration", UI.getCurrent().getLocale()));
         invokerConfigurationButton.setWidthFull();
-        invokerConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-            InvokerConfigurationDialog componentConfigurationDialog = new InvokerConfigurationDialog(module, flowName,
-                componentName, configurationRestService
-            );
-
-            this.close();
-            componentConfigurationDialog.open();
-        });
+        invokerConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>)
+            buttonClickEvent -> openInvokerConfiguration());
 
         verticalLayout.add(invokerConfigurationButton);
+
+        ComponentSecurityVisibility.applySecurity(invokerConfigurationButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.PLATORM_CONFIGURATON_ADMIN
+            , SecurityConstants.PLATORM_CONFIGURATON_READ
+            , SecurityConstants.PLATORM_CONFIGURATON_WRITE);
 
         Button createWiretapBeforeComponentWithTTLOneDayButton = new Button(
             getTranslation("button.wiretap-before-component-oneday", UI.getCurrent().getLocale()));
@@ -100,12 +99,20 @@ public class ComponentOptionsDialog extends Dialog
             (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay("before"));
         verticalLayout.add(createWiretapBeforeComponentWithTTLOneDayButton);
 
+        ComponentSecurityVisibility.applySecurity(createWiretapBeforeComponentWithTTLOneDayButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.WIRETAP_ADMIN
+            , SecurityConstants.WIRETAP_ADMIN);
+
         Button createWiretapAfterComponentWithTTLOneDayButton = new Button(
             getTranslation("button.wiretap-after-component-oneday", UI.getCurrent().getLocale()));
         createWiretapAfterComponentWithTTLOneDayButton.setWidthFull();
         createWiretapAfterComponentWithTTLOneDayButton.addClickListener(
             (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay("after"));
         verticalLayout.add(createWiretapAfterComponentWithTTLOneDayButton);
+
+        ComponentSecurityVisibility.applySecurity(createWiretapAfterComponentWithTTLOneDayButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.WIRETAP_ADMIN
+            , SecurityConstants.WIRETAP_WRITE);
 
         Button createLogBeforeComponentButton = new Button(
             getTranslation("button.log-before-component", UI.getCurrent().getLocale()));
@@ -114,6 +121,10 @@ public class ComponentOptionsDialog extends Dialog
             .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog("before"));
         verticalLayout.add(createLogBeforeComponentButton);
 
+        ComponentSecurityVisibility.applySecurity(createLogBeforeComponentButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.WIRETAP_ADMIN
+            , SecurityConstants.WIRETAP_WRITE);
+
         Button createLogAfterComponentButton = new Button(
             getTranslation("button.log-after-component", UI.getCurrent().getLocale()));
         createLogAfterComponentButton.setWidthFull();
@@ -121,7 +132,31 @@ public class ComponentOptionsDialog extends Dialog
             .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog("after"));
         verticalLayout.add(createLogAfterComponentButton);
 
+        ComponentSecurityVisibility.applySecurity(createLogAfterComponentButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.WIRETAP_ADMIN
+            , SecurityConstants.WIRETAP_WRITE);
+
         this.add(verticalLayout);
+    }
+
+    private void openComponentConfiguration()
+    {
+        ComponentConfigurationDialog componentConfigurationDialog = new ComponentConfigurationDialog(module,
+            flowName, componentName, configurationRestService
+        );
+
+        this.close();
+        componentConfigurationDialog.open();
+    }
+
+    private void openInvokerConfiguration()
+    {
+        InvokerConfigurationDialog componentConfigurationDialog = new InvokerConfigurationDialog(module, flowName,
+            componentName, configurationRestService
+        );
+
+        this.close();
+        componentConfigurationDialog.open();
     }
 
     private void createWiretapWithTTLOneDay(String relationship)
@@ -133,7 +168,6 @@ public class ComponentOptionsDialog extends Dialog
     {
         createTrigger(relationship,"loggingJob",null);
     }
-
 
     private void createTrigger(String relationship, String job, String ttl)
     {
@@ -151,6 +185,7 @@ public class ComponentOptionsDialog extends Dialog
             NotificationHelper.showErrorNotification(
                 getTranslation("message.wiretap-save-unsuccessful", UI.getCurrent().getLocale()));
         }
+
         this.close();
     }
 }

@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 public class ConfigurationRestServiceImplTest
 {
     public static final String CONFIGURATION_METADATA_JSON = "/data/configuration.json";
+    public static final String FLOW_CONFIGURATION_METADATA_JSON = "/data/flow-configuration.json";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
@@ -169,14 +170,11 @@ public class ConfigurationRestServiceImplTest
         stubFor(get(urlEqualTo("/rest/configuration/test%20Module/testFlow/flow"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).willReturn(
-                aResponse().withBody(loadDataFile(CONFIGURATION_METADATA_JSON))
+                aResponse().withBody(loadDataFile(FLOW_CONFIGURATION_METADATA_JSON))
                            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                            .withStatus(200)));
-        List<ConfigurationMetaData> result = uut.getFlowConfigurations(contexBaseUrl,"test Module","testFlow");
-        assertEquals(2, result.size());
-        assertEquals("consumerConfiguredResourceId", result.get(0).getConfigurationId());
-        assertEquals("producerConfiguredResourceId", result.get(1).getConfigurationId());
-
+        ConfigurationMetaData result = uut.getFlowConfiguration(contexBaseUrl,"test Module","testFlow");
+        assertEquals("messaging-module-JMS to JMS Flow", result.getConfigurationId());
     }
 
     @Test

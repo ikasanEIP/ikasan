@@ -18,6 +18,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
@@ -67,7 +68,11 @@ public abstract class AbstractConfigurationDialog extends Dialog
         Image configurationImage = new Image("/frontend/images/configuration-service.png", "");
         configurationImage.setHeight("70px");
 
-        this.loadConfigurationMetaData();
+        if(!this.loadConfigurationMetaData())
+        {
+            NotificationHelper.showErrorNotification(getTranslation("error.could-not-open-configuration", UI.getCurrent().getLocale()));
+            return;
+        }
 
         H3 configurationLabel = new H3(String.format(getTranslation("label.configuration-management", UI.getCurrent().getLocale())
             , this.configurationMetaData.getConfigurationId()));
@@ -147,11 +152,29 @@ public abstract class AbstractConfigurationDialog extends Dialog
         Button deleteButton = new Button(getTranslation("button.delete", UI.getCurrent().getLocale()));
         deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            // todo need to implement delete.
+            try
+            {
+                this.configurationRestService.delete(module.getUrl(), this.configurationMetaData.getConfigurationId());
+                NotificationHelper.showUserNotification(getTranslation("message.successfully-deleted-configuration", UI.getCurrent().getLocale()));
+                this.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                NotificationHelper.showUserNotification(getTranslation("error.could-not-delete-configuration", UI.getCurrent().getLocale()));
+            }
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(saveButton, deleteButton);
+
+        ComponentSecurityVisibility.applySecurity(saveButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.PLATORM_CONFIGURATON_ADMIN
+            , SecurityConstants.PLATORM_CONFIGURATON_WRITE);
+
+        ComponentSecurityVisibility.applySecurity(deleteButton, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.PLATORM_CONFIGURATON_ADMIN
+            , SecurityConstants.PLATORM_CONFIGURATON_WRITE);
 
         layout.add(buttonLayout);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
@@ -270,7 +293,12 @@ public abstract class AbstractConfigurationDialog extends Dialog
         }
     }
 
-    protected abstract void loadConfigurationMetaData();
+    /**
+     * Abstract method responsible for loading the configuration metadata.
+     *
+     * @return
+     */
+    protected abstract boolean loadConfigurationMetaData();
 
     private Component manageBooleanConfiguration(ConfigurationParameterMetaData configurationParameterMetaData)
     {
@@ -578,7 +606,10 @@ public abstract class AbstractConfigurationDialog extends Dialog
     @Override
     protected void onAttach(AttachEvent attachEvent)
     {
-        this.downloadButtonTooltip.attachToComponent(downloadButton);
+        if (downloadButton != null)
+        {
+            this.downloadButtonTooltip.attachToComponent(downloadButton);
+        }
     }
 
     private class TextFieldNVP
