@@ -75,11 +75,10 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
-    public List<ConfigurationMetaData> getFlowConfigurations(String contextUrl, String moduleName, String flowName)
+    public ConfigurationMetaData getFlowConfiguration(String contextUrl, String moduleName, String flowName)
     {
-
         String url = contextUrl + FLOW_CONFIGURATION_URL;
-        return getConfigurations(url,moduleName,flowName);
+        return getConfiguration(url, moduleName, flowName);
     }
 
     public ConfigurationMetaData getConfiguredResourceConfiguration(String contextUrl, String moduleName, String flowName, String componentName)
@@ -165,6 +164,28 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         {
             Map<String, String> parameters = new HashMap<String, String>()
             {{put("moduleName", moduleName);put("flowName", flowName);put("componentName", componentName);}};
+
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, parameters);
+
+            ConfigurationMetaData data = configurationMetaDataProvider.deserialiseMetadataConfiguration(response.getBody());
+            return data;
+        }
+        catch (RestClientException e)
+        {
+            logger.warn("Issue getting configuration for url [" + url + "]  with response [{" + e
+                .getLocalizedMessage() + "}]");
+            return null;
+        }
+    }
+
+    private ConfigurationMetaData getConfiguration(String url,String moduleName, String flowName)
+    {
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+        try
+        {
+            Map<String, String> parameters = new HashMap<String, String>()
+            {{put("moduleName", moduleName);put("flowName", flowName);}};
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, parameters);
 

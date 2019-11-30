@@ -11,19 +11,20 @@ public class FlowConfigurationDialog extends AbstractConfigurationDialog
      *
      * @param module
      * @param flowName
-     * @param componentName
      * @param configurationRestService
      */
-    public FlowConfigurationDialog(Module module, String flowName, String componentName
+    public FlowConfigurationDialog(Module module, String flowName
         , ConfigurationRestServiceImpl configurationRestService)
     {
-        super(module, flowName, componentName, configurationRestService);
+        super(module, flowName, null, configurationRestService);
     }
 
     @Override
-    protected void loadConfigurationMetaData()
+    protected boolean loadConfigurationMetaData()
     {
         this.configurationMetaData = this.configurationRestService
-            .getComponentInvoker(module.getUrl(), module.getName(), flowName, componentName);
+            .getFlowConfiguration(module.getUrl(), module.getName(), flowName);
+
+        return this.configurationMetaData != null;
     }
 }
