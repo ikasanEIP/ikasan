@@ -64,35 +64,35 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
         runningButton = this.createStatusButton();
         runningButton.setText("0");
-        runningButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(runningButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
+        runningButtonTooltip = TooltipHelper.getTooltipForComponentBottom(runningButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout runningButtonLayout = this.createStatusButtonLayout(runningButton, runningLabel);
         runningButtonLayout.add(runningButtonTooltip);
 
         stoppedButton = this.createStatusButton();
         stoppedButton.setText("0");
-        stoppedButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stoppedButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
+        stoppedButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stoppedButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout stoppedButtonLayout = this.createStatusButtonLayout(stoppedButton, stoppedLabel);
         stoppedButtonLayout.add(stoppedButtonTooltip);
 
         stoppedInErrorButton = this.createStatusButton();
         stoppedInErrorButton.setText("0");
-        stoppedInErrorButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stoppedInErrorButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
+        stoppedInErrorButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stoppedInErrorButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout stoppedInErrorButtonLayout = this.createStatusButtonLayout(stoppedInErrorButton, stoppedInErrorLabel);
         stoppedInErrorButtonLayout.add(stoppedInErrorButtonTooltip);
 
         recoveringButton = this.createStatusButton();
         recoveringButton.setText("0");
-        recoveringButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(recoveringButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
+        recoveringButtonTooltip = TooltipHelper.getTooltipForComponentBottom(recoveringButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout recoveringButtonLayout = this.createStatusButtonLayout(recoveringButton, recoveringLabel);
         recoveringButtonLayout.add(recoveringButtonTooltip);
 
         pauseButton = this.createStatusButton();
         pauseButton.setText("0");
-        pauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(pauseButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
+        pauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(pauseButton, getTranslation("status.click-for-module-status", UI.getCurrent().getLocale()));
 
         VerticalLayout pauseButtonLayout = this.createStatusButtonLayout(pauseButton, pausedLabel);
         pauseButtonLayout.add(pauseButtonTooltip);

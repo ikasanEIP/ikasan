@@ -89,6 +89,11 @@ public class User implements UserDetails, Principal
 	 */
 	private long previousAccessTimestamp;
 
+	/**
+     * Boolean flag to force user to change password in next login.
+	 */
+	private boolean requiresPasswordChange;
+
     /**
      * Constructor
      * 
@@ -109,7 +114,7 @@ public class User implements UserDetails, Principal
      * Default constructor required by ORM
      */
     @SuppressWarnings("unused")
-    private User()
+    public User()
     {
         // Do Nothing - Default constructor required by ORM
     }
@@ -409,7 +414,17 @@ public class User implements UserDetails, Principal
 		this.previousAccessTimestamp = previousAccessTimestamp;
 	}
 
-	/* (non-Javadoc)
+    public boolean isRequiresPasswordChange()
+    {
+        return requiresPasswordChange;
+    }
+
+    public void setRequiresPasswordChange(boolean requiresPasswordChange)
+    {
+        this.requiresPasswordChange = requiresPasswordChange;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

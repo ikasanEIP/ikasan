@@ -69,7 +69,15 @@ public class SelectRoleDialog extends Dialog
 
             this.securityService.savePrincipal(principal);
 
-            String action = String.format("Role [%s] added to group [%s].", roleItemDoubleClickEvent.getItem().getName(), principal.getName());
+            String action;
+            if(principal.getType().equals("user"))
+            {
+                action = String.format("Role [%s] added to user [%s].", roleItemDoubleClickEvent.getItem().getName(), principal.getName());
+            }
+            else
+            {
+                action = String.format("Role [%s] added to group [%s].", roleItemDoubleClickEvent.getItem().getName(), principal.getName());
+            }
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, principal.getName());
 

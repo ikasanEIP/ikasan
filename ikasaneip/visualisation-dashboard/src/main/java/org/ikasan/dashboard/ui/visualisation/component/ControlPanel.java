@@ -90,16 +90,16 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         selectAllImageOff.setHeight("40px");
 
         startButton = createButton(playImage, START, true);
-        startButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
+        startButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
 
         stopButton = createButton(stopImage, STOP, true);
-        stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+        stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
 
         pauseButton = createButton(pauseImage, PAUSE, true);
-        pauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(pauseButton, getTranslation("tooltip.pause-flow", UI.getCurrent().getLocale()));
+        pauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(pauseButton, getTranslation("tooltip.pause-flow", UI.getCurrent().getLocale()));
 
         startPauseButton = createButton(startPauseImage, START_PAUSE, true);
-        startPauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
+        startPauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
 
 
         all = createButton(selectAllImageOff, SELECT, true);
@@ -121,46 +121,46 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         {
             startButton = createButton(playImageDisabled, START, false);
             stopButton = createButton(stopImage, STOP, true);
-            stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+            stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
             pauseButton = createButton(pauseImage, PAUSE, true);
-            pauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(pauseButton, getTranslation("tooltip.pause-flow", UI.getCurrent().getLocale()));
+            pauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(pauseButton, getTranslation("tooltip.pause-flow", UI.getCurrent().getLocale()));
             startPauseButton = createButton(startPauseImageDisabled, START_PAUSE, false);
         }
         else if(state.equals(State.STOPPED_STATE))
         {
             startButton = createButton(playImage, START, true);
-            startButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
+            startButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
             stopButton = createButton(stopImageDisabled, STOP, false);
             pauseButton = createButton(pauseImageDisabled, PAUSE, false);
             startPauseButton = createButton(startPauseImage, START_PAUSE, true);
-            startPauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
+            startPauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
         }
         else if(state.equals(State.STOPPED_IN_ERROR_STATE))
         {
             startButton = createButton(playImage, START, true);
-            startButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
+            startButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
             stopButton = createButton(stopImageDisabled, STOP, false);
-            stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+            stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
             pauseButton = createButton(pauseImageDisabled, PAUSE, false);
             startPauseButton = createButton(startPauseImage, START_PAUSE, true);
-            startPauseButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
+            startPauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
         }
         else if(state.equals(State.PAUSED_STATE))
         {
             startButton = createButton(playImage, START, true);
-            startButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
+            startButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
 
             stopButton = createButton(stopImage, STOP, true);
-            stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+            stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
             pauseButton = createButton(pauseImageDisabled, PAUSE, false);
             startPauseButton = createButton(startPauseImageDisabled, START_PAUSE, false);
         }
         else if(state.equals(State.START_PAUSE_STATE))
         {
             startButton = createButton(playImage, START, true);
-            startButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
+            startButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startButton, getTranslation("tooltip.start-flow", UI.getCurrent().getLocale()));
             stopButton = createButton(stopImage, STOP, true);
-            stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+            stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
             pauseButton = createButton(pauseImageDisabled, PAUSE, false);
             startPauseButton = createButton(startPauseImageDisabled, START_PAUSE, false);
         }
@@ -168,7 +168,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         {
             startButton = createButton(playImageDisabled, START, false);
             stopButton = createButton(stopImage, STOP, true);
-            stopButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
+            stopButtonTooltip = TooltipHelper.getTooltipForComponentBottom(stopButton, getTranslation("tooltip.stop-flow", UI.getCurrent().getLocale()));
             pauseButton = createButton(pauseImageDisabled, PAUSE, false);
             startPauseButton = createButton(startPauseImageDisabled, START_PAUSE, false);
         }

@@ -54,4 +54,5 @@ public class SystemEventConstants
 	public static final String DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS = "Principal role change";
     public static final String DASHBOARD_ROLE_ADDED = "Role added";
     public static final String DASHBOARD_ROLE_DELETED = "Role added";
+    public static final String NEW_USER_CREATED = "New user created";
 }
