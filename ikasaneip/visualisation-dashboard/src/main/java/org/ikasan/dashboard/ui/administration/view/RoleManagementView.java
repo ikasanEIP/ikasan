@@ -98,6 +98,7 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
+        buttonLayout.setMargin(true);
         buttonLayout.setVerticalComponentAlignment(Alignment.CENTER, addRoleButton);
         buttonLayout.setWidth("100%");
         buttonLayout.add(addRoleButton);

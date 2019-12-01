@@ -47,7 +47,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Default implementation of the <code>UserService</code>
@@ -134,6 +137,7 @@ public class UserServiceImpl implements UserService
         String firstName = "";
         String surname = "";
         String department = "";
+        boolean requiredPasswordChange = false;
         
         if (userDetails instanceof User)
         {
@@ -142,6 +146,7 @@ public class UserServiceImpl implements UserService
             firstName = tempUser.getFirstName();
             surname = tempUser.getSurname();
             department = tempUser.getDepartment();
+            requiredPasswordChange = tempUser.isRequiresPasswordChange();
         }
         boolean enabled = userDetails.isEnabled();
         if (username == null || "".equals(username))
@@ -161,11 +166,20 @@ public class UserServiceImpl implements UserService
         {
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
+
+        IkasanPrincipal principal = new IkasanPrincipal();
+        principal.setName(username);
+        principal.setType("user");
+        principal.setDescription(username + " user principal.");
+        this.securityService.savePrincipal(principal);
+
         String encodedPassword = passwordEncoder.encode(password);
         User userToCreate = new User(username, encodedPassword, email, enabled);
         userToCreate.setFirstName(firstName);
         userToCreate.setSurname(surname);
         userToCreate.setDepartment(department);
+        userToCreate.addPrincipal(principal);
+        userToCreate.setRequiresPasswordChange(requiredPasswordChange);
         userDao.save(userToCreate);
     }
 

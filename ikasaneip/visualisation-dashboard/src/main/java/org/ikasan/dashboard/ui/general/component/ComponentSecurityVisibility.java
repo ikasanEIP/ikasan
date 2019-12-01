@@ -33,13 +33,16 @@ public class ComponentSecurityVisibility
 
     public static boolean hasAuthorisation(String ... securityConstants)
     {
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        for(String securityConstant: securityConstants)
+        if(SecurityContextHolder.getContext().getAuthentication() instanceof  IkasanAuthentication)
         {
-            if(authentication.hasGrantedAuthority(securityConstant))
+            IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
+            for (String securityConstant : securityConstants)
             {
-                return true;
+                if (authentication.hasGrantedAuthority(securityConstant))
+                {
+                    return true;
+                }
             }
         }
 

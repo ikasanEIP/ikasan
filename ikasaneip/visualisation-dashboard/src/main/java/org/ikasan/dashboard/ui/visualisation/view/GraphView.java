@@ -20,8 +20,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -41,7 +39,6 @@ import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.*;
@@ -54,7 +51,6 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
-import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -85,7 +81,6 @@ import org.vaadin.tabs.PagedTabs;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -523,7 +518,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 dialogOpenedChangeEvent -> populateBusinessStreamGrid());
         });
 
-        uploadBusinssStreamButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(uploadBusinssStreamButton, getTranslation("tooltip.upload-business-stream", UI.getCurrent().getLocale()));
+        uploadBusinssStreamButtonTooltip = TooltipHelper.getTooltipForComponentBottom(uploadBusinssStreamButton, getTranslation("tooltip.upload-business-stream", UI.getCurrent().getLocale()));
 
         businessStreamLayout.add(uploadBusinssStreamButtonTooltip, uploadBusinssStreamButton, this.businessStreamGrid);
         businessStreamLayout.setHorizontalComponentAlignment(Alignment.END, uploadBusinssStreamButton);

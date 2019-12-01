@@ -1,10 +1,18 @@
 package org.ikasan.dashboard.ui.administration.view;
 
+import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -13,7 +21,10 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
+import org.ikasan.dashboard.ui.administration.component.NewUserDialog;
 import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
+import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -59,6 +70,9 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
 
     private UserFilter userFilter = new UserFilter();
 
+    private Tooltip newUserTooltip;
+    private Button addNewUserButton;
+
     /**
      * Constructor
      */
@@ -73,8 +87,42 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         this.setSizeFull();
         this.setSpacing(true);
 
-        H2 userDirectories = new H2(getTranslation("label.user-management", UI.getCurrent().getLocale(), null));
-        add(userDirectories);
+        H2 userDirectoriesLabel = new H2(getTranslation("label.user-management", UI.getCurrent().getLocale(), null));
+
+        HorizontalLayout labelLayout = new HorizontalLayout();
+        labelLayout.setJustifyContentMode(JustifyContentMode.START);
+        labelLayout.setVerticalComponentAlignment(Alignment.CENTER, userDirectoriesLabel);
+        labelLayout.setWidth("100%");
+        labelLayout.add(userDirectoriesLabel);
+
+        this.addNewUserButton = new Button(VaadinIcon.PLUS.create());
+        this.addNewUserButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+            NewUserDialog newUserDialog = new NewUserDialog(this.userService,  this.systemEventLogger);
+            newUserDialog.open();
+            newUserDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updateUsers();
+                }
+            });
+        });
+
+        this.newUserTooltip = TooltipHelper.getTooltipForComponentBottom(this.addNewUserButton, getTranslation("tooltip.add-new-user"
+            , UI.getCurrent().getLocale()));
+
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
+        buttonLayout.setMargin(true);
+        buttonLayout.setVerticalComponentAlignment(Alignment.CENTER, this.addNewUserButton);
+        buttonLayout.setWidth("100%");
+        buttonLayout.add(this.addNewUserButton, newUserTooltip);
+
+        HorizontalLayout wrapperLayout = new HorizontalLayout();
+        wrapperLayout.setWidth("100%");
+
+        wrapperLayout.add(labelLayout, buttonLayout);
+        add(wrapperLayout);
 
         this.userGrid = new FilteringGrid<>(userFilter);
         this.userGrid.setSizeFull();
@@ -109,16 +157,22 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
         add(this.userGrid);
     }
 
-    @Override
-    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    private void updateUsers()
     {
-        if(users != null)
-        {
-            return;
-        }
-
         this.users = this.userService.getUsers();
 
         this.userGrid.setItems(users);
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    {
+        updateUsers();
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        this.newUserTooltip.attachToComponent(this.addNewUserButton);
     }
 }

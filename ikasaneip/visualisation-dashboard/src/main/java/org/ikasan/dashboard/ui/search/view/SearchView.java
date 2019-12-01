@@ -26,6 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.general.component.*;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.search.component.ChangePasswordDialog;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
 import org.ikasan.dashboard.ui.search.listener.IgnoreHospitalEventSubmissionListener;
@@ -39,6 +40,9 @@ import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -50,6 +54,7 @@ import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -93,6 +98,9 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
     @Resource
     private BatchInsert replayAuditService;
+
+    @Resource
+    private UserService userService;
 
     @Value("${render.search.images}")
     private boolean renderSearchImages;
@@ -308,10 +316,10 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         ignoreImage.setHeight("30px");
         ignoreButton = new Button(ignoreImage);
 
-        selectAllTooltip = TooltipHelper.getTooltipForComponentTopRight(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
-        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
-        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
-        replayButtonTooltip = TooltipHelper.getTooltipForComponentTopRight(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
+        selectAllTooltip = TooltipHelper.getTooltipForComponentBottom(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
+        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentBottom(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
+        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentBottom(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
+        replayButtonTooltip = TooltipHelper.getTooltipForComponentBottom(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
 
@@ -550,11 +558,22 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
                 types.add(SolrReplayDao.REPLAY);
             }
 
-            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_WRITE, SecurityConstants.SEARCH_ADMIN, SecurityConstants.ALL_AUTHORITY))
+            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_WRITE, SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.ALL_AUTHORITY))
             {
-                types.add(SolrExclusionEventDao.EXCLUSION);
-                types.add(SolrWiretapDao.WIRETAP);
-                types.add(SolrErrorReportingServiceDao.ERROR);
+                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_READ, SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.ALL_AUTHORITY))
+                {
+                    types.add(SolrWiretapDao.WIRETAP);
+                }
+
+                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.ALL_AUTHORITY))
+                {
+                    types.add(SolrExclusionEventDao.EXCLUSION);
+                }
+
+                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_ADMIN, SecurityConstants.ALL_AUTHORITY))
+                {
+                    types.add(SolrErrorReportingServiceDao.ERROR);
+                }
             }
         }
         else
@@ -797,6 +816,19 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.createSearchResultGridLayout();
 
             this.initialised = true;
+
+            IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+            User user = this.userService.loadUserByUsername(authentication.getName());
+
+            if(user.isRequiresPasswordChange())
+            {
+                ChangePasswordDialog dialog = new ChangePasswordDialog(user, this.userService);
+                dialog.setCloseOnOutsideClick(false);
+                dialog.setCloseOnEsc(false);
+                dialog.setSizeFull();
+
+                dialog.open();
+            }
         }
     }
 
