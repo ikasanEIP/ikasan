@@ -54,9 +54,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
-import  static org.junit.Assert.assertEquals;
-import  static org.junit.Assert.assertNull;
-import  static org.junit.Assert.assertNotNull;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
  * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
  * database rather than mocking the hibernate template.
@@ -303,5 +304,29 @@ public class HibernateFilteredMessageDaoImplTest
             null, null,null, new Date(1));
         assertEquals(0,result.getResultSize());
     }
+
+    /**
+     * Test case: DAO must return null since filter entry was not found in database
+     */
+    @Test
+    @DirtiesContext
+    public void findMessages_by_clinetId_when_no_filter_entries_exist()
+    {
+        List<FilterEntry> result = this.duplicateFilterDao.findMessages("Not_existing_client_id");
+        assertTrue(result.isEmpty());
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void findMessages_by_clinetId_when_filter_entries_exist()
+
+    {
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.duplicateFilterDao.save(aMessage);
+        List<FilterEntry> result = this.duplicateFilterDao.findMessages("find_test");
+        assertEquals(1,result.size());
+    }
+
 
 }
