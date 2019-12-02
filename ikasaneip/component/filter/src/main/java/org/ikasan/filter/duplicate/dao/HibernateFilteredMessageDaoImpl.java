@@ -126,13 +126,8 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_BY_CLIENTID_QUERY);
             query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
 
-            List<FilterEntry> result = query.getResultList();
-            if (!result.isEmpty())
-            {
-                return result;
-            }else{
-                return null;
-            }
+            return query.getResultList();
+
 
         });
 
