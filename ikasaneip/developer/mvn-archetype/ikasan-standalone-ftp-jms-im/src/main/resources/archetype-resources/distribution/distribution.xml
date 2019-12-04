@@ -8,6 +8,7 @@
     <fileSet>
         <directory>../bin</directory>
         <filtered>true</filtered>
+        <fileMode>755</fileMode>
         <outputDirectory>\${artifactId}-\${version}</outputDirectory>
     </fileSet>
     <fileSet>
@@ -31,7 +32,7 @@
             <include>\${groupId}:\${artifactId}</include>
             <include>com.h2database:h2:jar:${version.com.h2database}</include>
         </includes>
-        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
+        <outputDirectory>\${artifactId}-\${version}/lib</outputDirectory>
     </dependencySet>
 </dependencySets>
 </assembly>

@@ -7,14 +7,16 @@ SCRIPT_DIR=$(pwd)
 # Ikasan Module settings
 
 MODULE_NAME=`cat config/application.properties|grep "module.name"|head -1|cut -d'=' -f2`
-MODULE_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=*"
+OBJECT_STORE_PROP=com.arjuna.ats.arjuna.objectstore.objectStoreDir
+MODULE_OBJECT_STORE=`cat config/application.properties|grep ${OBJECT_STORE_PROP}|head -1|cut -d'=' -f2`
+MODULE_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -D${OBJECT_STORE_PROP}=${MODULE_OBJECT_STORE} -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=*"
 MODULE_OTHER_OPTS=""
 MODULE_JAVA_OPTS="$MODULE_JVM_OPTS  $MODULE_OTHER_OPTS"
 
 APPLICATION_JAR=$MODULE_NAME-${project.version}.jar
 
 # H2 Persistence settings
-H2_VERSION=1.4.199
+H2_VERSION=${version.com.h2database}
 H2_MODULE_NAME=h2-$MODULE_NAME
 H2_JVM_OPTS="-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m"
 H2_PORT=`cat config/application.properties|grep "h2.db.port"|head -1|cut -d'=' -f2`
@@ -25,11 +27,6 @@ JAVA=$JAVA_HOME/bin/java
 
 cd $SCRIPT_DIR
 mkdir -p logs
-
-#echo "Print MODULE_JAVA_OPTS $MODULE_JAVA_OPTS"
-#echo "Print JAVA $JAVA"
-#echo "RUN $JAVA $MODULE_JAVA_OPTS -jar $APPLICATION_JAR"
-
 
 # Prints command usage.
 function usage
@@ -47,7 +44,7 @@ function start_module
     check_module
     if [[ ${#modulepid} -lt 1 ]];then
       echo "Starting Module"
-      nohup $JAVA $MODULE_JAVA_OPTS -Dmodule.name=$MODULE_NAME -Dmodule.version=${project.version} -jar $APPLICATION_JAR >/dev/null 2>&1 &
+      nohup $JAVA $MODULE_JAVA_OPTS -Dmodule.name=$MODULE_NAME -jar ${SCRIPT_DIR}/lib/$APPLICATION_JAR > ${SCRIPT_DIR}/logs/application.log 2>&1 &
     else
       echo "Module already running on PID $modulepid, will not start"
     fi
@@ -59,7 +56,7 @@ function start_h2
     check_h2
     if [[ ${#h2pid} -lt 1 ]];then
       echo "Starting H2"
-      nohup $JAVA -cp h2-$H2_VERSION.jar $H2_JVM_OPTS -Dmodule.name=$H2_MODULE_NAME org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort $H2_PORT &
+      nohup $JAVA -cp ${SCRIPT_DIR}/lib/h2-$H2_VERSION.jar $H2_JVM_OPTS -Dmodule.name=$H2_MODULE_NAME org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort $H2_PORT > ${SCRIPT_DIR}/logs/h2-server.log 2>&1 &
     else
       echo "H2 already running on PID $h2pid, will not start"
     fi
@@ -71,7 +68,7 @@ function check_module
     if [[ ${#modulepid} -gt 0 ]];then
       echo "$MODULE_NAME running on PID $modulepid"
     else
-      echo "Module $MODULE_NAME not running"
+      echo "$MODULE_NAME not running"
     fi
 }
 
@@ -79,9 +76,9 @@ function check_h2
 {
     h2pid=`ps aux|grep module.name=$H2_MODULE_NAME|grep -v grep| awk '{print $2}'`
     if [[ ${#h2pid} -gt 0 ]];then
-      echo "H2 $H2_MODULE_NAME running on PID $h2pid"
+      echo "$H2_MODULE_NAME running on PID $h2pid"
     else
-      echo "H2 $H2_MODULE_NAME not running"
+      echo "$H2_MODULE_NAME not running"
     fi
 }
 
@@ -89,7 +86,7 @@ function stop_module
 {
     check_module
     if [[ ${#modulepid} -gt 0 ]];then
-      echo "Stopping Module $MODULE_NAME on PID $modulepid"
+      echo "Stopping $MODULE_NAME on PID $modulepid"
       kill $modulepid
     fi
 }
@@ -98,7 +95,7 @@ function stop_h2
 {
     check_h2
     if [[ ${#h2pid} -gt 0 ]];then
-      echo "Stopping H2 $H2_MODULE_NAME on PID $h2pid"
+      echo "Stopping $H2_MODULE_NAME on PID $h2pid"
       kill $h2pid
     fi
 }
@@ -107,6 +104,7 @@ ACTION=$1
 case "$ACTION" in
     start) # starts both H2 and Module
         start_h2
+        check_h2
         start_module
         ;;
     start-h2) # starts H2 only
@@ -115,7 +113,7 @@ case "$ACTION" in
     stop) # stops both Module and H2
         stop_module
         while [[ ${#modulepid} -gt 0 ]];do
-          echo "Waiting for module to shut down before stopping H2"
+          echo "Waiting for $MODULE_NAME to shut down before stopping $H2_MODULE_NAME"
           sleep 5
           check_module
         done
