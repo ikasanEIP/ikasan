@@ -47,17 +47,90 @@ mvn archetype:generate
 
 (Accept defaults or update as required)
 
-This will create a standard empty Ikasan application as a starting point. 
-Even without an Integration Module and associated flows we can still build and create a deployable image by going into the directory and run a maven clean package.
+It is recommended this archetype be used when getting familiar with Ikasan as part of the "Hands On Developer Walk Through" section.
+
+### Build
+To build and create a deployable integration module image you need to go into the directory and run a maven clean package.
 
 ```
 cd vanilla-im
 mvn clean package 
 ```
 
-This will build and create a zip binary containing all the required deployments.
+This will build and create a zip binary (specifically ```distribution/target/vanilla-im-distribution-${project.version}-dist.zip```) containing all the required artefacts for the deployment of your integration module.
 
-It is recommended this archetype be used when getting familiar with Ikasan as part of the "Hands On Developer Walk Through" section.
+### Deploy
+Copy the created zip image from to the required destination, unzip and navigate into the unzipped directory.
+```xslt
+ unzip vanilla-im-distribution-${project.version}-dist.zip
+ cd vanilla-im-distribution-${project.version}
+```
+
+### Understanding the Content
+The unzipped distribution contains the following,
+```unix
+config
+ikasan.sh
+lib
+```
+- ```config``` directory contains the runtime application.properties
+- ```ikasan.sh``` is the shell script for managing the stopping and starting of the Integration Module and h2 processes
+- ```lib``` directory contains all binaries required to run the Integration Module
+
+The following additional directories are created on first startup of the Integration Module.
+- ```logs``` directory contains the runtime output logs (std.out, std.err redirected) for the Integration Module and h2 database
+- ```persistence``` directory for the persistence of the transaction logs and h2 database of the Integration Module
+
+The contents of the  ```persistence``` directory are critical to the runtime operation and crash/recovery ability of the Integration Module. 
+It is advised that this be located on a separate mount in production runtime, either through a symlink or by changing the location in the application.properties.
+
+#### Relocating Persistence via Symlink
+To relocate the persistence directory via a symlink firstly ensure the processes are not running then move the persistence directory as follows,
+```java
+mv persistence /someother/location
+ln -s /someother/location persistence
+```
+#### Relocating Persistence via application.properties
+To change the persistence directory location via the application.properties you need to update the following properties which refer to the relative location of './persistence'.
+```java
+com.arjuna.ats.arjuna.objectstore.objectStoreDir=./persistence/${artifactId}-ObjectStore
+
+datasource.url=jdbc:h2:tcp://localhost:${h2.db.port}/./persistence/${module.name}-db/esb;IFEXISTS=FALSE
+```
+ 
+
+### Running the Integration Module
+The Integration Module runs as two JVM processes,
+
+- h2 database process - file based Java SQL database
+- Integration Module process - the Integration Module itself
+ 
+The Integration Module requires h2 to be running before the module process can be started.
+The ```ikasan.sh``` script manages the starting and stopping of these processes.
+
+#### Starting All Processes
+The following will start h2 and the Integration Module in the correct order. If any are already running then no additional instances are started. 
+```
+./ikasan.sh start
+```
+
+#### Stopping All Processes
+The following will stop the Integration Module and h2 in the correct order.
+```
+./ikasan.sh stop
+```
+
+#### Starting h2 Only
+The following will only start h2. If an instance is already running then no additional instances are started.
+```
+./ikasan.sh start-h2
+```
+
+#### Checking Processes
+The following will check to see which processes are running.
+```
+./ikasan.sh ps
+```
 
 ### Common Problems When Generating From Archetypes
 

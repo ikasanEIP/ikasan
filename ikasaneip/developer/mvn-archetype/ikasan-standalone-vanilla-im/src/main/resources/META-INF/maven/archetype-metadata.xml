@@ -45,9 +45,6 @@
 
     <fileSets>
         <fileSet filtered="true" packaged="false">
-            <directory>docs</directory>
-        </fileSet>
-        <fileSet filtered="true" packaged="false">
             <directory>jar</directory>
         </fileSet>
         <fileSet filtered="true" packaged="false">
