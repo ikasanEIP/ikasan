@@ -96,10 +96,12 @@ public class ChangePasswordDialog extends Dialog
                     return;
                 }
 
-                this.userService.changeUsersPassword(user.getUsername(), userPasswordChange.getPassword(), userPasswordChange.getPassword());
-
                 user.setRequiresPasswordChange(false);
                 this.userService.updateUser(user);
+
+                this.userService.changeUsersPassword(user.getUsername(), userPasswordChange.getPassword(), userPasswordChange.getPassword());
+
+
 
                 this.close();
             }
