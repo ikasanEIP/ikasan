@@ -33,11 +33,11 @@ mvn archetype:generate
 
 |Parameter    | Description |
 |--------------| ------------|
-- **groupId** – groupId for this new Integration Module
-- **artifactId** – artifactId for this new Integration Module
-- **version** – version of this new Integration Module
-- **sourceFlowName** – source flow name within this Integration Module
-- **targetFlowName** – target flow name within this Integration Module
+|**groupId**|groupId for this new Integration Module|
+|**artifactId**|artifactId for this new Integration Module|
+|**version**|version of this new Integration Module|
+|**sourceFlowName**|source flow name within this Integration Module|
+|**targetFlowName**|target flow name within this Integration Module|
 
 
 #### Example Usage
