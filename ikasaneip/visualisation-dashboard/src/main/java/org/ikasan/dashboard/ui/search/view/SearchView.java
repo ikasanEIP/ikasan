@@ -818,16 +818,20 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.initialised = true;
 
             IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
-            User user = this.userService.loadUserByUsername(authentication.getName());
 
-            if(user.isRequiresPasswordChange())
+            if(authentication != null)
             {
-                ChangePasswordDialog dialog = new ChangePasswordDialog(user, this.userService);
-                dialog.setCloseOnOutsideClick(false);
-                dialog.setCloseOnEsc(false);
-                dialog.setSizeFull();
+                User user = this.userService.loadUserByUsername(authentication.getName());
 
-                dialog.open();
+                if (user.isRequiresPasswordChange())
+                {
+                    ChangePasswordDialog dialog = new ChangePasswordDialog(user, this.userService);
+                    dialog.setCloseOnOutsideClick(false);
+                    dialog.setCloseOnEsc(false);
+                    dialog.setSizeFull();
+
+                    dialog.open();
+                }
             }
         }
     }
