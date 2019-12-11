@@ -880,12 +880,8 @@
                 <module>replay</module>
 				<module>persistence</module>
                 <module>sample</module>
-                <!--<module>dashboard</module>-->
                 <module>visualisation</module>
-                <module>visualisation-dashboard</module>
-                <module>visualisation-dashboard-dist</module>
             </modules>
-
 
         </profile>
 
@@ -935,7 +931,7 @@
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
-                <module>dashboard</module>
+                <module>visualisation</module>
                 <module>developer</module>
                 <module>sample</module>
                 <module>transaction</module>
@@ -1340,6 +1336,18 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-dashboard</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-vis.js</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-webconsole-boot-war</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1410,7 +1418,6 @@
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
-
 
             <dependency>
                 <groupId>org.ikasan</groupId>
