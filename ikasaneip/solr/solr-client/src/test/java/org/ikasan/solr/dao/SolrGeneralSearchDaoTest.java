@@ -198,6 +198,38 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
     @Test
     @DirtiesContext
+    public void test_search_success_empty_string() throws Exception {
+
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("type", "test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+
+            assertEquals(3, dao.search(null, null, "", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+        }
+    }
+
+    @Test
+    @DirtiesContext
     public void test_search_with_offset_success() throws Exception {
 
 
