@@ -1083,6 +1083,16 @@
                 <artifactId>ikasan-housekeeping</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-housekeeping-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-housekeeping-dashboard</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                <groupId>org.ikasan</groupId>
