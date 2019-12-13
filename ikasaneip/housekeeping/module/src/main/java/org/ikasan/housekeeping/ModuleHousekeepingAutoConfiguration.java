@@ -6,6 +6,7 @@ import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -14,14 +15,15 @@ import java.util.List;
  * House keeping related configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
-public class HousekeepingAutoConfiguration
+@Configuration
+public class ModuleHousekeepingAutoConfiguration
 {
+
     @Bean
     public HousekeepingSchedulerService housekeepingSchedulerService(List<HousekeepingJob> housekeepingJobs)
     {
-        return
-            new HousekeepingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
-                CachingScheduledJobFactory.getInstance(), housekeepingJobs);
+        return new HousekeepingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
+            CachingScheduledJobFactory.getInstance(), housekeepingJobs);
     }
 
     @Bean
