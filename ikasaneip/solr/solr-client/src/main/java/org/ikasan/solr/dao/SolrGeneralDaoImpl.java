@@ -78,17 +78,26 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
         StringBuffer queryBuffer = new StringBuffer();
 
         queryBuffer.append(CREATED_DATE_TIME + COLON).append("[")
-                .append(startTime).append(TO).append(endTime).append("]");
+            .append(startTime).append(TO).append(endTime).append("]");
 
 
         logger.debug("queryString: " + queryBuffer);
 
         SolrQuery query = new SolrQuery();
-        query.setQuery(searchString);
         query.setStart(offset);
         query.setRows(resultSize);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
-        query.set("defType", "dismax");
+
+        if (searchString.isEmpty())
+        {
+            query.setQuery("*:*");
+        }
+        else
+        {
+            query.setQuery(searchString);
+            query.set("defType", "dismax");
+        }
+
         query.setFilterQueries(queryBuffer.toString());
         query.set("qf", ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW,
                 ERROR_URI, TYPE, RELATED_EVENT, ERROR_DETAIL, ERROR_MESSAGE, EXCEPTION_CLASS);

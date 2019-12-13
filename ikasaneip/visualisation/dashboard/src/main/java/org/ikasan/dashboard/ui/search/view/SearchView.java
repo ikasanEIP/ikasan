@@ -633,7 +633,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             SearchTerm searchTerm = new SearchTerm();
 
             searchTextBinder.forField(this.searchText)
-                .withValidator(term -> term != null && term.length() > 0, getTranslation("error-message.search-term-must-be-entered", UI.getCurrent().getLocale(), null))
                 .bind(SearchTerm::getTerm, SearchTerm::setTerm);
 
             try
