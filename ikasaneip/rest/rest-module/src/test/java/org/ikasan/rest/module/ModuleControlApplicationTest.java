@@ -140,7 +140,7 @@ public class ModuleControlApplicationTest
         Mockito.verifyNoMoreInteractions(moduleService);
         assertEquals(404, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"errorCode\":null,\"errorMessage\":\"Module [testModule] Flow [nonExistingFlow] not found.\"}",
+            "{\"errorMessage\":\"Module [testModule] Flow [nonExistingFlow] not found.\"}",
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
     }

@@ -156,12 +156,12 @@ public class SchedulerController
         if (!platformScheduler.isShutdown())
         {
             List<String> triggerGroupNames = platformScheduler.getTriggerGroupNames();
-            logger.info("found triggerGroupNames:" + triggerGroupNames.size());
+            logger.debug("found triggerGroupNames:" + triggerGroupNames.size());
             for (String triggerGroupName : triggerGroupNames)
             {
                 GroupMatcher<TriggerKey> groupMatcher = GroupMatcher.groupEquals(triggerGroupName);
                 Set<TriggerKey> keys = platformScheduler.getTriggerKeys(groupMatcher);
-                logger.info("found triggerNames:" + keys.size() + ", for triggerGroupName:" + triggerGroupName);
+                logger.debug("found triggerNames:" + keys.size() + ", for triggerGroupName:" + triggerGroupName);
                 for (TriggerKey key : keys) 
                 {
                     triggers.add(platformScheduler.getTrigger(key));
