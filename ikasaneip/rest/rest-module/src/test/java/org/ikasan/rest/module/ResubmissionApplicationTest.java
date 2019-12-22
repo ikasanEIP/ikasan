@@ -136,7 +136,7 @@ public class ResubmissionApplicationTest
         Mockito.verifyNoMoreInteractions(hospitalService);
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorCode\":null,\"errorMessage\":\"Invalid action[NotKnown] allowed values [resubmit|ignore] \"}", result.getResponse().getContentAsString());
+        assertEquals("{\"errorMessage\":\"Invalid action[NotKnown] allowed values [resubmit|ignore] \"}", result.getResponse().getContentAsString());
 
     }
 
