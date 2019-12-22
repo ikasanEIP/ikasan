@@ -1,5 +1,7 @@
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
@@ -55,6 +57,8 @@ public class MockedUserServiceTestConfig implements WebMvcConfigurer
             ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
         converter.getObjectMapper().registerModule(m);
+        converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
         converters.add(converter);
     }
 

@@ -40,6 +40,8 @@
  */
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
@@ -102,9 +104,15 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     public MetaDataApplication metaDataApplication(){
         return new MetaDataApplication();
     }
+
     @Bean
     public FilterApplication filterApplication(){
         return new FilterApplication();
+    }
+
+    @Bean
+    public SchedulerApplication schedulerApplication(){
+        return new SchedulerApplication();
     }
 
     @Override
@@ -118,6 +126,9 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
                           ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
                       m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
                       ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().registerModule(m);
+
+                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
                   } );
     }
