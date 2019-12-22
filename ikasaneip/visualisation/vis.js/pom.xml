@@ -16,7 +16,6 @@
 	<description>Integration of vis.js library for Ikasan platform</description>
 
 	<properties>
-		<version.vaadin>10.0.11</version.vaadin>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,6 +52,11 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
