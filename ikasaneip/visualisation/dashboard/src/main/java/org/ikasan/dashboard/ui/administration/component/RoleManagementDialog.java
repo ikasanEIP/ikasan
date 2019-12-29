@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
+import org.ikasan.dashboard.ui.administration.filter.RoleModuleFilter;
 import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
@@ -32,6 +33,7 @@ import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.systemevent.SystemEventService;
 
 import java.util.ArrayList;
@@ -46,10 +48,12 @@ public class RoleManagementDialog extends Dialog
     private SystemEventService systemEventService;
     private SystemEventLogger systemEventLogger;
     private UserService userService;
+    private ModuleMetaDataService moduleMetadataService;
 
     private FilteringGrid<Policy> policyGrid;
     private FilteringGrid<IkasanPrincipalLite> groupGrid;
     private FilteringGrid<UserLite> userGrid;
+    private FilteringGrid<RoleModule> roleModuleGrid;
 
     /**
      * Constructor
@@ -59,9 +63,11 @@ public class RoleManagementDialog extends Dialog
      * @param userService
      * @param systemEventService
      * @param systemEventLogger
+     * @param moduleMetadataService
      */
     public RoleManagementDialog(Role role, SecurityService securityService, UserService userService,
-                                SystemEventService systemEventService, SystemEventLogger systemEventLogger)
+                                SystemEventService systemEventService, SystemEventLogger systemEventLogger,
+                                ModuleMetaDataService moduleMetadataService)
     {
         this.role = role;
         if(this.role == null)
@@ -88,6 +94,11 @@ public class RoleManagementDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
+        this.moduleMetadataService = moduleMetadataService;
+        if(this.moduleMetadataService == null)
+        {
+            throw new IllegalArgumentException("moduleMetadataService cannot be null!");
+        }
 
         init();
     }
@@ -101,6 +112,7 @@ public class RoleManagementDialog extends Dialog
         accordion.add(getTranslation("accordian-label.associated-users", UI.getCurrent().getLocale(), null), createAssociatedUserLayout());
         accordion.add(getTranslation("accordian-label.associated-groups", UI.getCurrent().getLocale(), null), createAssociatedGroupsLayout());
         accordion.add(getTranslation("accordian-label.associated-policies", UI.getCurrent().getLocale(), null), createIkasanPoliciesLayout());
+        accordion.add(getTranslation("accordian-label.associated-integration-modules", UI.getCurrent().getLocale(), null), this.createAssociatedIntegrationModules());
 
         accordion.close();
 
@@ -447,6 +459,78 @@ public class RoleManagementDialog extends Dialog
         layout.setWidth("100%");
         layout.setHeight("400px");
         return layout;
+    }
+
+    /**
+     * Create the associated integration modules
+     *
+     * @return layout containing the relevant associated integration module components.
+     */
+    private VerticalLayout createAssociatedIntegrationModules()
+    {
+        VerticalLayout verticalLayout = new VerticalLayout();
+
+        H3 associatedRoleModulesLabel = new H3(getTranslation("label.role-associated-integration-modules", UI.getCurrent().getLocale(), null));
+
+        verticalLayout.add(associatedRoleModulesLabel);
+
+        RoleModuleFilter roleModuleFilter = new RoleModuleFilter();
+
+        this.roleModuleGrid = new FilteringGrid<>(roleModuleFilter);
+        this.roleModuleGrid.setClassName("my-userGrid");
+        this.roleModuleGrid.addColumn(RoleModule::getModuleName).setKey("name").setHeader(getTranslation("table-header.moduleName", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(2);
+        this.roleModuleGrid.addColumn(new ComponentRenderer<>(roleModule->
+        {
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                this.role.getRoleModules().remove(roleModule);
+                this.securityService.saveRole(role);
+                this.securityService.deleteRoleModule(roleModule);
+
+                String action = String.format("Module [%s] removed from role [%s]", roleModule.getModuleName(), role.getName());
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_MODULE_ROLE_CHANGE_CONSTANTS, action, null);
+
+                this.updateRoleModuleGrid();
+            });
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
+            return layout;
+        })).setFlexGrow(1);
+
+        HeaderRow hr = roleModuleGrid.appendHeaderRow();
+        this.roleModuleGrid.addGridFiltering(hr, roleModuleFilter::setModuleNameFilter, "name");
+
+        Button addModule = new Button(getTranslation("button.add-role-module", UI.getCurrent().getLocale(), null));
+        addModule.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+        {
+            SelectModuleForRoleDialog dialog = new SelectModuleForRoleDialog(this.role, this.moduleMetadataService,
+                this.securityService, this.systemEventLogger);
+            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+            {
+                if(dialogOpenedChangeEvent.isOpened() == false)
+                {
+                    this.updateRoleModuleGrid();
+                }
+            });
+
+            dialog.open();
+        });
+
+        userGrid.setSizeFull();
+
+        this.updateRoleModuleGrid();
+
+        return this.layoutAssociatedEntityComponents(this.roleModuleGrid, addModule, associatedRoleModulesLabel);
+    }
+
+    protected void updateRoleModuleGrid()
+    {
+        this.roleModuleGrid.setItems(this.role.getRoleModules());
     }
 
     /**

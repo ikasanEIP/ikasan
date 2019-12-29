@@ -88,6 +88,12 @@ public interface SecurityDao
     public void deletePolicyLink(PolicyLink policyLink);
 
     /**
+     *
+     * @param roleModule
+     */
+    public void deleteRoleModule(RoleModule roleModule);
+
+    /**
      * 
      * @param principal
      */

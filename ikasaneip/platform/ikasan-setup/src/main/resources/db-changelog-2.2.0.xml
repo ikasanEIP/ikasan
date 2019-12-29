@@ -5,14 +5,14 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <!-- 2.1.x table creation -->
+    <include file="db/tables/db-changeLog-createRoleModule.xml" relativeToChangelogFile="true" />
 
     <!-- 2.1.x table alterations -->
     <include file="db/alter/db-changeLog-alterSystemEventAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
     <include file="db/alter/db-changeLog-alterUserAddPasswordChangeRequired.xml" relativeToChangelogFile="true" />
 
-
-
     <!-- 2.1.x cardinality creation -->
+    <include file="db/cardinality/db-changeLog-createRoleModuleFk.xml" relativeToChangelogFile="true" />
 
     <!-- 2.1.x data creation -->
 

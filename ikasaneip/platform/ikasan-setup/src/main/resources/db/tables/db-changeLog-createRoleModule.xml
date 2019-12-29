@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -44,52 +42,44 @@
  Author:  Ikasan Development Team
  
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-    <class
-        name="org.ikasan.security.model.Role"
-        table="SecurityRole">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    
+    <changeSet author="ikasan dev" id="createRoleModule" context="baseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="RoleModule" /></not>
+		</preConditions>
 
-        <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-        </id>
+        <createTable tableName="RoleModule">
+        
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="SecurityRo_10713398503"/>
+            </column>
+            <column name="RoleId" type="numeric(18)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ModuleName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
+            </column>
+            
+        </createTable>
+        
+        <!-- The statement below is required by sybase to set the identity gap to 1. -->
+        <sql dbms="sybase">sp_chgattribute 'RoleModule', 'identity_gap', 1</sql>
+        
+        <createIndex indexName="RoleModule_RoleId_idx" tableName="RoleModule" unique="true">
+            <column name="RoleId"/>
+        </createIndex>
 
-        <set name="policies" table="RolePolicy" cascade="all" lazy="false" fetch="select" inverse="false">
-            <key column="RoleId"/>
-            <many-to-many column="PolicyId"
-                class="org.ikasan.security.model.Policy"/>
-        </set>
+    </changeSet>
 
-        <set name="roleModules" table="RoleModule" cascade="all" lazy="false" fetch="select" inverse="false">
-            <key column="RoleId"/>
-            <one-to-many class="org.ikasan.security.model.RoleModule"/>
-        </set>
-
-        <property name="name"
-                  type="java.lang.String"
-                  column="Name"
-                  not-null="true" 
-                  unique="true"/>
-
-         <property name="description"
-                  type="java.lang.String"
-                  column="Description"
-                  not-null="true" 
-                  unique="false"/>
-
-        <property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
-
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-    </class>
-</hibernate-mapping>
+</databaseChangeLog>
