@@ -56,7 +56,7 @@
         <createTable tableName="RoleModule">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints primaryKey="true" primaryKeyName="SecurityRo_10713398503"/>
+                <constraints primaryKey="true" primaryKeyName="RoleModule_pk"/>
             </column>
             <column name="RoleId" type="numeric(18)">
                 <constraints nullable="true"/>
