@@ -1121,14 +1121,7 @@ public class MyModule
         @Override
         public String getEvent()
         {
-            try
-            {
-                return (++count <= 1 ?  "Test Message " + count : null);
-            }
-            catch (InterruptedException e)
-            {
-                return null;
-            }
+            return (++count <= 1 ?  "Test Message " + count : null);
         }
 
         @Override
@@ -1200,15 +1193,7 @@ public class MyModule
         @Override
         public String getEvent()
         {
-            try
-            {
-                Thread.sleep(1000);
-                return (++count <= 1 ?  "Test Message " + count : null);
-            }
-            catch (InterruptedException e)
-            {
-                return null;
-            }
+            return (++count <= 1 ?  "Test Message " + count : null);
         }
 
         @Override
