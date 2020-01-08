@@ -1104,11 +1104,11 @@ TOOO
 #### Methods
 #### Components
 #### Flows
-The flow testing is a great method of verifying that whole Spring application boostrap correctly. Also Flow test will help you assess if all flow branches has been executed as expected. 
+Flow testing is a great way of verifying that the whole Integration Module bootstraps correctly. It also allows you to exercise each and every route through the flow in a controlled and verifiable manner. 
 
-Before we create the flow test we need to change the module to allow us to have certainty around the events and flow invocation as curently the event generator is simply creating as many events as possible as fast as possible.
+Before we create the flow test we need to change the module to provide certainty around the events invoking the flow. The default EndpointEventProvider for the Event Generating consumer creates as many events as possible as quickly as possible - we need to override this with something more measureable to test.
 
-So firstly, we want to create a more consistent event provider by adding the following to the ```com.ikasan.example.MyModule``` class.
+So firstly, lets create a consistent EndpointEventProvider implementation by adding the following to the ```com.ikasan.example.MyModule``` class.
 ```java
 public class MyModule
 {
@@ -1139,9 +1139,9 @@ public class MyModule
     }
 }
 ```
-The above event provider will events until count exceeds 1 - so in this case just one event in total.
+The above MyMessageProvider will create events until count exceeds 1 - so in this case just one event in total.
 
-We also need to override the eventGenerating consumer in the same class. The sample below shows the full java class with the new Event Generator.
+We also need to override the EndpointEventProvider on the consumer in the same class. The sample below shows the full java class with the new EndpointEventProvider implementation and override on the consumer.
 ```java
 package com.ikasan.example;
 
