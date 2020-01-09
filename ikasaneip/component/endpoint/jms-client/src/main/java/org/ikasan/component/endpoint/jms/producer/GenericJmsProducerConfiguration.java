@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
+import org.ikasan.spec.configuration.Masked;
+
 import javax.jms.Session;
 import java.util.Map;
 
@@ -72,6 +74,7 @@ public class GenericJmsProducerConfiguration
     private String username;
 
     /** password credential where authentication is required */
+    @Masked
     private String password;
 
     /** is this session transacted */

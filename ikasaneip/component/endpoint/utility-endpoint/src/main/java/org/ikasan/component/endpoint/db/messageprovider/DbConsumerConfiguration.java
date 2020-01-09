@@ -41,8 +41,7 @@
 package org.ikasan.component.endpoint.db.messageprovider;
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-
-import java.util.List;
+import org.ikasan.spec.configuration.Masked;
 
 /**
  * DB consumer configuration bean.
@@ -54,6 +53,7 @@ public class DbConsumerConfiguration extends ScheduledConsumerConfiguration
     String driver;
     String url;
     String username;
+    @Masked
     String password;
     String sqlStatement;
 
