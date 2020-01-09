@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
+import org.ikasan.spec.configuration.Masked;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +68,7 @@ public class SpringMessageConsumerConfiguration
     private String connectionFactoryUsername;
 
     /** credential for authenticated connection factory */
+    @Masked
     private String connectionFactoryPassword;
 
     /** false if queue; true if topic - this is how Spring categorises */

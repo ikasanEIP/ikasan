@@ -43,6 +43,7 @@ package org.ikasan.component.endpoint.mongo;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
+import org.ikasan.spec.configuration.Masked;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
@@ -72,6 +73,7 @@ public class MongoClientConfiguration
     protected String username;
 
     /** authentication credential */
+    @Masked
     protected String password;
 
     /** database name */

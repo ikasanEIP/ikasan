@@ -40,6 +40,8 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
+import org.ikasan.spec.configuration.Masked;
+
 /**
  * SFTP Producer Configuration window.
  * 
@@ -72,6 +74,7 @@ public class SftpProducerConfiguration
     protected String username;
 
     /** SFTP password/passphrase */
+    @Masked
     protected String password;
 
     /** SFTP remote port */

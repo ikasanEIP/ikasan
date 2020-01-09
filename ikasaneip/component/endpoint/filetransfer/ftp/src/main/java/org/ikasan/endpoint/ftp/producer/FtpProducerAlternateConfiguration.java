@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.producer;
 
+import org.ikasan.spec.configuration.Masked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     private String alternateUsername;
 
     /** FTP password/passphrase */
+    @Masked
     private String alternatePassword;
 
     /** Connection Timeout */
