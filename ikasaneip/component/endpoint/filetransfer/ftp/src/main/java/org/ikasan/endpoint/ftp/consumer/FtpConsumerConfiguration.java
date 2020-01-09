@@ -42,6 +42,7 @@ package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
+import org.ikasan.spec.configuration.Masked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -130,6 +131,7 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration imp
     private String username;
 
     /** Password/passphrase */
+    @Masked
     private String password;
 
     /** Whether it is active transfer mode - default False */

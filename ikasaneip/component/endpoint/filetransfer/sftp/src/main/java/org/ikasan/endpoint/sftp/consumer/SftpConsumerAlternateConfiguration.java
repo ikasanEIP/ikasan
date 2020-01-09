@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.spec.configuration.IsValidationAware;
+import org.ikasan.spec.configuration.Masked;
 
 /**
  * SFTP Consumer Configuration window.
@@ -68,6 +69,7 @@ public class SftpConsumerAlternateConfiguration extends SftpConsumerConfiguratio
     private String alternateUsername;
 
     /** SFTP password/passphrase */
+    @Masked
     private String alternatePassword;
 
     /** SFTP remote port */
