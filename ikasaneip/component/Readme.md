@@ -270,7 +270,7 @@ public class ModuleConfig {
   @Resource
   private BuilderFactory builderFactory;
 
-  public Consumer getJmsProducer(){
+  public Producer getJmsProducer(){
 
 
     Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
@@ -281,7 +281,7 @@ public class ModuleConfig {
        .setSessionTransacted(true)
        .setConfiguredResourceId("jmsProducer")
        .build();
-    return jmsConsumer;
+    return jmsProducer;
   }
 }
 
