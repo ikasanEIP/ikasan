@@ -80,7 +80,7 @@ public class IkasanModuleAutoConfiguration
     @DependsOn("liquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService localTxTopologyService,
+        SecurityService securityService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService,
         DashboardRestService moduleMetadataDashboardRestService,
@@ -88,7 +88,7 @@ public class IkasanModuleAutoConfiguration
     )
     {
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+             moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

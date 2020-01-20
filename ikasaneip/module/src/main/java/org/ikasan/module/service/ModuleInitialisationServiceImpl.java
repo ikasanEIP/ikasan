@@ -40,7 +40,6 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.module.converter.ModuleConverter;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -55,8 +54,6 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -69,8 +66,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,11 +107,6 @@ public class ModuleInitialisationServiceImpl
     private SecurityService securityService;
 
     /**
-     * TopologyService provides access to module metadata tables
-     */
-    private TopologyService topologyService;
-
-    /**
      * Module Metadata dashboard rest client
      */
     private DashboardRestService moduleMetadataDashboardRestService;
@@ -135,8 +125,6 @@ public class ModuleInitialisationServiceImpl
      */
     private HarvestingSchedulerService harvestingSchedulerService;
 
-    private ModuleConverter moduleConverter = new ModuleConverter();
-
 
     /**
      * Constructor
@@ -146,7 +134,7 @@ public class ModuleInitialisationServiceImpl
      * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService topologyService,
+        SecurityService securityService,
         DashboardRestService moduleMetadataDashboardRestService,
         DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
@@ -167,11 +155,6 @@ public class ModuleInitialisationServiceImpl
         if (securityService == null)
         {
             throw new IllegalArgumentException("securityService cannot be 'null'");
-        }
-        this.topologyService = topologyService;
-        if (topologyService == null)
-        {
-            throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
         this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
         if (moduleMetadataDashboardRestService == null)
@@ -428,13 +411,11 @@ public class ModuleInitialisationServiceImpl
      */
     public void initialiseModuleMetaData(Module module)
     {
-        Optional<Server> server = this.getServer();
-        topologyService.initialiseModuleMetaData(server.orElse(null), platformContext.getApplicationName()
-            , this.moduleConverter.convert(module));
+        Optional<String> serverUrl = this.getServer();
 
-        if(server.isPresent())
+        if(serverUrl.isPresent())
         {
-            module.setUrl(server.get().getDescription());
+            module.setUrl(serverUrl.get());
         }
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
@@ -446,32 +427,18 @@ public class ModuleInitialisationServiceImpl
      *
      * @return existing server or Optional.empty()
      */
-    private Optional<Server> getServer()
+    private Optional<String> getServer()
     {
         String host = getHost();
-        Optional<Server> existingServer = null;
-        if (host != null)
         {
             Integer port = getPort();
             String pid = getPid();
+            String protocol = getProtocol();
             String context = platformContext.getApplicationName();
-            String serverName = "http://" + host + ":" + port  + context;
-            String serverUrl = "http://" + host;
-            logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
-            String name =  host + ":" + port;
-            Server server = new Server(name, serverName, serverUrl, port);
-            List<Server> servers = this.topologyService.getAllServers();
-            // find existing server by comparing url and port
-            existingServer = servers.stream()
-                    .filter(s -> s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
-                    .findFirst();
-            if (!existingServer.isPresent())
-            {
-                logger.info("Server instance  [" + server + "], creating...");
-                this.topologyService.save(server);
-                return Optional.ofNullable(server);
-            }
-            return existingServer;
+            String serverUrl = protocol + "://" + host + ":" + port  + context;
+            logger.info("Module url [" + serverUrl + "] running with PID [" + pid + "]");
+
+
         }
 
         return Optional.empty();
@@ -490,22 +457,6 @@ public class ModuleInitialisationServiceImpl
             if (port != null)
             {
                 return Integer.valueOf(port);
-            }
-            Object portObject;
-            try
-            {
-                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(
-                        new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
-            }
-            catch (InstanceNotFoundException e)
-            {
-                portObject = ManagementFactory.getPlatformMBeanServer()
-                        .getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"),
-                                "port");
-            }
-            if (portObject != null)
-            {
-                return (Integer) portObject;
             }
             return 8080;
         }
@@ -531,25 +482,37 @@ public class ModuleInitialisationServiceImpl
                 return host;
             }
 
-            Object portHost;
-            try
-            {
-                portHost = ManagementFactory.getPlatformMBeanServer()
-                        .getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
-            }
-            catch (InstanceNotFoundException e)
-            {
-                portHost = System.getProperty("jboss.bind.address");
-            }
-            if (portHost != null)
-            {
-                return (String) portHost;
-            }
-            return null;
+            return "localhost";
         }
         catch (Throwable ex)
         {
-            return null;
+            return "localhost";
+        }
+    }
+
+    private String getProtocol()
+    {
+        try
+        {
+
+            String protocol = platformContext.getEnvironment().getProperty("public.service.protocol");
+            if (protocol != null)
+            {
+                return protocol;
+            }
+            protocol = platformContext.getEnvironment().getProperty("server.protocol");
+            if (protocol != null)
+            {
+                return protocol;
+            }
+            else
+            {
+                return "http";
+            }
+        }
+        catch (Throwable ex)
+        {
+            return "http";
         }
     }
 
