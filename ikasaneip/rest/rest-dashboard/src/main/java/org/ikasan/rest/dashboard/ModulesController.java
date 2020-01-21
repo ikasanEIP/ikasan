@@ -62,8 +62,9 @@ public class ModulesController
 {
     private ModuleMetaDataService moduleMetaDataService;
 
-    public ModulesController(ModuleMetaDataService moduleMetaDataService){
-        this.moduleMetaDataService =  moduleMetaDataService;
+    public ModulesController(ModuleMetaDataService moduleMetaDataService)
+    {
+        this.moduleMetaDataService = moduleMetaDataService;
     }
 
     @RequestMapping(method = RequestMethod.GET,
@@ -72,8 +73,9 @@ public class ModulesController
     public ResponseEntity getModules()
     {
         List<MetadataModuleDto> dtos = moduleMetaDataService.findAll().stream().map(
-            moduleMetaData -> new MetadataModuleDto(moduleMetaData.getName(), moduleMetaData.getUrl()))
-                                                            .collect(Collectors.toList());
+            moduleMetaData -> new MetadataModuleDto(moduleMetaData.getName(), moduleMetaData.getUrl(),
+                moduleMetaData.getFlows().stream().map(f -> f.getName()).collect(Collectors.toList())
+            )).collect(Collectors.toList());
 
         return new ResponseEntity(dtos, HttpStatus.OK);
 
