@@ -411,12 +411,7 @@ public class ModuleInitialisationServiceImpl
      */
     public void initialiseModuleMetaData(Module module)
     {
-        Optional<String> serverUrl = this.getServer();
-
-        if(serverUrl.isPresent())
-        {
-            module.setUrl(serverUrl.get());
-        }
+        module.setUrl(this.getServer());
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
 
@@ -427,21 +422,18 @@ public class ModuleInitialisationServiceImpl
      *
      * @return existing server or Optional.empty()
      */
-    private Optional<String> getServer()
+    private String getServer()
     {
         String host = getHost();
-        {
-            Integer port = getPort();
-            String pid = getPid();
-            String protocol = getProtocol();
-            String context = platformContext.getApplicationName();
-            String serverUrl = protocol + "://" + host + ":" + port  + context;
-            logger.info("Module url [" + serverUrl + "] running with PID [" + pid + "]");
+        Integer port = getPort();
+        String pid = getPid();
+        String protocol = getProtocol();
+        String context = platformContext.getApplicationName();
+        String serverUrl = protocol + "://" + host + ":" + port + context;
+        logger.info("Module url [" + serverUrl + "] running with PID [" + pid + "]");
 
+        return serverUrl;
 
-        }
-
-        return Optional.empty();
     }
 
     private Integer getPort()
