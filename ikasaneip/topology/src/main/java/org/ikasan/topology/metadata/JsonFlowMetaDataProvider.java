@@ -22,12 +22,9 @@ import org.ikasan.spec.metadata.Transition;
 import org.ikasan.topology.metadata.model.FlowElementMetaDataImpl;
 import org.ikasan.topology.metadata.model.FlowMetaDataImpl;
 import org.ikasan.topology.metadata.model.TransitionImpl;
-import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Map;
 
 /**
