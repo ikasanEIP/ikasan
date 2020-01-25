@@ -188,102 +188,15 @@ public class ModuleInitialisationServiceImplTest {
     }
 
 
-
-
     @Test
-    public void initialiseModuleMetaDataWhenNoHostAndModuleExistInDB() throws Exception {
+    public void initialiseModuleMetaData() throws Exception {
 
         // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
 
         VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
         Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
 
-        Environment environment = mockery.mock(Environment.class);
-        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
-
         mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("public.service.port");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.port");
-            will(returnValue(null));
-
-
-            oneOf(environment).getProperty("server.protocol");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("public.service.protocol");
-            will(returnValue(null));
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
-        }});
-
-        uut.initialiseModuleMetaData(module);
-        mockery.assertIsSatisfied();
-    }
-
-
-    @Test
-    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDBAndServerIsPublic() throws Exception {
-
-        // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
-        Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
-        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
-
-        mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue("myServerName"));
-
-            oneOf(environment).getProperty("public.service.port");
-            will(returnValue("80"));
-
-            oneOf(environment).getProperty("server.protocol");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("public.service.protocol");
-            will(returnValue(null));
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
 
 
             oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
@@ -294,37 +207,4 @@ public class ModuleInitialisationServiceImplTest {
         mockery.assertIsSatisfied();
     }
 
-
-    public class TestInvoker implements FlowElementInvoker
-    {
-        @Override
-        public FlowElement invoke(List flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
-        {
-            return null;
-        }
-
-        @Override
-        public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
-        {
-
-        }
-
-        @Override
-        public void setFlowInvocationContextListeners(List list)
-        {
-
-        }
-
-        @Override
-        public void setInvokeContextListeners(boolean invokeContextListeners)
-        {
-
-        }
-
-        @Override
-        public String getInvokerType()
-        {
-            return null;
-        }
-    }
 }
