@@ -66,11 +66,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -411,114 +409,9 @@ public class ModuleInitialisationServiceImpl
      */
     public void initialiseModuleMetaData(Module module)
     {
-        module.setUrl(this.getServer());
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
 
-    }
-
-    /**
-     * Gets server from the runtime platform information
-     *
-     * @return existing server or Optional.empty()
-     */
-    private String getServer()
-    {
-        String host = getHost();
-        Integer port = getPort();
-        String pid = getPid();
-        String protocol = getProtocol();
-        String context = platformContext.getApplicationName();
-        String serverUrl = protocol + "://" + host + ":" + port + context;
-        logger.info("Module url [" + serverUrl + "] running with PID [" + pid + "]");
-
-        return serverUrl;
-
-    }
-
-    private Integer getPort()
-    {
-        try
-        {
-            String port = platformContext.getEnvironment().getProperty("public.service.port");
-            if (port != null)
-            {
-                return Integer.valueOf(port);
-            }
-             port = platformContext.getEnvironment().getProperty("server.port");
-            if (port != null)
-            {
-                return Integer.valueOf(port);
-            }
-            return 8080;
-        }
-        catch (Throwable ex)
-        {
-            return 8080;
-        }
-    }
-
-    private String getHost()
-    {
-        try
-        {
-
-            String host = platformContext.getEnvironment().getProperty("public.service.address");
-            if (host != null)
-            {
-                return host;
-            }
-            host = platformContext.getEnvironment().getProperty("server.address");
-            if (host != null)
-            {
-                return host;
-            }
-
-            return "localhost";
-        }
-        catch (Throwable ex)
-        {
-            return "localhost";
-        }
-    }
-
-    private String getProtocol()
-    {
-        try
-        {
-
-            String protocol = platformContext.getEnvironment().getProperty("public.service.protocol");
-            if (protocol != null)
-            {
-                return protocol;
-            }
-            protocol = platformContext.getEnvironment().getProperty("server.protocol");
-            if (protocol != null)
-            {
-                return protocol;
-            }
-            else
-            {
-                return "http";
-            }
-        }
-        catch (Throwable ex)
-        {
-            return "http";
-        }
-    }
-
-    private static String getPid()
-    {
-        try
-        {
-            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-            return jvmName.split("@")[0];
-        }
-        catch (Throwable ex)
-        {
-            return null;
-        }
     }
 
 

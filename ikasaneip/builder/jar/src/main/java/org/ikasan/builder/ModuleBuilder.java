@@ -43,9 +43,12 @@ package org.ikasan.builder;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,12 +59,21 @@ import java.util.List;
  */
 public class ModuleBuilder
 {
-    public static final String URL_PROTOCOL = "server.url.protocol";
+
     public static final String SERVER_PORT = "server.port";
     public static final String SERVER_ADDRESS = "server.address";
-    public static final String SERVER_CONTEXT_PATH = "server.servlet.context-path";
+    public static final String SERVER_PROTOCOL = "server.protocol";
+    public static final String PUBLIC_SERVICE_PORT = "public.service.port";
+    public static final String PUBLIC_SERVICE_ADDRESS = "public.service.address";
+    public static final String PUBLIC_SERVICE_PROTOCOL = "public.service.protocol";
 
-	/** name of the module being instantiated */
+    public static final String DEFAULT_PROTOCOL = "http";
+
+    public static final String DEFAULT_HOST = "localhost";
+
+    private static final Logger logger = LoggerFactory.getLogger(ModuleBuilder.class);
+
+    /** name of the module being instantiated */
 	String name;
 
     /** module version */
@@ -157,12 +169,109 @@ public class ModuleBuilder
 		return flowBuilder;
 	}
 
-	private String getUrl()
+
+    /**
+     * Gets application url
+     *
+     * @return application url
+     */
+    private String getUrl()
     {
-        return this.context.getEnvironment().getProperty(URL_PROTOCOL) + "//:" +
-            this.context.getEnvironment().getProperty(SERVER_ADDRESS) + ":" +
-            this.context.getEnvironment().getProperty(SERVER_PORT) +
-            this.context.getEnvironment().getProperty(SERVER_CONTEXT_PATH);
+        String host = getHost();
+        Integer port = getPort();
+        String pid = getPid();
+        String protocol = getProtocol();
+        String context = this.context.getApplicationName();
+        String serverUrl = protocol + "://" + host + ":" + port + context;
+        logger.info("Module url [" + serverUrl + "] running with PID [" + pid + "]");
+
+        return serverUrl;
+
+    }
+
+    private Integer getPort()
+    {
+        try
+        {
+            String port = context.getEnvironment().getProperty(PUBLIC_SERVICE_PORT);
+            if (port != null)
+            {
+                return Integer.valueOf(port);
+            }
+            port = context.getEnvironment().getProperty(SERVER_PORT);
+            if (port != null)
+            {
+                return Integer.valueOf(port);
+            }
+            return 8080;
+        }
+        catch (Throwable ex)
+        {
+            return 8080;
+        }
+    }
+
+    private String getHost()
+    {
+        try
+        {
+
+            String host = context.getEnvironment().getProperty(PUBLIC_SERVICE_ADDRESS);
+            if (host != null)
+            {
+                return host;
+            }
+            host = context.getEnvironment().getProperty(SERVER_ADDRESS);
+            if (host != null)
+            {
+                return host;
+            }
+
+            return DEFAULT_HOST;
+        }
+        catch (Throwable ex)
+        {
+            return DEFAULT_HOST;
+        }
+    }
+
+    private String getProtocol()
+    {
+        try
+        {
+
+            String protocol = context.getEnvironment().getProperty(PUBLIC_SERVICE_PROTOCOL);
+            if (protocol != null)
+            {
+                return protocol;
+            }
+            protocol = context.getEnvironment().getProperty(SERVER_PROTOCOL);
+            if (protocol != null)
+            {
+                return protocol;
+            }
+            else
+            {
+                return DEFAULT_PROTOCOL;
+            }
+        }
+        catch (Throwable ex)
+        {
+            return DEFAULT_PROTOCOL;
+        }
+    }
+
+    private static String getPid()
+    {
+        try
+        {
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            return jvmName.split("@")[0];
+        }
+        catch (Throwable ex)
+        {
+            return null;
+        }
     }
 }
 
