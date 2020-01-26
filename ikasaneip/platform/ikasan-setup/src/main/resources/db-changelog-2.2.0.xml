@@ -15,6 +15,7 @@
     <!-- 2.1.x cardinality creation -->
 
     <!-- 2.1.x data creation -->
+    <include file="db/data/db-changelog-insertBlueConsoleSecurityRecords.xml"/>
 
     <!-- 2.1.x index creation -->
     <include file="db/index/db-changeLog-createIndexErrorOccurrenceExpiry.xml" relativeToChangelogFile="true" />
