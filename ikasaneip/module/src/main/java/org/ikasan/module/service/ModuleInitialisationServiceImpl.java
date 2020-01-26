@@ -41,10 +41,6 @@
 package org.ikasan.module.service;
 
 import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -100,11 +96,6 @@ public class ModuleInitialisationServiceImpl
     private ApplicationContext platformContext;
 
     /**
-     * SecurityService provides access to users and authorities
-     */
-    private SecurityService securityService;
-
-    /**
      * Module Metadata dashboard rest client
      */
     private DashboardRestService moduleMetadataDashboardRestService;
@@ -123,16 +114,17 @@ public class ModuleInitialisationServiceImpl
      */
     private HarvestingSchedulerService harvestingSchedulerService;
 
-
     /**
      * Constructor
      *
      * @param moduleContainer
      * @param moduleActivator
-     * @param securityService
+     * @param moduleMetadataDashboardRestService
+     * @param configurationMetadataDashboardRestService
+     * @param housekeepingSchedulerService
+     * @param harvestingSchedulerService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        SecurityService securityService,
         DashboardRestService moduleMetadataDashboardRestService,
         DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
@@ -148,11 +140,6 @@ public class ModuleInitialisationServiceImpl
         if (moduleActivator == null)
         {
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
-        }
-        this.securityService = securityService;
-        if (securityService == null)
-        {
-            throw new IllegalArgumentException("securityService cannot be 'null'");
         }
         this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
         if (moduleMetadataDashboardRestService == null)
@@ -280,7 +267,6 @@ public class ModuleInitialisationServiceImpl
     {
         try
         {
-            this.initialiseModuleSecurity(module);
             // intialise config into db
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
@@ -351,56 +337,6 @@ public class ModuleInitialisationServiceImpl
         }
     }
 
-    /**
-     * Creates the authorities for the module if they do not already exist
-     *
-     * @param module - The module to secure
-     */
-    private void initialiseModuleSecurity(Module module)
-    {
-        List<Policy> readBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-        if (readBlueConsolePolicies == null || readBlueConsolePolicies.isEmpty())
-        {
-            Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
-            logger.info("Creating ReadBlueConsole policy...");
-            this.securityService.savePolicy(readBlueConsole);
-        }
-        List<Policy> writeBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-        if (writeBlueConsolePolicies == null && writeBlueConsolePolicies.isEmpty())
-        {
-            Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
-            logger.info("Creating WriteBlueConsole policy...");
-            this.securityService.savePolicy(writeBlueConsole);
-        }
-        List<Role> existingUserRoles = this.securityService.getRoleByNameLike("User");
-        if (existingUserRoles == null || existingUserRoles.isEmpty())
-        {
-            Role userRole = new Role("User", "Users who have a read only view on the system.");
-            logger.info("Creating standard User role...");
-            this.securityService.saveRole(userRole);
-        }
-        List<Role> existingAdminRoles = this.securityService.getRoleByNameLike("ADMIN");
-        if (existingAdminRoles == null || existingAdminRoles.isEmpty())
-        {
-            Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
-            logger.info("Creating standard Admin role...");
-            this.securityService.saveRole(adminRole);
-        }
-        List<IkasanPrincipal> existingAdminPrinciples = this.securityService.getPrincipalByNameLike("admin");
-        if (existingAdminPrinciples == null && existingAdminPrinciples.isEmpty())
-        {
-            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin", "user", "The administrator user principle.");
-            logger.info("Creating standard admin principle...");
-            this.securityService.savePrincipal(adminPrinciple);
-        }
-        List<IkasanPrincipal> existingUserPrinciples = this.securityService.getPrincipalByNameLike("user");
-        if (existingUserPrinciples == null || existingUserPrinciples.isEmpty())
-        {
-            IkasanPrincipal userPrinciple = new IkasanPrincipal("user", "user", "The user principle.");
-            logger.info("Creating standard user principle...");
-            this.securityService.savePrincipal(userPrinciple);
-        }
-    }
 
     /**
      * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
