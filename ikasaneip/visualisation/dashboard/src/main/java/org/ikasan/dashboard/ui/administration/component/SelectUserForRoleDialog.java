@@ -126,7 +126,7 @@ public class SelectUserForRoleDialog extends Dialog
         layout.add(selectUserLabel, userGrid);
 
         layout.setWidth("1200px");
-        layout.setHeight("500px");
+        layout.setHeight("700px");
 
         this.add(layout);
     }

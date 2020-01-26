@@ -22,6 +22,8 @@ public class SelectPolicyForRoleDialog extends Dialog
     private Role role;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
+    private FilteringGrid<Policy> policyGrid;
+    private List<Policy> policiesList;
 
     public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger)
     {
@@ -48,13 +50,12 @@ public class SelectPolicyForRoleDialog extends Dialog
     {
         H3 selectGroupLabel = new H3(getTranslation("label.select-policy", UI.getCurrent().getLocale(), null));
 
-        List<Policy> policiesList = this.securityService.getAllPolicies();
-
+        policiesList = this.securityService.getAllPolicies();
         policiesList.removeAll(role.getPolicies());
 
         PolicyFilter policyFilter = new PolicyFilter();
 
-        FilteringGrid<Policy> policyGrid = new FilteringGrid<>(policyFilter);
+        policyGrid = new FilteringGrid<>(policyFilter);
         policyGrid.setSizeFull();
 
         policyGrid.setClassName("my-grid");
@@ -71,23 +72,30 @@ public class SelectPolicyForRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-            this.close();
+            policiesList.removeAll(role.getPolicies());
+
+            this.updatePolicyGrid();
         });
 
         HeaderRow hr = policyGrid.appendHeaderRow();
         policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
         policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
 
-        policyGrid.setItems(policiesList);
-
         policyGrid.setSizeFull();
+
+        this.updatePolicyGrid();
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(selectGroupLabel, policyGrid);
 
-        layout.setWidth("600px");
-        layout.setHeight("300px");
+        layout.setWidth("1200px");
+        layout.setHeight("700px");
 
         this.add(layout);
+    }
+
+    private void updatePolicyGrid()
+    {
+        policyGrid.setItems(policiesList);
     }
 }

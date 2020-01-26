@@ -76,7 +76,7 @@
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'RoleModule', 'identity_gap', 1</sql>
         
-        <createIndex indexName="RoleModule_RoleId_idx" tableName="RoleModule" unique="true">
+        <createIndex indexName="RoleModule_RoleId_idx" tableName="RoleModule" unique="false">
             <column name="RoleId"/>
         </createIndex>
 

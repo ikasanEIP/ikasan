@@ -26,6 +26,7 @@ public class SelectModuleForRoleDialog extends Dialog
     private ModuleMetaDataService moduleMetadataService;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
+    private List<ModuleMetaData> moduleMetaDataList;
 
     public SelectModuleForRoleDialog(Role role, ModuleMetaDataService moduleMetadataService,  SecurityService securityService
         , SystemEventLogger systemEventLogger)
@@ -58,21 +59,27 @@ public class SelectModuleForRoleDialog extends Dialog
     {
         H3 selectUserLabel = new H3(getTranslation("label.select-module", UI.getCurrent().getLocale(), null));
 
-        List<ModuleMetaData> moduleMetaDataList = this.moduleMetadataService.findAll();
+        moduleMetaDataList = this.moduleMetadataService.findAll();
         moduleMetaDataList = this.removeAlreadyAssociatedModules(moduleMetaDataList);
 
         ModuleFilter moduleFilter = new ModuleFilter();
 
-        FilteringGrid<ModuleMetaData> userGrid = new FilteringGrid<>(moduleFilter);
-        userGrid.setSizeFull();
+        FilteringGrid<ModuleMetaData> moduleGrid = new FilteringGrid<>(moduleFilter);
+        moduleGrid.setSizeFull();
 
-        userGrid.addColumn(ModuleMetaData::getName)
+        moduleGrid.addColumn(ModuleMetaData::getName)
             .setKey("name")
             .setHeader(getTranslation("table-header.moduleName", UI.getCurrent().getLocale(), null))
             .setSortable(true)
             .setFlexGrow(2);
 
-        userGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>) moduleItemDoubleClickEvent ->
+        moduleGrid.addColumn(ModuleMetaData::getDescription)
+            .setKey("description")
+            .setHeader(getTranslation("table-header.description", UI.getCurrent().getLocale(), null))
+            .setSortable(true)
+            .setFlexGrow(2);
+
+        moduleGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>) moduleItemDoubleClickEvent ->
         {
             RoleModule roleModule = new RoleModule();
             roleModule.setRole(this.role);
@@ -86,21 +93,21 @@ public class SelectModuleForRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_MODULE_ROLE_CHANGE_CONSTANTS, action, null);
 
-            this.close();
+            moduleGrid.setItems(removeAlreadyAssociatedModules(moduleMetaDataList));
         });
 
-        HeaderRow hr = userGrid.appendHeaderRow();
-        userGrid.addGridFiltering(hr, moduleFilter::setModuleNameFilter, "name");
+        HeaderRow hr = moduleGrid.appendHeaderRow();
+        moduleGrid.addGridFiltering(hr, moduleFilter::setModuleNameFilter, "name");
 
-        userGrid.setItems(moduleMetaDataList);
+        moduleGrid.setItems(moduleMetaDataList);
 
-        userGrid.setSizeFull();
+        moduleGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(selectUserLabel, userGrid);
+        layout.add(selectUserLabel, moduleGrid);
 
         layout.setWidth("1200px");
-        layout.setHeight("500px");
+        layout.setHeight("700px");
 
         this.add(layout);
     }

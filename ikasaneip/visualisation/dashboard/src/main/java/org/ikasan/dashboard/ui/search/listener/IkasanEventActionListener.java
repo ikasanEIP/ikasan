@@ -18,13 +18,31 @@ public abstract class IkasanEventActionListener
     protected ModuleMetaDataService moduleMetadataService;
     protected HashMap<String, ModuleMetaData> moduleMetaDataCache;
 
-    public IkasanEventActionListener(ModuleMetaDataService moduleMetadataService)
+    public IkasanEventActionListener(ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid,
+            HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems)
     {
         this.moduleMetadataService = moduleMetadataService;
         if(this.moduleMetadataService == null)
         {
             throw new IllegalArgumentException("moduleMetadataService cannot be null!");
         }
+        this.searchResultsGrid = searchResultsGrid;
+        if(this.searchResultsGrid == null)
+        {
+            throw new IllegalArgumentException("searchResultsGrid cannot be null!");
+        }
+        this.selectionBoxes = selectionBoxes;
+        if(this.selectionBoxes == null)
+        {
+            throw new IllegalArgumentException("selectionBoxes cannot be null!");
+        }
+        this.selectionItems = selectionItems;
+        if(this.selectionItems == null)
+        {
+            throw new IllegalArgumentException("selectionItems cannot be null!");
+        }
+
+        moduleMetaDataCache = new HashMap<>();
     }
 
     /**

@@ -32,6 +32,7 @@ import elemental.json.JsonArray;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
@@ -39,6 +40,7 @@ import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.*;
@@ -51,6 +53,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -72,6 +75,7 @@ import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
@@ -421,6 +425,18 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     protected void populateModulesGrid()
     {
         List<ModuleMetaData> moduleMetaData = this.moduleMetadataService.findAll();
+
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
+        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
+
+            moduleMetaData = moduleMetaData
+                .stream()
+                .filter(metadata -> accessibleModules.contains(metadata.getName()))
+                .collect(Collectors.toList());
+        }
+
         this.modulesGrid.setItems(moduleMetaData);
     }
 

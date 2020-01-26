@@ -109,8 +109,8 @@ public class SelectGroupForRoleDialog extends Dialog
         VerticalLayout layout = new VerticalLayout();
         layout.add(selectGroupLabel, groupGrid);
 
-        layout.setWidth("1000px");
-        layout.setHeight("500px");
+        layout.setWidth("1200px");
+        layout.setHeight("700px");
 
         this.add(layout);
     }

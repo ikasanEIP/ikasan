@@ -538,7 +538,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     }
 
     /**
-     * Mthod to perform the search.
+     * Method to perform the search.
      *
      * @param type the entity type
      * @param searchTerm the search term

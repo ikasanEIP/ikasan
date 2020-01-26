@@ -41,10 +41,11 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
     private ResubmissionRestServiceImpl resubmissionRestService;
 
     public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
-        ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
-        , HashMap<String, IkasanSolrDocument> selectionItems)
+        ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid
+        , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems)
     {
-        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService);
+        super(actionMessage, errorReportingService, moduleMetadataService
+            , resubmissionRestService, searchResultsGrid, selectionBoxes, selectionItems);
         this.hospitalAuditService = hospitalAuditService;
         if(this.hospitalAuditService == null)
         {
