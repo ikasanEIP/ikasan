@@ -43,11 +43,9 @@ package org.ikasan.module.service;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
@@ -56,7 +54,6 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.topology.model.Server;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -66,7 +63,6 @@ import org.junit.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -112,7 +108,7 @@ public class ModuleInitialisationServiceImplTest {
     ModuleInitialisationServiceImpl uut;
     @Before
     public void setup(){
-        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService,configurationMetadataDashboardRestService,housekeepingSchedulerService,harvestingSchedulerService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
@@ -121,44 +117,38 @@ public class ModuleInitialisationServiceImplTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService,
+        new ModuleInitialisationServiceImpl(null, moduleActivator,
             moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService,
+        new ModuleInitialisationServiceImpl(moduleContainer, null,
             moduleDashboardRestService, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_securityService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,
-            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService,harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_dashboard() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             null, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_configurationMetadataDashboardRestService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService, null,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_housekeeping() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService, configurationMetadataDashboardRestService,null, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_harvestion() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, null);
     }
 
