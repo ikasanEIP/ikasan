@@ -144,7 +144,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty())
         {
             moduleNames = new HashSet<>();
-            moduleNames.add(ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+            moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
         }
 
         HashSet<String> flowNames = null;
@@ -152,7 +152,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getFlowNameFilter() != null && !filter.getFlowNameFilter().isEmpty())
         {
             flowNames = new HashSet<>();
-            flowNames.add(ClientUtils.escapeQueryChars(filter.getFlowNameFilter()) + "*");
+            flowNames.add("*" + ClientUtils.escapeQueryChars(filter.getFlowNameFilter()) + "*");
         }
 
         HashSet<String> componentNames = null;
@@ -160,7 +160,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(filter.getComponentNameFilter() != null && !filter.getComponentNameFilter().isEmpty())
         {
             componentNames = new HashSet<>();
-            componentNames.add(ClientUtils.escapeQueryChars(filter.getComponentNameFilter()) + "*");
+            componentNames.add("*" + ClientUtils.escapeQueryChars(filter.getComponentNameFilter()) + "*");
         }
 
         String eventId = null;
