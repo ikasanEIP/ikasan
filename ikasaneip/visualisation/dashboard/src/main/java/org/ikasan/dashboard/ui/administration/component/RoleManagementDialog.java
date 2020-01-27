@@ -19,6 +19,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
@@ -50,10 +52,17 @@ public class RoleManagementDialog extends Dialog
     private UserService userService;
     private ModuleMetaDataService moduleMetadataService;
 
-    private FilteringGrid<Policy> policyGrid;
-    private FilteringGrid<IkasanPrincipalLite> groupGrid;
     private FilteringGrid<UserLite> userGrid;
+    private ListDataProvider<UserLite> userDataProvider;
+
+    private FilteringGrid<IkasanPrincipalLite> groupGrid;
+    private ListDataProvider<IkasanPrincipalLite> groupDataProvider;
+
+    private FilteringGrid<Policy> policyGrid;
+    private ListDataProvider<Policy> policyDataProvider;
+
     private FilteringGrid<RoleModule> roleModuleGrid;
+    private ListDataProvider<RoleModule> roleModuleDataProvider;
 
     /**
      * Constructor
@@ -177,14 +186,7 @@ public class RoleManagementDialog extends Dialog
         Button addPolicyButton = new Button(getTranslation("button.add-policy", UI.getCurrent().getLocale(), null));
         addPolicyButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger);
-            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-            {
-                if(dialogOpenedChangeEvent.isOpened() == false)
-                {
-                    this.updatePoliciesGrid();
-                }
-            });
+            SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger, this.policyDataProvider);
 
             dialog.open();
         });
@@ -199,7 +201,8 @@ public class RoleManagementDialog extends Dialog
      */
     private void updatePoliciesGrid()
     {
-        this.policyGrid.setItems(role.getPolicies());
+        policyDataProvider = new ListDataProvider<>(role.getPolicies());
+        this.policyGrid.setDataProvider(policyDataProvider);
     }
 
     /**
@@ -256,14 +259,7 @@ public class RoleManagementDialog extends Dialog
         addUser.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectUserForRoleDialog dialog = new SelectUserForRoleDialog(this.role, this.userService, this.getAssociatedUsers(),
-                this.securityService, this.systemEventLogger);
-            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-            {
-                if(dialogOpenedChangeEvent.isOpened() == false)
-                {
-                    this.updateAssociatedUsersGrid();
-                }
-            });
+                this.securityService, this.systemEventLogger, this.userDataProvider);
 
             dialog.open();
         });
@@ -314,7 +310,8 @@ public class RoleManagementDialog extends Dialog
      */
     private void updateAssociatedUsersGrid()
     {
-        this.userGrid.setItems(this.getAssociatedUsers());
+        userDataProvider = new ListDataProvider<>(this.getAssociatedUsers());
+        this.userGrid.setDataProvider(userDataProvider);
     }
 
     /**
@@ -364,7 +361,7 @@ public class RoleManagementDialog extends Dialog
         addGroup.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectGroupForRoleDialog dialog = new SelectGroupForRoleDialog(this.role, getAssociatedGroups()
-                , this.securityService, this.systemEventLogger);
+                , this.securityService, this.systemEventLogger, groupDataProvider);
             dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
             {
                 if(dialogOpenedChangeEvent.isOpened() == false)
@@ -422,7 +419,8 @@ public class RoleManagementDialog extends Dialog
      */
     private void updateAssociatedGroupsGrid()
     {
-        this.groupGrid.setItems(this.getAssociatedGroups());
+        this.groupDataProvider = new ListDataProvider<>(this.getAssociatedGroups());
+        this.groupGrid.setDataProvider(this.groupDataProvider);
     }
 
     /**
@@ -509,14 +507,7 @@ public class RoleManagementDialog extends Dialog
         addModule.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectModuleForRoleDialog dialog = new SelectModuleForRoleDialog(this.role, this.moduleMetadataService,
-                this.securityService, this.systemEventLogger);
-            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-            {
-                if(dialogOpenedChangeEvent.isOpened() == false)
-                {
-                    this.updateRoleModuleGrid();
-                }
-            });
+                this.securityService, this.systemEventLogger, this.roleModuleDataProvider);
 
             dialog.open();
         });
@@ -530,7 +521,8 @@ public class RoleManagementDialog extends Dialog
 
     protected void updateRoleModuleGrid()
     {
-        this.roleModuleGrid.setItems(this.role.getRoleModules());
+        roleModuleDataProvider = DataProvider.ofCollection(this.role.getRoleModules());
+        this.roleModuleGrid.setDataProvider(roleModuleDataProvider);
     }
 
     /**

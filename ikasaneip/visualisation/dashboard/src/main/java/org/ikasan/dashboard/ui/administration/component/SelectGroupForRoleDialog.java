@@ -1,17 +1,13 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -30,9 +26,10 @@ public class SelectGroupForRoleDialog extends Dialog
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
     private List<IkasanPrincipalLite> associatedGroups;
+    private ListDataProvider<IkasanPrincipalLite> groupDataProvider;
 
     public SelectGroupForRoleDialog(Role role, List<IkasanPrincipalLite> associatedGroups, SecurityService securityService
-        , SystemEventLogger systemEventLogger)
+        , SystemEventLogger systemEventLogger, ListDataProvider<IkasanPrincipalLite> groupDataProvider)
     {
         this.role = role;
         if(this.role == null)
@@ -54,6 +51,11 @@ public class SelectGroupForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
+        this.groupDataProvider = groupDataProvider;
+        if(this.groupDataProvider == null)
+        {
+            throw new IllegalArgumentException("groupDataProvider cannot be null!");
+        }
 
         init();
     }
@@ -70,6 +72,12 @@ public class SelectGroupForRoleDialog extends Dialog
         FilteringGrid<IkasanPrincipalLite> groupGrid = new FilteringGrid<>(groupFilter);
         groupGrid.setSizeFull();
         groupGrid.setClassName("my-grid");
+
+        ListDataProvider<IkasanPrincipalLite> groupLiteDataProvider = new ListDataProvider<>(principals.stream()
+            .filter(principal -> principal.getType() != null && principal.getType().equals("application"))
+            .collect(Collectors.toList()));
+
+        groupGrid.setDataProvider(groupLiteDataProvider);
 
         groupGrid.addColumn(IkasanPrincipalLite::getName)
             .setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null))
@@ -93,16 +101,16 @@ public class SelectGroupForRoleDialog extends Dialog
 
                 this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-                this.close();
+                this.groupDataProvider.getItems().add(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
+                this.groupDataProvider.refreshAll();
+
+                groupLiteDataProvider.getItems().remove(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
+                groupLiteDataProvider.refreshAll();
         });
 
         HeaderRow hr = groupGrid.appendHeaderRow();
         groupGrid.addGridFiltering(hr, groupFilter::setNameFilter, "name");
         groupGrid.addGridFiltering(hr, groupFilter::setDescriptionFilter, "description");
-
-        groupGrid.setItems(principals.stream()
-            .filter(principal -> principal.getType() != null && principal.getType().equals("application"))
-            .collect(Collectors.toList()));
 
         groupGrid.setSizeFull();
 

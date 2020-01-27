@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.ModuleFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -27,9 +28,10 @@ public class SelectModuleForRoleDialog extends Dialog
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
     private List<ModuleMetaData> moduleMetaDataList;
+    private ListDataProvider<RoleModule> roleModuleDataProvider;
 
     public SelectModuleForRoleDialog(Role role, ModuleMetaDataService moduleMetadataService,  SecurityService securityService
-        , SystemEventLogger systemEventLogger)
+        , SystemEventLogger systemEventLogger, ListDataProvider<RoleModule> roleModuleDataProvider)
     {
         this.role = role;
         if(this.role == null)
@@ -50,6 +52,11 @@ public class SelectModuleForRoleDialog extends Dialog
         if(this.systemEventLogger == null)
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
+        }
+        this.roleModuleDataProvider = roleModuleDataProvider;
+        if(this.roleModuleDataProvider == null)
+        {
+            throw new IllegalArgumentException("roleModuleDataProvider cannot be null!");
         }
 
         init();
@@ -94,6 +101,9 @@ public class SelectModuleForRoleDialog extends Dialog
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_MODULE_ROLE_CHANGE_CONSTANTS, action, null);
 
             moduleGrid.setItems(removeAlreadyAssociatedModules(moduleMetaDataList));
+
+            this.roleModuleDataProvider.getItems().add(roleModule);
+            this.roleModuleDataProvider.refreshAll();
         });
 
         HeaderRow hr = moduleGrid.appendHeaderRow();

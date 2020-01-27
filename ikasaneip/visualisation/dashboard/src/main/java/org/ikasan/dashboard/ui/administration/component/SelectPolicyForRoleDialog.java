@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -24,8 +25,10 @@ public class SelectPolicyForRoleDialog extends Dialog
     private SystemEventLogger systemEventLogger;
     private FilteringGrid<Policy> policyGrid;
     private List<Policy> policiesList;
+    private ListDataProvider<Policy> policyDataProvider;
 
-    public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger)
+    public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger,
+                                     ListDataProvider<Policy> policyDataProvider)
     {
         this.role = role;
         if(this.role == null)
@@ -41,6 +44,11 @@ public class SelectPolicyForRoleDialog extends Dialog
         if(this.systemEventLogger == null)
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
+        }
+        this.policyDataProvider = policyDataProvider;
+        if(this.policyDataProvider == null)
+        {
+            throw new IllegalArgumentException("policyDataProvider cannot be null!");
         }
 
         init();
@@ -75,6 +83,9 @@ public class SelectPolicyForRoleDialog extends Dialog
             policiesList.removeAll(role.getPolicies());
 
             this.updatePolicyGrid();
+
+            this.policyDataProvider.getItems().add(policyItemDoubleClickEvent.getItem());
+            this.policyDataProvider.refreshAll();
         });
 
         HeaderRow hr = policyGrid.appendHeaderRow();
