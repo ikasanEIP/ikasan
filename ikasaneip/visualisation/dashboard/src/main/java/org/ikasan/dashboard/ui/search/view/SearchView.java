@@ -414,7 +414,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         this.searchResultsGrid.addColumn(TemplateRenderer.<IkasanSolrDocument>of(
             "<div>[[item.eventIdentifier]]</div>")
             .withProperty("eventIdentifier",
-                ikasanSolrDocument -> Optional.ofNullable(ikasanSolrDocument.getErrorUri()).orElse(ikasanSolrDocument.getEventId())))
+                ikasanSolrDocument -> Optional.ofNullable(ikasanSolrDocument.getEventId()).orElse("")))
             .setKey("eventId")
             .setHeader(getTranslation("table-header.event-id", UI.getCurrent().getLocale()))
             .setSortable(true)
