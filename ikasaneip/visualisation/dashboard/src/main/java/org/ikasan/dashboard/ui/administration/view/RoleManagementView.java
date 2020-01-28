@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
@@ -40,6 +41,7 @@ import java.util.List;
 @Route(value = "roleManagement", layout = IkasanAppLayout.class)
 @UIScope
 @Component
+@PageTitle("Ikasan - Role Management")
 public class RoleManagementView extends VerticalLayout implements BeforeEnterObserver
 {
     private Logger logger = LoggerFactory.getLogger(RoleManagementView.class);
