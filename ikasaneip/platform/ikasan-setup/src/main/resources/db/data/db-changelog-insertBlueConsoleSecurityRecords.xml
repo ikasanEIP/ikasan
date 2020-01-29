@@ -60,6 +60,28 @@
             <column name="Description" value="Users who have Access to REST endpoint on the system" />
         </insert>
 
+        <insert tableName="SecurityRole">
+            <column name="Name" value="AdminUser" />
+            <column name="Description" value="Users who have Access to REST endpoint on the system" />
+        </insert>
+
+        <insert tableName="SecurityRole">
+            <column name="Name" value="WriteUser" />
+            <column name="Description" value="Users who have Access to REST endpoint on the system" />
+        </insert>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'RESTAccess'
+            and p.Name = 'WebServiceAdmin'
+            )
+        </sql>
+
+
         <sql>
             INSERT INTO RolePolicy ( RoleId, PolicyId )
             (SELECT r.Id, p.Id
@@ -77,10 +99,894 @@
             FROM
             SecurityRole r , SecurityPolicy p
             WHERE
-            r.Name = 'RESTAccess'
-            and p.Name = 'WebServiceAdmin'
+            r.Name = 'User'
+            and p.Name = 'wiretap-read'
             )
         </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'error-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'actioned_error-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'categorised_error-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'exclusion-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'actioned_exclusion-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'system_event-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'filter-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'monitoring-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'replay-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'housekeeping-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'user_administration-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'group_administration-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'role_administration-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'policy_administration-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'user_directory-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'User'
+            and p.Name = 'notification-read'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'ReadBlueConsole'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'WriteBlueConsole'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'wiretap-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'wiretap-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'error-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'error-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'actioned_error-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'actioned_error-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'categorised_error-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'categorised_error-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'exclusion-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'exclusion-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'actioned_exclusion-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'actioned_exclusion-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'system_event-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'system_event-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'filter-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'filter-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'topology-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'topology-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'mapping-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'mapping-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'monitoring-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'monitoring-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'replay-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'replay-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'housekeeping-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'housekeeping-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'user_administration-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'user_administration-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'group_administration-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'group_administration-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'role_administration-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'role_administration-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'policy_administration-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'policy_administration-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'user_directory-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'user_directory-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'platform_configuration-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'platform_configuration-write'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'notification-read'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'WriteUser'
+            and p.Name = 'notification-write'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'ReadBlueConsole'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'WriteBlueConsole'
+            )
+        </sql>
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'wiretap-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'error-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'actioned_error-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'categorised_error-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'exclusion-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'actioned_exclusion-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'system_event-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'filter-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'monitoring-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'replay-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'housekeeping-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'user_administration-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'group_administration-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'role_administration-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'policy_administration-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'user_directory-admin'
+            )
+        </sql>
+
+
+        <sql>
+            INSERT INTO RolePolicy ( RoleId, PolicyId )
+            (SELECT r.Id, p.Id
+            FROM
+            SecurityRole r , SecurityPolicy p
+            WHERE
+            r.Name = 'AdminUser'
+            and p.Name = 'notification-admin'
+            )
+        </sql>
+
+
 
 
     </changeSet>
