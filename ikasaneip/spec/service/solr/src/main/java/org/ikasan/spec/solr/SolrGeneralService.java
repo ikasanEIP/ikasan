@@ -64,6 +64,20 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * Perform general search against ikasan solr index.
      *
      * @param moduleNames
+     * @param searchString
+     * @param startTime
+     * @param endTime
+     * @param offset
+     * @param resultSize
+     * @param entityTypes
+     * @return RESULTS
+     */
+    public RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
+
+    /**
+     * Perform general search against ikasan solr index.
+     *
+     * @param moduleNames
      * @param flowNames
      * @param componentNames
      * @param eventId

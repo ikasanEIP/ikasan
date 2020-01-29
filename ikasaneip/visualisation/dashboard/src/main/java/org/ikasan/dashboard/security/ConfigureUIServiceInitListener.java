@@ -4,7 +4,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
-import org.ikasan.dashboard.ui.administration.view.PersistenceSetupView;
 import org.ikasan.dashboard.ui.security.view.LoginView;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,11 +35,6 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 	 */
 	private void beforeEnter(BeforeEnterEvent event)
     {
-	    if(PersistenceSetupView.class.equals(event.getNavigationTarget()))
-        {
-            return;
-        }
-
 		if (!LoginView.class.equals(event.getNavigationTarget())
 		    && !SecurityUtils.isUserLoggedIn() && !dashboardSecurityMode.equals("test"))
 		{

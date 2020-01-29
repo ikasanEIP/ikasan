@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TableButton;
@@ -41,8 +42,10 @@ public class UserManagementDialog extends Dialog
     private SecurityService securityService;
     private SystemEventService systemEventService;
     private SystemEventLogger systemEventLogger;
+    private Grid<SystemEvent> securityChangesGrid = new Grid<>();
+
     private Grid<Role> roleGrid = new Grid<>();
-    Grid<SystemEvent> securityChangesGrid = new Grid<>();
+    private ListDataProvider<Role> roleListDataProvider;
 
     /**
      * Constructor
@@ -176,15 +179,7 @@ public class UserManagementDialog extends Dialog
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             IkasanPrincipal principal = securityService.findPrincipalByName(this.user.getUsername());
-            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger);
-            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-            {
-                if(dialogOpenedChangeEvent.isOpened() == false)
-                {
-                    this.updateRolesGrid();
-                    this.updateSecurityChangesGrid();
-                }
-            });
+            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger, this.roleListDataProvider);
 
             dialog.open();
         });
@@ -217,7 +212,8 @@ public class UserManagementDialog extends Dialog
         IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
         if(principal!=null)
         {
-            roleGrid.setItems(principal.getRoles());
+            this.roleListDataProvider = new ListDataProvider<>(principal.getRoles());
+            this.roleGrid.setDataProvider(this.roleListDataProvider);
         }
     }
 

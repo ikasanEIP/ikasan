@@ -9,6 +9,7 @@ import com.vaadin.flow.i18n.I18NProvider;
 import com.vaadin.flow.server.VaadinService;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
+import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
@@ -34,9 +35,11 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
     private ResubmissionRestServiceImpl resubmissionRestService;
 
     public HospitalEventActionListener(String translatedEventActionMessage, ErrorReportingService errorReportingService,
-                                       ModuleMetaDataService moduleMetadataService, ResubmissionRestServiceImpl resubmissionRestService)
+                                       ModuleMetaDataService moduleMetadataService, ResubmissionRestServiceImpl resubmissionRestService,
+                                       SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes,
+                                       HashMap<String, IkasanSolrDocument> selectionItems)
     {
-        super(moduleMetadataService);
+        super(moduleMetadataService, searchResultsGrid, selectionBoxes, selectionItems);
         this.translatedEventActionMessage = translatedEventActionMessage;
         if(this.translatedEventActionMessage == null)
         {
@@ -52,7 +55,6 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
         {
             throw new IllegalArgumentException("resubmissionRestService cannot be null!");
         }
-        moduleMetaDataCache = new HashMap<>();
     }
 
     protected List<ExclusionEventAction> actionHospitalEvents(List<IkasanSolrDocument> exclusionEvents, ExclusionEventAction exclusionEventAction, ProgressIndicatorDialog progressIndicatorDialog

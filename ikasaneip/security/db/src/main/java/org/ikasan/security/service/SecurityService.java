@@ -52,49 +52,43 @@ import org.ikasan.security.model.*;
 public interface SecurityService
 {
     /**
-     * 
+     *
      * @param name
      * @return
-     * @throws SecurityServiceException
      */
     public IkasanPrincipal findPrincipalByName(String name);
 
     /**
-     * 
+     *
      * @param name
      * @return
-     * @throws SecurityServiceException
      */
     public Role findRoleByName(String name);
-    
+
     /**
-     * 
+     *
      * @param name
      * @return
-     * @throws SecurityServiceException
      */
     public Policy findPolicyByName(String name);
 
     /**
-     * 
+     *
      * @param name
      * @param type
      * @return
-     * @throws SecurityServiceException
      */
     public IkasanPrincipal createNewPrincipal(String name, String type);
 
     /**
-     * 
+     *
      * @param principal
-     * @throws SecurityServiceException
      */
     public void savePrincipal(IkasanPrincipal principal);
 
     /**
-     * 
+     *
      * @return
-     * @throws SecurityServiceException
      */
     public List<IkasanPrincipal> getAllPrincipals();
 
@@ -105,103 +99,99 @@ public interface SecurityService
     public List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
-     * 
+     *
+     * @param roleName
      * @return
-     * @throws SecurityDaoException
      */
     public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
-    
+
     /**
-     * 
-     * @param name
+     *
+     * @param names
      * @return
      */
     public List<IkasanPrincipal> getPrincipalsByName(List<String> names);
 
     /**
-     * 
+     *
      * @param principal
-     * @throws SecurityServiceException
      */
     public void deletePrincipal(IkasanPrincipal principal);
 
     /**
-     * 
+     *
      * @param name
+     * @param description
      * @return
-     * @throws SecurityServiceException
      */
     public Role createNewRole(String name, String description);
 
     /**
-     * 
+     *
      * @param role
-     * @throws SecurityServiceException
      */
     public void saveRole(Role role);
 
     /**
-     * 
+     *
      * @param role
-     * @throws SecurityServiceException
      */
     public void deleteRole(Role role);
 
     /**
-     * 
+     *
      * @return
-     * @throws SecurityServiceException
      */
     public List<Role> getAllRoles();
 
     /**
-     * 
+     *
      * @param name
+     * @param description
      * @return
-     * @throws SecurityServiceException
      */
     public Policy createNewPolicy(String name, String description);
 
     /**
-     * 
+     *
      * @param policy
-     * @throws SecurityServiceException
      */
     public void savePolicy(Policy policy);
 
     /**
-     * 
+     *
      * @param policy
-     * @throws SecurityServiceException
      */
     public void deletePolicy(Policy policy);
 
     /**
-     * 
+     *
+     * @param roleModule
+     */
+    public void deleteRoleModule(RoleModule roleModule);
+
+    /**
+     *
      * @return
-     * @throws SecurityServiceException
      */
     public List<Policy> getAllPolicies();
 
     /**
-     * 
+     *
      * @param authenticationMethod
-     * @throws SecurityDaoException
      */
     public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
-     * 
+     *
      * @return
-     * @throws SecurityDaoException
      */
     public List<AuthenticationMethod> getAuthenticationMethods();
-    
+
     /**
-     * 
+     *
      * @param id
      * @return
-     * @throws SecurityDaoException
      */
     public AuthenticationMethod getAuthenticationMethod(Long id);
 

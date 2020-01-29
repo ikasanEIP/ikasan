@@ -14,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
@@ -38,6 +39,7 @@ import java.util.List;
 @Route(value = "policyManagement", layout = IkasanAppLayout.class)
 @UIScope
 @Component
+@PageTitle("Ikasan - Policy Management")
 public class PolicyManagementView extends VerticalLayout implements BeforeEnterObserver
 {
     private Logger logger = LoggerFactory.getLogger(PolicyManagementView.class);

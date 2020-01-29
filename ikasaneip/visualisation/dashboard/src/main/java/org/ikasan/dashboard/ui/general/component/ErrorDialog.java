@@ -7,8 +7,10 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -52,7 +54,14 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public Component getEntityDetailsLayout()
     {
-        H3 userProfileLabel = new H3(getTranslation("label.error-event-details", UI.getCurrent().getLocale(), null));
+        Image errorImage = new Image("/frontend/images/error-service.png", "");
+        errorImage.setHeight("70px");
+
+        H3 errorLabel = new H3(getTranslation("label.error-event-details", UI.getCurrent().getLocale(), null));
+
+        HorizontalLayout headerLayout = new HorizontalLayout();
+        headerLayout.setSpacing(true);
+        headerLayout.add(errorImage, errorLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -90,7 +99,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         buttonWrapper.wrapComponent(downloadButton);
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userProfileLabel, formLayout, buttonWrapper, downloadButtonTooltip);
+        layout.add(headerLayout, formLayout, buttonWrapper, downloadButtonTooltip);
 
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
 
