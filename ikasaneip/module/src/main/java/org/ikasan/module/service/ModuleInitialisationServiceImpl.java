@@ -40,12 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.module.converter.ModuleConverter;
 import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -55,8 +50,6 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.topology.model.Server;
-import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -69,13 +62,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -107,16 +96,6 @@ public class ModuleInitialisationServiceImpl
     private ApplicationContext platformContext;
 
     /**
-     * SecurityService provides access to users and authorities
-     */
-    private SecurityService securityService;
-
-    /**
-     * TopologyService provides access to module metadata tables
-     */
-    private TopologyService topologyService;
-
-    /**
      * Module Metadata dashboard rest client
      */
     private DashboardRestService moduleMetadataDashboardRestService;
@@ -135,18 +114,17 @@ public class ModuleInitialisationServiceImpl
      */
     private HarvestingSchedulerService harvestingSchedulerService;
 
-    private ModuleConverter moduleConverter = new ModuleConverter();
-
-
     /**
      * Constructor
      *
      * @param moduleContainer
      * @param moduleActivator
-     * @param securityService
+     * @param moduleMetadataDashboardRestService
+     * @param configurationMetadataDashboardRestService
+     * @param housekeepingSchedulerService
+     * @param harvestingSchedulerService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService topologyService,
         DashboardRestService moduleMetadataDashboardRestService,
         DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
@@ -162,16 +140,6 @@ public class ModuleInitialisationServiceImpl
         if (moduleActivator == null)
         {
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
-        }
-        this.securityService = securityService;
-        if (securityService == null)
-        {
-            throw new IllegalArgumentException("securityService cannot be 'null'");
-        }
-        this.topologyService = topologyService;
-        if (topologyService == null)
-        {
-            throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
         this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
         if (moduleMetadataDashboardRestService == null)
@@ -299,7 +267,6 @@ public class ModuleInitialisationServiceImpl
     {
         try
         {
-            this.initialiseModuleSecurity(module);
             // intialise config into db
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
@@ -370,56 +337,6 @@ public class ModuleInitialisationServiceImpl
         }
     }
 
-    /**
-     * Creates the authorities for the module if they do not already exist
-     *
-     * @param module - The module to secure
-     */
-    private void initialiseModuleSecurity(Module module)
-    {
-        List<Policy> readBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-        if (readBlueConsolePolicies == null || readBlueConsolePolicies.isEmpty())
-        {
-            Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
-            logger.info("Creating ReadBlueConsole policy...");
-            this.securityService.savePolicy(readBlueConsole);
-        }
-        List<Policy> writeBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
-        if (writeBlueConsolePolicies == null && writeBlueConsolePolicies.isEmpty())
-        {
-            Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
-            logger.info("Creating WriteBlueConsole policy...");
-            this.securityService.savePolicy(writeBlueConsole);
-        }
-        List<Role> existingUserRoles = this.securityService.getRoleByNameLike("User");
-        if (existingUserRoles == null || existingUserRoles.isEmpty())
-        {
-            Role userRole = new Role("User", "Users who have a read only view on the system.");
-            logger.info("Creating standard User role...");
-            this.securityService.saveRole(userRole);
-        }
-        List<Role> existingAdminRoles = this.securityService.getRoleByNameLike("ADMIN");
-        if (existingAdminRoles == null || existingAdminRoles.isEmpty())
-        {
-            Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
-            logger.info("Creating standard Admin role...");
-            this.securityService.saveRole(adminRole);
-        }
-        List<IkasanPrincipal> existingAdminPrinciples = this.securityService.getPrincipalByNameLike("admin");
-        if (existingAdminPrinciples == null && existingAdminPrinciples.isEmpty())
-        {
-            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin", "user", "The administrator user principle.");
-            logger.info("Creating standard admin principle...");
-            this.securityService.savePrincipal(adminPrinciple);
-        }
-        List<IkasanPrincipal> existingUserPrinciples = this.securityService.getPrincipalByNameLike("user");
-        if (existingUserPrinciples == null || existingUserPrinciples.isEmpty())
-        {
-            IkasanPrincipal userPrinciple = new IkasanPrincipal("user", "user", "The user principle.");
-            logger.info("Creating standard user principle...");
-            this.securityService.savePrincipal(userPrinciple);
-        }
-    }
 
     /**
      * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
@@ -428,142 +345,9 @@ public class ModuleInitialisationServiceImpl
      */
     public void initialiseModuleMetaData(Module module)
     {
-        Optional<Server> server = this.getServer();
-        topologyService.initialiseModuleMetaData(server.orElse(null), platformContext.getApplicationName()
-            , this.moduleConverter.convert(module));
-
-        if(server.isPresent())
-        {
-            module.setUrl(server.get().getDescription());
-        }
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
 
-    }
-
-    /**
-     * Gets server from the runtime platform information
-     *
-     * @return existing server or Optional.empty()
-     */
-    private Optional<Server> getServer()
-    {
-        String host = getHost();
-        Optional<Server> existingServer = null;
-        if (host != null)
-        {
-            Integer port = getPort();
-            String pid = getPid();
-            String context = platformContext.getApplicationName();
-            String serverName = "http://" + host + ":" + port  + context;
-            String serverUrl = "http://" + host;
-            logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
-            String name =  host + ":" + port;
-            Server server = new Server(name, serverName, serverUrl, port);
-            List<Server> servers = this.topologyService.getAllServers();
-            // find existing server by comparing url and port
-            existingServer = servers.stream()
-                    .filter(s -> s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
-                    .findFirst();
-            if (!existingServer.isPresent())
-            {
-                logger.info("Server instance  [" + server + "], creating...");
-                this.topologyService.save(server);
-                return Optional.ofNullable(server);
-            }
-            return existingServer;
-        }
-
-        return Optional.empty();
-    }
-
-    private Integer getPort()
-    {
-        try
-        {
-            String port = platformContext.getEnvironment().getProperty("public.service.port");
-            if (port != null)
-            {
-                return Integer.valueOf(port);
-            }
-             port = platformContext.getEnvironment().getProperty("server.port");
-            if (port != null)
-            {
-                return Integer.valueOf(port);
-            }
-            Object portObject;
-            try
-            {
-                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(
-                        new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
-            }
-            catch (InstanceNotFoundException e)
-            {
-                portObject = ManagementFactory.getPlatformMBeanServer()
-                        .getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"),
-                                "port");
-            }
-            if (portObject != null)
-            {
-                return (Integer) portObject;
-            }
-            return 8080;
-        }
-        catch (Throwable ex)
-        {
-            return 8080;
-        }
-    }
-
-    private String getHost()
-    {
-        try
-        {
-
-            String host = platformContext.getEnvironment().getProperty("public.service.address");
-            if (host != null)
-            {
-                return host;
-            }
-            host = platformContext.getEnvironment().getProperty("server.address");
-            if (host != null)
-            {
-                return host;
-            }
-
-            Object portHost;
-            try
-            {
-                portHost = ManagementFactory.getPlatformMBeanServer()
-                        .getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
-            }
-            catch (InstanceNotFoundException e)
-            {
-                portHost = System.getProperty("jboss.bind.address");
-            }
-            if (portHost != null)
-            {
-                return (String) portHost;
-            }
-            return null;
-        }
-        catch (Throwable ex)
-        {
-            return null;
-        }
-    }
-
-    private static String getPid()
-    {
-        try
-        {
-            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-            return jvmName.split("@")[0];
-        }
-        catch (Throwable ex)
-        {
-            return null;
-        }
     }
 
 

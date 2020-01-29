@@ -47,14 +47,12 @@ import org.ikasan.module.service.ModuleServiceImpl;
 import org.ikasan.module.service.StartupControlServiceImpl;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
-import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.ikasan.topology.service.TopologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -80,15 +78,14 @@ public class IkasanModuleAutoConfiguration
     @DependsOn("liquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
-        SecurityService securityService, TopologyService localTxTopologyService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService,
         DashboardRestService moduleMetadataDashboardRestService,
         DashboardRestService configurationMetadataDashboardRestService
     )
     {
-        return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService,
-            localTxTopologyService, moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+        return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
+             moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean

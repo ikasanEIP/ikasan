@@ -453,7 +453,7 @@
         <version.com.vaadin.componentfactory>1.2.1</version.com.vaadin.componentfactory>
         <version.org.vaadin.olli>1.1.0</version.org.vaadin.olli>
         <version.org.vaadin.erik>1.0.0-beta4</version.org.vaadin.erik>
-
+        <version.finbugs>1.3.9</version.finbugs>
 		<version.com.google.guava>23.0</version.com.google.guava>
 		<version.org.apache.tomcat>8.5.38</version.org.apache.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
@@ -1679,6 +1679,12 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-config-client</artifactId>
                 <version>${version.spring.cloud.config.client}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${version.finbugs}</version>
             </dependency>
 
             <dependency>

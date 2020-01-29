@@ -40,15 +40,12 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.topology.service.TopologyService;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
@@ -57,7 +54,6 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.topology.model.Server;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -67,7 +63,6 @@ import org.junit.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -91,7 +86,6 @@ public class ModuleInitialisationServiceImplTest {
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
     SecurityService securityService = mockery.mock(SecurityService.class);
-    TopologyService topologyService = mockery.mock(TopologyService.class);
     DashboardRestService moduleDashboardRestService = mockery.mock(DashboardRestService.class,"moduleDashboardRestService");
     DashboardRestService configurationMetadataDashboardRestService = mockery.mock(DashboardRestService.class,"configurationMetadataDashboardRestService");
     HousekeepingSchedulerService housekeepingSchedulerService = mockery.mock(HousekeepingSchedulerService.class);
@@ -114,7 +108,7 @@ public class ModuleInitialisationServiceImplTest {
     ModuleInitialisationServiceImpl uut;
     @Before
     public void setup(){
-        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService,configurationMetadataDashboardRestService,housekeepingSchedulerService,harvestingSchedulerService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
@@ -123,50 +117,38 @@ public class ModuleInitialisationServiceImplTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(null, moduleActivator,
             moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(moduleContainer, null,
             moduleDashboardRestService, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_securityService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, null,topologyService,
-            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService,harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_topology() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, null,
-            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService,harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_dashboard() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             null, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_configurationMetadataDashboardRestService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService, null,housekeepingSchedulerService, harvestingSchedulerService);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_housekeeping() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService, configurationMetadataDashboardRestService,null, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_harvestion() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService,
+        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
             moduleDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, null);
     }
 
@@ -197,68 +179,15 @@ public class ModuleInitialisationServiceImplTest {
 
 
     @Test
-    public void initialiseModuleMetaDataWhenNoHostAndModuleDoesNotExistInDB() throws Exception {
+    public void initialiseModuleMetaData() throws Exception {
 
         // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
 
         VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
         Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
 
-        Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
-
         mockery.checking(new Expectations() {{
 
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.address");
-            will(returnValue(null));
-
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            // discovery
-            exactly(1).of(flowConfiguration).getFlowElements();
-            will(returnValue(flowElements));
-
-            exactly(1).of(consumerElement).getComponentName();
-            will(returnValue("consumer"));
-
-            exactly(2).of(consumerElement).getDescription();
-            will(returnValue("consumer description"));
-
-            exactly(1).of(consumerElement).getFlowComponent();
-            will(returnValue(consumer));
-
-            exactly(1).of(consumerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            exactly(1).of(producerElement).getComponentName();
-            will(returnValue("producer"));
-
-            exactly(2).of(producerElement).getDescription();
-            will(returnValue("producer description"));
-
-            exactly(1).of(producerElement).getFlowComponent();
-            will(returnValue(producer));
-
-            exactly(1).of(producerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
 
             oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
             oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
@@ -268,352 +197,4 @@ public class ModuleInitialisationServiceImplTest {
         mockery.assertIsSatisfied();
     }
 
-
-    @Test
-    public void initialiseModuleMetaDataWhenNoHostAndModuleExistInDB() throws Exception {
-
-        // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
-        Environment environment = mockery.mock(Environment.class);
-        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
-
-        mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.address");
-            will(returnValue(null));
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            // discovery
-            exactly(1).of(flowConfiguration).getFlowElements();
-            will(returnValue(flowElements));
-
-            exactly(1).of(consumerElement).getComponentName();
-            will(returnValue("consumer"));
-
-            exactly(2).of(consumerElement).getDescription();
-            will(returnValue("consumer description"));
-
-            exactly(1).of(consumerElement).getFlowComponent();
-            will(returnValue(consumer));
-
-            exactly(1).of(consumerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            exactly(1).of(producerElement).getComponentName();
-            will(returnValue("producer"));
-
-            exactly(2).of(producerElement).getDescription();
-            will(returnValue("producer description"));
-
-            exactly(1).of(producerElement).getFlowComponent();
-            will(returnValue(producer));
-
-            exactly(1).of(producerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            oneOf(topologyService).initialiseModuleMetaData(with(aNull(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
-        }});
-
-        uut.initialiseModuleMetaData(module);
-        mockery.assertIsSatisfied();
-    }
-
-
-    @Test
-    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleDoesNotExistInDB() throws Exception {
-
-        // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
-        Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
-
-        mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.address");
-            will(returnValue("myServerName"));
-
-            oneOf(environment).getProperty("public.service.port");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.port");
-            will(returnValue(8080));
-
-            atLeast(2).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            oneOf(topologyService).getAllServers();
-            will(returnValue(servers));
-
-            oneOf(topologyService).save(with(any(Server.class)));
-
-            // discovery
-            exactly(1).of(flowConfiguration).getFlowElements();
-            will(returnValue(flowElements));
-
-            exactly(1).of(consumerElement).getComponentName();
-            will(returnValue("consumer"));
-
-            exactly(2).of(consumerElement).getDescription();
-            will(returnValue("consumer description"));
-
-            exactly(1).of(consumerElement).getFlowComponent();
-            will(returnValue(consumer));
-
-            exactly(1).of(consumerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            exactly(1).of(producerElement).getComponentName();
-            will(returnValue("producer"));
-
-            exactly(2).of(producerElement).getDescription();
-            will(returnValue("producer description"));
-
-            exactly(1).of(producerElement).getFlowComponent();
-            will(returnValue(producer));
-
-            exactly(1).of(producerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
-        }});
-
-        uut.initialiseModuleMetaData(module);
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDB() throws Exception {
-
-        // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
-        Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
-        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
-
-        mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.address");
-            will(returnValue("myServerName"));
-
-            oneOf(environment).getProperty("public.service.port");
-            will(returnValue(null));
-
-            oneOf(environment).getProperty("server.port");
-            will(returnValue(8080));
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            oneOf(topologyService).getAllServers();
-            will(returnValue(servers));
-
-            oneOf(topologyService).save(with(any(Server.class)));
-
-            // discovery
-            exactly(1).of(flowConfiguration).getFlowElements();
-            will(returnValue(flowElements));
-
-            exactly(1).of(consumerElement).getComponentName();
-            will(returnValue("consumer"));
-
-            exactly(2).of(consumerElement).getDescription();
-            will(returnValue("consumer description"));
-
-            exactly(1).of(consumerElement).getFlowComponent();
-            will(returnValue(consumer));
-
-            exactly(1).of(consumerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            exactly(1).of(producerElement).getComponentName();
-            will(returnValue("producer"));
-
-            exactly(2).of(producerElement).getDescription();
-            will(returnValue("producer description"));
-
-            exactly(1).of(producerElement).getFlowComponent();
-            will(returnValue(producer));
-
-            exactly(1).of(producerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
-        }});
-
-        uut.initialiseModuleMetaData(module);
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    public void initialiseModuleMetaDataWhenServerDoesNotExistsAndModuleExistInDBAndServerIsPublic() throws Exception {
-
-        // Setup test data
-        FlowElement consumerElement = mockery.mock(FlowElement.class,"mockConsumerElement");
-        FlowElement producerElement = mockery.mock(FlowElement.class,"mockProducerElement");
-
-        Consumer consumer = mockery.mock(Consumer.class,"mockConsumer");
-        Producer producer = mockery.mock(Producer.class,"mockProducer");
-
-        List<FlowElement<?>> flowElements = Arrays.asList(consumerElement,producerElement);
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
-        Environment environment = mockery.mock(Environment.class);
-        List<Server> servers = Arrays.asList();
-        org.ikasan.topology.model.Module moduleDb = new org.ikasan.topology.model.Module(MODULE_NAME,"/sampleModule",null,null,null,null);
-
-        mockery.checking(new Expectations() {{
-
-            // getServer() start
-            atLeast(2).of(platformContext).getEnvironment();
-            will(returnValue(environment));
-
-            oneOf(environment).getProperty("public.service.address");
-            will(returnValue("myServerName"));
-
-            oneOf(environment).getProperty("public.service.port");
-            will(returnValue(80));
-
-            atLeast(1).of(platformContext).getApplicationName();
-            will(returnValue("/sampleModule"));
-
-            oneOf(topologyService).getAllServers();
-            will(returnValue(servers));
-
-            oneOf(topologyService).save(with(any(Server.class)));
-
-            // discovery
-            exactly(1).of(flowConfiguration).getFlowElements();
-            will(returnValue(flowElements));
-
-            exactly(1).of(consumerElement).getComponentName();
-            will(returnValue("consumer"));
-
-            exactly(2).of(consumerElement).getDescription();
-            will(returnValue("consumer description"));
-
-            exactly(1).of(consumerElement).getFlowComponent();
-            will(returnValue(consumer));
-
-            exactly(1).of(consumerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            exactly(1).of(producerElement).getComponentName();
-            will(returnValue("producer"));
-
-            exactly(2).of(producerElement).getDescription();
-            will(returnValue("producer description"));
-
-            exactly(1).of(producerElement).getFlowComponent();
-            will(returnValue(producer));
-
-            exactly(1).of(producerElement).getFlowElementInvoker();
-            will(returnValue(new TestInvoker()));
-
-            oneOf(topologyService).initialiseModuleMetaData(with(any(Server.class)), with(any(String.class)), with(any(org.ikasan.topology.model.Module.class)));
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
-        }});
-
-        uut.initialiseModuleMetaData(module);
-        mockery.assertIsSatisfied();
-    }
-
-
-    public class TestInvoker implements FlowElementInvoker
-    {
-        @Override
-        public FlowElement invoke(List flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
-        {
-            return null;
-        }
-
-        @Override
-        public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
-        {
-
-        }
-
-        @Override
-        public void setFlowInvocationContextListeners(List list)
-        {
-
-        }
-
-        @Override
-        public void setInvokeContextListeners(boolean invokeContextListeners)
-        {
-
-        }
-
-        @Override
-        public String getInvokerType()
-        {
-            return null;
-        }
-    }
 }

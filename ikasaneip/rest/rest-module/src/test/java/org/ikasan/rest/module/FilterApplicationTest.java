@@ -98,7 +98,7 @@ public class FilterApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"pagedResults\":[{\"criteria\":11221,\"clientId\":\"test\",\"criteriaDescription\":null,\"createdDateTime\":1,\"expiry\":2}],\"firstResultIndex\":0,\"resultSize\":1,\"lastResultIndex\":1,\"lastPage\":true}",
+            "{\"pagedResults\":[{\"criteria\":11221,\"clientId\":\"test\",\"createdDateTime\":1,\"expiry\":2}],\"firstResultIndex\":0,\"resultSize\":1,\"lastResultIndex\":1,\"lastPage\":true}",
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
 
@@ -131,7 +131,7 @@ public class FilterApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"pagedResults\":[{\"criteria\":11221,\"clientId\":\"test\",\"criteriaDescription\":null,\"createdDateTime\":1,\"expiry\":2}],\"firstResultIndex\":0,\"resultSize\":1,\"lastResultIndex\":1,\"lastPage\":true}",
+            "{\"pagedResults\":[{\"criteria\":11221,\"clientId\":\"test\",\"createdDateTime\":1,\"expiry\":2}],\"firstResultIndex\":0,\"resultSize\":1,\"lastResultIndex\":1,\"lastPage\":true}",
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
 
@@ -200,7 +200,7 @@ public class FilterApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"criteria\":11221,\"clientId\":\"test\",\"criteriaDescription\":null,\"createdDateTime\":1,\"expiry\":2}",
+            "{\"criteria\":11221,\"clientId\":\"test\",\"createdDateTime\":1,\"expiry\":2}",
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
 

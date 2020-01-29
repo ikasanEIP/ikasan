@@ -274,12 +274,14 @@
   </fieldType>
   <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
     <analyzer type="index">
+      <!--tokenizer class="solr.StandardTokenizerFactory"/-->
       <tokenizer class="solr.NGramTokenizerFactory" minGramSize="3" maxGramSize="7"/>
       <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
       <filter class="solr.LowerCaseFilterFactory"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer class="solr.NGramTokenizerFactory" minGramSize="3" maxGramSize="7"/>
+      <!-- tokenizer class="solr.StandardTokenizerFactory"/ -->
       <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
       <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter class="solr.LowerCaseFilterFactory"/>
@@ -453,18 +455,18 @@
   <field name="componentName" type="text_general" multiValued="false" stored="true"/>
   <field name="errorDetail" type="text_general" multiValued="false" stored="true"/>
   <field name="errorMessage" type="text_general" multiValued="false" stored="true"/>
-  <field name="errorUri" type="text_general" multiValued="false" stored="true"/>
-  <field name="event" type="text_general" multiValued="false" stored="true"/>
-  <field name="exceptionClass" type="text_general" multiValued="false" stored="true"/>
+  <field name="errorUri" type="strings" multiValued="false" stored="true"/>
+  <field name="event" type="strings" multiValued="false" stored="true"/>
+  <field name="exceptionClass" type="strings" multiValued="false" stored="true"/>
   <field name="expiry" type="plongs" multiValued="false" stored="true"/>
-  <field name="flowName" type="text_general" multiValued="false" stored="true"/>
+  <field name="flowName" type="strings" multiValued="false" stored="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
-  <field name="moduleName" type="text_general" multiValued="false" stored="true"/>
+  <field name="moduleName" type="strings" multiValued="false" stored="true"/>
   <field name="payload" type="text_general" multiValued="false" stored="true"/>
   <field name="payloadRaw" type="binary" multiValued="false" indexed="false" stored="true"/>
-  <field name="relatedEventId" type="text_general" multiValued="false" stored="true"/>
+  <field name="relatedEventId" type="strings" multiValued="false" stored="true"/>
   <field name="timestamp" type="plongs" multiValued="false" stored="true"/>
-  <field name="type" type="text_general" multiValued="false" stored="true"/>
+  <field name="type" type="strings" multiValued="false" stored="true"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
   <dynamicField name="*_ancestor_path" type="ancestor_path" indexed="true" stored="true"/>

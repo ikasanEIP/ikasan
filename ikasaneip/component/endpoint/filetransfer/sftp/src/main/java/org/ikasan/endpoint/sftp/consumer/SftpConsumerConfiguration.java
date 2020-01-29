@@ -44,6 +44,7 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
+import org.ikasan.spec.configuration.Masked;
 
 /**
  * SFTP Consumer Configuration window.
@@ -131,6 +132,7 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration im
     private String username;
 
     /** SFTP password/passphrase */
+    @Masked
     private String password;
 
     /** SFTP remote port */

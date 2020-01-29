@@ -1104,7 +1104,107 @@ TOOO
 #### Methods
 #### Components
 #### Flows
-The flow testing is if great method of verifying that whole Spring application boostrap correctly. Also Flow test will help you assess if all flow branches has been executed as expected. Here is how to create a flow test.
+Flow testing is a great way of verifying that the whole Integration Module bootstraps correctly. It also allows you to exercise each and every route through the flow in a controlled and verifiable manner. 
+
+Before we create the flow test we need to change the module to provide certainty around the events invoking the flow. The default EndpointEventProvider for the Event Generating consumer creates as many events as possible as quickly as possible - we need to override this with something more measureable to test.
+
+So firstly, lets create a consistent EndpointEventProvider implementation by adding the following to the ```com.ikasan.example.MyModule``` class.
+```java
+public class MyModule
+{
+    ...
+    
+    class MyMessageProvider implements EndpointEventProvider<String>
+    {
+        int count = 0;
+
+        @Override
+        public String getEvent()
+        {
+            return (++count <= 1 ?  "Test Message " + count : null);
+        }
+
+        @Override
+        public void rollback()
+        {
+
+        }
+    }
+}
+```
+The above MyMessageProvider will create events until count exceeds 1 - so in this case just one event in total.
+
+We also need to override the EndpointEventProvider on the consumer in the same class. The sample below shows the full java class with the new EndpointEventProvider implementation and override on the consumer.
+```java
+package com.ikasan.example;
+
+import com.ikasan.example.converter.MyConverter;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.quartz.JobExecutionContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+
+import javax.annotation.Resource;
+
+@Configuration("ModuleFactory")
+@ImportResource( {
+        "classpath:h2-datasource-conf.xml",
+        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
+} )
+public class MyModule
+{
+    @Resource BuilderFactory builderFactory;
+
+    @Bean
+    public Module myModule()
+    {
+        // Create a module builder from the builder factory
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
+                .withDescription("My first integration module.");
+
+        // Create a component builder from the builder factory
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+
+        // create a flow from the module builder and add required orchestration components
+        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
+                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer()
+                .setEndpointEventProvider( new MyMessageProvider() ))
+                .converter("My Converter", new MyConverter())
+                .producer("My Target Producer", componentBuilder.logProducer())
+                .build();
+
+        // Add the created flow to the module builder and create the module
+        Module module = moduleBuilder
+                .addFlow(eventGeneratingFlow)
+                .build();
+        return module;
+    }
+
+    class MyMessageProvider implements EndpointEventProvider<String>
+    {
+        int count = 0;
+
+        @Override
+        public String getEvent()
+        {
+            return (++count <= 1 ?  "Test Message " + count : null);
+        }
+
+        @Override
+        public void rollback()
+        {
+
+        }
+    }
+}
+```
+Now we have consistent event generation we can use the following test class.
 ```java
 package com.ikasan.example;
 
@@ -1149,8 +1249,13 @@ public class ApplicationTest
                 .producer("My Target Producer");
 
         ikasanFlowTestRule.startFlow();
-        ikasanFlowTestRule.sleep(500);
-        Assert.assertTrue(ikasanFlowTestRule.getFlowState().equals(Flow.RUNNING));
+
+        while (ikasanFlowTestRule.getFlowState().equals(Flow.RUNNING))
+        {
+            ikasanFlowTestRule.sleep(500);
+        }
+
+        Assert.assertTrue(ikasanFlowTestRule.getFlowState().equals(Flow.STOPPED));
     }
 }
 ```

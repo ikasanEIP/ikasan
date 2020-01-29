@@ -42,6 +42,7 @@ package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
+import org.ikasan.spec.configuration.Masked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration 
     private String alternateUsername;
 
     /** Password/passphrase */
+    @Masked
     private String alternatePassword;
 
     /** Whether it is active transfer mode - default False */
