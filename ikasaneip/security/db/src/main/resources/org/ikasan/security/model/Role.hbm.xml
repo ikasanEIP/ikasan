@@ -65,6 +65,11 @@
                 class="org.ikasan.security.model.Policy"/>
         </set>
 
+        <set name="roleModules" table="RoleModule" cascade="all" lazy="false" fetch="select" inverse="false">
+            <key column="RoleId"/>
+            <one-to-many class="org.ikasan.security.model.RoleModule"/>
+        </set>
+
         <property name="name"
                   type="java.lang.String"
                   column="Name"

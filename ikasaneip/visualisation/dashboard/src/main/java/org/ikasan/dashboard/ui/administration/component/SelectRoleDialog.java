@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -23,8 +24,10 @@ public class SelectRoleDialog extends Dialog
     private IkasanPrincipal principal;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
+    private ListDataProvider<Role> roleListDataProvider;
 
-    public SelectRoleDialog(IkasanPrincipal principal, SecurityService securityService, SystemEventLogger systemEventLogger)
+    public SelectRoleDialog(IkasanPrincipal principal, SecurityService securityService, SystemEventLogger systemEventLogger,
+                            ListDataProvider<Role> roleListDataProvider)
     {
         this.principal = principal;
         if(this.principal == null)
@@ -41,6 +44,11 @@ public class SelectRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
+        this.roleListDataProvider = roleListDataProvider;
+        if(this.roleListDataProvider == null)
+        {
+            throw new IllegalArgumentException("roleListDataProvider cannot be null!");
+        }
 
         init();
     }
@@ -52,13 +60,15 @@ public class SelectRoleDialog extends Dialog
         List<Role> roles = this.securityService.getAllRoles();
 
         Set<Role> principalRoles = principal.getRoles();
-
         roles.removeAll(principalRoles);
 
         RoleFilter roleFilter = new RoleFilter();
 
         FilteringGrid<Role> roleGrid = new FilteringGrid<>(roleFilter);
         roleGrid.setSizeFull();
+
+        ListDataProvider<Role> roleDataProvider = new ListDataProvider<>(roles);
+        roleGrid.setDataProvider(roleDataProvider);
 
         roleGrid.setClassName("my-grid");
         roleGrid.addColumn(Role::getName).setKey("role").setFlexGrow(5);
@@ -81,13 +91,15 @@ public class SelectRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, principal.getName());
 
-            this.close();
+            this.roleListDataProvider.getItems().add(roleItemDoubleClickEvent.getItem());
+            this.roleListDataProvider.refreshAll();
+
+            roleDataProvider.getItems().remove(roleItemDoubleClickEvent.getItem());
+            roleDataProvider.refreshAll();
         });
 
         HeaderRow hr = roleGrid.appendHeaderRow();
         roleGrid.addGridFiltering(hr, roleFilter::setNameFilter, "role");
-
-        roleGrid.setItems(roles);
 
         roleGrid.setSizeFull();
 

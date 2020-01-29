@@ -40,11 +40,13 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
     private HospitalAuditService hospitalAuditService;
     private ResubmissionRestServiceImpl resubmissionRestService;
 
-    public ResubmitHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
-          ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+    public ResubmitHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService
+        , ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage
+        , SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
         , HashMap<String, IkasanSolrDocument> selectionItems)
     {
-        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService);
+        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService
+            , searchResultsGrid, selectionBoxes, selectionItems);
         this.hospitalAuditService = hospitalAuditService;
         if(this.hospitalAuditService == null)
         {
@@ -55,9 +57,6 @@ public class ResubmitHospitalEventSubmissionListener extends HospitalEventAction
         {
             throw new IllegalArgumentException("hospitalAuditService cannot be null!");
         }
-        this.searchResultsGrid = searchResultsGrid;
-        this.selectionBoxes = selectionBoxes;
-        this.selectionItems = selectionItems;
     }
 
     @Override

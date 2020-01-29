@@ -60,6 +60,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
@@ -96,6 +97,7 @@ import java.util.concurrent.Executors;
 @Route(value = "userDirectories", layout = IkasanAppLayout.class)
 @UIScope
 @Component
+@PageTitle("Ikasan - LDAP Management")
 public class UserDirectoriesView extends VerticalLayout implements BeforeEnterObserver
 {
 	private Logger logger = LoggerFactory.getLogger(UserDirectoriesView.class);

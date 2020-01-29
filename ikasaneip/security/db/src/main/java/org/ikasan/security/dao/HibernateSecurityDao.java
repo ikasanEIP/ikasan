@@ -329,6 +329,12 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         this.getHibernateTemplate().delete(policy);
     }
 
+    @Override
+    public void deleteRoleModule(RoleModule roleModule)
+    {
+        this.getHibernateTemplate().delete(roleModule);
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)

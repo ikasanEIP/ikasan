@@ -20,7 +20,11 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterListener;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.PreserveOnRefresh;
+import com.vaadin.flow.server.InitialPageSettings;
+import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
@@ -33,6 +37,7 @@ import org.ikasan.dashboard.ui.visualisation.view.MapView;
 import org.ikasan.dashboard.ui.visualisation.view.ModuleView;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -42,7 +47,10 @@ import java.util.Locale;
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @Theme(Lumo.class)
 @PreserveOnRefresh
-public class IkasanAppLayout extends AppLayoutRouterLayout
+@PWA(name = "Ikasan Visualisation Dashboard",
+    shortName = "Ikasan",
+    enableInstallPrompt = false)
+public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfigurator
 {
     private Component leftAppMenu;
     private Component leftSubmenu;
@@ -172,5 +180,13 @@ public class IkasanAppLayout extends AppLayoutRouterLayout
 
         this.userDirectoryManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.USER_DIRECTORY_ADMIN, SecurityConstants.USER_DIRECTORY_WRITE,
             SecurityConstants.USER_DIRECTORY_READ));
+    }
+
+    @Override
+    public void configurePage(InitialPageSettings settings) {
+        HashMap<String, String> attributes = new HashMap<>();
+        attributes.put("rel", "shortcut icon");
+        attributes.put("type", "image/png");
+        settings.addLink("icons/icon.png", attributes);
     }
 }

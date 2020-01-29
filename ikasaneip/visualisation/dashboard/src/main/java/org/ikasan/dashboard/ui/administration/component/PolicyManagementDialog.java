@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
@@ -34,7 +35,9 @@ public class PolicyManagementDialog extends Dialog
     private Policy policy;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
+
     private FilteringGrid<Role> roleGrid;
+    private ListDataProvider<Role> roleListDataProvider;
 
     /**
      * Constructor
@@ -121,14 +124,8 @@ public class PolicyManagementDialog extends Dialog
         Button addRoleButton = new Button(getTranslation("button-associate-policy-with-role", UI.getCurrent().getLocale(), null));
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            SelectRoleForPolicyDialog dialog = new SelectRoleForPolicyDialog(policy, this.securityService, this.systemEventLogger);
-            dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-            {
-                if(dialogOpenedChangeEvent.isOpened() == false)
-                {
-                    this.updateRolesGrid();
-                }
-            });
+            SelectRoleForPolicyDialog dialog = new SelectRoleForPolicyDialog(policy, this.securityService, this.systemEventLogger
+                , this.roleListDataProvider);
 
             dialog.open();
         });
@@ -158,7 +155,8 @@ public class PolicyManagementDialog extends Dialog
 
     private void updateRolesGrid()
     {
-        roleGrid.setItems(this.policy.getRoles());
+        this.roleListDataProvider = new ListDataProvider<>(this.policy.getRoles());
+        roleGrid.setDataProvider(this.roleListDataProvider);
     }
 
 

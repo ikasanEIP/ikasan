@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.GroupManagementDialog;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Route(value = "groupManagement", layout = IkasanAppLayout.class)
 @UIScope
 @Component
+@PageTitle("Ikasan - Group Management")
 public class GroupManagementView extends VerticalLayout implements BeforeEnterObserver
 {
     private Logger logger = LoggerFactory.getLogger(GroupManagementView.class);

@@ -44,10 +44,10 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
     private ReplayRestServiceImpl replayRestService;
     private BatchInsert replayAuditService;
 
-    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
-        , HashMap<String, IkasanSolrDocument> selectionItems)
+    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid
+        , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems)
     {
-        super(moduleMetadataService);
+        super(moduleMetadataService, searchResultsGrid, selectionBoxes, selectionItems);
 
         this.replayRestService = replayRestService;
         if(this.replayRestService == null)
@@ -59,9 +59,6 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
         {
             throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
-        this.searchResultsGrid = searchResultsGrid;
-        this.selectionBoxes = selectionBoxes;
-        this.selectionItems = selectionItems;
     }
 
     @Override

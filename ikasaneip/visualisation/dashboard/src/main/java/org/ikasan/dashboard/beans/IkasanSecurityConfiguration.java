@@ -101,6 +101,7 @@ public class IkasanSecurityConfiguration
             "/org/ikasan/security/model/Principal.hbm.xml",
             "/org/ikasan/security/model/PrincipalLite.hbm.xml",
             "/org/ikasan/security/model/Role.hbm.xml",
+            "/org/ikasan/security/model/RoleModule.hbm.xml",
             "/org/ikasan/security/model/Policy.hbm.xml",
             "/org/ikasan/security/model/User.hbm.xml",
             "/org/ikasan/security/model/UserLite.hbm.xml",
