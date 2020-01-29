@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -22,8 +23,12 @@ public class SelectPolicyForRoleDialog extends Dialog
     private Role role;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
+    private FilteringGrid<Policy> policyGrid;
+    private List<Policy> policiesList;
+    private ListDataProvider<Policy> policyDataProvider;
 
-    public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger)
+    public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger,
+                                     ListDataProvider<Policy> policyDataProvider)
     {
         this.role = role;
         if(this.role == null)
@@ -40,6 +45,11 @@ public class SelectPolicyForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
+        this.policyDataProvider = policyDataProvider;
+        if(this.policyDataProvider == null)
+        {
+            throw new IllegalArgumentException("policyDataProvider cannot be null!");
+        }
 
         init();
     }
@@ -48,13 +58,12 @@ public class SelectPolicyForRoleDialog extends Dialog
     {
         H3 selectGroupLabel = new H3(getTranslation("label.select-policy", UI.getCurrent().getLocale(), null));
 
-        List<Policy> policiesList = this.securityService.getAllPolicies();
-
+        policiesList = this.securityService.getAllPolicies();
         policiesList.removeAll(role.getPolicies());
 
         PolicyFilter policyFilter = new PolicyFilter();
 
-        FilteringGrid<Policy> policyGrid = new FilteringGrid<>(policyFilter);
+        policyGrid = new FilteringGrid<>(policyFilter);
         policyGrid.setSizeFull();
 
         policyGrid.setClassName("my-grid");
@@ -71,23 +80,33 @@ public class SelectPolicyForRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-            this.close();
+            policiesList.removeAll(role.getPolicies());
+
+            this.updatePolicyGrid();
+
+            this.policyDataProvider.getItems().add(policyItemDoubleClickEvent.getItem());
+            this.policyDataProvider.refreshAll();
         });
 
         HeaderRow hr = policyGrid.appendHeaderRow();
         policyGrid.addGridFiltering(hr, policyFilter::setNameFilter, "name");
         policyGrid.addGridFiltering(hr, policyFilter::setDescriptionFilter, "description");
 
-        policyGrid.setItems(policiesList);
-
         policyGrid.setSizeFull();
+
+        this.updatePolicyGrid();
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(selectGroupLabel, policyGrid);
 
-        layout.setWidth("600px");
-        layout.setHeight("300px");
+        layout.setWidth("1200px");
+        layout.setHeight("700px");
 
         this.add(layout);
+    }
+
+    private void updatePolicyGrid()
+    {
+        policyGrid.setItems(policiesList);
     }
 }

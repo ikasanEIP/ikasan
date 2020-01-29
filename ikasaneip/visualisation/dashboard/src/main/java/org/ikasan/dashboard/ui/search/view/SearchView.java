@@ -21,6 +21,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -68,6 +69,7 @@ import java.util.*;
 @Route(value = "", layout = IkasanAppLayout.class)
 @UIScope
 @Component
+@PageTitle("Ikasan - Search")
 public class SearchView extends VerticalLayout implements BeforeEnterObserver
 {
     Logger logger = LoggerFactory.getLogger(SearchView.class);
@@ -538,7 +540,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     }
 
     /**
-     * Mthod to perform the search.
+     * Method to perform the search.
      *
      * @param type the entity type
      * @param searchTerm the search term

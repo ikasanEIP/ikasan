@@ -192,6 +192,12 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.deletePolicy(policy);
     }
 
+    @Override
+    public void deleteRoleModule(RoleModule roleModule)
+    {
+        this.securityDao.deleteRoleModule(roleModule);
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAllPrincipals()

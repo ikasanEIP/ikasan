@@ -49,11 +49,7 @@ import javax.annotation.Resource;
 
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
+import org.ikasan.security.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +78,6 @@ public class HibernateSecurityDaoTest
     /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
-     * @throws SecurityDaoException 
      */
     @Before public void setup()
     {
@@ -259,6 +254,58 @@ public class HibernateSecurityDaoTest
         Assert.assertNotNull(principal);
 
         Assert.assertEquals(principal.getRoles().size(), 11);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_add_role_wth_role_module()
+    {
+        IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 10);
+
+        Role role = new Role();
+        role.setName("role_new");
+        role.setDescription("description");
+
+        HashSet<Policy> policies = new HashSet<Policy>();
+
+        for(int j=0; j<10; j++)
+        {
+            Policy policy = new Policy();
+            policy.setName("policy" + j);
+            policy.setDescription("description");
+            this.xaSecurityDao.saveOrUpdatePolicy(policy);
+            policies.add(policy);
+        }
+
+
+        role.setPolicies(policies);
+
+        RoleModule roleModule = new RoleModule();
+        roleModule.setModuleName("moduleName");
+        roleModule.setRole(role);
+        role.addRoleModule(roleModule);
+
+        this.xaSecurityDao.saveOrUpdateRole(role);
+
+        principal.getRoles().add(role);
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
+        principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 11);
+
+        Role foundRole = principal.getRoles().stream().filter(role1 -> role1.getName().equals("role_new")).findFirst().get();
+
+        RoleModule foundRoleModule = foundRole.getRoleModules().stream().findFirst().get();
+
+        Assert.assertEquals("found role module equals", roleModule.getModuleName(), foundRoleModule.getModuleName());
     }
 
     @Test 

@@ -15,6 +15,9 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.InitialPageSettings;
+import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
@@ -23,15 +26,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 
 @Tag("sa-login-view")
 @Route(value = LoginView.ROUTE)
-@PageTitle("Login")
+@PageTitle("Ikasan - Login")
 @HtmlImport("frontend://styles/shared-styles.html")
 @HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Component
 @UIScope
-public class LoginView extends VerticalLayout
+public class LoginView extends VerticalLayout implements PageConfigurator
 {
     public static final String ROUTE = "login";
 
@@ -78,5 +82,13 @@ public class LoginView extends VerticalLayout
         });
 
         this.add(layout);
+    }
+
+    @Override
+    public void configurePage(InitialPageSettings settings) {
+        HashMap<String, String> attributes = new HashMap<>();
+        attributes.put("rel", "shortcut icon");
+        attributes.put("type", "image/png");
+        settings.addLink("icons/icon.png", attributes);
     }
 }

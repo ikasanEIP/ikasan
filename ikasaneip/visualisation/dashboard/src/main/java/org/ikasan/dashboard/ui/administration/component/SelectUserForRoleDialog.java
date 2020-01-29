@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -26,9 +27,10 @@ public class SelectUserForRoleDialog extends Dialog
     private SystemEventLogger systemEventLogger;
     private UserService userService;
     private List<UserLite> associatedUsers;
+    private ListDataProvider<UserLite> userDataProvider;
 
     public SelectUserForRoleDialog(Role role, UserService userService, List<UserLite> associatedUsers, SecurityService securityService
-        , SystemEventLogger systemEventLogger)
+        , SystemEventLogger systemEventLogger, ListDataProvider<UserLite> userDataProvider)
     {
         this.role = role;
         if(this.role == null)
@@ -55,6 +57,11 @@ public class SelectUserForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
+        this.userDataProvider = userDataProvider;
+        if(this.userDataProvider == null)
+        {
+            throw new IllegalArgumentException("userDataProvider cannot be null!");
+        }
 
         init();
     }
@@ -68,6 +75,7 @@ public class SelectUserForRoleDialog extends Dialog
 
         UserLiteFilter userFilter = new UserLiteFilter();
 
+        ListDataProvider<UserLite> userLiteListDataProvider = new ListDataProvider<>(usersList);
         FilteringGrid<UserLite> userGrid = new FilteringGrid<>(userFilter);
         userGrid.setSizeFull();
 
@@ -108,7 +116,11 @@ public class SelectUserForRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-            this.close();
+            userLiteListDataProvider.getItems().remove(userLiteItemDoubleClickEvent.getItem());
+            userLiteListDataProvider.refreshAll();
+
+            userDataProvider.getItems().add(userLiteItemDoubleClickEvent.getItem());
+            userDataProvider.refreshAll();
         });
 
         HeaderRow hr = userGrid.appendHeaderRow();
@@ -118,7 +130,7 @@ public class SelectUserForRoleDialog extends Dialog
         userGrid.addGridFiltering(hr, userFilter::setEmailFilter, "email");
         userGrid.addGridFiltering(hr, userFilter::setDepartmentFilter, "department");
 
-        userGrid.setItems(usersList);
+        userGrid.setDataProvider(userLiteListDataProvider);
 
         userGrid.setSizeFull();
 
@@ -126,7 +138,7 @@ public class SelectUserForRoleDialog extends Dialog
         layout.add(selectUserLabel, userGrid);
 
         layout.setWidth("1200px");
-        layout.setHeight("500px");
+        layout.setHeight("700px");
 
         this.add(layout);
     }
