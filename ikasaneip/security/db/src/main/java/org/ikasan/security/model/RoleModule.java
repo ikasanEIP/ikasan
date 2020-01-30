@@ -1,6 +1,7 @@
 package org.ikasan.security.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class RoleModule
 {
@@ -63,5 +64,22 @@ public class RoleModule
 
     public void setUpdatedDateTime(Date updatedDateTime) {
         this.updatedDateTime = updatedDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoleModule that = (RoleModule) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(moduleName, that.moduleName) &&
+            Objects.equals(role, that.role) &&
+            Objects.equals(createdDateTime, that.createdDateTime) &&
+            Objects.equals(updatedDateTime, that.updatedDateTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, moduleName, role, createdDateTime, updatedDateTime);
     }
 }
