@@ -51,7 +51,7 @@
 <hibernate-mapping>
 	 
 	<class
-		name="org.ikasan.trigger.model.Trigger"
+		name="org.ikasan.trigger.model.TriggerImpl"
 		table="FlowEventTrigger">
 
         <id name="id" type="java.lang.Long" column="Id">

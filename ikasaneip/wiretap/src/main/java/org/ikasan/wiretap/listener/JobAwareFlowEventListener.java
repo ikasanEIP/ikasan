@@ -40,20 +40,22 @@
  */
 package org.ikasan.wiretap.listener;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.trigger.model.TriggerImpl;
+import org.ikasan.spec.trigger.TriggerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.management.FlowEventListenerMaintenanceService;
 import org.ikasan.trigger.dao.TriggerDao;
-import org.ikasan.trigger.model.Trigger;
-import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.trigger.service.FlowEventJob;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * The <code>JobAwareFlowEventListener</code> provides a
@@ -70,19 +72,15 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public class JobAwareFlowEventListener implements FlowEventListener, FlowEventListenerMaintenanceService<FlowEventJob>
+public class JobAwareFlowEventListener implements FlowEventListener, FlowEventListenerMaintenanceService<FlowEventJob>,
+                                                  TriggerService
 {
-    /** Before constant for location prefix */
-    private static final String AFTER_LOCATION_PREFIX = "after";
-
-    /** After constant for location prefix */
-    private static final String BEFORE_LOCATION_PREFIX = "before";
 
     /** Registered jobs */
     private Map<String, FlowEventJob> flowEventJobs;
 
     /** Registered triggers */
-    private Map<String, List<Trigger>> triggers = new HashMap<String, List<Trigger>>();
+    private Map<String, List<Trigger>> triggers = new HashMap<>();
 
     /** Data access object for dynamic trigger persistence */
     private TriggerDao triggerDao;
@@ -130,35 +128,6 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     }
 
     /**
-     * Registers a List of static triggers
-     * 
-     * Static Triggers are usually set through hibernate, and cannot be
-     * added to or deleted at runtime
-     * 
-     * @param staticTriggers - List of Triggers
-     */
-    public void addStaticTriggers(List<Trigger> staticTriggers)
-    {
-        for (Trigger trigger : staticTriggers)
-        {
-            addStaticTrigger(trigger);
-        }
-    }
-
-    /**
-     * Registers a static triggers
-     * 
-     * Static Triggers are usually set through hibernate, and cannot be
-     * added to or deleted at runtime
-     * 
-     * @param trigger - The static Trigger to add
-     */
-    public void addStaticTrigger(Trigger trigger)
-    {
-        mapTrigger(trigger);
-    }
-
-    /**
      * Registers a dynamic trigger
      * 
      * Dynamic triggers may be created and deleted at runtime. They are persisted
@@ -184,7 +153,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         List<Trigger> list = this.triggers.get(key);
         if (list == null)
         {
-            list = new ArrayList<Trigger>();
+            list = new ArrayList<>();
             this.triggers.put(key, list);
         }
         list.add(trigger);
@@ -217,18 +186,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
-        if(!triggersLoaded)
-        {
-            loadTriggers();
-        }
-
-        String flowElementName = flowElement.getComponentName();
-        String key = moduleName + flowName + TriggerRelationship.BEFORE.getDescription() + flowElementName;
-        List<Trigger> beforeElementTriggers = this.triggers.get(key);
-        if(beforeElementTriggers != null && beforeElementTriggers.size() > 0)
-        {
-            fireTriggers(moduleName, flowName, event, beforeElementTriggers, BEFORE_LOCATION_PREFIX + " " + flowElementName);
-        }
+        flowElement(moduleName,flowName,flowElement,event,TriggerRelationship.BEFORE.getDescription());
     }
 
     /*
@@ -242,19 +200,25 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
+        flowElement(moduleName,flowName,flowElement,event,TriggerRelationship.AFTER.getDescription());
+    }
+
+    private void flowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event, String location)
+    {
         if(!triggersLoaded)
         {
             loadTriggers();
         }
 
         String flowElementName = flowElement.getComponentName();
-        String key = moduleName + flowName + TriggerRelationship.AFTER.getDescription() + flowElementName;
+        String key = moduleName + flowName + location + flowElementName;
         List<Trigger> afterElementTriggers = this.triggers.get(key);
         if(afterElementTriggers != null && afterElementTriggers.size() > 0)
         {
-            fireTriggers(moduleName, flowName, event, afterElementTriggers, AFTER_LOCATION_PREFIX + " " + flowElementName);
+            fireTriggers(moduleName, flowName, event, afterElementTriggers, location + " " + flowElementName);
         }
     }
+
 
     /**
      * location aware implementation method, calls the agent associated with
@@ -283,16 +247,32 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         }
     }
 
-    /**
-     * Returns a safe List of all the triggers associated with a particular point in a particular flow
-     * 
-     * @param moduleName - THe name of the module
-     * @param flowName - The name of the flow
-     * @param relationship - The Trigger relationship (before or after)
-     * @param flowElementName - The flow element name
-     * 
-     * @return - List of triggers that apply at the point in flow specified by the parameters
-     */
+
+    @Override
+    public Map<String,List<Trigger>> getTriggers(String moduleName, String flowName)
+    {
+        if ( !triggersLoaded )
+        {
+            loadTriggers();
+        }
+        Map<String,List<Trigger>> r = triggers.entrySet().stream()
+                                              .filter(e -> isKeyPartOfFlow(e.getKey(),moduleName,flowName))
+                                              .collect(Collectors.toMap(e->getShortKey(e.getKey(),moduleName,flowName),Map.Entry::getValue));
+        return r;
+
+    }
+
+    private String getShortKey(String key, String moduleName, String flowName)
+    {
+        return key.replace(moduleName+flowName,"");
+    }
+
+    private boolean isKeyPartOfFlow(String key, String moduleName, String flowName)
+    {
+        return key.startsWith(moduleName+flowName);
+    }
+
+    @Override
     public List<Trigger> getTriggers(String moduleName, String flowName, TriggerRelationship relationship, String flowElementName)
     {
         if(!triggersLoaded)
@@ -310,14 +290,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         return result;
     }
 
-    /**
-     * Deletes a dynamic trigger, specified by trigger id. This has the effect of:<br>
-     * <br>
-     *  1) de-registering the trigger from the mapped triggers, so that it no longer takes effect
-     *  2) deleting the trigger so that it is not reloaded next time
-     * 
-     * @param triggerId - The dynamic Trigger to deregister
-     */
+    @Override
     public void deleteDynamicTrigger(Long triggerId)
     {
         Trigger trigger = this.triggerDao.findById(triggerId);

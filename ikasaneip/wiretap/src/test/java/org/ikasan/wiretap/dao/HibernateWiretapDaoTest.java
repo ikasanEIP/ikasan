@@ -66,8 +66,7 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hsqldb-config.xml",
+@ContextConfiguration(locations={ "/h2-config.xml",
         "/substitute-components.xml",
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

@@ -2,15 +2,15 @@ package org.ikasan.rest.module;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.module.SimpleModule;
-import org.ikasan.rest.module.model.TestConsumer;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +19,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -72,15 +73,14 @@ public class SchedulerApplicationTest
     @Mock
     protected FlowConfiguration flowConfiguration;
 
-    @MockBean
-    protected SystemEventService systemEventService;
-
     @Mock
     protected SerialiserFactory serialiserFactory;
 
     @Mock
-    protected ScheduledConsumer scheduledConsumer;
+    protected Serialiser serialiser;
 
+    @Mock
+    protected ScheduledConsumer scheduledConsumer;
     @Mock
     protected FlowElement scheduledConsumerElement ;
 
@@ -252,60 +252,6 @@ public class SchedulerApplicationTest
     }
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNowWhenConsumerIsNotRightType() throws Exception
-    {
-
-        Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
-        SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
-
-        JobDetailImpl jobDetail = new JobDetailImpl();
-        jobDetail.setName("testName");
-        jobDetail.setGroup("testGroup");
-        Mockito
-            .when(platformScheduler.isShutdown())
-            .thenReturn(false);
-
-        Mockito
-            .when(moduleContainer.getModule("testModule"))
-            .thenReturn(module);
-
-        Mockito
-            .when(flowConfiguration.getConsumerFlowElement())
-            .thenReturn(scheduledConsumerElement);
-
-        Mockito
-            .when(scheduledConsumerElement.getFlowComponent())
-            .thenReturn(new TestConsumer());
-
-
-
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
-                                                              .accept(MediaType.APPLICATION_JSON_VALUE);
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-
-        Mockito
-            .verify(platformScheduler).isShutdown();
-
-        Mockito
-            .verify(moduleContainer).getModule("testModule");
-
-        Mockito
-            .verify(flowConfiguration).getConsumerFlowElement();
-
-        Mockito
-            .verify(scheduledConsumerElement,Mockito.times(3)).getFlowComponent();
-
-
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"Consumer of given module[testModule] flow [testFlow] is not of "
-            + "ScheduledConsumer type and cannot be triggered using this API.\"}", result.getResponse().getContentAsString());
-
-
-    }
-
-    @Test
-    @WithMockUser(authorities = "WebServiceAdmin")
     public void triggerNow() throws Exception
     {
 
@@ -351,17 +297,13 @@ public class SchedulerApplicationTest
             .verify(flowConfiguration).getConsumerFlowElement();
 
         Mockito
-            .verify(scheduledConsumerElement,Mockito.times(4)).getFlowComponent();
+            .verify(scheduledConsumerElement,Mockito.times(3)).getFlowComponent();
 
         Mockito
             .verify(scheduledConsumer).getJobDetail();
 
         Mockito
             .verify(scheduledConsumer).scheduleAsEagerTrigger(Mockito.any(Trigger.class),Mockito.eq(0));
-
-        Mockito
-            .verify(systemEventService).logSystemEvent(Mockito.eq("testModule.testFlow"),
-            Mockito.eq("Manual Trigger of flow requested"),Mockito.anyString());
 
 
         assertEquals(200, result.getResponse().getStatus());

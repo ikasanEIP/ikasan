@@ -44,7 +44,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.trigger.model.Trigger;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.trigger.model.TriggerImpl;
 
 /**
  * Class representing the details for a trigger
@@ -194,7 +195,7 @@ public class TriggerDetails implements Serializable
      */
     public Trigger createTrigger()
     {
-        Trigger trigger = new Trigger(this.moduleName, this.flowName, this.relationship, this.jobName, this.flowElementName, this.params);
+        Trigger trigger = new TriggerImpl(this.moduleName, this.flowName, this.relationship, this.jobName, this.flowElementName, this.params);
         return trigger;
     }
 }

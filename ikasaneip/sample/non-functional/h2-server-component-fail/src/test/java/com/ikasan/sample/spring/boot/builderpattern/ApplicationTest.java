@@ -52,7 +52,7 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
 import org.junit.runner.RunWith;

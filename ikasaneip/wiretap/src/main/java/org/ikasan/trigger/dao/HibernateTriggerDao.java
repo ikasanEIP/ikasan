@@ -42,7 +42,8 @@ package org.ikasan.trigger.dao;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.ikasan.trigger.model.Trigger;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.trigger.model.TriggerImpl;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -73,7 +74,7 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
     @SuppressWarnings("unchecked")
     public List<Trigger> findAll()
     {
-        return getHibernateTemplate().execute(session -> session.createQuery("from Trigger").getResultList());
+        return getHibernateTemplate().execute(session -> session.createQuery("from TriggerImpl").getResultList());
     }
 
     /* (non-Javadoc)
@@ -81,7 +82,7 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
      */
     public Trigger findById(Long triggerId)
     {
-        return (Trigger) getHibernateTemplate().get(Trigger.class, triggerId);
+        return (Trigger) getHibernateTemplate().get(TriggerImpl.class, triggerId);
     }
 
     /* (non-Javadoc)
@@ -105,7 +106,7 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
 
             CriteriaQuery<Trigger> criteriaQuery = builder.createQuery(Trigger.class);
 
-            Root<Trigger> root = criteriaQuery.from(Trigger.class);
+            Root<TriggerImpl> root = criteriaQuery.from(TriggerImpl.class);
             List<Predicate> predicates = new ArrayList<>();
 
             if(moduleName != null && moduleName.length() > 0)

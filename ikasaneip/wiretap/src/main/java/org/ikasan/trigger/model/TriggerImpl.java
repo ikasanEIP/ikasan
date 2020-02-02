@@ -40,6 +40,9 @@
  */
 package org.ikasan.trigger.model;
 
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerRelationship;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +51,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public class Trigger
+public class TriggerImpl implements Trigger
 {
     /**
      * Name of the <code>FlowElement</code>, if any, to which this
@@ -80,7 +83,7 @@ public class Trigger
 
     /** (Hibernate) Constructor */
     @SuppressWarnings("unused")
-    private Trigger()
+    private TriggerImpl()
     {
         // Constructor used by Hibernate
     }
@@ -93,7 +96,7 @@ public class Trigger
      * @param relationshipDescription - The relationship description
      * @param jobName - The name of the Job to trigger
      */
-    public Trigger(String moduleName, String flowName, String relationshipDescription, String jobName)
+    public TriggerImpl(String moduleName, String flowName, String relationshipDescription, String jobName)
     {
         super();
         this.jobName = jobName;
@@ -111,7 +114,7 @@ public class Trigger
      * @param jobName - The name of the Job to trigger
      * @param params - The parameters for the trigger
      */
-    public Trigger(String moduleName, String flowName, String relationshipDescription, String jobName, Map<String, String> params)
+    public TriggerImpl(String moduleName, String flowName, String relationshipDescription, String jobName, Map<String, String> params)
     {
         this(moduleName, flowName, relationshipDescription, jobName);
         this.params.putAll(params);
@@ -126,7 +129,7 @@ public class Trigger
      * @param jobName - The name of the Job to trigger
      * @param flowElementName - The name of the Flow Element
      */
-    public Trigger(String moduleName, String flowName, String relationshipDescription, String jobName, String flowElementName)
+    public TriggerImpl(String moduleName, String flowName, String relationshipDescription, String jobName, String flowElementName)
     {
         this(moduleName, flowName, relationshipDescription, jobName);
         this.flowElementName = flowElementName;
@@ -142,7 +145,7 @@ public class Trigger
      * @param flowElementName - The name of the Flow Element
      * @param params - The parameters for the trigger
      */
-    public Trigger(String moduleName, String flowName, String relationshipDescription, String jobName, String flowElementName, Map<String, String> params)
+    public TriggerImpl(String moduleName, String flowName, String relationshipDescription, String jobName, String flowElementName, Map<String, String> params)
     {
         this(moduleName, flowName, relationshipDescription, jobName, flowElementName);
         this.params.putAll(params);
@@ -155,6 +158,7 @@ public class Trigger
      * @return true if this is to apply to a <code>FlowElement</code>, otherwise
      * false
      */
+    @Override
     public boolean appliesToFlowElement()
     {
         return flowElementName != null;
@@ -165,6 +169,7 @@ public class Trigger
      * 
      * @return The flow element name
      */
+    @Override
     public String getFlowElementName()
     {
         return flowElementName;
@@ -175,6 +180,7 @@ public class Trigger
      * 
      * @return flowName
      */
+    @Override
     public String getFlowName()
     {
         return flowName;
@@ -185,6 +191,7 @@ public class Trigger
      * 
      * @return id
      */
+    @Override
     public Long getId()
     {
         return id;
@@ -195,6 +202,7 @@ public class Trigger
      * 
      * @return jobName
      */
+    @Override
     public String getJobName()
     {
         return jobName;
@@ -205,6 +213,7 @@ public class Trigger
      * 
      * @return moduleName
      */
+    @Override
     public String getModuleName()
     {
         return moduleName;
@@ -215,6 +224,7 @@ public class Trigger
      * 
      * @return params
      */
+    @Override
     public Map<String, String> getParams()
     {
         return params;
@@ -225,6 +235,7 @@ public class Trigger
      * 
      * @return relationship
      */
+    @Override
     public TriggerRelationship getRelationship()
     {
         return relationship;

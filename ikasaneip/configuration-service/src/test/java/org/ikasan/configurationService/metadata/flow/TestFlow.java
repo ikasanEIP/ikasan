@@ -3,6 +3,7 @@ package org.ikasan.configurationService.metadata.flow;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.trigger.TriggerService;
 
 import java.util.List;
 
@@ -72,6 +73,18 @@ public class TestFlow implements Flow, ConfiguredResource<FlowConfiguration>
 
     @Override
     public boolean removeFlowListener(FlowEventListener flowEventListener)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTriggerService(TriggerService triggerService)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TriggerService getTriggerService()
     {
         throw new UnsupportedOperationException();
     }

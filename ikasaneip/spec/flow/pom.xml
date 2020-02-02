@@ -94,6 +94,11 @@
             <artifactId>ikasan-spec-replay</artifactId>
         </dependency>
 
-	</dependencies>
+         <dependency>
+             <groupId>org.ikasan</groupId>
+             <artifactId>ikasan-spec-wiretap</artifactId>
+         </dependency>
+
+     </dependencies>
 
 </project>

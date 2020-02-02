@@ -1,5 +1,5 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,23 +38,63 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.service;
+package org.ikasan.spec.trigger;
 
-import java.util.List;
-
-import org.ikasan.trigger.model.Trigger;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 
+ * An enum listing the possible trigger relationships
  * @author Ikasan Development Team
- *
  */
-public interface TriggerManagementService
+public enum TriggerRelationship
 {
-	/**
-	 * returns all persisted Triggers, narrowed by module flow and element
-	 * 
-	 * @return List of Triggers
-	 */
-	public List<Trigger> findTriggers(String moduleName, String flowname, String flowElementName);
+    /** Before the trigger */
+    BEFORE("before"), 
+    /** After the trigger */
+    AFTER("after");
+    
+    /** The trigger relationship description */
+    private String description;
+
+    /**
+     * Get the trigger relationship description
+     * @return description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * Relationship lookup map
+     */
+    private static final Map<String, TriggerRelationship> lookup = new HashMap<String, TriggerRelationship>();
+    static
+    {
+        for (TriggerRelationship relationship : EnumSet.allOf(TriggerRelationship.class))
+        {
+            lookup.put(relationship.getDescription(), relationship);
+        }
+    }
+
+    /**
+     * Constructor
+     * @param description
+     */
+    private TriggerRelationship(String description)
+    {
+        this.description = description;
+    }
+
+    /**
+     * Get the trigger relationship based off a description
+     * @param description
+     * @return a trigger relationship
+     */
+    public static TriggerRelationship get(String description)
+    {
+        return lookup.get(description.toLowerCase());
+    }
 }

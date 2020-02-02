@@ -48,17 +48,16 @@ import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.trigger.model.Trigger;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.trigger.model.TriggerImpl;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -98,7 +97,7 @@ public class WiretapApplication
             params.put("timeToLive", timeToLive);
         }
 
-        Trigger trigger = new Trigger(moduleName, flowName, relationship, jobType, flowElementName, params);
+        Trigger trigger = new TriggerImpl(moduleName, flowName, relationship, jobType, flowElementName, params);
 
         try
         {
@@ -127,7 +126,7 @@ public class WiretapApplication
             params.put("timeToLive", triggerDto.getTimeToLive());
         }
 
-        Trigger trigger = new Trigger(triggerDto.getModuleName(), triggerDto.getFlowName(),
+        Trigger trigger = new TriggerImpl(triggerDto.getModuleName(), triggerDto.getFlowName(),
             triggerDto.getRelationship(), triggerDto.getJobType(), triggerDto.getFlowElementName(), params
         );
 

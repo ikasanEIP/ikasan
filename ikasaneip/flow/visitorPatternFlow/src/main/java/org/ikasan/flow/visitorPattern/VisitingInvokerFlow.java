@@ -59,6 +59,7 @@ import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.trigger.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +122,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
     /** errorReportingService handle */
     private ErrorReportingService errorReportingService;
+
+    private TriggerService triggerService;
 
     /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
@@ -1074,6 +1077,19 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     public boolean removeFlowListener(FlowEventListener flowEventListener)
     {
         return this.flowEventListeners.remove(flowEventListener);
+    }
+
+    @Override
+    public void setTriggerService(TriggerService triggerService)
+    {
+        this.triggerService = triggerService;
+
+    }
+
+    @Override
+    public TriggerService getTriggerService()
+    {
+        return this.triggerService;
     }
 
     @Override
