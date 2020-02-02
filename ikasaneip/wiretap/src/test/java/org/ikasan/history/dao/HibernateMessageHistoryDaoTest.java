@@ -66,8 +66,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hsqldb-config.xml",
+@ContextConfiguration(locations={ "/h2-config.xml",
         "/substitute-components.xml",
 })
 @DirtiesContext

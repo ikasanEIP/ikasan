@@ -49,11 +49,7 @@
   xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-	<bean id="triggerManagementService"
-		class="org.ikasan.wiretap.service.TriggerManagementServiceImpl">
-		<constructor-arg ref="triggerDao"/>
-	</bean>
-		
+
     <bean id="wiretapFlowEventListener"
         class="org.ikasan.wiretap.listener.JobAwareFlowEventListener" depends-on="liquibase">
         <constructor-arg ref="jobsMap"/>

@@ -69,8 +69,7 @@ import javax.annotation.Resource;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hsqldb-config.xml",
+@ContextConfiguration(locations={ "/h2-config.xml",
         "/substitute-components.xml",
 })
 public class MessageHistoryServiceImplTest
