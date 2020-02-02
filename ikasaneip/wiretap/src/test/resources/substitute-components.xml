@@ -77,7 +77,12 @@
         <property name="batchHousekeepDelete" value="true"></property>
         <property name="housekeepingBatchSize" value="500"></property>
         <property name="transactionBatchSize" value="5000"></property>
-        
+
+    </bean>
+
+    <bean id="triggerDao"
+          class="org.ikasan.trigger.dao.HibernateTriggerDao">
+        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
     </bean>
 
     <bean id="wiretapHibernateSessionFactory"

@@ -42,7 +42,7 @@ package org.ikasan.trigger.dao;
 
 import java.util.List;
 
-import org.ikasan.trigger.model.Trigger;
+import org.ikasan.spec.trigger.Trigger;
 
 /**
  * Data Access Interface for <code>Trigger</code> persistence

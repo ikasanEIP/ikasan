@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,63 +38,51 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.trigger.model;
+package org.ikasan.spec.trigger;
 
-import java.util.EnumSet;
-import java.util.HashMap;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerRelationship;
+
+import java.util.List;
 import java.util.Map;
 
 /**
- * An enum listing the possible trigger relationships
+ * 
  * @author Ikasan Development Team
+ *
  */
-public enum TriggerRelationship
+public interface TriggerService
 {
-    /** Before the trigger */
-    BEFORE("before"), 
-    /** After the trigger */
-    AFTER("after");
-    
-    /** The trigger relationship description */
-    private String description;
 
     /**
-     * Get the trigger relationship description
-     * @return description
+     * Returns a Map all the triggers associated with a particular flow
+     *
+     * @param moduleName - THe name of the module
+     * @param flowName - The name of the flow
+     *
+     * @return - List of triggers that apply in flow specified by the parameters
      */
-    public String getDescription()
-    {
-        return description;
-    }
+    Map<String,List<Trigger>> getTriggers(String moduleName, String flowName);
+    /**
+     * Returns a safe List of all the triggers associated with a particular point in a particular flow
+     *
+     * @param moduleName - THe name of the module
+     * @param flowName - The name of the flow
+     * @param relationship - The Trigger relationship (before or after)
+     * @param flowElementName - The flow element name
+     *
+     * @return - List of triggers that apply at the point in flow specified by the parameters
+     */
+    List<Trigger> getTriggers(String moduleName, String flowName, TriggerRelationship relationship, String flowElementName);
 
     /**
-     * Relationship lookup map
+     * Deletes a dynamic trigger, specified by trigger id. This has the effect of:<br>
+     * <br>
+     *  1) de-registering the trigger from the mapped triggers, so that it no longer takes effect
+     *  2) deleting the trigger so that it is not reloaded next time
+     *
+     * @param triggerId - The dynamic Trigger to deregister
      */
-    private static final Map<String, TriggerRelationship> lookup = new HashMap<String, TriggerRelationship>();
-    static
-    {
-        for (TriggerRelationship relationship : EnumSet.allOf(TriggerRelationship.class))
-        {
-            lookup.put(relationship.getDescription(), relationship);
-        }
-    }
+    void deleteDynamicTrigger(Long triggerId);
 
-    /**
-     * Constructor
-     * @param description
-     */
-    private TriggerRelationship(String description)
-    {
-        this.description = description;
-    }
-
-    /**
-     * Get the trigger relationship based off a description
-     * @param description
-     * @return a trigger relationship
-     */
-    public static TriggerRelationship get(String description)
-    {
-        return lookup.get(description.toLowerCase());
-    }
 }

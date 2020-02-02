@@ -86,6 +86,7 @@ import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.trigger.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
@@ -126,6 +127,10 @@ public class FlowBuilder implements ApplicationContextAware
     /** flow event listener */
     @Autowired
     FlowEventListener flowEventListener;
+
+    /** trigger service */
+    @Autowired
+    TriggerService triggerService;
 
     /** flow recovery manager factory instance */
     @Autowired
@@ -263,7 +268,7 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     /**
-     * Add a flow description
+     * Add a Flow Event Listener
      *
      * @param flowEventListener
      * @return
@@ -273,6 +278,19 @@ public class FlowBuilder implements ApplicationContextAware
         this.flowEventListener = flowEventListener;
         return this;
     }
+
+    /**
+     * Add a trigger service
+     *
+     * @param triggerService
+     * @return
+     */
+    public FlowBuilder withTriggerService(TriggerService triggerService)
+    {
+        this.triggerService = triggerService;
+        return this;
+    }
+
 
     /**
      * Allow override of default configuration service
@@ -881,6 +899,7 @@ public class FlowBuilder implements ApplicationContextAware
 
         Flow flow = new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setFlowListener(flowEventListener);
+        flow.setTriggerService(triggerService);
 
         if(flow instanceof ConfiguredResource)
         {

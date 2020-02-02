@@ -40,12 +40,10 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.Destination;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.commons.io.FileUtils;
 import org.h2.tools.Server;
 import org.ikasan.nonfunctional.test.util.AMQTestUtil;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
@@ -56,7 +54,7 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
 import org.junit.runner.RunWith;

@@ -3,15 +3,13 @@ package org.ikasan.rest.module;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.IsInstanceOf;
-import org.ikasan.rest.module.dto.ResubmissionRequestDto;
 import org.ikasan.rest.module.dto.TriggerDto;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.trigger.model.Trigger;
+import org.ikasan.trigger.model.TriggerImpl;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.Before;
 import org.junit.Rule;
@@ -98,7 +96,7 @@ public class WiretapApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(201, result.getResponse().getStatus());
-        Mockito.verify(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(Trigger.class));
+        Mockito.verify(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(TriggerImpl.class));
 
     }
 
@@ -108,7 +106,7 @@ public class WiretapApplicationTest
     {
 
         Mockito.doThrow(new RuntimeException("issue persisting rigger"))
-               .when(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(Trigger.class));
+               .when(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(TriggerImpl.class));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/wiretap/trigger")
                                                               .content(createTriggerDto())

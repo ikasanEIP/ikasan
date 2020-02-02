@@ -43,8 +43,8 @@ package org.ikasan.nonfunctional.test.util;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.trigger.model.Trigger;
-import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.spec.trigger.TriggerRelationship;
+import org.ikasan.trigger.model.TriggerImpl;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 
 import java.util.HashMap;
@@ -122,6 +122,6 @@ public class WiretapTestUtil
      */
     public void addWiretapTrigger(String moduleName, String flowName, TriggerRelationship relationship, String componentName, Map<String,String> params)
     {
-        jobAwareFlowEventListener.addDynamicTrigger( new Trigger(moduleName, flowName, relationship.name(), "wiretapJob", componentName, params) );
+        jobAwareFlowEventListener.addDynamicTrigger( new TriggerImpl(moduleName, flowName, relationship.name(), "wiretapJob", componentName, params));
     }
 }

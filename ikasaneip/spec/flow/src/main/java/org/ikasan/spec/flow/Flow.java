@@ -41,6 +41,7 @@
 package org.ikasan.spec.flow;
 
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.trigger.TriggerService;
 
 import java.util.List;
 
@@ -128,6 +129,20 @@ public interface Flow
      * @return boolean returns true when successfully removed or false when not
      */
     boolean removeFlowListener(FlowEventListener flowEventListener);
+
+    /**
+     * Setter for a triggerService.
+     *
+     * @param triggerService
+     */
+    void setTriggerService(TriggerService triggerService);
+
+    /**
+     * Getter for a triggerService.
+     *
+     * @return the triggerService
+     */
+    TriggerService getTriggerService();
 
     /**
      * Setter for a List of listeners for the FlowInvocationContext
