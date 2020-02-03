@@ -48,6 +48,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,8 @@ public class AopProxyProviderSpringImpl implements AopProxyProvider, Application
     /** map of defined pointcuts */
     Map<String,DefaultBeanFactoryPointcutAdvisor> aopFactories;
 
+    List components = new ArrayList<Object>();
+
     /**
      * Apply pointcuts for the given name and component.
      * @param name
@@ -74,6 +77,13 @@ public class AopProxyProviderSpringImpl implements AopProxyProvider, Application
      */
     public <T> T applyPointcut(String name, T component)
     {
+        // Do not try to pointcut the same object instance multiple times.
+        // Its either already pointcut as required, or does not need pointcutting
+        for(Object processedComponent:components)
+        {
+            if(processedComponent == component) {return component;}
+        }
+
         List<? extends Class<?>> componentInterfaces = Arrays.asList(component.getClass().getInterfaces());
 
         if(this.aopFactories!=null && !this.aopFactories.isEmpty())
@@ -87,7 +97,9 @@ public class AopProxyProviderSpringImpl implements AopProxyProvider, Application
                 {
                     if (aopFactory.getPointcut().getClassFilter().matches(componentInterface))
                     {
-                        logger.info("Applying pointcut [" + key + "] on component [" + name + "] class [" + component.getClass().getCanonicalName() + "] interface [" + componentInterface.getCanonicalName() + "]");
+                        logger.info("Applying pointcut [" + key + "] on component [" + name + "] class [" + component.getClass().getCanonicalName()
+                                + "] interface [" + componentInterface.getCanonicalName() + "] "
+                                + "Pointcut Expression [" + aopFactory.getPointcut().toString() + "]");
                         factory.addInterface(componentInterface);
                         factory.addAdvice(aopFactory.getAdvice());
                     }
@@ -95,12 +107,18 @@ public class AopProxyProviderSpringImpl implements AopProxyProvider, Application
             }
             if(factory.getAdvisors().length>0)
             {
-                return (T) factory.getProxy();
-            }else
+                T proxy =  (T) factory.getProxy();
+                components.add(proxy);
+                return proxy;
+            }
+            else
             {
+                components.add(component);
                 return component;
             }
         }
+
+        components.add(component);
         return component;
     }
 
