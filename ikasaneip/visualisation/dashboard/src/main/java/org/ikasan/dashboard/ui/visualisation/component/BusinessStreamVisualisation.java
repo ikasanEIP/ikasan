@@ -13,15 +13,21 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
-import org.ikasan.dashboard.ui.visualisation.model.flow.MessageChannel;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
+import org.ikasan.vaadin.visjs.network.Node;
+import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
@@ -35,13 +41,14 @@ import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
 
-public class ModuleVisualisation extends VerticalLayout implements BeforeEnterObserver
+public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
-    private Logger logger = LoggerFactory.getLogger(ModuleVisualisation.class);
-    private Map<String, Flow> flowMap;
+    private Logger logger = LoggerFactory.getLogger(BusinessStreamVisualisation.class);
+    private Map<String, Node> nodeMap;
     private NetworkDiagram networkDiagram;
     private Flow currentFlow;
     private Module module;
@@ -54,32 +61,44 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
 
-    public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
+    private BusinessStream businessStream;
+    private ArrayList<Node> nodes = new ArrayList<>();
+
+    private UI current;
+
+    public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
-        ,TriggerRestServiceImpl triggerRestService)
+        , TriggerRestServiceImpl triggerRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
         this.setSizeFull();
-        this.flowMap = new HashMap<>();
+        this.nodeMap = new HashMap<>();
+        current = UI.getCurrent();
     }
 
-    public void addModule(Module module)
+    /**
+     *
+     * @param json
+     */
+    public void createBusinessStreamGraphGraph(String json) throws IOException
     {
-        for(Flow flow: module.getFlows())
+        BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
+
+        this.businessStream = adapter.toBusinessStreamGraph(json);
+
+        nodes.addAll(businessStream.getFlows());
+        nodes.addAll(businessStream.getDestinations());
+        nodes.addAll(businessStream.getIntegratedSystems());
+
+        if(this.networkDiagram != null)
         {
-            add(flow);
+            this.remove(networkDiagram);
         }
 
-        this.module = module;
-    }
-
-    protected void add(Flow flow)
-    {
-        logger.info("Adding flow [{}] to visualisation.", flow.getName());
-        this.flowMap.put(flow.getName(), flow);
-        logger.info("Finished adding flow [{}] to visualisation.", flow.getName());
+        updateNetworkDiagram(nodes, businessStream.getEdges());
+        this.add(networkDiagram);
     }
 
     /**
@@ -190,31 +209,158 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         return networkDiagram;
     }
 
-    public ComponentEventListener<ClickEvent<Button>> asButtonClickedListener()
+    /**
+     * Method to update the network diagram with the node and edge lists.
+     *
+     * @param nodes a list containing all network nodes.
+     * @param edges a list containing all the network edges.
+     */
+    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges)
     {
-        return (ComponentEventListener<ClickEvent<Button>>) selectedChangeEvent ->
+        Physics physics = new Physics();
+        physics.setEnabled(false);
+
+        networkDiagram = new NetworkDiagram
+            (Options.builder()
+                .withAutoResize(true)
+                .withPhysics(physics)
+                .withEdges(
+                    Edges.builder()
+                        .withArrows(new Arrows(new ArrowHead()))
+                        .withColor(EdgeColor.builder()
+                            .withColor("#000000")
+                            .build())
+                        .withDashes(false)
+                        .build())
+                .build());
+
+        networkDiagram.setSizeFull();
+
+        networkDiagram.setNodes(nodes);
+        networkDiagram.setEdges(edges);
+
+        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
         {
-            if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START))
+            logger.info(doubleClickEvent.getParams().toString());
+
+            JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
+            String nodeId = nodesArray.get(0).asString();
+
+            logger.info(nodeId);
+
+//            for(Flow flow: graph.getFlows())
+//            {
+//                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
+//                {
+//                    eventViewDialog.open(flow.getWireapEvent());
+//                }
+//            }
+        });
+
+    }
+
+    public void performWiretapSearch(String searchTerm, Date startDate, Date endDate)
+    {
+        Set<String> moduleNames = new HashSet<>();
+        Set<String> flowNames = new HashSet<>();
+
+        boolean userDotSeperator = false;
+        for(Node node: this.businessStream.getFlows())
+        {
+            if (node.getId().contains("."))
             {
-                this.currentFlow.setStatus(State.RUNNING_STATE);
-                this.drawFlowStatus(State.RUNNING_STATE);
+                String[] moduleFlowPair = node.getId().split(Pattern.quote("."));
+                moduleNames.add(moduleFlowPair[0]);
+                flowNames.add(moduleFlowPair[1]);
+                userDotSeperator = true;
             }
-            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.STOP))
+            else
             {
-                this.currentFlow.setStatus(State.STOPPED_STATE);
-                this.drawFlowStatus(State.STOPPED_STATE);
+                moduleNames.add(node.getId());
             }
-            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.PAUSE))
+        }
+
+//        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
+//            null, null, null, startDate, endDate, searchTerm);
+//
+//        logger.info("Found:" + results.getResultSize());
+
+        HashMap<String, Node> nodeMap = new HashMap<>();
+
+        for(Node node: nodes)
+        {
+            node.setFoundStatus(NodeFoundStatus.FOUND);
+            nodeMap.put(node.getId(), node);
+
+            if(node instanceof org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)
             {
-                this.currentFlow.setStatus(State.PAUSED_STATE);
-                this.drawFlowStatus(State.PAUSED_STATE);
+                this.networkDiagram.drawStatusBorder(node.getX() - 40, node.getY() - 30, 80
+                    , 60, State.RUNNING_COLOUR);
             }
-            else if(selectedChangeEvent.getSource().getElement().getAttribute("id").equals(ControlPanel.START_PAUSE))
-            {
-                this.currentFlow.setStatus(State.START_PAUSE_STATE);
-                this.drawFlowStatus(State.START_PAUSE_STATE);
-            }
-        };
+        }
+
+        HashSet<String> correlationValues = new HashSet<>();
+        HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
+//        for(WiretapEvent<String> result: results.getPagedResults())
+//        {
+//            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
+//
+//            if(node != null)
+//            {
+//                node.setFoundStatus(NodeFoundStatus.FOUND);
+//                ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).setWireapEvent(result.getEvent());
+//                uniqueResults.put(result.getEvent(), result);
+//
+//                if(((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).getCorrelator() != null)
+//                {
+//                    String correlationValue = (String)((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+//                        .getCorrelator().correlate(result.getEvent());
+//
+//                    correlationValues.add(correlationValue);
+//                    logger.info("Correlation value = " + correlationValue);
+//                }
+//            }
+//        }
+
+        logger.info("Number of unique correlations values = " + correlationValues.size());
+
+//        for(String value: correlationValues)
+//        {
+//            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
+//                null, null, null, startDate, endDate, value);
+//
+//            logger.info("Found correlating:" + secondResults.getResultSize());
+//
+//            for(WiretapEvent<String> result: secondResults.getPagedResults())
+//            {
+//                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
+//
+//                if(node != null)
+//                {
+//                    node.setFoundStatus(NodeFoundStatus.FOUND);
+//                    ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+//                        .setWireapEvent(result.getEvent());
+//                    uniqueResults.put(result.getEvent(), result);
+//                }
+//            }
+//        }
+//
+//        logger.info("Number of unique events = " + uniqueResults.size());
+//
+//        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
+//
+//        if(uniqueResults.size() > 0)
+//        {
+//            this.viewListButton.setVisible(true);
+//        }
+//        else
+//        {
+//            this.viewListButton.setVisible(false);
+//        }
+
+        current.access(() ->
+            networkDiagram.updateNodesStates(nodes));
+        this.networkDiagram.diagamRedraw();
     }
 
     private void drawFlowStatus(State state)

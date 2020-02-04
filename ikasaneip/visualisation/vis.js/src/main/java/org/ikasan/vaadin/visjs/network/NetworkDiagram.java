@@ -194,20 +194,6 @@ public class NetworkDiagram extends Component implements HasSize {
         .runWhenAttached(ui -> ui.beforeClientResponse(this, context -> command.accept(ui)));
   }
 
-  // public void setCustomNodeIfAdded(final boolean activate, final String id, final String label) {
-  // callFunction("setCustomNodeIfAdded", activate, id, label);
-  // }
-  //
-  // public void setCustomEdgeIfAdded(final boolean activate, final String id, final String label) {
-  // callFunction("setCustomEdgeIfAdded", activate, id, label);
-  // }
-
-  // public void updateOptions(final Options options) {
-  // getState().updates++;
-  // callFunction("updateOptions", gson.toJson(options));
-  // }
-  //
-
   /**
    * Creates a ListDataProvider with the given items.
    *
