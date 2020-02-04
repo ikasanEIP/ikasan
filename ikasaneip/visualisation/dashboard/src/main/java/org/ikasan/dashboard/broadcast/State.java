@@ -4,20 +4,20 @@ import java.util.Objects;
 
 public class State
 {
-    private static final String RUNNING = "running";
-    private static final String STOPPED = "stopped";
-    private static final String STOPPED_IN_ERROR = "stoppedInError";
-    private static final String RECOVERING = "recovering";
-    private static final String PAUSED = "paused";
-    private static final String START_PAUSE = "startPause";
-    private static final String UNKNOWN = "unknown";
+    public static final String RUNNING = "running";
+    public static final String STOPPED = "stopped";
+    public static final String STOPPED_IN_ERROR = "stoppedInError";
+    public static final String RECOVERING = "recovering";
+    public static final String PAUSED = "paused";
+    public static final String START_PAUSE = "startPause";
+    public static final String UNKNOWN = "unknown";
 
-    private static final String RUNNING_COLOUR = "rgb(5,227,108)";
-    private static final String STOPPED_COLOUR= "rgb(0,0,0)";
-    private static final String STOPPED_IN_ERROR_COLOUR = "rgb(255,0,0)";
-    private static final String RECOVERING_COLOUR = "rgb(253,185,19)";
-    private static final String PAUSED_COLOUR = "rgb(133,181,225)";
-    private static final String START_PAUSE_COLOUR = "rgb(133,181,225)";
+    public static final String RUNNING_COLOUR = "rgb(5,227,108)";
+    public static final String STOPPED_COLOUR= "rgb(0,0,0)";
+    public static final String STOPPED_IN_ERROR_COLOUR = "rgb(255,0,0)";
+    public static final String RECOVERING_COLOUR = "rgb(253,185,19)";
+    public static final String PAUSED_COLOUR = "rgb(133,181,225)";
+    public static final String START_PAUSE_COLOUR = "rgb(133,181,225)";
 
     public static State RUNNING_STATE = new State(RUNNING, RUNNING_COLOUR);
     public static State STOPPED_STATE = new State(STOPPED, STOPPED_COLOUR);

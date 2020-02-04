@@ -34,7 +34,6 @@ public class XpathCorrelator implements Correlator<String, String>
         }
         catch (Exception e)
         {
-
             // Ignore as we don't really care
         }
 
