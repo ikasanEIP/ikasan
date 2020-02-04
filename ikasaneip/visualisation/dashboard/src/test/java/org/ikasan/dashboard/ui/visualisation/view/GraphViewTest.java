@@ -17,7 +17,6 @@ import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.SpringVaadinServletService;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.Application;
-import org.ikasan.dashboard.ui.home.view.HomeView;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
@@ -134,7 +133,7 @@ public class GraphViewTest
 
         JsonModuleMetaDataProvider provider = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
 
-        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_JSON)));
+        graphView.createModuleVisualisation(provider.deserialiseModule(loadDataFile(MODULE_JSON)));
 
         NetworkDiagram networkDiagram = _get(NetworkDiagram.class);
         Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");

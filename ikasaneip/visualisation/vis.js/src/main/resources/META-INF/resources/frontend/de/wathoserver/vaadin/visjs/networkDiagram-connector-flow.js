@@ -100,37 +100,6 @@ window.Vaadin.Flow.networkDiagramConnector = {
 							});
 		}
 
-        // var currentRadius = 0;
-        // var animateRadius = true;
-        // var colorCircle = 'rgba(0, 255, 0, 0.8)';
-        // var colorBorder = 'rgba(0, 255, 0, 0.2)';
-        // var updateFrameVar = setInterval(function() { updateFrameTimer(); }, 60);
-        //
-        // function updateFrameTimer() {
-        //     if (animateRadius) {
-        //         graph.$connector.diagram.redraw();
-        //         currentRadius += 0.05;
-        //     }
-        // }
-        //
-        // graph.$connector.diagram.on("beforeDrawing", function(ctx) {
-        //     if (animateRadius) {
-        //         var inode;
-        //         var nodePositions = graph.$connector.diagram.getPositions();
-        //         var arrayLength = graph.nodes.length;
-        //         for (inode = 0; inode < arrayLength; inode++) {
-        //             var radius = Math.abs(50 * Math.sin(currentRadius + inode / 50.0));
-        //             var node = nodesParent[inode];
-        //             ctx.strokeStyle = node.edgeColour;
-        //             ctx.fillStyle = node.fillColour;
-        //             var nodePosition = nodePositions[node.id];
-        //             ctx.circle(nodePosition.x, nodePosition.y, radius);
-        //             ctx.fill();
-        //             ctx.stroke();
-        //         }
-        //     };
-        // });
-
         graph.$connector.diagram.on("afterDrawing", function(ctx) {
             var inode;
             var nodePositions = graph.$connector.diagram.getPositions();
@@ -143,7 +112,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 {
                     var img = new Image();
                     img.src = node.foundImage;
-                    ctx.drawImage(img, nodePosition.x + 35, nodePosition.y - 15, 15, 15);
+                    ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
                 }
             }
         });
@@ -261,15 +230,15 @@ window.Vaadin.Flow.networkDiagramConnector = {
             // graph.draw();
         }
 
-        var animateStatus = true;
-        var updateSrarusVar = setInterval(function() { updateFrameTimer(); }, 1000);
-
-        function updateFrameTimer() {
-            if (animateStatus) {
-                graph.$connector.diagram.redraw();
-                currentRadius += 0.05;
-            }
-        }
+        // var animateStatus = true;
+        // var updateSrarusVar = setInterval(function() { updateFrameTimer(); }, 1000);
+        //
+        // function updateFrameTimer() {
+        //     if (animateStatus) {
+        //         graph.$connector.diagram.redraw();
+        //         currentRadius += 0.05;
+        //     }
+        // }
 
         graph.$connector.drawStatusBorder = function (x, y, width, height, colour) {
             graph.$connector.diagram.on("beforeDrawing", function (ctx) {
