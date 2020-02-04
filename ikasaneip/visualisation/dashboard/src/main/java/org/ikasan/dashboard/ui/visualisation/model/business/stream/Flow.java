@@ -71,7 +71,8 @@ public class Flow extends Node
         super.setFoundStatus(found);
         if(found.equals(NodeFoundStatus.FOUND))
         {
-            super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
+//            super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
+            super.setFoundImage("frontend/images/wiretap-service.png");
         }
         else if(found.equals(NodeFoundStatus.NOT_FOUND))
         {

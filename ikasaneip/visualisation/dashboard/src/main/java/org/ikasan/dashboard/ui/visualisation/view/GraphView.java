@@ -32,6 +32,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import elemental.json.JsonArray;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
@@ -66,6 +67,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
+import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
@@ -132,7 +134,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     private BusinessStream graph = null;
     private List<Node> nodes = new ArrayList<>();
-    private NetworkDiagram networkDiagram;
+//    private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
     private Grid<ModuleMetaData> modulesGrid = new Grid<>();
@@ -141,7 +143,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private List<WiretapEvent> wiretapSearchResults;
     private List<ErrorOccurrence> errorOccurrences;
-    private BusinessStreamMetaDataDaoImpl businessStreamMetaDataDao = new BusinessStreamMetaDataDaoImpl();
+    private BusinessStreamVisualisation businessStreamVisualisation;
     private ModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
     private HorizontalLayout hl = new HorizontalLayout();
@@ -205,7 +207,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 this.flowComboBox.setVisible(true);
                 this.controlPanel.setVisible(true);
                 this.statusPanel.setVisible(true);
-                createGraph(doubleClickEvent.getItem());
+                createModuleVisualisation(doubleClickEvent.getItem());
 
                 if(this.toolSlider.isExpanded())
                 {
@@ -243,7 +245,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         {
             try
             {
-                this.createBusinessStreamGraphGraph(doubleClickEvent.getItem().getJson());
+                this.createBusinessStreamGraph(doubleClickEvent.getItem().getJson());
 
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
                 this.hl.setVisible(true);
@@ -281,7 +283,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void createNetworkDiagram()
     {
-        this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
+//        this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
 
         flowComboBox = new FlowComboBox();
         flowComboBox.setItemLabelGenerator(org.ikasan.dashboard.ui.visualisation.model.flow.Flow::getName);
@@ -371,55 +373,55 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.graphViewChangeListeners.add(controlPanel);
     }
 
-    /**
-     * Method to update the network diagram with the node and edge lists.
-     *
-     * @param nodes a list containing all network nodes.
-     * @param edges a list containing all the network edges.
-     */
-    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges)
-    {
-        Physics physics = new Physics();
-        physics.setEnabled(false);
-
-        networkDiagram = new NetworkDiagram
-            (Options.builder()
-                .withAutoResize(true)
-                .withPhysics(physics)
-                .withEdges(
-                    Edges.builder()
-                        .withArrows(new Arrows(new ArrowHead()))
-                        .withColor(EdgeColor.builder()
-                            .withColor("#000000")
-                            .build())
-                        .withDashes(false)
-                        .build())
-                .build());
-
-        networkDiagram.setSizeFull();
-
-        networkDiagram.setNodes(nodes);
-        networkDiagram.setEdges(edges);
-
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
-        {
-            logger.info(doubleClickEvent.getParams().toString());
-
-            JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
-            String nodeId = nodesArray.get(0).asString();
-
-            logger.info(nodeId);
-
-//            for(Flow flow: graph.getFlows())
-//            {
-//                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
-//                {
-//                    eventViewDialog.open(flow.getWireapEvent());
-//                }
-//            }
-        });
-
-    }
+//    /**
+//     * Method to update the network diagram with the node and edge lists.
+//     *
+//     * @param nodes a list containing all network nodes.
+//     * @param edges a list containing all the network edges.
+//     */
+//    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges)
+//    {
+//        Physics physics = new Physics();
+//        physics.setEnabled(false);
+//
+//        networkDiagram = new NetworkDiagram
+//            (Options.builder()
+//                .withAutoResize(true)
+//                .withPhysics(physics)
+//                .withEdges(
+//                    Edges.builder()
+//                        .withArrows(new Arrows(new ArrowHead()))
+//                        .withColor(EdgeColor.builder()
+//                            .withColor("#000000")
+//                            .build())
+//                        .withDashes(false)
+//                        .build())
+//                .build());
+//
+//        networkDiagram.setSizeFull();
+//
+//        networkDiagram.setNodes(nodes);
+//        networkDiagram.setEdges(edges);
+//
+//        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
+//        {
+//            logger.info(doubleClickEvent.getParams().toString());
+//
+//            JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
+//            String nodeId = nodesArray.get(0).asString();
+//
+//            logger.info(nodeId);
+//
+////            for(Flow flow: graph.getFlows())
+////            {
+////                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
+////                {
+////                    eventViewDialog.open(flow.getWireapEvent());
+////                }
+////            }
+//        });
+//
+//    }
 
     /**
      * Method to initialise the modulesGrid on the tools slider.
@@ -456,7 +458,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      *
      * @param moduleMetaData
      */
-    protected void createGraph(ModuleMetaData moduleMetaData)
+    protected void createModuleVisualisation(ModuleMetaData moduleMetaData)
     {
         List<String> configurationIds = moduleMetaData.getFlows().stream()
             .map(flowMetaData -> flowMetaData.getFlowElements()).flatMap(List::stream)
@@ -472,7 +474,12 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         Module module = adapter.adapt(moduleMetaData, configurationMetaData);
 
         this.remove(moduleVisualisation);
-        this.remove(networkDiagram);
+//        this.remove(networkDiagram);
+
+        if (this.businessStreamVisualisation != null)
+        {
+            this.remove(businessStreamVisualisation);
+        }
 
         this.currentModule = module;
         this.currentFlow = module.getFlows().get(0);
@@ -493,21 +500,24 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      *
      * @param json
      */
-    protected void createBusinessStreamGraphGraph(String json) throws IOException
-    {
-        BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
+    protected void createBusinessStreamGraph(String json) throws IOException {
 
-        this.graph = adapter.toBusinessStreamGraph(json);
+        if (this.businessStreamVisualisation != null)
+        {
+            this.remove(businessStreamVisualisation);
+        }
 
-        nodes = new ArrayList<>();
-        nodes.addAll(graph.getFlows());
-        nodes.addAll(graph.getDestinations());
-        nodes.addAll(graph.getIntegratedSystems());
+        businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
+        this.configurationRestService,
+        this.triggerRestService);
 
-        this.remove(networkDiagram);
-        this.remove(this.moduleVisualisation);
-        updateNetworkDiagram(nodes, graph.getEdges());
-        this.add(networkDiagram);
+        businessStreamVisualisation.createBusinessStreamGraphGraph(json);
+
+        this.remove(moduleVisualisation);
+//        this.remove(networkDiagram);
+
+        businessStreamVisualisation.redraw();
+        this.add(businessStreamVisualisation);
     }
 
     /**
@@ -658,7 +668,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void search(String searchTerm, Date startDate, Date endDate)
     {
-        if(graph == null || graph.getFlows() == null || graph.getFlows().isEmpty())
+        if(this.businessStreamVisualisation == null)
         {
             NotificationHelper.showUserNotification("The Ikasan Visualisation appears to be empty!");
             return;
@@ -682,6 +692,10 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     protected void performWiretapSearch(String searchTerm, Date startDate, Date endDate)
     {
+        if(this.businessStreamVisualisation != null)
+        {
+            this.businessStreamVisualisation.performWiretapSearch(searchTerm, startDate, endDate);
+        }
 //        Set<String> moduleNames = new HashSet<>();
 //        Set<String> flowNames = new HashSet<>();
 //
@@ -710,8 +724,11 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 //
 //        for(Node node: nodes)
 //        {
-//            node.setFoundStatus(NodeFoundStatus.NOT_FOUND);
+//            node.setFoundStatus(NodeFoundStatus.FOUND);
 //            nodeMap.put(node.getId(), node);
+//
+//            this.networkDiagram.drawStatusBorder(node.getX() -40, node.getY() -30, 80
+//                , 60, State.RUNNING_COLOUR);
 //        }
 //
 //        HashSet<String> correlationValues = new HashSet<>();
@@ -723,12 +740,13 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 //            if(node != null)
 //            {
 //                node.setFoundStatus(NodeFoundStatus.FOUND);
-//                ((Flow)node).setWireapEvent(result.getEvent());
+//                ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).setWireapEvent(result.getEvent());
 //                uniqueResults.put(result.getEvent(), result);
 //
-//                if(((Flow)node).getCorrelator() != null)
+//                if(((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).getCorrelator() != null)
 //                {
-//                    String correlationValue = (String)((Flow)node).getCorrelator().correlate(result.getEvent());
+//                    String correlationValue = (String)((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+//                        .getCorrelator().correlate(result.getEvent());
 //
 //                    correlationValues.add(correlationValue);
 //                    logger.info("Correlation value = " + correlationValue);
@@ -752,7 +770,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 //                if(node != null)
 //                {
 //                    node.setFoundStatus(NodeFoundStatus.FOUND);
-//                    ((Flow)node).setWireapEvent(result.getEvent());
+//                    ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+//                        .setWireapEvent(result.getEvent());
 //                    uniqueResults.put(result.getEvent(), result);
 //                }
 //            }
