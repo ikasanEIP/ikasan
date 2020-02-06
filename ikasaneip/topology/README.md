@@ -696,7 +696,17 @@ The JSON below is an example of the meta data for a flow:
     "implementingClass" : "org.ikasan.metadata.components.ConfiguredConsumer",
     "configurationId" : "CONFIGURATION_ID",
     "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-    "configurable" : true
+    "configurable" : true,
+    "decorators" : [ {
+          "type" : "Wiretap",
+          "name" : "BEFORE Test Consumer",
+          "configurable" : false
+        }, {
+          "configurationId" : "wiretap_Id",
+          "type" : "Wiretap",
+          "name" : "BEFORE Test Consumer",
+          "configurable" : true
+        } ]
   },
   "transitions" : [ {
     "from" : "Test Broker",
@@ -734,7 +744,14 @@ The JSON below is an example of the meta data for a flow:
     "implementingClass" : "org.ikasan.metadata.components.TestProducer",
     "configurationId" : null,
     "invokerConfigurationId" : "FLOW_INVOKER_CONFIGURATION_ID",
-    "configurable" : false
+    "configurable" : false,
+    "decorators" : [ {
+              "configurationId" : "WiretapId",
+              "type" : "Wiretap",
+              "name" : "AFTER Test Producer 2",
+              "configurable" : true
+            }
+     ]
   }, {
     "componentName" : "Test Broker",
     "description" : "Test Broker Description",

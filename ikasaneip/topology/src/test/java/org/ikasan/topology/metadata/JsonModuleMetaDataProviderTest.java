@@ -5,11 +5,15 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.topology.metadata.components.*;
 import org.ikasan.topology.metadata.flow.TestFlow;
 import org.ikasan.topology.metadata.flow.TestFlowConfiguration;
 import org.ikasan.topology.metadata.flow.TestFlowElement;
 import org.ikasan.topology.metadata.module.TestModule;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,13 +22,21 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class JsonModuleMetaDataProviderTest
 {
     public static final String MODULE_RESULT_JSON = "/data/module.json";
+
+    private Mockery mockery = new Mockery();
+
+    TriggerService triggerService = mockery.mock(TriggerService.class);
+    Map<String, List<Trigger>> triggers = new HashMap<>();
+
 
     @Test
     public void test_module_serialisation() throws IOException, JSONException
@@ -109,6 +121,16 @@ public class JsonModuleMetaDataProviderTest
 
         Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
 
+        flow.setTriggerService(triggerService);
+
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(triggerService).getTriggers("Module Name",flowName);
+                will(returnValue(triggers));
+            }
+        });
         return flow;
     }
 
@@ -162,7 +184,16 @@ public class JsonModuleMetaDataProviderTest
         FlowConfiguration flowConfiguration = new TestFlowConfiguration(consumer);
 
         Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
+        flow.setTriggerService(triggerService);
 
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(triggerService).getTriggers("Module Name",flowName);
+                will(returnValue(triggers));
+            }
+        });
         return flow;
     }
 
@@ -216,6 +247,17 @@ public class JsonModuleMetaDataProviderTest
         FlowConfiguration flowConfiguration = new TestFlowConfiguration(consumer);
 
         Flow flow = new TestFlow(flowName, "Module Name", flowConfiguration);
+
+        flow.setTriggerService(triggerService);
+
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(triggerService).getTriggers("Module Name",flowName);
+                will(returnValue(triggers));
+            }
+        });
 
         return flow;
     }

@@ -1,6 +1,9 @@
 package org.ikasan.topology.metadata.model;
 
+import org.ikasan.spec.metadata.DecoratorMetaData;
 import org.ikasan.spec.metadata.FlowElementMetaData;
+
+import java.util.List;
 
 public class FlowElementMetaDataImpl implements FlowElementMetaData
 {
@@ -11,7 +14,7 @@ public class FlowElementMetaDataImpl implements FlowElementMetaData
     private boolean isConfigurable = false;
     private String configurationId;
     private String invokerConfigurationId;
-
+    private List<DecoratorMetaData> decorators;
 
     @Override
     public String getComponentName()
@@ -96,4 +99,17 @@ public class FlowElementMetaDataImpl implements FlowElementMetaData
     {
         this.invokerConfigurationId = configurationId;
     }
+
+    @Override
+    public List<DecoratorMetaData> getDecorators()
+    {
+        return this.decorators;
+    }
+
+    @Override
+    public void setDecorators(List<DecoratorMetaData> decorators)
+    {
+        this.decorators = decorators;
+    }
+
 }
