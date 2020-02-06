@@ -1,6 +1,9 @@
 package org.ikasan.module.metadata.model;
 
+import org.ikasan.spec.metadata.DecoratorMetaData;
 import org.ikasan.spec.metadata.FlowElementMetaData;
+
+import java.util.List;
 
 public class SolrFlowElementMetaDataImpl implements FlowElementMetaData
 {
@@ -11,6 +14,7 @@ public class SolrFlowElementMetaDataImpl implements FlowElementMetaData
     private boolean isConfigurable = false;
     private String configurationId;
     private String invokerConfigurationId;
+    private List<DecoratorMetaData> decorators;
 
 
     @Override
@@ -95,5 +99,18 @@ public class SolrFlowElementMetaDataImpl implements FlowElementMetaData
     public void setInvokerConfigurationId(String configurationId)
     {
         this.invokerConfigurationId = configurationId;
+    }
+
+
+    @Override
+    public List<DecoratorMetaData> getDecorators()
+    {
+        return this.decorators;
+    }
+
+    @Override
+    public void setDecorators(List<DecoratorMetaData> decorators)
+    {
+        this.decorators = decorators;
     }
 }

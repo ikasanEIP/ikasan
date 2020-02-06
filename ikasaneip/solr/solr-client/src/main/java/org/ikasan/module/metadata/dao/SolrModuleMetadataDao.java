@@ -45,6 +45,7 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
         m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
         m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
         m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+        m.addAbstractTypeMapping(DecoratorMetaData.class, SolrDecoratorMetaDataImpl.class);
 
         objectMapper.registerModule(m);
     }

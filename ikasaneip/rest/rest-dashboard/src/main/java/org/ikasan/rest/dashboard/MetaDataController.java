@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.rest.dashboard.model.dto.ErrorDto;
 import org.ikasan.rest.dashboard.model.metadata.configuration.ConfigurationMetaDataImpl;
 import org.ikasan.rest.dashboard.model.metadata.configuration.ConfigurationParameterMetaDataImpl;
-import org.ikasan.rest.dashboard.model.metadata.module.FlowElementMetaDataImpl;
-import org.ikasan.rest.dashboard.model.metadata.module.FlowMetaDataImpl;
-import org.ikasan.rest.dashboard.model.metadata.module.ModuleMetaDataImpl;
-import org.ikasan.rest.dashboard.model.metadata.module.TransitionImpl;
+import org.ikasan.rest.dashboard.model.metadata.module.*;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger;
@@ -63,6 +60,7 @@ public class MetaDataController
         m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
         m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
         m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
+        m.addAbstractTypeMapping(DecoratorMetaData.class, DecoratorMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationParameterMetaData.class,ConfigurationParameterMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationMetaData.class,ConfigurationMetaDataImpl.class);
 
