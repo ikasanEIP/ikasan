@@ -104,7 +104,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip-test</artifactId>
+            <artifactId>ikasan-test</artifactId>
             <scope>test</scope>
         </dependency>
 
