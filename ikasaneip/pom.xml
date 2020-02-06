@@ -1382,7 +1382,7 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-eip-test</artifactId>
+                <artifactId>ikasan-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -41,9 +41,16 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.sample.SampleConsumer;
-import org.ikasan.platform.IkasanEIPTest;
+import org.ikasan.dashboard.DashboardClientAutoConfiguration;
+import org.ikasan.harvesting.HarvestingAutoConfiguration;
+import org.ikasan.housekeeping.ModuleHousekeepingAutoConfiguration;
+import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.ikasan.web.IkasanWebAutoConfiguration;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,19 +63,32 @@ import javax.annotation.Resource;
  * 
  * @author Ikasan Development Team
  */
+//@ContextConfiguration(locations = {
+//        "/sample-flow-conf.xml",
+//        "/sample-component-conf.xml",
+//        "/substitute-components.xml",
+//        "/h2-datasource-conf.xml"
+//        })
+
 @RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = { 
-        "/sample-flow-conf.xml",
-        "/sample-component-conf.xml",
-        "/substitute-components.xml",
-        "/exception-conf.xml",
-        "/h2-datasource-conf.xml"
-        })
-public class SampleFlowTest extends IkasanEIPTest
+@ContextConfiguration( classes = {TestFlowConfiguration.class, IkasanWebAutoConfiguration.class,
+    IkasanModuleAutoConfiguration.class, ModuleHousekeepingAutoConfiguration.class,
+    HarvestingAutoConfiguration.class, DashboardClientAutoConfiguration.class})
+public class SampleFlowTest
 {
     @Resource
     Flow flow;
+
+
+    @Rule
+    public IkasanFlowTestRule ikasanFlowTestRule = new IkasanFlowTestRule();
+
+
+    @Before
+    public void setup()
+    {
+        ikasanFlowTestRule.withFlow(flow);
+    }
 
     /**
      * Test successful flow creation.
@@ -96,13 +116,15 @@ public class SampleFlowTest extends IkasanEIPTest
                     .repeat(2)
                 .blockEnd();
 
-        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
+        ikasanFlowTestRule.startFlow();
 
         FlowElement flowElement = flow.getFlowElement("consumer");
         SampleConsumer consumer = (SampleConsumer)flowElement.getFlowComponent();
         consumer.onMessage("test");
 
         ikasanFlowTestRule.sleep(1L);
+
+        ikasanFlowTestRule.assertIsSatisfied();
 
     }
 }
