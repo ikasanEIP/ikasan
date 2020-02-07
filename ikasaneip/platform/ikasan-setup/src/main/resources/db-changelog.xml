@@ -43,7 +43,7 @@
     <!-- 2.1.x change log -->
     <include file="db-changelog-2.1.0.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x change log -->
-    <include file="db-changelog-2.2.0.xml" relativeToChangelogFile="true" />
+    <!-- 3.0.x change log -->
+    <include file="db-changelog-3.0.0.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
