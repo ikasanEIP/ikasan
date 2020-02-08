@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-solr</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>ikasan-solr-distribution</artifactId>
@@ -107,8 +107,8 @@
                             <target>
                                 <echo message="Re-packaging Solr..." />
 
-                                <copy todir="${project.build.directory}/solr-${solr.version}/server/solr/ikasan" >
-                                    <fileset dir="${basedir}/src/main/resources/ikasan" includes="**"/>
+                                <copy todir="${project.build.directory}/solr-${solr.version}/server/solr/ikasan">
+                                    <fileset dir="${basedir}/src/main/resources/ikasan" includes="**" />
                                 </copy>
 
                                 <copy file="${basedir}/src/main/resources/security.json" tofile="${project.build.directory}/solr-${solr.version}/server/solr/security.json" />
