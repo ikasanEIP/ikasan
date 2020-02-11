@@ -9,9 +9,12 @@ import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.resubmission.ResubmissionService;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,6 +38,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @RestController
 public class SchedulerApplication
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(SchedulerApplication.class);
+
     @Autowired
     private Scheduler platformScheduler;
 
@@ -118,16 +124,16 @@ public class SchedulerApplication
 
                 FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
                 FlowElement<Consumer> flowConfigurationConsumerFlowElement = flowConfiguration.getConsumerFlowElement();
-                if ( flowConfigurationConsumerFlowElement != null
-                    && flowConfigurationConsumerFlowElement.getFlowComponent() != null
-                    && flowConfigurationConsumerFlowElement.getFlowComponent() instanceof ScheduledConsumer )
+                if (flowConfigurationConsumerFlowElement != null && flowConfigurationConsumerFlowElement.getFlowComponent() != null)
                 {
-                    ScheduledConsumer consumer = (ScheduledConsumer) flowConfigurationConsumerFlowElement
-                        .getFlowComponent();
-                    JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
-                    Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
-                    consumer.scheduleAsEagerTrigger(trigger, 0);
-
+                    Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent() );
+                    if (consumer instanceof ScheduledConsumer)
+                    {
+                        ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
+                        JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
+                        Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
+                        scheduledConsumer.scheduleAsEagerTrigger(trigger, 0);
+                    }
                 }
 
                 return new ResponseEntity(HttpStatus.OK);
@@ -142,5 +148,23 @@ public class SchedulerApplication
         {
             return new ResponseEntity(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    protected <T> T resolveProxiedComponent(T component)
+    {
+        try
+        {
+            if(AopUtils.isAopProxy(component) && component instanceof Advised)
+            {
+                Advised advised = (Advised) component;
+                return (T) advised.getTargetSource().getTarget();
+            }
+        }
+        catch (Exception e)
+        {
+            logger.warn("Unable to unwrap proxied target for component [" + component.getClass().getName() + "]. Returning component as is.", e);
+        }
+
+        return component;
     }
 }
