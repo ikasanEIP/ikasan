@@ -358,9 +358,11 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 //            this.viewListButton.setVisible(false);
 //        }
 
-        current.access(() ->
-            networkDiagram.updateNodesStates(nodes));
-        this.networkDiagram.diagamRedraw();
+        current.access(() ->{
+            this.networkDiagram.updateNodesStates(nodes);
+            this.networkDiagram.drawNodeFoundStatus();
+            this.networkDiagram.diagamRedraw();
+        });
     }
 
     private void drawFlowStatus(State state)
