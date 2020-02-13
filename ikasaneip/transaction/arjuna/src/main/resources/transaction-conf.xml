@@ -18,7 +18,6 @@
         </property>
         <property name="autodetectUserTransaction" value="true"/>
         <property name="defaultTimeout" value="${ikasan.default.transaction.timeout.seconds:300}"/>
-
     </bean>
 
 </beans>
