@@ -1,121 +1,140 @@
 window.Vaadin.Flow.networkDiagramConnector = {
 	initLazy : function(graph, initialNodes, initialEdges, options) {
 
-		// Check whether the connector was already initialized for the Iron list
-		if (graph.$connector) {
-			return;
-		}
-		console.log('init networkDiagramConnector');
+        // Check whether the connector was already initialized for the Iron list
+        if (graph.$connector) {
+            return;
+        }
+        console.log('init networkDiagramConnector');
 
-		graph.$connector = {};
+        graph.$connector = {};
 
-		console.log(initialNodes);
-		var nodesParent = JSON.parse(initialNodes);
+        var drawn = false;
 
-		graph.nodes = new vis.DataSet(nodesParent);
-		graph.edges = new vis.DataSet(JSON.parse(initialEdges));
+        console.log(initialNodes);
+        var nodesParent = JSON.parse(initialNodes);
 
-        graph.$connector.updateNodeStates = function(nodesStates) {
+        graph.nodes = new vis.DataSet(nodesParent);
+        graph.edges = new vis.DataSet(JSON.parse(initialEdges));
+
+        graph.$connector.updateNodeStates = function (nodesStates) {
             nodesParent = JSON.parse(nodesStates);
         };
 
-		var self = this;
-		var customNodeifAdded = false;
-		var customNodeID;
-		var customNodeLabel;
-		var customEdgeifAdded = false;
-		var customEdgeID;
-		var customEdgeLabel;
+        var self = this;
+        var customNodeifAdded = false;
+        var customNodeID;
+        var customNodeLabel;
+        var customEdgeifAdded = false;
+        var customEdgeID;
+        var customEdgeLabel;
 
-		graph.options = JSON.parse(options);
-		graph.options.manipulation.addNode = function(nodeData, callback) {
-			if (customNodeifAdded == true) {
-				nodeData.label = customNodeLabel;
-				nodeData.id = customNodeID;
-			}
-			self.onManipulationNodeAdded(nodeData);
-			callback(nodeData);
-		};
-		graph.options.manipulation.addEdge = function(edgeData, callback) {
-			if (customEdgeifAdded == true) {
-				edgeData.label = customEdgeLabel;
-				edgeData.id = customEdgeID;
-			}
-			self.onManipulationEdgeAdded(edgeData);
-			callback(edgeData);
-		};
-		graph.options.manipulation.deleteNode = function(nodeData, callback) {
-			self.onManipulationNodeDeleted(nodeData);
-			callback(nodeData);
-		};
-		graph.options.manipulation.deleteEdge = function(edgeData, callback) {
-			self.onManipulationEdgeDeleted(edgeData);
-			callback(edgeData);
-		};
-		graph.options.manipulation.editEdge = function(edgeData, callback) {
-			self.onManipulationEdgeEdited(edgeData);
-			callback(edgeData);
-		};
-		console.log("networkdiagram options: " + JSON.stringify(graph.options));
-		graph.$connector.diagram = new vis.Network(graph, {
-			nodes : graph.nodes,
-			edges : graph.edges
-		}, graph.options);
-
-		// Enable event dispatching to vaadin only for registered eventTypes to
-		// avoid to much overhead.
-		graph.$connector.enableEventDispatching = function(vaadinEventType) {
-			const eventType = vaadinEventType.substring(7);
-			graph.$connector.diagram
-					.on(
-							eventType,
-							function(params) {
-								if (params != null) {
-									// removing dom nodes from params cause they
-									// can't send back to server.
-									if (params.hasOwnProperty('event')) {
-										// source of click event
-										delete params.event.firstTarget;
-										delete params.event.target;
-									}
-									JSON
-											.stringify(
-													params,
-													function(key, value) {
-														if (value instanceof Node) {
-															console
-																	.log("Message JsonObject contained a dom node reference  "
-																			+ key
-																			+ "  which "
-																			+ "should not be sent to the server and can cause a cyclic dependecy.");
-															delete params[key];
-														}
-														return value;
-													});
-								}
-								graph.dispatchEvent(new CustomEvent(
-										vaadinEventType, {
-											detail : params
-										}));
-							});
-		}
-
-        graph.$connector.diagram.on("afterDrawing", function(ctx) {
-            var inode;
-            var nodePositions = graph.$connector.diagram.getPositions();
-            var arrayLength = graph.nodes.length;
-            for (inode = 0; inode < arrayLength; inode++) {
-                var node = nodesParent[inode];
-                var nodePosition = nodePositions[node.id];
-
-                if(node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND")
-                {
-                    var img = new Image();
-                    img.src = node.foundImage;
-                    ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
-                }
+        graph.options = JSON.parse(options);
+        graph.options.manipulation.addNode = function (nodeData, callback) {
+            if (customNodeifAdded == true) {
+                nodeData.label = customNodeLabel;
+                nodeData.id = customNodeID;
             }
-        });
+            self.onManipulationNodeAdded(nodeData);
+            callback(nodeData);
+        };
+        graph.options.manipulation.addEdge = function (edgeData, callback) {
+            if (customEdgeifAdded == true) {
+                edgeData.label = customEdgeLabel;
+                edgeData.id = customEdgeID;
+            }
+            self.onManipulationEdgeAdded(edgeData);
+            callback(edgeData);
+        };
+        graph.options.manipulation.deleteNode = function (nodeData, callback) {
+            self.onManipulationNodeDeleted(nodeData);
+            callback(nodeData);
+        };
+        graph.options.manipulation.deleteEdge = function (edgeData, callback) {
+            self.onManipulationEdgeDeleted(edgeData);
+            callback(edgeData);
+        };
+        graph.options.manipulation.editEdge = function (edgeData, callback) {
+            self.onManipulationEdgeEdited(edgeData);
+            callback(edgeData);
+        };
+        console.log("networkdiagram options: " + JSON.stringify(graph.options));
+        graph.$connector.diagram = new vis.Network(graph, {
+            nodes: graph.nodes,
+            edges: graph.edges
+        }, graph.options);
+
+        // Enable event dispatching to vaadin only for registered eventTypes to
+        // avoid to much overhead.
+        graph.$connector.enableEventDispatching = function (vaadinEventType) {
+            const eventType = vaadinEventType.substring(7);
+            graph.$connector.diagram
+                .on(
+                    eventType,
+                    function (params) {
+                        if (params != null) {
+                            // removing dom nodes from params cause they
+                            // can't send back to server.
+                            if (params.hasOwnProperty('event')) {
+                                // source of click event
+                                delete params.event.firstTarget;
+                                delete params.event.target;
+                            }
+                            JSON
+                                .stringify(
+                                    params,
+                                    function (key, value) {
+                                        if (value instanceof Node) {
+                                            console
+                                                .log("Message JsonObject contained a dom node reference  "
+                                                    + key
+                                                    + "  which "
+                                                    + "should not be sent to the server and can cause a cyclic dependecy.");
+                                            delete params[key];
+                                        }
+                                        return value;
+                                    });
+                        }
+                        graph.dispatchEvent(new CustomEvent(
+                            vaadinEventType, {
+                                detail: params
+                            }));
+                    });
+        }
+
+        // graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+        //     var inode;
+        //     var nodePositions = graph.$connector.diagram.getPositions();
+        //     var arrayLength = graph.nodes.length;
+        //     for (inode = 0; inode < arrayLength; inode++) {
+        //         var node = nodesParent[inode];
+        //         var nodePosition = nodePositions[node.id];
+        //
+        //         if (node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND") {
+        //             var img = new Image();
+        //             img.src = node.foundImage;
+        //             ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
+        //         }
+        //     }
+        // });
+
+        graph.$connector.drawNodeFoundStatus = function () {
+            graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+                var inode;
+                var nodePositions = graph.$connector.diagram.getPositions();
+                var arrayLength = graph.nodes.length;
+                for (inode = 0; inode < arrayLength; inode++) {
+                    var node = nodesParent[inode];
+                    var nodePosition = nodePositions[node.id];
+
+                    if (node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND") {
+                        var img = new Image();
+                        img.src = node.foundImage;
+                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
+                    }
+                }
+            });
+        }
 
         graph.$connector.drawStatus = function (x, y, radius, colour) {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
@@ -235,7 +254,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
         //
         // function updateFrameTimer() {
         //     if (animateStatus) {
-        //         graph.$connector.diagram.redraw();
+        //
         //         currentRadius += 0.05;
         //     }
         // }

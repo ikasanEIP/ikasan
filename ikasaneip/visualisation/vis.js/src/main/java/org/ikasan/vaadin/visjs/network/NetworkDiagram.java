@@ -388,15 +388,34 @@ public class NetworkDiagram extends Component implements HasSize {
     runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.destroy"));
   }
 
-  public void drawModule(Integer x, Integer y, Integer w, Integer h, String text) { getElement().callFunction("$connector.drawModuleSquare", x, y ,w, h, text);}
+  public void drawModule(Integer x, Integer y, Integer w, Integer h, String text) {
+      runBeforeClientResponse(
+          ui -> getElement().callFunction("$connector.drawModuleSquare", x, y ,w, h, text));
+  }
 
-  public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) { getElement().callFunction("$connector.drawFlowBorder", x, y ,w, h, text);}
+  public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) {
+      runBeforeClientResponse(
+          ui -> getElement().callFunction("$connector.drawFlowBorder", x, y ,w, h, text));
+  }
 
-  public void drawStatus(Integer x, Integer y, Integer radius, String colour) { getElement().callFunction("$connector.drawStatus", x, y ,radius, colour);}
+  public void drawStatus(Integer x, Integer y, Integer radius, String colour) {
+      runBeforeClientResponse(
+          ui -> getElement().callFunction("$connector.drawStatus", x, y ,radius, colour));
+  }
 
-  public void drawStatusBorder(Integer x, Integer y, Integer w, Integer h, String colour) { getElement().callFunction("$connector.drawStatusBorder", x, y ,w, h, colour);}
+  public void drawStatusBorder(Integer x, Integer y, Integer w, Integer h, String colour) {
+      runBeforeClientResponse(
+          ui -> getElement().callFunction("$connector.drawStatusBorder", x, y ,w, h, colour));
+  }
 
-  // ==== Events ====
+  public void drawNodeFoundStatus() {
+      runBeforeClientResponse(
+            ui -> getElement().callFunction("$connector.drawNodeFoundStatus"));
+      this.diagamRedraw();
+  }
+
+
+    // ==== Events ====
   private void enableEventDispatching(Class<? extends Event> clazz) {
     runBeforeClientResponse(ui -> {
       if (!enabledEvents.contains(clazz)) {
