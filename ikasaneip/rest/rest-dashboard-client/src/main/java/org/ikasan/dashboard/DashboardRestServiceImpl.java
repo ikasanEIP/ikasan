@@ -39,8 +39,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 
     private boolean isEnabled;
 
-    public DashboardRestServiceImpl(Environment environment, String path,
-        Converter converter)
+    public DashboardRestServiceImpl(Environment environment, String path, Converter converter)
     {
         this(environment, path);
         this.converter = converter;
@@ -53,7 +52,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
         isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
-        if (isEnabled)
+        if ( isEnabled )
         {
             this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
             this.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
@@ -65,7 +64,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 
     public boolean publish(T events)
     {
-        if (isEnabled && events != null)
+        if ( isEnabled && events != null )
         {
             return callHttp(events, true);
         }
@@ -77,7 +76,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         logger.debug("Pushing events [{}] to dashboard [{}]", events, url);
         HttpHeaders headers = createHttpHeaders();
         HttpEntity<List<HarvestEvent>> entity;
-        if (converter != null)
+        if ( converter != null )
         {
             entity = new HttpEntity(converter.convert(events), headers);
         }
@@ -88,34 +87,38 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         try
         {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
-            logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events,
-                url, response);
+            logger.debug("Successfully published [{}] events to dashboard [{}] with response [{}]", events, url,
+                response
+                        );
             return true;
         }
         catch (HttpClientErrorException e)
         {
-            if (e.getRawStatusCode() == 401 && isFirst)
+            if ( e.getRawStatusCode() == 401 && isFirst )
             {
                 this.token = null;
-                if (authenticate())
-                    return callHttp(events, false);
+                if ( authenticate() )
+                { return callHttp(events, false); }
             }
-            logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
-                + "] with response [{"+e.getResponseBodyAsString()+"}]");
+            logger.warn("Issue while publishing events to dashboard [{}] with response [{}] [{}]", url,
+                e.getRawStatusCode(), e.getResponseBodyAsString());
             return false;
-        }catch(RestClientException e){
-            logger.warn("Issue while publishing [" + events + "] events to dashboard [" + url
-                + "] with response [{"+e.getLocalizedMessage()+"}]");
+        }
+        catch (RestClientException e)
+        {
+            logger.warn("Issue while publishing events to dashboard [{}] with response [{}]", url,
+                 e.getLocalizedMessage());
+
             return false;
         }
     }
 
     private boolean authenticate()
     {
-        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password),createHttpHeaders());
+        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password), createHttpHeaders());
         try
         {
-            if (username != null && password != null)
+            if ( username != null && password != null )
             {
                 ResponseEntity<JwtResponse> response = restTemplate
                     .exchange(authenticateUrl, HttpMethod.POST, entity, JwtResponse.class);
@@ -126,8 +129,8 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         }
         catch (HttpClientErrorException e)
         {
-            logger.warn("Issue while authenticating to dashboard [" + authenticateUrl
-                + "] with response [{"+e.getResponseBodyAsString()+"}]", e);
+            logger.warn("Issue while authenticating to dashboard [" + authenticateUrl + "] with response [{" + e
+                .getResponseBodyAsString() + "}]", e);
             return false;
         }
     }
@@ -137,7 +140,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add(HttpHeaders.USER_AGENT, moduleName);
-        if (token != null)
+        if ( token != null )
         {
             headers.add("Authorization", "Bearer " + token);
         }
