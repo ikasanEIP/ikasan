@@ -118,7 +118,11 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                 }
                 else
                 {
-                    results = this.solrSearchService.search(SecurityUtils.getAccessibleModules(authentication), searchTerm,
+                    Set<String> moduleNames = SecurityUtils.getAccessibleModules(authentication);
+                    if(moduleNames.isEmpty()){
+                        moduleNames.add("--");
+                    }
+                    results = this.solrSearchService.search(moduleNames, searchTerm,
                         startTime, endTime, offset, limit, types);
                 }
             }
@@ -143,7 +147,12 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                 }
                 else
                 {
-                    results = this.solrSearchService.search(SecurityUtils.getAccessibleModules(authentication), searchTerm,
+                    Set<String> moduleNames = SecurityUtils.getAccessibleModules(authentication);
+                    if(moduleNames.isEmpty()){
+                        moduleNames.add("--");
+                    }
+
+                    results = this.solrSearchService.search(moduleNames, searchTerm,
                         startTime, endTime, 0, 0, types);
                 }
             }
@@ -218,6 +227,10 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) && moduleNames == null)
         {
             moduleNames = SecurityUtils.getAccessibleModules(authentication);
+
+            if(moduleNames.isEmpty()){
+                moduleNames.add("--");
+            }
         }
 
         return this.solrSearchService.search(moduleNames, flowNames, componentNames, eventId, searchTerm,
