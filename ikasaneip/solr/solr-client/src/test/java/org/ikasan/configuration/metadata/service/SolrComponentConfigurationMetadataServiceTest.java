@@ -69,6 +69,8 @@ public class SolrComponentConfigurationMetadataServiceTest extends SolrTestCaseJ
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
         }
     }
 
