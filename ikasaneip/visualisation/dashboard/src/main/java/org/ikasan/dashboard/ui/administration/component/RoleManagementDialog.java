@@ -170,6 +170,9 @@ public class RoleManagementDialog extends Dialog
                 this.updatePoliciesGrid();
             });
 
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.POLICY_ADMINISTRATION_WRITE,
+                SecurityConstants.POLICY_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
+
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
             layout.add(deleteButton);
@@ -240,6 +243,9 @@ public class RoleManagementDialog extends Dialog
 
                 this.updateAssociatedUsersGrid();
             });
+
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.USER_ADMINISTRATION_WRITE,
+                SecurityConstants.USER_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
 
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
@@ -345,6 +351,9 @@ public class RoleManagementDialog extends Dialog
 
                 this.updateAssociatedGroupsGrid();
             });
+
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.GROUP_ADMINISTRATION_WRITE,
+                SecurityConstants.GROUP_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
 
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
@@ -492,6 +501,9 @@ public class RoleManagementDialog extends Dialog
 
                 this.updateRoleModuleGrid();
             });
+
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ROLE_ADMINISTRATION_WRITE,
+                SecurityConstants.ROLE_ADMINISTRATION_WRITE, SecurityConstants.ALL_AUTHORITY));
 
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
