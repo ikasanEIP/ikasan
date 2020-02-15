@@ -86,8 +86,8 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
 
             Thread.sleep(2000);
@@ -117,8 +117,8 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
 
             Thread.sleep(2000);

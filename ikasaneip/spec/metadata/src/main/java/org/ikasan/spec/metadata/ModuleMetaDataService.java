@@ -19,4 +19,15 @@ public interface ModuleMetaDataService
      * @return
      */
     public List<ModuleMetaData> findAll();
+
+    /**
+     * Find using module names and offset.
+     *
+     * @param modulesNames
+     * @param startOffset
+     * @param resultSize
+     * @return
+     */
+    public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize);
+
 }

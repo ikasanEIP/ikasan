@@ -63,8 +63,8 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
 
             solrErrorReportingManagementService.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
         }
     }
@@ -102,8 +102,8 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
 
             solrErrorReportingManagementService.save(errorOccurrences);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
         }
     }
@@ -141,8 +141,8 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
 
             batchInsert.insert(errorOccurrences);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
         }
     }
