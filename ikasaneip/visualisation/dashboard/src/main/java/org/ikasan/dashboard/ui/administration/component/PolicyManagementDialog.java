@@ -106,6 +106,9 @@ public class PolicyManagementDialog extends Dialog
                 this.updateRolesGrid();
             });
 
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.POLICY_ADMINISTRATION_WRITE,
+                SecurityConstants.POLICY_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
+
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
             layout.add(deleteButton);
