@@ -143,23 +143,26 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
             moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
         }
 
+        ModuleMetadataSearchResults results =  this.solrSearchService.find(moduleNames, offset, limit);
+
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
-        ModuleMetadataSearchResults results;
+        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
 
-        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
-        {
-            List<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication)
+             List<ModuleMetaData> resultsList = results.getResultList()
                 .stream()
-                .collect(Collectors.toList());;
+                .filter(metadata -> accessibleModules.contains(metadata.getName()))
+                .collect(Collectors.toList());
 
-            results =  this.solrSearchService.find(accessibleModules, offset, limit);
-        }
-        else
-        {
-            results =  this.solrSearchService.find(moduleNames, offset, limit);
+             results = new ModuleMetadataSearchResults(resultsList, results.getTotalNumberOfResults(), results.getQueryResponseTime());
         }
 
         return results;
+    }
+
+    public long getResultSize()
+    {
+        return resultSize;
     }
 }
