@@ -101,8 +101,9 @@ public class SelectModuleForRoleDialog extends Dialog
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_MODULE_ROLE_CHANGE_CONSTANTS, action, null);
 
             moduleGrid.setItems(removeAlreadyAssociatedModules(moduleMetaDataList));
+            moduleGrid.getDataProvider().refreshAll();
 
-            this.roleModuleDataProvider.getItems().add(roleModule);
+//            this.roleModuleDataProvider.getItems().add(roleModule);
             this.roleModuleDataProvider.refreshAll();
         });
 

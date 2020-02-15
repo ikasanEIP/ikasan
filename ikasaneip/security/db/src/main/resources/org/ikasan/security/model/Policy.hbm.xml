@@ -63,7 +63,7 @@
        			  class="org.ikasan.security.model.PolicyLink" not-null="false" lazy="false"
        			  cascade="all"/>
        			  
-        <set name="roles" table="RolePolicy" cascade="all" lazy="false" fetch="select" inverse="true">
+        <set name="roles" table="RolePolicy" lazy="false" fetch="select" inverse="true">
             <key column="PolicyId"/>
             <many-to-many column="RoleId"
                 class="org.ikasan.security.model.Role"/>
