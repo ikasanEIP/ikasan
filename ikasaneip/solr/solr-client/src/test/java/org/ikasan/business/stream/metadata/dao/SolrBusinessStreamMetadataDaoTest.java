@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
@@ -85,8 +86,8 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
 
             dao.save(solrBusinessStream);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
         }
     }
 
@@ -152,11 +153,159 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
 
             dao.save(solrBusinessStream);
 
-            List<BusinessStreamMetaData> BusinessStreamMetaData = dao.findAll();
+            List<BusinessStreamMetaData> BusinessStreamMetaData = dao.findAll(0, 10);
 
-            Assert.assertEquals("Number of results 2",2, BusinessStreamMetaData.size());
+            Assert.assertEquals("Number of results 1",1, BusinessStreamMetaData.size());
             Assert.assertEquals("name equals","businessStream", BusinessStreamMetaData.get(0).getName());
             Assert.assertEquals("meta data equals", businessStream, BusinessStreamMetaData.get(0).getJson());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            String businessStream = loadDataFile(BUSINESS_STREAM_JSON);
+
+            List<SolrBusinessStream> businessStreams = new ArrayList<>();
+
+            SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream1");
+            solrBusinessStream.setName("businessStream1");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream2");
+            solrBusinessStream.setName("businessStream2");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream3");
+            solrBusinessStream.setName("businessStream3");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream4");
+            solrBusinessStream.setName("businessStream4");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream5");
+            solrBusinessStream.setName("blah");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            dao.save(businessStreams);
+
+            List<String> businessStreamNames = new ArrayList<>();
+            businessStreamNames.add("businessStr*");
+
+            BusinessStreamMetadataSearchResults businessStreamMetaData = dao.find(businessStreamNames,0, 3);
+
+            Assert.assertEquals("Number of results 3",3, businessStreamMetaData.getResultList().size());
+            Assert.assertEquals("Number of results total 4",4, businessStreamMetaData.getTotalNumberOfResults());
+
+            businessStreamNames = new ArrayList<>();
+            businessStreamNames.add("bla*");
+
+            businessStreamMetaData = dao.find(businessStreamNames,0, 10);
+
+            Assert.assertEquals("Number of results 1",1, businessStreamMetaData.getResultList().size());
+            Assert.assertEquals("Number of results total 1",1, businessStreamMetaData.getTotalNumberOfResults());
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find_all_size_5() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            String businessStream = loadDataFile(BUSINESS_STREAM_JSON);
+
+            List<SolrBusinessStream> businessStreams = new ArrayList<>();
+
+            SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream1");
+            solrBusinessStream.setName("businessStream1");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream2");
+            solrBusinessStream.setName("businessStream2");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream3");
+            solrBusinessStream.setName("businessStream3");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream4");
+            solrBusinessStream.setName("businessStream4");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream5");
+            solrBusinessStream.setName("businessStream5");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            businessStreams.add(solrBusinessStream);
+
+            dao.save(businessStreams);
+
+            List<BusinessStreamMetaData> businessStreamMetaData = dao.findAll(0, 5);
+
+            Assert.assertEquals("Number of results 5",5, businessStreamMetaData.size());
+            Assert.assertEquals("name equals","businessStream1", businessStreamMetaData.get(0).getName());
+            Assert.assertEquals("meta data equals", businessStream, businessStreamMetaData.get(0).getJson());
 
             server.close();
         }

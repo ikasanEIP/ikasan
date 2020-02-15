@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.business.stream.metadata.model.BusinessStreamMetaDataImpl;
+import org.ikasan.spec.metadata.BusinessStreamMetadataSearchResults;
 import org.ikasan.business.stream.metadata.model.SolrBusinessStream;
 import org.ikasan.module.metadata.model.SolrFlowElementMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrFlowMetaDataImpl;
@@ -55,7 +56,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "businessStream-"+businessStreamMetaData.getId());
         document.addField(TYPE, BUSINESS_STREAM_METADATA);
-        document.addField(MODULE_NAME, businessStreamMetaData.getId());
+        document.addField(MODULE_NAME, businessStreamMetaData.getName());
         document.addField(PAYLOAD_CONTENT, businessStreamMetaData.getBusinessStreamMetaData());
         document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
 
@@ -71,7 +72,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
 
-        List<SolrBusinessStream> beans = this.findByQuery(queryString);
+        List<SolrBusinessStream> beans = this.findByQuery(query);
 
         if(beans.size() > 0 && beans.get(0) != null)
         {
@@ -83,14 +84,57 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         }
     }
 
-    public List<BusinessStreamMetaData> findAll()
+    public BusinessStreamMetadataSearchResults find(List<String> businessStreamNames, Integer startOffset, Integer resultSize)
     {
         String queryString = "type:\"" + BUSINESS_STREAM_METADATA + "\"";
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
+        query.setStart(startOffset);
+        query.setRows(resultSize);
 
-        List<SolrBusinessStream> beans = this.findByQuery(queryString);
+        StringBuffer businessStreamNamesBuffer = new StringBuffer();
+
+        if(businessStreamNames != null && businessStreamNames.size() > 0)
+        {
+            businessStreamNamesBuffer.append(this.buildPredicate(MODULE_NAME, businessStreamNames));
+        }
+
+        query.setFilterQueries(businessStreamNamesBuffer.toString());
+
+        BusinessStreamMetadataSearchResults results;
+
+        try
+        {
+            QueryRequest req = new QueryRequest(query);
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            List<SolrBusinessStream> beans = rsp.getBeans(SolrBusinessStream.class);
+
+            results = new BusinessStreamMetadataSearchResults(beans.stream()
+                .map(solrBusinessStream -> convert(solrBusinessStream))
+                .collect(Collectors.toList()), rsp.getResults().getNumFound(), rsp.getQTime());
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error resolving solr business stream meta data by query [" + query + "] from the ikasan solr index!", e);
+        }
+
+       return results;
+    }
+
+    public List<BusinessStreamMetaData> findAll(Integer startOffset, Integer resultSize)
+    {
+        String queryString = "type:\"" + BUSINESS_STREAM_METADATA + "\"";
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+        query.setStart(startOffset);
+        query.setRows(resultSize);
+
+        List<SolrBusinessStream> beans = this.findByQuery(query);
 
         return beans.stream()
                     .map(solrBusinessStream -> convert(solrBusinessStream))
@@ -105,14 +149,11 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
     /**
      * Helper method to find by query.
      *
-     * @param queryString
+     * @param query
      */
-    private List<SolrBusinessStream> findByQuery(String queryString)
+    private List<SolrBusinessStream> findByQuery(SolrQuery query)
     {
-        logger.debug("queryString: " + queryString);
-
-        SolrQuery query = new SolrQuery();
-        query.setQuery(queryString);
+        logger.debug("queryString: " + query);
 
         try
         {
@@ -125,7 +166,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Error resolving solr module meta data by query [" + queryString + "] from the ikasan solr index!", e);
+            throw new RuntimeException("Error resolving solr module meta data by query [" + query + "] from the ikasan solr index!", e);
         }
     }
 

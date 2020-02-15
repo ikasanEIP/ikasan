@@ -1,6 +1,7 @@
 package org.ikasan.business.stream.metadata.service;
 
 import org.ikasan.business.stream.metadata.dao.SolrBusinessStreamMetadataDao;
+import org.ikasan.spec.metadata.BusinessStreamMetadataSearchResults;
 import org.ikasan.business.stream.metadata.model.SolrBusinessStream;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
@@ -26,11 +27,19 @@ public class SolrBusinessStreamMetaDataServiceImpl extends SolrServiceBase imple
     }
 
     @Override
-    public List<BusinessStreamMetaData> findAll()
+    public List<BusinessStreamMetaData> findAll(Integer startOffset, Integer resultSize)
     {
         dao.setSolrUsername(super.solrUsername);
         dao.setSolrPassword(super.solrPassword);
-        return this.dao.findAll();
+        return this.dao.findAll(startOffset, resultSize);
+    }
+
+    @Override
+    public BusinessStreamMetadataSearchResults find(List<String> businessStreamNames, Integer startOffset, Integer resultSize)
+    {
+        dao.setSolrUsername(super.solrUsername);
+        dao.setSolrPassword(super.solrPassword);
+        return this.dao.find(businessStreamNames, startOffset, resultSize);
     }
 
     @Override

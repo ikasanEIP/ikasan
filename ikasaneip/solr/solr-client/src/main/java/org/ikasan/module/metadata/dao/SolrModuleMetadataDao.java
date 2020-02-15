@@ -9,6 +9,7 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.ikasan.business.stream.metadata.model.SolrBusinessStream;
 import org.ikasan.module.metadata.model.*;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.solr.SolrConstants;
@@ -104,7 +105,7 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
 
-        List<SolrModule> beans = this.findByQuery(queryString);
+        List<SolrModule> beans = this.findByQuery(query);
 
         if(beans.size() > 0 && beans.get(0).getModuleMetaData() != null)
         {
@@ -116,14 +117,16 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
         }
     }
 
-    public List<ModuleMetaData> findAll()
+    public List<ModuleMetaData> findAll(Integer startOffset, Integer resultSize)
     {
         String queryString = "type:\"" + MODULE_METADATA + "\"";
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
+        query.setStart(startOffset);
+        query.setRows(resultSize);
 
-        List<SolrModule> beans = this.findByQuery(queryString);
+        List<SolrModule> beans = this.findByQuery(query);
 
         List<ModuleMetaData> results = beans.stream().map(bean -> convert(bean.getModuleMetaData())).collect(Collectors.toList());
 
@@ -133,14 +136,11 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
     /**
      * Helper method to find by query.
      *
-     * @param queryString
+     * @param query
      */
-    private List<SolrModule> findByQuery(String queryString)
+    private List<SolrModule> findByQuery(SolrQuery query)
     {
-        logger.debug("queryString: " + queryString);
-
-        SolrQuery query = new SolrQuery();
-        query.setQuery(queryString);
+        logger.debug("queryString: " + query);
 
         try
         {
@@ -153,8 +153,57 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Error resolving solr module meta data by query [" + queryString + "] from the ikasan solr index!", e);
+            throw new RuntimeException("Error resolving solr module meta data by query [" + query + "] from the ikasan solr index!", e);
         }
+    }
+
+    /**
+     * Get using offset with filtering capabilities.
+     *
+     * @param modulesNames
+     * @param startOffset
+     * @param resultSize
+     * @return
+     */
+    public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize)
+    {
+        String queryString = "type:\"" + MODULE_METADATA + "\"";
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+        query.setStart(startOffset);
+        query.setRows(resultSize);
+
+        StringBuffer moduleNamesBuffer = new StringBuffer();
+
+        if(modulesNames != null && modulesNames.size() > 0)
+        {
+            moduleNamesBuffer.append(this.buildPredicate(ID, modulesNames));
+        }
+
+        query.setFilterQueries(moduleNamesBuffer.toString());
+
+        ModuleMetadataSearchResults results;
+
+        try
+        {
+            QueryRequest req = new QueryRequest(query);
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            List<SolrModule> beans = rsp.getBeans(SolrModule.class);
+
+            results = new ModuleMetadataSearchResults(beans.stream()
+                .map(solrModule -> convert(solrModule.getModuleMetaData()))
+                .collect(Collectors.toList()), rsp.getResults().getNumFound(), rsp.getQTime());
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error resolving solr module meta data by query [" + query + "] from the ikasan solr index!", e);
+        }
+
+        return results;
     }
 
     /**
@@ -167,10 +216,10 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
     {
         try
         {
-            SolrModuleMetaDataImpl solrConfigurationMetaData
+            SolrModuleMetaDataImpl solrModuleMetaData
                 = objectMapper.readValue(rawModuleMetaData, SolrModuleMetaDataImpl.class);
 
-            return solrConfigurationMetaData;
+            return solrModuleMetaData;
         }
         catch (Exception e)
         {

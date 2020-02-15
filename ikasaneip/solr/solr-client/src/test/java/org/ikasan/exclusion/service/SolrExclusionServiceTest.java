@@ -62,8 +62,8 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
 
             solrExclusionService.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }
@@ -100,8 +100,8 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
 
             solrExclusionService.save(events);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }
@@ -138,8 +138,8 @@ public class SolrExclusionServiceTest extends SolrTestCaseJ4
 
             batchInsert.insert(events);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }

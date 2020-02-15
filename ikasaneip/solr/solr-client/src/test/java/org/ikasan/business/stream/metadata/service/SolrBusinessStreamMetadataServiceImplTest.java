@@ -90,8 +90,8 @@ public class SolrBusinessStreamMetadataServiceImplTest extends SolrTestCaseJ4
 
             solrBusinessStreamMetaDataService.save(solrBusinessStream);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
         }
     }
 
@@ -157,9 +157,9 @@ public class SolrBusinessStreamMetadataServiceImplTest extends SolrTestCaseJ4
 
             dao.save(solrBusinessStream);
 
-            List<BusinessStreamMetaData> BusinessStreamMetaData = solrBusinessStreamMetaDataService.findAll();
+            List<BusinessStreamMetaData> BusinessStreamMetaData = solrBusinessStreamMetaDataService.findAll(0, 10);
 
-            Assert.assertEquals("Number of results 2",2, BusinessStreamMetaData.size());
+            Assert.assertEquals("Number of results 1",1, BusinessStreamMetaData.size());
             Assert.assertEquals("name equals","businessStream", BusinessStreamMetaData.get(0).getName());
             Assert.assertEquals("meta data equals", businessStream, BusinessStreamMetaData.get(0).getJson());
 
