@@ -90,8 +90,8 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
 
             Thread.sleep(2000);
@@ -163,7 +163,7 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             List<ErrorOccurrence> result = dao.find(null, null, null, null, null, 100);
 
-            Assert.assertEquals(result.size(), 10);
+            Assert.assertEquals(result.size(), 5);
 
         }
     }
@@ -256,7 +256,7 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             List<ErrorOccurrence> result = dao.find(moduleNames, null, null, null, null, 100);
 
-            Assert.assertEquals(result.size(), 2);
+            Assert.assertEquals(result.size(), 1);
 
         }
     }
@@ -304,7 +304,7 @@ public class SolrErrorReportingServiceDaoTest extends SolrTestCaseJ4
 
             List<ErrorOccurrence> result = dao.find(null, flowNames, null, null, null, 100);
 
-            Assert.assertEquals(result.size(), 10);
+            Assert.assertEquals(result.size(), 5);
 
         }
     }

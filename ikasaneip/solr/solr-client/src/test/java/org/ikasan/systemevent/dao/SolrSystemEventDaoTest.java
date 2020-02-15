@@ -94,7 +94,7 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
 
             List<SystemEvent> systemEvents = dao.list(new ArrayList<>(), null, null, null);
 
-            assertEquals(2, systemEvents.size());
+            assertEquals(1, systemEvents.size());
 
         }
     }
@@ -131,7 +131,7 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
 
             List<SystemEvent> systemEvents = dao.list(null, "*test*",null,null);
 
-            assertEquals(2, systemEvents.size());
+            assertEquals(1, systemEvents.size());
 
         }
     }
@@ -171,7 +171,7 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
                 new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
                                                                    );
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
             dao.housekeep(100);
 
