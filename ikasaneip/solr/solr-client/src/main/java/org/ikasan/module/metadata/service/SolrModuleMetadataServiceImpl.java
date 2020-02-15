@@ -3,6 +3,7 @@ package org.ikasan.module.metadata.service;
 import org.ikasan.module.metadata.dao.SolrModuleMetadataDao;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.metadata.ModuleMetadataSearchResults;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrServiceBase;
 
@@ -47,6 +48,23 @@ public class SolrModuleMetadataServiceImpl extends SolrServiceBase implements Ba
     {
         dao.setSolrUsername(super.solrUsername);
         dao.setSolrPassword(super.solrPassword);
-        return this.dao.findAll();
+
+        ModuleMetadataSearchResults moduleMetadataSearchResults = this.find(null, 0, 0);
+
+        int numResults = Integer.MAX_VALUE;
+        if(moduleMetadataSearchResults.getTotalNumberOfResults() < Integer.MAX_VALUE)
+        {
+            numResults = (int) moduleMetadataSearchResults.getTotalNumberOfResults();
+        }
+
+
+        return this.dao.findAll(0, numResults);
+    }
+
+    @Override
+    public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize) {
+        dao.setSolrUsername(super.solrUsername);
+        dao.setSolrPassword(super.solrPassword);
+        return this.dao.find(modulesNames, startOffset, resultSize);
     }
 }

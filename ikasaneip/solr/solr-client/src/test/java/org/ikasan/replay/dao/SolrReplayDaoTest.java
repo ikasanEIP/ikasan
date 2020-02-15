@@ -93,7 +93,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                 , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
         }
     }
@@ -119,7 +119,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(null, null
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
         }
     }
 
@@ -148,7 +148,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
                 new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
                                                                    );
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
         }
     }
 
@@ -177,7 +177,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
         }
     }
 
@@ -246,7 +246,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
                     , null,"data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
         }
     }
@@ -288,7 +288,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
                     , "eventId2","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
             replayEventList = dao.getReplayEvents(new ArrayList<>(), flowNames
                     , "eventId1","data", new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
@@ -320,7 +320,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
         }
     }
@@ -403,7 +403,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
         }
     }
@@ -432,7 +432,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
             List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>()
                     , null,null, new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10);
 
-            assertEquals(2, replayEventList.size());
+            assertEquals(1, replayEventList.size());
 
             dao.housekeep(100);
 

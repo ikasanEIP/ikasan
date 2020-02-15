@@ -88,8 +88,8 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
 
             Thread.sleep(2000);
@@ -151,7 +151,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     componentNames, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
 
         }
     }
@@ -205,7 +205,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     flowNames, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
 
         }
     }
@@ -262,7 +262,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     flowNames, componentNames, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
 
         }
     }
@@ -319,7 +319,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     flowNames, componentNames, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "odd one out");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 2);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 1);
 
         }
     }
@@ -463,7 +463,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     flowName, null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
 
         }
     }
@@ -514,7 +514,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     "flowName", null, null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
         }
     }
 
@@ -564,7 +564,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     "flowName", "componentName", null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 10);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 5);
         }
     }
 
@@ -614,7 +614,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
                     "flowName", "componentName", null, null, new Date(System.currentTimeMillis() - 100000000)
                     , new Date(System.currentTimeMillis() + 100000000), "odd one out");
 
-            Assert.assertEquals("Results must equal", results.getResultSize(), 2);
+            Assert.assertEquals("Results must equal", results.getResultSize(), 1);
 
         }
     }

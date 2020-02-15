@@ -16,9 +16,21 @@ public interface  BusinessStreamMetaDataService<T>
     /**
      * Get all the persisted module metadata.
      *
+     * @param startOffset
+     * @param resultSize
      * @return
      */
-    public List<T> findAll();
+    public List<T> findAll(Integer startOffset, Integer resultSize);
+
+    /**
+     * Find with business stream name and paging.
+     *
+     * @param businessStreamNames
+     * @param startOffset
+     * @param resultSize
+     * @return
+     */
+    public BusinessStreamMetadataSearchResults find(List<String> businessStreamNames, Integer startOffset, Integer resultSize);
 
     /**
      * Save the meta data.
