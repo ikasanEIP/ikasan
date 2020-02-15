@@ -164,6 +164,9 @@ public class UserManagementDialog extends Dialog
                 this.updateSecurityChangesGrid();
             });
 
+            deleteButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.USER_ADMINISTRATION_WRITE,
+                SecurityConstants.USER_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
+
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
             layout.add(deleteButton);
