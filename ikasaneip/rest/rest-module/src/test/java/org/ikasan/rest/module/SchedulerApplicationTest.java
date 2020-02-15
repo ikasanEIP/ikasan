@@ -297,7 +297,7 @@ public class SchedulerApplicationTest
             .verify(flowConfiguration).getConsumerFlowElement();
 
         Mockito
-            .verify(scheduledConsumerElement,Mockito.times(3)).getFlowComponent();
+            .verify(scheduledConsumerElement,Mockito.times(2)).getFlowComponent();
 
         Mockito
             .verify(scheduledConsumer).getJobDetail();
