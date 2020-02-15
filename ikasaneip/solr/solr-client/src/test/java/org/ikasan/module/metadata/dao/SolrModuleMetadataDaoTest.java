@@ -14,10 +14,7 @@ import org.ikasan.module.metadata.model.SolrFlowElementMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrFlowMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrModuleMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrTransitionImpl;
-import org.ikasan.spec.metadata.FlowElementMetaData;
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.ModuleMetaData;
-import org.ikasan.spec.metadata.Transition;
+import org.ikasan.spec.metadata.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,8 +87,8 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
             // do twice to make sure we are removing and updating.
             dao.save(moduleMetaData);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }
@@ -147,18 +144,79 @@ public class SolrModuleMetadataDaoTest extends SolrTestCaseJ4
 
             objectMapper.registerModule(m);
 
-            ModuleMetaData solrConfigurationMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            ModuleMetaData moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
 
             List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
-            moduleMetaDataList.add(solrConfigurationMetaData);
+            moduleMetaDataList.add(moduleMetaData);
 
             dao.save(moduleMetaDataList);
 
-            List<ModuleMetaData> moduleMetaData = dao.findAll();
+            List<ModuleMetaData> moduleMetaDataRes = dao.findAll(0, 10);
 
-            Assert.assertEquals("Number of results 2",2, moduleMetaData.size());
-            Assert.assertEquals("name equals","module name", moduleMetaData.get(0).getName());
-            Assert.assertEquals("6 flows", 6, moduleMetaData.get(0).getFlows().size());
+            Assert.assertEquals("Number of results 1",1, moduleMetaDataRes.size());
+            Assert.assertEquals("name equals","module name", moduleMetaDataRes.get(0).getName());
+            Assert.assertEquals("6 flows", 6, moduleMetaDataRes.get(0).getFlows().size());
+
+            server.close();
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
+
+            ModuleMetaData moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            moduleMetaData.setName("module1");
+            moduleMetaDataList.add(moduleMetaData);
+
+            moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            moduleMetaData.setName("module2");
+            moduleMetaDataList.add(moduleMetaData);
+
+            moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            moduleMetaData.setName("module3");
+            moduleMetaDataList.add(moduleMetaData);
+
+            moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            moduleMetaData.setName("module4");
+            moduleMetaDataList.add(moduleMetaData);
+
+            moduleMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+            moduleMetaData.setName("blah");
+            moduleMetaDataList.add(moduleMetaData);
+
+            dao.save(moduleMetaDataList);
+
+            List<String> moduleNames = new ArrayList<>();
+            moduleNames.add("modu*");
+
+            ModuleMetadataSearchResults moduleMetaDataRes = dao.find(moduleNames, 0, 3);
+
+            Assert.assertEquals("Number of results 3",3, moduleMetaDataRes.getResultList().size());
+            Assert.assertEquals("Number of results total 4",4, moduleMetaDataRes.getTotalNumberOfResults());
+
+            moduleNames = new ArrayList<>();
+            moduleNames.add("bla*");
+
+            moduleMetaDataRes = dao.find(moduleNames, 0, 5);
+
+            Assert.assertEquals("Number of results 1",1, moduleMetaDataRes.getResultList().size());
+            Assert.assertEquals("Number of results total 1",1, moduleMetaDataRes.getTotalNumberOfResults());
 
             server.close();
         }

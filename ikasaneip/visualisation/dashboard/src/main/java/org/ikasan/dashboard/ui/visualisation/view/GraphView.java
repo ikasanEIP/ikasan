@@ -8,6 +8,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -45,6 +46,8 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.*;
+import org.ikasan.dashboard.ui.visualisation.component.filter.BusinessStreamSearchFilter;
+import org.ikasan.dashboard.ui.visualisation.component.filter.ModuleSearchFilter;
 import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
@@ -135,8 +138,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
-    private Grid<ModuleMetaData> modulesGrid = new Grid<>();
-    private Grid<BusinessStreamMetaData> businessStreamGrid = new Grid<>();
+    private ModuleFilteringGrid modulesGrid;
+    private BusinessStreamFilteringGrid businessStreamGrid;
     private Button viewListButton;
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private List<WiretapEvent> wiretapSearchResults;
@@ -179,23 +182,25 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     private void init()
     {
+        this.createModuleGrid();
+        this.createdBusinessStreamGrid();
+
         this.createNetworkDiagram();
         this.createToolsSlider();
         this.createSearchSlider();
-
-        this.createModuleGrid();
-        this.createdBusinessStreamGrid();
     }
 
     protected void createModuleGrid()
     {
         // Create a modulesGrid bound to the list
+        ModuleSearchFilter moduleSearchFilter = new ModuleSearchFilter();
+        modulesGrid = new ModuleFilteringGrid(this.moduleMetadataService, moduleSearchFilter);
         modulesGrid.removeAllColumns();
         modulesGrid.setVisible(true);
         modulesGrid.setHeight("800px");
         modulesGrid.setWidth("100%");
 
-        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name");
+        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name").setKey("name");
 
         modulesGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>)
             doubleClickEvent ->
@@ -212,17 +217,23 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                     this.toolSlider.collapse();
                 }
             });
+
+        HeaderRow hr = this.modulesGrid.appendHeaderRow();
+        this.modulesGrid.addGridFiltering(hr, moduleSearchFilter::setModuleNameFilter, "name");
     }
 
     protected void createdBusinessStreamGrid()
     {
         // Create a modulesGrid bound to the list
+        BusinessStreamSearchFilter businessStreamSearchFilter = new BusinessStreamSearchFilter();
+        this.businessStreamGrid = new BusinessStreamFilteringGrid(businessStreamMetaDataService,
+            businessStreamSearchFilter);
         businessStreamGrid.removeAllColumns();
         businessStreamGrid.setVisible(true);
         businessStreamGrid.setHeight("800px");
         businessStreamGrid.setWidth("100%");
 
-        businessStreamGrid.addColumn(BusinessStreamMetaData::getName).setHeader("Name");
+        businessStreamGrid.addColumn(BusinessStreamMetaData::getName).setHeader("Name").setKey("name").setFlexGrow(8);
         businessStreamGrid.addColumn(new ComponentRenderer<>(businessStreamMetaData->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -262,11 +273,22 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 this.toolSlider.collapse();
             }
         });
+
+        HeaderRow hr = this.businessStreamGrid.appendHeaderRow();
+        this.businessStreamGrid.addGridFiltering(hr, businessStreamSearchFilter::setBusinessStreamNameFilter, "name");
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
+        this.controlPanel = new ControlPanel(this.moduleControlRestService);
+
+        if(!initialised)
+        {
+            this.init();
+            initialised = true;
+        }
+
         this.populateModulesGrid();
         this.populateBusinessStreamGrid();
 
@@ -426,20 +448,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateModulesGrid()
     {
-        List<ModuleMetaData> moduleMetaData = this.moduleMetadataService.findAll();
-
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
-            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
-
-            moduleMetaData = moduleMetaData
-                .stream()
-                .filter(metadata -> accessibleModules.contains(metadata.getName()))
-                .collect(Collectors.toList());
-        }
-
-        this.modulesGrid.setItems(moduleMetaData);
+        this.modulesGrid.init();
     }
 
     /**
@@ -447,8 +456,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void populateBusinessStreamGrid()
     {
-        List<BusinessStreamMetaData> businessStreamMetaData = this.businessStreamMetaDataService.findAll();
-        this.businessStreamGrid.setItems(businessStreamMetaData);
+        this.businessStreamGrid.init();
     }
 
     /**
@@ -902,13 +910,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     protected void onAttach(AttachEvent attachEvent)
     {
         UI ui = attachEvent.getUI();
-        this.controlPanel = new ControlPanel(this.moduleControlRestService);
-
-        if(!initialised)
-        {
-            this.init();
-            initialised = true;
-        }
 
         broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {

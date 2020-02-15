@@ -80,14 +80,17 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "type");
             doc.addField("expiry", 0l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "type");
             doc.addField("expiry", 0l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "type");
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -116,14 +119,17 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "type");
             doc.addField("expiry", 0l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "type");
             doc.addField("expiry", 0l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "type");
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -174,16 +180,19 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
@@ -206,16 +215,19 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
@@ -238,16 +250,19 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
@@ -269,16 +284,19 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("type", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("type", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
@@ -300,16 +318,19 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             init(server);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
             doc.addField("moduleName", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
             doc.addField("moduleName", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
             doc.addField("moduleName", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);

@@ -81,8 +81,8 @@ public class SolrModuleMetadataServiceTest extends SolrTestCaseJ4
 
             batchInsert.insert(moduleMetaDataList);
 
-            assertEquals(2, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(2, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
             server.close();
         }
