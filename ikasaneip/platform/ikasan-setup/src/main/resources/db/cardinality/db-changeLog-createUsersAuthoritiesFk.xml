@@ -32,7 +32,7 @@
 
 		<preConditions onFail="MARK_RAN">
 			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_AUTH_FK1" /></not>
-			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_USER_FK2	" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_USER_FK2" /></not>
 		</preConditions>
 		
 		<addForeignKeyConstraint baseColumnNames="AuthorityId"
@@ -40,7 +40,7 @@
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Authorities" />
 
 		<addForeignKeyConstraint baseColumnNames="UserId"
-			baseTableName="UsersAuthorities" constraintName="USER_AUTH_USER_FK2	"
+			baseTableName="UsersAuthorities" constraintName="USER_AUTH_USER_FK2"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Users" />
 
 	</changeSet>
