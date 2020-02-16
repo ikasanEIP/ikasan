@@ -244,8 +244,8 @@
 
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>${version.org.hamcrest.hamcrest-all}</version>
+            <artifactId>hamcrest</artifactId>
+
         </dependency>
 
         <!-- Hibernate dependency -->

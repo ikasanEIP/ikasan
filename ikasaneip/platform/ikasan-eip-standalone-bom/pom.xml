@@ -859,11 +859,11 @@
                 <version>${version.commons-lang}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${version.org.hamcrest.hamcrest-all}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.hamcrest</groupId>-->
+                <!--<artifactId>hamcrest-all</artifactId>-->
+                <!--<version>${version.org.hamcrest.hamcrest-all}</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>com.fasterxml</groupId>
