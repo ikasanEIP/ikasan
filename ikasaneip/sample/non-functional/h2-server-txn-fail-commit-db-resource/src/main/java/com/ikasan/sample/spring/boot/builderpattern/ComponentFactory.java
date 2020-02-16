@@ -65,7 +65,6 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.*
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-jms.xml",
         "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml",
-        "classpath:ikasan-transaction-pointcut-resubmission.xml",
         "classpath:h2-datasource-conf.xml"
 } )
 public class ComponentFactory
