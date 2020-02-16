@@ -1,9 +1,6 @@
 package org.ikasan.dashboard.ui.configuration;
 
-import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.ConfigurationMetaDataService;
-import org.ikasan.spec.metadata.ModuleMetaData;
-import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.metadata.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -30,6 +27,11 @@ public class ComponentFactory
             @Override
             public List<ModuleMetaData> findAll()
             {
+                return null;
+            }
+
+            @Override
+            public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize) {
                 return null;
             }
         };
