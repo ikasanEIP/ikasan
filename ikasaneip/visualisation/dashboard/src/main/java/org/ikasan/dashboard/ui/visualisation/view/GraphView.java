@@ -7,7 +7,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Div;
@@ -30,12 +29,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
-import elemental.json.JsonArray;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.FlowStateCache;
-import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
@@ -43,13 +39,10 @@ import org.ikasan.dashboard.ui.component.WiretapListDialog;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.dashboard.ui.util.SecurityConstants;
-import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.component.*;
 import org.ikasan.dashboard.ui.visualisation.component.filter.BusinessStreamSearchFilter;
 import org.ikasan.dashboard.ui.visualisation.component.filter.ModuleSearchFilter;
-import org.ikasan.dashboard.ui.visualisation.dao.BusinessStreamMetaDataDaoImpl;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
@@ -58,7 +51,6 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -67,21 +59,10 @@ import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.vaadin.visjs.network.Edge;
-import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
-import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
-import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
-import org.ikasan.vaadin.visjs.network.options.Options;
-import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
-import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
-import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
-import org.ikasan.vaadin.visjs.network.options.edges.Edges;
-import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
@@ -94,7 +75,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -137,7 +120,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
     private BusinessStream graph = null;
     private List<Node> nodes = new ArrayList<>();
-//    private NetworkDiagram networkDiagram;
     private VaadinSession session;
     private UI current;
     private ModuleFilteringGrid modulesGrid;
@@ -305,8 +287,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void createNetworkDiagram()
     {
-//        this.updateNetworkDiagram(new ArrayList<>(), new ArrayList<>());
-
         flowComboBox = new FlowComboBox();
         flowComboBox.setItemLabelGenerator(org.ikasan.dashboard.ui.visualisation.model.flow.Flow::getName);
         flowComboBox.setHeight("40px");
@@ -395,56 +375,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.graphViewChangeListeners.add(controlPanel);
     }
 
-//    /**
-//     * Method to update the network diagram with the node and edge lists.
-//     *
-//     * @param nodes a list containing all network nodes.
-//     * @param edges a list containing all the network edges.
-//     */
-//    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges)
-//    {
-//        Physics physics = new Physics();
-//        physics.setEnabled(false);
-//
-//        networkDiagram = new NetworkDiagram
-//            (Options.builder()
-//                .withAutoResize(true)
-//                .withPhysics(physics)
-//                .withEdges(
-//                    Edges.builder()
-//                        .withArrows(new Arrows(new ArrowHead()))
-//                        .withColor(EdgeColor.builder()
-//                            .withColor("#000000")
-//                            .build())
-//                        .withDashes(false)
-//                        .build())
-//                .build());
-//
-//        networkDiagram.setSizeFull();
-//
-//        networkDiagram.setNodes(nodes);
-//        networkDiagram.setEdges(edges);
-//
-//        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
-//        {
-//            logger.info(doubleClickEvent.getParams().toString());
-//
-//            JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
-//            String nodeId = nodesArray.get(0).asString();
-//
-//            logger.info(nodeId);
-//
-////            for(Flow flow: graph.getFlows())
-////            {
-////                if(flow.getId().equals(nodeId) && flow.getFoundStatus().equals(NodeFoundStatus.FOUND))
-////                {
-////                    eventViewDialog.open(flow.getWireapEvent());
-////                }
-////            }
-//        });
-//
-//    }
-
     /**
      * Method to initialise the modulesGrid on the tools slider.
      */
@@ -482,7 +412,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         Module module = adapter.adapt(moduleMetaData, configurationMetaData);
 
         this.remove(moduleVisualisation);
-//        this.remove(networkDiagram);
 
         if (this.businessStreamVisualisation != null)
         {
@@ -516,13 +445,12 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         }
 
         businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
-        this.configurationRestService,
-        this.triggerRestService);
+            this.configurationRestService, this.triggerRestService, this.solrWiretapService,
+            this.wiretapSearchResults, this.viewListButton);
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(json);
 
         this.remove(moduleVisualisation);
-//        this.remove(networkDiagram);
 
         businessStreamVisualisation.redraw();
         this.add(businessStreamVisualisation);
@@ -704,102 +632,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         {
             this.businessStreamVisualisation.performWiretapSearch(searchTerm, startDate, endDate);
         }
-//        Set<String> moduleNames = new HashSet<>();
-//        Set<String> flowNames = new HashSet<>();
-//
-//        boolean userDotSeperator = false;
-//        for(Node node: this.graph.getFlows())
-//        {
-//            if (node.getId().contains("."))
-//            {
-//                String[] moduleFlowPair = node.getId().split(Pattern.quote("."));
-//                moduleNames.add(moduleFlowPair[0]);
-//                flowNames.add(moduleFlowPair[1]);
-//                userDotSeperator = true;
-//            }
-//            else
-//            {
-//                moduleNames.add(node.getId());
-//            }
-//        }
-//
-//        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
-//            null, null, null, startDate, endDate, searchTerm);
-//
-//        logger.info("Found:" + results.getResultSize());
-//
-//        HashMap<String, Node> nodeMap = new HashMap<>();
-//
-//        for(Node node: nodes)
-//        {
-//            node.setFoundStatus(NodeFoundStatus.FOUND);
-//            nodeMap.put(node.getId(), node);
-//
-//            this.networkDiagram.drawStatusBorder(node.getX() -40, node.getY() -30, 80
-//                , 60, State.RUNNING_COLOUR);
-//        }
-//
-//        HashSet<String> correlationValues = new HashSet<>();
-//        HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
-//        for(WiretapEvent<String> result: results.getPagedResults())
-//        {
-//            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
-//
-//            if(node != null)
-//            {
-//                node.setFoundStatus(NodeFoundStatus.FOUND);
-//                ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).setWireapEvent(result.getEvent());
-//                uniqueResults.put(result.getEvent(), result);
-//
-//                if(((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).getCorrelator() != null)
-//                {
-//                    String correlationValue = (String)((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
-//                        .getCorrelator().correlate(result.getEvent());
-//
-//                    correlationValues.add(correlationValue);
-//                    logger.info("Correlation value = " + correlationValue);
-//                }
-//            }
-//        }
-//
-//        logger.info("Number of unique correlations values = " + correlationValues.size());
-//
-//        for(String value: correlationValues)
-//        {
-//            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
-//                null, null, null, startDate, endDate, value);
-//
-//            logger.info("Found correlating:" + secondResults.getResultSize());
-//
-//            for(WiretapEvent<String> result: secondResults.getPagedResults())
-//            {
-//                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
-//
-//                if(node != null)
-//                {
-//                    node.setFoundStatus(NodeFoundStatus.FOUND);
-//                    ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
-//                        .setWireapEvent(result.getEvent());
-//                    uniqueResults.put(result.getEvent(), result);
-//                }
-//            }
-//        }
-//
-//        logger.info("Number of unique events = " + uniqueResults.size());
-//
-//        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
-//
-//        if(uniqueResults.size() > 0)
-//        {
-//            this.viewListButton.setVisible(true);
-//        }
-//        else
-//        {
-//            this.viewListButton.setVisible(false);
-//        }
-//
-//        current.access(() ->
-//            networkDiagram.updateNodesStates(nodes));
     }
 
     protected void performErrorSearch(String searchTerm, Date startDate, Date endDate)

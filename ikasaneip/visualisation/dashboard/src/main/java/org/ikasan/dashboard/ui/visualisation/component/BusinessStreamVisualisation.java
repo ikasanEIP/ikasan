@@ -1,6 +1,8 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -12,7 +14,6 @@ import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
-import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
@@ -22,8 +23,10 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
@@ -48,11 +51,7 @@ import java.util.regex.Pattern;
 public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
     private Logger logger = LoggerFactory.getLogger(BusinessStreamVisualisation.class);
-    private Map<String, Node> nodeMap;
     private NetworkDiagram networkDiagram;
-    private Flow currentFlow;
-    private Module module;
-    private boolean moduleView = false;
 
     private Registration flowStateBroadcasterRegistration;
     private Registration cacheStateBroadcasterRegistration;
@@ -61,20 +60,28 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
 
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
+
     private BusinessStream businessStream;
     private ArrayList<Node> nodes = new ArrayList<>();
+
+    private List<WiretapEvent> wiretapSearchResults;
+    private Button viewListButton;
 
     private UI current;
 
     public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService)
+        , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
+        , WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService
+        , List<WiretapEvent> wiretapSearchResults, Button viewListButton)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
         this.setSizeFull();
-        this.nodeMap = new HashMap<>();
+        this.solrWiretapService = solrWiretapService;
+        this.wiretapSearchResults = wiretapSearchResults;
+        this.viewListButton = viewListButton;
         current = UI.getCurrent();
     }
 
@@ -82,8 +89,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
      *
      * @param json
      */
-    public void createBusinessStreamGraphGraph(String json) throws IOException
-    {
+    public void createBusinessStreamGraphGraph(String json) throws IOException {
         BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
 
         this.businessStream = adapter.toBusinessStreamGraph(json);
@@ -92,121 +98,12 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         nodes.addAll(businessStream.getDestinations());
         nodes.addAll(businessStream.getIntegratedSystems());
 
-        if(this.networkDiagram != null)
-        {
+        if (this.networkDiagram != null) {
             this.remove(networkDiagram);
         }
 
         updateNetworkDiagram(nodes, businessStream.getEdges());
         this.add(networkDiagram);
-    }
-
-    /**
-     * Method to update the network diagram with the node and edge lists.
-     *
-     * @param flow to render.
-     */
-    protected NetworkDiagram createNetworkDiagram(Flow flow)
-    {
-        logger.info("Creating network diagram for flow [{}] to visualisation.", flow.getName());
-
-        NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
-
-        IkasanFlowLayoutManager layoutManager = new IkasanFlowLayoutManager(flow, networkDiagram, null);
-        layoutManager.layout();
-
-        logger.info("Finished creating network diagram for flow [{}] to visualisation.", flow.getName());
-        return networkDiagram;
-    }
-
-    /**
-     * Method to update the network diagram with the node and edge lists.
-     *
-     * @param module to render.
-     */
-    protected NetworkDiagram createNetworkDiagram(Module module)
-    {
-        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
-        NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
-
-        IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
-        layoutManager.layout();
-
-        return networkDiagram;
-    }
-
-    protected NetworkDiagram initialiseNetworkDiagram()
-    {
-        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
-        Physics physics = new Physics();
-        physics.setEnabled(false);
-
-        NetworkDiagram networkDiagram = new NetworkDiagram
-            (Options.builder()
-                .withAutoResize(true)
-                .withPhysics(physics)
-                .withInteraction(Interaction.builder().withDragNodes(false) .build())
-                .withEdges(
-                    Edges.builder()
-                        .withArrows(new Arrows(new ArrowHead()))
-                        .withColor(EdgeColor.builder()
-                            .withColor("#000000")
-                            .build())
-                        .withDashes(false)
-                        .withFont(Font.builder().withSize(9).build())
-                        .build())
-                .withNodes(Nodes.builder().withFont(Font.builder().withSize(11).build()).build())
-                .build());
-
-        networkDiagram.setSizeFull();
-
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
-        {
-            logger.info(doubleClickEvent.getParams().toString());
-
-            JsonArray nodes = doubleClickEvent.getParams().getArray("nodes");
-
-            if(nodes.length() == 0)
-            {
-                JsonObject pointer = doubleClickEvent.getParams().getObject("pointer");
-                logger.info("pointer: " + pointer);
-
-                JsonObject canvas = pointer.getObject("canvas");
-
-                Double x = canvas.getNumber("x");
-                Double y = canvas.getNumber("y");
-
-                logger.info(currentFlow.toString());
-
-                if((x > currentFlow.getX() && x < (currentFlow.getX() + currentFlow.getW()))
-                    && (y > currentFlow.getY() && y < (currentFlow.getY() + currentFlow.getH())))
-                {
-                    logger.info("Inside flow!");
-                    FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService);
-                    flowOptionsDialog.open();
-                }
-
-                return;
-            }
-
-            String node = nodes.get(0).asString();
-
-            logger.info("Node: " + node);
-
-            if(this.module.getComponentMap().get(node) != null)
-            {
-                ComponentOptionsDialog componentNodeActionDialog = new ComponentOptionsDialog(this.module,
-                    this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
-                    this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService,
-                    this.triggerRestService);
-
-                componentNodeActionDialog.open();
-            }
-        });
-
-        logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
-
-        return networkDiagram;
     }
 
     /**
@@ -280,10 +177,10 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             }
         }
 
-//        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
-//            null, null, null, startDate, endDate, searchTerm);
-//
-//        logger.info("Found:" + results.getResultSize());
+        final PagedSearchResult<WiretapEvent> results =  this.solrWiretapService.findWiretapEvents(0, 500, "", false, moduleNames, flowNames,
+            null, null, null, startDate, endDate, searchTerm);
+
+        logger.info("Found:" + results.getResultSize());
 
         HashMap<String, Node> nodeMap = new HashMap<>();
 
@@ -301,62 +198,62 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
         HashSet<String> correlationValues = new HashSet<>();
         HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
-//        for(WiretapEvent<String> result: results.getPagedResults())
-//        {
-//            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
-//
-//            if(node != null)
-//            {
-//                node.setFoundStatus(NodeFoundStatus.FOUND);
-//                ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).setWireapEvent(result.getEvent());
-//                uniqueResults.put(result.getEvent(), result);
-//
-//                if(((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).getCorrelator() != null)
-//                {
-//                    String correlationValue = (String)((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
-//                        .getCorrelator().correlate(result.getEvent());
-//
-//                    correlationValues.add(correlationValue);
-//                    logger.info("Correlation value = " + correlationValue);
-//                }
-//            }
-//        }
+        for(WiretapEvent<String> result: results.getPagedResults())
+        {
+            Node node = userDotSeperator ? nodeMap.get(result.getModuleName() + "." + result.getFlowName()) : nodeMap.get(result.getModuleName());
+
+            if(node != null)
+            {
+                node.setFoundStatus(NodeFoundStatus.FOUND);
+                ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).setWireapEvent(result.getEvent());
+                uniqueResults.put(result.getEvent(), result);
+
+                if(((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node).getCorrelator() != null)
+                {
+                    String correlationValue = (String)((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+                        .getCorrelator().correlate(result.getEvent());
+
+                    correlationValues.add(correlationValue);
+                    logger.info("Correlation value = " + correlationValue);
+                }
+            }
+        }
 
         logger.info("Number of unique correlations values = " + correlationValues.size());
 
-//        for(String value: correlationValues)
-//        {
-//            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
-//                null, null, null, startDate, endDate, value);
-//
-//            logger.info("Found correlating:" + secondResults.getResultSize());
-//
-//            for(WiretapEvent<String> result: secondResults.getPagedResults())
-//            {
-//                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
-//
-//                if(node != null)
-//                {
-//                    node.setFoundStatus(NodeFoundStatus.FOUND);
-//                    ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
-//                        .setWireapEvent(result.getEvent());
-//                    uniqueResults.put(result.getEvent(), result);
-//                }
-//            }
-//        }
-//
-//        logger.info("Number of unique events = " + uniqueResults.size());
-//
-//        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
-//
-//        if(uniqueResults.size() > 0)
-//        {
-//            this.viewListButton.setVisible(true);
-//        }
-//        else
-//        {
-//            this.viewListButton.setVisible(false);
-//        }
+        for(String value: correlationValues)
+        {
+            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
+                null, null, null, startDate, endDate, value);
+
+            logger.info("Found correlating:" + secondResults.getResultSize());
+
+            for(WiretapEvent<String> result: secondResults.getPagedResults())
+            {
+                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
+
+                if(node != null)
+                {
+                    node.setFoundStatus(NodeFoundStatus.FOUND);
+                    ((org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow)node)
+                        .setWireapEvent(result.getEvent());
+                    uniqueResults.put(result.getEvent(), result);
+                }
+            }
+        }
+
+        logger.info("Number of unique events = " + uniqueResults.size());
+
+        this.wiretapSearchResults = new ArrayList<>(uniqueResults.values());
+
+        if(uniqueResults.size() > 0)
+        {
+            this.viewListButton.setVisible(true);
+        }
+        else
+        {
+            this.viewListButton.setVisible(false);
+        }
 
         current.access(() ->{
             this.networkDiagram.updateNodesStates(nodes);
@@ -367,8 +264,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private void drawFlowStatus(State state)
     {
-        this.networkDiagram.drawStatusBorder(this.currentFlow.getX() -20, this.currentFlow.getY() -20, this.currentFlow.getW() + 40
-            , this.currentFlow.getH() + 40, state.getStateColour());
+//        this.networkDiagram.drawStatusBorder(this.currentFlow.getX() -20, this.currentFlow.getY() -20, this.currentFlow.getW() + 40
+//            , this.currentFlow.getH() + 40, state.getStateColour());
         this.networkDiagram.diagamRedraw();
     }
 
@@ -381,37 +278,32 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     public void redraw()
     {
-        if (!this.moduleView && this.currentFlow != null)
-        {
-            this.networkDiagram = this.createNetworkDiagram(this.currentFlow);
-
-            this.networkDiagram.drawFlow(this.currentFlow.getX(), this.currentFlow.getY(), this.currentFlow.getW()
-                , this.currentFlow.getH(), this.currentFlow.getName());
-
-            FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
-
-            if(flowState != null)
-            {
-                this.drawFlowStatus(flowState.getState());
-            }
-
-            this.removeAll();
-
-            this.add(networkDiagram);
-        }
-        else if(this.moduleView && this.module != null)
-        {
-            this.networkDiagram = this.createNetworkDiagram(this.module);
-
-            this.removeAll();
-
-            this.add(networkDiagram);
-        }
-    }
-
-    public void setCurrentFlow(Flow currentFlow)
-    {
-        this.currentFlow = currentFlow;
+//        if (!this.moduleView && this.currentFlow != null)
+//        {
+//            this.networkDiagram = this.createNetworkDiagram(this.currentFlow);
+//
+//            this.networkDiagram.drawFlow(this.currentFlow.getX(), this.currentFlow.getY(), this.currentFlow.getW()
+//                , this.currentFlow.getH(), this.currentFlow.getName());
+//
+//            FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
+//
+//            if(flowState != null)
+//            {
+//                this.drawFlowStatus(flowState.getState());
+//            }
+//
+//            this.removeAll();
+//
+//            this.add(networkDiagram);
+//        }
+//        else if(this.moduleView && this.module != null)
+//        {
+//            this.networkDiagram = this.createNetworkDiagram(this.module);
+//
+//            this.removeAll();
+//
+//            this.add(networkDiagram);
+//        }
     }
 
     @Override
@@ -444,11 +336,11 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     {
         ui.access(() ->
         {
-            if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
-                && module != null && flowState.getModuleName().equals(module.getName()))
-            {
-                this.drawFlowStatus(flowState.getState());
-            }
+//            if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
+//                && module != null && flowState.getModuleName().equals(module.getName()))
+//            {
+//                this.drawFlowStatus(flowState.getState());
+//            }
         });
     }
 }
