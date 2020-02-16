@@ -56,7 +56,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
     public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
-        ,TriggerRestServiceImpl triggerRestService)
+        , TriggerRestServiceImpl triggerRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
