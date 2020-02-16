@@ -25,9 +25,11 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.NewRoleDialog;
 import org.ikasan.dashboard.ui.administration.component.NewUserDialog;
 import org.ikasan.dashboard.ui.administration.component.UserManagementDialog;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.util.DateFormatter;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
@@ -109,6 +111,9 @@ public class UserManagementView extends VerticalLayout implements BeforeEnterObs
                 }
             });
         });
+
+        this.addNewUserButton.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.USER_ADMINISTRATION_WRITE,
+            SecurityConstants.USER_ADMINISTRATION_ADMIN, SecurityConstants.ALL_AUTHORITY));
 
         this.newUserTooltip = TooltipHelper.getTooltipForComponentBottom(this.addNewUserButton, getTranslation("tooltip.add-new-user"
             , UI.getCurrent().getLocale()));
