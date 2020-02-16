@@ -141,6 +141,9 @@ public class SampleFlowBuilderTest
             "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
                 + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
                 + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
+                + ",me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration"
+                + ",org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+
         };
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);

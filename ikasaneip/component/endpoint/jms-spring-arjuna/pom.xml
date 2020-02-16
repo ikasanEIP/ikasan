@@ -53,11 +53,17 @@
 
     <dependencies>
 
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jta-narayana</artifactId>
-            <version>${version.org.springboot}</version>
+            <groupId>me.snowdrop</groupId>
+            <artifactId>narayana-spring-boot-starter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
+
 
         <!-- Base Ikasan Jms Client -->
         <dependency>
