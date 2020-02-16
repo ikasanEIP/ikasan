@@ -4,8 +4,6 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd       ">
 
-    <bean id="narayanaProperties" class="org.springframework.boot.jta.narayana.NarayanaProperties">
-    </bean>
 
     <bean id="arjunaTransactionManager" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple">
         <property name="transactionTimeout" value="${ikasan.default.transaction.timeout.seconds:300}"/>
