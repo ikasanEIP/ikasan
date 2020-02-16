@@ -412,8 +412,8 @@
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
-        <version.org.quartz-scheduler>2.3.2</version.org.quartz-scheduler>
-        <version.com.h2database>1.4.200</version.com.h2database>
+        <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
+        <version.com.h2database>1.4.199</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.liquibase>3.8.5</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.25</version.org.yaml.snakeyaml>
@@ -426,7 +426,6 @@
         <version.org.aspectjrt>1.9.5</version.org.aspectjrt>
         <version.javax.servlet>4.0.1</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
-        <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.activemq>5.15.11</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
@@ -442,10 +441,7 @@
         <version.com.jcraft.jsch>0.1.55</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
-		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
-		<version.org.glassfish.json>1.0</version.org.glassfish.json>
-        <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
-        <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
+		<version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
         <version.vaadin>14.0.8</version.vaadin>
         <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
@@ -865,12 +861,10 @@
                 <module>monitor</module>
                 <module>marshaller</module>
                 <module>component</module>
-                <module>jca</module>
                 <module>platform</module>
                 <module>builder</module>
                 <module>compatibility</module>
                 <module>mapping</module>
-                <module>management</module>
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
@@ -1972,34 +1966,6 @@
             <!-- Jersey -->
 
             <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-server</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>validation-api</artifactId>
-                        <groupId>javax.validation</groupId>
-                    </exclusion>
-                        <exclusion>
-                            <groupId>javax.annotation</groupId>
-                            <artifactId>javax.annotation-api</artifactId>
-                        </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-json-jackson</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
 				<version>${version.com.fasterxml.jackson.core}</version>
@@ -2017,96 +1983,6 @@
                 <version>${version.com.fasterxml.jackson.core}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.containers</groupId>
-                <artifactId>jersey-container-servlet</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>javax.annotation-api</artifactId>
-                    </exclusion>
-
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.json</artifactId>
-                <version>${version.org.glassfish.json}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-moxy</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-json-processing</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.ext</groupId>
-                <artifactId>jersey-spring3</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>${version.com.sun.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>${version.com.sun.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -2330,6 +2206,12 @@
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>${version.org.liquibase}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -2418,13 +2300,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.glassfish.main.external</groupId>
-                <artifactId>jmxremote_optional-repackaged</artifactId>
-                <version>${version.org.glassfish.main.external.jmxremote_optional-repackaged}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${version.commons-lang}</version>
@@ -2488,12 +2363,6 @@
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-binding</artifactId>
                 <version>${version.org.springframework.webflow}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>se.jiderhamn</groupId>
-                <artifactId>classloader-leak-prevention</artifactId>
-                <version>${version.se.jiderhamn.classloader-leak-prevention}</version>
             </dependency>
 
             <dependency>
