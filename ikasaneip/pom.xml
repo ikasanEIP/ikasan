@@ -381,12 +381,12 @@
         <version.org.slf4j>1.7.30</version.org.slf4j>
         <version.junit>4.12</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
-        <version.org.jmock>2.6.0</version.org.jmock>
+        <version.org.jmock>2.12.0</version.org.jmock>
+        <version.org.jmock.jmock-legacy>2.12.0</version.org.jmock.jmock-legacy>
         <version.org.assertj>3.13.2</version.org.assertj>
         <version.javax.transaction.jta>1.1</version.javax.transaction.jta>
         <version.org.hamcrest.hamcrest-core>2.2</version.org.hamcrest.hamcrest-core>
         <version.org.hamcrest.hamcrest-library>2.2</version.org.hamcrest.hamcrest-library>
-        <version.org.jmock.jmock-legacy>2.5.1</version.org.jmock.jmock-legacy>
         <version.cglib.cglib-nodep>3.2.6</version.cglib.cglib-nodep>
         <version.org.objenesis>1.2</version.org.objenesis>
         <version.uk.com.robust-it.cloning>1.9.0</version.uk.com.robust-it.cloning>
@@ -441,7 +441,7 @@
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
         <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
-        <version.javax.ws.rs>2.0</version.javax.ws.rs>
+
         <version.vaadin>14.0.8</version.vaadin>
         <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
         <version.com.vaadin.componentfactory>1.2.1</version.com.vaadin.componentfactory>
@@ -1195,12 +1195,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-spec-rest</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-scheduler</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1497,6 +1491,12 @@
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>kryo</artifactId>
                 <version>${version.kryo}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- used in component filter to support XML -->
@@ -1616,6 +1616,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${version.org.springboot}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1650,6 +1656,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
                 <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${version.org.springboot}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1768,6 +1786,12 @@
                 <groupId>org.jmock</groupId>
                 <artifactId>jmock-legacy</artifactId>
                 <version>${version.org.jmock.jmock-legacy}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1981,13 +2005,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${version.com.fasterxml.jackson.core}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
-                <version>${version.javax.ws.rs}</version>
             </dependency>
 
             <!-- Vaadin -->
@@ -2614,6 +2631,7 @@
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-http</artifactId>
                     </exclusion>
+
                 </exclusions>
             </dependency>
 
@@ -2691,6 +2709,10 @@
                         <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
 
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -2763,7 +2785,10 @@
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-continuation</artifactId>
                     </exclusion>
-
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 

@@ -64,10 +64,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = {
-    "/substitute-beans.xml",
-    "/transaction-conf.xml"
-})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class HibernateBaseFileTransferDaoImplTest
 {
 

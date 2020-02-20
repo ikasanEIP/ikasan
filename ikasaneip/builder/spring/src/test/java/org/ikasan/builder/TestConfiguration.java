@@ -1,6 +1,12 @@
 package org.ikasan.builder;
 
+import org.ikasan.module.IkasanModuleAutoConfiguration;
+import org.ikasan.rest.module.IkasanRestAutoConfiguration;
+import org.ikasan.transaction.IkasanTransactionConfiguration;
+import org.ikasan.web.IkasanWebAutoConfiguration;
+import org.ikasan.web.WebSecurityConfig;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration
@@ -25,7 +31,6 @@ import org.springframework.context.annotation.ImportResource;
     "/filter-service-conf.xml",
     "/h2-datasource-conf.xml"
 })
-
 
 public class TestConfiguration
 {
