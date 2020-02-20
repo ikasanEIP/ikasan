@@ -40,23 +40,7 @@
  */
 package org.ikasan.topology.dao;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Filter;
-import org.ikasan.topology.model.FilterComponent;
-import org.ikasan.topology.model.FilterComponentKey;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Notification;
-import org.ikasan.topology.model.RoleFilter;
-import org.ikasan.topology.model.RoleFilterKey;
-import org.ikasan.topology.model.Server;
+import org.ikasan.topology.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +51,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -74,12 +64,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/topology-conf.xml",
-        "/topology-tx-conf.xml",
-        "/transaction-conf.xml",
-        "/h2db-config.xml"
-})
+@ContextConfiguration(classes={TestConfiguration.class })
 public class HibernateTopologyDaoTest
 {
 

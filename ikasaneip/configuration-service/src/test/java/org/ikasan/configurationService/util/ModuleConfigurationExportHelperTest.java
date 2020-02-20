@@ -2,6 +2,7 @@ package org.ikasan.configurationService.util;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.service.SampleConfiguration;
+import org.ikasan.configurationService.service.TestConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -25,12 +26,7 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = {
-        "/configuration-service-conf.xml",
-        "/hsqldb-datasource-conf.xml",
-        "/substitute-components.xml",
-        "/transaction-conf.xml"
-})
+@ContextConfiguration(classes = { TestConfiguration.class})
 public class ModuleConfigurationExportHelperTest
 {
     /**

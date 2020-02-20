@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
+import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +53,6 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource( {
         "classpath:exception-conf.xml",
-        "classpath:transaction-conf.xml",
         "classpath:ikasan-transaction-conf.xml",
         "classpath:ikasan-transaction-pointcut-resubmission.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
@@ -75,7 +75,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:springapp-servlet-boot.xml",
 
 } )
-@Import({IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
+@Import({ IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 
