@@ -48,6 +48,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -59,6 +60,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Supports testing of the SplitterFlowElementInvoker
  */
+@Ignore
+//TODO: Move test to mockito
 public class ConcurrentSplitterFlowElementInvokerTest
 {
     private final Synchroniser synchroniser = new Synchroniser();
@@ -69,7 +72,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
     private Mockery mockery = new Mockery()
     {{
             setImposteriser(ClassImposteriser.INSTANCE);
-            setThreadingPolicy(synchroniser);
+//            setThreadingPolicy(synchroniser);
         }};
 
     private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
