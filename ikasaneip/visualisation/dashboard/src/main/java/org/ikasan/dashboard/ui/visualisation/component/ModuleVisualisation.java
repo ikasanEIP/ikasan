@@ -54,7 +54,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
 
-    public ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
+    public  ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService)
     {
@@ -126,7 +126,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
             (Options.builder()
                 .withAutoResize(true)
                 .withPhysics(physics)
-                .withInteraction(Interaction.builder().withDragNodes(false) .build())
+                .withInteraction(Interaction.builder().withDragNodes(false).build())
                 .withEdges(
                     Edges.builder()
                         .withArrows(new Arrows(new ArrowHead()))

@@ -9,21 +9,21 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
-import elemental.json.JsonObject;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
+import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
-import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
-import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.metadata.ConfigurationMetaDataService;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
@@ -38,15 +38,15 @@ import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
 import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
 import org.ikasan.vaadin.visjs.network.options.edges.EdgeColor;
 import org.ikasan.vaadin.visjs.network.options.edges.Edges;
-import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.options.physics.Physics;
-import org.ikasan.vaadin.visjs.network.util.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver
 {
@@ -59,6 +59,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private ModuleControlRestServiceImpl moduleControlRestService;
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
+    private ModuleMetaDataService moduleMetaDataService;
+    private ConfigurationMetaDataService configurationMetadataService;
 
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
 
@@ -68,21 +70,26 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private List<WiretapEvent> wiretapSearchResults;
     private Button viewListButton;
 
+    private Map<String, Flow> flowMap;
+
     private UI current;
 
     public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
-        , WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService
-        , List<WiretapEvent> wiretapSearchResults, Button viewListButton)
+        , WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService, ModuleMetaDataService moduleMetaDataService
+        , ConfigurationMetaDataService configurationMetadataService, List<WiretapEvent> wiretapSearchResults, Button viewListButton)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
-        this.setSizeFull();
         this.solrWiretapService = solrWiretapService;
+        this.moduleMetaDataService = moduleMetaDataService;
+        this.configurationMetadataService = configurationMetadataService;
         this.wiretapSearchResults = wiretapSearchResults;
         this.viewListButton = viewListButton;
         current = UI.getCurrent();
+
+        this.setSizeFull();
     }
 
     /**
@@ -101,6 +108,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         if (this.networkDiagram != null) {
             this.remove(networkDiagram);
         }
+
+        this.populateFlowMap(businessStream.getFlows());
 
         updateNetworkDiagram(nodes, businessStream.getEdges());
         this.add(networkDiagram);
@@ -121,6 +130,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             (Options.builder()
                 .withAutoResize(true)
                 .withPhysics(physics)
+                .withInteraction(Interaction.builder().withDragNodes(false).build())
                 .withEdges(
                     Edges.builder()
                         .withArrows(new Arrows(new ArrowHead()))
@@ -144,6 +154,22 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             String nodeId = nodesArray.get(0).asString();
 
             logger.info(nodeId);
+            logger.info("Flow + " + this.flowMap.get(nodeId));
+
+            if(this.flowMap.get(nodeId) != null){
+                ModuleMetaData moduleMetaData = this.moduleMetaDataService
+                    .findById(nodeId.substring(0, nodeId.indexOf(".")));
+
+                logger.info("ModuleMetaData + " + moduleMetaData);
+
+                FlowVisualisationDialog flowVisualisationDialog
+                    = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
+                    this.triggerRestService, this.configurationMetadataService, moduleMetaData
+                    , nodeId.substring(nodeId.indexOf(".") + 1));
+
+                flowVisualisationDialog.open();
+            }
+
 
 //            for(Flow flow: graph.getFlows())
 //            {
@@ -262,10 +288,15 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         });
     }
 
-    private void drawFlowStatus(State state)
+    private void drawFlowStatus(FlowState state)
     {
-//        this.networkDiagram.drawStatusBorder(this.currentFlow.getX() -20, this.currentFlow.getY() -20, this.currentFlow.getW() + 40
-//            , this.currentFlow.getH() + 40, state.getStateColour());
+        if(this.flowMap != null && flowMap.containsKey(state.getModuleName() + "." + state.getFlowName())) {
+            Flow flow = flowMap.get(state.getModuleName() + "." + state.getFlowName());
+            this.networkDiagram.drawStatusBorder(flow.getX() - 40
+                , flow.getY() - 30, 80
+                , 60, state.getState().getStateColour());
+        }
+
         this.networkDiagram.diagamRedraw();
     }
 
@@ -278,37 +309,42 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     public void redraw()
     {
-//        if (!this.moduleView && this.currentFlow != null)
-//        {
-//            this.networkDiagram = this.createNetworkDiagram(this.currentFlow);
-//
-//            this.networkDiagram.drawFlow(this.currentFlow.getX(), this.currentFlow.getY(), this.currentFlow.getW()
-//                , this.currentFlow.getH(), this.currentFlow.getName());
-//
-//            FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
-//
-//            if(flowState != null)
-//            {
-//                this.drawFlowStatus(flowState.getState());
-//            }
-//
-//            this.removeAll();
-//
-//            this.add(networkDiagram);
-//        }
-//        else if(this.moduleView && this.module != null)
-//        {
-//            this.networkDiagram = this.createNetworkDiagram(this.module);
-//
-//            this.removeAll();
-//
-//            this.add(networkDiagram);
-//        }
+        if(this.businessStream != null) {
+            nodes.addAll(businessStream.getFlows());
+            nodes.addAll(businessStream.getDestinations());
+            nodes.addAll(businessStream.getIntegratedSystems());
+
+            if (this.networkDiagram != null) {
+                this.remove(networkDiagram);
+            }
+
+            this.populateFlowMap(businessStream.getFlows());
+
+            updateNetworkDiagram(nodes, businessStream.getEdges());
+
+            for(String key: this.flowMap.keySet()) {
+                if(key.contains(".")) {
+                    ModuleMetaData module = this.moduleMetaDataService
+                        .findById(key.substring(0, key.indexOf(".")));
+
+                    if(module != null) {
+                        FlowState flowState = FlowStateCache.instance().get(module, key.substring(key.indexOf(".") + 1));
+
+                        if (flowState != null) {
+                            this.drawFlowStatus(flowState);
+                        }
+                    }
+                }
+            }
+
+            this.add(networkDiagram);
+        }
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent)
     {
+        this.redraw();
         UI ui = attachEvent.getUI();
         flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
@@ -336,11 +372,16 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     {
         ui.access(() ->
         {
-//            if(currentFlow != null && flowState.getFlowName().equals(currentFlow.getName())
-//                && module != null && flowState.getModuleName().equals(module.getName()))
-//            {
-//                this.drawFlowStatus(flowState.getState());
-//            }
+            if(this.flowMap != null && this.flowMap.containsKey(flowState.getModuleName() + "." + flowState.getFlowName()))
+            {
+                this.drawFlowStatus(flowState);
+            }
         });
+    }
+
+    private void populateFlowMap(List<Flow> flows){
+        this.flowMap = flows
+            .stream()
+            .collect(Collectors.toMap(Flow::getId, Function.identity()));
     }
 }
