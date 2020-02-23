@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
 import org.apache.commons.text.WordUtils;
+import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Producer;
