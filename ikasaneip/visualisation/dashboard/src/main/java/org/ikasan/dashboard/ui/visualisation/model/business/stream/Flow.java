@@ -14,7 +14,8 @@ public class Flow extends Node
 
     public Flow(String id, String name, int x, int y)
     {
-        super(id, name, Nodes.builder().withShape(Shape.image).withx(x).withy(y).withImage("frontend/images/flow.png").withSize(20));
+        super(id, name, Nodes.builder().withShape(Shape.image).withx(x)
+            .withy(y).withImage("frontend/images/flow.png").withSize(20));
         super.setFoundStatus(NodeFoundStatus.EMPTY);
         super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
     }

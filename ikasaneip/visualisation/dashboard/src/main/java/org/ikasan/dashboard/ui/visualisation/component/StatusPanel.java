@@ -174,6 +174,10 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
     protected void calculateStatus()
     {
+        if(currentModule == null){
+            return;
+        }
+
         int running = 0;
         int stopped = 0;
         int inError = 0;

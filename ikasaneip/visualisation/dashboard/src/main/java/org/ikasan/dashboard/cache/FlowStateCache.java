@@ -7,16 +7,13 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.dto.FlowDto;
-import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Optional;
-import java.util.function.Consumer;
-
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class FlowStateCache implements Consumer<FlowState>
 {
@@ -66,10 +63,26 @@ public class FlowStateCache implements Consumer<FlowState>
         return this.cache.get(module.getName()+flow.getName());
     }
 
+    public FlowState get(ModuleMetaData module, String flowName)
+    {
+        if(!this.contains(module, flowName))
+        {
+            refreshFromSource(module.getName(), flowName, module.getUrl());
+        }
+
+        return this.cache.get(module.getName()+flowName);
+    }
+
     public boolean contains(Module module, Flow flow)
     {
         logger.debug("Check contains: " + module + flow);
         return this.cache.containsKey(module.getName()+flow.getName());
+    }
+
+    public boolean contains(ModuleMetaData module, String flowName)
+    {
+        logger.debug("Check contains: " + module + flowName);
+        return this.cache.containsKey(module.getName()+flowName);
     }
 
     @Override
