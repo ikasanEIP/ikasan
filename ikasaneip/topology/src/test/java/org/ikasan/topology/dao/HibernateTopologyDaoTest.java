@@ -41,6 +41,7 @@
 package org.ikasan.topology.dao;
 
 import org.ikasan.topology.model.*;
+import org.ikasan.topology.model.Module;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

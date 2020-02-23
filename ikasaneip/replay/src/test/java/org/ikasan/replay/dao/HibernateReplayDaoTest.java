@@ -40,9 +40,6 @@
  */
 package org.ikasan.replay.dao;
 
-import javax.annotation.Resource;
-
-import com.sun.org.apache.regexp.internal.RE;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -55,6 +52,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

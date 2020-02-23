@@ -40,12 +40,14 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.spec.systemevent.SystemEventService;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.*;
+import org.ikasan.spec.module.Module;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -255,7 +257,7 @@ public class ModuleServiceImpl implements ModuleService
     	else
     	{
             StartupControl flowStartupControl = this.startupControlDao.getStartupControl(moduleName, flowName);
-            if(StartupType.DISABLED.equals(flowStartupControl.getStartupType()))
+            if( StartupType.DISABLED.equals(flowStartupControl.getStartupType()))
             {
                 throw new IllegalStateException("flow [" + flowName + "] module [" 
                     + moduleName + "] is disabled so cannot be started.");

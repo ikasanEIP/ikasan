@@ -42,7 +42,9 @@ package org.ikasan.topology.service;
 
 import org.ikasan.topology.exception.DiscoveryException;
 import org.ikasan.topology.dao.TopologyDao;
-import org.ikasan.topology.model.*;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Flow;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -51,9 +53,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
 
 /**
  * 

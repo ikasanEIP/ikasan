@@ -45,6 +45,7 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -56,6 +57,8 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
+@Ignore
+//TODO: refactor to mockito
 public class FileLineEventIdentifierServiceImplTest
 {
     /**

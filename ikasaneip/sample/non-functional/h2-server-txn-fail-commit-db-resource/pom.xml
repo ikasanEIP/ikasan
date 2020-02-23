@@ -11,7 +11,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>h2-server-txn-fail-commit-db-resource</artifactId>
     <version>3.1.0-SNAPSHOT</version>
-    <name>H2 Server Stress Integration Module</name>
+    <name>H2 Server Stress With TX failing on DB commit Integration Module</name>
     <description>Stress test the H2 server persistence with soak tests.</description>
 
     <dependencies>
@@ -94,7 +94,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -135,33 +135,24 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
+                <version>2.22.2</version>
                 <configuration>
                     <argLine>
-                        -javaagent:"${settings.localRepository}"/org/aspectj/aspectjweaver/1.9.4/aspectjweaver-1.9.4.jar
+                        -javaagent:"${settings.localRepository}"/org/aspectj/aspectjweaver/1.9.5/aspectjweaver-1.9.5.jar
                     </argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <forkMode>always</forkMode>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.nickwongdev</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.11</version>
+                <version>1.12.1</version>
                 <configuration>
-                    <complianceLevel>1.8</complianceLevel>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <complianceLevel>11</complianceLevel>
+                    <source>11</source>
+                    <target>11</target>
                     <showWeaveInfo>true</showWeaveInfo>
                     <verbose>true</verbose>
                     <Xlint>ignore</Xlint>

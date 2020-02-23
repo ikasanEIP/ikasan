@@ -43,6 +43,7 @@ package org.ikasan.topology.dao;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.ikasan.topology.model.*;
+import org.ikasan.topology.model.Module;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import javax.persistence.criteria.CriteriaBuilder;

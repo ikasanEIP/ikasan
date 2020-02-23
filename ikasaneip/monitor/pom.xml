@@ -60,25 +60,21 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-monitor</artifactId>
-              <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-             <scope>provided</scope>
          </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-dashboard-client</artifactId>
-            <scope>provided</scope>
         </dependency>
 
 		 <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -89,7 +85,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -100,6 +95,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
 
         <dependency>
