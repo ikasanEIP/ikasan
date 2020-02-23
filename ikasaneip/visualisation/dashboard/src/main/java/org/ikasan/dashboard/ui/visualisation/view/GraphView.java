@@ -445,14 +445,14 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         }
 
         businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, this.solrWiretapService,
-            this.wiretapSearchResults, this.viewListButton);
+            this.configurationRestService, this.triggerRestService, this.solrWiretapService, this.moduleMetadataService
+            , this.configurationMetadataService, this.wiretapSearchResults, this.viewListButton);
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(json);
 
         this.remove(moduleVisualisation);
 
-        businessStreamVisualisation.redraw();
+//        businessStreamVisualisation.redraw();
         this.add(businessStreamVisualisation);
     }
 
