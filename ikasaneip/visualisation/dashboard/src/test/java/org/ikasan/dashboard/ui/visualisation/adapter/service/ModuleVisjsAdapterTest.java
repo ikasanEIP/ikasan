@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
+import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.dashboard.ui.visualisation.model.ConfigurationMetaDataImpl;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
