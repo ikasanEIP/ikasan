@@ -202,7 +202,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
 
     protected void performFlowControlAction(String action)
     {
-        ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(false);
+        ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
 
         if(action.equals(START))
         {
