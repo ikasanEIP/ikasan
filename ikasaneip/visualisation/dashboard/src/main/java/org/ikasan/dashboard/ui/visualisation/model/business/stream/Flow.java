@@ -16,8 +16,7 @@ public class Flow extends Node
     {
         super(id, name, Nodes.builder().withShape(Shape.image).withx(x)
             .withy(y).withImage("frontend/images/flow.png").withSize(20));
-        super.setFoundStatus(NodeFoundStatus.EMPTY);
-        super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
+        super.setWiretapFoundStatus(NodeFoundStatus.EMPTY);
     }
 
 
@@ -67,17 +66,17 @@ public class Flow extends Node
     }
 
     @Override
-    public void setFoundStatus(String found)
+    public void setWiretapFoundStatus(String found)
     {
-        super.setFoundStatus(found);
+        super.setWiretapFoundStatus(found);
         if(found.equals(NodeFoundStatus.FOUND))
         {
 //            super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
-            super.setFoundImage("frontend/images/wiretap-service.png");
+            super.setWiretapFoundImage("frontend/images/wiretap-service.png");
         }
         else if(found.equals(NodeFoundStatus.NOT_FOUND))
         {
-            super.setFoundImage("frontend/images/Red-Cross-PNG-Pic.png");
+            super.setWiretapFoundImage("frontend/images/Red-Cross-PNG-Pic.png");
         }
     }
 

@@ -8,8 +8,12 @@ public class Node extends Nodes
     private String id;
     private String edgeColour = "rgba(0, 255, 0, 0.8)";
     private String fillColour = "rgba(0, 255, 0, 0.2)";
-    private String foundStatus = NodeFoundStatus.EMPTY;
-    private String foundImage = null;
+    private String wiretapFoundStatus = NodeFoundStatus.EMPTY;
+    private String wiretapFoundImage = null;
+    private String errorFoundStatus = NodeFoundStatus.EMPTY;
+    private String errorFoundImage = null;
+    private String exclusionFoundStatus = NodeFoundStatus.EMPTY;
+    private String exclusionFoundImage = null;
 
     // @JsonIgnore
     // private transient List<Edge> edgeList = new ArrayList<>();;
@@ -74,24 +78,32 @@ public class Node extends Nodes
         this.fillColour = fillColour;
     }
 
-    public String getFoundStatus()
+    public String getWiretapFoundStatus()
     {
-        return foundStatus;
+        return wiretapFoundStatus;
     }
 
-    public void setFoundStatus(String foundStatus)
+    public void setWiretapFoundStatus(String wiretapFoundStatus)
     {
-        this.foundStatus = foundStatus;
+        this.wiretapFoundStatus = wiretapFoundStatus;
     }
 
-    public String getFoundImage()
+    public String getWiretapFoundImage()
     {
-        return foundImage;
+        return wiretapFoundImage;
     }
 
-    public void setFoundImage(String foundImage)
+    public void setWiretapFoundImage(String wiretapFoundImage)
     {
-        this.foundImage = foundImage;
+        this.wiretapFoundImage = wiretapFoundImage;
+    }
+
+    public String getErrorFoundStatus() {
+        return errorFoundStatus;
+    }
+
+    public void setErrorFoundStatus(String errorFoundStatus) {
+        this.errorFoundStatus = errorFoundStatus;
     }
 
     // FIXME sync with JS-Component
