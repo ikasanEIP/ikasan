@@ -127,10 +127,13 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     var node = nodesParent[inode];
                     var nodePosition = nodePositions[node.id];
 
-                    if (node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND") {
+                    if (node.wiretapFoundStatus === "FOUND") {
                         var img = new Image();
-                        img.src = node.foundImage;
+                        img.src = node.wiretapFoundImage;
                         ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
+                    }
+                    else if (node.wiretapFoundStatus === "NOT_FOUND") {
+                        ctx.clearRect(nodePosition.x + 50, nodePosition.y - 25, 15, 15);
                     }
                 }
             });
