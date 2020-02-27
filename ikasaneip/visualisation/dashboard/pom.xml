@@ -307,7 +307,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>${argLine} -Dvaadin.original.frontend.resources=true -Dvaadin.compatibilityMode=true</argLine>
+                    <argLine>-Dvaadin.original.frontend.resources=true -Dvaadin.compatibilityMode=true</argLine>
                 </configuration>
             </plugin>
 
