@@ -46,7 +46,8 @@ public class JwtAuthenticationEntryPointTest
 
         uut.commence(request, response, new AuthenticationServiceException("Test"));
 
-        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        verify(response).setContentType("application/json;charset=UTF-8");
+        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verifyNoMoreInteractions(request,response);
 
     }
