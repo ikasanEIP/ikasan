@@ -643,8 +643,10 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             }
 
             search(searchType, searchTerm.getTerm(),
-                Date.from(startDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() + DateTimeUtil.getMilliFromTime(this.startTimePicker.getValue()),
-                Date.from(endDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() + DateTimeUtil.getMilliFromTime(this.endTimePicker.getValue()));
+                Date.from(startDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()
+                    + DateTimeUtil.getMilliFromTime(this.startTimePicker.getValue()),
+                Date.from(endDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()
+                    + DateTimeUtil.getMilliFromTime(this.endTimePicker.getValue()));
         });
     }
 

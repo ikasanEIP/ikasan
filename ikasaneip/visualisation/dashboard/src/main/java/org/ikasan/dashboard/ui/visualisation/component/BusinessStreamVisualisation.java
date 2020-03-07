@@ -11,7 +11,6 @@ import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
@@ -46,9 +45,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver
@@ -67,12 +68,12 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private ModuleMetaDataService moduleMetaDataService;
     private ConfigurationMetaDataService configurationMetadataService;
 
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
+//    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
 
     private BusinessStream businessStream;
     private ArrayList<Node> nodes = new ArrayList<>();
 
-    private Button viewListButton;
+//    private Button viewListButton;
 
     private Map<String, Flow> flowMap;
 
@@ -80,17 +81,17 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
-        , WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService, ModuleMetaDataService moduleMetaDataService
-        , ConfigurationMetaDataService configurationMetadataService, Button viewListButton
+        , ModuleMetaDataService moduleMetaDataService
+        , ConfigurationMetaDataService configurationMetadataService
         , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
-        this.solrWiretapService = solrWiretapService;
+//        this.solrWiretapService = solrWiretapService;
         this.moduleMetaDataService = moduleMetaDataService;
         this.configurationMetadataService = configurationMetadataService;
-        this.viewListButton = viewListButton;
+//        this.viewListButton = viewListButton;
         this.solrSearchService = solrSearchService;
         current = UI.getCurrent();
 
