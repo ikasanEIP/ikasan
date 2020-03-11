@@ -26,7 +26,7 @@
             <bean class="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"/>
         </property>
         <property name="autodetectUserTransaction" value="true"/>
-        <property name="defaultTimeout" value="600" />
+        <property name="defaultTimeout" value="${ikasan.default.transaction.timeout.seconds:600}" />
     </bean>
 
     <aop:config>
