@@ -4,14 +4,11 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.FileUtils;
 import org.ikasan.security.model.User;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,21 +16,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
 
 public class DashboardUserServiceImplTest
 {
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-        setThreadingPolicy(new Synchroniser());
-    }};
 
-    Environment environment = mockery.mock(Environment.class);
+    private Environment environment = Mockito.mock(Environment.class);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -48,15 +38,16 @@ public class DashboardUserServiceImplTest
     public void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
-        mockery.checking(new Expectations()
-        {{
-            oneOf(environment).getProperty(DashboardUserServiceImpl.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
-            will(returnValue("true"));
-            atLeast(2).of(environment).getProperty(DashboardUserServiceImpl.DASHBOARD_BASE_URL_PROPERTY);
-            will(returnValue(dashboardBaseUrl));
-            oneOf(environment).getProperty(DashboardUserServiceImpl.MODULE_NAME_PROPERTY);
-            will(returnValue("testModule"));
-        }});
+
+        Mockito.when(environment.getProperty(DashboardUserServiceImpl.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"))
+        .thenReturn("true");
+
+        Mockito.when(environment.getProperty(DashboardUserServiceImpl.DASHBOARD_BASE_URL_PROPERTY))
+               .thenReturn(dashboardBaseUrl);
+
+       Mockito.when(environment.getProperty(DashboardUserServiceImpl.MODULE_NAME_PROPERTY))
+               .thenReturn("testModule");
+
         uut = new DashboardUserServiceImpl(environment);
 
     }
