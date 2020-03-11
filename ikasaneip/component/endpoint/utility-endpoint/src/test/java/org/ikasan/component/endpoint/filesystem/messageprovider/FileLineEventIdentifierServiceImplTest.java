@@ -40,13 +40,10 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.junit.Assert;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,24 +51,12 @@ import java.util.List;
 
 /**
  * Functional unit test cases for <code>FileLineEventIdentifierServiceImpl</code>.
- * 
+ *
  * @author Ikasan Development Team
  */
-@Ignore
-//TODO: refactor to mockito
 public class FileLineEventIdentifierServiceImplTest
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private final Mockery mockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
-
-    private File file = mockery.mock(File.class);
+    private File file = Mockito.mock(File.class);
 
     /**
      * Test single file getIndentifier.
@@ -84,18 +69,16 @@ public class FileLineEventIdentifierServiceImplTest
         filenames.add(file);
 
         // set test expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(1).of(file).getName();
-                will(returnValue("filename"));
-            }
-        });
+        Mockito.when(file.getName()).thenReturn("filename");
 
-        ManagedEventIdentifierService<String,List<File>> managedEventIdentifierService = new FileLineEventIdentifierServiceImpl("my_prefix");
+        ManagedEventIdentifierService<String, List<File>> managedEventIdentifierService =
+            new FileLineEventIdentifierServiceImpl(
+            "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
         Assert.assertTrue(identifier.equals(expectedIdentifier));
-        mockery.assertIsSatisfied();
+        Mockito.verify(file).getName();
+        Mockito.verifyNoMoreInteractions(file);
     }
 
     /**
@@ -111,22 +94,21 @@ public class FileLineEventIdentifierServiceImplTest
         filenames.add(file);
 
         // set test expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(1).of(file).getName();
-                will(returnValue("filename1"));
-                exactly(1).of(file).getName();
-                will(returnValue("filename2"));
-                exactly(1).of(file).getName();
-                will(returnValue("filename3"));
-            }
-        });
+        Mockito.when(file.getName())
+               .thenReturn("filename1")
+               .thenReturn("filename2")
+               .thenReturn("filename3")
+        ;
 
-        ManagedEventIdentifierService<String,List<File>> managedEventIdentifierService = new FileLineEventIdentifierServiceImpl("my_prefix");
+
+        ManagedEventIdentifierService<String, List<File>> managedEventIdentifierService =
+            new FileLineEventIdentifierServiceImpl(
+            "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
         Assert.assertTrue(identifier.equals(expectedIdentifier));
-        mockery.assertIsSatisfied();
+        Mockito.verify(file,Mockito.times(3)).getName();
+        Mockito.verifyNoMoreInteractions(file);
     }
 
     /**
@@ -139,17 +121,14 @@ public class FileLineEventIdentifierServiceImplTest
         final List<File> filenames = new ArrayList<File>();
 
         // set test expectations
-        mockery.checking(new Expectations() {
-            {
-                // nothing
-            }
-        });
 
-        ManagedEventIdentifierService<String,List<File>> managedEventIdentifierService = new FileLineEventIdentifierServiceImpl("my_prefix");
+        ManagedEventIdentifierService<String, List<File>> managedEventIdentifierService =
+            new FileLineEventIdentifierServiceImpl(
+            "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
         Assert.assertTrue(identifier.equals(expectedIdentifier));
-        mockery.assertIsSatisfied();
+        Mockito.verifyNoMoreInteractions(file);
     }
 
 }
