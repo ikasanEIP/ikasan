@@ -44,12 +44,8 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.flow.*;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,191 +56,183 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Supports testing of the SplitterFlowElementInvoker
  */
-@Ignore
-//TODO: Move test to mockito
 public class ConcurrentSplitterFlowElementInvokerTest
 {
-    private final Synchroniser synchroniser = new Synchroniser();
+    private FlowEventListener flowEventListener = Mockito.mock(FlowEventListener.class, "flowEventListener");
+
+    private FlowInvocationContext flowInvocationContext = Mockito
+        .mock(FlowInvocationContext.class, "flowInvocationContext");
+
+    private FlowEvent flowEvent = Mockito.mock(FlowEvent.class, "flowEvent");
 
     /**
-     * Mockery for mocking concrete classes
+     * the sub flow element, also used as the current splitter flow element
      */
-    private Mockery mockery = new Mockery()
-    {{
-            setImposteriser(ClassImposteriser.INSTANCE);
-//            setThreadingPolicy(synchroniser);
-        }};
+    private FlowElement subFlowElement = Mockito.mock(FlowElement.class, "subFlowElement");
 
-    private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
-    private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
-    private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
-    /** the sub flow element, also used as the current splitter flow element */
-    private FlowElement subFlowElement = mockery.mock(FlowElement.class, "subFlowElement");
+    /**
+     * the main flow element, called after the concurrent subflows
+     */
+    private FlowElement mainFlowElement = Mockito.mock(FlowElement.class, "mainFlowElement");
 
-    /** the main flow element, called after the concurrent subflows */
-    private FlowElement mainFlowElement = mockery.mock(FlowElement.class, "mainFlowElement");
-    private FlowElementInvoker mainFlowElementInvoker = mockery.mock(FlowElementInvoker.class, "mainFlowElementInvoker");
+    private FlowElementInvoker mainFlowElementInvoker = Mockito
+        .mock(FlowElementInvoker.class, "mainFlowElementInvoker");
 
-    private Splitter splitter = mockery.mock(Splitter.class, "splitter");
+    private Splitter splitter = Mockito.mock(Splitter.class, "splitter");
 
     // this is to test the InvocationAware aspect
-    interface SplitterInvocationAware extends Splitter, InvocationAware {}
-    private SplitterInvocationAware splitterInvocationAware = mockery.mock(SplitterInvocationAware.class, "splitterInvocationAware");
+    interface SplitterInvocationAware extends Splitter, InvocationAware
+    {
+    }
+
+    private SplitterInvocationAware splitterInvocationAware = Mockito
+        .mock(SplitterInvocationAware.class, "splitterInvocationAware");
 
     private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
-    private Object payload = mockery.mock(Object.class, "payload");
-    private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = mockery.mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
+    private Object payload = Mockito.mock(Object.class, "payload");
+
+    private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = Mockito
+        .mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
+
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution() throws Exception {
+    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution() throws Exception
+    {
         final List payloads = new ArrayList();
         payloads.add(payload);
 
         asyncTask._flowEvent = flowEvent;
         asyncTask._flowInvocationContext = flowInvocationContext;
 
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+        Mockito.when(flowEvent.getIdentifier()).thenReturn(payload);
+        Mockito.when(flowEvent.getRelatedIdentifier()).thenReturn(payload);
+        Mockito.spy(flowInvocationContext).addElementInvocation(Mockito.any(FlowElementInvocation.class));
+        Mockito.spy(flowInvocationContext).setLastComponentName(null);
 
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+        Mockito.spy(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
-                exactly(1).of(subFlowElement).getFlowComponent();
-                will(returnValue(splitter));
+        Mockito.when(subFlowElement.getFlowComponent()).thenReturn(splitter);
 
-                exactly(2).of(subFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+        Mockito.when(subFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
-                exactly(1).of(splitter).split(flowEvent);
-                will(throwException(new ClassCastException()));
-                exactly(2).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("id"));
+        Mockito.when(splitter.split(flowEvent)).thenThrow(new ClassCastException());
+        Mockito.when(flowEvent.getPayload()).thenReturn(payload);
+        Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
 
-                exactly(1).of(splitter).split(payload);
-                will(returnValue(payloads));
+        Mockito.when(splitter.split(payload)).thenReturn(payloads);
 
-                exactly(1).of(subFlowElement).getTransition(FlowElement.SUBFLOW_TRANSITION_NAME);
-                will(returnValue(subFlowElement));
+        Mockito.when(subFlowElement.getTransition(FlowElement.SUBFLOW_TRANSITION_NAME)).thenReturn(subFlowElement);
 
-                exactly(1).of(asyncTask).call();
-                will(returnValue(asyncTask));
+        Mockito.when(asyncTask.call()).thenReturn(asyncTask);
 
-                exactly(1).of(subFlowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(mainFlowElement));
+        Mockito.when(subFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME)).thenReturn(mainFlowElement);
 
-                exactly(1).of(mainFlowElement).getFlowElementInvoker();
-                will(returnValue(mainFlowElementInvoker));
-                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
-                will(returnValue(null));
+        Mockito.when(mainFlowElement.getFlowElementInvoker()).thenReturn(mainFlowElementInvoker);
+        Mockito.when(mainFlowElementInvoker
+            .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement))
+               .thenReturn(null);
 
-                exactly(1).of(flowEvent).setPayload(payload);
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
-                exactly(2).of(mainFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-                exactly(1).of(flowEventListener).afterFlowElement(with(any(String.class)), with(any(String.class)), with(any(FlowElement.class)), with(any(FlowEvent.class)));
+        Mockito.spy(flowEvent).setPayload(payload);
+        Mockito.spy(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+        Mockito.when(mainFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+        Mockito.spy(flowEventListener)
+               .afterFlowElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(FlowElement.class),
+                   Mockito.any(FlowEvent.class)
+                                );
 
-                exactly(1).of(flowInvocationContext).combine(flowInvocationContext);
+        Mockito.spy(flowInvocationContext).combine(flowInvocationContext);
 
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
+        FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1,
+            null
+        );
         flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
-        mockery.assertIsSatisfied();
+        flowElementInvoker
+            .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
+        //mockery.assertIsSatisfied();
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware() throws Exception {
+    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware()
+        throws Exception
+    {
         final List payloads = new ArrayList();
         payloads.add(payload);
 
         asyncTask._flowEvent = flowEvent;
         asyncTask._flowInvocationContext = flowInvocationContext;
 
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+        Mockito.when(flowEvent.getIdentifier()).thenReturn(payload);
+        Mockito.when(flowEvent.getRelatedIdentifier()).thenReturn(payload);
+        Mockito.spy(flowInvocationContext).addElementInvocation(Mockito.any(FlowElementInvocation.class));
+        Mockito.spy(flowInvocationContext).setLastComponentName(null);
 
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+        Mockito.spy(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
-                exactly(1).of(subFlowElement).getFlowComponent();
-                will(returnValue(splitterInvocationAware));
+        Mockito.when(subFlowElement.getFlowComponent()).thenReturn(splitterInvocationAware);
 
-                exactly(1).of(splitterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+        Mockito.spy(splitterInvocationAware).setFlowElementInvocation(Mockito.any(FlowElementInvocation.class));
 
-                exactly(2).of(subFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+        Mockito.when(subFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
-                exactly(1).of(splitterInvocationAware).split(flowEvent);
-                will(throwException(new ClassCastException()));
-                exactly(2).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("id"));
+        Mockito.when(splitterInvocationAware.split(flowEvent)).thenThrow(new ClassCastException());
+        Mockito.when(flowEvent.getPayload()).thenReturn(payload);
+        Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
 
-                exactly(1).of(splitterInvocationAware).split(payload);
-                will(returnValue(payloads));
+        Mockito.when(splitterInvocationAware.split(payload)).thenReturn(payloads);
 
-                exactly(1).of(splitterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+        Mockito.spy(splitterInvocationAware).unsetFlowElementInvocation(Mockito.any(FlowElementInvocation.class));
 
+        Mockito.when(subFlowElement.getTransition(FlowElement.SUBFLOW_TRANSITION_NAME)).thenReturn(subFlowElement);
 
-                exactly(1).of(subFlowElement).getTransition(FlowElement.SUBFLOW_TRANSITION_NAME);
-                will(returnValue(subFlowElement));
+        Mockito.when(asyncTask.call()).thenReturn(asyncTask);
 
-                exactly(1).of(asyncTask).call();
-                will(returnValue(asyncTask));
+        Mockito.when(subFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME)).thenReturn(mainFlowElement);
 
-                exactly(1).of(subFlowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(mainFlowElement));
+        Mockito.when(mainFlowElement.getFlowElementInvoker()).thenReturn(mainFlowElementInvoker);
+        Mockito.when(mainFlowElementInvoker
+            .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement))
+               .thenReturn(null);
 
-                exactly(1).of(mainFlowElement).getFlowElementInvoker();
-                will(returnValue(mainFlowElementInvoker));
-                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
-                will(returnValue(null));
+        Mockito.spy(flowEvent).setPayload(payload);
+        Mockito.spy(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+        Mockito.when(mainFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+        Mockito.spy(flowEventListener)
+               .afterFlowElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(FlowElement.class),
+                   Mockito.any(FlowEvent.class)
+                                );
 
-                exactly(1).of(flowEvent).setPayload(payload);
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
-                exactly(2).of(mainFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-                exactly(1).of(flowEventListener).afterFlowElement(with(any(String.class)), with(any(String.class)), with(any(FlowElement.class)), with(any(FlowEvent.class)));
+        Mockito.spy(flowInvocationContext).combine(flowInvocationContext);
 
-                exactly(1).of(flowInvocationContext).combine(flowInvocationContext);
-
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
+        FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1,
+            null
+        );
         flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
-        mockery.assertIsSatisfied();
+        flowElementInvoker
+            .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
+
+
+
+        Mockito.verify(flowEvent,Mockito.times(3)).getIdentifier();
+        Mockito.verify(flowEvent,Mockito.times(2)).getRelatedIdentifier();
+        Mockito.verify(flowEvent,Mockito.times(2)).getPayload();
+        Mockito.verify(flowEvent,Mockito.times(3)).getIdentifier();
+       // Mockito.verify(flowEvent).setPayload(payload);
+
+        //Mockito.verifyNoMoreInteractions(flowEvent);
     }
 
     class StubbedConcurrentSplitterFlowElementInvoker extends ConcurrentSplitterFlowElementInvoker
     {
         int callbackCount;
+
         Throwable callbackThrowableException;
 
-        public StubbedConcurrentSplitterFlowElementInvoker(ExecutorService executorService, int callbackCount, Throwable callbackThrowableException)
+        public StubbedConcurrentSplitterFlowElementInvoker(ExecutorService executorService, int callbackCount,
+                                                           Throwable callbackThrowableException)
         {
             super(executorService);
             this.callbackCount = callbackCount;
@@ -254,7 +242,10 @@ public class ConcurrentSplitterFlowElementInvokerTest
         /**
          * Mock the async task.
          */
-        protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, List<FlowEventListener> flowEventListeners, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+        protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute,
+                                                List<FlowEventListener> flowEventListeners, String moduleName,
+                                                String flowName, FlowInvocationContext flowInvocationContext,
+                                                FlowEvent flowEvent)
         {
             return asyncTask;
         }

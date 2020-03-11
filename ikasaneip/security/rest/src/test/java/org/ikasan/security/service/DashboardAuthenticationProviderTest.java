@@ -1,45 +1,30 @@
 package org.ikasan.security.service;
 
-import org.apache.commons.io.FileUtils;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.authentication.DashboardAuthenticationProvider;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.io.File;
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 
-@Ignore
-//TODO: Move test to mockito
 public class DashboardAuthenticationProviderTest
 {
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-        setThreadingPolicy(new Synchroniser());
-    }};
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     private DashboardAuthenticationProvider uut;
 
-    private DashboardUserServiceImpl dashboardUserService = mockery.mock(DashboardUserServiceImpl.class);
+    private DashboardUserServiceImpl dashboardUserService = Mockito.mock(DashboardUserServiceImpl.class);
 
     @Before
     public void setup()
@@ -51,20 +36,16 @@ public class DashboardAuthenticationProviderTest
     public void authenticate_successful()
     {
         User user = setupUser("testUser");
-        this.mockery.checking(new Expectations()
-        {
-            {
-                oneOf(dashboardUserService).authenticate("admin", "admin");
-                will(returnValue(true));
-                oneOf(dashboardUserService).loadUserByUsername("admin");
-                will(returnValue(user));
-            }
-        });
+        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenReturn(true);
+        Mockito.when(dashboardUserService.loadUserByUsername("admin")).thenReturn(user);
+
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(true, result.isAuthenticated());
         assertEquals(25, result.getAuthorities().size());
-        mockery.assertIsSatisfied();
+        Mockito.verify(dashboardUserService).authenticate("admin", "admin");
+        Mockito.verify(dashboardUserService).loadUserByUsername("admin");
+        Mockito.verifyNoMoreInteractions(dashboardUserService);
     }
 
     @Test
@@ -73,34 +54,27 @@ public class DashboardAuthenticationProviderTest
         thrown.expect(UsernameNotFoundException.class);
         thrown.expectMessage("User not found: admin");
 
-        this.mockery.checking(new Expectations()
-        {
-            {
-                oneOf(dashboardUserService).authenticate("admin", "admin");
-                will(returnValue(true));
-                oneOf(dashboardUserService).loadUserByUsername("admin");
-                will(throwException(new UsernameNotFoundException("User not found: admin")));
-            }
-        });
+        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenReturn(true);
+        Mockito.when(dashboardUserService.loadUserByUsername("admin")).thenThrow(new UsernameNotFoundException("User not found: admin"));
+
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
-        mockery.assertIsSatisfied();
+        Mockito.verify(dashboardUserService).authenticate("admin", "admin");
+        Mockito.verify(dashboardUserService).loadUserByUsername("admin");
+        Mockito.verifyNoMoreInteractions(dashboardUserService);
     }
 
     @Test
     public void authenticate_failed()
     {
-        this.mockery.checking(new Expectations()
-        {
-            {
-                oneOf(dashboardUserService).authenticate("admin", "admin");
-                will(returnValue(false));
-            }
-        });
+
+        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenReturn(false);
+
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(false, result.isAuthenticated());
-        mockery.assertIsSatisfied();
+        Mockito.verify(dashboardUserService).authenticate("admin", "admin");
+        Mockito.verifyNoMoreInteractions(dashboardUserService);
     }
 
     private User setupUser(String username)
