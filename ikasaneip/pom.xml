@@ -368,7 +368,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
         <version.org.hibernate>5.4.10.Final</version.org.hibernate>
-        <version.org.hibernate-validator>6.0.18.Final</version.org.hibernate-validator>
+        <version.org.hibernate-validator>6.1.0.Final</version.org.hibernate-validator>
         <version.org.springframework>5.2.3.RELEASE</version.org.springframework>
         <version.org.springframework.security>5.2.1.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
