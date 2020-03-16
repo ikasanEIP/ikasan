@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -143,26 +142,24 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
             moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
         }
 
-        ModuleMetadataSearchResults results =  this.solrSearchService.find(moduleNames, offset, limit);
-
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
-        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
-            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
+        ModuleMetadataSearchResults results;
 
-             List<ModuleMetaData> resultsList = results.getResultList()
+        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+            List<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication)
                 .stream()
-                .filter(metadata -> accessibleModules.contains(metadata.getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());;
 
-             results = new ModuleMetadataSearchResults(resultsList, resultsList.size(), results.getQueryResponseTime());
+            results =  this.solrSearchService.find(accessibleModules, offset, limit);
+        }
+        else
+        {
+            results =  this.solrSearchService.find(moduleNames, offset, limit);
         }
 
         return results;
     }
-
-    public long getResultSize()
-    {
-        return resultSize;
-    }
 }
+
