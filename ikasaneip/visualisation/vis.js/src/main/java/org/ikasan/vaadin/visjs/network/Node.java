@@ -14,6 +14,8 @@ public class Node extends Nodes
     private String errorFoundImage = null;
     private String exclusionFoundStatus = NodeFoundStatus.EMPTY;
     private String exclusionFoundImage = null;
+    private String replayFoundStatus = NodeFoundStatus.EMPTY;
+    private String replayFoundImage = null;
 
     // @JsonIgnore
     // private transient List<Edge> edgeList = new ArrayList<>();;
@@ -104,6 +106,46 @@ public class Node extends Nodes
 
     public void setErrorFoundStatus(String errorFoundStatus) {
         this.errorFoundStatus = errorFoundStatus;
+    }
+
+    public String getErrorFoundImage() {
+        return errorFoundImage;
+    }
+
+    public void setErrorFoundImage(String errorFoundImage) {
+        this.errorFoundImage = errorFoundImage;
+    }
+
+    public String getExclusionFoundStatus() {
+        return exclusionFoundStatus;
+    }
+
+    public void setExclusionFoundStatus(String exclusionFoundStatus) {
+        this.exclusionFoundStatus = exclusionFoundStatus;
+    }
+
+    public String getExclusionFoundImage() {
+        return exclusionFoundImage;
+    }
+
+    public void setExclusionFoundImage(String exclusionFoundImage) {
+        this.exclusionFoundImage = exclusionFoundImage;
+    }
+
+    public String getReplayFoundStatus() {
+        return replayFoundStatus;
+    }
+
+    public void setReplayFoundStatus(String replayFoundStatus) {
+        this.replayFoundStatus = replayFoundStatus;
+    }
+
+    public String getReplayFoundImage() {
+        return replayFoundImage;
+    }
+
+    public void setReplayFoundImage(String replayFoundImage) {
+        this.replayFoundImage = replayFoundImage;
     }
 
     // FIXME sync with JS-Component

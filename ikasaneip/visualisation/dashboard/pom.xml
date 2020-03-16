@@ -209,6 +209,11 @@
         </dependency>
 
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.vaadin.componentfactory</groupId>
             <artifactId>tooltip</artifactId>
         </dependency>
