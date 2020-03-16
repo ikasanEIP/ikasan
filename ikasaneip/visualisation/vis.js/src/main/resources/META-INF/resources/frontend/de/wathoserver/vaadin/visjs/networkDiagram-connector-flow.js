@@ -119,7 +119,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
         // });
 
         graph.$connector.drawNodeFoundStatus = function () {
-            graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
                 var inode;
                 var nodePositions = graph.$connector.diagram.getPositions();
                 var arrayLength = graph.nodes.length;
@@ -130,10 +130,22 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     if (node.wiretapFoundStatus === "FOUND") {
                         var img = new Image();
                         img.src = node.wiretapFoundImage;
-                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
+                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 40, 15, 15);
                     }
-                    else if (node.wiretapFoundStatus === "NOT_FOUND") {
-                        ctx.clearRect(nodePosition.x + 50, nodePosition.y - 25, 15, 15);
+                    if (node.errorFoundStatus === "FOUND") {
+                        var img = new Image();
+                        img.src = node.errorFoundImage;
+                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 20, 15, 15);
+                    }
+                    if (node.exclusionFoundStatus === "FOUND") {
+                        var img = new Image();
+                        img.src = node.exclusionFoundImage;
+                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y, 15, 15);
+                    }
+                    if (node.replayFoundStatus === "FOUND") {
+                        var img = new Image();
+                        img.src = node.replayFoundImage;
+                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y + 20, 15, 15);
                     }
                 }
             });

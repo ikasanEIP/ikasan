@@ -58,11 +58,36 @@ public class FlowVisualisationDialog extends Dialog {
         , ModuleMetaData moduleMetaData, String flowName, SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService)
     {
         this.moduleControlRestService = moduleControlRestService;
+        if(this.moduleControlRestService == null){
+            throw new IllegalArgumentException("moduleControlRestService cannot be null!");
+        }
         this.configurationRestService = configurationRestService;
+        if(this.configurationRestService == null){
+            throw new IllegalArgumentException("configurationRestService cannot be null!");
+        }
         this.triggerRestService = triggerRestService;
+        if(this.triggerRestService == null){
+            throw new IllegalArgumentException("triggerRestService cannot be null!");
+        }
         this.configurationMetadataService = configurationMetadataService;
+        if(this.configurationMetadataService == null){
+            throw new IllegalArgumentException("configurationMetadataService cannot be null!");
+        }
         this.solrSearchService = solrSearchService;
+        if(this.solrSearchService == null){
+            throw new IllegalArgumentException("solrSearchService cannot be null!");
+        }
+        if(moduleMetaData == null){
+            throw new IllegalArgumentException("moduleMetaData cannot be null!");
+        }
+        if(flowName == null){
+            throw new IllegalArgumentException("flowName cannot be null!");
+        }
 
+        this.init(moduleMetaData, flowName);
+    }
+
+    private void init(ModuleMetaData moduleMetaData, String flowName){
         List<String> configurationIds = moduleMetaData.getFlows().stream()
             .map(flowMetaData -> flowMetaData.getFlowElements()).flatMap(List::stream)
             .map(flowElementMetaData -> flowElementMetaData.getConfigurationId())
@@ -115,6 +140,12 @@ public class FlowVisualisationDialog extends Dialog {
         }
         this.moduleVisualisation.setWidth("1600px");
         this.moduleVisualisation.setHeight("800px");
+        this.moduleVisualisation.getStyle().set( "border" , "1px dashed Grey" );
+        this.moduleVisualisation.getStyle().set( "-webkit-border-radius" , "22px" );
+        this.moduleVisualisation.getStyle().set( "-moz-border-radius" , "22px" );
+        this.moduleVisualisation.getStyle().set( "border-radius" , "22px" );
+        this.moduleVisualisation.getStyle().set( "background-size" , "10px 1px" );
+
         this.moduleVisualisation.redraw();
 
         this.searchLayout = this.buildSearchLayout();
