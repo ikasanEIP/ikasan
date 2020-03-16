@@ -71,12 +71,37 @@ public class Flow extends Node
         super.setWiretapFoundStatus(found);
         if(found.equals(NodeFoundStatus.FOUND))
         {
-//            super.setFoundImage("frontend/images/Green-Tick-PNG-Transparent-Image.png");
             super.setWiretapFoundImage("frontend/images/wiretap-service.png");
         }
-        else if(found.equals(NodeFoundStatus.NOT_FOUND))
+    }
+
+    @Override
+    public void setErrorFoundStatus(String errorFoundStatus) {
+        super.setErrorFoundStatus(errorFoundStatus);
+
+        if(errorFoundStatus.equals(NodeFoundStatus.FOUND))
         {
-            super.setWiretapFoundImage("frontend/images/Red-Cross-PNG-Pic.png");
+            super.setErrorFoundImage("frontend/images/error-service.png");
+        }
+    }
+
+    @Override
+    public void setExclusionFoundStatus(String exclusionFoundStatus) {
+        super.setExclusionFoundStatus(exclusionFoundStatus);
+
+        if(exclusionFoundStatus.equals(NodeFoundStatus.FOUND))
+        {
+            super.setExclusionFoundImage("frontend/images/hospital-service.png");
+        }
+    }
+
+    @Override
+    public void setReplayFoundStatus(String replayFoundStatus) {
+        super.setReplayFoundStatus(replayFoundStatus);
+
+        if(replayFoundStatus.equals(NodeFoundStatus.FOUND))
+        {
+            super.setReplayFoundImage("frontend/images/replay-service.png");
         }
     }
 

@@ -61,8 +61,6 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
 
     private List<GraphViewChangeListener> graphViewChangeListeners;
 
-    private boolean initialised = false;
-
     /**
      * Constructor
      */
@@ -70,25 +68,33 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         , ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService
         , ConfigurationMetaDataService configurationMetadataService) {
-        this.setMargin(true);
-        this.setSizeFull();
 
         this.graphViewChangeListeners = new ArrayList<>();
 
         this.moduleControlRestService = moduleControlRestService;
-        this.configurationRestService = configurationRestService;
-        this.triggerRestService = triggerRestService;
-        this.configurationMetadataService = configurationMetadataService;
-
-        this.controlPanel = new ControlPanel(this.moduleControlRestService);
-
-        if (!initialised) {
-            this.init();
-            initialised = true;
+        if(this.moduleControlRestService == null){
+            throw new IllegalArgumentException("moduleControlRestService cannot be null!");
         }
+        this.configurationRestService = configurationRestService;
+        if(this.configurationRestService == null){
+            throw new IllegalArgumentException("configurationRestService cannot be null!");
+        }
+        this.triggerRestService = triggerRestService;
+        if(this.triggerRestService == null){
+            throw new IllegalArgumentException("triggerRestService cannot be null!");
+        }
+        this.configurationMetadataService = configurationMetadataService;
+        if(this.configurationMetadataService == null){
+            throw new IllegalArgumentException("configurationMetadataService cannot be null!");
+        }
+
+        this.init();
     }
 
     private void init() {
+        this.controlPanel = new ControlPanel(this.moduleControlRestService);
+        this.setMargin(true);
+        this.setSizeFull();
         this.createModuleViewHeader();
     }
 
@@ -212,6 +218,7 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
         moduleVisualisation.redraw();
         this.flowComboBox.setCurrentModule(module);
+
         this.add(moduleVisualisation);
     }
 

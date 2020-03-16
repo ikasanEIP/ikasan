@@ -134,9 +134,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.createModuleGrid();
         this.createdBusinessStreamGrid();
-
         this.createToolsSlider();
-        this.createSearchSlider();
     }
 
     protected void createModuleGrid()
@@ -198,7 +196,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         {
             try
             {
-                this.createBusinessStreamGraph(doubleClickEvent.getItem().getJson());
+                this.createBusinessStreamGraph(doubleClickEvent.getItem().getName(), doubleClickEvent.getItem().getJson());
 
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
             }
@@ -280,7 +278,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      *
      * @param json
      */
-    protected void createBusinessStreamGraph(String json) throws IOException {
+    protected void createBusinessStreamGraph(String name, String json) throws IOException {
 
         if (this.businessStreamVisualisation != null) {
             this.remove(businessStreamVisualisation);
@@ -294,7 +292,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             this.moduleControlRestService, this.moduleMetadataService, this.configurationRestService
             , this.triggerRestService, this.configurationMetadataService);
 
-        businessStreamVisualisation.createBusinessStreamGraph(json);
+        businessStreamVisualisation.createBusinessStreamGraph(name, json);
 
         this.add(businessStreamVisualisation);
     }
@@ -365,63 +363,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         super.add(toolSlider);
     }
-
-    /**
-     * Method to create the search slider.
-     */
-    protected void createSearchSlider()
-    {
-        HorizontalLayout searchLayout = new HorizontalLayout();
-        searchLayout.setSizeFull();
-
-        LocalDate now = LocalDate.now();
-
-        group.setItems("Wiretap", "Error", "Exclusion");
-        group.setValue("Wiretap");
-
-        searchLayout.add(group);
-
-        DatePicker startDate = new DatePicker(now.minus(1, ChronoUnit.DAYS));
-        searchLayout.add(startDate);
-
-        DatePicker endDate = new DatePicker(now.plus(1, ChronoUnit.DAYS));
-        searchLayout.add(endDate);
-
-        TextField searchText = new TextField();
-        searchText.setWidth("300px");
-        searchText.setHeight("30px");
-        searchLayout.add(searchText);
-
-        Button searchButton = new Button("Search");
-
-        searchLayout.add(searchButton);
-
-        this.viewListButton = new Button("Result List");
-        this.viewListButton.setVisible(false);
-
-        searchLayout.add(viewListButton);
-
-        Div searchDiv = new Div();
-        searchDiv.setSizeFull();
-        searchDiv.setWidth("100%");
-        searchDiv.setHeight("70px");
-        searchDiv.getStyle().set("background", "white");
-        searchDiv.getStyle().set("color", "black");
-        searchDiv.add(searchLayout);
-
-        SlideTab searchSlider = new SlideTabBuilder(searchDiv)
-            .expanded(false)
-            .mode(SlideMode.BOTTOM)
-            .caption("Search")
-            .tabPosition(SlideTabPosition.MIDDLE)
-            .fixedContentSize(80)
-            .zIndex(1)
-            .flowInContent(true)
-            .build();
-
-        add(searchSlider);
-    }
-
     @Override
     protected void onAttach(AttachEvent attachEvent)
     {
