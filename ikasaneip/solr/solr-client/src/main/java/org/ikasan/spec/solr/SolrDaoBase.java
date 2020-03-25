@@ -10,10 +10,7 @@ import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -134,9 +131,15 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         StringBuffer eventIdBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();
 
+        List<String> all = Arrays.asList("*");
+
         if(moduleNames != null && moduleNames.size() > 0)
         {
             moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, moduleNames));
+        }
+        else if(moduleNames != null && moduleNames.size() == 0)
+        {
+            moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, all));
         }
 
         if(flowNames != null && flowNames.size() > 0)
@@ -144,7 +147,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
             flowNamesBuffer.append(this.buildPredicate(FLOW_NAME, flowNames));
         }
 
-        if(componentNames != null)
+        if(componentNames != null && componentNames.size() > 0)
         {
             componentNamesBuffer.append(this.buildPredicate(COMPONENT_NAME, componentNames));
         }
@@ -170,6 +173,10 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         {
             payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(SolrSpecialCharacterEscapeUtil.escape(payloadContent)).append("\"");
 
+        }
+        else
+        {
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON + "*");
         }
 
         StringBuffer bufferFinalQuery = new StringBuffer();
@@ -268,7 +275,14 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
         for (String predicateValue : predicateValues)
         {
-            predicate.append(delim).append(predicateValue).append(" ");
+            if(predicateValue.contains("*"))
+            {
+                predicate.append(delim).append(predicateValue).append(" ");
+            }
+            else
+            {
+                predicate.append(delim).append("\"").append(predicateValue).append("\"").append(" ");
+            }
             delim = OR;
         }
 
