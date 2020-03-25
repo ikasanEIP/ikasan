@@ -2,7 +2,6 @@ package org.ikasan.dashboard.ui.visualisation.adapter.model;
 
 public class Destination
 {
-
     private String id;
     private String name;
     private Integer x;
