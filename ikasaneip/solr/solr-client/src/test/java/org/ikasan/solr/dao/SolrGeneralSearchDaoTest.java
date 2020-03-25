@@ -17,12 +17,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -181,19 +185,22 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("id", "1");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "2");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "3");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -216,19 +223,22 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("id", "1");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "2");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "3");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -251,26 +261,28 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("id", "1");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "2");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "3");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
-            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
             server.commit();
 
 
-            assertEquals(2, dao.search(new HashSet<>(), new HashSet<>(),new HashSet<>(), null,"test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
+            assertEquals(2, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
 
         }
     }
@@ -285,19 +297,22 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("id", "1");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "2");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "3");
-            doc.addField("type", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -320,18 +335,24 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("id", "1");
             doc.addField("moduleName", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "2");
             doc.addField("moduleName", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
             doc.addField("id", "3");
             doc.addField("moduleName", "test");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -346,12 +367,80 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void test() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+
+            init(server);
+
+            BufferedReader br = this.loadDataFileStream("/data/complexSearchData/australian_users_items.json.gz");
+            String content;
+            int i=0;
+            while ((content = br.readLine()) != null)
+            {
+                SolrInputDocument doc = new SolrInputDocument();
+                doc.addField("id", ""+i);
+                doc.addField("moduleName", "test");
+                doc.addField("flowName", "test");
+                doc.addField("componentName", "test");
+                doc.addField("type", "type");
+                if(i<5)
+                {
+                    doc.addField("payload", "ikasan1"+content + "ikasan3 rocks");
+                }
+                if(i>=5 && i<80)
+                {
+                    doc.addField("payload", "ikasan2 ikasan2 ikasan2"+content);
+                }
+                if(i>=80 && i<150)
+                {
+                    doc.addField("payload", "b-ikasan2/"+content);
+                }
+                if(i>=150 && i<200)
+                {
+                    doc.addField("payload", "b223648-bu-13442 "+content);
+                }
+                doc.addField("expiry", 100l);
+                doc.addField("timestamp", 100l);
+                server.add("ikasan", doc);
+
+                i++;
+            }
+
+            server.commit();
+
+            Set<String> moduleNames = new HashSet<String>();
+            moduleNames.add("test");
+            assertEquals(5, dao.search(moduleNames, null, "ikasan1", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(75, dao.search(moduleNames, null, "ikasan2 ikasan2 ikasan2", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(70, dao.search(moduleNames, null, "b-ikasan2/", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(50, dao.search(moduleNames, null, "b223648-bu-13442", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(5, dao.search(null, null, "ikasan3", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+        }
+    }
+
     public static String TEST_HOME() {
         return getFile("solr/ikasan").getParent();
     }
 
     public static Path TEST_PATH() {
         return getFile("solr/ikasan").getParentFile().toPath();
+    }
+
+    protected BufferedReader loadDataFileStream(String fileName) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(fileName);
+        GZIPInputStream gzip = new GZIPInputStream(inputStream);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+
+        return br;
     }
 
 

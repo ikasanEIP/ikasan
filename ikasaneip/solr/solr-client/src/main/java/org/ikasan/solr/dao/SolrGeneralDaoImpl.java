@@ -8,12 +8,14 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -71,65 +73,49 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
      */
     protected IkasanSolrDocumentSearchResults searchBase(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes)
     {
-        IkasanSolrDocumentSearchResults results = null;
-
-        List<IkasanSolrDocument> beans = null;
-
-        StringBuffer queryBuffer = new StringBuffer();
-
-        queryBuffer.append(CREATED_DATE_TIME + COLON).append("[")
-            .append(startTime).append(TO).append(endTime).append("]");
-
-
-        logger.debug("queryString: " + queryBuffer);
-
         SolrQuery query = new SolrQuery();
         query.setStart(offset);
         query.setRows(resultSize);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
 
-        if (searchString.isEmpty())
+        String queryFilter = super.buildQuery(moduleName, flowNames, componentNames, new Date(startTime), new Date(endTime), null, eventId, entityTypes);
+
+        StringBuffer payloadBuffer = new StringBuffer();
+
+        if(searchString != null && !searchString.trim().isEmpty())
         {
-            query.setQuery("*:*");
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(SolrSpecialCharacterEscapeUtil.escape(searchString)).append("\"");
+
         }
         else
         {
-            query.setQuery(searchString);
-            query.set("defType", "dismax");
+            payloadBuffer.append(PAYLOAD_CONTENT + COLON + "*");
         }
 
-        query.setFilterQueries(queryBuffer.toString());
-        query.set("qf", ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW,
-                ERROR_URI, TYPE, RELATED_EVENT, ERROR_DETAIL, ERROR_MESSAGE, EXCEPTION_CLASS);
-        query.set("mm", 2);
-        
-
-        String queryFilter = super.buildQuery(moduleName, flowNames, componentNames, null, null, null, eventId, entityTypes);
+        query.setQuery(payloadBuffer.toString());
 
         if(queryFilter != null && !queryFilter.isEmpty())
         {
-            query.setFilterQueries(queryBuffer.toString() + " AND " + queryFilter);
+            query.addFilterQuery(queryFilter);
         }
 
         try
         {
-            logger.debug("query: " + query);
+            logger.info("query: " + query);
 
             QueryRequest req = new QueryRequest(query);
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
 
             QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
 
-            beans = rsp.getBeans(IkasanSolrDocument.class);
+            List<IkasanSolrDocument> beans = rsp.getBeans(IkasanSolrDocument.class);
 
-            results = new IkasanSolrDocumentSearchResults(beans, rsp.getResults().getNumFound(), rsp.getQTime());
+            return new IkasanSolrDocumentSearchResults(beans, rsp.getResults().getNumFound(), rsp.getQTime());
         }
         catch (Exception e)
         {
             throw new RuntimeException("Caught exception perform general ikasan search!", e);
         }
-
-        return results;
     }
 
     @Override

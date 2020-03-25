@@ -47,21 +47,27 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             SolrInputDocument doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -91,21 +97,27 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             SolrInputDocument doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "blah");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -116,7 +128,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
-            assertEquals(2, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
+            assertEquals(1, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null).getResultList().size());
 
         }
     }
@@ -135,21 +147,27 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             SolrInputDocument doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -161,7 +179,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
             ArrayList<String> entityTypes = new ArrayList<>();
-            entityTypes.add("test");
+            entityTypes.add("type");
 
             assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes)
                     .getResultList().size());
@@ -183,21 +201,27 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             SolrInputDocument doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
-            doc.addField("type", "test");
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
             server.add("ikasan", doc);
@@ -231,20 +255,29 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("moduleName", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("moduleName", "test");
             doc.addField("expiry", 100l);
             doc.addField("timestamp", 100l);
             server.add("ikasan", doc);
             doc = new SolrInputDocument();
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "test");
             doc.addField("moduleName", "test");
             doc.addField("timestamp", 100l);
             doc.addField("expiry", System.currentTimeMillis() + 10000000l);
@@ -278,13 +311,15 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             IkasanSolrDocument doc = new IkasanSolrDocument();
             doc.setModuleName("test");
             doc.setExpiry(100l);
             doc.setTimeStamp(100l);
+            doc.setEvent("test");
+            doc.setId("1");
 
             dao = new SolrGeneralDaoImpl();
             dao.setSolrClient(server);
@@ -296,7 +331,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             solrGeneralService.saveOrUpdate(doc);
 
 
-            assertEquals(2, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(1, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
 
         }
     }
@@ -315,18 +350,20 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
         {
             CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
             createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal-dismax");
+            createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
             IkasanSolrDocument doc1 = new IkasanSolrDocument();
             doc1.setModuleName("test");
             doc1.setId("1");
+            doc1.setEvent("test");
             doc1.setExpiry(100l);
             doc1.setTimeStamp(100l);
 
             IkasanSolrDocument doc2 = new IkasanSolrDocument();
             doc2.setModuleName("test");
             doc2.setId("2");
+            doc2.setEvent("test");
             doc2.setExpiry(100l);
             doc2.setTimeStamp(100l);
 
@@ -345,7 +382,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             IkasanSolrDocumentSearchResults results = solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100);
 
-            assertEquals(4, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(2, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
 
         }
     }
