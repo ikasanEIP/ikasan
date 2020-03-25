@@ -4,7 +4,8 @@ public class Flow
 {
     private Correlator correlator;
     private String id;
-    private String name;
+    private String moduleName;
+    private String flowName;
     private Integer x;
     private Integer y;
 
@@ -19,14 +20,22 @@ public class Flow
         this.id = id;
     }
 
-    public String getName()
-    {
-        return name;
+    public String getModuleName() {
+        return moduleName;
     }
 
-    public void setName(String name)
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getFlowName()
     {
-        this.name = name;
+        return flowName;
+    }
+
+    public void setFlowName(String flowName)
+    {
+        this.flowName = flowName;
     }
 
     public Integer getX()

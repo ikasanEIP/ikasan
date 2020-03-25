@@ -394,7 +394,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
                 horizontalLayout.add(replayImage);
             }
 
-
             return horizontalLayout;
         })).setWidth("40px");
 
