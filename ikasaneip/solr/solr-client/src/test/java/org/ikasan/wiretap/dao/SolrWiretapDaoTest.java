@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -82,11 +83,17 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             init(server);
             dao.setDaysToKeep(0);
 
+            SolrDocumentList solrDocuments = server.query(new SolrQuery("*:*")).getResults();
+            System.out.println(solrDocuments);
+
             SolrWiretapEvent event = new SolrWiretapEvent(1l, "moduleName", "flowName", "componentName",
                 "eventId", "relatedEventId", 12345l, "event");
 
 
             dao.save(event);
+
+            solrDocuments = server.query(new SolrQuery("*:*")).getResults();
+            System.out.println(solrDocuments);
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
