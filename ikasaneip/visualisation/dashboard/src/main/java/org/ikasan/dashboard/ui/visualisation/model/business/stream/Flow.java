@@ -9,13 +9,17 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
 public class Flow extends Node
 {
     private String state = FlowState.RUNNING;
+    private String moduleName;
+    private String flowName;
     private String wireapEvent;
     private Correlator correlator;
 
-    public Flow(String id, String name, int x, int y)
+    public Flow(String id, String moduleName, String flowName, int x, int y)
     {
-        super(id, name, Nodes.builder().withShape(Shape.image).withx(x)
+        super(id, ("\n").concat(moduleName).concat("\n").concat(flowName), Nodes.builder().withShape(Shape.image).withx(x)
             .withy(y).withImage("frontend/images/flow.png").withSize(20));
+        this.moduleName = moduleName;
+        this.flowName = flowName;
         super.setWiretapFoundStatus(NodeFoundStatus.EMPTY);
     }
 
@@ -52,6 +56,14 @@ public class Flow extends Node
             super.setEdgeColour("rgba(165, 26, 255, 0.8)");
             super.setFillColour("rgba(165, 26, 255, 0.2)");
         }
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public String getFlowName() {
+        return flowName;
     }
 
     public String getState()
