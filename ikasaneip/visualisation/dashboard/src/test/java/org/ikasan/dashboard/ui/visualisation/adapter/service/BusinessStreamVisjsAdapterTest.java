@@ -77,7 +77,7 @@ public class BusinessStreamVisjsAdapterTest
     {
         Flow flow = new Flow();
         flow.setId(id);
-        flow.setName(name);
+        flow.setFlowName(name);
         flow.setX(x);
         flow.setY(y);
 

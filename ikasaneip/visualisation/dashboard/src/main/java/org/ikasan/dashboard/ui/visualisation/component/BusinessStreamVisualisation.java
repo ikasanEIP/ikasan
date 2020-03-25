@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -201,6 +202,24 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         }
 
         this.networkDiagram.diagamRedraw();
+    }
+
+    public void search(List<String> entityTypes, String searchTerm, long startTime, long endTime) {
+        Set<String> moduleNames = this.businessStream
+            .getFlows()
+            .stream()
+            .map(flow -> flow.getModuleName())
+            .collect(Collectors.toSet());
+
+        Set<String> flowNames = this.businessStream
+            .getFlows()
+            .stream()
+            .map(flow -> flow.getFlowName())
+            .collect(Collectors.toSet());
+
+        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime, endTime, 100, entityTypes);
+
+        logger.info("Results: " + results.getTotalNumberOfResults());
     }
 
     public void drawFoundStatus()

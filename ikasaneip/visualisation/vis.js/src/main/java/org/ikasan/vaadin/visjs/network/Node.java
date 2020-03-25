@@ -4,7 +4,6 @@ import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 
 public class Node extends Nodes
 {
-
     private String id;
     private String edgeColour = "rgba(0, 255, 0, 0.8)";
     private String fillColour = "rgba(0, 255, 0, 0.2)";
@@ -16,11 +15,6 @@ public class Node extends Nodes
     private String exclusionFoundImage = null;
     private String replayFoundStatus = NodeFoundStatus.EMPTY;
     private String replayFoundImage = null;
-
-    // @JsonIgnore
-    // private transient List<Edge> edgeList = new ArrayList<>();;
-    // @JsonIgnore
-    // private transient Map<String, Edge> edgeMap = new HashMap<>();;
 
     public Node()
     {

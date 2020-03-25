@@ -1,0 +1,56 @@
+{
+  "flows": [
+    {
+      "id": "wriggle-im.Wriggle Request Inbound Flow",
+      "name": "wriggle-im\nWriggle Request Inbound Flow",
+      "x": 200,
+      "y": 0
+    },
+    {
+      "id": "wriggle-im.Wriggle Request Router Flow",
+      "name": "wriggle-im\nWriggle Request Router Flow",
+      "x": 200,
+      "y": 200
+    },
+    {
+      "id": "wriggle-im.Wriggle Ledger HTTP Request Flow",
+      "name": "wriggle-im\nWriggle Ledger HTTP Request Flow",
+      "x": 200,
+      "y": 400
+    },
+    {
+      "id": "wriggle-im.Wriggle Company HTTP Request Flow",
+      "name": "wriggle-im\nWriggle Company HTTP Request Flow",
+      "x": 0,
+      "y": 600
+    },
+    {
+      "id": "wriggle-im.Wriggle Account HTTP Request Flow",
+      "name": "wriggle-im\nWriggle Account HTTP Request Flow",
+      "x": 200,
+      "y": 500
+    },
+    {
+      "id": "wriggle-im.Scheduled FLow",
+      "name": "wriggle-im\nScheduled FLow",
+      "x": 200,
+      "y": 700
+    },
+    {
+      "id": "wriggle-im.Wriggle Customer HTTP Request Flow",
+      "name": "wriggle-im\nWriggle Customer HTTP Request Flow",
+      "x": 0,
+      "y": 400
+    },
+    {
+      "id": "wriggle-im.Wriggle Invoice HTTP Request Flow",
+      "name": "wriggle-im\nWriggle Invoice HTTP Request Flow",
+      "x": 0,
+      "y": 200
+    }
+  ],
+  "integratedSystems": [
+  ],
+  "edges": [
+  ]
+}
