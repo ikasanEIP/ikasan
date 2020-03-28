@@ -13,6 +13,6 @@ public class SolrSpecialCharacterEscapeUtilTest
     {
         String result = SolrSpecialCharacterEscapeUtil.escape("(1+1):2");
 
-        Assert.assertEquals("Escaped string must equal!", "\\(1\\+1\\)\\:2", result);
+        Assert.assertEquals("Escaped string must equal!", "(1\\+1)\\:2", result);
     }
 }

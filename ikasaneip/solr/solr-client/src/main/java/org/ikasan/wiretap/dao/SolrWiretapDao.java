@@ -16,10 +16,8 @@ import org.ikasan.wiretap.model.SolrWiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -81,9 +79,15 @@ public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements Wiretap
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames
             , Set<String> flowNames, Set<String> componentNames, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
     {
-        PagedSearchResult results = null;
+        PagedSearchResult results;
+        String queryString;
 
-        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
+        try {
+            queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
+        }
+        catch (IOException e) {
+           return new ArrayListPagedSearchResult<WiretapEvent>(new ArrayList<>(), 0, 0L);
+        }
 
         logger.debug("queryString: " + queryString);
 
