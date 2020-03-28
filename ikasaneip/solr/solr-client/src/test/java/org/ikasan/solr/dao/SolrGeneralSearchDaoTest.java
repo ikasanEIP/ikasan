@@ -10,6 +10,7 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
+import org.ikasan.solr.model.IkasanSolrDocument;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -25,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
@@ -369,6 +371,12 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
     @Test
     @DirtiesContext
+    /**
+     * The idea of this test is to take a large and random json data set that contains
+     * 88310 records and seed it with some key words that are very unlikely to be in the
+     * dataset. Then perform queries against the dataset to confirm that the results are
+     * narrowed accurately.
+     */
     public void test() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
@@ -387,22 +395,42 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
                 doc.addField("flowName", "test");
                 doc.addField("componentName", "test");
                 doc.addField("type", "type");
+
+
+                // insert variants of ikasan
                 if(i<5)
                 {
-                    doc.addField("payload", "ikasan1"+content + "ikasan3 rocks");
+                    doc.addField("payload", "ikasan1" +content + "ikasan3 rocks");
                 }
                 if(i>=5 && i<80)
                 {
                     doc.addField("payload", "ikasan2 ikasan2 ikasan2"+content);
                 }
+
+                // insert ikasan with some reserved characters
                 if(i>=80 && i<150)
                 {
                     doc.addField("payload", "b-ikasan2/"+content);
                 }
+
+                // insert something that looks like a trade id
                 if(i>=150 && i<200)
                 {
                     doc.addField("payload", "b223648-bu-13442 "+content);
                 }
+
+                // insert something that looks like a trade id somewhere in the middle of the content
+                if(i>=5000 && i<5090)
+                {
+                    doc.addField("payload", content.substring(0, 50) + " 33454432 " + content.substring(51, content.length()-1));
+                }
+
+                // insert something that looks like a trade id somewhere in the middle of the content that contains reserved characters
+                if(i>=6000 && i<6035)
+                {
+                    doc.addField("payload", content.substring(0, 50) + "  3345:44932-bb:9 " + content.substring(51, content.length()-1));
+                }
+
                 doc.addField("expiry", 100l);
                 doc.addField("timestamp", 100l);
                 server.add("ikasan", doc);
@@ -416,7 +444,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             moduleNames.add("test");
             assertEquals(5, dao.search(moduleNames, null, "ikasan1", 0
                 , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
-            assertEquals(75, dao.search(moduleNames, null, "ikasan2 ikasan2 ikasan2", 0
+            assertEquals(75, dao.search(moduleNames, null, "\"ikasan2 ikasan2 ikasan2\"", 0
                 , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
             assertEquals(70, dao.search(moduleNames, null, "b-ikasan2/", 0
                 , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
@@ -424,6 +452,43 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
                 , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
             assertEquals(5, dao.search(null, null, "ikasan3", 0
                 , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(5, dao.search(null, null, "ikasan3 rocks", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(90, dao.search(null, null, "33454432", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+            // Note partial searches require the * wildcard character
+            assertEquals(90, dao.search(null, null, "3345443*", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(90, dao.search(null, null, "*345443*", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
+            // Note in the
+            assertEquals(5, dao.search(moduleNames, null, "\"ikasan1\" AND ikasan3", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(55, dao.search(moduleNames, null, "ikasan1 OR b223648-bu-13442", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(5, dao.search(moduleNames, null, "ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(5, dao.search(moduleNames, null, "((ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")))", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(0, dao.search(moduleNames, null, "ikasan3 AND NOT (ikasan1 OR \"b223648-bu-13442\")", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(50, dao.search(moduleNames, null, "(ikasan3 AND NOT ikasan1) OR \"b223648-bu-13442\"", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "\"3345:44932-bb:9\"", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "3345:44932-bb:9", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "\"44932-bb\"", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "44932-bb", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "3345:44932-bb", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(35, dao.search(moduleNames, null, "3345 AND :44932-bb:", 0
+                , System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+
         }
     }
 

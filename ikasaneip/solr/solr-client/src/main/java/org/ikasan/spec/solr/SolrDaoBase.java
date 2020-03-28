@@ -6,10 +6,11 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.ikasan.solr.util.SolrSpecialCharacterEscapeUtil;
+import org.ikasan.solr.util.SolrTokenizerQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +21,8 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrDaoBase.class);
+
+    private static final List<String> ALL = Arrays.asList("*");
 
     public static final String ID = "id";
     public static final String ERROR_URI = "errorUri";
@@ -99,8 +102,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @return String
      */
     protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
-            , Date untilDate, String payloadContent, String eventId, String type)
-    {
+            , Date untilDate, String payloadContent, String eventId, String type) throws IOException {
         ArrayList<String> types = new ArrayList<String>();
         types.add(type);
 
@@ -115,146 +117,80 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @param componentNames
      * @param fromDate
      * @param untilDate
-     * @param payloadContent
+     * @param searchTerm
      * @param eventId
      * @param types
      * @return String
      */
     protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
-            , Date untilDate, String payloadContent, String eventId, List<String> types)
+            , Date untilDate, String searchTerm, String eventId, List<String> types) throws IOException
     {
-        StringBuffer moduleNamesBuffer = new StringBuffer();
-        StringBuffer flowNamesBuffer = new StringBuffer();
-        StringBuffer componentNamesBuffer = new StringBuffer();
-        StringBuffer dateBuffer = new StringBuffer();
-        StringBuffer payloadBuffer = new StringBuffer();
-        StringBuffer eventIdBuffer = new StringBuffer();
-        StringBuffer typeBuffer = new StringBuffer();
+        // Setup the predicates
+        StringBuffer moduleNamesBuffer =  this.buildStringListQueryPart(moduleNames, MODULE_NAME);
+        StringBuffer flowNamesBuffer = this.buildStringListQueryPart(flowNames, FLOW_NAME);
+        StringBuffer componentNamesBuffer = this.buildStringListQueryPart(componentNames, COMPONENT_NAME);
+        StringBuffer dateBuffer = this.buildDatePredicate(CREATED_DATE_TIME, fromDate, untilDate);
+        StringBuffer payloadBuffer = this.buildSearchStringPredicate(searchTerm, PAYLOAD_CONTENT);
+        StringBuffer eventIdBuffer = this.buildFieldPredicate(eventId, EVENT);
+        StringBuffer typeBuffer =  this.buildStringListQueryPart(types, TYPE);
 
-        List<String> all = Arrays.asList("*");
-
-        if(moduleNames != null && moduleNames.size() > 0)
-        {
-            moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, moduleNames));
-        }
-        else if(moduleNames != null && moduleNames.size() == 0)
-        {
-            moduleNamesBuffer.append(this.buildPredicate(MODULE_NAME, all));
-        }
-
-        if(flowNames != null && flowNames.size() > 0)
-        {
-            flowNamesBuffer.append(this.buildPredicate(FLOW_NAME, flowNames));
-        }
-
-        if(componentNames != null && componentNames.size() > 0)
-        {
-            componentNamesBuffer.append(this.buildPredicate(COMPONENT_NAME, componentNames));
-        }
-
-        if(eventId != null && !eventId.trim().isEmpty())
-        {
-            eventIdBuffer.append(EVENT + COLON);
-
-            eventIdBuffer.append(eventId).append(" ");
-        }
-
-        if(types != null && !types.isEmpty())
-        {
-            typeBuffer.append(this.buildPredicate(TYPE, types));
-        }
-
-        if(fromDate != null && untilDate != null)
-        {
-            dateBuffer.append(CREATED_DATE_TIME + COLON).append("[").append(fromDate.getTime()).append(TO).append(untilDate.getTime()).append("]");
-        }
-
-        if(payloadContent != null && !payloadContent.trim().isEmpty())
-        {
-            payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("\"").append(SolrSpecialCharacterEscapeUtil.escape(payloadContent)).append("\"");
-
-        }
-        else
-        {
-            payloadBuffer.append(PAYLOAD_CONTENT + COLON + "*");
-        }
-
+        // Construct the query
         StringBuffer bufferFinalQuery = new StringBuffer();
-
-        boolean hasPrevious = false;
-
-        if(moduleNames != null && moduleNames.size() > 0)
-        {
-            bufferFinalQuery.append(moduleNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(flowNames != null && flowNames.size() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(flowNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(componentNames != null && componentNames.size() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(componentNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(payloadContent != null && payloadContent.length() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(payloadBuffer);
-            hasPrevious = true;
-        }
-
-        if(eventIdBuffer.length() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(eventIdBuffer);
-            hasPrevious = true;
-        }
-
-        if(typeBuffer.length() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(typeBuffer);
-            hasPrevious = true;
-        }
-
-        if(fromDate != null && untilDate != null)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(dateBuffer);
-        }
+        Boolean hasPrevious = this.addQueryPart(bufferFinalQuery, moduleNamesBuffer, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, flowNamesBuffer, hasPrevious);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, componentNamesBuffer, hasPrevious);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, payloadBuffer, hasPrevious);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, eventIdBuffer, hasPrevious);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, typeBuffer, hasPrevious);
+        this.addQueryPart(bufferFinalQuery, dateBuffer, hasPrevious);
 
         return bufferFinalQuery.toString();
+    }
+
+    /**
+     * Helper method to build query parts.
+     *
+     * @param values
+     * @param field
+     * @return
+     */
+    protected StringBuffer buildStringListQueryPart(Collection<String> values, String field)
+    {
+        StringBuffer queryPart = new StringBuffer();
+        if(values != null && values.size() > 0)
+        {
+            queryPart.append(this.buildPredicate(field,  values));
+        }
+        else if(values != null && values.size() == 0)
+        {
+            queryPart.append(this.buildPredicate(field, ALL));
+        }
+
+        return queryPart;
+    }
+
+    /**
+     * Helper method to add query part to the solr query.
+     *
+     * @param bufferFinalQuery
+     * @param queryPart
+     * @param hasPrevious
+     * @return
+     */
+    protected boolean addQueryPart(StringBuffer bufferFinalQuery, StringBuffer queryPart, Boolean hasPrevious)
+    {
+        if(queryPart != null && queryPart.length() > 0)
+        {
+            if(hasPrevious)
+            {
+                bufferFinalQuery.append(AND);
+            }
+
+            bufferFinalQuery.append(queryPart);
+            hasPrevious = true;
+        }
+
+        return hasPrevious;
     }
 
     /**
@@ -289,6 +225,67 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         predicate.append(CLOSE_BRACKET);
 
         return predicate;
+    }
+
+    /**
+     * Helper method to build date predicate.
+     *
+     * @param field
+     * @param fromDate
+     * @param untilDate
+     * @return
+     */
+    protected StringBuffer buildDatePredicate(String field, Date fromDate, Date untilDate)
+    {
+        StringBuffer dateBuffer = new StringBuffer();
+
+        if(fromDate != null && untilDate != null)
+        {
+            dateBuffer.append(field + COLON).append("[").append(fromDate.getTime())
+                .append(TO).append(untilDate.getTime()).append("]");
+        }
+
+        return dateBuffer;
+    }
+
+    /**
+     * Helper method to build the search string predicate.
+     *
+     * @param searchTerm
+     * @param field
+     * @return
+     * @throws IOException
+     */
+    protected StringBuffer buildSearchStringPredicate(String searchTerm, String field) throws IOException
+    {
+        StringBuffer searchTermBuffer = new StringBuffer();
+        if(searchTerm != null && !searchTerm.trim().isEmpty())
+        {
+            searchTermBuffer.append("(").append(SolrTokenizerQueryBuilder.buildQuery(searchTerm, field)).append(")");
+        }
+
+        return searchTermBuffer;
+    }
+
+    /**
+     * Helper method to build general field predicates.
+     *
+     * @param value
+     * @param field
+     * @return
+     */
+    protected StringBuffer buildFieldPredicate(String value, String field)
+    {
+        StringBuffer predicateBuffer = new StringBuffer();
+
+        if(value != null && !value.trim().isEmpty())
+        {
+            predicateBuffer.append(field + COLON);
+
+            predicateBuffer.append(value).append(" ");
+        }
+
+        return predicateBuffer;
     }
 
     /**
@@ -378,6 +375,10 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         this.deleteByQuery(query.toString());
     }
 
+    /**
+     * Set the entity days to keep.
+     * @param daysToKeep
+     */
     public void setDaysToKeep(int daysToKeep)
     {
         this.daysToKeep = daysToKeep;
@@ -487,17 +488,11 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         throws org.apache.solr.client.solrj.SolrServerException, java.io.IOException
     {
         UpdateResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
-
         logger.debug("Solr Response: " + rsp.toString());
 
         rsp = req.commit(solrClient, SolrConstants.CORE);
-
         logger.debug("Solr Commit Response: " + rsp.toString());
-
     }
 
-
     protected abstract SolrInputDocument getSolrInputFields(Long expiry, T event);
-
-
 }
