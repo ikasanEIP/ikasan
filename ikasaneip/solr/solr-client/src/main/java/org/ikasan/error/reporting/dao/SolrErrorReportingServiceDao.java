@@ -15,6 +15,7 @@ import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,13 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
 
     public List<ErrorOccurrence> find(List<String> moduleNames, List<String> flowNames, List<String> componentNames, Date startDate, Date endDate, int size)
     {
-        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, startDate, endDate, null, null, ERROR);
+        String queryString;
+        try {
+            queryString = this.buildQuery(moduleNames, flowNames, componentNames, startDate, endDate, null, null, ERROR);
+        }
+        catch (IOException e) {
+            return new ArrayList<>();
+        }
 
         logger.debug("queryString: " + queryString);
 

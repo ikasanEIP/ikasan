@@ -2,6 +2,7 @@ package org.ikasan.solr.dao;
 
 import org.ikasan.solr.model.IkasanSolrDocument;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public interface SolrGeneralDao<RESULTS>
      * @param resultSize
      * @return RESULTS
      */
-    public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize);
+    public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize) throws IOException;
 
 
     /**
@@ -36,7 +37,7 @@ public interface SolrGeneralDao<RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
+    public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException;
 
     /**
      * Perform general search against ikasan solr index.
@@ -53,7 +54,7 @@ public interface SolrGeneralDao<RESULTS>
      * @param entityTypes
      * @return
      */
-    public RESULTS search(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
+    public RESULTS search(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException;
 
 
 
@@ -67,7 +68,7 @@ public interface SolrGeneralDao<RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
+    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException;
 
     /**
      * Perform general search against ikasan solr index.
@@ -80,7 +81,7 @@ public interface SolrGeneralDao<RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
+    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException;
 
     /**
      * Set the solr username

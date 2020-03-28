@@ -15,6 +15,7 @@ import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +100,15 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao
             flowNamesSet = new HashSet<String>(flowNames);
         }
 
-        String queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY);
+        String queryString;
+        try
+        {
+            queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY);
+        }
+        catch (IOException e)
+        {
+           return new ArrayList<>();
+        }
 
         logger.debug("queryString: " + queryString);
 
