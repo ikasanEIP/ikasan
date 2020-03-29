@@ -37,6 +37,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
     public static final String RELATED_EVENT = "relatedEventId";
     public static final String EXPIRY = "expiry";
     public static final String ERROR_DETAIL = "errorDetail";
+    public static final String ERROR_ACTION = "errorAction";
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String EXCEPTION_CLASS = "exceptionClass";
 

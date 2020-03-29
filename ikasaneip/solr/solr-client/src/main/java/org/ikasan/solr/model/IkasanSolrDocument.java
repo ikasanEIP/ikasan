@@ -34,6 +34,9 @@ public class IkasanSolrDocument
     @Field("event")
     private String eventId;
 
+    @Field("errorAction")
+    private String errorAction;
+
     @Field("errorUri")
     private String errorUri;
 
@@ -157,6 +160,14 @@ public class IkasanSolrDocument
     public void setErrorUri(String errorUri)
     {
         this.errorUri = errorUri;
+    }
+
+    public String getErrorAction() {
+        return errorAction;
+    }
+
+    public void setErrorAction(String errorAction) {
+        this.errorAction = errorAction;
     }
 
     public String getErrorDetail()

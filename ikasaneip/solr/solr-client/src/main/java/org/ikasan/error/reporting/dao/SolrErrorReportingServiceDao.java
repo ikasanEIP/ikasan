@@ -147,6 +147,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
         document.addField(PAYLOAD_CONTENT, errorOccurrence.getEventAsString());
         document.addField(CREATED_DATE_TIME, errorOccurrence.getTimestamp());
         document.addField(ERROR_DETAIL, errorOccurrence.getErrorDetail());
+        document.addField(ERROR_ACTION, errorOccurrence.getAction());
         document.addField(ERROR_MESSAGE, errorOccurrence.getErrorMessage());
         document.addField(EXCEPTION_CLASS, errorOccurrence.getExceptionClass());
         document.setField(EXPIRY, expiry);

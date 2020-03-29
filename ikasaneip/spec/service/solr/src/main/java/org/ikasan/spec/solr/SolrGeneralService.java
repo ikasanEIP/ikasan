@@ -20,7 +20,8 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize) throws IOException;
+    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
+        , long endTime, int resultSize) throws IOException;
 
     /**
      * Perform general search against ikasan solr index.
@@ -34,7 +35,8 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param entityTypes
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException;
+    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
+        , long endTime, int resultSize, List<String> entityTypes);
 
     /**
      * Perform general search against ikasan solr index.
@@ -46,7 +48,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException;
+    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
 
     /**
      * Perform general search against ikasan solr index.
@@ -59,7 +61,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException;
+    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
 
     /**
      * Perform general search against ikasan solr index.
@@ -73,7 +75,8 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param entityTypes
      * @return RESULTS
      */
-    public RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException;
+    public RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize
+        , List<String> entityTypes);
 
     /**
      * Perform general search against ikasan solr index.
@@ -90,7 +93,8 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param entityTypes
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException;
+    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId
+        , String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes);
 
     /**
      * Save or update an ENTITY
