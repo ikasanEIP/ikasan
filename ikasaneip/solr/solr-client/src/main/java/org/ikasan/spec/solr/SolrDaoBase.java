@@ -103,11 +103,11 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @return String
      */
     protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
-            , Date untilDate, String payloadContent, String eventId, String type) throws IOException {
+            , Date untilDate, String payloadContent, String eventId, String type, boolean negateQuery) throws IOException {
         ArrayList<String> types = new ArrayList<String>();
         types.add(type);
 
-        return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, types);
+        return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, types, negateQuery);
     }
 
     /**
@@ -124,26 +124,38 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @return String
      */
     protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
-            , Date untilDate, String searchTerm, String eventId, List<String> types) throws IOException
+            , Date untilDate, String searchTerm, String eventId, List<String> types, boolean negateQuery) throws IOException
     {
         // Setup the predicates
         StringBuffer moduleNamesBuffer =  this.buildStringListQueryPart(moduleNames, MODULE_NAME);
         StringBuffer flowNamesBuffer = this.buildStringListQueryPart(flowNames, FLOW_NAME);
         StringBuffer componentNamesBuffer = this.buildStringListQueryPart(componentNames, COMPONENT_NAME);
         StringBuffer dateBuffer = this.buildDatePredicate(CREATED_DATE_TIME, fromDate, untilDate);
-        StringBuffer payloadBuffer = this.buildSearchStringPredicate(searchTerm, PAYLOAD_CONTENT);
+        StringBuffer payloadBuffer = this.buildSearchStringPredicate(searchTerm, PAYLOAD_CONTENT, negateQuery);
+        StringBuffer errorBuffer = this.buildSearchStringPredicate(searchTerm, ERROR_DETAIL, negateQuery);
+        StringBuffer errorUriBuffer = this.buildSearchStringPredicate(searchTerm, ERROR_URI, negateQuery);
+        StringBuffer eventBuffer = this.buildSearchStringPredicate(searchTerm, EVENT, negateQuery);
         StringBuffer eventIdBuffer = this.buildFieldPredicate(eventId, EVENT);
         StringBuffer typeBuffer =  this.buildStringListQueryPart(types, TYPE);
 
+        String logicalOperator = OR;
+        if (negateQuery)
+        {
+            logicalOperator = AND;
+        }
+
         // Construct the query
         StringBuffer bufferFinalQuery = new StringBuffer();
-        Boolean hasPrevious = this.addQueryPart(bufferFinalQuery, moduleNamesBuffer, false);
-        hasPrevious = this.addQueryPart(bufferFinalQuery, flowNamesBuffer, hasPrevious);
-        hasPrevious = this.addQueryPart(bufferFinalQuery, componentNamesBuffer, hasPrevious);
-        hasPrevious = this.addQueryPart(bufferFinalQuery, payloadBuffer, hasPrevious);
-        hasPrevious = this.addQueryPart(bufferFinalQuery, eventIdBuffer, hasPrevious);
-        hasPrevious = this.addQueryPart(bufferFinalQuery, typeBuffer, hasPrevious);
-        this.addQueryPart(bufferFinalQuery, dateBuffer, hasPrevious);
+        Boolean hasPrevious = this.addQueryPart(bufferFinalQuery, payloadBuffer, false, AND, true, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, errorBuffer, hasPrevious, logicalOperator, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, errorUriBuffer, hasPrevious, logicalOperator, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, eventBuffer, hasPrevious, logicalOperator, false, true);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, moduleNamesBuffer, hasPrevious, AND, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, flowNamesBuffer, hasPrevious, AND, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, componentNamesBuffer, hasPrevious, AND, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, eventIdBuffer, hasPrevious, AND, false, false);
+        hasPrevious = this.addQueryPart(bufferFinalQuery, typeBuffer, hasPrevious, AND, false, false);
+        this.addQueryPart(bufferFinalQuery, dateBuffer, hasPrevious, AND, false, false);
 
         return bufferFinalQuery.toString();
     }
@@ -178,16 +190,27 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @param hasPrevious
      * @return
      */
-    protected boolean addQueryPart(StringBuffer bufferFinalQuery, StringBuffer queryPart, Boolean hasPrevious)
+    protected boolean addQueryPart(StringBuffer bufferFinalQuery, StringBuffer queryPart, Boolean hasPrevious
+        , String logicalOperator, boolean addPreceedingBracket, boolean addFollowingBracket)
     {
         if(queryPart != null && queryPart.length() > 0)
         {
             if(hasPrevious)
             {
-                bufferFinalQuery.append(AND);
+                bufferFinalQuery.append(logicalOperator);
+            }
+
+            if(addPreceedingBracket)
+            {
+                bufferFinalQuery.append(OPEN_BRACKET);
             }
 
             bufferFinalQuery.append(queryPart);
+
+            if(addFollowingBracket)
+            {
+                bufferFinalQuery.append(CLOSE_BRACKET);
+            }
             hasPrevious = true;
         }
 
@@ -257,12 +280,12 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @return
      * @throws IOException
      */
-    protected StringBuffer buildSearchStringPredicate(String searchTerm, String field) throws IOException
+    protected StringBuffer buildSearchStringPredicate(String searchTerm, String field, boolean negateQuery) throws IOException
     {
         StringBuffer searchTermBuffer = new StringBuffer();
         if(searchTerm != null && !searchTerm.trim().isEmpty())
         {
-            searchTermBuffer.append("(").append(SolrTokenizerQueryBuilder.buildQuery(searchTerm, field)).append(")");
+            searchTermBuffer.append("(").append(SolrTokenizerQueryBuilder.buildQuery(searchTerm, field, negateQuery)).append(")");
         }
 
         return searchTermBuffer;

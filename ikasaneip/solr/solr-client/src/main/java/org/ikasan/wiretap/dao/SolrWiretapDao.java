@@ -83,7 +83,7 @@ public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements Wiretap
         String queryString;
 
         try {
-            queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
+            queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP, false);
         }
         catch (IOException e) {
            return new ArrayListPagedSearchResult<WiretapEvent>(new ArrayList<>(), 0, 0L);
