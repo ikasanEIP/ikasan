@@ -30,29 +30,29 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) {
-        return this.searchBase(null, null, null, null, searchString, startTime, endTime, 0, resultSize, null);
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery) {
+        return this.searchBase(null, null, null, null, searchString, startTime, endTime, 0, resultSize, null, negateQuery);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
-        return this.searchBase(null, null, null, null, searchString, startTime, endTime, offset, resultSize, null);
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery) {
+        return this.searchBase(null, null, null, null, searchString, startTime, endTime, offset, resultSize, null, negateQuery);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize) {
-        return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, null);
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, boolean negateQuery) {
+        return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, null, negateQuery);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) {
-        return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, entityTypes);
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery) {
+        return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, entityTypes, negateQuery);
     }
 
     @Override
     public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime
-        , long endTime, int offset, int resultSize, List<String> entityTypes) {
-        return this.searchBase(moduleName, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes);
+        , long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery) {
+        return this.searchBase(moduleName, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes, negateQuery);
     }
 
     /**
@@ -68,7 +68,8 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
      * @param entityTypes
      * @return
      */
-    protected IkasanSolrDocumentSearchResults searchBase(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
+    protected IkasanSolrDocumentSearchResults searchBase(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames
+        , String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery) {
         SolrQuery query = new SolrQuery();
         query.setStart(offset);
         query.setRows(resultSize);
@@ -77,7 +78,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
         String queryFilter;
 
         try {
-            queryFilter = super.buildQuery(moduleName, flowNames, componentNames, new Date(startTime), new Date(endTime), searchString, eventId, entityTypes);
+            queryFilter = super.buildQuery(moduleName, flowNames, componentNames, new Date(startTime), new Date(endTime), searchString, eventId, entityTypes, negateQuery);
         }
         catch (IOException e) {
             throw new RuntimeException(String.format("An error has occurred building Sorl query.", e.getMessage()));

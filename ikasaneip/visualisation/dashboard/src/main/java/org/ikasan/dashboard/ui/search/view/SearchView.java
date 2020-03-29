@@ -118,6 +118,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private DatePicker endDate;
     private TimePicker startTimePicker = new TimePicker();
     private TimePicker endTimePicker = new TimePicker();
+    private Checkbox negateQueryCheckbox;
 
     private Label resultsLabel = new Label();
     private Button selectAllButton;
@@ -282,9 +283,12 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         VerticalLayout replayButtonLayout = createSearchButtonLayout(replaySearchButton, replayButtonLabel);
         replayButtonLayout.add(replaySearchButtonTooltip);
 
+        this.negateQueryCheckbox = new Checkbox(getTranslation("checkbox-label.negate-search", UI.getCurrent().getLocale()));
+
         HorizontalLayout checkBoxLayout = new HorizontalLayout();
         checkBoxLayout.setSpacing(true);
-        checkBoxLayout.add(allButtonLayout, wiretapButtonLayout, replayButtonLayout, hospitalButtonLayout, errorButtonLayout);
+        checkBoxLayout.add(allButtonLayout, wiretapButtonLayout, replayButtonLayout, hospitalButtonLayout, errorButtonLayout, this.negateQueryCheckbox);
+        checkBoxLayout.setVerticalComponentAlignment(Alignment.CENTER, this.negateQueryCheckbox);
 
         ComponentSecurityVisibility.applySecurity(replayButtonLayout, SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY);
         ComponentSecurityVisibility.applySecurity(errorButtonLayout, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_ADMIN,SecurityConstants.ALL_AUTHORITY);
@@ -604,7 +608,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         this.selectionBoxes = new HashMap<>();
         this.selectionItems = new HashMap<>();
 
-        this.searchResultsGrid.init(startDate, endDate, searchTerm, types);
+        this.searchResultsGrid.init(startDate, endDate, searchTerm, types, this.negateQueryCheckbox.getValue());
 
         if(selected)
         {

@@ -81,7 +81,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
     {
         String queryString;
         try {
-            queryString = this.buildQuery(moduleNames, flowNames, componentNames, startDate, endDate, null, null, ERROR);
+            queryString = this.buildQuery(moduleNames, flowNames, componentNames, startDate, endDate, null, null, ERROR, false);
         }
         catch (IOException e) {
             return new ArrayList<>();
