@@ -78,7 +78,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
-            assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -128,7 +128,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
-            assertEquals(1, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null, false).getResultList().size());
+            assertEquals(1, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null, false, null ,null ).getResultList().size());
 
         }
     }
@@ -181,7 +181,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             ArrayList<String> entityTypes = new ArrayList<>();
             entityTypes.add("type");
 
-            assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes, false)
+            assertEquals(3, solrGeneralService.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes, false, null ,null )
                     .getResultList().size());
 
         }
@@ -235,7 +235,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             ArrayList<String> entityTypes = new ArrayList<>();
             entityTypes.add("test");
 
-            assertEquals(3, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes, false)
+            assertEquals(3, solrGeneralService.search("test", 0, System.currentTimeMillis() + 100000000l, 100, entityTypes, false, null ,null )
                 .getResultList().size());
 
         }
@@ -292,7 +292,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
 
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
 
-            assertEquals(3, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(3, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -331,7 +331,7 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             solrGeneralService.saveOrUpdate(doc);
 
 
-            assertEquals(1, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(1, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -380,9 +380,9 @@ public class SolrGeneralSearchServiceTest extends SolrTestCaseJ4
             SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(dao);
             solrGeneralService.saveOrUpdate(documents);
 
-            IkasanSolrDocumentSearchResults results = solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false);
+            IkasanSolrDocumentSearchResults results = solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null );
 
-            assertEquals(2, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(2, solrGeneralService.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
