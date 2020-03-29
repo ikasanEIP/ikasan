@@ -29,6 +29,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private TextField componentNameTf;
     private TextField flowNameTf;
     private TextField eventIdTf;
+    private TextField errorActionTf;
     private TextField dateTimeTf;
     private TextField errorUriTf;
     private TextField errorClassTf;
@@ -47,6 +48,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         componentNameTf = new TextField(getTranslation("text-field.component-name", UI.getCurrent().getLocale(), null));
         eventIdTf = new TextField(getTranslation("text-field.event-id", UI.getCurrent().getLocale(), null));
         errorUriTf = new TextField(getTranslation("text-field.error-uri", UI.getCurrent().getLocale(), null));
+        errorActionTf = new TextField(getTranslation("text-field.error-action", UI.getCurrent().getLocale(), null));
         dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
         errorClassTf = new TextField(getTranslation("text-field.exception-class", UI.getCurrent().getLocale(), null));
     }
@@ -83,14 +85,17 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         errorUriTf.setReadOnly(true);
         formLayout.add(errorUriTf);
 
+        errorActionTf.setReadOnly(true);
+        formLayout.add(errorActionTf);
+
         errorClassTf.setReadOnly(true);
         formLayout.add(errorClassTf);
-        formLayout.setColspan(errorClassTf, 2);
 
         formLayout.setSizeFull();
 
         Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton
+            , getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("error.txt"
             , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
@@ -103,19 +108,21 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
 
-        Tab errorTab = new Tab(getTranslation("tab-label.error", UI.getCurrent().getLocale(), null));
-        Tab errorEventTab = new Tab(getTranslation("tab-label.error-event", UI.getCurrent().getLocale(), null));
+        Tab errorTab = new Tab(getTranslation("tab-label.error", UI.getCurrent().getLocale()));
+        Tab errorEventTab = new Tab(getTranslation("tab-label.error-event", UI.getCurrent().getLocale()));
         Tabs tabs = new Tabs(errorTab, errorEventTab);
 
         tabs.addSelectedChangeListener(event ->
         {
             if(tabs.getSelectedTab().equals(errorTab))
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorDetails)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorDetails))
+                    .orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorEvent)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorEvent))
+                    .orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });
 
@@ -133,6 +140,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.componentNameTf.setValue(Optional.ofNullable(errorEvent.getComponentName()).orElse(""));
         this.eventIdTf.setValue(Optional.ofNullable(errorEvent.getEventId()).orElse(""));
         this.errorUriTf.setValue(Optional.ofNullable(errorEvent.getErrorUri()).orElse(""));
+        this.errorActionTf.setValue(Optional.ofNullable(errorEvent.getErrorAction()).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(errorEvent.getTimestamp()));
         this.errorClassTf.setValue(Optional.ofNullable(errorEvent.getExceptionClass()).orElse(""));
 

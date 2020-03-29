@@ -36,7 +36,7 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrGener
 
     @Override
     public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames,
-                                                  String searchString, long startTime, long endTime, int resultSize) throws IOException {
+                                                  String searchString, long startTime, long endTime, int resultSize) {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(moduleName, flowNames, searchString, startTime, endTime, resultSize);
@@ -44,35 +44,35 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrGener
 
     @Override
     public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
-            , long endTime, int resultSize, List<String> entityTypes) throws IOException {
+            , long endTime, int resultSize, List<String> entityTypes) {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(moduleNames, flowNames, searchString, startTime, endTime, resultSize, entityTypes);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(searchString, startTime, endTime, resultSize, entityTypes);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(searchString, startTime, endTime, offset, resultSize, entityTypes);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes)  {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(moduleNames, null, null, null, searchString, startTime, endTime, offset, resultSize, entityTypes);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(moduleNames, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes);

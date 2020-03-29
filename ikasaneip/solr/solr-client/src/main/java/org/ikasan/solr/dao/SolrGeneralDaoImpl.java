@@ -30,27 +30,28 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) {
         return this.searchBase(null, null, null, null, searchString, startTime, endTime, 0, resultSize, null);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
         return this.searchBase(null, null, null, null, searchString, startTime, endTime, offset, resultSize, null);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize) throws IOException {
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize) {
         return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, null);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes) {
         return this.searchBase(moduleName, flowNames, null, null, searchString, startTime, endTime, 0, resultSize, entityTypes);
     }
 
     @Override
-    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime
+        , long endTime, int offset, int resultSize, List<String> entityTypes) {
         return this.searchBase(moduleName, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes);
     }
 
@@ -67,13 +68,21 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
      * @param entityTypes
      * @return
      */
-    protected IkasanSolrDocumentSearchResults searchBase(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) throws IOException {
+    protected IkasanSolrDocumentSearchResults searchBase(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId, String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes) {
         SolrQuery query = new SolrQuery();
         query.setStart(offset);
         query.setRows(resultSize);
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
 
-        String queryFilter = super.buildQuery(moduleName, flowNames, componentNames, new Date(startTime), new Date(endTime), searchString, eventId, entityTypes);
+        String queryFilter;
+
+        try {
+            queryFilter = super.buildQuery(moduleName, flowNames, componentNames, new Date(startTime), new Date(endTime), searchString, eventId, entityTypes);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(String.format("An error has occurred building Sorl query.", e.getMessage()));
+        }
+
         query.setQuery(queryFilter);
 
         try
