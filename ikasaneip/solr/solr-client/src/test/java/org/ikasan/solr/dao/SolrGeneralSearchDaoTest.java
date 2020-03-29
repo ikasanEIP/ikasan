@@ -10,7 +10,6 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.solr.model.IkasanSolrDocument;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -172,7 +171,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
         dao = new SolrGeneralDaoImpl();
         dao.setSolrClient(server);
 
-        dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false);
+        dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null );
 
     }
 
@@ -209,7 +208,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.commit();
 
 
-            assertEquals(3, dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(3, dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -247,7 +246,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.commit();
 
 
-            assertEquals(3, dao.search(null, null, "", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(3, dao.search(null, null, "", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -284,7 +283,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.commit();
 
 
-            assertEquals(2, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null, false).getResultList().size());
+            assertEquals(2, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 1,100, null, false, null ,null ).getResultList().size());
 
         }
     }
@@ -320,7 +319,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             server.add("ikasan", doc);
             server.commit();
 
-            assertEquals(3, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 100, new ArrayList<>(), false).getResultList().size());
+            assertEquals(3, dao.search("test", 0, System.currentTimeMillis() + 100000000l, 100, new ArrayList<>(), false, null ,null ).getResultList().size());
 
         }
     }
@@ -364,7 +363,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             Set<String> moduleNames = new HashSet<String>();
             moduleNames.add("test");
 
-            assertEquals(3, dao.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+            assertEquals(3, dao.search(moduleNames, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
         }
     }
@@ -401,34 +400,40 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
                 if(i<5)
                 {
                     doc.addField("payload", "ikasan1" +content + "ikasan3 rocks");
+                    doc.addField("event", "mrsquid1");
                 }
                 if(i>=5 && i<80)
                 {
                     doc.addField("payload", "ikasan2 ikasan2 ikasan2"+content);
+                    doc.addField("event", "mrsquid2");
                 }
 
                 // insert ikasan with some reserved characters
                 if(i>=80 && i<150)
                 {
                     doc.addField("payload", "b-ikasan2/"+content);
+                    doc.addField("event", "mrsquid3");
                 }
 
                 // insert something that looks like a trade id
                 if(i>=150 && i<200)
                 {
                     doc.addField("payload", "b223648-bu-13442 "+content);
+                    doc.addField("event", "mrsquid4");
                 }
 
                 // insert something that looks like a trade id somewhere in the middle of the content
                 if(i>=5000 && i<5090)
                 {
                     doc.addField("payload", content.substring(0, 50) + " 33454432 " + content.substring(51, content.length()-1));
+                    doc.addField("event", "mrsquid5");
                 }
 
                 // insert something that looks like a trade id somewhere in the middle of the content that contains reserved characters
                 if(i>=6000 && i<6035)
                 {
                     doc.addField("payload", content.substring(0, 50) + "  3345:44932-bb:9 " + content.substring(51, content.length()-1));
+                    doc.addField("event", "mrsquid6");
                 }
 
                 doc.addField("expiry", 100l);
@@ -443,103 +448,143 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             Set<String> moduleNames = new HashSet<String>();
             moduleNames.add("test");
             assertEquals(5, dao.search(moduleNames, null, "ikasan1", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(75, dao.search(moduleNames, null, "\"ikasan2 ikasan2 ikasan2\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(70, dao.search(moduleNames, null, "b-ikasan2/", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(50, dao.search(moduleNames, null, "b223648-bu-13442", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(5, dao.search(null, null, "ikasan3", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(5, dao.search(null, null, "ikasan3 rocks", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(90, dao.search(null, null, "33454432", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
             // Note partial searches require the * wildcard character
             assertEquals(90, dao.search(null, null, "3345443*", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(90, dao.search(null, null, "*345443*", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
             // Perform some queries with various logical elements to the query
             assertEquals(5, dao.search(moduleNames, null, "\"ikasan1\" AND ikasan3", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(55, dao.search(moduleNames, null, "ikasan1 OR b223648-bu-13442", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(5, dao.search(moduleNames, null, "ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(5, dao.search(moduleNames, null, "((ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")))", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(0, dao.search(moduleNames, null, "ikasan3 AND NOT (ikasan1 OR \"b223648-bu-13442\")", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(50, dao.search(moduleNames, null, "(ikasan3 AND NOT ikasan1) OR \"b223648-bu-13442\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
             // Perform some queries that are tokenised by the lexical analyser.
             assertEquals(35, dao.search(moduleNames, null, "\"3345:44932-bb:9\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(35, dao.search(moduleNames, null, "3345:44932-bb:9", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(35, dao.search(moduleNames, null, "\"44932-bb\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(35, dao.search(moduleNames, null, "44932-bb", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(35, dao.search(moduleNames, null, "3345:44932-bb", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
             assertEquals(35, dao.search(moduleNames, null, "3345 AND :44932-bb:", 0
-                , System.currentTimeMillis() + 100000000l, 100, false).getResultList().size());
+                , System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
             // Negate queries
             assertEquals(88305, dao.search(moduleNames, null, "ikasan1", 0
-                , System.currentTimeMillis() + 100000000l, 0, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 0, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88235, dao.search(moduleNames, null, "\"ikasan2 ikasan2 ikasan2\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88240, dao.search(moduleNames, null, "b-ikasan2/", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88260, dao.search(moduleNames, null, "b223648-bu-13442", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88305, dao.search(null, null, "ikasan3", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88305, dao.search(null, null, "ikasan3 rocks", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88220, dao.search(null, null, "33454432", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
 
             // Note partial searches require the * wildcard character
             assertEquals(88220, dao.search(null, null, "3345443*", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88220, dao.search(null, null, "*345443*", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
 
             // Perform some queries with various logical elements to the query
             assertEquals(88305, dao.search(moduleNames, null, "\"ikasan1\" AND ikasan3", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88255, dao.search(moduleNames, null, "ikasan1 OR b223648-bu-13442", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88255, dao.search(moduleNames, null, "ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88255, dao.search(moduleNames, null, "((ikasan3 AND (ikasan1 OR \"b223648-bu-13442\")))", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(0, dao.search(moduleNames, null, "ikasan3 AND NOT (ikasan1 OR \"b223648-bu-13442\")", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88260, dao.search(moduleNames, null, "(ikasan3 AND NOT ikasan1) OR \"b223648-bu-13442\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
 
             // Perform some queries that are tokenised by the lexical analyser.
             assertEquals(88275, dao.search(moduleNames, null, "\"3345:44932-bb:9\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88275, dao.search(moduleNames, null, "3345:44932-bb:9", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88275, dao.search(moduleNames, null, "\"44932-bb\"", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88275, dao.search(moduleNames, null, "44932-bb", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88275, dao.search(moduleNames, null, "3345:44932-bb", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
             assertEquals(88275, dao.search(moduleNames, null, "3345 AND :44932-bb:", 0
-                , System.currentTimeMillis() + 100000000l, 100, true).getTotalNumberOfResults());
+                , System.currentTimeMillis() + 100000000l, 100, true, null ,null ).getTotalNumberOfResults());
+
+            // Mix it up with some variants on the use of module, flow and component names.
+            Set<String> flowNames = new HashSet<String>();
+            moduleNames.add("test");
+            Set<String> componentNames = new HashSet<String>();
+            componentNames.add("test");
+            List<String> entityTypes = new ArrayList<>();
+            assertEquals(5, dao.search(moduleNames, flowNames, componentNames, null, "ikasan1", 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            componentNames = new HashSet<String>();
+            componentNames.add("blah");
+            assertEquals(0, dao.search(moduleNames, flowNames, componentNames, null, "ikasan1", 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            flowNames = new HashSet<String>();
+            flowNames.add("test");
+            componentNames = new HashSet<String>();
+            componentNames.add("blah");
+            assertEquals(0, dao.search(moduleNames, flowNames, componentNames, null, "ikasan1", 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            // Query using event id
+            assertEquals(5, dao.search(null, null, null, "mrsquid1", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            assertEquals(75, dao.search(null, null, null, "mrsquid2", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            assertEquals(70, dao.search(null, null, null, "mrsquid3", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            assertEquals(50, dao.search(null, null, null, "mrsquid4", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            assertEquals(90, dao.search(null, null, null, "mrsquid5", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
+
+            assertEquals(35, dao.search(null, null, null, "mrsquid6", null, 0
+                , System.currentTimeMillis() + 100000000l, 0,  100, entityTypes, false, null ,null ).getResultList().size());
         }
     }
 

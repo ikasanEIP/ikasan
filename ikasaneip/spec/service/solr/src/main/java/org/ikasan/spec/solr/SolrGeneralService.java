@@ -19,10 +19,12 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param endTime
      * @param resultSize
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return
      */
     public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
-        , long endTime, int resultSize, boolean negateQuery) throws IOException;
+        , long endTime, int resultSize, boolean negateQuery, String sortField, String sortOrder) throws IOException;
 
     /**
      * Perform general search against ikasan solr index.
@@ -35,10 +37,12 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @param entityTypes
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return
      */
     public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
-        , long endTime, int resultSize, List<String> entityTypes, boolean negateQuery);
+        , long endTime, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -49,9 +53,11 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @param entityTypes
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery);
+    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -63,9 +69,11 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @param entityTypes
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery);
+    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -78,10 +86,12 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @param entityTypes
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return RESULTS
      */
     public RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize
-        , List<String> entityTypes, boolean negateQuery);
+        , List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -97,10 +107,12 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param resultSize
      * @param entityTypes
      * @param negateQuery
+     * @param sortField
+     * @param sortOrder
      * @return
      */
     public RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId
-        , String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery);
+        , String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Save or update an ENTITY

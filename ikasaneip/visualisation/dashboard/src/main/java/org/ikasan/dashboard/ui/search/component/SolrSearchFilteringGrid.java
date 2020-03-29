@@ -11,8 +11,6 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.User;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -107,24 +105,49 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 
             if(filter.isPresent())
             {
-                results = this.getResults(authentication, filter.get(), startTime, endTime
-                    , searchTerm, offset, limit, types, negateQuery);
+                if(query.getSortOrders().size() > 0)
+                {
+                    results = this.getResults(authentication, filter.get(), startTime, endTime
+                        , searchTerm, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
+                        , query.getSortOrders().get(0).getDirection().name());
+                }
+                else
+                {
+                    results = this.getResults(authentication, filter.get(), startTime, endTime
+                        , searchTerm, offset, limit, types, negateQuery, null, null);
+                }
             }
             else
             {
                 if(authentication.hasGrantedAuthority("ALL"))
                 {
-                    results = this.solrSearchService.search(searchTerm,
-                        startTime, endTime, offset, limit, types, negateQuery);
+                    if(query.getSortOrders().size() > 0)
+                    {
+                        results = this.solrSearchService.search(searchTerm,
+                            startTime, endTime, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
+                            , query.getSortOrders().get(0).getDirection().name());
+                    }
+                    else
+                    {
+                        results = this.solrSearchService.search(searchTerm,
+                            startTime, endTime, offset, limit, types, negateQuery, null, null);
+                    }
                 }
-                else
-                {
+                else {
                     Set<String> moduleNames = SecurityUtils.getAccessibleModules(authentication);
-                    if(moduleNames.isEmpty()){
+                    if (moduleNames.isEmpty()) {
                         moduleNames.add("--");
                     }
-                    results = this.solrSearchService.search(moduleNames, searchTerm,
-                        startTime, endTime, offset, limit, types, negateQuery);
+                    if (query.getSortOrders().size() > 0) {
+                        results = this.solrSearchService.search(moduleNames, searchTerm,
+                            startTime, endTime, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
+                            , query.getSortOrders().get(0).getDirection().name());
+                    }
+                    else
+                    {
+                        results = this.solrSearchService.search(moduleNames, searchTerm,
+                            startTime, endTime, offset, limit, types, negateQuery,null, null);
+                    }
                 }
             }
 
@@ -138,14 +161,14 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
             if(filter.isPresent())
             {
                 results = this.getResults(authentication, filter.get(), startTime, endTime
-                    , searchTerm, 0, 0, types, negateQuery);
+                    , searchTerm, 0, 0, types, negateQuery, null, null);
             }
             else
             {
                 if(authentication.hasGrantedAuthority("ALL"))
                 {
                     results = this.solrSearchService.search(searchTerm,
-                        startTime, endTime, 0, 0, types, negateQuery);
+                        startTime, endTime, 0, 0, types, negateQuery, null, null);
                 }
                 else
                 {
@@ -155,7 +178,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                     }
 
                     results = this.solrSearchService.search(moduleNames, searchTerm,
-                        startTime, endTime, 0, 0, types, negateQuery);
+                        startTime, endTime, 0, 0, types, negateQuery, null, null);
                 }
             }
 
@@ -176,7 +199,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     }
 
     private IkasanSolrDocumentSearchResults getResults(IkasanAuthentication authentication, SearchFilter filter, long startTime
-        , long endTime, String searchTerm, int offset, int limit, List<String> types, boolean negateQuery)
+        , long endTime, String searchTerm, int offset, int limit, List<String> types, boolean negateQuery, String sortField, String sortOrder)
     {
         Set<String> moduleNames = null;
 
@@ -235,7 +258,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         }
 
         return this.solrSearchService.search(moduleNames, flowNames, componentNames, eventId, searchTerm,
-            startTime, endTime, offset, limit, types, negateQuery);
+            startTime, endTime, offset, limit, types, negateQuery, sortField, sortOrder);
     }
 
     public long getResultSize()
