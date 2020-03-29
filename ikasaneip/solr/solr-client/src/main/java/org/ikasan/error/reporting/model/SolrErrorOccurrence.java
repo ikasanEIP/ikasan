@@ -77,6 +77,12 @@ public class SolrErrorOccurrence implements ErrorOccurrence<byte[]>, HarvestEven
     private String flowElementName;
 
     /**
+     * the action associated with the error
+     */
+    @Field("errorAction")
+    private String errorAction;
+
+    /**
      * raw dump of the error as it occurred
      */
 	@Field("errorDetail")
@@ -291,12 +297,12 @@ public class SolrErrorOccurrence implements ErrorOccurrence<byte[]>, HarvestEven
 
     public String getAction()
     {
-		throw new UnsupportedOperationException();
+		return this.errorAction;
     }
 
     public void setAction(String action) 
     {
-		throw new UnsupportedOperationException();
+		this.errorAction = action;
     }
 
     public String getErrorMessage() 

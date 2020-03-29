@@ -454,6 +454,7 @@
   <field name="errorDetail" type="text_general" multiValued="false" stored="true"/>
   <field name="errorMessage" type="text_general" multiValued="false" stored="true"/>
   <field name="errorUri" type="strings" multiValued="false" stored="true"/>
+  <field name="errorAction" type="strings" multiValued="false" stored="true"/>
   <field name="event" type="strings" multiValued="false" stored="true"/>
   <field name="exceptionClass" type="strings" multiValued="false" stored="true"/>
   <field name="expiry" type="plongs" multiValued="false" stored="true"/>

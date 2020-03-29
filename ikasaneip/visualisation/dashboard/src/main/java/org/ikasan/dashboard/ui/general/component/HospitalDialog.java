@@ -44,6 +44,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private TextField flowNameTf;
     private TextField eventIdTf;
     private TextField errorUriTf;
+    private TextField errorActionTf;
     private TextField dateTimeTf;
 
     private StreamResource streamResource;
@@ -97,6 +98,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         eventIdTf = new TextField(getTranslation("text-field.event-id", UI.getCurrent().getLocale(), null));
         errorUriTf = new TextField(getTranslation("text-field.error-uri", UI.getCurrent().getLocale(), null));
         dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
+        errorActionTf = new TextField(getTranslation("text-field.error-action", UI.getCurrent().getLocale(), null));
 
         translatedEventActionMessage = getTranslation("message.resubmission-event-action"
             , UI.getCurrent().getLocale());
@@ -127,6 +129,9 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         errorUriTf.setReadOnly(true);
         formLayout.add(errorUriTf);
+
+        errorActionTf.setReadOnly(true);
+        formLayout.add(errorActionTf);
 
         dateTimeTf.setReadOnly(true);
         formLayout.add(dateTimeTf);
@@ -291,14 +296,15 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     public void populate(IkasanSolrDocument ikasanSolrDocument)
     {
         this.ikasanSolrDocument = ikasanSolrDocument;
-        this.moduleNameTf.setValue(ikasanSolrDocument.getModuleName());
-        this.flowNameTf.setValue(ikasanSolrDocument.getFlowName());
-        this.eventIdTf.setValue(ikasanSolrDocument.getEventId());
-        this.errorUriTf.setValue(ikasanSolrDocument.getId());
+        this.moduleNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getModuleName()).orElse(""));
+        this.flowNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getFlowName()).orElse(""));
+        this.eventIdTf.setValue(Optional.ofNullable(ikasanSolrDocument.getEventId()).orElse(""));
+        this.errorUriTf.setValue(Optional.ofNullable(ikasanSolrDocument.getId()).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(ikasanSolrDocument.getTimestamp()));
 
         this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(ikasanSolrDocument.getId());
         this.exclusionPayload = ikasanSolrDocument.getEvent();
+        this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
 
         ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
         ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
