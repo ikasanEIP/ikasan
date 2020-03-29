@@ -16,26 +16,32 @@ public class SolrTokenizerQueryBuilder {
     private static List<String> LOGICAL_OPERATORS
         = Arrays.asList("&&", "||", "!", "(", ")", "AND", "OR", "NOT");
 
-    public static String buildQuery(String queryString, String type) throws IOException
+    public static String buildQuery(String queryString, String type, boolean negateQuery) throws IOException
     {
         List<String> tokens = tokenize(queryString);
 
         StringBuffer query = new StringBuffer();
 
+        StringBuffer negationQuery = new StringBuffer();
+        if(negateQuery)
+        {
+             negationQuery.append("*:* NOT ");
+        }
+
         tokens.forEach(token ->
         {
             if(token.contains("*"))
             {
-                query.append(type).append(COLON).append(SolrSpecialCharacterEscapeUtil.escape(token)).append(" ");
+                query.append(negationQuery).append(type).append(COLON).append(SolrSpecialCharacterEscapeUtil.escape(token)).append(" ");
             }
-            else if(!LOGICAL_OPERATORS.contains(token))
+            else if(LOGICAL_OPERATORS.contains(token))
             {
-                query.append(type).append(COLON).append("\"").append(token)
-                    .append("\"").append(" ");
+                query.append(SolrSpecialCharacterEscapeUtil.escape(token)).append(" ");
             }
             else
             {
-                query.append(SolrSpecialCharacterEscapeUtil.escape(token)).append(" ");
+                query.append(negationQuery).append(type).append(COLON).append("\"").append(token)
+                    .append("\"").append(" ");
             }
         });
 

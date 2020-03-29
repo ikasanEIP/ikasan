@@ -103,7 +103,7 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao
         String queryString;
         try
         {
-            queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY);
+            queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY, false);
         }
         catch (IOException e)
         {
