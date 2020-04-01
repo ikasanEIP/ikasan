@@ -105,7 +105,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
 
         try
         {
-            logger.info("query: " + query);
+            logger.debug("query: " + query);
 
             QueryRequest req = new QueryRequest(query);
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
