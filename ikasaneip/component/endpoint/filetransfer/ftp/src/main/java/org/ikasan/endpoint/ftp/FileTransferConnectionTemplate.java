@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.ftp;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.client.ConnectionCallback;
@@ -90,20 +91,45 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
     private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
     private FileChunkDao fileChunkDao;
     private BaseFileTransferDao baseFileTransferDao;
+    private Cache<String, Boolean> duplicatesFileCache;
 
     private JtaTransactionManager transactionManager;
+
     /**
      * Constructor
      *
-     * @param connectionSpec - THe connection spec
+     * @param connectionSpec
+     * @param transactionalResourceCommandDAO
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param transactionManager
+     * @throws ResourceException
      */
     public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
-                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,JtaTransactionManager transactionManager)  throws ResourceException
+                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,JtaTransactionManager transactionManager)  throws ResourceException {
+        this(connectionSpec, transactionalResourceCommandDAO, fileChunkDao, baseFileTransferDao, transactionManager, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param connectionSpec
+     * @param transactionalResourceCommandDAO
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param transactionManager
+     * @param duplicatesFileCache
+     * @throws ResourceException
+     */
+    public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,JtaTransactionManager transactionManager,
+                                          Cache<String, Boolean> duplicatesFileCache)  throws ResourceException
     {
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
         this.baseFileTransferDao = baseFileTransferDao;
         this.transactionManager = transactionManager;
+        this.duplicatesFileCache = duplicatesFileCache;
 
         ftpManagedConnection = new FTPManagedConnection(connectionSpecToCRI(connectionSpec));
         ftpManagedConnection.setTransactionJournal(getTransactionJournal(transactionalResourceCommandDAO,fileChunkDao));
@@ -241,7 +267,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         Connection connection = null;
         try
         {
-            connection = (Connection) ftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao);
+            connection = (Connection) ftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao, duplicatesFileCache);
             try
             {
                 if (connection instanceof BaseFileTransferConnection)

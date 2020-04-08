@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
+import com.google.common.cache.Cache;
 import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.ikasan.spec.configuration.Configured;
 import org.slf4j.Logger;
@@ -109,13 +110,23 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
 
     private JtaTransactionManager transactionManager;
 
+    private Cache<String, Boolean> duplicatesFileCache = null;
+
     public SftpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
             FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+    {
+        this(transactionManager, baseFileTransferDao, fileChunkDao, transactionalResourceCommandDAO, null);
+    }
+
+    public SftpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
+                               FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                               Cache<String, Boolean> duplicatesFileCache)
     {
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+        this.duplicatesFileCache = duplicatesFileCache;
     }
 
     @Override public Payload invoke(JobExecutionContext context)
@@ -270,6 +281,9 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
 
     @Override public void stopManagedResource()
     {
+        if (duplicatesFileCache != null) {
+            duplicatesFileCache.invalidateAll();
+        }
     }
 
     @Override public void setManagedResourceRecoveryManager(
@@ -341,13 +355,15 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
     {
         try {
             activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
-                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
+                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager,
+                    duplicatesFileCache);
 
             activeFileTransferConnectionTemplate.addListener(this);
             if (alternateSpec != null)
             {
                 alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,
-                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
+                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager,
+                        duplicatesFileCache);
                 alternateFileTransferConnectionTemplate.addListener(this);
             }
         } catch (ResourceException e) {

@@ -41,21 +41,19 @@
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.resource.ResourceException;
 
+import com.google.common.cache.Cache;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.ikasan.connector.basefiletransfer.net.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
-import org.ikasan.connector.basefiletransfer.net.ClientDirectoryFilter;
-import org.ikasan.connector.basefiletransfer.net.ClientFilenameFilter;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
-import org.ikasan.connector.basefiletransfer.net.ClientSymLinkFilter;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 
 /**
@@ -64,8 +62,8 @@ import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransf
  * @author Ikasan Development Team
  */
 public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalResourceCommand
-{
     /** The logger instance. */
+{
     private static Logger logger = LoggerFactory.getLogger(FileDiscoveryCommand.class);
 
     /** source directory */
@@ -82,7 +80,7 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
 
     /** Whether we filter duplicates */
     private boolean filterDuplicates;
-    
+
     /** Whether we use File name in the duplicates filter */
     private boolean filterOnFilename;
 
@@ -92,6 +90,15 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
     /** Whether the file discovery will travers sub directories recursively  */
     private boolean isRecursive;
 
+    /** Whether the file discovery need to be sorted chronological **/
+    private boolean chronological;
+
+    /** Whether we should only return the first found file that matches all filters **/
+    private boolean onlyFirstFile;
+
+    /** The duplicate file cache **/
+    private Cache<String, Boolean> duplicateFilesCache;
+
     /** No args constructor as required by Hibernate */
     public FileDiscoveryCommand()
     {
@@ -99,8 +106,8 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
     }
 
     /**
-     * Constructor
-     * 
+     * Constructor (required for backwards compatibility)
+     *
      * @param sourceDirectory The directory we're picking up the file from
      * @param filenamePattern The pattern to search for
      * @param persistence The DAO persistence class
@@ -110,9 +117,32 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
      * @param filterOnLastModifiedDate Whether we filter on the last modified date
      */
     public FileDiscoveryCommand(String sourceDirectory, String filenamePattern, BaseFileTransferDao persistence,
-            long minAge, boolean filterDuplicates, boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean isRecursive)
+                                long minAge, boolean filterDuplicates, boolean filterOnFilename,
+                                boolean filterOnLastModifiedDate, boolean isRecursive)
     {
-        super();
+        this(sourceDirectory, filenamePattern, persistence, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate,
+            isRecursive, false, false, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param sourceDirectory The directory we're picking up the file from
+     * @param filenamePattern The pattern to search for
+     * @param persistence The DAO persistence class
+     * @param minAge The minimum age of the file
+     * @param filterDuplicates Whether we filter duplicates
+     * @param filterOnFilename Whether we filter on file name
+     * @param filterOnLastModifiedDate Whether we filter on the last modified date
+     * @param isRecursive recursive
+     * @param chronological sort chronologically
+     * @param onlyFirstFile return first available result only
+     */
+    public FileDiscoveryCommand(String sourceDirectory, String filenamePattern, BaseFileTransferDao persistence,
+                                long minAge, boolean filterDuplicates, boolean filterOnFilename,
+                                boolean filterOnLastModifiedDate, boolean isRecursive, boolean chronological,
+                                boolean onlyFirstFile, Cache<String, Boolean> duplicateFilesCache)
+    {
         this.sourceDirectory = sourceDirectory;
         this.persistence = persistence;
         this.filenamePattern = filenamePattern;
@@ -121,6 +151,9 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         this.filterOnFilename = filterOnFilename;
         this.filterOnLastModifiedDate = filterOnLastModifiedDate;
         this.isRecursive = isRecursive;
+        this.chronological = chronological;
+        this.onlyFirstFile = onlyFirstFile;
+        this.duplicateFilesCache = duplicateFilesCache;
     }
 
     @Override
@@ -147,7 +180,7 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
 
     /**
      * retrieves a list of new files
-     * 
+     *
      * @return List<ClientListEntry>
      * @throws ResourceException Exception thrown by Connector
      */
@@ -164,10 +197,19 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         List<ClientListEntry> allFiles = new ArrayList<ClientListEntry>();
         allFiles = listDirectory(sourceDirectory, allFiles);
 
-        logFileList(allFiles, "Unfiltered file list"); //$NON-NLS-1$
+        if (logger.isDebugEnabled()) {
+            logFileList(allFiles, "Unfiltered file list"); //$NON-NLS-1$
+        }
+
+        if (this.chronological) {
+            logger.info("Sorting entries list by chronological order.");
+            Collections.sort(allFiles, new OlderFirstClientListEntryComparator());
+        }
 
         // Filter the files
-        logger.debug("Filtering entries based on default filter list..."); //$NON-NLS-1$
+        if (logger.isDebugEnabled()) {
+            logger.debug("Filtering entries based on default filter list..."); //$NON-NLS-1$
+        }
         List<ClientListEntry> filteredFiles = filterDefaults(allFiles);
 
         // Process filtered files
@@ -186,27 +228,48 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
                 long ageInMillis = (now.getTime()) - (lastModifiedDate.getTime());
                 long ageInSec = ageInMillis / 1000;
                 logger.debug("file [" + entry.getLongFilename() + "] ageInSec [" + ageInSec + "] vs minAge [" + minAge //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        + "]"); //$NON-NLS-1$
+                    + "]"); //$NON-NLS-1$
 
                 if (ageInSec < minAge)
                 {
                     // vetoing File because it is not old enough
                     logger.debug("vetoing file because it is not old enough [" + entry + "]"); //$NON-NLS-1$//$NON-NLS-2$
-
                     continue;
                 }
 
                 // Filter out duplicates based on parameters passed in earlier
                 if (filterDuplicates && filterOptionsSet())
                 {
+                    // check in cache if there is a cache
+                    String key = null;
+                    if (duplicateFilesCache != null) {
+                        key = getCacheKey(entry);
+                        if (duplicateFilesCache.getIfPresent(key) != null) {
+                            // if the file is in the duplicate cache skip it
+                            continue;
+                        }
+                    }
+
+                    // if not in cache check DB
                     if (!persistence.isDuplicate(entry, filterOnFilename, filterOnLastModifiedDate))
                     {
                         result.add(entry);
+                        if (onlyFirstFile) {
+                            return result;
+                        }
+                    } else {
+                        // add to cache
+                        if (duplicateFilesCache != null) {
+                            duplicateFilesCache.put(key, Boolean.TRUE);
+                        }
                     }
                 }
                 else
                 {
                     result.add(entry);
+                    if (onlyFirstFile) {
+                        return result;
+                    }
                 }
             }
         }
@@ -217,11 +280,24 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         return result;
     }
 
+    private String getCacheKey(ClientListEntry entry) {
+        StringBuilder key = new StringBuilder();
+        key.append(entry.getClientId());
+        if (filterOnFilename) {
+            key.append("_").append(entry.getFullPath());
+        }
+        if (filterOnLastModifiedDate) {
+            key.append("_").append(entry.getDtLastModified().getTime());
+        }
+        key.append("_").append(entry.getSize());
+        return key.toString();
+    }
+
     protected List<ClientListEntry> listDirectory(String directory, List<ClientListEntry> allFiles) throws ResourceException
     {
         if(!this.isRecursive)
         {
-          return   listDirectory(directory);
+            return   listDirectory(directory);
         } else{
             List<ClientListEntry> tmpFiles = listDirectory(directory);
             for(ClientListEntry clientListEntry:tmpFiles){
@@ -243,18 +319,18 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
 
     /**
      * Applies the default filtering rules in the following order:
-     * 
+     *
      * <ol>
      * <li>Exclude directories</li>
      * <li>Exclude symbolic links</li>
      * <li>Exclude the files that do not match the provided pattern</li>
      * </ol>
-     * 
+     *
      * <p>
      * Note: Any filtering/comparisons relating to time (i.e. minimumAgeLimit)
      * should be done against database and not List entries.
      * </p>
-     * 
+     *
      * @param list The <code>List&lt;ClientListEntry&gt;</code> objects to
      *            filter.
      * @return The filtered list containing only the files that have passed
@@ -295,8 +371,8 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
 
     /**
      * Return whether at least one filtering option is set
-     * 
-     * @return true if at least one filtering option is set 
+     *
+     * @return true if at least one filtering option is set
      */
     private boolean filterOptionsSet()
     {
@@ -307,7 +383,7 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         logger.warn("No filtering options were set, so skipping filter after all.");
         return false;
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */

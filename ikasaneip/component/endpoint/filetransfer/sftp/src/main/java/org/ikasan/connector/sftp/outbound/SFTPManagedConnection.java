@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.BaseFileTransferConnection;
@@ -114,11 +115,31 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     /**
      * Create a virtual connection (a BaseFileTransferConnection object) and
      * add it to the list of managed instances before returning it to the client.
+     *
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @return
      */
     public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
     {
+        return getConnection(fileChunkDao, baseFileTransferDao, null);
+    }
+
+    /**
+     * Create a virtual connection (a BaseFileTransferConnection object) and
+     * add it to the list of managed instances before returning it to the client.
+     *
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param duplicatesFileCache
+     * @return
+     */
+    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,
+                                 Cache<String, Boolean> duplicatesFileCache)
+    {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new SFTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
+        BaseFileTransferConnection connection = new SFTPConnectionImpl(this, fileChunkDao,
+            baseFileTransferDao, duplicatesFileCache);
         return connection;
     }
 

@@ -47,6 +47,7 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
+import com.google.common.cache.CacheBuilder;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.XidImpl;
@@ -73,7 +74,7 @@ public class FileDiscoveryCommandTest
 {
     /**
      * Tests the execute method
-     * 
+     *
      * @throws ResourceException Exception thrown by Connector
      * @throws ClientCommandCdException Exception if we can't change directory
      * @throws ClientCommandLsException Exception if we can't list directory
@@ -123,24 +124,24 @@ public class FileDiscoveryCommandTest
                 will(returnValue(false));
             }
         });
-        
+
         final FileDiscoveryCommand command = new FileDiscoveryCommand(sourceDir,
-            filenamePattern, dao, 120, true, true, true, false);
-        
+                filenamePattern, dao, 120, true, true, true, false, false, false, CacheBuilder.newBuilder().build());
+
         final TransactionJournal transactionJournal = BaseFileTransferCommandJUnitHelper.getTransactionJournal(command, 3);
         command.setTransactionJournal(transactionJournal);
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.CLIENT_ID, "clientId");
-        
+
         command.setExecutionContext(executionContext);
-        
+
         ExecutionOutput  output = command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         List<?> result = output.getResultList();
         assertNotNull("command result should not be null", result); //$NON-NLS-1$
         assertNotNull("command result should only contain one entry", result //$NON-NLS-1$
-            .size() == 1);
+                .size() == 1);
         assertEquals(
-            "command result's only entry should be the file that matches pattern", //$NON-NLS-1$
-            fileToDiscover, result.get(0));
+                "command result's only entry should be the file that matches pattern", //$NON-NLS-1$
+                fileToDiscover, result.get(0));
     }
 }
