@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.sftp;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.client.ConnectionCallback;
@@ -88,20 +89,47 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
     private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
     private FileChunkDao fileChunkDao;
     private BaseFileTransferDao baseFileTransferDao;
+    private Cache<String, Boolean> duplicatesFileCache;
 
     private JtaTransactionManager transactionManager;
     /**
      * Constructor
      *
-     * @param connectionSpec - THe connection spec
+     * @param connectionSpec
+     * @param transactionalResourceCommandDAO
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param transactionManager
+     * @throws ResourceException
      */
     public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
                                           FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,JtaTransactionManager transactionManager)  throws ResourceException
+    {
+        this(connectionSpec,transactionalResourceCommandDAO,
+            fileChunkDao, baseFileTransferDao, transactionManager, null);
+
+    }
+
+    /**
+     * Constructor
+     *
+     * @param connectionSpec
+     * @param transactionalResourceCommandDAO
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param transactionManager
+     * @param duplicatesFileCache
+     * @throws ResourceException
+     */
+    public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,
+                                          JtaTransactionManager transactionManager, Cache<String, Boolean> duplicatesFileCache)  throws ResourceException
     {
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
         this.baseFileTransferDao = baseFileTransferDao;
         this.transactionManager = transactionManager;
+        this.duplicatesFileCache = duplicatesFileCache;
 
         sftpManagedConnection = new SFTPManagedConnection(connectionSpecToCRI(connectionSpec));
         sftpManagedConnection.setTransactionJournal(getTransactionJournal(transactionalResourceCommandDAO,fileChunkDao));
@@ -151,8 +179,8 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
      * @param moveOnSuccessNewPath - Where we move the file to
      * @param chunking - Whether we are chunking enabled
      * @param chunkSize - The size of the chunks
-     * @param checksum - Whether we checksum the pickup 
-     * @param minAge - The minimum age the file has to be in order to be picked up 
+     * @param checksum - Whether we checksum the pickup
+     * @param minAge - The minimum age the file has to be in order to be picked up
      * @param destructive - Whether we pick up destructively
      * @param filterDuplicates - Whether we filter duplicates
      * @param filterOnFilename - Whether we filter duplicates based on file name
@@ -174,9 +202,9 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
             {
                 addListenersToConnection((BaseFileTransferConnection) connection);
                 Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir,
-                        filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath,
-                        chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename,
-                        filterOnLastModifedDate, chronological,isRecursive);
+                    filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath,
+                    chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename,
+                    filterOnLastModifedDate, chronological,isRecursive);
                 return discoveredFile;
             }
         });
@@ -239,7 +267,8 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         Connection connection = null;
         try
         {
-            connection = (Connection) sftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao);
+            connection = (Connection) sftpManagedConnection.getConnection(this.fileChunkDao,
+                baseFileTransferDao, duplicatesFileCache);
             try
             {
                 if (connection instanceof BaseFileTransferConnection)

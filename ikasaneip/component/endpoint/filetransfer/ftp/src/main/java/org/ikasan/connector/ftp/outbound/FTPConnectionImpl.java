@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.ftp.outbound;
 
+import com.google.common.cache.Cache;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -109,17 +110,35 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
 
     private BaseFileTransferDao baseFileTransferDao;
 
+    private Cache<String, Boolean> duplicateFilesCache;
+
     /**
      * Constructor which takes ManagedConnection as a parameter
      *
-     * @param mc The ManagedConnection
+     * @param mc
+     * @param fileChunkDao
+     * @param baseFileTransferDao
      */
-    public FTPConnectionImpl(FTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    public FTPConnectionImpl(FTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao) {
+        this(mc, fileChunkDao, baseFileTransferDao, null);
+    }
+
+    /**
+     * Constructor which takes ManagedConnection as a parameter
+     *
+     * @param mc
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param duplicateFilesCache
+     */
+    public FTPConnectionImpl(FTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,
+                             Cache<String, Boolean> duplicateFilesCache)
     {
         this.managedConnection = (FTPManagedConnection) mc;
         this.clientId = managedConnection.getClientID();
         this.fileChunkDao = fileChunkDao;
         this.baseFileTransferDao = baseFileTransferDao;
+        this.duplicateFilesCache = duplicateFilesCache;
 
     }
     /**
@@ -203,17 +222,15 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
         logger.debug("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
         executionContext.put(ExecutionContext.CLIENT_ID, this.clientId);
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern, baseFileTransferDao, minAge, filterDuplicates,
-            filterOnFilename, filterOnLastModifiedDate,isRecursive);
+            filterOnFilename, filterOnLastModifiedDate,isRecursive, chronological, false, duplicateFilesCache);
 
         // Discover any new files
         List<?> entries = executeCommand(fileDiscoveryCommand, executionContext).getResultList();
-        if(!(entries.isEmpty()) && chronological)
-        {
-            List<ClientListEntry> list = (List<ClientListEntry>) entries;
-            logger.info("Sorting entries list by chronological order.");
-            Collections.sort(list, new OlderFirstClientListEntryComparator());
+
+        if(logger.isDebugEnabled()) {
+            logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+
         // If there are any new files, only source the first one
         // TODO this should be configurable
         if(!entries.isEmpty())

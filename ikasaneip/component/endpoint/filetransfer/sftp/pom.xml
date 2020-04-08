@@ -66,6 +66,12 @@
             <artifactId>ikasan-quartz-endpoint</artifactId>
         </dependency>
 
+        <!-- Cache implementation -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>junit</groupId>

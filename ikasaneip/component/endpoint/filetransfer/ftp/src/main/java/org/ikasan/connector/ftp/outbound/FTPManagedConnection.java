@@ -47,6 +47,7 @@ import javax.resource.ResourceException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -114,11 +115,30 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     /**
      * Create a virtual connection (a BaseFileTransferConnection object) and
      * add it to the list of managed instances before returning it to the client.
+     *
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @return
      */
-    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao, int testtodo) {
+        return getConnection(fileChunkDao, baseFileTransferDao, null);
+    }
+
+    /**
+     * Create a virtual connection (a BaseFileTransferConnection object) and
+     * add it to the list of managed instances before returning it to the client.
+     *
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param duplicatesFileCache
+     * @return
+     */
+    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,
+                                 Cache<String, Boolean> duplicatesFileCache)
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new FTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
+        BaseFileTransferConnection connection = new FTPConnectionImpl(this, fileChunkDao, baseFileTransferDao,
+            duplicatesFileCache);
         return connection;
     }
 

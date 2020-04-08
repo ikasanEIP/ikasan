@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+import com.google.common.cache.Cache;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -110,19 +111,35 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
 
     private FileChunkDao fileChunkDao;
     private BaseFileTransferDao baseFileTransferDao;
+    private Cache<String, Boolean> duplicateFilesCache;
 
     /**
      * Constructor which takes ManagedConnection as a parameter
      * 
      * @param mc The ManagedConnection
+     * @param fileChunkDao
+     * @param baseFileTransferDao
      */
     public SFTPConnectionImpl(SFTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    {
+        this(mc, fileChunkDao, baseFileTransferDao, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param mc The ManagedConnection
+     * @param fileChunkDao
+     * @param baseFileTransferDao
+     * @param duplicateFilesCache
+     */
+    public SFTPConnectionImpl(SFTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,  Cache<String, Boolean> duplicateFilesCache)
     {
         this.managedConnection = mc;
         this.clientId = managedConnection.getClientID();
         this.fileChunkDao = fileChunkDao;
         this.baseFileTransferDao = baseFileTransferDao;
-
+        this.duplicateFilesCache = duplicateFilesCache;
     }
 
     /**
@@ -197,10 +214,10 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
      */
     @SuppressWarnings("unchecked")
     public Payload getDiscoveredFile(String sourceDir, String filenamePattern, boolean renameOnSuccess,
-            String renameOnSuccessExtension, boolean moveOnSuccess, String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum,
-            long minAge, boolean destructive, boolean filterDuplicates, boolean filterOnFilename, boolean  filterOnLastModifiedDate,
-            boolean chronological, boolean isRecursive)
-            throws ResourceException
+                                     String renameOnSuccessExtension, boolean moveOnSuccess, String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum,
+                                     long minAge, boolean destructive, boolean filterDuplicates, boolean filterOnFilename, boolean  filterOnLastModifiedDate,
+                                     boolean chronological, boolean isRecursive)
+        throws ResourceException
     {
         Payload result = null;
 
@@ -211,17 +228,16 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
         executionContext.put(ExecutionContext.CLIENT_ID, clientId);
 
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern,
-            baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate, isRecursive);
+            baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate,
+            isRecursive, chronological, true, duplicateFilesCache);
 
         // Discover any new files
         List<?> entries = executeCommand(fileDiscoveryCommand, executionContext).getResultList();
-        if (chronological)
-        {
-            List<ClientListEntry> list = (List<ClientListEntry>)entries;
-            logger.info("Sorting entries list by chronological order.");
-            Collections.sort(list, new OlderFirstClientListEntryComparator());
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+
         // If there are any new files, only source the first one
         // TODO this should be configurable
         if (!entries.isEmpty())

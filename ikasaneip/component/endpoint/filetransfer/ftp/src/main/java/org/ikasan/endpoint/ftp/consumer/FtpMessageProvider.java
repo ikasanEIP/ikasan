@@ -40,6 +40,7 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
+import com.google.common.cache.Cache;
 import org.ikasan.endpoint.ftp.FtpResourceNotStartedException;
 import org.ikasan.spec.configuration.Configured;
 import org.slf4j.Logger;
@@ -113,15 +114,43 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
 
     private JtaTransactionManager transactionManager;
 
+    private Cache<String, Boolean> duplicatesFileCache = null;
+
+    /**
+     * Constructor
+     *
+     * @param transactionManager
+     * @param baseFileTransferDao
+     * @param fileChunkDao
+     * @param transactionalResourceCommandDAO
+     * @param fileBasedPasswordHelper
+     */
+    public FtpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
+                              FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                              FileBasedPasswordHelper fileBasedPasswordHelper) {
+        this(transactionManager, baseFileTransferDao, fileChunkDao, transactionalResourceCommandDAO,
+            fileBasedPasswordHelper, null);
+    }
+    /**
+     * Constructor
+     *
+     * @param transactionManager
+     * @param baseFileTransferDao
+     * @param fileChunkDao
+     * @param transactionalResourceCommandDAO
+     * @param fileBasedPasswordHelper
+     * @param duplicatesFileCache
+     */
     public FtpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
             FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
-            FileBasedPasswordHelper fileBasedPasswordHelper)
+            FileBasedPasswordHelper fileBasedPasswordHelper, Cache<String, Boolean> duplicatesFileCache)
     {
         this.transactionManager = transactionManager;
         this.baseFileTransferDao = baseFileTransferDao;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
         this.fileBasedPasswordHelper = fileBasedPasswordHelper;
+        this.duplicatesFileCache = duplicatesFileCache;
         if (this.fileBasedPasswordHelper == null)
         {
             throw new IllegalArgumentException("fileBasedPasswordHelper cannot be 'null'");
@@ -274,6 +303,9 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
 
     @Override public void stopManagedResource()
     {
+        if (duplicatesFileCache != null) {
+            duplicatesFileCache.invalidateAll();
+        }
     }
 
     @Override public void setManagedResourceRecoveryManager(
@@ -375,7 +407,7 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
     {
         try{
             activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
-                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
+                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager, duplicatesFileCache);
             activeFileTransferConnectionTemplate.addListener(this);
             if (alternateSpec != null)
             {
