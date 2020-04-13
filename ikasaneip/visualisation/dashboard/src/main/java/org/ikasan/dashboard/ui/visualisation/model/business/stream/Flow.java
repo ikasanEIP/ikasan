@@ -136,4 +136,68 @@ public class Flow extends Node
     {
         this.correlator = correlator;
     }
+
+    public boolean wiretapClickedOn(double x, double y)
+    {
+        if(super.getWiretapFoundStatus().equals(NodeFoundStatus.FOUND))
+        {
+            if(x >= super.getX() + super.wiretapFoundImageX
+                && x <= super.getX() + super.wiretapFoundImageX + super.wiretapFoundImageW
+                && y >= super.getY() + super.wiretapFoundImageY
+                && y <= super.getY() + super.wiretapFoundImageY + super.wiretapFoundImageH)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean errorClickedOn(double x, double y)
+    {
+        if(super.getErrorFoundStatus().equals(NodeFoundStatus.FOUND))
+        {
+            if(x >= super.getX() + super.errorFoundImageX
+                && x <= super.getX() + super.errorFoundImageX + super.errorFoundImageW
+                && y >= super.getY() + super.errorFoundImageY
+                && y <= super.getY() + super.errorFoundImageY + super.errorFoundImageH)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean exclusionClickedOn(double x, double y)
+    {
+        if(super.getExclusionFoundStatus().equals(NodeFoundStatus.FOUND))
+        {
+            if(x >= super.getX() + super.exclusionFoundImageX
+                && x <= super.getX() + super.exclusionFoundImageX + super.exclusionFoundImageW
+                && y >= super.getY() + super.exclusionFoundImageY
+                && y <= super.getY() + super.exclusionFoundImageY + super.exclusionFoundImageH)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean replayClickedOn(double x, double y)
+    {
+        if(super.getReplayFoundStatus().equals(NodeFoundStatus.FOUND))
+        {
+            if(x >= super.getX() + super.replayFoundImageX
+                && x <= super.getX() + super.replayFoundImageX + super.replayFoundImageW
+                && y >= super.getY() + super.replayFoundImageY
+                && y <= super.getY() + super.replayFoundImageY + super.replayFoundImageH)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -8,10 +8,12 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.general.component.SearchResultsDialog;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
@@ -28,7 +30,6 @@ import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
-import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
@@ -40,15 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver
-{
+public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver {
     private Logger logger = LoggerFactory.getLogger(BusinessStreamVisualisation.class);
     private NetworkDiagram networkDiagram;
 
@@ -65,7 +62,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private BusinessStream businessStream;
     private ArrayList<Node> nodes = new ArrayList<>();
-    private ArrayList<Node> flows = new ArrayList<>();
+    private ArrayList<Flow> flows = new ArrayList<>();
 
     private Map<String, Flow> flowMap;
 
@@ -75,30 +72,29 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
         , ModuleMetaDataService moduleMetaDataService
         , ConfigurationMetaDataService configurationMetadataService
-        , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService)
-    {
+        , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService) {
         this.moduleControlRestService = moduleControlRestService;
-        if(this.moduleControlRestService == null){
+        if (this.moduleControlRestService == null) {
             throw new IllegalArgumentException("moduleControlRestService cannot be null!");
         }
         this.configurationRestService = configurationRestService;
-        if(this.configurationRestService == null){
+        if (this.configurationRestService == null) {
             throw new IllegalArgumentException("configurationRestService cannot be null!");
         }
         this.triggerRestService = triggerRestService;
-        if(this.triggerRestService == null){
+        if (this.triggerRestService == null) {
             throw new IllegalArgumentException("triggerRestService cannot be null!");
         }
         this.moduleMetaDataService = moduleMetaDataService;
-        if(this.moduleMetaDataService == null){
+        if (this.moduleMetaDataService == null) {
             throw new IllegalArgumentException("moduleMetaDataService cannot be null!");
         }
         this.configurationMetadataService = configurationMetadataService;
-        if(this.configurationMetadataService == null){
+        if (this.configurationMetadataService == null) {
             throw new IllegalArgumentException("configurationMetadataService cannot be null!");
         }
         this.solrSearchService = solrSearchService;
-        if(this.solrSearchService == null){
+        if (this.solrSearchService == null) {
             throw new IllegalArgumentException("solrSearchService cannot be null!");
         }
 
@@ -108,7 +104,6 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     }
 
     /**
-     *
      * @param json
      */
     public void createBusinessStreamGraphGraph(String json) throws IOException {
@@ -140,8 +135,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
      * @param nodes a list containing all network nodes.
      * @param edges a list containing all the network edges.
      */
-    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges)
-    {
+    protected void updateNetworkDiagram(List<Node> nodes, List<Edge> edges) {
         Physics physics = new Physics();
         physics.setEnabled(false);
 
@@ -165,36 +159,63 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         networkDiagram.setNodes(nodes);
         networkDiagram.setEdges(edges);
 
-        networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
+        networkDiagram.addDoubleClickListener(doubleClickEvent ->
         {
             logger.info(doubleClickEvent.getParams().toString());
 
             JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
-            String nodeId = nodesArray.get(0).asString();
 
-            logger.info(nodeId);
-            logger.info("Flow + " + this.flowMap.get(nodeId));
+            if (nodesArray.length() > 0) {
+                String nodeId = nodesArray.get(0).asString();
 
-            if(this.flowMap.get(nodeId) != null){
-                ModuleMetaData moduleMetaData = this.moduleMetaDataService
-                    .findById(nodeId.substring(0, nodeId.indexOf(".")));
+                logger.info(nodeId);
+                logger.info("Flow + " + this.flowMap.get(nodeId));
 
-                logger.info("ModuleMetaData + " + moduleMetaData);
+                if (this.flowMap.get(nodeId) != null) {
+                    ModuleMetaData moduleMetaData = this.moduleMetaDataService
+                        .findById(nodeId.substring(0, nodeId.indexOf(".")));
 
-                FlowVisualisationDialog flowVisualisationDialog
-                    = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
-                    this.triggerRestService, this.configurationMetadataService, moduleMetaData
-                    , nodeId.substring(nodeId.indexOf(".") + 1), this.solrSearchService);
+                    logger.info("ModuleMetaData + " + moduleMetaData);
 
-                flowVisualisationDialog.open();
+                    FlowVisualisationDialog flowVisualisationDialog
+                        = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
+                        this.triggerRestService, this.configurationMetadataService, moduleMetaData
+                        , nodeId.substring(nodeId.indexOf(".") + 1), this.solrSearchService);
+
+                    flowVisualisationDialog.open();
+                }
+            } else {
+                JsonObject coordinates = doubleClickEvent.getParams().getObject("pointer").getObject("canvas");
+
+                this.flows.forEach(flow -> {
+                    if (flow.wiretapClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
+                        logger.info("wiretap clicked: " + flow.getModuleName() + " " + flow.getFlowName());
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.open();
+                    }
+                    if (flow.errorClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
+                        logger.info("error clicked: " + flow.getModuleName() + " " + flow.getFlowName());
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.open();
+                    }
+                    if (flow.exclusionClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
+                        logger.info("exclusion clicked: " + flow.getModuleName() + " " + flow.getFlowName());
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.open();
+                    }
+                    if (flow.replayClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
+                        logger.info("replay clicked: " + flow.getModuleName() + " " + flow.getFlowName());
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.open();
+                    }
+                });
             }
         });
 
     }
 
-    private void drawFlowStatus(FlowState state)
-    {
-        if(this.flowMap != null && flowMap.containsKey(state.getModuleName() + "." + state.getFlowName())) {
+    private void drawFlowStatus(FlowState state) {
+        if (this.flowMap != null && flowMap.containsKey(state.getModuleName() + "." + state.getFlowName())) {
             Flow flow = flowMap.get(state.getModuleName() + "." + state.getFlowName());
             this.networkDiagram.drawStatusBorder(flow.getX() - 40
                 , flow.getY() - 30, 80
@@ -217,39 +238,67 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             .map(flow -> flow.getFlowName())
             .collect(Collectors.toSet());
 
-        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime, endTime, 100, entityTypes);
+        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime, endTime, 1000, entityTypes, false, null, null);
 
         logger.info("Results: " + results.getTotalNumberOfResults());
+
+        this.drawFoundStatus(results);
     }
 
-    public void drawFoundStatus()
-    {
-        this.flows = (ArrayList<Node>) this.flows.stream().map(node -> {
-            node.setWiretapFoundStatus(NodeFoundStatus.FOUND);
-            node.setErrorFoundStatus(NodeFoundStatus.FOUND);
-            node.setExclusionFoundStatus(NodeFoundStatus.FOUND);
-            node.setReplayFoundStatus(NodeFoundStatus.FOUND);
-            return node;
+    public void drawFoundStatus(IkasanSolrDocumentSearchResults results) {
+        HashMap<String, IkasanSolrDocument> errorMap = createResultMap(results, "error");
+        HashMap<String, IkasanSolrDocument> wiretapMap = createResultMap(results, "wiretap");
+        HashMap<String, IkasanSolrDocument> exclusionMap = createResultMap(results, "exclusion");
+        HashMap<String, IkasanSolrDocument> replayMap = createResultMap(results, "replay");
+
+        this.flows = (ArrayList<Flow>) this.flows.stream().map(flow -> {
+            if (wiretapMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+                flow.setWiretapFoundStatus(NodeFoundStatus.FOUND);
+            } else {
+                flow.setWiretapFoundStatus(NodeFoundStatus.NOT_FOUND);
+            }
+            if (errorMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+                flow.setErrorFoundStatus(NodeFoundStatus.FOUND);
+            } else {
+                flow.setErrorFoundStatus(NodeFoundStatus.NOT_FOUND);
+            }
+            if (exclusionMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+                flow.setExclusionFoundStatus(NodeFoundStatus.FOUND);
+            } else {
+                flow.setExclusionFoundStatus(NodeFoundStatus.NOT_FOUND);
+            }
+            if (replayMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+                flow.setReplayFoundStatus(NodeFoundStatus.FOUND);
+            } else {
+                flow.setReplayFoundStatus(NodeFoundStatus.NOT_FOUND);
+            }
+            return flow;
         }).collect(Collectors.toList());
 
         current.access(() ->
-            networkDiagram.updateNodesStates(this.flows));
+            networkDiagram.updateNodesStates((ArrayList<Node>) ((ArrayList<?>) this.flows)));
         current.access(() ->
             this.networkDiagram.drawNodeFoundStatus());
 
         this.networkDiagram.diagamRedraw();
     }
 
+    private HashMap<String, IkasanSolrDocument> createResultMap(IkasanSolrDocumentSearchResults results, String type) {
+        return (HashMap<String, IkasanSolrDocument>) results
+            .getResultList()
+            .stream()
+            .filter(result -> result.getType().equals(type))
+            .collect(Collectors.toMap(ikasanSolrDocument -> ikasanSolrDocument.getModuleName() + ikasanSolrDocument.getFlowName(), Function.identity(), (existing, replacement) -> existing));
+    }
+
 
     @Override
-    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
-    {
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         this.redraw();
     }
 
-    public void redraw()
-    {
-        if(this.businessStream != null) {
+    public void redraw() {
+        if (this.businessStream != null) {
             nodes = new ArrayList<>();
             nodes.addAll(businessStream.getFlows());
             nodes.addAll(businessStream.getDestinations());
@@ -263,12 +312,12 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
             updateNetworkDiagram(nodes, businessStream.getEdges());
 
-            for(String key: this.flowMap.keySet()) {
-                if(key.contains(".")) {
+            for (String key : this.flowMap.keySet()) {
+                if (key.contains(".")) {
                     ModuleMetaData module = this.moduleMetaDataService
                         .findById(key.substring(0, key.indexOf(".")));
 
-                    if(module != null) {
+                    if (module != null) {
                         FlowState flowState = FlowStateCache.instance().get(module, key.substring(key.indexOf(".") + 1));
 
                         if (flowState != null) {
@@ -283,8 +332,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     }
 
     @Override
-    protected void onAttach(AttachEvent attachEvent)
-    {
+    protected void onAttach(AttachEvent attachEvent) {
         this.redraw();
         UI ui = attachEvent.getUI();
         flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
@@ -301,26 +349,23 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     }
 
     @Override
-    protected void onDetach(DetachEvent detachEvent)
-    {
+    protected void onDetach(DetachEvent detachEvent) {
         this.flowStateBroadcasterRegistration.remove();
         this.flowStateBroadcasterRegistration = null;
         this.cacheStateBroadcasterRegistration.remove();
         this.cacheStateBroadcasterRegistration = null;
     }
 
-    protected void drawFlowStatus(UI ui, FlowState flowState)
-    {
+    protected void drawFlowStatus(UI ui, FlowState flowState) {
         ui.access(() ->
         {
-            if(this.flowMap != null && this.flowMap.containsKey(flowState.getModuleName() + "." + flowState.getFlowName()))
-            {
+            if (this.flowMap != null && this.flowMap.containsKey(flowState.getModuleName() + "." + flowState.getFlowName())) {
                 this.drawFlowStatus(flowState);
             }
         });
     }
 
-    private void populateFlowMap(List<Flow> flows){
+    private void populateFlowMap(List<Flow> flows) {
         this.flowMap = flows
             .stream()
             .collect(Collectors.toMap(Flow::getId, Function.identity()));

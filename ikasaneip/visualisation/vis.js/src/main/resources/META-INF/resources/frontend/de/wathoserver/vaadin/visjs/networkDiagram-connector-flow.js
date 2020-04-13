@@ -65,7 +65,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
         }, graph.options);
 
         // Enable event dispatching to vaadin only for registered eventTypes to
-        // avoid to much overhead.
+        // avoid too much overhead.
         graph.$connector.enableEventDispatching = function (vaadinEventType) {
             const eventType = vaadinEventType.substring(7);
             graph.$connector.diagram
@@ -102,22 +102,6 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     });
         }
 
-        // graph.$connector.diagram.on("beforeDrawing", function (ctx) {
-        //     var inode;
-        //     var nodePositions = graph.$connector.diagram.getPositions();
-        //     var arrayLength = graph.nodes.length;
-        //     for (inode = 0; inode < arrayLength; inode++) {
-        //         var node = nodesParent[inode];
-        //         var nodePosition = nodePositions[node.id];
-        //
-        //         if (node.foundStatus === "FOUND" || node.foundStatus === "NOT_FOUND") {
-        //             var img = new Image();
-        //             img.src = node.foundImage;
-        //             ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 25, 15, 15);
-        //         }
-        //     }
-        // });
-
         graph.$connector.drawNodeFoundStatus = function () {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
                 var inode;
@@ -130,22 +114,34 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     if (node.wiretapFoundStatus === "FOUND") {
                         var img = new Image();
                         img.src = node.wiretapFoundImage;
-                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 40, 15, 15);
+                        ctx.drawImage(img, nodePosition.x + node.wiretapFoundImageX
+                            , nodePosition.y + node.wiretapFoundImageY
+                            , node.wiretapFoundImageW
+                            , node.wiretapFoundImageH);
                     }
                     if (node.errorFoundStatus === "FOUND") {
                         var img = new Image();
                         img.src = node.errorFoundImage;
-                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y - 20, 15, 15);
+                        ctx.drawImage(img, nodePosition.x + node.errorFoundImageX
+                            , nodePosition.y + node.errorFoundImageY
+                            , node.errorFoundImageW
+                            , node.errorFoundImageH);
                     }
                     if (node.exclusionFoundStatus === "FOUND") {
                         var img = new Image();
                         img.src = node.exclusionFoundImage;
-                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y, 15, 15);
+                        ctx.drawImage(img, nodePosition.x + node.exclusionFoundImageX
+                            , nodePosition.y + node.exclusionFoundImageY
+                            , node.exclusionFoundImageW
+                            , node.exclusionFoundImageH);
                     }
                     if (node.replayFoundStatus === "FOUND") {
                         var img = new Image();
                         img.src = node.replayFoundImage;
-                        ctx.drawImage(img, nodePosition.x + 50, nodePosition.y + 20, 15, 15);
+                        ctx.drawImage(img, nodePosition.x + node.replayFoundImageX
+                            , nodePosition.y + node.exclusionFoundImageY
+                            , node.exclusionFoundImageW
+                            , node.exclusionFoundImageH);
                     }
                 }
             });

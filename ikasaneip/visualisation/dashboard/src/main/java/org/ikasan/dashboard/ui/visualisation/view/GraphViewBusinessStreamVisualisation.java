@@ -358,8 +358,6 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout
             }
         }
 
-        this.businessStreamVisualisation.drawFoundStatus();
-
         this.businessStreamVisualisation.search(types, searchTerm, startDate, endDate);
     }
 
