@@ -16,6 +16,26 @@ public class Node extends Nodes
     private String replayFoundStatus = NodeFoundStatus.EMPTY;
     private String replayFoundImage = null;
 
+    protected double wiretapFoundImageX = 50;
+    protected double wiretapFoundImageY = -40;
+    protected int wiretapFoundImageH = 15;
+    protected int wiretapFoundImageW = 15;
+
+    protected double errorFoundImageX = 50;
+    protected double errorFoundImageY = -20;
+    protected int errorFoundImageH = 15;
+    protected int errorFoundImageW = 15;
+
+    protected double exclusionFoundImageX = 50;
+    protected double exclusionFoundImageY = 0;
+    protected int exclusionFoundImageH = 15;
+    protected int exclusionFoundImageW = 15;
+
+    protected double replayFoundImageX = 50;
+    protected double replayFoundImageY = 20;
+    protected int replayFoundImageH = 15;
+    protected int replayFoundImageW = 15;
+
     public Node()
     {
     }
@@ -142,29 +162,131 @@ public class Node extends Nodes
         this.replayFoundImage = replayFoundImage;
     }
 
-    // FIXME sync with JS-Component
-    // public List<Edge> getConnectedEdges() {
-    // return edgeList;
-    // }
-    //
-    // public void setConnectedEdges(List<Edge> edgeList) {
-    // this.edgeList = edgeList;
-    // }
-    //
-    // public void addEdgeToList(Edge edge) {
-    // edgeList.add(edge);
-    // }
-    //
-    // public void removeEdgeFromList(Edge edge) {
-    // edgeList.remove(edge);
-    // }
-    //
-    // public Map<String, Edge> getEdgeMap() {
-    // return edgeMap;
-    // }
-    //
-    // public void setEdgeMap(Map<String, Edge> edgeMap) {
-    // this.edgeMap = edgeMap;
-    // }
+    public double getWiretapFoundImageX() {
+        return wiretapFoundImageX;
+    }
 
+    public void setWiretapFoundImageX(double wiretapFoundImageX) {
+        this.wiretapFoundImageX = wiretapFoundImageX;
+    }
+
+    public double getWiretapFoundImageY() {
+        return wiretapFoundImageY;
+    }
+
+    public void setWiretapFoundImageY(double wiretapFoundImageY) {
+        this.wiretapFoundImageY = wiretapFoundImageY;
+    }
+
+    public int getWiretapFoundImageH() {
+        return wiretapFoundImageH;
+    }
+
+    public void setWiretapFoundImageH(int wiretapFoundImageH) {
+        this.wiretapFoundImageH = wiretapFoundImageH;
+    }
+
+    public int getWiretapFoundImageW() {
+        return wiretapFoundImageW;
+    }
+
+    public void setWiretapFoundImageW(int wiretapFoundImageW) {
+        this.wiretapFoundImageW = wiretapFoundImageW;
+    }
+
+    public double getErrorFoundImageX() {
+        return errorFoundImageX;
+    }
+
+    public void setErrorFoundImageX(double errorFoundImageX) {
+        this.errorFoundImageX = errorFoundImageX;
+    }
+
+    public double getErrorFoundImageY() {
+        return errorFoundImageY;
+    }
+
+    public void setErrorFoundImageY(double errorFoundImageY) {
+        this.errorFoundImageY = errorFoundImageY;
+    }
+
+    public int getErrorFoundImageH() {
+        return errorFoundImageH;
+    }
+
+    public void setErrorFoundImageH(int errorFoundImageH) {
+        this.errorFoundImageH = errorFoundImageH;
+    }
+
+    public int getErrorFoundImageW() {
+        return errorFoundImageW;
+    }
+
+    public void setErrorFoundImageW(int errorFoundImageW) {
+        this.errorFoundImageW = errorFoundImageW;
+    }
+
+    public double getExclusionFoundImageX() {
+        return exclusionFoundImageX;
+    }
+
+    public void setExclusionFoundImageX(double exclusionFoundImageX) {
+        this.exclusionFoundImageX = exclusionFoundImageX;
+    }
+
+    public double getExclusionFoundImageY() {
+        return exclusionFoundImageY;
+    }
+
+    public void setExclusionFoundImageY(double exclusionFoundImageY) {
+        this.exclusionFoundImageY = exclusionFoundImageY;
+    }
+
+    public int getExclusionFoundImageH() {
+        return exclusionFoundImageH;
+    }
+
+    public void setExclusionFoundImageH(int exclusionFoundImageH) {
+        this.exclusionFoundImageH = exclusionFoundImageH;
+    }
+
+    public int getExclusionFoundImageW() {
+        return exclusionFoundImageW;
+    }
+
+    public void setExclusionFoundImageW(int exclusionFoundImageW) {
+        this.exclusionFoundImageW = exclusionFoundImageW;
+    }
+
+    public double getReplayFoundImageX() {
+        return replayFoundImageX;
+    }
+
+    public void setReplayFoundImageX(double replayFoundImageX) {
+        this.replayFoundImageX = replayFoundImageX;
+    }
+
+    public double getReplayFoundImageY() {
+        return replayFoundImageY;
+    }
+
+    public void setReplayFoundImageY(double replayFoundImageY) {
+        this.replayFoundImageY = replayFoundImageY;
+    }
+
+    public int getReplayFoundImageH() {
+        return replayFoundImageH;
+    }
+
+    public void setReplayFoundImageH(int replayFoundImageH) {
+        this.replayFoundImageH = replayFoundImageH;
+    }
+
+    public int getReplayFoundImageW() {
+        return replayFoundImageW;
+    }
+
+    public void setReplayFoundImageW(int replayFoundImageW) {
+        this.replayFoundImageW = replayFoundImageW;
+    }
 }
