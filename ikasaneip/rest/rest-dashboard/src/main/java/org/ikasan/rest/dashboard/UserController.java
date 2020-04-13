@@ -134,6 +134,7 @@ public class UserController
         dto.setFirstName(user.getFirstName());
         dto.setSurname(user.getSurname());
         dto.setPreviousAccessTimestamp(user.getPreviousAccessTimestamp());
+        dto.setEnabled(user.isEnabled());
         dto.setPrincipals(user.getPrincipals().stream().map(p -> convert(p)).collect(Collectors.toSet()));
         return dto;
     }

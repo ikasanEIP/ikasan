@@ -100,6 +100,24 @@ public class DashboardUserServiceImplTest
     }
 
     @Test
+    public void loadUserByUsernameWhenUserIsDisabled() throws IOException
+    {
+        stubFor(get(urlEqualTo("/rest/user?username=disabledUser"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withBody(readFile("disabled-user.json"))
+                                   .withStatus(200)
+                                   .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                       ));
+
+        thrown.expect(UsernameNotFoundException.class);
+        thrown.expectMessage("Given user: disabledUser is disabled. Contact administrator.");
+
+        uut.loadUserByUsername("disabledUser");
+
+    }
+
+    @Test
     public void loadUserByUsernameReturns400() throws IOException
     {
         thrown.expect(UsernameNotFoundException.class);

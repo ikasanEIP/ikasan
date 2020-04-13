@@ -6,8 +6,7 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource( locations={
     "/h2-config.xml",
-    "/substitute-components.xml",
-    "/mock-components.xml"
+    "/test-transation.xml",
 })
 public class TestImportConfig
 {

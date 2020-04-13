@@ -240,6 +240,11 @@ public class DashboardUserServiceImpl implements UserService
             {
                 throw new UsernameNotFoundException("Unknown username : " + username);
             }
+            if (!user.getBody().isEnabled())
+            {
+                throw new UsernameNotFoundException("Given user: " + username + " is disabled. Contact administrator.");
+            }
+
             return user.getBody();
         }
         catch (HttpClientErrorException e)

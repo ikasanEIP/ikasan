@@ -78,14 +78,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
 public class SecurityServiceTest
 {
-    /** Mockery for objects */
-    private final Mockery mockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
-   
+
  
     /** Object being tested */
     @Resource private SecurityDao xaSecurityDao;
