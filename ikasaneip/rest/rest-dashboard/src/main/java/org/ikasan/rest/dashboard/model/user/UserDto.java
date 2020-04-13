@@ -153,6 +153,10 @@ public class UserDto implements Serializable
         this.enabled = enabled;
     }
 
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
 
     /**
      * Removes an Policy from a user's granted authorities
