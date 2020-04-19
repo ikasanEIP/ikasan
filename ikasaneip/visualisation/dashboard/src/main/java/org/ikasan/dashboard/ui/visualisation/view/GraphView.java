@@ -27,6 +27,8 @@ import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
+import org.ikasan.dashboard.ui.search.component.SearchForm;
+import org.ikasan.dashboard.ui.search.listener.SearchListener;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamFilteringGrid;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamUploadDialog;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleFilteringGrid;
@@ -116,6 +118,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private Button uploadBusinssStreamButton;
     private Tooltip uploadBusinssStreamButtonTooltip;
 
+    private SearchForm searchForm;
+
     /**
      * Constructor
      */
@@ -130,6 +134,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.createModuleGrid();
         this.createdBusinessStreamGrid();
         this.createToolsSlider();
+        this.createSearchSlider();
     }
 
     protected void createModuleGrid()
@@ -192,7 +197,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             try
             {
                 this.createBusinessStreamGraph(doubleClickEvent.getItem().getName(), doubleClickEvent.getItem().getJson());
-
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
             }
             catch (IOException e)
@@ -290,6 +294,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         businessStreamVisualisation.createBusinessStreamGraph(name, json);
 
         this.add(businessStreamVisualisation);
+        this.searchForm.setSearchListener(businessStreamVisualisation);
     }
 
     /**
@@ -337,13 +342,17 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
 
         Image transparent = new Image("frontend/images/transparent.png", "");
         transparent.setHeight("60px");
+        transparent.setWidth("350px");
 
         Div card = new Div();
         card.setSizeFull();
-        card.setWidth("360px");
+        card.setWidth("370px");
         card.setHeight("100%");
         card.getStyle().set("background", "white");
+        card.getStyle().set("position" , "absolute");
+        card.getStyle().set("right" , "0px");
         card.add(transparent, tabs);
+
 
 
         toolSlider = new SlideTabBuilder(card)
@@ -351,13 +360,42 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             .mode(SlideMode.RIGHT)
             .caption("Tools")
             .tabPosition(SlideTabPosition.MIDDLE)
-            .fixedContentSize(360)
+            .fixedContentSize(397)
             .zIndex(1)
             .flowInContent(true)
             .build();
 
         super.add(toolSlider);
     }
+
+    /**
+     * Method to create the search slider.
+     */
+    protected void createSearchSlider()
+    {
+        searchForm = new SearchForm();
+
+        Div searchDiv = new Div();
+        searchDiv.setSizeFull();
+        searchDiv.setWidth("100%");
+        searchDiv.setHeight("250px");
+        searchDiv.getStyle().set("background", "white");
+        searchDiv.getStyle().set("color", "black");
+        searchDiv.add(searchForm);
+
+        SlideTab searchSlider = new SlideTabBuilder(searchDiv)
+            .expanded(false)
+            .mode(SlideMode.BOTTOM)
+            .caption("Search")
+            .tabPosition(SlideTabPosition.MIDDLE)
+            .fixedContentSize(255)
+            .zIndex(1)
+            .flowInContent(true)
+            .build();
+
+        super.add(searchSlider);
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent)
     {

@@ -16,6 +16,7 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.search.SearchConstants;
+import org.ikasan.dashboard.ui.search.listener.SearchListener;
 import org.ikasan.dashboard.ui.util.DateTimeUtil;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamVisualisation;
@@ -43,7 +44,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class GraphViewBusinessStreamVisualisation extends VerticalLayout
+public class GraphViewBusinessStreamVisualisation extends VerticalLayout implements SearchListener
 {
     Logger logger = LoggerFactory.getLogger(GraphViewBusinessStreamVisualisation.class);
 
@@ -290,7 +291,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout
     {
         button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            search(searchType, this.searchText.getValue(),
+            search(this.searchText.getValue(),
                 Date.from(startDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()
                     + DateTimeUtil.getMilliFromTime(this.startTimePicker.getValue()),
                 Date.from(endDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()
@@ -301,16 +302,15 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout
     /**
      * Method to perform the search.
      *
-     * @param type the entity type
      * @param searchTerm the search term
      * @param startDate the start date/time of the search
      * @param endDate the end date/time of the search
      */
-    protected void search(String type, String searchTerm, long startDate, long endDate)
+    public void search(String searchTerm, long startDate, long endDate)
     {
         ArrayList<String> types = new ArrayList<>();
 
-        if(type.equals(SearchConstants.ALL))
+        if("ALL".equals(SearchConstants.ALL))
         {
             if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY))
             {
@@ -333,28 +333,6 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout
                 {
                     types.add(SolrErrorReportingServiceDao.ERROR);
                 }
-            }
-        }
-        else
-        {
-            if(type.equals(SearchConstants.REPLAY))
-            {
-                types.add(SolrReplayDao.REPLAY);
-            }
-
-            if(type.equals(SearchConstants.WIRETAP))
-            {
-                types.add(SolrWiretapDao.WIRETAP);
-            }
-
-            if(type.equals(SearchConstants.EXCLUSION))
-            {
-                types.add(SolrExclusionEventDao.EXCLUSION);
-            }
-
-            if(type.equals(SearchConstants.ERROR))
-            {
-                types.add(SolrErrorReportingServiceDao.ERROR);
             }
         }
 
