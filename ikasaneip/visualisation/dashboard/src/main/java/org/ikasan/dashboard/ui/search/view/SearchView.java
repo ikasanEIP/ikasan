@@ -234,7 +234,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         this.searchButton.setHeight("50px");
         this.searchButton.setWidth("50px");
 
-        addButtonSearchListener(ALL, this.searchButton);
+        addButtonSearchListener(this.searchButton);
 
         this.allButtonTooltip = TooltipHelper.getTooltipForComponentBottom(searchButton, getTranslation("tooltip.search-all-event-types"
             , UI.getCurrent().getLocale()));
@@ -621,10 +621,9 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     /**
      * Add the search listener to a button.
      *
-     * @param searchType
      * @param button
      */
-    private void addButtonSearchListener(String searchType, Button button)
+    private void addButtonSearchListener(Button button)
     {
         button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
