@@ -1,12 +1,9 @@
 package org.ikasan.dashboard.ui.general.component;
 
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Image;
@@ -23,6 +20,7 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrGeneralService;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SearchResultsDialog extends Dialog {
@@ -205,22 +203,26 @@ public class SearchResultsDialog extends Dialog {
         this.searchResultsGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<IkasanSolrDocument>>)
             ikasanSolrDocumentItemDoubleClickEvent ->
             {
-//                if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.WIRETAP))
-//                {
-//                    wiretapDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
-//                }
-//                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.ERROR))
-//                {
-//                    errorDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
-//                }
-//                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.REPLAY))
-//                {
+                if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.WIRETAP))
+                {
+                    WiretapDialog wiretapDialog = new WiretapDialog();
+                    wiretapDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
+                }
+                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.ERROR))
+                {
+                    ErrorDialog errorDialog = new ErrorDialog();
+                    errorDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
+                }
+                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.REPLAY))
+                {
+//                    ReplayDialog replayDialog = new ReplayDialog();
 //                    replayDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
-//                }
-//                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.EXCLUSION))
-//                {
-//                    exclusionDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
-//                }
+                }
+                else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.EXCLUSION))
+                {
+//                    HospitalDialog hospitalDialog = new HospitalDialog();
+//                    hospitalDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
+                }
             });
 
 //        exclusionDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
@@ -239,5 +241,13 @@ public class SearchResultsDialog extends Dialog {
         this.searchResultsGrid.addGridFiltering(hr, searchFilter::setEventIdFilter, "eventId");
 
         this.searchResultsGrid.setSizeFull();
+    }
+
+    public void search(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery, String moduleName, String flowName) {
+        SearchFilter searchFilter = new SearchFilter();
+        searchFilter.setModuleNameFilter(moduleName);
+        searchFilter.setFlowNameFilter(flowName);
+
+        this.searchResultsGrid.init(startTime, endTime, searchTerm, types, negateQuery, searchFilter);
     }
 }

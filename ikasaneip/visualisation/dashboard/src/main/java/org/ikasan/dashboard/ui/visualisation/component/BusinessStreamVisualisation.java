@@ -191,21 +191,29 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     if (flow.wiretapClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("wiretap clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("wiretap"), false
+                            , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.errorClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("error clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("error"), false
+                            , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.exclusionClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("exclusion clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("exclusion"), false
+                            , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.replayClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("replay clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("replay"), false
+                            , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                 });
