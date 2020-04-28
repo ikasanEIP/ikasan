@@ -87,8 +87,16 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         hr.getCell(getColumnByKey(columnKey)).setComponent(textField);
     }
 
-    public void init(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery)
+    public void init(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery) {
+        this.init(startTime, endTime, searchTerm, types, negateQuery, null);
+    }
+
+    public void init(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery, SearchFilter searchFilter)
     {
+        if(searchFilter != null) {
+            this.searchFilter = searchFilter;
+        }
+
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
         dataProvider = DataProvider.fromFilteringCallbacks(query ->
