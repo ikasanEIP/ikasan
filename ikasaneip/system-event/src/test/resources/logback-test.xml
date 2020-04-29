@@ -8,7 +8,7 @@
         </encoder>
     </appender>
     <logger name="org.springframework" level="WARN"/>
-    <logger name="org.hibernate" level="INFO"/>
+    <logger name="org.hibernate" level="ERROR"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.springframework.core.env.StandardEnvironment" level="OFF"/>
 
