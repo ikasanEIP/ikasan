@@ -71,7 +71,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =
-{ "/mapping-conf.xml", "/hsqldb-config.xml", "/substitute-components.xml",
+{ "/mapping-conf.xml", "/h2-config.xml", "/substitute-components.xml",
 		"/mock-components.xml" })
 public class MappingConfigurationServiceTest
 {
