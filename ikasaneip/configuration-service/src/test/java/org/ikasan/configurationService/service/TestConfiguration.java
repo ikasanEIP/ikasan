@@ -7,8 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @ImportResource(locations = {
-    "/configuration-service-conf.xml",
-    "/hsqldb-datasource-conf.xml",
+    "/configuration-service-conf.xml", "/h2-datasource-conf.xml",
     "/substitute-components.xml"
 })
 @Import({ IkasanTransactionConfiguration.class})

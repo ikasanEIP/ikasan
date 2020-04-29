@@ -198,12 +198,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Test dependencies -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+            <version>${version.org.springboot}</version>
+            <scope>runtime</scope>
         </dependency>
+
+        <!-- Test dependencies -->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -251,15 +253,8 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-
         </dependency>
 
-        <!-- Hibernate dependency -->
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 
