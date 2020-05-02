@@ -117,6 +117,7 @@ public class ComponentFactory
     {
         ActiveMQXAConnectionFactory connectionFactory =
                 new ActiveMQXAConnectionFactory(jmsProviderUrl);
+        connectionFactory.setClientIDPrefix(jmsProducerConfiguredResourceId);
         RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
         redeliveryPolicy.setMaximumRedeliveries(-1);
         connectionFactory.setRedeliveryPolicy(redeliveryPolicy);
