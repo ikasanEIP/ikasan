@@ -59,12 +59,13 @@ import org.vaadin.tabs.PagedTabs;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 
 @Route(value = "visualisation", layout = IkasanAppLayout.class)
 @UIScope
 @PageTitle("Ikasan - Visualisation")
 @Component
-public class GraphView extends VerticalLayout implements BeforeEnterObserver
+public class GraphView extends VerticalLayout implements BeforeEnterObserver, SearchListener
 {
     Logger logger = LoggerFactory.getLogger(GraphView.class);
 
@@ -115,6 +116,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     private boolean initialised = false;
 
     private SlideTab toolSlider;
+    private SlideTab searchSlider;
     private Button uploadBusinssStreamButton;
     private Tooltip uploadBusinssStreamButtonTooltip;
 
@@ -294,7 +296,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         businessStreamVisualisation.createBusinessStreamGraph(name, json);
 
         this.add(businessStreamVisualisation);
-        this.searchForm.setSearchListener(businessStreamVisualisation);
+        this.searchForm.addSearchListener(businessStreamVisualisation);
+        this.searchForm.addSearchListener(this);
     }
 
     /**
@@ -323,7 +326,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 dialogOpenedChangeEvent -> populateBusinessStreamGrid());
         });
 
-        uploadBusinssStreamButtonTooltip = TooltipHelper.getTooltipForComponentBottom(uploadBusinssStreamButton, getTranslation("tooltip.upload-business-stream", UI.getCurrent().getLocale()));
+        uploadBusinssStreamButtonTooltip = TooltipHelper.getTooltipForComponentBottom(uploadBusinssStreamButton
+            , getTranslation("tooltip.upload-business-stream", UI.getCurrent().getLocale()));
 
         businessStreamLayout.add(uploadBusinssStreamButtonTooltip, uploadBusinssStreamButton, this.businessStreamGrid);
         businessStreamLayout.setHorizontalComponentAlignment(Alignment.END, uploadBusinssStreamButton);
@@ -383,7 +387,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         searchDiv.getStyle().set("color", "black");
         searchDiv.add(searchForm);
 
-        SlideTab searchSlider = new SlideTabBuilder(searchDiv)
+        searchSlider = new SlideTabBuilder(searchDiv)
             .expanded(false)
             .mode(SlideMode.BOTTOM)
             .caption("Search")
@@ -417,6 +421,14 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         broadcasterRegistration.remove();
         broadcasterRegistration = null;
+    }
+
+    @Override
+    public void search(String searchTerm, List<String> entityTypes, boolean negateQuery, long startDate, long endDate) {
+        if(this.searchSlider.isExpanded())
+        {
+            this.searchSlider.collapse();
+        }
     }
 }
 
