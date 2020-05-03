@@ -15,6 +15,7 @@ import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.general.component.SearchResultsDialog;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
@@ -45,6 +46,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+
 public class BusinessStreamVisualisation extends VerticalLayout implements BeforeEnterObserver {
     private Logger logger = LoggerFactory.getLogger(BusinessStreamVisualisation.class);
     private NetworkDiagram networkDiagram;
@@ -65,6 +68,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private ArrayList<Flow> flows = new ArrayList<>();
 
     private Map<String, Flow> flowMap;
+    private Map<String, SearchFoundStatus> stringSearchFoundStatusMap;
 
     private UI current;
 
@@ -180,7 +184,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     FlowVisualisationDialog flowVisualisationDialog
                         = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
                         this.triggerRestService, this.configurationMetadataService, moduleMetaData
-                        , nodeId.substring(nodeId.indexOf(".") + 1), this.solrSearchService);
+                        , this.flowMap.get(nodeId), this.solrSearchService
+                        , this.stringSearchFoundStatusMap.get(nodeId));
 
                     flowVisualisationDialog.open();
                 }
@@ -188,31 +193,32 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                 JsonObject coordinates = doubleClickEvent.getParams().getObject("pointer").getObject("canvas");
 
                 this.flows.forEach(flow -> {
+                    SearchFoundStatus searchFoundStatus = this.stringSearchFoundStatusMap.get(flow.getId());
                     if (flow.wiretapClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("wiretap clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
-                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("wiretap"), false
+                        searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "wiretap", false
                             , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.errorClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("error clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
-                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("error"), false
+                        searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "error", false
                             , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.exclusionClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("exclusion clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
-                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("exclusion"), false
+                        searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "exclusion", false
                             , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
                     if (flow.replayClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.info("replay clicked: " + flow.getModuleName() + " " + flow.getFlowName());
                         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
-                        searchResultsDialog.search(0L, System.currentTimeMillis(), "", Arrays.asList("replay"), false
+                        searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "replay", false
                             , flow.getModuleName(), flow.getFlowName());
                         searchResultsDialog.open();
                     }
@@ -234,52 +240,81 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     }
 
     public void search(List<String> entityTypes, String searchTerm, long startTime, long endTime) {
-        Set<String> moduleNames = this.businessStream
-            .getFlows()
-            .stream()
-            .map(flow -> flow.getModuleName())
-            .collect(Collectors.toSet());
+        this.stringSearchFoundStatusMap.values().forEach(searchFoundStatus -> {
+            searchFoundStatus.setSearchTerm(searchTerm);
+            searchFoundStatus.setStartTime(startTime);
+            searchFoundStatus.setEndTime(endTime);
+        });
 
-        Set<String> flowNames = this.businessStream
-            .getFlows()
-            .stream()
-            .map(flow -> flow.getFlowName())
-            .collect(Collectors.toSet());
+        HashMap<String, Boolean> errorMap = new HashMap<>();
+        HashMap<String, Boolean> wiretapMap = new HashMap<>();
+        HashMap<String, Boolean> exclusionMap = new HashMap<>();
+        HashMap<String, Boolean> replayMap = new HashMap<>();
 
-        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime, endTime, 1000, entityTypes, false, null, null);
+        this.businessStream.getFlows().forEach(flow -> {
+            entityTypes.forEach(entityType -> {
+                IkasanSolrDocumentSearchResults results = this.solrSearchService.search(Set.of(flow.getModuleName()), Set.of(flow.getFlowName()), searchTerm, startTime
+                    , endTime, 0, Arrays.asList(entityType), false, null, null);
 
-        logger.info("Results: " + results.getTotalNumberOfResults());
+                if (entityType.equals("wiretap")) {
+                    wiretapMap.put(flow.getId(), results.getTotalNumberOfResults() > 0);
+                }
+                else if (entityType.equals("error")) {
+                    errorMap.put(flow.getId(), results.getTotalNumberOfResults() > 0);
+                }
+                else if (entityType.equals("exclusion")) {
+                    exclusionMap.put(flow.getId(), results.getTotalNumberOfResults() > 0);
+                }
+                else if (entityType.equals("replay")) {
+                    replayMap.put(flow.getId(), results.getTotalNumberOfResults() > 0);
+                }
+            });
+        });
 
-        this.drawFoundStatus(results);
+//        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime
+//            , endTime, 1000, entityTypes, false, null, null);
+//
+//        logger.info("Results: " + results.getTotalNumberOfResults());
+
+        this.drawFoundStatus(errorMap, wiretapMap, exclusionMap, replayMap);
     }
 
-    public void drawFoundStatus(IkasanSolrDocumentSearchResults results) {
-        HashMap<String, IkasanSolrDocument> errorMap = createResultMap(results, "error");
-        HashMap<String, IkasanSolrDocument> wiretapMap = createResultMap(results, "wiretap");
-        HashMap<String, IkasanSolrDocument> exclusionMap = createResultMap(results, "exclusion");
-        HashMap<String, IkasanSolrDocument> replayMap = createResultMap(results, "replay");
+    public void drawFoundStatus(HashMap<String, Boolean> errorMap, HashMap<String, Boolean> wiretapMap
+        , HashMap<String, Boolean> exclusionMap, HashMap<String, Boolean> replayMap) {
 
         this.flows = (ArrayList<Flow>) this.flows.stream().map(flow -> {
-            if (wiretapMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+            SearchFoundStatus searchFoundStatus = this.stringSearchFoundStatusMap.get(flow.getId());
+            if (wiretapMap.get(flow.getId())) {
                 flow.setWiretapFoundStatus(NodeFoundStatus.FOUND);
+                searchFoundStatus.setWiretapFound(true);
             } else {
                 flow.setWiretapFoundStatus(NodeFoundStatus.NOT_FOUND);
+                searchFoundStatus.setWiretapFound(false);
             }
-            if (errorMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+            if (errorMap.get(flow.getId())) {
                 flow.setErrorFoundStatus(NodeFoundStatus.FOUND);
+                searchFoundStatus.setErrorFound(true);
             } else {
                 flow.setErrorFoundStatus(NodeFoundStatus.NOT_FOUND);
+                searchFoundStatus.setErrorFound(false);
             }
-            if (exclusionMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+            if (exclusionMap.get(flow.getId())) {
                 flow.setExclusionFoundStatus(NodeFoundStatus.FOUND);
+                searchFoundStatus.setExclusionFound(true);
             } else {
                 flow.setExclusionFoundStatus(NodeFoundStatus.NOT_FOUND);
+                searchFoundStatus.setExclusionFound(false);
             }
-            if (replayMap.containsKey(flow.getModuleName() + flow.getFlowName())) {
+            if (replayMap.get(flow.getId())) {
                 flow.setReplayFoundStatus(NodeFoundStatus.FOUND);
+                searchFoundStatus.setReplayFound(true);
             } else {
                 flow.setReplayFoundStatus(NodeFoundStatus.NOT_FOUND);
+                searchFoundStatus.setReplayFound(false);
             }
+
+            this.stringSearchFoundStatusMap.put(flow.getModuleName() + flow.getFlowName()
+                , searchFoundStatus);
             return flow;
         }).collect(Collectors.toList());
 
@@ -296,7 +331,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             .getResultList()
             .stream()
             .filter(result -> result.getType().equals(type))
-            .collect(Collectors.toMap(ikasanSolrDocument -> ikasanSolrDocument.getModuleName() + ikasanSolrDocument.getFlowName(), Function.identity(), (existing, replacement) -> existing));
+            .collect(toMap(ikasanSolrDocument -> ikasanSolrDocument.getModuleName() + ikasanSolrDocument.getFlowName()
+                , Function.identity(), (existing, replacement) -> existing));
     }
 
 
@@ -376,6 +412,11 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private void populateFlowMap(List<Flow> flows) {
         this.flowMap = flows
             .stream()
-            .collect(Collectors.toMap(Flow::getId, Function.identity()));
+            .collect(toMap(Flow::getId, Function.identity()));
+
+        this.stringSearchFoundStatusMap = new HashMap<>();
+
+        flows.forEach(flow -> this.stringSearchFoundStatusMap
+            .put(flow.getId(), new SearchFoundStatus()));
     }
 }
