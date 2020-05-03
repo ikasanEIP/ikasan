@@ -43,6 +43,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class GraphViewBusinessStreamVisualisation extends VerticalLayout implements SearchListener
 {
@@ -119,37 +120,8 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
      * @param startDate the start date/time of the search
      * @param endDate the end date/time of the search
      */
-    public void search(String searchTerm, long startDate, long endDate)
-    {
-        ArrayList<String> types = new ArrayList<>();
-
-        if("ALL".equals(SearchConstants.ALL))
-        {
-            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY))
-            {
-                types.add(SolrReplayDao.REPLAY);
-            }
-
-            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_WRITE, SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.ALL_AUTHORITY))
-            {
-                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_READ, SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.ALL_AUTHORITY))
-                {
-                    types.add(SolrWiretapDao.WIRETAP);
-                }
-
-                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.ALL_AUTHORITY))
-                {
-                    types.add(SolrExclusionEventDao.EXCLUSION);
-                }
-
-                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_ADMIN, SecurityConstants.ALL_AUTHORITY))
-                {
-                    types.add(SolrErrorReportingServiceDao.ERROR);
-                }
-            }
-        }
-
-        this.businessStreamVisualisation.search(types, searchTerm, startDate, endDate);
+    public void search(String searchTerm, List<String> entityTypes, boolean negateQuery, long startDate, long endDate) {
+        this.businessStreamVisualisation.search(entityTypes, searchTerm, startDate, endDate);
     }
 
     /**

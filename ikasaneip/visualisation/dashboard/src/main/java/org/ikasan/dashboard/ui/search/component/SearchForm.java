@@ -27,7 +27,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SearchForm extends VerticalLayout {
     private Button searchButton;
@@ -53,7 +55,7 @@ public class SearchForm extends VerticalLayout {
     private TimePicker endTimePicker = new TimePicker();
     private Checkbox negateQueryCheckbox;
 
-    private SearchListener searchListener;
+    private List<SearchListener> searchListeners = new ArrayList<>();
 
     public SearchForm() {
         this.createSearchForm();
@@ -209,11 +211,26 @@ public class SearchForm extends VerticalLayout {
                 return;
             }
 
-            if(this.searchListener != null) {
-                this.searchListener.search(searchTerm.getTerm(),
+            List<String> entityTypes = new ArrayList<>();
+
+            if(this.errorCheckbox.getValue()) {
+                entityTypes.add("error");
+            }
+            if(this.wiretapCheckbox.getValue()) {
+                entityTypes.add("wiretap");
+            }
+            if(this.hospitalCheckbox.getValue()) {
+                entityTypes.add("exclusion");
+            }
+            if(this.replayCheckbox.getValue()) {
+                entityTypes.add("replay");
+            }
+
+            this.searchListeners.forEach(searchListener -> {
+                searchListener.search(searchTerm.getTerm(), entityTypes, this.negateQueryCheckbox.getValue(),
                     Date.from(startDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() + DateTimeUtil.getMilliFromTime(this.startTimePicker.getValue()),
                     Date.from(endDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() + DateTimeUtil.getMilliFromTime(this.endTimePicker.getValue()));
-            }
+            });
         });
     }
 
@@ -268,7 +285,7 @@ public class SearchForm extends VerticalLayout {
         this.replaySearchButtonTooltip.attachToComponent(this.replayImage);
     }
 
-    public void setSearchListener(SearchListener searchListener) {
-        this.searchListener = searchListener;
+    public void addSearchListener(SearchListener searchListener) {
+        this.searchListeners.add(searchListener);
     }
 }

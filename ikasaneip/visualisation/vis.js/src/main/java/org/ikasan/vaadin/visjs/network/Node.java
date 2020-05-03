@@ -16,25 +16,25 @@ public class Node extends Nodes
     private String replayFoundStatus = NodeFoundStatus.EMPTY;
     private String replayFoundImage = null;
 
-    protected double wiretapFoundImageX = 50;
+    protected double wiretapFoundImageX = -80;
     protected double wiretapFoundImageY = -40;
-    protected int wiretapFoundImageH = 15;
-    protected int wiretapFoundImageW = 15;
+    protected int wiretapFoundImageH = 30;
+    protected int wiretapFoundImageW = 30;
 
-    protected double errorFoundImageX = 50;
-    protected double errorFoundImageY = -20;
-    protected int errorFoundImageH = 15;
-    protected int errorFoundImageW = 15;
+    protected double errorFoundImageX = -80;
+    protected double errorFoundImageY = 0;
+    protected int errorFoundImageH = 30;
+    protected int errorFoundImageW = 30;
 
     protected double exclusionFoundImageX = 50;
-    protected double exclusionFoundImageY = 0;
-    protected int exclusionFoundImageH = 15;
-    protected int exclusionFoundImageW = 15;
+    protected double exclusionFoundImageY = -40;
+    protected int exclusionFoundImageH = 30;
+    protected int exclusionFoundImageW = 30;
 
     protected double replayFoundImageX = 50;
-    protected double replayFoundImageY = 20;
-    protected int replayFoundImageH = 15;
-    protected int replayFoundImageW = 15;
+    protected double replayFoundImageY = 0;
+    protected int replayFoundImageH = 30;
+    protected int replayFoundImageW = 30;
 
     public Node()
     {

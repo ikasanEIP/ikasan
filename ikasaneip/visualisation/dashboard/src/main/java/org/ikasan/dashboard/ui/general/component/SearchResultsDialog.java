@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import org.ikasan.dashboard.ui.search.SearchConstants;
@@ -20,6 +21,7 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrGeneralService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,10 +35,12 @@ public class SearchResultsDialog extends Dialog {
 
         this.createSearchResultsGrid();
 
-        HorizontalLayout layout = new HorizontalLayout();
+        VerticalLayout layout = new VerticalLayout();
         layout.setWidth("1600px");
         layout.setHeight("800px");
 
+        this.resultsLabel.setVisible(false);
+        layout.add(this.resultsLabel);
         layout.add(this.searchResultsGrid);
 
         this.add(layout);
@@ -78,13 +82,11 @@ public class SearchResultsDialog extends Dialog {
                 hospitalImage.setHeight("30px");
                 horizontalLayout.add(hospitalImage);
             }
-            else if(ikasanSolrDocument.getType().equalsIgnoreCase(SearchConstants.REPLAY))
-            {
+            else if(ikasanSolrDocument.getType().equalsIgnoreCase(SearchConstants.REPLAY)) {
                 Image replayImage = new Image("frontend/images/replay-service.png", "");
                 replayImage.setHeight("30px");
                 horizontalLayout.add(replayImage);
             }
-
 
             return horizontalLayout;
         })).setWidth("40px");
@@ -243,11 +245,12 @@ public class SearchResultsDialog extends Dialog {
         this.searchResultsGrid.setSizeFull();
     }
 
-    public void search(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery, String moduleName, String flowName) {
+    public void search(long startTime, long endTime, String searchTerm, String type, boolean negateQuery, String moduleName, String flowName) {
         SearchFilter searchFilter = new SearchFilter();
         searchFilter.setModuleNameFilter(moduleName);
         searchFilter.setFlowNameFilter(flowName);
 
-        this.searchResultsGrid.init(startTime, endTime, searchTerm, types, negateQuery, searchFilter);
+        this.searchResultsGrid.init(startTime, endTime, searchTerm, Arrays.asList(type), negateQuery, searchFilter);
+        this.resultsLabel.setVisible(true);
     }
 }

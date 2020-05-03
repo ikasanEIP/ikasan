@@ -15,7 +15,9 @@ import org.ikasan.dashboard.ui.general.component.SearchResultsDialog;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.search.SearchConstants;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
+import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
@@ -27,6 +29,8 @@ import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.solr.SolrGeneralService;
 
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,8 +45,8 @@ public class FlowVisualisationDialog extends Dialog {
     private ConfigurationMetaDataService configurationMetadataService;
     private ControlPanel flowControlPanel;
 
-    private Button allButton;
-    private Tooltip allButtonTooltip;
+    private Button replayButton;
+    private Tooltip replayButtonTooltip;
     private Button wiretapButton;
     private Tooltip wiretapButtonTooltip;
     private Button hospitalButton;
@@ -50,12 +54,17 @@ public class FlowVisualisationDialog extends Dialog {
     private Button errorButton;
     private Tooltip errorButtonTooltip;
 
+    private SearchFoundStatus searchFoundStatus;
+
     private VerticalLayout searchLayout;
+
+    private Flow flow;
 
     public FlowVisualisationDialog(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService
-        , ModuleMetaData moduleMetaData, String flowName, SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService)
+        , ModuleMetaData moduleMetaData, Flow flow, SolrGeneralService<IkasanSolrDocument
+        , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus)
     {
         this.moduleControlRestService = moduleControlRestService;
         if(this.moduleControlRestService == null){
@@ -77,14 +86,19 @@ public class FlowVisualisationDialog extends Dialog {
         if(this.solrSearchService == null){
             throw new IllegalArgumentException("solrSearchService cannot be null!");
         }
+        this.searchFoundStatus = searchFoundStatus;
+        if(this.searchFoundStatus == null){
+            throw new IllegalArgumentException("searchFoundStatus cannot be null!");
+        }
+        this.flow = flow;
+        if(this.flow == null){
+            throw new IllegalArgumentException("flow cannot be null!");
+        }
         if(moduleMetaData == null){
             throw new IllegalArgumentException("moduleMetaData cannot be null!");
         }
-        if(flowName == null){
-            throw new IllegalArgumentException("flowName cannot be null!");
-        }
 
-        this.init(moduleMetaData, flowName);
+        this.init(moduleMetaData, flow.getFlowName());
     }
 
     private void init(ModuleMetaData moduleMetaData, String flowName){
@@ -166,39 +180,55 @@ public class FlowVisualisationDialog extends Dialog {
     private VerticalLayout buildSearchLayout(){
         VerticalLayout serviceLayout = new VerticalLayout();
 
-        Image allButtonImage = new Image("frontend/images/all-services-icon.png", "");
-        allButtonImage.setHeight("40px");
-        allButton = new Button(allButtonImage);
-
-        addButtonSearchListener(SearchConstants.ALL, allButton);
-        allButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(allButton, getTranslation("tooltip.search-all-event-types"
-            , UI.getCurrent().getLocale()));
-
-        serviceLayout.add(createSearchButtonLayout(allButton), allButtonTooltip);
-
         Image wiretapImage = new Image("frontend/images/wiretap-service.png", "");
         wiretapImage.setHeight("40px");
         wiretapButton = new Button(wiretapImage);
         wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(wiretapButton, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
-
-        addButtonSearchListener(SearchConstants.WIRETAP, wiretapButton);
-        serviceLayout.add(createSearchButtonLayout(wiretapButton), wiretapButtonTooltip);
+        if(!this.searchFoundStatus.getWiretapFound()) {
+            this.wiretapButton.setVisible(false);
+        }
+        else {
+            addButtonSearchListener(SearchConstants.WIRETAP, wiretapButton);
+            serviceLayout.add(createSearchButtonLayout(wiretapButton), wiretapButtonTooltip);
+        }
 
         Image errorImage = new Image("frontend/images/error-service.png", "");
         errorImage.setHeight("40px");
         errorButton = new Button(errorImage);
         errorButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(errorButton, getTranslation("tooltip.search-error-events", UI.getCurrent().getLocale()));
+        if(!this.searchFoundStatus.getErrorFound()) {
+            this.errorButton.setVisible(false);
+        }
+        else {
+            addButtonSearchListener(SearchConstants.ERROR, errorButton);
+            serviceLayout.add(createSearchButtonLayout(errorButton), errorButtonTooltip);
+        }
 
-        addButtonSearchListener(SearchConstants.ERROR, errorButton);
-        serviceLayout.add(createSearchButtonLayout(errorButton), errorButtonTooltip);
 
         Image hospitalImage = new Image("frontend/images/hospital-service.png", "");
         hospitalImage.setHeight("40px");
         hospitalButton = new Button(hospitalImage);
         hospitalButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(hospitalButton, getTranslation("tooltip.search-hospital-events", UI.getCurrent().getLocale()));
+        if(!this.searchFoundStatus.getExclusionFound()) {
+            this.hospitalButton.setVisible(false);
+        }
+        else {
+            addButtonSearchListener(SearchConstants.EXCLUSION, hospitalButton);
+            serviceLayout.add(createSearchButtonLayout(hospitalButton), hospitalButtonTooltip);
+        }
 
-        addButtonSearchListener(SearchConstants.EXCLUSION, hospitalButton);
-        serviceLayout.add(createSearchButtonLayout(hospitalButton), hospitalButtonTooltip);
+        Image replayButtonImage = new Image("frontend/images/all-services-icon.png", "");
+        replayButtonImage.setHeight("40px");
+        replayButton = new Button(replayButtonImage);
+        replayButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replayButton, getTranslation("tooltip.search-replay-events"
+            , UI.getCurrent().getLocale()));
+        if(!this.searchFoundStatus.getReplayFound()) {
+            this.replayButton.setVisible(false);
+        }
+        else {
+            addButtonSearchListener(SearchConstants.REPLAY, replayButton);
+            serviceLayout.add(createSearchButtonLayout(replayButton), replayButtonTooltip);
+        }
 
         serviceLayout.setWidth("50px");
 
@@ -209,80 +239,13 @@ public class FlowVisualisationDialog extends Dialog {
      * Method to perform the search.
      *
      * @param type the entity type
-     * @param startDate the start date/time of the search
-     * @param endDate the end date/time of the search
      */
-    protected void search(String type, long startDate, long endDate)
+    protected void search(String type)
     {
         SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+        searchResultsDialog.search(this.searchFoundStatus.getStartTime(), this.searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm()
+            , type, false, flow.getModuleName(), flow.getFlowName());
         searchResultsDialog.open();
-
-//        this.currentSearchType = type;
-//
-//        ArrayList<String> types = new ArrayList<>();
-//
-//        if(type.equals(ALL))
-//        {
-//            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY))
-//            {
-//                types.add(SolrReplayDao.REPLAY);
-//            }
-//
-//            if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_WRITE, SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.ALL_AUTHORITY))
-//            {
-//                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_READ, SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.ALL_AUTHORITY))
-//                {
-//                    types.add(SolrWiretapDao.WIRETAP);
-//                }
-//
-//                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.ALL_AUTHORITY))
-//                {
-//                    types.add(SolrExclusionEventDao.EXCLUSION);
-//                }
-//
-//                if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_ADMIN, SecurityConstants.ALL_AUTHORITY))
-//                {
-//                    types.add(SolrErrorReportingServiceDao.ERROR);
-//                }
-//            }
-//        }
-//        else
-//        {
-//            if(type.equals(REPLAY))
-//            {
-//                types.add(SolrReplayDao.REPLAY);
-//            }
-//
-//            if(type.equals(WIRETAP))
-//            {
-//                types.add(SolrWiretapDao.WIRETAP);
-//            }
-//
-//            if(type.equals(EXCLUSION))
-//            {
-//                types.add(SolrExclusionEventDao.EXCLUSION);
-//            }
-//
-//            if(type.equals(ERROR))
-//            {
-//                types.add(SolrErrorReportingServiceDao.ERROR);
-//            }
-//        }
-//
-//        this.selectionBoxes = new HashMap<>();
-//        this.selectionItems = new HashMap<>();
-//
-//        this.searchResultsGrid.init(startDate, endDate, searchTerm, types);
-//
-//        if(selected)
-//        {
-//            toggleSelected();
-//        }
-//        functionalGroupSetup();
-//        this.resultsLabel.setVisible(true);
-//        this.addReplayButtonEventListener();
-//        this.addHospitalResubmitButtonEventListener();
-//        this.addIgnoreButtonEventListener();
     }
 
     /**
@@ -295,8 +258,7 @@ public class FlowVisualisationDialog extends Dialog {
     {
         button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            search(searchType,
-                System.currentTimeMillis(), System.currentTimeMillis());
+            search(searchType);
         });
     }
 
