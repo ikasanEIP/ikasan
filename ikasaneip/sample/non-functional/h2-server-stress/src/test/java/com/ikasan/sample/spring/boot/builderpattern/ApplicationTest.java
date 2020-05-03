@@ -215,7 +215,7 @@ public class ApplicationTest
         // wait for event generating flows to complete
 
         with().pollInterval(5, TimeUnit.SECONDS).and().with().pollDelay(60,TimeUnit.SECONDS)
-              .await().atMost(240,TimeUnit.SECONDS)
+              .await().atMost(480,TimeUnit.SECONDS)
               .untilAsserted(()-> {
                   PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
                   logger.info("Expected eventGeneratorToJMSFlow flow wiretap count {} but found {}", ModuleConfig.EVENT_GENERATOR_COUNT,  wiretaps.getResultSize());
