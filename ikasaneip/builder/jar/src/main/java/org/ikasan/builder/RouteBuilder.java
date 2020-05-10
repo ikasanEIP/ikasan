@@ -55,6 +55,9 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Default route builder.
  *
@@ -175,7 +178,45 @@ public class RouteBuilder
 		return this.splitter(name, splitter, splitterInvokerConfigurationBuilder.build());
 	}
 
-	public RouteBuilder filter(String name, Filter filter)
+    public RouteBuilder concurrentSplitter(String name, Splitter splitter)
+    {
+        // TODO - how to override for nu ber of threads
+        ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration = new ConcurrentSplitterInvokerConfiguration();
+        ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
+        this.route.addFlowElement(new FlowElementImpl(name, splitter, new ConcurrentSplitterFlowElementInvoker(executorService)));
+        return this;
+    }
+
+    public RouteBuilder concurrentSplitter(String name, Builder<Splitter> concurrentSplitterBuilder)
+    {
+        return this.concurrentSplitter(name, concurrentSplitterBuilder.build());
+    }
+
+    public RouteBuilder concurrentSplitter(String name, Splitter splitter, ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration)
+    {
+        ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
+        ConcurrentSplitterFlowElementInvoker concurrentSplitterFlowElementInvoker = new ConcurrentSplitterFlowElementInvoker(executorService);
+        concurrentSplitterFlowElementInvoker.setConfiguration(concurrentSplitterInvokerConfiguration);
+        this.route.addFlowElement(new FlowElementImpl(name, splitter, concurrentSplitterFlowElementInvoker));
+        return this;
+    }
+
+    public RouteBuilder concurrentSplitter(String name, Builder<Splitter> concurrentSplitterBuilder, ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration)
+    {
+        return this.concurrentSplitter(name, concurrentSplitterBuilder.build(), concurrentSplitterInvokerConfiguration);
+    }
+
+    public RouteBuilder concurrentSplitter(String name, Builder<Splitter> splitterBuilder, ConcurrentSplitterInvokerConfigurationBuilder concurrentSplitterInvokerConfigurationBuilder)
+    {
+        return this.concurrentSplitter(name, splitterBuilder.build(), concurrentSplitterInvokerConfigurationBuilder.build());
+    }
+
+    public RouteBuilder concurrentSplitter(String name, Splitter splitter, ConcurrentSplitterInvokerConfigurationBuilder concurrentSplitterInvokerConfigurationBuilder)
+    {
+        return this.concurrentSplitter(name, splitter, concurrentSplitterInvokerConfigurationBuilder.build());
+    }
+
+    public RouteBuilder filter(String name, Filter filter)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
 		return this;

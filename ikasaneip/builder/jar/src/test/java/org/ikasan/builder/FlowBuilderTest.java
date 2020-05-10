@@ -123,10 +123,13 @@ public class FlowBuilderTest
     /** Mock Translator Builder */
     final Builder<Translator> translatorBuilder = mockery.mock(Builder.class, "mockTranslatorBuilder");
 
-    /** Mock Translator */
+    /** Mock Splitter */
     final Splitter splitter = mockery.mock(Splitter.class, "mockSplitter");
-    /** Mock Translator Builder */
+    /** Mock Splitter Builder */
     final Builder<Splitter> splitterBuilder = mockery.mock(Builder.class, "mockSplitterBuilder");
+
+    /** Mock ConcurrentSplitter Builder */
+    final Builder<Splitter> concurrentSplitterBuilder = mockery.mock(Builder.class, "mockConcurrentSplitterBuilder");
 
     /** Mock Converter */
     final Converter converter = mockery.mock(Converter.class, "mockConverter");
@@ -237,6 +240,8 @@ public class FlowBuilderTest
                 will(returnValue(filter));
                 exactly(3).of(splitterBuilder).build();
                 will(returnValue(splitter));
+                exactly(3).of(concurrentSplitterBuilder).build();
+                will(returnValue(splitter));
             }
         });
 
@@ -320,14 +325,13 @@ public class FlowBuilderTest
         primaryRouteBuilder.splitter("Splitter", splitter, Configuration.splitterInvoker().build());
         primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.splitterInvoker().build());
 
-        // TODO - need to consider whether concurrent splitter is a separate configuration
-//        // concurrent splitter combinations
-//        primaryRouteBuilder.splitter("Splitter", splitter);
-//        primaryRouteBuilder.splitter("Splitter", splitterBuilder);
-//        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker());
-//        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker());
-//        primaryRouteBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker().build());
-//        primaryRouteBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker().build());
+        // concurrent splitter combinations
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", splitter);
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", concurrentSplitterBuilder);
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", splitter, Configuration.concurrentSplitterInvoker());
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", concurrentSplitterBuilder, Configuration.concurrentSplitterInvoker());
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", splitter, Configuration.concurrentSplitterInvoker().build());
+        primaryRouteBuilder.concurrentSplitter("ConcurrentSplitter", concurrentSplitterBuilder, Configuration.concurrentSplitterInvoker().build());
     }
 
     /**
@@ -384,6 +388,77 @@ public class FlowBuilderTest
         Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
         Assert.assertTrue("flow element invoker should be an instance of SplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SplitterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(4);
+        Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
+        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_simple_transitions_with_concurrentSplitter()
+    {
+        setupMockExpectations();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .isRecording(true)
+            .withDescription("flowDescription")
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .withSerialiserFactory(serialiserFactory)
+            .consumer("consumer", consumer)
+            .converter("converter", converter)
+            .translator("translator", translator)
+            .concurrentSplitter("splitter", splitter)
+            .broker("broker", broker)
+            .producer("producer", producer).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        Assert.assertTrue("flow is recording", true == ((FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration()).getIsRecording());
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have two FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 2);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker should be an instance of ConfiguredResource", fe.getFlowElementInvoker() instanceof ConfiguredResource);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
+        Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(2);
+        Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to splitter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(3);
+        Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element invoker should be an instance of ConcurrentSplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConcurrentSplitterFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(4);
@@ -476,6 +551,77 @@ public class FlowBuilderTest
      * Test successful flow creation.
      */
     @Test
+    public void test_successful_simple_transitions_not_recording_with_concurrentSplitter()
+    {
+        setupMockExpectations();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .isRecording(false)
+            .withDescription("flowDescription")
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .withSerialiserFactory(serialiserFactory)
+            .consumer("consumer", consumer)
+            .converter("converter", converter)
+            .translator("translator", translator)
+            .concurrentSplitter("splitter", splitter)
+            .broker("broker", broker)
+            .producer("producer", producer).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        Assert.assertTrue("flow is recording", false == ((FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration()).getIsRecording());
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have two FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 2);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker should be an instance of ConfiguredResource", fe.getFlowElementInvoker() instanceof ConfiguredResource);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
+        Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(2);
+        Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to splitter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(3);
+        Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element invoker should be an instance of ConcurrentSplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConcurrentSplitterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(4);
+        Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
+        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
     public void test_successful_simple_transitions_with_invokerConfiguration()
     {
         setupMockExpectations();
@@ -525,6 +671,76 @@ public class FlowBuilderTest
         Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
         Assert.assertTrue("flow element invoker should be an instance of SplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SplitterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(4);
+        Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
+        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_simple_transitions_with_invokerConfiguration_with_concurrentSplitter()
+    {
+        setupMockExpectations();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .withSerialiserFactory(serialiserFactory)
+            .consumer("consumer", consumer, Configuration.consumerInvoker().withDynamicConfiguration(true))
+            .converter("converter", converter, Configuration.converterInvoker().withDynamicConfiguration(false))
+            .translator("translator", translator, Configuration.translatorInvoker().withApplyTranslator(true).withDynamicConfiguration(true))
+            .concurrentSplitter("splitter", splitter, Configuration.concurrentSplitterInvoker().withDynamicConfiguration(true))
+            .broker("broker", broker, Configuration.brokerInvoker().withDynamicConfiguration(true))
+            .producer("producer", producer, Configuration.producerInvoker().withDynamicConfiguration(true)).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have two FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 2);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker should be an instance of ConfiguredResource", fe.getFlowElementInvoker() instanceof ConfiguredResource);
+        Assert.assertTrue("flow element invoker should be have dynamicConfiguration set", ((ConfiguredResource<InvokerConfiguration>)fe.getFlowElementInvoker()).getConfiguration().isDynamicConfiguration());
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
+        Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(2);
+        Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to splitter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(3);
+        Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element invoker should be an instance of ConcurrentSplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConcurrentSplitterFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(4);
@@ -612,6 +828,93 @@ public class FlowBuilderTest
         Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
         Assert.assertTrue("flow element invoker should be an instance of SplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SplitterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(4);
+        Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
+        Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(5);
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_simple_transitions_passing_builder_instances_with_concurrentSplitter()
+    {
+        setupMockExpectations();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                oneOf(consumerBuilder).build();
+                will(returnValue(consumer));
+                oneOf(converterBuilder).build();
+                will(returnValue(converter));
+                oneOf(translatorBuilder).build();
+                will(returnValue(translator));
+                oneOf(concurrentSplitterBuilder).build();
+                will(returnValue(splitter));
+                oneOf(brokerBuilder).build();
+                will(returnValue(broker));
+                oneOf(producerBuilder).build();
+                will(returnValue(producer));
+            }
+        });
+
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withFlowInvocationContextListener(flowInvocationContextListener)
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .withSerialiserFactory(serialiserFactory)
+            .consumer("consumer", consumerBuilder)
+            .converter("converter", converterBuilder)
+            .translator("translator", translatorBuilder)
+            .concurrentSplitter("splitter", concurrentSplitterBuilder)
+            .broker("broker", brokerBuilder)
+            .producer("producer", producerBuilder).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have two FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 2);
+
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(1);
+        Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
+        Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(2);
+        Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to splitter", fe.getTransitions().size() == 1);
+
+        fe = flowElements.get(3);
+        Assert.assertTrue("flow element name should be 'splitter'", "splitter".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Splitter", fe.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element invoker should be an instance of ConcurrentSplitterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConcurrentSplitterFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(4);
@@ -938,6 +1241,72 @@ public class FlowBuilderTest
         mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_simple_router_transitions_with_concurrentSplitter()
+    {
+        setupMockExpectations();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
+            .withExclusionServiceFactory(exclusionServiceFactory)
+            .withSerialiserFactory(serialiserFactory)
+            .consumer("consumer", consumer)
+            .singleRecipientRouter("router", singleRecipientRouter)
+            .when("route1", builderFactory.getRouteBuilder().producer("route1Publisher", producer))
+            .when("route2", builderFactory.getRouteBuilder().concurrentSplitter("route2Splitter", splitter).producer("route2Publisher", producer))
+            .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertEquals("Should be 7 flow elements", 7, flowElements.size());
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have one FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 1);
+
+        // Consumer
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element should have a single transition", fe.getTransitions().size() == 1);
+
+        // SRR
+        fe = (FlowElement)fe.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'router'", "router".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of SRR", fe.getFlowComponent() instanceof SingleRecipientRouter);
+        Assert.assertTrue("flow element SRR shuold have 3 transitions not [" + fe.getTransitions().size() + "]", fe.getTransitions().size() == 3);
+
+        // when route1
+        FlowElement feRoute1 = (FlowElement)fe.getTransitions().get("route1");
+        Assert.assertTrue("flow element name should be 'route1Publisher'", "route1Publisher".equals(feRoute1.getComponentName()));
+        Assert.assertTrue("flow element transition should be to 0 for producer", feRoute1.getTransitions().size() == 0);
+
+        // when route2
+        FlowElement feRoute2 = (FlowElement)fe.getTransitions().get("route2");
+        Assert.assertTrue("flow element name should be 'route2Splitter'", "route2Splitter".equals(feRoute2.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Spitter", feRoute2.getFlowComponent() instanceof Splitter);
+        Assert.assertTrue("flow element transition should be to producer", feRoute2.getTransitions().size() == 1);
+        FlowElement publisher2FlowElement = (FlowElement)feRoute2.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'route2Publisher'", "route2Publisher".equals(publisher2FlowElement.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", publisher2FlowElement.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element transition should be 0 for a producer", publisher2FlowElement.getTransitions().size() == 0);
+
+        // otherwise route
+        FlowElement feOtherwise = (FlowElement)fe.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'otherwiseTranslator'", "otherwiseTranslator".equals(feOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", feOtherwise.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element transition should be to producer", feOtherwise.getTransitions().size() == 1);
+        feOtherwise = (FlowElement)feOtherwise.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'otherwisePublisher'", "otherwisePublisher".equals(feOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feOtherwise.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element transition should be 0 for a producer", feOtherwise.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
 
     /**
      * Test successful flow creation.

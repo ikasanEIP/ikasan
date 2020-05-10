@@ -62,6 +62,8 @@ public class ModuleConfig
         return flowBuilder.withDescription("scheduled flow description")
             .consumer("consumer", componentBuilder.scheduledConsumer().setCronExpression("0/5 * * * * ?").setConfiguredResourceId("configuredResourceId")
                 .setScheduledJobGroupName("scheduledJobGroupName").setScheduledJobName("scheduledJobName").build())
+            .concurrentSplitter("splitterName", componentBuilder.listSplitter(),
+                org.ikasan.builder.invoker.Configuration.concurrentSplitterInvoker().setConcurrentThreads(5))
             .producer("producer", new MyProducer()).build();
     }
 
