@@ -210,12 +210,11 @@ public class ApplicationTest
         flow2TestRule.startFlow();
         flow1TestRule.startFlow();
 
-        // wait for event generating flows to complete
-        logger.info("Waiting for 'configurationUpdaterFlow' flow to complete (circa 70 seconds).");
-        // wait for event generating flows to complete
+        logger.info("Waiting for 'eventGeneratorToJMSFlow' flow to complete (circa 24 seconds).");
 
+        //TODO: Update 10min timeout to lower value
         with().pollInterval(5, TimeUnit.SECONDS).and().with().pollDelay(60,TimeUnit.SECONDS)
-              .await().atMost(240,TimeUnit.SECONDS)
+              .await().atMost(600,TimeUnit.SECONDS)
               .untilAsserted(()-> {
                   PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "eventGeneratorToJMSFlow", TriggerRelationship.AFTER, "Event Generating Consumer", ModuleConfig.EVENT_GENERATOR_COUNT);
                   logger.info("Expected eventGeneratorToJMSFlow flow wiretap count {} but found {}", ModuleConfig.EVENT_GENERATOR_COUNT,  wiretaps.getResultSize());
@@ -224,8 +223,7 @@ public class ApplicationTest
 
               });
 
-
-        logger.info("Waiting for 'eventGeneratorToJMSFlow' flow to complete (circa 24 seconds).");
+        logger.info("Waiting for 'configurationUpdaterFlow' flow to complete (circa 70 seconds).");
 
         with().pollInterval(5, TimeUnit.SECONDS).and().with().pollDelay(5,TimeUnit.SECONDS)
               .await().atMost(30,TimeUnit.SECONDS)
