@@ -1,40 +1,40 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -100,6 +100,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A simple Flow builder.
@@ -654,56 +656,56 @@ public class FlowBuilder implements ApplicationContextAware
                 Consumer consumer = (Consumer) flowElement.getFlowComponent();
                 consumer.setEventFactory(eventFactory);
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        consumer,
-                        flowElement.getFlowElementInvoker(), nextFlowElement);
+                    flowElement.getComponentName(),
+                    consumer,
+                    flowElement.getFlowElementInvoker(), nextFlowElement);
             }
             else if (flowElement.getFlowComponent() instanceof MultiRecipientRouter)
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
-                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+                    flowElement.getComponentName(),
+                    this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
+                    flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
-                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+                    flowElement.getComponentName(),
+                    this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
+                    flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof Sequencer)
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
-                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+                    flowElement.getComponentName(),
+                    this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
+                    flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof Producer)
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
-                        flowElement.getFlowElementInvoker());
+                    flowElement.getComponentName(),
+                    this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
+                    flowElement.getFlowElementInvoker());
             }
             else if (flowElement.getFlowComponent() instanceof When
-                    || flowElement.getFlowComponent() instanceof Otherwise
-                    || flowElement.getFlowComponent() instanceof SequenceName
-                    )
+                || flowElement.getFlowComponent() instanceof Otherwise
+                || flowElement.getFlowComponent() instanceof SequenceName
+            )
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
-                        flowElement.getFlowElementInvoker(),
-                        nextFlowElement);
+                    flowElement.getComponentName(),
+                    flowElement.getFlowComponent(),
+                    flowElement.getFlowElementInvoker(),
+                    nextFlowElement);
             }
             else
             {
                 nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
-                        flowElement.getFlowElementInvoker(),
-                        nextFlowElement);
+                    flowElement.getComponentName(),
+                    this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
+                    flowElement.getFlowElementInvoker(),
+                    nextFlowElement);
             }
         }
 
@@ -727,7 +729,7 @@ public class FlowBuilder implements ApplicationContextAware
                 {
                     id = id.substring(0,253) + type;
                     logger.warn("Generated Identifier exceeds 255 characters for moduleName[" + moduleName + "] flowName[" + flowName
-                            + "] componentName[" + componentName + "] fq classname[" + fqClassName + "] type [" + type + "]. Truncated to 255 -> [" + id + "]");
+                        + "] componentName[" + componentName + "] fq classname[" + fqClassName + "] type [" + type + "]. Truncated to 255 -> [" + id + "]");
                 }
             }
         }
@@ -782,7 +784,7 @@ public class FlowBuilder implements ApplicationContextAware
         if (configurationService == null)
         {
             configurationService = ConfiguredResourceConfigurationService
-                    .getDefaultConfigurationService();
+                .getDefaultConfigurationService();
         }
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
         if (resubmissionService != null)
@@ -946,16 +948,16 @@ public class FlowBuilder implements ApplicationContextAware
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         logger.info("Instantiated flow - name[" + flowName + "] module[" + moduleName
-                + "] with RecoveryManager[" + ((recoveryManager != null) ? recoveryManager.getClass().getSimpleName() : "none")
-                + "] with ErrorReportingService[" + ((errorReportingService != null) ? errorReportingService.getClass().getSimpleName() : "none")
-                + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
-                + "] with ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
-                + "] with ExclusionService[" + ((exclusionService != null) ? exclusionService.getClass().getSimpleName() : "none")
-                + "] with ConfigurationService[" + ((configurationService != null) ? configurationService.getClass().getSimpleName() : "none")
-                + "] with RecordReplayService[" + ((replayRecordService != null) ? replayRecordService.getClass().getSimpleName() : "none")
-                + "] with FlowEventListener[" + ((flowEventListener != null) ? flowEventListener.getClass().getSimpleName() : "none")
-                + "] with Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
-                + "]");
+            + "] with RecoveryManager[" + ((recoveryManager != null) ? recoveryManager.getClass().getSimpleName() : "none")
+            + "] with ErrorReportingService[" + ((errorReportingService != null) ? errorReportingService.getClass().getSimpleName() : "none")
+            + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
+            + "] with ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
+            + "] with ExclusionService[" + ((exclusionService != null) ? exclusionService.getClass().getSimpleName() : "none")
+            + "] with ConfigurationService[" + ((configurationService != null) ? configurationService.getClass().getSimpleName() : "none")
+            + "] with RecordReplayService[" + ((replayRecordService != null) ? replayRecordService.getClass().getSimpleName() : "none")
+            + "] with FlowEventListener[" + ((flowEventListener != null) ? flowEventListener.getClass().getSimpleName() : "none")
+            + "] with Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
+            + "]");
 
         return flow;
     }
@@ -1095,6 +1097,44 @@ public class FlowBuilder implements ApplicationContextAware
         public PrimaryRouteBuilder splitter(String name, Builder<Splitter> splitterBuilder, SplitterInvokerConfigurationBuilder splitterInvokerConfigurationBuilder)
         {
             return this.splitter(name, splitterBuilder.build(), splitterInvokerConfigurationBuilder.build());
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Splitter splitter)
+        {
+            // TODO - how to override for nu ber of threads
+            ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration = new ConcurrentSplitterInvokerConfiguration();
+            ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
+            this.route.addFlowElement(new FlowElementImpl(name, splitter, new ConcurrentSplitterFlowElementInvoker(executorService)));
+            return this;
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Builder<Splitter> concurrentSplitterBuilder)
+        {
+            return this.concurrentSplitter(name, concurrentSplitterBuilder.build());
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Splitter splitter, ConcurrentSplitterInvokerConfigurationBuilder concurrentSplitterInvokerConfigurationBuilder)
+        {
+            return this.concurrentSplitter(name, splitter, concurrentSplitterInvokerConfigurationBuilder.build());
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Splitter splitter, ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration)
+        {
+            ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
+            ConcurrentSplitterFlowElementInvoker concurrentSplitterFlowElementInvoker = new ConcurrentSplitterFlowElementInvoker(executorService);
+            concurrentSplitterFlowElementInvoker.setConfiguration(concurrentSplitterInvokerConfiguration);
+            this.route.addFlowElement(new FlowElementImpl(name, splitter, concurrentSplitterFlowElementInvoker));
+            return this;
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Builder<Splitter> concurrentSplitterBuilder, ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration)
+        {
+            return this.concurrentSplitter(name, concurrentSplitterBuilder.build(), concurrentSplitterInvokerConfiguration);
+        }
+
+        public PrimaryRouteBuilder concurrentSplitter(String name, Builder<Splitter> concurrentSplitterBuilder, ConcurrentSplitterInvokerConfigurationBuilder concurrentSplitterInvokerConfigurationBuilder)
+        {
+            return this.concurrentSplitter(name, concurrentSplitterBuilder.build(), concurrentSplitterInvokerConfigurationBuilder.build());
         }
 
         public PrimaryRouteBuilder filter(String name, Filter filter)
@@ -1245,7 +1285,7 @@ public class FlowBuilder implements ApplicationContextAware
         public EvaluationWhen<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter, MultiRecipientRouterInvokerConfiguration invokerConfiguration)
         {
             MultiRecipientRouterFlowElementInvoker multiRecipientRouterFlowElementInvoker =
-                    new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
+                new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), invokerConfiguration);
             this.route.addFlowElement( new FlowElementImpl(name, multiRecipientRouter, multiRecipientRouterFlowElementInvoker) );
             return new PrimaryEvaluationWhenImpl(route);
         }
