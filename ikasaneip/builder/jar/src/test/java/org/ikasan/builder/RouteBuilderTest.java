@@ -113,6 +113,8 @@ public class RouteBuilderTest
     final Splitter splitter = mockery.mock(Splitter.class, "mockSplitter");
     /** Mock Splitter Builder */
     final Builder<Splitter> splitterBuilder = mockery.mock(Builder.class, "mockSplitterBuilder");
+    /** Mock Concurrent Splitter Builder */
+    final Builder<Splitter> concurrentSplitterBuilder = mockery.mock(Builder.class, "mockConcurrentSplitterBuilder");
 
     /** Mock Converter */
     final Converter converter = mockery.mock(Converter.class, "mockConverter");
@@ -226,6 +228,8 @@ public class RouteBuilderTest
                 will(returnValue(filter));
                 exactly(3).of(splitterBuilder).build();
                 will(returnValue(splitter));
+                exactly(3).of(concurrentSplitterBuilder).build();
+                will(returnValue(splitter));
             }
         });
 
@@ -301,14 +305,13 @@ public class RouteBuilderTest
         routeBuilder.splitter("Splitter", splitter, Configuration.splitterInvoker().build());
         routeBuilder.splitter("Splitter", splitterBuilder, Configuration.splitterInvoker().build());
 
-        // TODO - need to consider whether concurrent splitter is a separate configuration
-//        // concurrent splitter combinations
-//        routeBuilder.splitter("Splitter", splitter);
-//        routeBuilder.splitter("Splitter", splitterBuilder);
-//        routeBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker());
-//        routeBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker());
-//        routeBuilder.splitter("Splitter", splitter, Configuration.concurrentSplitterInvoker().build());
-//        routeBuilder.splitter("Splitter", splitterBuilder, Configuration.concurrentSplitterInvoker().build());
+        // concurrent splitter combinations
+        routeBuilder.concurrentSplitter("Splitter", splitter);
+        routeBuilder.concurrentSplitter("Splitter", concurrentSplitterBuilder);
+        routeBuilder.concurrentSplitter("Splitter", splitter, Configuration.concurrentSplitterInvoker());
+        routeBuilder.concurrentSplitter("Splitter", concurrentSplitterBuilder, Configuration.concurrentSplitterInvoker());
+        routeBuilder.concurrentSplitter("Splitter", splitter, Configuration.concurrentSplitterInvoker().build());
+        routeBuilder.concurrentSplitter("Splitter", concurrentSplitterBuilder, Configuration.concurrentSplitterInvoker().build());
     }
 
 }

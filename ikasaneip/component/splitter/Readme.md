@@ -3,16 +3,16 @@
 
 ### Purpose
 
-<img src="../../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitter will devide existing event pasted to it or generate new event as a list of events. Any transition component following splitter will receive 'n' events one by one in order provided by the list.
-Read more about EIP [Sequencer](http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html)
-In order to create your own splitter you need to implement [Splitter Interface](../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java)
-<br/>
-<br/>
-<br/>
-<br/>
+<img src="../../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splitter will split the incoming event into a list of multiple outgoing events. Each split event in the list will be operated on
+ by each down stream component before the next split event in the list. Splitter components can be executed by the default splitter invoker as a single thread, or by the concurrent splitter invoker where each split event in the returned list can operated on concurrently.
+
+
 ### Pattern
 
 ### Types
 
-# Document Info
+- [Default Splitter](./DefaultSplitter.md)
+- [Concurrent Splitter](./ConcurrentSplitter.md)
+
+
 

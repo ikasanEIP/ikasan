@@ -75,6 +75,12 @@ public class ConcurrentSplitterInvokerConfigurationBuilder
         return this;
     }
 
+    public ConcurrentSplitterInvokerConfigurationBuilder setConcurrentThreads(int concurrentThreads)
+    {
+        this.concurrentSplitterInvokerConfiguration.setConcurrentThreads(concurrentThreads);
+        return this;
+    }
+
     /**
      * Return the built instance
      * @return
