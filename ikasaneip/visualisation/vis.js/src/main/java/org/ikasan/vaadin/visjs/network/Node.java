@@ -22,7 +22,7 @@ public class Node extends Nodes
     protected int wiretapFoundImageW = 30;
 
     protected double errorFoundImageX = -80;
-    protected double errorFoundImageY = 0;
+    protected double errorFoundImageY = 10;
     protected int errorFoundImageH = 30;
     protected int errorFoundImageW = 30;
 
@@ -32,7 +32,7 @@ public class Node extends Nodes
     protected int exclusionFoundImageW = 30;
 
     protected double replayFoundImageX = 50;
-    protected double replayFoundImageY = 0;
+    protected double replayFoundImageY = 10;
     protected int replayFoundImageH = 30;
     protected int replayFoundImageW = 30;
 

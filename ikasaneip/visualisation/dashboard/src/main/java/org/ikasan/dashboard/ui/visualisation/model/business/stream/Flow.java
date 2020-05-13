@@ -191,8 +191,8 @@ public class Flow extends Node
         {
             if(x >= super.getX() + super.replayFoundImageX
                 && x <= super.getX() + super.replayFoundImageX + super.replayFoundImageW
-                && y >= super.getY() + super.replayFoundImageY
-                && y <= super.getY() + super.replayFoundImageY + super.replayFoundImageH)
+                && y <= super.getY() - super.replayFoundImageY
+                && y >= super.getY() - super.replayFoundImageY - super.replayFoundImageH)
             {
                 return true;
             }
