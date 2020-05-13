@@ -1,7 +1,10 @@
 package org.ikasan.dashboard.ui.general.component;
 
+import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -13,10 +16,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.ui.search.SearchConstants;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
+import org.ikasan.dashboard.ui.search.listener.IgnoreHospitalEventSubmissionListener;
+import org.ikasan.dashboard.ui.search.listener.ReplayEventSubmissionListener;
+import org.ikasan.dashboard.ui.search.listener.ResubmitHospitalEventSubmissionListener;
 import org.ikasan.dashboard.ui.util.DateFormatter;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrGeneralService;
@@ -30,22 +38,88 @@ public class SearchResultsDialog extends Dialog {
     private Label resultsLabel = new Label();
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
+    private HorizontalLayout buttonLayout = new HorizontalLayout();
+
+    private Registration replayEventRegistration;
+    private ReplayEventSubmissionListener replayEventSubmissionListener;
+
+    private Registration resubmitHospitalEventRegistration;
+    private ResubmitHospitalEventSubmissionListener resubmitHospitalEventSubmissionListener;
+
+    private Registration ignoreHospitalEventRegistration;
+    private IgnoreHospitalEventSubmissionListener ignoreHospitalEventSubmissionListener;
+
+    private Button selectAllButton;
+    private Button replayButton;
+    private Button resubmitButton;
+    private Button ignoreButton;
+    private Tooltip selectAllTooltip;
+    private Tooltip replayButtonTooltip;
+    private Tooltip resubmitButtonTooltip;
+    private Tooltip ignoreButtonTooltip;
+
     public SearchResultsDialog(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService){
         this.solrGeneralService = solrGeneralService;
 
         this.createSearchResultsGrid();
 
+        createSearchResultGridLayout();
+
+        this.setSizeFull();
+    }
+
+    /**
+     * Create the results grid layout.
+     */
+    protected void createSearchResultGridLayout()
+    {
+        createSearchResultsGrid();
+
+        this.resultsLabel.setVisible(false);
+
+        Image selectAllImage = new Image("/frontend/images/all-small-off-icon.png", "");
+        selectAllImage.setHeight("30px");
+        selectAllButton = new Button(selectAllImage);
+        Image replayImage = new Image("/frontend/images/replay-service.png", "");
+        replayImage.setHeight("30px");
+        replayButton = new Button(replayImage);
+        Image resubmitImage = new Image("/frontend/images/resubmit-icon.png", "");
+        resubmitImage.setHeight("30px");
+        resubmitButton = new Button(resubmitImage);
+        Image ignoreImage = new Image("/frontend/images/ignore-icon.png", "");
+        ignoreImage.setHeight("30px");
+        ignoreButton = new Button(ignoreImage);
+
+        selectAllTooltip = TooltipHelper.getTooltipForComponentBottom(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
+        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentBottom(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
+        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentBottom(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
+        replayButtonTooltip = TooltipHelper.getTooltipForComponentBottom(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
+
+        selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
+
+        buttonLayout.setWidth("70px");
+
+        HorizontalLayout buttonLayoutWrapper = new HorizontalLayout();
+        buttonLayoutWrapper.setWidthFull();
+        buttonLayoutWrapper.add(this.resultsLabel, buttonLayout);
+        buttonLayoutWrapper.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttonLayoutWrapper.setVerticalComponentAlignment(FlexComponent.Alignment.END, buttonLayout);
+
+        HorizontalLayout resultsLayout = new HorizontalLayout();
+        resultsLayout.setWidthFull();
+        resultsLayout.add(resultsLabel);
+
+        HorizontalLayout controlLayout = new HorizontalLayout();
+        controlLayout.setWidthFull();
+        controlLayout.add(resultsLayout, buttonLayoutWrapper);
+
         VerticalLayout layout = new VerticalLayout();
         layout.setWidth("1600px");
         layout.setHeight("800px");
 
-        this.resultsLabel.setVisible(false);
-        layout.add(this.resultsLabel);
-        layout.add(this.searchResultsGrid);
+        layout.add(controlLayout, searchResultsGrid);
 
         this.add(layout);
-
-        this.setSizeFull();
     }
 
     /**
@@ -245,6 +319,116 @@ public class SearchResultsDialog extends Dialog {
         this.searchResultsGrid.setSizeFull();
     }
 
+    /**
+     * Helper method to toggle the selected check box.
+     */
+    private void toggleSelected()
+    {
+//        if(this.selected)
+//        {
+//            selectionBoxes.keySet().forEach(key -> selectionBoxes.get(key).setValue(false));
+//
+//            Image selectedImage = new Image("/frontend/images/all-small-off-icon.png", "");
+//            selectedImage.setHeight("30px");
+//
+//            this.selectAllButton = new Button(selectedImage);
+//            this.selectionItems.clear();
+//
+//            this.selected = Boolean.FALSE;
+//            this.replayEventSubmissionListener.setSelected(Boolean.FALSE);
+//            this.resubmitHospitalEventSubmissionListener.setSelected(Boolean.FALSE);
+//            this.ignoreHospitalEventSubmissionListener.setSelected(Boolean.FALSE);
+//        }
+//        else
+//        {
+//            this.selectionBoxes.keySet().forEach(key -> selectionBoxes.get(key).setValue(true));
+//            Image deSelectedImage = new Image("/frontend/images/all-small-on-icon.png", "");
+//            deSelectedImage.setHeight("30px");
+//
+//            this.selectAllButton = new Button(deSelectedImage);
+//
+//            this.selected = Boolean.TRUE;
+//            this.replayEventSubmissionListener.setSelected(Boolean.TRUE);
+//            this.resubmitHospitalEventSubmissionListener.setSelected(Boolean.TRUE);
+//            this.ignoreHospitalEventSubmissionListener.setSelected(Boolean.TRUE);
+//        }
+//
+//        selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
+//        functionalGroupSetup();
+    }
+
+//    /**
+//     * Add the event listener for replay events.
+//     */
+//    private void addReplayButtonEventListener()
+//    {
+//        if(this.replayEventRegistration != null)
+//        {
+//            this.replayEventRegistration.remove();
+//        }
+//
+//        this.replayEventSubmissionListener = new ReplayEventSubmissionListener(this.replayRestService, this.replayAuditService, this.moduleMetadataService, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+//        this.replayEventRegistration = this.replayButton.addClickListener(this.replayEventSubmissionListener);
+//    }
+//
+//    /**
+//     * Add the event listener for the resubmission of hospital events.
+//     */
+//    private void addHospitalResubmitButtonEventListener()
+//    {
+//        if(this.resubmitHospitalEventRegistration != null)
+//        {
+//            this.resubmitHospitalEventRegistration.remove();
+//        }
+//
+//        this.resubmitHospitalEventSubmissionListener = new ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
+//            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+//        this.resubmitHospitalEventRegistration = this.resubmitButton.addClickListener(this.resubmitHospitalEventSubmissionListener);
+//    }
+//
+//    /**
+//     * Add the event listener to deal with ignoring hospital events.
+//     */
+//    private void addIgnoreButtonEventListener()
+//    {
+//        if(this.ignoreHospitalEventRegistration != null)
+//        {
+//            this.ignoreHospitalEventRegistration.remove();
+//        }
+//
+//        this.ignoreHospitalEventSubmissionListener = new IgnoreHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
+//            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+//        this.ignoreHospitalEventRegistration = this.ignoreButton.addClickListener(ignoreHospitalEventSubmissionListener);
+//    }
+//
+    /**
+     * Set up the functional group.
+     */
+    private void functionalGroupSetup(String type)
+    {
+        buttonLayout.removeAll();
+
+        if(type.equals("replay"))
+        {
+            buttonLayout.add(replayButton, replayButtonTooltip, selectAllButton, selectAllTooltip);
+
+            ComponentSecurityVisibility.applySecurity(replayButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+            ComponentSecurityVisibility.applySecurity(selectAllButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+
+            buttonLayout.setWidth("80px");
+        }
+        else if(type.equals("exclusion"))
+        {
+            buttonLayout.add(this.resubmitButton, resubmitButtonTooltip, this.ignoreButton, ignoreButtonTooltip, this.selectAllButton, selectAllTooltip);
+
+            ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+            ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+            ComponentSecurityVisibility.applySecurity(selectAllButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+
+            buttonLayout.setWidth("120px");
+        }
+    }
+
     public void search(long startTime, long endTime, String searchTerm, String type, boolean negateQuery, String moduleName, String flowName) {
         SearchFilter searchFilter = new SearchFilter();
         searchFilter.setModuleNameFilter(moduleName);
@@ -252,5 +436,7 @@ public class SearchResultsDialog extends Dialog {
 
         this.searchResultsGrid.init(startTime, endTime, searchTerm, Arrays.asList(type), negateQuery, searchFilter);
         this.resultsLabel.setVisible(true);
+
+        this.functionalGroupSetup(type);
     }
 }
