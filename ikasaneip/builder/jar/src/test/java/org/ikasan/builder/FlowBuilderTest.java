@@ -42,12 +42,14 @@ package org.ikasan.builder;
 
 import org.ikasan.builder.component.Builder;
 import org.ikasan.builder.invoker.Configuration;
+import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
@@ -1970,6 +1972,33 @@ public class FlowBuilderTest
 
     /**
      * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_concurrentSplitter() throws InterruptedException
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        RecordingProducer recordingProducer = new RecordingProducer();
+
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+            .withDescription("flowDescription")
+            .consumer("consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer().setEndpointEventProvider( new ListEventsEndpointEndProvider() ))
+            .splitter("split", builderFactory.getComponentBuilder().listSplitter())
+            .producer("producer", recordingProducer)
+            .build();
+
+        flow.start();
+        while(flow.isRunning())
+        {
+            Thread.sleep(100);
+        }
+
+        List recorded = recordingProducer.getRecorded();
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
      * This test is to ensure we can pass exceptionResolver with explicit instance or builder instance
      */
     @Test
@@ -2096,5 +2125,50 @@ public class FlowBuilderTest
                 .consumer("consumerName", builderFactory.getComponentBuilder().eventGeneratingConsumer().build())
                 .producer("producerName", producer)
                 .build();
+    }
+
+    class ListEventsEndpointEndProvider implements EndpointEventProvider<List<String>>
+    {
+        List<List<String>> events = new ArrayList<List<String>>();
+        int count = 0;
+
+        public ListEventsEndpointEndProvider()
+        {
+            List<String> event = new ArrayList<String>();
+            event.add("one");
+            event.add("two");
+            event.add("three");
+
+            events.add(event);
+            events.add(null);
+        }
+
+        @Override
+        public List<String> getEvent()
+        {
+            return events.get(count++);
+        }
+
+        @Override
+        public void rollback()
+        {
+            // ignore
+        }
+    }
+
+    class RecordingProducer implements Producer
+    {
+        List<Object> recorded = new ArrayList<Object>();
+
+        @Override
+        public void invoke(Object payload) throws EndpointException
+        {
+            recorded.add(payload);
+        }
+
+        public List getRecorded()
+        {
+            return recorded;
+        }
     }
 }

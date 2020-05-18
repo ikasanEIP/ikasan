@@ -49,14 +49,51 @@ package org.ikasan.flow.visitorPattern.invoker;
  */
 public class SplitterInvokerConfiguration extends InvokerConfiguration
 {
-    // whether to send the splits as a single payload or individual events
-    private boolean sendSplitsAsSinglePayload = false;
-
-    public boolean isSendSplitsAsSinglePayload() {
-        return sendSplitsAsSinglePayload;
+    public enum SplitEventTo
+    {
+        ListOfPayloads, ListOfEvents, IndividualEvents
     }
 
-    public void setSendSplitsAsSinglePayload(boolean sendSplitsAsSinglePayload) {
-        this.sendSplitsAsSinglePayload = sendSplitsAsSinglePayload;
+    // default state is IndividualEvents
+    String splitEventTo = SplitEventTo.IndividualEvents.name();
+
+    public void setSplitEventTo(SplitEventTo splitEventTo)
+    {
+        this.splitEventTo = splitEventTo.name();
+    }
+
+    public void setSplitEventToListOfPayloads()
+    {
+        this.splitEventTo = SplitEventTo.ListOfPayloads.name();
+    }
+
+    public void setSplitEventToListOfEvents()
+    {
+        this.splitEventTo = SplitEventTo.ListOfEvents.name();
+    }
+
+    public void setSplitEventToIndividualEvents()
+    {
+        this.splitEventTo = SplitEventTo.IndividualEvents.name();
+    }
+
+    public boolean isSplitEventToListOfPayloads()
+    {
+        return SplitEventTo.ListOfPayloads.equals(SplitEventTo.valueOf(splitEventTo));
+    }
+
+    public boolean isSplitEventToListOfEvents()
+    {
+        return SplitEventTo.ListOfEvents.equals(SplitEventTo.valueOf(splitEventTo));
+    }
+
+    public boolean isSplitEventToIndividualEvents()
+    {
+        return SplitEventTo.IndividualEvents.equals(SplitEventTo.valueOf(splitEventTo));
+    }
+
+    public SplitEventTo getSplitEventTo()
+    {
+        return SplitEventTo.valueOf(this.splitEventTo);
     }
 }

@@ -64,7 +64,7 @@ public class ConcurrentSplitterInvokerConfigurationBuilderTest
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("ConcurrentSplitterInvokerConfiguration should be false", csicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload());
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload());
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 1", csicb.build().getConcurrentThreads() == 1);
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 5", csicb.build().getConcurrentThreads() == 5);
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 2", csicb.setConcurrentThreads(2).build().getConcurrentThreads() == 2);
 
     }

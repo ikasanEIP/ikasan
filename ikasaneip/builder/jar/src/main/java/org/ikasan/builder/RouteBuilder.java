@@ -54,6 +54,7 @@ import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.event.EventFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,14 +67,21 @@ import java.util.concurrent.Executors;
 public class RouteBuilder
 {
 	Route route;
+    EventFactory eventFactory;
 
-	public RouteBuilder(Route route)
+	public RouteBuilder(Route route, EventFactory eventFactory)
 	{
 		this.route = route;
 		if(route == null)
 		{
 			throw new IllegalArgumentException("route cannot be 'null'");
 		}
+
+        this.eventFactory = eventFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("eventFactory cannot be 'null'");
+        }
 	}
 
 	public RouteBuilder converter(String name, Converter converter)
@@ -146,7 +154,7 @@ public class RouteBuilder
 
 	public RouteBuilder splitter(String name, Splitter splitter)
 	{
-		this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
+		this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker(eventFactory)));
 		return this;
 	}
 
@@ -157,7 +165,7 @@ public class RouteBuilder
 
 	public RouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
 	{
-		SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker();
+		SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
 		splitterFlowElementInvoker.setConfiguration(splitterInvokerConfiguration);
 		this.route.addFlowElement(new FlowElementImpl(name, splitter, splitterFlowElementInvoker));
 		return this;
@@ -180,7 +188,6 @@ public class RouteBuilder
 
     public RouteBuilder concurrentSplitter(String name, Splitter splitter)
     {
-        // TODO - how to override for nu ber of threads
         ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration = new ConcurrentSplitterInvokerConfiguration();
         ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
         this.route.addFlowElement(new FlowElementImpl(name, splitter, new ConcurrentSplitterFlowElementInvoker(executorService)));

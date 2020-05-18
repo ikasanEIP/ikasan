@@ -38,57 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.invoker;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.flow.visitorPattern.invoker.SplitterInvokerConfiguration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Splitter invoker configuration builder.
+ * Sample module.
+ *
  * @author Ikasan Development Team
  */
-public class SplitterInvokerConfigurationBuilder
+@SpringBootApplication
+public class Application
 {
-    SplitterInvokerConfiguration splitterInvokerConfiguration;
-
-    /**
-     * Constructor
-     * @param splitterInvokerConfiguration
-     */
-    public SplitterInvokerConfigurationBuilder(SplitterInvokerConfiguration splitterInvokerConfiguration)
+    public static void main(String[] args)
     {
-        this.splitterInvokerConfiguration = splitterInvokerConfiguration;
-    }
-
-    public SplitterInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
-    {
-        this.splitterInvokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsEventWithListOfPayloads()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToListOfPayloads();
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsEventWithListOfEvents()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToListOfEvents();
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsIndividualEvents()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToIndividualEvents();
-        return this;
-    }
-
-    /**
-     * Return the built instance
-     * @return
-     */
-    public SplitterInvokerConfiguration build()
-    {
-        return this.splitterInvokerConfiguration;
+        SpringApplication.run(Application.class, args);
     }
 }

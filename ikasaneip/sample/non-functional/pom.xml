@@ -58,6 +58,7 @@
         <module>h2-server-txn-fail-precommit-amq-resource</module>
         <module>h2-server-txn-fail-commit-db-resource</module>
         <module>h2-server-txn-fail-commit-amq-resource</module>
+        <module>component-performance</module>
     </modules>
 
 </project>

@@ -175,7 +175,7 @@ public class FlowBuilder implements ApplicationContextAware
     Monitor monitor;
 
     /** default event factory */
-    EventFactory eventFactory = new FlowEventFactory();
+    EventFactory eventFactory;
 
     /** head flow element of the exclusion flow */
     FlowElement<?> exclusionFlowHeadElement;
@@ -210,7 +210,7 @@ public class FlowBuilder implements ApplicationContextAware
      *
      * @param name
      */
-    public FlowBuilder(String name, String moduleName)
+    public FlowBuilder(String name, String moduleName, EventFactory eventFactory)
     {
         this.flowName = name;
         if(name == null)
@@ -222,6 +222,12 @@ public class FlowBuilder implements ApplicationContextAware
         if(moduleName == null)
         {
             throw new IllegalArgumentException("module name cannot be 'null'");
+        }
+
+        this.eventFactory = eventFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("eventFactory name cannot be 'null'");
         }
     }
 
@@ -1067,7 +1073,7 @@ public class FlowBuilder implements ApplicationContextAware
 
         public PrimaryRouteBuilder splitter(String name, Splitter splitter)
         {
-            this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
+            this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker(eventFactory)));
             return this;
         }
 
@@ -1083,7 +1089,7 @@ public class FlowBuilder implements ApplicationContextAware
 
         public PrimaryRouteBuilder splitter(String name, Splitter splitter, SplitterInvokerConfiguration splitterInvokerConfiguration)
         {
-            SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker();
+            SplitterFlowElementInvoker splitterFlowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
             splitterFlowElementInvoker.setConfiguration(splitterInvokerConfiguration);
             this.route.addFlowElement(new FlowElementImpl(name, splitter, splitterFlowElementInvoker));
             return this;
@@ -1101,7 +1107,6 @@ public class FlowBuilder implements ApplicationContextAware
 
         public PrimaryRouteBuilder concurrentSplitter(String name, Splitter splitter)
         {
-            // TODO - how to override for nu ber of threads
             ConcurrentSplitterInvokerConfiguration concurrentSplitterInvokerConfiguration = new ConcurrentSplitterInvokerConfiguration();
             ExecutorService executorService = Executors.newFixedThreadPool(concurrentSplitterInvokerConfiguration.getConcurrentThreads());
             this.route.addFlowElement(new FlowElementImpl(name, splitter, new ConcurrentSplitterFlowElementInvoker(executorService)));

@@ -53,7 +53,7 @@ public class ConcurrentSplitterInvokerConfiguration extends InvokerConfiguration
     private boolean sendSplitsAsSinglePayload = false;
 
     // number of concurrent threads for the excecutor service
-    private int concurrentThreads = 1;
+    private int concurrentThreads = 5;
 
     public boolean isSendSplitsAsSinglePayload() {
         return sendSplitsAsSinglePayload;

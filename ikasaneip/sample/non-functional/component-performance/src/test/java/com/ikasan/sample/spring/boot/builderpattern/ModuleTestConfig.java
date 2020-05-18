@@ -38,57 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.invoker;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.flow.visitorPattern.invoker.SplitterInvokerConfiguration;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
- * Splitter invoker configuration builder.
+ *
  * @author Ikasan Development Team
  */
-public class SplitterInvokerConfigurationBuilder
+@Configuration
+public class ModuleTestConfig
 {
-    SplitterInvokerConfiguration splitterInvokerConfiguration;
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
-    /**
-     * Constructor
-     * @param splitterInvokerConfiguration
-     */
-    public SplitterInvokerConfigurationBuilder(SplitterInvokerConfiguration splitterInvokerConfiguration)
+    @Bean
+    JmsTemplate jmsTemplate()
     {
-        this.splitterInvokerConfiguration = splitterInvokerConfiguration;
+        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
+        return jmsTemplate;
     }
 
-    public SplitterInvokerConfigurationBuilder withDynamicConfiguration(boolean dynamicConfiguration)
-    {
-        this.splitterInvokerConfiguration.setDynamicConfiguration(dynamicConfiguration);
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsEventWithListOfPayloads()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToListOfPayloads();
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsEventWithListOfEvents()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToListOfEvents();
-        return this;
-    }
-
-    public SplitterInvokerConfigurationBuilder withSplitAsIndividualEvents()
-    {
-        this.splitterInvokerConfiguration.setSplitEventToIndividualEvents();
-        return this;
-    }
-
-    /**
-     * Return the built instance
-     * @return
-     */
-    public SplitterInvokerConfiguration build()
-    {
-        return this.splitterInvokerConfiguration;
-    }
 }

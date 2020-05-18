@@ -40,6 +40,8 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.flow.event.FlowEventFactory;
+import org.ikasan.spec.event.EventFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
@@ -107,6 +109,8 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /** allow turning off context listeners at the component level */
     Boolean ignoreContextInvocation = false;
+
+    EventFactory eventFactory = new FlowEventFactory();
 
     /**
      * Setter for executor service override
@@ -317,7 +321,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
             }
             else
             {
-                flowElementInvoker = new SplitterFlowElementInvoker();
+                flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
             }
         }
         else if(component instanceof Filter)
