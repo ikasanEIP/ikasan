@@ -62,8 +62,21 @@ public class SplitterInvokerConfigurationBuilderTest
         Assert.assertTrue("SplitterInvokerConfiguration should have 2 properties", TestUtils.getFields(SplitterInvokerConfiguration.class).size() == 2);
         Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload());
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload());
+
+        // default behaviour
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.build().isSplitEventToIndividualEvents());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfPayloads());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfEvents());
+
+        // overrride with list of payloads
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSplitAsEventWithListOfPayloads().build().isSplitEventToListOfPayloads());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfEvents());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToIndividualEvents());
+
+        // overrride with list of events
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSplitAsEventWithListOfEvents().build().isSplitEventToListOfEvents());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfPayloads());
+        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToIndividualEvents());
     }
 
 }

@@ -41,6 +41,7 @@
 package org.ikasan.builder;
 
 import org.ikasan.module.SimpleModule;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
@@ -88,11 +89,13 @@ public class ModuleBuilder
 	/** application context */
 	ApplicationContext context;
 
+    EventFactory eventFactory;
+
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	ModuleBuilder(ApplicationContext context, String name)
+	ModuleBuilder(ApplicationContext context, String name, EventFactory eventFactory)
 	{
 		this.context = context;
 		if(context == null)
@@ -100,11 +103,17 @@ public class ModuleBuilder
 			throw new IllegalArgumentException("context cannot be 'null'");
 		}
 
-		this.name = name;
-		if(name == null)
-		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
-		}
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("module name cannot be 'null'");
+        }
+
+        this.eventFactory = eventFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("eventFactory name cannot be 'null'");
+        }
 	}
 
 	/**
@@ -163,7 +172,7 @@ public class ModuleBuilder
 	public FlowBuilder getFlowBuilder(String flowName)
 	{
 		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-		FlowBuilder flowBuilder = new FlowBuilder(flowName, this.name);
+		FlowBuilder flowBuilder = new FlowBuilder(flowName, this.name, eventFactory);
 		beanFactory.autowireBean(flowBuilder);
 		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;

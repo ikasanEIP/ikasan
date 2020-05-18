@@ -152,6 +152,8 @@ public class RouteBuilderTest
 
     final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "serialiserFactory");
 
+    final EventFactory eventFactory = mockery.mock(EventFactory.class, "eventFactory");
+
     IkasanApplication ikasanApplication;
 
     @Before
@@ -205,7 +207,7 @@ public class RouteBuilderTest
     public void test_successful_method_combinations()
     {
         List<FlowElement> flowELements = new ArrayList<FlowElement>();
-        RouteBuilder routeBuilder = new RouteBuilder( new RouteImpl(flowELements) );
+        RouteBuilder routeBuilder = new RouteBuilder( new RouteImpl(flowELements), eventFactory);
 
         mockery.checking(new Expectations()
         {

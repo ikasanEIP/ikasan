@@ -41,10 +41,11 @@
 package org.ikasan.builder;
 
 import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.monitor.MonitorFactory;
 import org.ikasan.monitor.notifier.NotifierFactory;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -63,6 +64,7 @@ public class BuilderFactory implements ApplicationContextAware
 {
     /** handle to the spring application context */
     ApplicationContext applicationContext;
+    EventFactory eventFactory = new FlowEventFactory();
 
     Map<String, ModuleBuilder> moduleBuilders = new HashMap<String, ModuleBuilder>();
 
@@ -79,7 +81,7 @@ public class BuilderFactory implements ApplicationContextAware
             return this.moduleBuilders.get(moduleName);
         }
 
-        ModuleBuilder moduleBuilder = new ModuleBuilder(this.applicationContext, moduleName);
+        ModuleBuilder moduleBuilder = new ModuleBuilder(this.applicationContext, moduleName, eventFactory);
         this.moduleBuilders.put(moduleName, moduleBuilder);
         return moduleBuilder;
     }
@@ -120,7 +122,7 @@ public class BuilderFactory implements ApplicationContextAware
      */
     public RouteBuilder getRouteBuilder()
     {
-        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
+        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()), eventFactory);
     }
 
     /**
