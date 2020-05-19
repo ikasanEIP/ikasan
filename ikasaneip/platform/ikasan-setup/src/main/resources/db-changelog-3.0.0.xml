@@ -4,25 +4,28 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <!-- 2.1.x table creation -->
+    <!-- 3.0.x table creation -->
     <include file="db/tables/db-changeLog-createRoleModule.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x table alterations -->
+    <!-- 3.0.x table alterations -->
     <include file="db/alter/db-changeLog-alterSystemEventAddHarvestedTimestamp.xml" relativeToChangelogFile="true" />
     <include file="db/alter/db-changeLog-alterUserAddPasswordChangeRequired.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x cardinality creation -->
+    <!-- 3.0.x cardinality creation -->
     <include file="db/cardinality/db-changeLog-createRoleModuleFk.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x data creation -->
+    <!-- 3.0.x data creation -->
     <include file="db/data/db-changelog-insertBlueConsoleSecurityRecords.xml"/>
+    <include file="db/data/db-changelog-insertUserSearchSecurityRecords.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-module-control-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-insertConfigurationReadSecurityRecords.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x index creation -->
+    <!-- 3.0.x index creation -->
     <include file="db/index/db-changeLog-createIndexErrorOccurrenceExpiry.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.1.x table drop -->
+    <!-- 3.0.x table drop -->
 
-    <!-- 2.1.x table modify -->
+    <!-- 3.0.x table modify -->
 
 
 </databaseChangeLog>
