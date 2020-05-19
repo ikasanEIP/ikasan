@@ -146,6 +146,10 @@ public class SecurityConstants
 	public static String NOTIFICATION_WRITE = "notification-write";
 	public static String NOTIFICATION_ADMIN = "notification-admin";
 
+    public static String MODULE_CONTROL_READ = "module-control-read";
+    public static String MODULE_CONTROL_WRITE = "module-control-write";
+    public static String MODULE_CONTROL_ADMIN = "module-control-admin";
+
 	public static List<String> SERVICE_VIEW_PERMISSIONS;
 
 	public static List<String> TOPOLOGY_VIEW_PERMISSIONS;

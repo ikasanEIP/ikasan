@@ -39,6 +39,7 @@ import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.EventViewDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.component.WiretapListDialog;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
@@ -208,7 +209,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
                 this.hl.setVisible(true);
                 this.flowComboBox.setVisible(true);
-                this.controlPanel.setVisible(true);
+                ComponentSecurityVisibility.applySecurity(this.controlPanel, SecurityConstants.ALL_AUTHORITY
+                    , SecurityConstants.MODULE_CONTROL_WRITE
+                    , SecurityConstants.MODULE_CONTROL_ADMIN);
                 this.statusPanel.setVisible(true);
                 createGraph(doubleClickEvent.getItem());
 
