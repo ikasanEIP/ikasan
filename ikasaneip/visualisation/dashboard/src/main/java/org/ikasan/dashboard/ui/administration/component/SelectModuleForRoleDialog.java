@@ -91,6 +91,7 @@ public class SelectModuleForRoleDialog extends Dialog
             RoleModule roleModule = new RoleModule();
             roleModule.setRole(this.role);
             roleModule.setModuleName(moduleItemDoubleClickEvent.getItem().getName());
+            this.securityService.saveRoleModule(roleModule);
 
             role.addRoleModule(roleModule);
 
@@ -103,7 +104,6 @@ public class SelectModuleForRoleDialog extends Dialog
             moduleGrid.setItems(removeAlreadyAssociatedModules(moduleMetaDataList));
             moduleGrid.getDataProvider().refreshAll();
 
-//            this.roleModuleDataProvider.getItems().add(roleModule);
             this.roleModuleDataProvider.refreshAll();
         });
 

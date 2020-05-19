@@ -14,8 +14,10 @@ import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
@@ -113,6 +115,10 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         this.add(controlPanelLayout);
         this.setVerticalComponentAlignment(Alignment.BASELINE, controlPanelLayout);
         this.setJustifyContentMode(JustifyContentMode.END);
+
+        ComponentSecurityVisibility.applySecurity(this, SecurityConstants.ALL_AUTHORITY
+            , SecurityConstants.MODULE_CONTROL_WRITE
+            , SecurityConstants.MODULE_CONTROL_ADMIN);
     }
 
     public void setFlowStatus(State state)

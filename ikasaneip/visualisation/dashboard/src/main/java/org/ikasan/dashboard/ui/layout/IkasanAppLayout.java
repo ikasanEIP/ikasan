@@ -25,6 +25,7 @@ import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.PageConfigurator;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
@@ -74,7 +75,8 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
         {
             SecurityContextHolder.getContext().setAuthentication(null);
             UI.getCurrent().navigate("");
-            UI.getCurrent().getSession().close();
+            VaadinSession.getCurrent().getSession().invalidate();
+            UI.getCurrent().getPage().executeJs("window.location.href=''");
         });
 
         Button jpButton = new Button("JP", new Icon(VaadinIcon.ARROW_RIGHT));

@@ -20,22 +20,14 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.visualisation.component.ControlPanel;
 import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImpl;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Route(value = "module", layout = IkasanAppLayout.class)
@@ -45,20 +37,9 @@ public class ModuleView extends VerticalLayout implements BeforeEnterObserver
 {
     Logger logger = LoggerFactory.getLogger(ModuleView.class);
 
-    @Resource
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
-
-    @Resource
-    private ErrorReportingService solrErrorReportingService;
-
-    @Resource
-    private ExclusionManagementService solrExclusionService;
-
     @Autowired
     private ModuleMetaDataService moduleMetadataService;
 
-    @Resource
-    private ConfigurationMetaDataService configurationMetadataService;
 
     private VaadinSession session;
     private UI current;

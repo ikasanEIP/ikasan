@@ -17,7 +17,8 @@
     <!-- 3.0.x data creation -->
     <include file="db/data/db-changelog-insertBlueConsoleSecurityRecords.xml"/>
     <include file="db/data/db-changelog-insertUserSearchSecurityRecords.xml" relativeToChangelogFile="true" />
-
+    <include file="db/data/db-changelog-module-control-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-insertConfigurationReadSecurityRecords.xml" relativeToChangelogFile="true" />
 
     <!-- 3.0.x index creation -->
     <include file="db/index/db-changeLog-createIndexErrorOccurrenceExpiry.xml" relativeToChangelogFile="true" />
