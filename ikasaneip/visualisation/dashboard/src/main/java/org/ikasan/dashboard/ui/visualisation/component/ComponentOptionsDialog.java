@@ -100,7 +100,7 @@ public class ComponentOptionsDialog extends Dialog
         verticalLayout.add(createWiretapBeforeComponentWithTTLOneDayButton);
 
         ComponentSecurityVisibility.applySecurity(createWiretapBeforeComponentWithTTLOneDayButton, SecurityConstants.ALL_AUTHORITY
-            , SecurityConstants.WIRETAP_ADMIN
+            , SecurityConstants.WIRETAP_WRITE
             , SecurityConstants.WIRETAP_ADMIN);
 
         Button createWiretapAfterComponentWithTTLOneDayButton = new Button(

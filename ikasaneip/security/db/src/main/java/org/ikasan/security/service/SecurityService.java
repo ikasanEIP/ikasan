@@ -226,6 +226,12 @@ public interface SecurityService
      * @param policyLink
      */
     public void savePolicyLink(PolicyLink policyLink);
+
+    /**
+     *
+     * @param roleModule
+     */
+    public void saveRoleModule(RoleModule roleModule);
     
     /**
      * 

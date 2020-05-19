@@ -94,6 +94,12 @@ public interface SecurityDao
     public void deleteRoleModule(RoleModule roleModule);
 
     /**
+     *
+     * @param roleModule
+     */
+    public void saveRoleModule(RoleModule roleModule);
+
+    /**
      * 
      * @param principal
      */
