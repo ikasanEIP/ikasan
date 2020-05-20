@@ -283,12 +283,14 @@ public class HibernateSecurityDaoTest
 
 
         role.setPolicies(policies);
+        this.xaSecurityDao.saveOrUpdateRole(role);
 
         RoleModule roleModule = new RoleModule();
         roleModule.setModuleName("moduleName");
         roleModule.setRole(role);
-        role.addRoleModule(roleModule);
+        this.xaSecurityDao.saveRoleModule(roleModule);
 
+        role.addRoleModule(roleModule);
         this.xaSecurityDao.saveOrUpdateRole(role);
 
         principal.getRoles().add(role);

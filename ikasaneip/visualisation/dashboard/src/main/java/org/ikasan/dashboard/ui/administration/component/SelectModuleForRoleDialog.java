@@ -94,7 +94,6 @@ public class SelectModuleForRoleDialog extends Dialog
             this.securityService.saveRoleModule(roleModule);
 
             role.addRoleModule(roleModule);
-
             this.securityService.saveRole(this.role);
 
             String action = String.format("Module [%s] added to role [%s].", moduleItemDoubleClickEvent.getItem().getName(), role.getName());

@@ -60,7 +60,7 @@
         </id>
 
         <many-to-one name="role" class="org.ikasan.security.model.Role" fetch="select">
-            <column name="RoleId" not-null="true" />
+            <column name="RoleId" />
         </many-to-one>
 
          <property name="moduleName"
