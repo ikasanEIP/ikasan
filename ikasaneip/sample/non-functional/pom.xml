@@ -53,7 +53,6 @@
 
     <modules>
         <module>nft-util</module>
-        <module>h2-server-stress</module>
         <module>h2-server-component-fail</module>
         <module>h2-server-txn-fail-precommit-db-resource</module>
         <module>h2-server-txn-fail-precommit-amq-resource</module>
