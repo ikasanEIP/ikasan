@@ -3,7 +3,6 @@ package org.ikasan.dashboard.ui.visualisation.view;
 import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
@@ -12,8 +11,6 @@ import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -26,28 +23,18 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.cache.FlowStateCache;
-import org.ikasan.dashboard.ui.component.ErrorListDialog;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
-import org.ikasan.dashboard.ui.component.WiretapListDialog;
-import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
-import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapter;
-import org.ikasan.dashboard.ui.visualisation.component.*;
+import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamFilteringGrid;
+import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamUploadDialog;
+import org.ikasan.dashboard.ui.visualisation.component.ModuleFilteringGrid;
 import org.ikasan.dashboard.ui.visualisation.component.filter.BusinessStreamSearchFilter;
 import org.ikasan.dashboard.ui.visualisation.component.filter.ModuleSearchFilter;
-import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
-import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
@@ -61,7 +48,6 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.vaadin.visjs.network.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +62,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Route(value = "visualisation", layout = IkasanAppLayout.class)
 @UIScope
@@ -118,33 +101,19 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Resource
     private BusinessStreamMetaDataService<BusinessStreamMetaData> businessStreamMetaDataService;
 
-//    private EventViewDialog eventViewDialog = new EventViewDialog();
+    @Resource
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
-    private BusinessStream graph = null;
-    private List<Node> nodes = new ArrayList<>();
-    private VaadinSession session;
-    private UI current;
+
     private ModuleFilteringGrid modulesGrid;
     private BusinessStreamFilteringGrid businessStreamGrid;
     private Button viewListButton;
     private RadioButtonGroup<String> group = new RadioButtonGroup<>();
-//    private List<WiretapEvent> wiretapSearchResults;
-//    private List<ErrorOccurrence> errorOccurrences;
-    private BusinessStreamVisualisation businessStreamVisualisation;
-    private ModuleVisualisation moduleVisualisation;
+    private GraphViewBusinessStreamVisualisation businessStreamVisualisation;
+    private GraphViewModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
-    private HorizontalLayout moduleViewHeaderLayout = new HorizontalLayout();
-    private FlowComboBox flowComboBox;
-    private ControlPanel controlPanel;
 
     private Registration broadcasterRegistration;
-
-    private StatusPanel statusPanel;
-
-    private Module currentModule;
-    private Flow currentFlow;
-
-    private List<GraphViewChangeListener> graphViewChangeListeners;
 
     private boolean initialised = false;
 
@@ -159,11 +128,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     {
         this.setMargin(true);
         this.setSizeFull();
-
-        this.graphViewChangeListeners = new ArrayList<>();
-
-        session = UI.getCurrent().getSession();
-        current = UI.getCurrent();
     }
 
     private void init()
@@ -171,7 +135,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         this.createModuleGrid();
         this.createdBusinessStreamGrid();
 
-        this.createModuleViewHeader();
         this.createToolsSlider();
         this.createSearchSlider();
     }
@@ -191,13 +154,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         modulesGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>)
             doubleClickEvent ->
             {
-                this.moduleLabel.setText(doubleClickEvent.getItem().getName());
-                this.moduleViewHeaderLayout.setVisible(true);
-                this.flowComboBox.setVisible(true);
-                ComponentSecurityVisibility.applySecurity(this.controlPanel, SecurityConstants.ALL_AUTHORITY
-                    , SecurityConstants.MODULE_CONTROL_WRITE
-                    , SecurityConstants.MODULE_CONTROL_ADMIN);
-                this.statusPanel.setVisible(true);
                 createModuleVisualisation(doubleClickEvent.getItem());
 
                 if(this.toolSlider.isExpanded())
@@ -245,10 +201,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
                 this.createBusinessStreamGraph(doubleClickEvent.getItem().getJson());
 
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
-                this.moduleViewHeaderLayout.setVisible(true);
-                this.flowComboBox.setVisible(false);
-                this.controlPanel.setVisible(false);
-                this.statusPanel.setVisible(false);
             }
             catch (IOException e)
             {
@@ -269,8 +221,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
-        this.controlPanel = new ControlPanel(this.moduleControlRestService);
-
         if(!initialised)
         {
             this.init();
@@ -284,100 +234,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         {
             this.uploadBusinssStreamButtonTooltip.attachToComponent(this.uploadBusinssStreamButton);
         }
-    }
-
-    protected void createModuleViewHeader()
-    {
-        this.createFlowCombo();
-
-        HorizontalLayout moduleNameLayout = new HorizontalLayout();
-        moduleNameLayout.setMargin(false);
-        moduleNameLayout.setSpacing(false);
-        moduleNameLayout.add(moduleLabel);
-
-        HorizontalLayout comboBoxLayout = new HorizontalLayout();
-        comboBoxLayout.setMargin(false);
-        comboBoxLayout.setSpacing(false);
-        comboBoxLayout.add(flowComboBox);
-
-        moduleViewHeaderLayout.setWidth("100%");
-        moduleViewHeaderLayout.setMargin(false);
-
-        statusPanel = new StatusPanel(this.moduleControlRestService);
-
-        moduleViewHeaderLayout.setFlexGrow(1, moduleNameLayout);
-        moduleViewHeaderLayout.setFlexGrow(1, statusPanel);
-        moduleViewHeaderLayout.setFlexGrow(5, comboBoxLayout);
-        moduleViewHeaderLayout.setFlexGrow(3, controlPanel);
-
-        moduleViewHeaderLayout.add(moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
-        moduleViewHeaderLayout.setVerticalComponentAlignment(Alignment.BASELINE, moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
-
-        if(this.currentModule == null)
-        {
-            moduleViewHeaderLayout.setVisible(false);
-        }
-
-        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService,
-            this.triggerRestService);
-
-        this.add(moduleViewHeaderLayout);
-//        this.add(moduleVisualisation);
-
-        this.graphViewChangeListeners.add(statusPanel);
-        this.graphViewChangeListeners.add(controlPanel);
-    }
-
-    private void createFlowCombo() {
-        flowComboBox = new FlowComboBox();
-        flowComboBox.setItemLabelGenerator(org.ikasan.dashboard.ui.visualisation.model.flow.Flow::getName);
-        flowComboBox.setHeight("40px");
-        flowComboBox.setWidth("600px");
-
-        flowComboBox.setRenderer(new ComponentRenderer<>(item ->
-        {
-            HorizontalLayout container = new HorizontalLayout();
-
-            Icon icon = new Icon(VaadinIcon.CIRCLE);
-
-            FlowState flowState = FlowStateCache.instance().get(currentModule, item);
-
-            if(flowState != null)
-            {
-                icon.setColor(flowState.getState().getStateColour());
-            }
-
-            icon.setSize("15px");
-            icon.setVisible(true);
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.setWidth("20px");
-            verticalLayout.add(icon);
-            verticalLayout.setHorizontalComponentAlignment(Alignment.END, icon);
-
-            Label namelabel = new Label(item.getName());
-            namelabel.setWidth("500px");
-
-            container.setVerticalComponentAlignment(Alignment.CENTER, namelabel);
-            container.add(namelabel, verticalLayout);
-
-            return container;
-        }));
-
-        this.flowComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<org.ikasan.dashboard.ui.visualisation.model.flow.Flow>, org.ikasan.dashboard.ui.visualisation.model.flow.Flow>>) comboBoxFlowComponentValueChangeEvent ->
-        {
-            if(comboBoxFlowComponentValueChangeEvent.getValue() != null)
-            {
-                logger.info("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
-                this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
-                this.moduleVisualisation.redraw();
-
-                this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
-
-                this.fireModuleFlowChangeEvent();
-                logger.info("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
-            }
-        });
     }
 
     /**
@@ -403,40 +259,20 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void createModuleVisualisation(ModuleMetaData moduleMetaData)
     {
-        List<String> configurationIds = moduleMetaData.getFlows().stream()
-            .map(flowMetaData -> flowMetaData.getFlowElements()).flatMap(List::stream)
-            .map(flowElementMetaData -> flowElementMetaData.getConfigurationId())
-            .filter(id -> id != null)
-            .distinct()
-            .collect(Collectors.toList());
-
-        List<ConfigurationMetaData> configurationMetaData
-            = this.configurationMetadataService.findByIdList(configurationIds);
-
-        ModuleVisjsAdapter adapter = new ModuleVisjsAdapter();
-        Module module = adapter.adapt(moduleMetaData, configurationMetaData);
-
-        if(this.moduleVisualisation != null){
-            this.remove(moduleVisualisation);
-        }
-
         if (this.businessStreamVisualisation != null)
         {
             this.remove(businessStreamVisualisation);
         }
 
-        this.currentModule = module;
-        this.currentFlow = module.getFlows().get(0);
+        if(this.moduleVisualisation != null)
+        {
+            this.remove(moduleVisualisation);
+        }
 
-        this.fireModuleFlowChangeEvent();
-
-        this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
+        this.moduleVisualisation = new GraphViewModuleVisualisation(this.moduleControlRestService,
             this.configurationRestService,
-            this.triggerRestService);
-        moduleVisualisation.addModule(module);
-        moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
-        moduleVisualisation.redraw();
-        this.flowComboBox.setCurrentModule(module);
+            this.triggerRestService, this.configurationMetadataService);
+        this.moduleVisualisation.createModuleVisualisation(moduleMetaData);
         this.add(moduleVisualisation);
     }
 
@@ -454,13 +290,12 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             this.remove(moduleVisualisation);
         }
 
-        businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, this.solrWiretapService, this.moduleMetadataService
-            , this.configurationMetadataService, this.viewListButton, this.solrSearchService);
+        businessStreamVisualisation = new GraphViewBusinessStreamVisualisation(this.solrSearchService,
+            this.moduleControlRestService, this.moduleMetadataService, this.configurationRestService
+            , this.triggerRestService, this.configurationMetadataService);
 
-        businessStreamVisualisation.createBusinessStreamGraphGraph(json);
+        businessStreamVisualisation.createBusinessStreamGraph(json);
 
-//        businessStreamVisualisation.redraw();
         this.add(businessStreamVisualisation);
     }
 
@@ -558,27 +393,11 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
         searchLayout.add(searchText);
 
         Button searchButton = new Button("Search");
-//        searchButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> search(searchText.getValue(),
-//            Date.from(startDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-//            Date.from(endDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
 
         searchLayout.add(searchButton);
 
         this.viewListButton = new Button("Result List");
         this.viewListButton.setVisible(false);
-        this.viewListButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-        {
-//            if(this.group.getValue().equals("Wiretap"))
-//            {
-//                WiretapListDialog dialog = new WiretapListDialog(this.wiretapSearchResults);
-//                dialog.open();
-//            }
-//            else if(this.group.getValue().equals("Error"))
-//            {
-//                ErrorListDialog dialog = new ErrorListDialog(this.errorOccurrences, this.solrErrorReportingService);
-//                dialog.open();
-//            }
-        });
 
         searchLayout.add(viewListButton);
 
@@ -601,168 +420,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver
             .build();
 
         add(searchSlider);
-    }
-
-//    /**
-//     * Method to perform the search.
-//     *
-//     * @param searchTerm The search term we are seeding the search with.
-//     * @param startDate The start date range.
-//     * @param endDate The end date range.
-//     */
-//    protected void search(String searchTerm, Date startDate, Date endDate)
-//    {
-//        if(this.businessStreamVisualisation == null)
-//        {
-//            NotificationHelper.showUserNotification("The Ikasan Visualisation appears to be empty!");
-//            return;
-//        }
-//
-//        if(searchTerm == null || searchTerm.isEmpty())
-//        {
-//            NotificationHelper.showUserNotification("A search term must be entered!");
-//            return;
-//        }
-//
-//        if(group.getValue().equals("Wiretap"))
-//        {
-//            this.performWiretapSearch(searchTerm, startDate, endDate);
-//        }
-//        else if(group.getValue().equals("Error"))
-//        {
-//            this.performErrorSearch(searchTerm, startDate, endDate);
-//        }
-//    }
-//
-//    protected void performWiretapSearch(String searchTerm, Date startDate, Date endDate)
-//    {
-//        if(this.businessStreamVisualisation != null)
-//        {
-//            this.businessStreamVisualisation.performWiretapSearch(searchTerm, startDate, endDate);
-//        }
-//    }
-//
-//    protected void performErrorSearch(String searchTerm, Date startDate, Date endDate)
-//    {
-//        ArrayList<String> moduleNames = new ArrayList<>();
-//        ArrayList<String> flowNames = new ArrayList<>();
-//
-//        for(Node node: this.graph.getFlows())
-//        {
-//            if (node.getId().contains("."))
-//            {
-//                String[] moduleFlowPair = node.getId().split(Pattern.quote("."));
-//                moduleNames.add(moduleFlowPair[0]);
-//                flowNames.add(moduleFlowPair[1]);
-//            }
-//            else
-//            {
-//                moduleNames.add(node.getId());
-//            }
-//        }
-//
-//        errorOccurrences = this.solrErrorReportingService.find(moduleNames, flowNames, null, startDate, endDate, 500);
-//
-//        logger.info("Found errors:" + errorOccurrences.size());
-//
-//        if(errorOccurrences.size() > 0)
-//        {
-//            this.viewListButton.setVisible(true);
-//        }
-//        else
-//        {
-//            this.viewListButton.setVisible(false);
-//        }
-//
-////        HashMap<String, Node> nodeMap = new HashMap<>();
-////
-////        for(Node node: nodes)
-////        {
-////            node.setFoundStatus(NodeFoundStatus.NOT_FOUND);
-////            nodeMap.put(node.getId(), node);
-////        }
-////
-////        HashSet<String> correlationValues = new HashSet<>();
-////        HashMap<String, WiretapEvent<String>> uniqueResults = new HashMap<>();
-////        for(WiretapEvent<String> result: results.getPagedResults())
-////        {
-////            Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
-////
-////            if(node != null)
-////            {
-////                node.setFoundStatus(NodeFoundStatus.FOUND);
-////                ((Flow)node).setWireapEvent(result.getEvent());
-////                uniqueResults.put(result.getEvent(), result);
-////
-////                if(((Flow)node).getCorrelator() != null)
-////                {
-////                    String correlationValue = (String)((Flow)node).getCorrelator().correlate(result.getEvent());
-////
-////                    correlationValues.add(correlationValue);
-////                    logger.info("Correlation value = " + correlationValue);
-////                }
-////            }
-////        }
-////
-////        logger.info("Number of unique correlations values = " + correlationValues.size());
-////
-////        for(String value: correlationValues)
-////        {
-////            PagedSearchResult<WiretapEvent> secondResults =  this.solrWiretapService.findWiretapEvents(0, 500, "timestamp", false, moduleNames, flowNames,
-////                null, null, null, startDate, endDate, value);
-////
-////            logger.info("Found correlating:" + secondResults.getResultSize());
-////
-////            for(WiretapEvent<String> result: secondResults.getPagedResults())
-////            {
-////                Node node = nodeMap.get(result.getModuleName() + "." + result.getFlowName());
-////
-////                if(node != null)
-////                {
-////                    node.setFoundStatus(NodeFoundStatus.FOUND);
-////                    ((Flow)node).setWireapEvent(result.getEvent());
-////                    uniqueResults.put(result.getEvent(), result);
-////                }
-////            }
-////        }
-////
-////        logger.info("Number of unique events = " + uniqueResults.size());
-////
-////        if(uniqueResults.size() > 0)
-////        {
-////            this.viewListButton.setVisible(true);
-////
-////            this.viewListButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
-////            {
-////                final WiretapListDialog component = new WiretapListDialog(results.getPagedResults());
-////                component.open();
-////
-////                component.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-////                {
-////                    if(dialogOpenedChangeEvent.isOpened() == false)
-////                    {
-////                        component.removeAll();
-////                    }
-////                });
-////            });
-////        }
-////        else
-////        {
-////            this.viewListButton.setVisible(false);
-////        }
-////
-////        current.access(() ->
-////            networkDiagram.updateNodesStates(nodes));
-//    }
-
-    protected void fireModuleFlowChangeEvent()
-    {
-        GraphViewChangeEvent graphViewChangeEvent = new GraphViewChangeEvent(this.currentModule, this.currentFlow);
-
-        for(GraphViewChangeListener graphViewChangeListener: this.graphViewChangeListeners)
-        {
-            graphViewChangeListener.onChange(graphViewChangeEvent);
-        }
     }
 
     @Override

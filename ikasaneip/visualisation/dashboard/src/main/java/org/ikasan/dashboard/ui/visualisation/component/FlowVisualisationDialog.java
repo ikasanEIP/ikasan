@@ -37,7 +37,6 @@ public class FlowVisualisationDialog extends Dialog {
     private ModuleControlRestServiceImpl moduleControlRestService;
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
-    private Module module;
     private ModuleVisualisation moduleVisualisation;
     private ConfigurationMetaDataService configurationMetadataService;
     private ControlPanel flowControlPanel;
