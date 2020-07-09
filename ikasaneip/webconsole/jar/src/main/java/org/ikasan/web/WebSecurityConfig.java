@@ -93,6 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             .and()
             .logout().logoutSuccessUrl("/").logoutUrl("/j_spring_security_logout").deleteCookies("JSESSIONID")
             .and()
-            .csrf().disable();
+            .csrf().disable()
+            .headers().frameOptions().sameOrigin();
     }
 }
