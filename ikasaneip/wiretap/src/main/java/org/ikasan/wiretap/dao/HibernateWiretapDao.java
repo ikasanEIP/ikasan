@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
  * @author Ikasan Development Team
  * 
  */
-public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao
+public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao<Long>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HibernateWiretapDao.class);
@@ -147,12 +147,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
     /**
      * Find the Wiretap by its Id
-     *
-     * @see
-     * WiretapDao#findById(java.lang.Long)
-     * Long)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public WiretapEvent findById(final Long identifier)
     {
         return (WiretapFlowEvent)this.getHibernateTemplate().execute(new HibernateCallback()

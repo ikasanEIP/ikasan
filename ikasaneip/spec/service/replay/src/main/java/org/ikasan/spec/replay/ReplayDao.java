@@ -49,7 +49,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface ReplayDao
+public interface ReplayDao<IDENTIFIER>
 {
 	/**
 	 * Method to save or update a ReplayEvent.
@@ -111,7 +111,7 @@ public interface ReplayDao
 	 * @param id
 	 * @return
 	 */
-	public ReplayEvent getReplayEventById(Long id);
+	public ReplayEvent getReplayEventById(IDENTIFIER id);
 
     /**
      * Update entity as being harvested.

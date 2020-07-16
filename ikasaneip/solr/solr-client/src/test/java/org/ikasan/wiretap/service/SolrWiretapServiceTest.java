@@ -533,7 +533,7 @@ public class SolrWiretapServiceTest extends SolrTestCaseJ4
 
             wiretapService.save(event);
 
-            WiretapEvent wiretapEvent = wiretapService.getWiretapEvent(3l);
+            WiretapEvent wiretapEvent = wiretapService.getWiretapEvent("moduleName-wiretap-"+3l);
 
             Assert.assertEquals("Results must equal", wiretapEvent.getEvent(), "odd one out");
 
@@ -595,7 +595,7 @@ public class SolrWiretapServiceTest extends SolrTestCaseJ4
 
             wiretapService.save(event);
 
-            WiretapEvent wiretapEvent = wiretapService.getWiretapEvent(30l);
+            WiretapEvent wiretapEvent = wiretapService.getWiretapEvent("moduleName-wiretap-"+30l);
 
             Assert.assertEquals("Results must equal", wiretapEvent, null);
 
@@ -1089,7 +1089,7 @@ public class SolrWiretapServiceTest extends SolrTestCaseJ4
 
         SolrWiretapServiceImpl wiretapService = new SolrWiretapServiceImpl(solrCloudBase, moduleService);
 
-        wiretapService.getWiretapEvent(1l);
+        wiretapService.getWiretapEvent("" + 1l);
     }
 
     @Test(expected = RuntimeException.class)

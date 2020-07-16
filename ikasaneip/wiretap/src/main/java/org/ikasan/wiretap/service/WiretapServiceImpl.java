@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>, Long>
         , InitializingBean, HousekeepService, HarvestService<WiretapEvent>, BatchInsert<WiretapEvent>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */

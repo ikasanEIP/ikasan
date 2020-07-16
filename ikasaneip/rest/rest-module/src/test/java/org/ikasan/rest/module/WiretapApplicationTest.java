@@ -55,7 +55,7 @@ public class WiretapApplicationTest
     protected ModuleService moduleService;
 
     @MockBean
-    protected WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>> wiretapService;
+    protected WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
 
     private ObjectMapper mapper = new ObjectMapper();

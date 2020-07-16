@@ -51,7 +51,7 @@ import org.ikasan.spec.search.PagedSearchResult;
  * 
  * @author Ikasan Development Team
  */
-public interface WiretapDao
+public interface WiretapDao<IDENTIFIER>
 {
 
     /**
@@ -116,7 +116,7 @@ public interface WiretapDao
      * @param id - The id to search on
      * @return WiretapFlowEvent
      */
-    public WiretapEvent findById(Long id);
+    public WiretapEvent findById(IDENTIFIER id);
 
     /**
      * Deletes all WiretapFlowEvents that have surpassed their expiryDate

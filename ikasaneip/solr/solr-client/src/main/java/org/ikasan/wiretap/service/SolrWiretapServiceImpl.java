@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by amajewski on 23/09/2017.
  */
-public class SolrWiretapServiceImpl extends SolrServiceBase implements HousekeepService, SolrService<WiretapEvent>, WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, BatchInsert<WiretapEvent>
+public class SolrWiretapServiceImpl extends SolrServiceBase implements HousekeepService, SolrService<WiretapEvent>, WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>, String>, BatchInsert<WiretapEvent>
 {
 
     /** Logger for this class */
@@ -176,7 +176,7 @@ public class SolrWiretapServiceImpl extends SolrServiceBase implements Housekeep
      * @param wiretapEventId - The Id to search with
      * @return The WiretapFlowEvent
      */
-    public WiretapEvent getWiretapEvent(Long wiretapEventId)
+    public WiretapEvent getWiretapEvent(String wiretapEventId)
     {
         wiretapDao.setSolrUsername(this.solrUsername);
         wiretapDao.setSolrPassword(this.solrPassword);

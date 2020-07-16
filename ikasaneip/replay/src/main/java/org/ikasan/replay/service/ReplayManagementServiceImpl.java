@@ -62,7 +62,7 @@ import org.ikasan.spec.replay.ReplayManagementService;
  *
  */
 public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, HibernateReplayAudit
-		, HibernateReplayAuditEvent>, HousekeepService, HarvestService<ReplayEvent>, BatchInsert<ReplayEvent>
+		, HibernateReplayAuditEvent, Long>, HousekeepService, HarvestService<ReplayEvent>, BatchInsert<ReplayEvent>
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;

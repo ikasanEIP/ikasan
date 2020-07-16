@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 25/08/2017.
  */
-public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao, ReplayAuditDao<ReplayAudit, ReplayAuditEvent>
+public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao<String>, ReplayAuditDao<ReplayAudit, ReplayAuditEvent>
 {
     private static Logger logger = LoggerFactory.getLogger(SolrReplayDao.class);
 
@@ -47,7 +47,7 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao
     protected SolrInputDocument getSolrInputFields(Long expiry, ReplayEvent replayEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "replay-" + replayEvent.getId());
+        document.addField(ID, replayEvent.getModuleName() + "-replay-" + replayEvent.getId());
         document.addField(TYPE, REPLAY);
         document.addField(MODULE_NAME, replayEvent.getModuleName());
         document.addField(FLOW_NAME, replayEvent.getFlowName());
@@ -150,9 +150,9 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao
     }
 
     @Override
-    public ReplayEvent getReplayEventById(Long id)
+    public ReplayEvent getReplayEventById(String id)
     {
-        String queryString = "id:replay-" + id;
+        String queryString = "id:" + id;
 
         logger.debug("queryString: " + queryString);
 

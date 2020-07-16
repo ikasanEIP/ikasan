@@ -59,7 +59,7 @@ import java.util.Set;
  */
 public class WiretapTestUtil
 {
-    private WiretapService<WiretapEvent,PagedSearchResult> wiretapService;
+    private WiretapService<WiretapEvent,PagedSearchResult, Long> wiretapService;
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     /**
@@ -67,7 +67,7 @@ public class WiretapTestUtil
      * @param wiretapService
      * @param jobAwareFlowEventListener
      */
-    public WiretapTestUtil(WiretapService<WiretapEvent,PagedSearchResult> wiretapService, JobAwareFlowEventListener jobAwareFlowEventListener)
+    public WiretapTestUtil(WiretapService<WiretapEvent,PagedSearchResult, Long> wiretapService, JobAwareFlowEventListener jobAwareFlowEventListener)
     {
         this.wiretapService = wiretapService;
         if(wiretapService == null)
