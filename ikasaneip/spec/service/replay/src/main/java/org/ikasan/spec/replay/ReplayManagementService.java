@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT>
+public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT, INDENTIFIER>
 {
     /**
      * Get all replay events for a given date range.
@@ -30,7 +30,6 @@ public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT>
      * @param user
      * @param startDate
      * @param endDate
-     * @param resultSize
      * @return
 	 */
     public List<AUDIT> getReplayAudits(List<String> moduleNames, List<String> flowNames,
@@ -66,5 +65,5 @@ public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT>
 	 * @param id
 	 * @return
      */
-	public EVENT getReplayEventById(Long id);
+	public EVENT getReplayEventById(INDENTIFIER id);
 }

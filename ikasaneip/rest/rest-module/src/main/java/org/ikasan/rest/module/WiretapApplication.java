@@ -72,7 +72,7 @@ public class WiretapApplication
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     @Autowired
-    /** The wiretap service */ private WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>> wiretapService;
+    /** The wiretap service */ private WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
     @Autowired
     /** The module container (effectively holds the DTO) */ private ModuleService moduleService;

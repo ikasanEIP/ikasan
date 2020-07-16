@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Ikasan Development Team on 23/09/2017.
  */
-public class SolrReplayServiceImpl extends SolrServiceBase implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>, BatchInsert<ReplayEvent>
+public class SolrReplayServiceImpl extends SolrServiceBase implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent, String>, BatchInsert<ReplayEvent>
 {
 
     private SolrReplayDao replayDao;
@@ -92,7 +92,7 @@ public class SolrReplayServiceImpl extends SolrServiceBase implements SolrServic
     }
 
     @Override
-    public ReplayEvent getReplayEventById(Long id)
+    public ReplayEvent getReplayEventById(String id)
     {
         this.replayDao.setSolrUsername(this.solrUsername);
         this.replayDao.setSolrPassword(this.solrPassword);

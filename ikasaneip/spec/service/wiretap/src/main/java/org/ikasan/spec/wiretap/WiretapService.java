@@ -49,7 +49,7 @@ import java.util.Set;
  * 
  * @author Ikasan Development Team
  */
-public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
+public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT,IDENTIFIER>
 {
     /**
      * Allows previously stored FlowEvents to be searched for.
@@ -102,10 +102,10 @@ public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
     /**
      * Retrieve a specific <code>WiretapFlowEvent</code> by Id
      * 
-     * @param wiretapFlowEventId - The id of the wiretap event to retrieve
+     * @param wiretapEventId - The id of the wiretap event to retrieve
      * @return <code>WiretapFlowEvent</code>
      */
-    public WiretapEvent getWiretapEvent(Long wiretapEventId);
+    public WiretapEvent getWiretapEvent(IDENTIFIER wiretapEventId);
 
     /**
      * dumps a snapshot of an <code>FlowEvent</code> at runtime in the form of one

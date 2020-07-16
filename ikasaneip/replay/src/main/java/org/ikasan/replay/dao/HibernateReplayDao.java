@@ -65,7 +65,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao,ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent>
+public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao<Long>,ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent>
 {
 	public static final String MODULE_NAME = "moduleName";
 	public static final String FLOW_NAME = "flowame";

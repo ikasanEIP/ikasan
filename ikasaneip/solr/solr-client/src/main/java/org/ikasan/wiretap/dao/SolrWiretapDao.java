@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ikasan Development Team on 14/02/2017.
  */
-public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements WiretapDao
+public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements WiretapDao<String>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrWiretapDao.class);
@@ -42,7 +42,7 @@ public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements Wiretap
     protected SolrInputDocument getSolrInputFields(Long expiry, WiretapEvent wiretapEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "wiretap-"
+        document.addField(ID, wiretapEvent.getModuleName() + "-wiretap-"
             + wiretapEvent.getIdentifier());
         document.addField(TYPE, WIRETAP);
         document.addField(MODULE_NAME, wiretapEvent.getModuleName());
@@ -118,9 +118,9 @@ public class SolrWiretapDao extends SolrDaoBase<WiretapEvent> implements Wiretap
     }
 
     @Override
-    public WiretapEvent findById(Long id)
+    public WiretapEvent findById(String id)
     {
-        String queryString = "id:wiretap-" + id;
+        String queryString = "id:" + id;
 
         logger.debug("queryString: " + queryString);
 

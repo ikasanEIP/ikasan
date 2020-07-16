@@ -94,7 +94,7 @@ public class ApplicationTest
     private Module<Flow> moduleUnderTest;
 
     @Resource
-    private WiretapService<WiretapEvent,PagedSearchResult> wiretapService;
+    private WiretapService<WiretapEvent,PagedSearchResult, Long> wiretapService;
 
     @Resource
     private JobAwareFlowEventListener jobAwareFlowEventListener;

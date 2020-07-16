@@ -370,7 +370,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            WiretapEvent wiretapEvent = dao.findById(3l);
+            WiretapEvent wiretapEvent = dao.findById("moduleName-wiretap-" + 3l);
 
             Assert.assertEquals("Results must equal", wiretapEvent.getEvent(), "odd one out");
         }
@@ -415,7 +415,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            WiretapEvent wiretapEvent = dao.findById(20l);
+            WiretapEvent wiretapEvent = dao.findById("moduleName-wiretap-"+20l);
 
             Assert.assertEquals("Results must equal", wiretapEvent, null);
         }
@@ -670,7 +670,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
         dao.setDaysToKeep(0);
 
 
-        dao.findById(1l);
+        dao.findById("moduleName-wiretap-"+1l);
     }
 
     @Test(expected = RuntimeException.class)

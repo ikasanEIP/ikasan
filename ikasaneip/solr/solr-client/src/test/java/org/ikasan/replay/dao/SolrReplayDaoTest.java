@@ -345,7 +345,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            ReplayEvent replayEvent1 = dao.getReplayEventById(1l);
+            ReplayEvent replayEvent1 = dao.getReplayEventById("moduleName-replay-" + 1l);
 
             assertNotNull(replayEvent1);
 
@@ -372,7 +372,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
 
             dao.saveOrUpdate(replayEvent);
 
-            ReplayEvent replayEvent1 = dao.getReplayEventById(2l);
+            ReplayEvent replayEvent1 = dao.getReplayEventById("moduleName-replay-" +2l);
 
             assertNull(replayEvent1);
 
@@ -491,7 +491,7 @@ public class SolrReplayDaoTest extends SolrTestCaseJ4
         SolrReplayDao dao = new SolrReplayDao();
         dao.setSolrClient(server);
 
-        dao.getReplayEventById(1l);
+        dao.getReplayEventById("moduleName-replay-" +1l);
     }
 
     @Test(expected = RuntimeException.class)

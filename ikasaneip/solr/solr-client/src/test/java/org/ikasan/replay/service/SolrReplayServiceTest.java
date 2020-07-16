@@ -552,7 +552,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
-            ReplayEvent replayEvent1 = solrReplayService.getReplayEventById(1l);
+            ReplayEvent replayEvent1 = solrReplayService.getReplayEventById("moduleName-replay-" +1l);
 
             assertNotNull(replayEvent1);
 
@@ -594,7 +594,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
             SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
-            ReplayEvent replayEvent1 = solrReplayService.getReplayEventById(2l);
+            ReplayEvent replayEvent1 = solrReplayService.getReplayEventById("moduleName-replay-" +2l);
 
             assertNull(replayEvent1);
 
@@ -744,7 +744,7 @@ public class SolrReplayServiceTest extends SolrTestCaseJ4
 
         SolrReplayServiceImpl solrReplayService = new SolrReplayServiceImpl(dao, dao);
 
-        solrReplayService.getReplayEventById(1l);
+        solrReplayService.getReplayEventById("moduleName-replay-" +1l);
     }
 
     @Test(expected = RuntimeException.class)

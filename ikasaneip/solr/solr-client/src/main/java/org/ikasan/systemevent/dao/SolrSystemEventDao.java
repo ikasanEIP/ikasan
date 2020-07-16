@@ -31,11 +31,14 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
     protected SolrInputDocument getSolrInputFields(Long expiry, SystemEvent systemEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getId());
         document.addField(TYPE, SYSTEM_EVENT);
         document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
         if(systemEvent instanceof SolrSystemEvent){
+            document.addField(ID, ((SolrSystemEvent) systemEvent).getModuleName() + "-" + SYSTEM_EVENT + "-" + systemEvent.getId());
             document.addField(MODULE_NAME, ((SolrSystemEvent) systemEvent).getModuleName());
+        }
+        else {
+            document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getId());
         }
         document.addField(CREATED_DATE_TIME, systemEvent.getTimestamp().getTime());
         document.setField(EXPIRY, expiry);

@@ -136,7 +136,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
     protected SolrInputDocument getSolrInputFields(Long expiry, ErrorOccurrence errorOccurrence)
     {
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "error-" + errorOccurrence.getUri());
+        document.addField(ID, errorOccurrence.getModuleName() + "-error-" + errorOccurrence.getUri());
         document.addField(ERROR_URI, errorOccurrence.getUri());
         document.addField(TYPE, ERROR);
         document.addField(MODULE_NAME, errorOccurrence.getModuleName());

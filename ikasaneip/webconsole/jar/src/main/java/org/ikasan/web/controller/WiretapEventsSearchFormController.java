@@ -80,7 +80,7 @@ public class WiretapEventsSearchFormController
     private static Logger logger = LoggerFactory.getLogger(WiretapEventsSearchFormController.class);
 
     /** The wiretap service */
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
