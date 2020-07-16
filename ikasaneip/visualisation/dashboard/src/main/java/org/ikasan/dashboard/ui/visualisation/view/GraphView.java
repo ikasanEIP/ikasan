@@ -70,7 +70,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     Logger logger = LoggerFactory.getLogger(GraphView.class);
 
     @Resource
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> solrWiretapService;
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>, String> solrWiretapService;
 
     @Resource
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
