@@ -59,4 +59,8 @@ public class ProgressIndicatorDialog extends Dialog
     {
         return isCancelled;
     }
+
+    public void cancel() {
+        this.isCancelled = true;
+    }
 }

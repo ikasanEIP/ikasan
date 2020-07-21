@@ -10,8 +10,8 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.data.provider.Query;
 import org.ikasan.dashboard.ui.component.NotificationHelper;
-import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.general.component.HospitalCommentsDialog;
+import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
@@ -33,27 +33,24 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionListener implements ComponentEventListener<ClickEvent<Button>>
-{
+public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionListener implements ComponentEventListener<ClickEvent<Button>> {
     private Logger logger = LoggerFactory.getLogger(IgnoreHospitalEventSubmissionListener.class);
 
     private HospitalAuditService hospitalAuditService;
     private ResubmissionRestServiceImpl resubmissionRestService;
 
     public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
-        ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid
-        , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems)
-    {
-        super(actionMessage, errorReportingService, moduleMetadataService
-            , resubmissionRestService, searchResultsGrid, selectionBoxes, selectionItems);
+                                                 ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid
+        , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
+        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService,
+            searchResultsGrid, selectionBoxes, selectionItems, ikasanAuthentication);
+
         this.hospitalAuditService = hospitalAuditService;
-        if(this.hospitalAuditService == null)
-        {
+        if (this.hospitalAuditService == null) {
             throw new IllegalArgumentException("hospitalAuditService cannot be null!");
         }
         this.resubmissionRestService = resubmissionRestService;
-        if(this.hospitalAuditService == null)
-        {
+        if (this.hospitalAuditService == null) {
             throw new IllegalArgumentException("hospitalAuditService cannot be null!");
         }
 
@@ -63,10 +60,8 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
     }
 
     @Override
-    public void onComponentEvent(ClickEvent<Button> buttonClickEvent)
-    {
-        if(!confirmSelectedEvents())
-        {
+    public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
+        if (!confirmSelectedEvents()) {
             NotificationHelper.showErrorNotification(getTranslation("message.at-least-one-record-needs-to-be-selected", UI.getCurrent().getLocale()));
             return;
         }
@@ -80,17 +75,13 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
 
         commentsDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
         {
-            if(!dialogOpenedChangeEvent.isOpened() && commentsDialog.isActioned())
-            {
+            if (!dialogOpenedChangeEvent.isOpened() && commentsDialog.isActioned()) {
                 ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
 
-                if (selected)
-                {
+                if (selected) {
                     progressIndicatorDialog.open(String.format(getTranslation("message.ignoring-exclusions", UI.getCurrent().getLocale())
                         , searchResultsGrid.getResultSize()));
-                }
-                else
-                {
+                } else {
                     progressIndicatorDialog.open(String.format(getTranslation("message.ignoring-exclusions", UI.getCurrent().getLocale())
                         , super.getNumberOfSeletedItems()));
                 }
@@ -99,15 +90,10 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
                 Executor executor = Executors.newSingleThreadExecutor();
                 executor.execute(() ->
                 {
-                    try
-                    {
+                    try {
                         List<ExclusionEventAction> exclusionEventActions = null;
-                        ExclusionEventAction eventAction;
 
-                        ObjectMapper mapper = new ObjectMapper();
-
-                        if (!selected)
-                        {
+                        if (!selected) {
                             List<IkasanSolrDocument> resubmissionEvents = this.selectionItems.values()
                                 .stream()
                                 .filter(document -> this.shouldActionEvent(document))
@@ -115,47 +101,49 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
 
                             exclusionEventActions = super.actionHospitalEvents(resubmissionEvents, exclusionEventAction, progressIndicatorDialog,
                                 "ignore", authentication.getName(), current);
-                        }
-                        else
-                        {
-                            exclusionEventActions = new ArrayList<>();
 
-                            for (int i = 0; i < searchResultsGrid.getResultSize(); i += 100)
-                            {
-                                if (progressIndicatorDialog.isCancelled())
-                                {
+                            if (exclusionEventActions.size() > 0) {
+                                hospitalAuditService.save(exclusionEventActions);
+                            }
+
+                        } else {
+                            for (int i = 0; i < searchResultsGrid.getResultSize(); i += 100) {
+                                if (progressIndicatorDialog.isCancelled()) {
                                     break;
                                 }
-
                                 List<IkasanSolrDocument> docs = (List<IkasanSolrDocument>) searchResultsGrid.getDataProvider().fetch
-                                    (new Query<>(i, i + 100, Collections.EMPTY_LIST, null, null)).collect(Collectors.toList());
+                                    (new Query<>(0, 100, Collections.EMPTY_LIST, null, null)).collect(Collectors.toList());
 
                                 List<IkasanSolrDocument> resubmissionEvents = docs
                                     .stream()
                                     .filter(document -> this.shouldActionEvent(document))
                                     .collect(Collectors.toList());
 
-                                exclusionEventActions.addAll(super.actionHospitalEvents(resubmissionEvents, exclusionEventAction, progressIndicatorDialog,
-                                    "ignore", authentication.getName(), current));
+                                exclusionEventActions = super.actionHospitalEvents(resubmissionEvents, exclusionEventAction, progressIndicatorDialog,
+                                    "ignore", authentication.getName(), current);
+
+                                if (exclusionEventActions.size() > 0) {
+                                    hospitalAuditService.save(exclusionEventActions);
+                                }
                             }
                         }
 
-                        if(exclusionEventActions.size() > 0)
-                        {
-                            hospitalAuditService.save(exclusionEventActions);
+                        if (progressIndicatorDialog.isOpened()) {
+                            current.access(() ->
+                            {
+                                progressIndicatorDialog.close();
+                                NotificationHelper.showUserNotification(getTranslation("message.successfully-ignored-exclusions", UI.getCurrent().getLocale()));
+                                selectionBoxes.keySet().forEach(key -> selectionBoxes.get(key).setValue(false));
+                                selectionItems.clear();
+                            });
                         }
 
                         current.access(() ->
                         {
-                            selectionItems.clear();
-                            selectionBoxes.keySet().forEach(key -> selectionBoxes.get(key).setValue(false));
-                            progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification(getTranslation("message.successfully-ignored-exclusions", UI.getCurrent().getLocale()));
                             this.searchResultsGrid.getDataProvider().refreshAll();
                         });
                     }
-                    catch(Exception e)
-                    {
+                    catch (Exception e) {
                         e.printStackTrace();
                         current.access(() ->
                         {

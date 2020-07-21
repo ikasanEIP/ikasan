@@ -565,7 +565,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         }
         else if(this.hospitalCheckbox.getValue() && !this.replayCheckbox.getValue() && !this.errorCheckbox.getValue() && !this.wiretapCheckbox.getValue())
         {
-            this.currentSearchType = REPLAY;
+            this.currentSearchType = EXCLUSION;
         }
         else
         {
@@ -726,8 +726,11 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.resubmitHospitalEventRegistration.remove();
         }
 
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
         this.resubmitHospitalEventSubmissionListener = new ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
-            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes
+            , this.selectionItems, authentication);
         this.resubmitHospitalEventRegistration = this.resubmitButton.addClickListener(this.resubmitHospitalEventSubmissionListener);
     }
 
@@ -741,8 +744,11 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             this.ignoreHospitalEventRegistration.remove();
         }
 
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
         this.ignoreHospitalEventSubmissionListener = new IgnoreHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
-            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems);
+            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes
+            , this.selectionItems, authentication);
         this.ignoreHospitalEventRegistration = this.ignoreButton.addClickListener(ignoreHospitalEventSubmissionListener);
     }
 
