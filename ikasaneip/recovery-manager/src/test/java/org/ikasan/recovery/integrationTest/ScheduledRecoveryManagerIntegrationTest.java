@@ -297,6 +297,119 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_resolver_to_retryAction() throws SchedulerException
     {
+
+        mockery.checking(new Expectations()
+                         {
+                             {
+                                 atLeast(1).of(flowInvocationContext).getLastComponentName();
+                                 will(returnValue(componentName));
+                                 atLeast(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
+
+                                 atLeast(1).of(flowInvocationContext).setErrorUri(null);
+                             }
+                         }
+
+                        );
+
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+
+        //
+        // create an exception resolver
+        ExceptionAction retryAction = new RetryAction((long)2000, 2);
+        IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, retryAction);
+        List<ExceptionGroup> matchers = new ArrayList<>();
+        matchers.add(matcher);
+        ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
+
+        //
+        // create the RM and set the resolver
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(resolver);
+
+        //
+        // start the consumer and pass exception to recoveryManager
+        consumer.start();
+        Assert.assertTrue("consumer should be running", consumer.isRunning());
+
+        //
+        // first retry action
+        try
+        {
+            //recoveryManager.recover(componentName, new Exception());
+            recoveryManager.recover(flowInvocationContext, new Exception(), "", "");
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
+            Assert.assertFalse("consumer should not be running", consumer.isRunning());
+            Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
+            Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNotNull("job should still be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+        // wait for scheduler callback to restart the consumer
+        while(!consumer.isRunning())
+        {
+            logger.info("Waiting for consumer to be started...");
+            pause(100);
+        }
+        
+        //
+        // second retry action
+        try
+        {
+            Assert.assertTrue("consumer should be running", consumer.isRunning());
+            //recoveryManager.recover(componentName, new Exception());
+            recoveryManager.recover(flowInvocationContext, new Exception(), "", "");
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
+            Assert.assertFalse("consumer should not be running", consumer.isRunning());
+            Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
+            Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNotNull("job should still be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+        // wait for scheduler callback to restart the consumer
+        while(!consumer.isRunning()){pause(100);};
+        
+        //
+        // third retry action
+        try
+        {
+            Assert.assertTrue(consumer.isRunning());
+           // recoveryManager.recover(componentName, new Exception());
+            recoveryManager.recover(flowInvocationContext, new Exception(), "", "");
+
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+            Assert.assertFalse("consumer should not be running", consumer.isRunning());
+            Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
+            Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNull("job should not be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+    }
+
+    /**
+     * Test recovery manager with resolver for retry action.
+     * @throws SchedulerException
+     */
+    @Test
+    public void test_recoveryManager_resolver_to_retryAction_when_exception_thrown_from_tech_endpoint() throws SchedulerException
+    {
+
         JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
 
         //
@@ -342,45 +455,14 @@ public class ScheduledRecoveryManagerIntegrationTest
             logger.info("Waiting for consumer to be started...");
             pause(100);
         }
-        
+
         //
         // second retry action
-        try
-        {
             Assert.assertTrue("consumer should be running", consumer.isRunning());
-            recoveryManager.recover(componentName, new Exception());
-        }
-        catch (Exception e)
-        {
-            Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
-            Assert.assertFalse("consumer should not be running", consumer.isRunning());
-            Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
-            Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
-            Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail(jobKey));
-        }
 
-        // wait for scheduler callback to restart the consumer
-        while(!consumer.isRunning()){pause(100);};
-        
-        //
-        // third retry action
-        try
-        {
-            Assert.assertTrue(consumer.isRunning());
-            recoveryManager.recover(componentName, new Exception());
-        }
-        catch (Exception e)
-        {
-            Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
-            Assert.assertFalse("consumer should not be running", consumer.isRunning());
-            Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
-            Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
-            Assert.assertNull("job should not be registered with scheduler",
+            Assert.assertFalse("recovery manager not should be recovering", recoveryManager.isRecovering());
+            Assert.assertNull("job should still be registered with scheduler",
                 this.scheduler.getJobDetail(jobKey));
-        }
 
     }
 
@@ -392,6 +474,20 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_resolver_to_retryActionA_followed_by_retryActionB() throws SchedulerException
     {
+
+        mockery.checking(new Expectations()
+            {
+                {
+                    atLeast(1).of(flowInvocationContext).getLastComponentName();
+                    will(returnValue(componentName));
+                    atLeast(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
+
+                    atLeast(1).of(flowInvocationContext).setErrorUri(null);
+                }
+            }
+
+                        );
+
         JobKey jobKey = new JobKey("recoveryJob_"+flowName+ Thread.currentThread().getId(), moduleName);
 
         //
@@ -424,7 +520,8 @@ public class ScheduledRecoveryManagerIntegrationTest
         // first retry action
         try
         {
-            recoveryManager.recover(componentName, new IllegalArgumentException());
+            //recoveryManager.recover(componentName, new IllegalArgumentException());
+            recoveryManager.recover(flowInvocationContext, new IllegalArgumentException(), "", "");
         }
         catch (Exception e)
         {
@@ -445,7 +542,8 @@ public class ScheduledRecoveryManagerIntegrationTest
         try
         {
             Assert.assertTrue(consumer.isRunning());
-            recoveryManager.recover(componentName, new NullPointerException());
+            //recoveryManager.recover(componentName, new NullPointerException());
+            recoveryManager.recover(flowInvocationContext, new NullPointerException(), "", "");
         }
         catch (Exception e)
         {
@@ -466,7 +564,9 @@ public class ScheduledRecoveryManagerIntegrationTest
         try
         {
             Assert.assertTrue(consumer.isRunning());
-            recoveryManager.recover(componentName, new NullPointerException());
+         //   recoveryManager.recover(componentName, new NullPointerException());
+            recoveryManager.recover(flowInvocationContext, new NullPointerException(), "", "");
+
         }
         catch (Exception e)
         {
@@ -486,7 +586,9 @@ public class ScheduledRecoveryManagerIntegrationTest
         // forth retry action
         try
         {
-            recoveryManager.recover(componentName, new NullPointerException());
+            //recoveryManager.recover(componentName, new NullPointerException());
+            recoveryManager.recover(flowInvocationContext, new NullPointerException(), "", "");
+
         }
         catch (Exception e)
         {
