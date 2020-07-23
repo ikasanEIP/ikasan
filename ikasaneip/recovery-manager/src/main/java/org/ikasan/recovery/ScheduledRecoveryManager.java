@@ -134,6 +134,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private Set<Object> recoveringIdentifiers = new HashSet<>();
 
     private boolean isConsumerMultiThreaded = false;
+    private boolean isEventBaseRecovery = false;
 
     /**
      * Constructor
@@ -212,8 +213,9 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      * @param throwable  the exception that was thrown
      * @param id the identifier of the FlowEvent
      */
-    protected void recover(ExceptionAction action, String componentName, Throwable throwable, ID id)
+    protected void recover(ExceptionAction action, String componentName, Throwable throwable, ID id, boolean isEventBaseRecovery)
     {
+        this.isEventBaseRecovery = isEventBaseRecovery;
         if(action instanceof StopAction)
         {
             if(isRecovering())
@@ -344,7 +346,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         this.errorReportingService.notify(componentName, throwable, action.toString());
-        this.recover(action, componentName, throwable, null);
+        this.recover(action, componentName, throwable, null, false);
     }
 
     /**
@@ -375,7 +377,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 
-        this.recover(action, lastComponentName, throwable, identifier);
+        this.recover(action, lastComponentName, throwable, identifier, true);
     }
 
     protected FinalAction getFinalAction(ExceptionAction exceptionAction)
@@ -659,6 +661,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             else
             {
                 this.consumer.start();
+                if(!isEventBaseRecovery)
+                {
+                    recoveryAttempts = 0;
+                }
             }
         }
         catch(Throwable throwable)
