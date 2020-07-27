@@ -65,6 +65,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -78,6 +79,7 @@ import java.util.List;
 public class LdapServiceImpl implements LdapService
 {
 	private static Logger logger = LoggerFactory.getLogger(LdapServiceImpl.class);
+    private static final CharsetEncoder VALID_CHARSET_ENCODER = Charset.forName(CharEncoding.ISO_8859_1).newEncoder();
 
 	private SecurityDao securityDao;
 	private UserDao userDao;
@@ -385,9 +387,9 @@ public class LdapServiceImpl implements LdapService
                     continue;
                 }
 
-                if(!Charset.forName(CharEncoding.ISO_8859_1).newEncoder().canEncode(ldapUser.accountName))
+                if(!isValidEncoding(ldapUser))
                 {
-                    logger.warn(String.format("User[%s] contains an unsupported character encoding.", ldapUser));
+                    logger.warn(String.format("User[%s] contains an unsupported character encoding, skipping.", ldapUser));
                     continue;
                 }
 
@@ -463,6 +465,30 @@ public class LdapServiceImpl implements LdapService
             }
 		}
 	}
+
+    protected boolean isValidEncoding(LdapUser ldapUser){
+
+        if(!VALID_CHARSET_ENCODER.canEncode(ldapUser.accountName)){
+            logger.warn(String.format("User[%s] has character encoding issue for accountName='%s'", ldapUser.accountName, ldapUser.accountName));
+            return false;
+        }
+
+        if(!VALID_CHARSET_ENCODER.canEncode(ldapUser.department)){
+            logger.warn(String.format("User[%s] has character encoding issue for department='%s'", ldapUser.accountName, ldapUser.department));
+            return false;
+        }
+
+        if (ldapUser.memberOf != null) {
+            for (String group : ldapUser.memberOf) {
+                if (!VALID_CHARSET_ENCODER.canEncode(group)) {
+                    logger.warn(String.format("User[%s] has character encoding issue for memberOf.group='%s'", ldapUser.accountName, group));
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
 	protected AuthenticationMethod getAuthenticationMethod()
 			throws LdapServiceException
