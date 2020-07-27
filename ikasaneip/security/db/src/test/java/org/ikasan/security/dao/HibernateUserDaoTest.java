@@ -54,7 +54,11 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * 
@@ -64,25 +68,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@Sql(scripts = {"/setupSecurityData.sql"}, executionPhase = BEFORE_TEST_METHOD)
+@Sql(scripts = {"/teardownSecurityData.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class HibernateUserDaoTest
 {
 
 	@Resource
 	private UserDao xaUserDao;
-	
-	/**
-     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-     * being tested
-     * @throws SecurityDaoException 
-     */
-    @Before public void setup()
-    {
-        User user = new User("username", "password", "email address", true);
-        user.setFirstName("firstname");
-        user.setSurname("surname");
-        
-        this.xaUserDao.save(user);
-    }
 
 	/**
 	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
