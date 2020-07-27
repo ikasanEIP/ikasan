@@ -40,21 +40,24 @@
  */
 package org.ikasan.wiretap.listener;
 
-import org.ikasan.trigger.model.TriggerImpl;
-import org.ikasan.spec.trigger.TriggerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.management.FlowEventListenerMaintenanceService;
-import org.ikasan.trigger.dao.TriggerDao;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
+import org.ikasan.spec.trigger.TriggerService;
+import org.ikasan.trigger.dao.TriggerDao;
 import org.ikasan.trigger.service.FlowEventJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +88,16 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     /** Data access object for dynamic trigger persistence */
     private TriggerDao triggerDao;
 
+    /** Module service is used to get information about module
+     *  Required for publishing metadata
+     **/
+    private ModuleService moduleService;
+
+    /**
+     * Dashboard client used for publishing module metadata to dashboard
+     */
+    private DashboardRestService moduleMetadataDashboardRestService;
+
     /** Logger instance */
     private static final Logger logger = LoggerFactory.getLogger(JobAwareFlowEventListener.class);
 
@@ -98,11 +111,17 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      * @param flowEventJobs - The list of flow event jobs
      * @param triggerDao - The DAO for the trigger
      */
-    public JobAwareFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao)
+    public JobAwareFlowEventListener(Map<String, FlowEventJob> flowEventJobs,
+                                     TriggerDao triggerDao,
+                                     ModuleService moduleService,
+                                     DashboardRestService moduleMetadataDashboardRestService
+                                     )
     {
         super();
         this.flowEventJobs = flowEventJobs;
         this.triggerDao = triggerDao;
+        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
+        this.moduleService = moduleService;
         loadTriggers();
     }
 
@@ -139,6 +158,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     {
         this.triggerDao.save(trigger);
         mapTrigger(trigger);
+        moduleMetadataDashboardRestService.publish(moduleService.getModule(trigger.getModuleName()));
     }
 
     /**

@@ -52,8 +52,10 @@
 
     <bean id="wiretapFlowEventListener"
         class="org.ikasan.wiretap.listener.JobAwareFlowEventListener" depends-on="liquibase">
-        <constructor-arg ref="jobsMap"/>
-        <constructor-arg ref="triggerDao"/>
+        <constructor-arg name="flowEventJobs" ref="jobsMap"/>
+        <constructor-arg name="triggerDao" ref="triggerDao"/>
+        <constructor-arg name="moduleMetadataDashboardRestService" ref="moduleMetadataDashboardRestService"/>
+        <constructor-arg name="moduleService" ref="moduleService"/>
     </bean>
 
 	<bean id="wiretapService"

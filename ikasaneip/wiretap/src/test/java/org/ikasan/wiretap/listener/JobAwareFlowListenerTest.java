@@ -40,11 +40,16 @@
  */
 package org.ikasan.wiretap.listener;
 
+import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.trigger.dao.TriggerDao;
 import org.ikasan.trigger.model.TriggerImpl;
-import org.junit.Assert;
+import org.ikasan.spec.module.Module;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,8 +76,20 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JobAwareFlowListenerTest
 {
-	@Resource
+
+    private final Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
+    ModuleService moduleService = mockery.mock(ModuleService.class);
+    DashboardRestService dashboardRestService = mockery.mock(DashboardRestService.class);
+
+    @Resource
     private TriggerDao triggerDao;
+
 
 	private JobAwareFlowEventListener uut;
 
@@ -98,7 +115,7 @@ public class JobAwareFlowListenerTest
         this.triggerDao.save(trigger2After);
         this.triggerDao.save(trigger2After2);
 
-        uut = new JobAwareFlowEventListener(null, triggerDao);
+        uut = new JobAwareFlowEventListener(null, triggerDao,moduleService,dashboardRestService);
 
 	}
 
@@ -130,6 +147,22 @@ public class JobAwareFlowListenerTest
         assertEquals("trigger2After", result.get(0).getJobName());
         assertEquals("trigger2AfterLog", result.get(1).getJobName());
 
+    }
+
+    @Test
+    public void addDynamicTrigger()
+    {
+
+        Module m = mockery.mock(Module.class);
+        mockery.checking(new Expectations(){{
+            oneOf(moduleService).getModule("moduleTest");
+            will(returnValue(m));
+            oneOf(dashboardRestService).publish(m);
+        }});
+
+        uut.addDynamicTrigger(new TriggerImpl("moduleTest","flowTest","AFTER","testTrigger"));
+
+        mockery.assertIsSatisfied();
     }
 
 
