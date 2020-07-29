@@ -100,7 +100,7 @@ public interface ErrorCategorisationService
 	/**
 	 * Method to delete an error categorisation link.
 	 * 
-	 * @param errorCategorisation
+	 * @param errorCategorisationLink
 	 */
 	public void delete(ErrorCategorisationLink errorCategorisationLink);
 	
@@ -115,7 +115,7 @@ public interface ErrorCategorisationService
 	 * @param endDate
 	 * @return
 	 */
-	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
+	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurrences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
 			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate, int size);
 	
 	/**

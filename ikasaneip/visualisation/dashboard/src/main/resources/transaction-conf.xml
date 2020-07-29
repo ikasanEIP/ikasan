@@ -69,8 +69,8 @@
                 <!--expression="execution(* org.ikasan.replay.listener.*.*(..))"/>-->
         <!--<aop:pointcut id="housekeepingServiceMethods"-->
                       <!--expression="execution(* org.ikasan.spec.housekeeping.HousekeepService.*(..))"/>-->
-        <!--<aop:pointcut id="platformConfigurationServiceMethods"-->
-                      <!--expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>-->
+        <aop:pointcut id="platformConfigurationServiceMethods"
+                      expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>
         <!--<aop:pointcut id="messageHistoryServiceMethods"-->
                       <!--expression="execution(* org.ikasan.history.dao.MessageHistoryDao.*(..))"/>-->
 
@@ -92,7 +92,7 @@
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>-->
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="housekeepingServiceMethods"/>-->
-        <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="platformConfigurationServiceMethods"/>-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="platformConfigurationServiceMethods"/>
         <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="messageHistoryServiceMethods"/>-->
         <!---->
     </aop:config>

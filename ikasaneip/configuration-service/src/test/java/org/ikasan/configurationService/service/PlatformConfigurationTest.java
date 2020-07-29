@@ -76,7 +76,7 @@ public class PlatformConfigurationTest
     PlatformConfigurationService platformConfigurationService;
 	
 	@Before
-	public	 void setup()
+	public void setup()
 	{
 		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
 		
@@ -90,22 +90,12 @@ public class PlatformConfigurationTest
 		}
 		
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)platformConfiguration.getParameters();      
-        
-		ConfigurationParameter userParam = null;
-		ConfigurationParameter passwordParam = null;
+
 		ConfigurationParameter mapParam = null;
         
         for(ConfigurationParameter parameter: parameters)
         {
-        	if(parameter.getName().equals("webServiceUserAccount"))
-        	{
-        		userParam = parameter;
-        	}
-        	else if(parameter.getName().equals("webServiceUserPassword"))
-        	{
-        		passwordParam = parameter;
-        	}
-        	else if(parameter.getName().equals("configurationMap"))
+            if(parameter.getName().equals("configurationMap"))
         	{
         		mapParam = parameter;
         	}
@@ -115,26 +105,10 @@ public class PlatformConfigurationTest
         map.put("value1", "value1");
         map.put("value2", "value2");
         
-        mapParam.setValue(map);    			
-		userParam.setValue("username");
-		passwordParam.setValue("password");
+        mapParam.setValue(map);
     	
 		configurationService.saveConfiguration(platformConfiguration);      
 	}
-	
-	@Test
-    @DirtiesContext
-    public void test_platform_configuration_username()
-    {
-		Assert.assertEquals(platformConfigurationService.getWebServiceUsername(), "username");
-    }
-	
-	@Test
-    @DirtiesContext
-    public void test_platform_configuration_password()
-    {
-		Assert.assertEquals(platformConfigurationService.getWebServicePassword(), "password");
-    }
 	
 	@Test
     @DirtiesContext
