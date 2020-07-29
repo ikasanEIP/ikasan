@@ -75,10 +75,13 @@ public class BusinessStreamNotificationJob implements Job {
         final Context ctx = new Context();
 
         try {
-            long lastRunTimestamp = 0L;
+            long lastRunTimestamp = this.getLastRunTimestamp();
 
-            if(this.businessStreamNotification.isNewExclusionsOnlyNotification()) {
-                lastRunTimestamp = this.getLastRunTimestamp();
+            if(!this.businessStreamNotification.isNewExclusionsOnlyNotification()) {
+                lastRunTimestamp = 0L;
+            }
+            else if (lastRunTimestamp == 0L && this.businessStreamNotification.getLastRunTimestamp() > 0L) {
+                lastRunTimestamp = this.businessStreamNotification.getLastRunTimestamp();
             }
 
             Optional<BusinessStreamExclusions> businessStreamExclusions = this.businessStreamNotificationService
