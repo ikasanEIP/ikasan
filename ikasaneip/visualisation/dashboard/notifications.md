@@ -4,7 +4,7 @@
 
 The Ikasan Visualisation Dashboard supports email notifications. Users and support staff are notified of the exclusion of business stream events. Notifications are configurable
  and are fired on a scheduled basis. When a notification job is fired, the notification service queries the Ikasan index to determine if there are any exclusions relating to
- the business stream. If exclusions are found the following [businessStreamModel](./src/main/java/org/ikasan/dashboard/notification/model/BusinessStreamExclusions) is made 
+ the business stream. If exclusions are found the following [Business Stream Model](./src/main/java/org/ikasan/dashboard/notification/model/BusinessStreamExclusions.java) is made 
  available to the [Thymeleaf](https://www.thymeleaf.org/) template engine in order to render the notification email content.
 
 | Name      | Description |
