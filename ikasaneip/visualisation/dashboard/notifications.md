@@ -7,6 +7,7 @@ The Ikasan Visualisation Dashboard supports email notifications. Users and suppo
  the business stream. If exclusions are found the following [Business Stream Model](./src/main/java/org/ikasan/dashboard/notification/model/BusinessStreamExclusions.java) is made 
  available to the [Thymeleaf](https://www.thymeleaf.org/) template engine in order to render the notification email content.
 
+### Configuring visualisation dashboard notifications
 | Name      | Description |
 | ----------- | ----------- |
 | jobName      | Each individual notification must provide a job name to be registered with the scheduler.       |
@@ -19,7 +20,9 @@ The Ikasan Visualisation Dashboard supports email notifications. Users and suppo
 | resultSize      | The maximum number of exclusions that can be returned by the exclusion service when searching for exclusions.       |
 | isNewExclusionsOnlyNotification   | A boolean flag to indicate if the notification is only applicable for new exclusions or if it notifies for all outstanding exclusions for a business stream.        |
 
-### Example configuration block
+It is possible to configure any number of notifications and the email content supports the rendering of any UTF-8 character set.
+
+### Example notification configuration block
 ```text
 dashboard.notification[0].jobName=notification-1
 dashboard.notification[0].emailBodyTemplate=<path-to-template>/notification-email-jp.html
@@ -32,7 +35,7 @@ dashboard.notification[0].resultSize=100
 dashboard.notification[0].isNewExclusionsOnlyNotification=true
 ```
 
-### Example html notification template.
+### Example html notification template
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -71,7 +74,7 @@ dashboard.notification[0].isNewExclusionsOnlyNotification=true
     </body>
 </html>
 ```
-### Example text notification template.
+### Example text notification template
 ```text
 Business Stream: [( ${businessStreamModel.businessStreamMetaData.name} )]
 
@@ -86,7 +89,7 @@ Please log into the Ikasan dashboard to remediate these events.
 Regards,
     The Ikasan Team
 ```
-### Example email subject template.
+### Example email subject template
 ```text
 Attention. Events have been excluded for the following business stream: [( ${businessStreamModel.businessStreamMetaData.name} )]
 ```
