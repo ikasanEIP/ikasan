@@ -5,13 +5,13 @@ import java.util.List;
 public class BusinessStreamNotification {
     private String jobName;
     private String emailBodyTemplate;
-    private String emailSubject;
+    private String emailSubjectTemplate;
     private String businessStreamName;
     private List<String> recipientList;
     private String cronExpression;
-    private Integer exclusionReminderFrequencyMinutes;
     private boolean isHtml;
     private Integer resultSize;
+    private boolean isNewExclusionsOnlyNotification;
 
     public String getJobName() {
         return jobName;
@@ -29,12 +29,12 @@ public class BusinessStreamNotification {
         this.emailBodyTemplate = emailBodyTemplate;
     }
 
-    public String getEmailSubject() {
-        return emailSubject;
+    public String getEmailSubjectTemplate() {
+        return emailSubjectTemplate;
     }
 
-    public void setEmailSubject(String emailSubject) {
-        this.emailSubject = emailSubject;
+    public void setEmailSubjectTemplate(String emailSubjectTemplate) {
+        this.emailSubjectTemplate = emailSubjectTemplate;
     }
 
     public String getBusinessStreamName() {
@@ -61,14 +61,6 @@ public class BusinessStreamNotification {
         this.cronExpression = cronExpression;
     }
 
-    public Integer getExclusionReminderFrequencyMinutes() {
-        return exclusionReminderFrequencyMinutes;
-    }
-
-    public void setExclusionReminderFrequencyMinutes(Integer exclusionReminderFrequencyMinutes) {
-        this.exclusionReminderFrequencyMinutes = exclusionReminderFrequencyMinutes;
-    }
-
     public boolean isHtml() {
         return isHtml;
     }
@@ -83,5 +75,13 @@ public class BusinessStreamNotification {
 
     public void setResultSize(Integer resultSize) {
         this.resultSize = resultSize;
+    }
+
+    public boolean isNewExclusionsOnlyNotification() {
+        return isNewExclusionsOnlyNotification;
+    }
+
+    public void setIsNewExclusionsOnlyNotification(boolean newExclusionsOnlyNotification) {
+        isNewExclusionsOnlyNotification = newExclusionsOnlyNotification;
     }
 }
