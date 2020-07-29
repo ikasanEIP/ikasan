@@ -2,11 +2,11 @@ package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ikasan.business.stream.metadata.model.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.correlate.XpathCorrelator;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Destination;
+import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.vaadin.visjs.network.Edge;
-import org.ikasan.dashboard.ui.visualisation.adapter.model.Graph;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.IntegratedSystem;
 
@@ -19,32 +19,30 @@ public class BusinessStreamVisjsAdapter
     /**
      * Converts a Graph object model to a JSON String.
      *
-     * @param graph
+     * @param businessStream
      * @return
      * @throws JsonProcessingException
      */
-    public String toJson(Graph graph) throws JsonProcessingException
+    public String toJson(BusinessStream businessStream) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
 
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(graph);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(businessStream);
     }
 
     /**
-     * Converts a JSON representation of a BusinessStream to a BusinessStream
+     * Converts a BusinessStreamMetaData representation of a BusinessStream to a BusinessStream
      * object model.
      *
-     * @param businessStreamGraph a JSON representation of a BusinessStream
+     * @param businessStreamMetaData the BusinessStreamMetaData
      * @return an initialised BusinessStream
      * @throws IOException
      */
-    public BusinessStream toBusinessStreamGraph(String businessStreamGraph) throws IOException
+    public org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream toBusinessStreamGraph(BusinessStreamMetaData<BusinessStream> businessStreamMetaData) throws IOException
     {
-        Graph graph = this.toGraph(businessStreamGraph);
-
-        return new BusinessStream(getFlows(graph.getFlows()),
-            getIntegratedSystem(graph.getIntegratedSystems()),
-            getEdges(graph.getEdges()), getDestinations(graph.getDestinations()));
+        return new org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream(getFlows(businessStreamMetaData.getBusinessStream().getFlows()),
+            getIntegratedSystem(businessStreamMetaData.getBusinessStream().getIntegratedSystems()),
+            getEdges(businessStreamMetaData.getBusinessStream().getEdges()), getDestinations(businessStreamMetaData.getBusinessStream().getDestinations()));
     }
 
     /**
@@ -54,11 +52,11 @@ public class BusinessStreamVisjsAdapter
      * @return and initialised Graph
      * @throws IOException
      */
-    private Graph toGraph(String graph) throws IOException
+    private BusinessStream toGraph(String graph) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
 
-        return mapper.readValue(graph, Graph.class);
+        return mapper.readValue(graph, BusinessStream.class);
     }
 
     /**
@@ -67,11 +65,11 @@ public class BusinessStreamVisjsAdapter
      * @param flows the raw flows
      * @return decorated flows
      */
-    private List<Flow> getFlows(List<org.ikasan.dashboard.ui.visualisation.adapter.model.Flow> flows)
+    private List<Flow> getFlows(List<org.ikasan.business.stream.metadata.model.Flow> flows)
     {
         ArrayList<Flow> flows1 = new ArrayList<>();
 
-        for(org.ikasan.dashboard.ui.visualisation.adapter.model.Flow flow: flows)
+        for(org.ikasan.business.stream.metadata.model.Flow flow: flows)
        {
            flows1.add(getFlow(flow));
        }
@@ -85,7 +83,7 @@ public class BusinessStreamVisjsAdapter
      * @param flow the raw flow
      * @return decorated flow
      */
-    private Flow getFlow(org.ikasan.dashboard.ui.visualisation.adapter.model.Flow flow)
+    private Flow getFlow(org.ikasan.business.stream.metadata.model.Flow flow)
     {
         Flow f = new Flow(flow.getId(), flow.getModuleName(), flow.getFlowName(), flow.getX(), flow.getY());
         if(flow.getCorrelator() != null)
@@ -106,11 +104,11 @@ public class BusinessStreamVisjsAdapter
      * @param integratedSystems
      * @return
      */
-    private List<IntegratedSystem> getIntegratedSystem(List<org.ikasan.dashboard.ui.visualisation.adapter.model.IntegratedSystem> integratedSystems)
+    private List<IntegratedSystem> getIntegratedSystem(List<org.ikasan.business.stream.metadata.model.IntegratedSystem> integratedSystems)
     {
         ArrayList<IntegratedSystem> integratedSystems1 = new ArrayList<>();
 
-        for(org.ikasan.dashboard.ui.visualisation.adapter.model.IntegratedSystem integratedSystem: integratedSystems)
+        for(org.ikasan.business.stream.metadata.model.IntegratedSystem integratedSystem: integratedSystems)
         {
             integratedSystems1.add(getIntegratedSystem(integratedSystem));
         }
@@ -124,7 +122,7 @@ public class BusinessStreamVisjsAdapter
      * @param integratedSystem
      * @return
      */
-    private IntegratedSystem getIntegratedSystem(org.ikasan.dashboard.ui.visualisation.adapter.model.IntegratedSystem integratedSystem)
+    private IntegratedSystem getIntegratedSystem(org.ikasan.business.stream.metadata.model.IntegratedSystem integratedSystem)
     {
         return new IntegratedSystem(integratedSystem.getId(), integratedSystem.getName(), integratedSystem.getX(), integratedSystem.getY());
     }
@@ -135,11 +133,11 @@ public class BusinessStreamVisjsAdapter
      * @param edges
      * @return
      */
-    private List<Edge> getEdges(List<org.ikasan.dashboard.ui.visualisation.adapter.model.Edge> edges)
+    private List<Edge> getEdges(List<org.ikasan.business.stream.metadata.model.Edge> edges)
     {
         ArrayList<Edge> edges1 = new ArrayList<>();
 
-        for(org.ikasan.dashboard.ui.visualisation.adapter.model.Edge edge: edges)
+        for(org.ikasan.business.stream.metadata.model.Edge edge: edges)
         {
             edges1.add(getEdge(edge));
         }
@@ -153,7 +151,7 @@ public class BusinessStreamVisjsAdapter
      * @param edge
      * @return
      */
-    private Edge getEdge(org.ikasan.dashboard.ui.visualisation.adapter.model.Edge edge)
+    private Edge getEdge(org.ikasan.business.stream.metadata.model.Edge edge)
     {
         return new Edge(edge.getFrom(), edge.getTo());
     }
@@ -164,11 +162,11 @@ public class BusinessStreamVisjsAdapter
      * @param destinations
      * @return
      */
-    private List<Destination> getDestinations(List<org.ikasan.dashboard.ui.visualisation.adapter.model.Destination> destinations)
+    private List<Destination> getDestinations(List<org.ikasan.business.stream.metadata.model.Destination> destinations)
     {
         ArrayList<Destination> destinations1 = new ArrayList<>();
 
-        for(org.ikasan.dashboard.ui.visualisation.adapter.model.Destination destination: destinations)
+        for(org.ikasan.business.stream.metadata.model.Destination destination: destinations)
         {
             destinations1.add(getDestination(destination));
         }
@@ -182,7 +180,7 @@ public class BusinessStreamVisjsAdapter
      * @param destination
      * @return
      */
-    private Destination getDestination(org.ikasan.dashboard.ui.visualisation.adapter.model.Destination destination)
+    private Destination getDestination(org.ikasan.business.stream.metadata.model.Destination destination)
     {
         return new Destination(destination.getId(), destination.getName(), destination.getX(), destination.getY());
     }

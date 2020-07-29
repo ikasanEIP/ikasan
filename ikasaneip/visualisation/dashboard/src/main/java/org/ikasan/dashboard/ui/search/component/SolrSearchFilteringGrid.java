@@ -7,22 +7,23 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.i18n.I18NProvider;
+import com.vaadin.flow.server.VaadinService;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.security.SecurityUtils;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.metadata.BusinessStreamMetadataSearchResults;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -265,8 +266,18 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
             }
         }
 
-        return this.solrSearchService.search(moduleNames, flowNames, componentNames, eventId, searchTerm,
-            startTime, endTime, offset, limit, types, negateQuery, sortField, sortOrder);
+        try {
+            return this.solrSearchService.search(moduleNames, flowNames, componentNames, eventId, searchTerm,
+                startTime, endTime, offset, limit, types, negateQuery, sortField, sortOrder);
+        }
+        catch (Exception e) {
+            final UI current = UI.getCurrent();
+            final I18NProvider i18NProvider = VaadinService.getCurrent().getInstantiator().getI18NProvider();
+            NotificationHelper.showErrorNotification(i18NProvider.getTranslation("error.solr-unavailable"
+                , current.getLocale()));
+        }
+
+        return new IkasanSolrDocumentSearchResults(new ArrayList<>(), 0, 0);
     }
 
     public long getResultSize()

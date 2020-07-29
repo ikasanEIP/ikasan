@@ -101,7 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
                                                                                                 // (production mode) static resources
                                                                                                 "/frontend-es5/**",
                                                                                                 "/frontend-es6/**")
-            .permitAll().antMatchers("/persistenceSetup").permitAll().antMatchers("/authenticate").permitAll()
+            .permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers("/swagger-ui.html").permitAll()
             // Allow all requests by logged in users.
             .anyRequest().authenticated()
@@ -120,6 +120,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         //            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
         //formatter:on
     }
 }

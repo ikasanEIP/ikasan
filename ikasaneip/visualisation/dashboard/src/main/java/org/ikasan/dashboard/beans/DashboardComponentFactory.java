@@ -26,12 +26,15 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
+import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.dao.SolrSystemEventDao;
 import org.ikasan.systemevent.service.SolrSystemEventServiceImpl;
+import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
+import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.ikasan.wiretap.service.SolrWiretapServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -240,5 +243,10 @@ public class DashboardComponentFactory
         FlowStateCache flowStateCache = FlowStateCache.instance();
         flowStateCache.setModuleControlRestService(this.moduleControlRestService);
         return flowStateCache;
+    }
+
+    @Bean
+    public ModuleMetaDataProvider<String> moduleMetaDataProvider() {
+        return new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
     }
 }

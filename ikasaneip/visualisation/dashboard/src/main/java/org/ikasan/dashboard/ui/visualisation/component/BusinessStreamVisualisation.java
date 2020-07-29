@@ -23,6 +23,7 @@ import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
@@ -108,12 +109,12 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     }
 
     /**
-     * @param json
+     * @param businessStreamMetaData
      */
-    public void createBusinessStreamGraphGraph(String json) throws IOException {
+    public void createBusinessStreamGraphGraph(BusinessStreamMetaData businessStreamMetaData) throws IOException {
         BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
 
-        this.businessStream = adapter.toBusinessStreamGraph(json);
+        this.businessStream = adapter.toBusinessStreamGraph(businessStreamMetaData);
 
         nodes = new ArrayList<>();
         nodes.addAll(businessStream.getFlows());

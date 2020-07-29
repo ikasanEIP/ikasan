@@ -1,11 +1,15 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.i18n.I18NProvider;
+import com.vaadin.flow.server.VaadinService;
 import org.apache.solr.client.solrj.util.ClientUtils;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.visualisation.component.filter.BusinessStreamSearchFilter;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
@@ -138,7 +142,17 @@ public class BusinessStreamFilteringGrid extends Grid<BusinessStreamMetaData>
             businessStreamNames.add("*" + ClientUtils.escapeQueryChars(filter.getBusinessStreamNameFilter()) + "*");
         }
 
-        return this.solrSearchService.find(businessStreamNames, offset, limit);
+        try {
+            return this.solrSearchService.find(businessStreamNames, offset, limit);
+        }
+        catch (Exception e) {
+            final UI current = UI.getCurrent();
+            final I18NProvider i18NProvider = VaadinService.getCurrent().getInstantiator().getI18NProvider();
+            NotificationHelper.showErrorNotification(i18NProvider.getTranslation("error.solr-unavailable"
+                , current.getLocale()));
+        }
+
+        return new BusinessStreamMetadataSearchResults(new ArrayList<>(), 0, 0);
     }
 
     public long getResultSize()

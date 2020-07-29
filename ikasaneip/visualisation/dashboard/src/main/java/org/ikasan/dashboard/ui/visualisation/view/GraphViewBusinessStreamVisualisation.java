@@ -1,48 +1,28 @@
 package org.ikasan.dashboard.ui.visualisation.view;
 
-import com.vaadin.componentfactory.Tooltip;
-import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
-import org.ikasan.dashboard.ui.general.component.TooltipHelper;
-import org.ikasan.dashboard.ui.search.SearchConstants;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
-import org.ikasan.dashboard.ui.util.DateTimeUtil;
-import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamVisualisation;
-import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
-import org.ikasan.exclusion.dao.SolrExclusionEventDao;
-import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.solr.SolrGeneralService;
-import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class GraphViewBusinessStreamVisualisation extends VerticalLayout implements SearchListener
@@ -124,11 +104,8 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         this.businessStreamVisualisation.search(entityTypes, searchTerm, startDate, endDate);
     }
 
-    /**
-     *
-     * @param json
-     */
-    protected void createBusinessStreamGraph(String name, String json) throws IOException {
+
+    protected void createBusinessStreamGraph(String name, BusinessStreamMetaData businessStreamMetaData) throws IOException {
 
         if (this.businessStreamVisualisation != null) {
             this.remove(businessStreamVisualisation);
@@ -138,7 +115,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
             this.configurationRestService, this.triggerRestService, this.moduleMetadataService
             , this.configurationMetadataService, this.solrSearchService);
 
-        businessStreamVisualisation.createBusinessStreamGraphGraph(json);
+        businessStreamVisualisation.createBusinessStreamGraphGraph(businessStreamMetaData);
 
         this.moduleLabel.setText(name);
 

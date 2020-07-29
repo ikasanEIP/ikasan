@@ -16,7 +16,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.i18n.I18NProvider;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinService;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditEventImpl;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
