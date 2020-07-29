@@ -2,8 +2,7 @@ package org.ikasan.dashboard.ui.visualisation.adapter.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import org.ikasan.dashboard.ui.visualisation.adapter.model.*;
-import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
+import org.ikasan.business.stream.metadata.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -61,16 +60,12 @@ public class BusinessStreamVisjsAdapterTest
         edges.add(createEdge("Murex", "gloss-trade"));
         edges.add(createEdge("gloss-trade", "Gloss"));
 
-        Graph graph = new Graph();
-        graph.setEdges(edges);
-        graph.setIntegratedSystems(integratedSystems);
-        graph.setFlows(flows);
+        BusinessStream businessStream = new BusinessStream();
+        businessStream.setEdges(edges);
+        businessStream.setIntegratedSystems(integratedSystems);
+        businessStream.setFlows(flows);
 
         BusinessStreamVisjsAdapter adapter = new BusinessStreamVisjsAdapter();
-
-        BusinessStream graph1 = adapter.toBusinessStreamGraph(adapter.toJson(graph));
-
-
     }
 
     private Flow createFlow(String id, String name, Integer x, Integer y)

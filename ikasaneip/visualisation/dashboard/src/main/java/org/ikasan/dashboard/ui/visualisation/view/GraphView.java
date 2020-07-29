@@ -23,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
@@ -198,7 +198,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         {
             try
             {
-                this.createBusinessStreamGraph(doubleClickEvent.getItem().getName(), doubleClickEvent.getItem().getJson());
+                this.createBusinessStreamGraph(doubleClickEvent.getItem().getName(), doubleClickEvent.getItem());
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
             }
             catch (IOException e)
@@ -279,7 +279,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
      *
      * @param json
      */
-    protected void createBusinessStreamGraph(String name, String json) throws IOException {
+    protected void createBusinessStreamGraph(String name, BusinessStreamMetaData businessStreamMetaData) throws IOException {
 
         if (this.businessStreamVisualisation != null) {
             this.remove(businessStreamVisualisation);
@@ -293,7 +293,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             this.moduleControlRestService, this.moduleMetadataService, this.configurationRestService
             , this.triggerRestService, this.configurationMetadataService);
 
-        businessStreamVisualisation.createBusinessStreamGraph(name, json);
+        businessStreamVisualisation.createBusinessStreamGraph(name, businessStreamMetaData);
 
         this.add(businessStreamVisualisation);
         this.searchForm.addSearchListener(businessStreamVisualisation);

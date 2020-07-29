@@ -50,6 +50,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
     private Component leftSubmenu;
     private LeftNavigationItem searchItem;
     private LeftNavigationItem visualisationItem;
+    private LeftNavigationItem notificationManagementItem;
     private LeftNavigationItem userManagementItem;
     private LeftNavigationItem groupManagementItem;
     private LeftNavigationItem roleManagementItem;
@@ -109,6 +110,10 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
             .get(getTranslation("menu-item.administration", UI.getCurrent().getLocale(), null), VaadinIcon.TOOLS.create());
 
         this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
+            UI.getCurrent().getLocale(), null), VaadinIcon.ENVELOPE.create(), UserManagementView.class);
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementItem);
+
+        this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
             UI.getCurrent().getLocale(), null), VaadinIcon.USERS.create(), UserManagementView.class);
         leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementItem);
 
@@ -144,9 +149,6 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
     {
         super.onAttach(attachEvent);
         this.searchItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.SEARCH_WRITE,
-//            SecurityConstants.ERROR_ADMIN, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE,
-//            SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ERROR_WRITE, SecurityConstants.EXCLUSION_READ,
-//            SecurityConstants.REPLAY_ADMIN, SecurityConstants.REPLAY_READ, SecurityConstants.REPLAY_WRITE,
             SecurityConstants.ALL_AUTHORITY));
 
         this.visualisationItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.WIRETAP_READ,

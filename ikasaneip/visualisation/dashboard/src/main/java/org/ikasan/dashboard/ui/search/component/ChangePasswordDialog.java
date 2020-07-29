@@ -12,17 +12,13 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
-import org.ikasan.dashboard.ui.util.SystemEventConstants;
-import org.ikasan.dashboard.ui.util.SystemEventLogger;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
 
 import java.util.function.IntPredicate;
-import java.util.regex.Pattern;
 
 public class ChangePasswordDialog extends Dialog
 {

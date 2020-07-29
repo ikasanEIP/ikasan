@@ -49,7 +49,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class GraphViewTest
+public class ModuleVisualisationViewTest
 {
     public static final String MODULE_JSON = "/data/graph/module.json";
     public static final String MODULE_FOUR_JSON = "/data/graph/module-four.json";
@@ -116,13 +116,12 @@ public class GraphViewTest
         Map<Class<? extends RouterLayout>, List<RouteData>> routesByParent = router.getRoutesByParent();
         List<RouteData> myRoutes = routesByParent.get(IkasanAppLayout.class);
 
-        Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!");
+        Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!0");
         Assertions.assertEquals("", myRoutes.get(0).getUrl(), "URL is empty string!");
-        Assertions.assertEquals(SearchView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
+        Assertions.assertEquals(SearchView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is SearchView.class!");
     }
 
     @Test
-    @Ignore
     public void testCreateGraph() throws IOException
     {
         UI.getCurrent().navigate("visualisation");
@@ -143,65 +142,15 @@ public class GraphViewTest
         Assertions.assertEquals(7, networkDiagram.getEdgesDataProvider().size(new Query<>())
             , "There should be 12 nodes in the network diagram!");
 
-//        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
-//
-//        networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 28 nodes in the network diagram!");
-//        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 27 nodes in the network diagram!");
-    }
+        graphView.createModuleVisualisation(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
 
+        networkDiagram = _get(NetworkDiagram.class);
+        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
 
-    @Test
-    @Ignore
-    public void testBadFileUpload() throws IOException
-    {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/json", loadDataFileStream(BAD_JSON));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("An error has occurred attempting to load graph JSON: Unrecognized token 'bad': was expecting ('true', 'false' or 'null')\n" +
-//            " at [Source: (String)\"bad json\"; line: 1, column: 4]", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
-    }
-
-    @Test
-    @Ignore
-    public void testBadXmlFileUpload() throws IOException
-    {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/xml", loadDataFileStream(BAD_XML));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("File should be JSON!", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
+        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
+            , "There should be 28 nodes in the network diagram!");
+        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
+            , "There should be 27 nodes in the network diagram!");
     }
 
     protected String loadDataFile(String fileName) throws IOException

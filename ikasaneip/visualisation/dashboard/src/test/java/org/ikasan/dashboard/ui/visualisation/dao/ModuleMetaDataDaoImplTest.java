@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-public class ModuleMataDataDaoImplTest
+public class ModuleMetaDataDaoImplTest
 {
     @Before
     public void setup()

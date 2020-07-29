@@ -14,13 +14,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
-import org.ikasan.dashboard.ui.component.NotificationHelper;
-import org.ikasan.dashboard.ui.search.model.replay.ReplayAuditImpl;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
-import org.ikasan.spec.replay.ReplayAudit;
 
 public class HospitalCommentsDialog extends Dialog
 {
