@@ -12,6 +12,7 @@ public class BusinessStreamNotification {
     private boolean isHtml;
     private Integer resultSize;
     private boolean isNewExclusionsOnlyNotification;
+    private Long lastRunTimestamp = -1L;
 
     public String getJobName() {
         return jobName;
@@ -83,5 +84,13 @@ public class BusinessStreamNotification {
 
     public void setIsNewExclusionsOnlyNotification(boolean newExclusionsOnlyNotification) {
         isNewExclusionsOnlyNotification = newExclusionsOnlyNotification;
+    }
+
+    public Long getLastRunTimestamp() {
+        return lastRunTimestamp;
+    }
+
+    public void setLastRunTimestamp(Long lastRunTimestamp) {
+        this.lastRunTimestamp = lastRunTimestamp;
     }
 }

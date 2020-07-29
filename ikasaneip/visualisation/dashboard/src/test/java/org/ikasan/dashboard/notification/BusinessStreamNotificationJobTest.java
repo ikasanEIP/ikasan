@@ -78,13 +78,13 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
             will(returnValue("jobName"));
             oneOf(platformConfigurationService).getConfigurationValue(with(any(String.class)));
             will(returnValue("0"));
+            exactly(1).of(businessStreamNotification).getLastRunTimestamp();
+            will(returnValue(0L));
             oneOf(businessStreamNotification).getResultSize();
             will(returnValue(1000));
             oneOf(businessStreamNotificationService).getBusinessStreamExclusions("businessStreamName", 0L, 1000);
             will(returnValue(Optional.empty()));
-            oneOf(businessStreamNotification).getJobName();
-            will(returnValue("jobName"));
-            oneOf(businessStreamNotification).getJobName();
+            exactly(2).of(businessStreamNotification).getJobName();
             will(returnValue("jobName"));
             oneOf(platformConfigurationService).saveConfigurationValue(with(any(String.class)), with(any(String.class)));
         }});
@@ -109,6 +109,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
             will(returnValue("jobName"));
             oneOf(platformConfigurationService).getConfigurationValue(with(any(String.class)));
             will(returnValue("0"));
+            exactly(1).of(businessStreamNotification).getLastRunTimestamp();
+            will(returnValue(0L));
             oneOf(businessStreamNotification).getResultSize();
             will(returnValue(1000));
             oneOf(businessStreamNotification).getEmailBodyTemplate();
@@ -149,6 +151,51 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_job_success_no_exclusions_found_due_to_last_run_timestamp() throws JobExecutionException {
+        mockery.checking(new Expectations(){{
+            ignoring(templateEngine);
+            oneOf(businessStreamNotification).isNewExclusionsOnlyNotification();
+            will(returnValue(true));
+            oneOf(businessStreamNotification).getBusinessStreamName();
+            will(returnValue("wriggle"));
+            oneOf(businessStreamNotification).getJobName();
+            will(returnValue("jobName"));
+            oneOf(platformConfigurationService).getConfigurationValue(with(any(String.class)));
+            will(returnValue("0"));
+            exactly(2).of(businessStreamNotification).getLastRunTimestamp();
+            will(returnValue(System.currentTimeMillis() + 1000000L));
+            oneOf(businessStreamNotification).getResultSize();
+            will(returnValue(1000));
+            exactly(2).of(businessStreamNotification).getJobName();
+            will(returnValue("jobName"));
+            oneOf(platformConfigurationService).saveConfigurationValue(with(any(String.class)), with(any(String.class)));
+        }});
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            this.initialiseDataBusinessStream(server);
+            this.initialiseDataExclusionsAndErrors(server);
+
+            BusinessStreamNotificationService businessStreamNotificationService = this.initialiseService(server);
+
+            BusinessStreamNotificationJob notification = new BusinessStreamNotificationJob(emailTemplateEngine(), businessStreamNotification
+                , businessStreamNotificationService, platformConfigurationService, emailNotifier);
+
+            notification.execute(jobExecutionContext);
+        }
+        catch (SolrServerException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mockery.assertIsSatisfied();
+    }
+
     @Test(expected = JobExecutionException.class)
     public void test_job_success_exclusions_found_exception_sending_email() throws JobExecutionException {
         mockery.checking(new Expectations(){{
@@ -161,6 +208,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
             will(returnValue("jobName"));
             oneOf(platformConfigurationService).getConfigurationValue(with(any(String.class)));
             will(returnValue("0"));
+            exactly(1).of(businessStreamNotification).getLastRunTimestamp();
+            will(returnValue(0L));
             oneOf(businessStreamNotification).getResultSize();
             will(returnValue(1000));
             oneOf(businessStreamNotification).getEmailBodyTemplate();
