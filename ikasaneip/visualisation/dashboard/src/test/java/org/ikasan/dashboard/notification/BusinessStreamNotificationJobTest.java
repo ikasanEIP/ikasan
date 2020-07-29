@@ -24,12 +24,10 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.test.annotation.DirtiesContext;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -40,9 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -74,6 +70,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     @Test
     public void test_job_success_no_exclusions_found() throws JobExecutionException {
         mockery.checking(new Expectations(){{
+            oneOf(businessStreamNotification).isNewExclusionsOnlyNotification();
+            will(returnValue(true));
             oneOf(businessStreamNotification).getBusinessStreamName();
             will(returnValue("businessStreamName"));
             oneOf(businessStreamNotification).getJobName();
@@ -103,6 +101,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     public void test_job_success_exclusions_found() throws JobExecutionException {
         mockery.checking(new Expectations(){{
             ignoring(templateEngine);
+            oneOf(businessStreamNotification).isNewExclusionsOnlyNotification();
+            will(returnValue(true));
             oneOf(businessStreamNotification).getBusinessStreamName();
             will(returnValue("wriggle"));
             oneOf(businessStreamNotification).getJobName();
@@ -113,7 +113,7 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
             will(returnValue(1000));
             oneOf(businessStreamNotification).getEmailBodyTemplate();
             will(returnValue("./src/test/resources/email/notification-email-jp.html"));
-            oneOf(businessStreamNotification).getEmailSubject();
+            oneOf(businessStreamNotification).getEmailSubjectTemplate();
             will(returnValue("./src/test/resources/email/notification-email-subject-jp.txt"));
             oneOf(businessStreamNotification).getRecipientList();
             will(returnValue(Arrays.asList("ikasan@ikasan.com")));
@@ -153,6 +153,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     public void test_job_success_exclusions_found_exception_sending_email() throws JobExecutionException {
         mockery.checking(new Expectations(){{
             ignoring(templateEngine);
+            oneOf(businessStreamNotification).isNewExclusionsOnlyNotification();
+            will(returnValue(true));
             oneOf(businessStreamNotification).getBusinessStreamName();
             will(returnValue("wriggle"));
             oneOf(businessStreamNotification).getJobName();
@@ -163,7 +165,7 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
             will(returnValue(1000));
             oneOf(businessStreamNotification).getEmailBodyTemplate();
             will(returnValue("./src/test/resources/email/notification-email-jp.html"));
-            oneOf(businessStreamNotification).getEmailSubject();
+            oneOf(businessStreamNotification).getEmailSubjectTemplate();
             will(returnValue("./src/test/resources/email/notification-email-subject-jp.txt"));
             oneOf(businessStreamNotification).getRecipientList();
             will(returnValue(Arrays.asList("ikasan@ikasan.com")));

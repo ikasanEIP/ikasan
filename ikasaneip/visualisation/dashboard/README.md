@@ -1,6 +1,8 @@
 ![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-# Ikasan Visualisation
+# Ikasan Visualisation Dashboard
+
+- [Notifications](./notifications.md)
 
 Import the project to the IDE of your choosing as a Maven project. 
 

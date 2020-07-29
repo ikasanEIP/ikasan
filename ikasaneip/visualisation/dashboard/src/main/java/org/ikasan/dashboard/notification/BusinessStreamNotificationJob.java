@@ -75,15 +75,21 @@ public class BusinessStreamNotificationJob implements Job {
         final Context ctx = new Context();
 
         try {
+            long lastRunTimestamp = 0L;
+
+            if(this.businessStreamNotification.isNewExclusionsOnlyNotification()) {
+                lastRunTimestamp = this.getLastRunTimestamp();
+            }
+
             Optional<BusinessStreamExclusions> businessStreamExclusions = this.businessStreamNotificationService
-                .getBusinessStreamExclusions(this.businessStreamNotification.getBusinessStreamName(), this.getLastRunTimestamp(),
+                .getBusinessStreamExclusions(this.businessStreamNotification.getBusinessStreamName(), lastRunTimestamp,
                     this.businessStreamNotification.getResultSize());
 
             if(businessStreamExclusions.isPresent()) {
                 ctx.setVariable("businessStreamModel", businessStreamExclusions.get());
 
                 final String content = this.templateEngine.process(businessStreamNotification.getEmailBodyTemplate(), ctx);
-                final String subject = this.templateEngine.process(businessStreamNotification.getEmailSubject(), ctx);
+                final String subject = this.templateEngine.process(businessStreamNotification.getEmailSubjectTemplate(), ctx);
 
                 EmailNotification emailNotification = new EmailNotification(this.businessStreamNotification.getRecipientList(),
                     subject, content, this.businessStreamNotification.isHtml());
