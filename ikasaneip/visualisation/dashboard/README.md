@@ -10,12 +10,12 @@ Open http://localhost:9080/ in browser
 
 In the slider in the right hands side of the the screen titled Tools, there are controls
 to change the state of each node, which in turn is reflected by the pulsing colour behind 
-the node. It is also possible to upload JSON graph files to this application which are
-then reflected on the graph visualisation screen.
+the node. It is also possible to upload JSON businessStream files to this application which are
+then reflected on the businessStream visualisation screen.
 
 There are 2 example files bundled with the application:
-- [Bond Flows](src/test/resources/data/graph/bondFlowsGraph.json)
-- [Reference Data Flows](src/test/resources/data/graph/referenceDataGraph.json)
+- [Bond Flows](src/test/resources/data/businessStream/bondFlowsGraph.json)
+- [Reference Data Flows](src/test/resources/data/businessStream/referenceDataGraph.json)
 
 ```json
 {

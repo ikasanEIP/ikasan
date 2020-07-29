@@ -73,7 +73,6 @@ public class DashboardClientAutoConfiguration
         return new DashboardRestServiceImpl(environment, SYSTEM_EVENTS_PATH);
     }
 
-
     @Bean
     public DashboardRestService moduleMetadataDashboardRestService(Environment environment,
         ModuleMetaDataProvider<String> jsonModuleMetaDataProvider)

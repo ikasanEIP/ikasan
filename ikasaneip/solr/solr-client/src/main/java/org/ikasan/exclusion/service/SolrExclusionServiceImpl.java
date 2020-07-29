@@ -64,7 +64,7 @@ public class SolrExclusionServiceImpl extends SolrServiceBase implements SolrSer
     {
         this.exclusionEventDao.setSolrUsername(this.solrUsername);
         this.exclusionEventDao.setSolrPassword(this.solrPassword);
-        return this.find(moduleName, flowName, startDate, endDate, s, size);
+        return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, s, size);
     }
 
     @Override

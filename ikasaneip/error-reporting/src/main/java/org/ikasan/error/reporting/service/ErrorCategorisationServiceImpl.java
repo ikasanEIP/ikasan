@@ -138,9 +138,9 @@ public class ErrorCategorisationServiceImpl implements ErrorCategorisationServic
      * @see org.ikasan.error.reporting.service.ErrorCategorisationService#findCategorisedErrorOccurences(java.util.List, java.util.List, java.util.List, java.lang.String, java.util.Date, java.util.Date)
      */
     @Override
-    public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames,
-            List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
-            int size)
+    public List<CategorisedErrorOccurrence> findCategorisedErrorOccurrences(List<String> moduleNames, List<String> flowNames,
+                                                                            List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
+                                                                            int size)
     {
         List<ErrorOccurrenceImpl> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate, size);
         Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();

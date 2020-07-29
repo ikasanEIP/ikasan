@@ -110,8 +110,6 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
-
-
         }
     }
 

@@ -1,0 +1,1 @@
+検索件数  検索時間 ミリ秒: [( ${businessStreamModel.businessStreamMetaData.name} )]

@@ -1,6 +1,6 @@
 package org.ikasan.spec.metadata;
 
-public interface BusinessStreamMetaData
+public interface BusinessStreamMetaData<BUSINESS_STREAM>
 {
     /**
      * Get the id.
@@ -42,4 +42,11 @@ public interface BusinessStreamMetaData
      * @param json
      */
     public void setJson(String json);
+
+    /**
+     * Get the business stream.
+     *
+     * @return
+     */
+    public BUSINESS_STREAM getBusinessStream();
 }

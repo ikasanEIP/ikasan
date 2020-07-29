@@ -41,8 +41,7 @@
 package org.ikasan.configurationService.model;
 
 import java.util.HashMap;
-
-import org.ikasan.spec.configuration.Masked;
+import java.util.Map;
 
 /**
  * 
@@ -51,22 +50,12 @@ import org.ikasan.spec.configuration.Masked;
  */
 public class PlatformConfiguration
 {
-	private HashMap<String, String> configurationMap = new HashMap<String, String>();
-	
-	private String webServiceUserAccount;
-	
-	@Masked
-	private String webServiceUserPassword;
-
-	private String solrUserAccount;
-
-	@Masked
-	private String solrUserPassword;
+	private Map<String, String> configurationMap = new HashMap<String, String>();
 
 	/**
 	 * @return the configurationMap
 	 */
-	public HashMap<String, String> getConfigurationMap()
+	public Map<String, String> getConfigurationMap()
 	{
 		return configurationMap;
 	}
@@ -74,60 +63,8 @@ public class PlatformConfiguration
 	/**
 	 * @param configurationMap the configurationMap to set
 	 */
-	public void setConfigurationMap(HashMap<String, String> configurationMap)
+	public void setConfigurationMap(Map<String, String> configurationMap)
 	{
 		this.configurationMap = configurationMap;
-	}
-
-	/**
-	 * @return the webServiceUserAccount
-	 */
-	public String getWebServiceUserAccount()
-	{
-		return webServiceUserAccount;
-	}
-
-	/**
-	 * @param webServiceUserAccount the webServiceUserAccount to set
-	 */
-	public void setWebServiceUserAccount(String webServiceUserAccount)
-	{
-		this.webServiceUserAccount = webServiceUserAccount;
-	}
-
-	/**
-	 * @return the webServiceUserPassword
-	 */
-	public String getWebServiceUserPassword()
-	{
-		return webServiceUserPassword;
-	}
-
-	/**
-	 * @param webServiceUserPassword the webServiceUserPassword to set
-	 */
-	public void setWebServiceUserPassword(String webServiceUserPassword)
-	{
-		this.webServiceUserPassword = webServiceUserPassword;
-	}
-
-	public String getSolrUserAccount()
-	{
-		return solrUserAccount;
-	}
-
-	public void setSolrUserAccount(String solrUserAccount)
-	{
-		this.solrUserAccount = solrUserAccount;
-	}
-
-	public String getSolrUserPassword()
-	{
-		return solrUserPassword;
-	}
-
-	public void setSolrUserPassword(String solrUserPassword)
-	{
-		this.solrUserPassword = solrUserPassword;
 	}
 }

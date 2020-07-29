@@ -43,6 +43,7 @@ package org.ikasan.configurationService.service;
 import java.util.List;
 
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -58,8 +59,6 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
  */
 public class PlatformConfigurationServiceImpl implements PlatformConfigurationService
 {
-	private static final int DEFAULT_RESULT_SIZE = 2000;
-	
 	protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	
 	public PlatformConfigurationServiceImpl(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
@@ -80,6 +79,13 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
         
         Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+        if(configuration == null) {
+            platformConfigurationConfiguredResource.setConfiguration(new PlatformConfiguration());
+            configuration = this.configurationManagement.createConfiguration(platformConfigurationConfiguredResource);
+
+            this.configurationManagement.saveConfiguration(configuration);
+        }
         
         final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
         
@@ -129,199 +135,4 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 
 		this.configurationManagement.saveConfiguration(configuration);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServiceUsername()
-	 */
-	@Override
-	public String getWebServiceUsername()
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-        
-        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-        
-        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-        
-        for(ConfigurationParameter parameter: parameters)
-        {
-        	if(parameter.getName().equals("webServiceUserAccount"))
-        	{
-        		return (String)parameter.getValue();
-        	}
-        }
-        
-		return "";
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServicePassword()
-	 */
-	@Override
-	public String getWebServicePassword()
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-        
-        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-        
-        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-        
-        for(ConfigurationParameter parameter: parameters)
-        {
-        	if(parameter.getName().equals("webServiceUserPassword"))
-        	{
-        		return (String)parameter.getValue();
-        	}
-        }
-        
-        return "";
-	}
-
-	@Override
-	public void saveWebServiceUsername(String username)
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("webServiceUserAccount"))
-			{
-				parameter.setValue(username);
-			}
-		}
-
-		this.configurationManagement.saveConfiguration(configuration);
-	}
-
-	@Override
-	public void saveWebServicePassword(String password)
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("webServiceUserPassword"))
-			{
-				parameter.setValue(password);
-			}
-		}
-
-		this.configurationManagement.saveConfiguration(configuration);
-	}
-
-	@Override
-	public void saveSolrUsername(String username)
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("solrUserAccount"))
-			{
-				parameter.setValue(username);
-			}
-		}
-
-		this.configurationManagement.saveConfiguration(configuration);
-	}
-
-	@Override
-	public void saveSolrPassword(String password)
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("solrUserPassword"))
-			{
-				parameter.setValue(password);
-			}
-		}
-
-		this.configurationManagement.saveConfiguration(configuration);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServiceUsername()
-	 */
-	@Override
-	public String getSolrUsername()
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("solrUserAccount"))
-			{
-				return (String)parameter.getValue();
-			}
-		}
-
-		return "";
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getWebServicePassword()
-	 */
-	@Override
-	public String getSolrPassword()
-	{
-		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
-
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getName().equals("solrUserPassword"))
-			{
-				return (String)parameter.getValue();
-			}
-		}
-
-		return "";
-	}
-
-	/* (non-Javadoc)
-         * @see org.ikasan.spec.configuration.PlatformConfigurationService#getSearchResultSetSize()
-         */
-	@Override
-	public Integer getSearchResultSetSize()
-	{
-		String resultSetSizeString = this.getConfigurationValue(PlatformConfigurationConstants.RESULT_SET_SIZE);
-		
-		Integer size = null;
-		
-		try
-		{
-			size = new Integer(resultSetSizeString);
-		}
-		catch(NumberFormatException e)
-		{
-			size = DEFAULT_RESULT_SIZE;
-		}
-		
-		return size;
-	}	
-
 }
