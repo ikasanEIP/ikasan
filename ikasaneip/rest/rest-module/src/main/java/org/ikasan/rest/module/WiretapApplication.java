@@ -60,6 +60,8 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Module application implementing the REST contract
@@ -75,7 +77,8 @@ public class WiretapApplication
     /** The wiretap service */ private WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
     @Autowired
-    /** The module container (effectively holds the DTO) */ private ModuleService moduleService;
+    /** The module container (effectively holds the DTO) */
+    private ModuleService moduleService;
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
@@ -189,6 +192,35 @@ public class WiretapApplication
 
         }
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/triggers")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity get()
+    {
+        List<TriggerDto> dtos = jobAwareFlowEventListener.getTriggers().stream()
+                                 .map( trigger -> convertDto(trigger))
+                                 .collect(Collectors.toList());
+        return new ResponseEntity(dtos, HttpStatus.OK);
+    }
+
+    private TriggerDto convertDto(Trigger trigger)
+    {
+        TriggerDto dto = new TriggerDto();
+        dto.setId(trigger.getId());
+        dto.setFlowName(trigger.getFlowName());
+        dto.setModuleName(trigger.getModuleName());
+        dto.setFlowElementName(trigger.getFlowElementName());
+        dto.setRelationship(trigger.getRelationship().toString());
+        if(trigger.getParams()!=null && !trigger.getParams().isEmpty() && trigger.getParams().containsKey("timeToLive"))
+        {
+            dto.setJobType("Wiretap");
+            dto.setTimeToLive(trigger.getParams().get("timeToLive"));
+        }else{
+            dto.setJobType("LogWiretap");
+        }
+        return dto;
     }
 
     @RequestMapping(method = RequestMethod.GET,
