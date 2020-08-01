@@ -204,6 +204,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      * org.ikasan.framework.flow.FlowElement,
      * org.ikasan.framework.component.Event)
      */
+    @Override
     public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
         flowElement(moduleName,flowName,flowElement,event,TriggerRelationship.BEFORE.getDescription());
@@ -218,6 +219,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      * org.ikasan.framework.flow.FlowElement,
      * org.ikasan.framework.component.Event)
      */
+    @Override
     public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
         flowElement(moduleName,flowName,flowElement,event,TriggerRelationship.AFTER.getDescription());
@@ -267,6 +269,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         }
     }
 
+    @Override
+    public List<Trigger> getTriggers()
+    {
+         return triggerDao.findAll();
+    }
 
     @Override
     public Map<String,List<Trigger>> getTriggers(String moduleName, String flowName)
@@ -291,6 +298,8 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     {
         return key.startsWith(moduleName+flowName);
     }
+
+
 
     @Override
     public List<Trigger> getTriggers(String moduleName, String flowName, TriggerRelationship relationship, String flowElementName)
@@ -322,6 +331,8 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         {
             unmapTrigger(trigger);
             this.triggerDao.delete(trigger);
+            moduleMetadataDashboardRestService.publish(moduleService.getModule(trigger.getModuleName()));
+
         }
     }
 
