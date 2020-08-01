@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 
 public class TriggerDto implements Serializable
 {
+    private Long id;
     private String moduleName;
     private String flowName;
     private String flowElementName;
@@ -25,6 +26,16 @@ public class TriggerDto implements Serializable
         this.relationship = relationship;
         this.jobType = jobType;
         this.timeToLive = timeToLive;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
     }
 
     public String getModuleName()

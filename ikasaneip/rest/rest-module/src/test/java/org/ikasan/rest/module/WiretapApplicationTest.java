@@ -33,6 +33,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -161,6 +164,30 @@ public class WiretapApplicationTest
 
     }
 
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getTriggers_when_returns_200() throws Exception
+    {
+        //String moduleName, String flowName, String relationshipDescription, String jobName, Map<String, String> params
+        TriggerImpl t = new TriggerImpl("testModule","testFlow","AFTER",
+            "tjob", new HashMap<>(){{put("timeToLive","200");}}
+            );
+
+        Mockito
+            .when(jobAwareFlowEventListener.getTriggers())
+            .thenReturn(Arrays.asList(t));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/wiretap/triggers/")
+                                                              .accept(MediaType.APPLICATION_JSON_VALUE)
+                                                              .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("[{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"relationship\":\"AFTER\","
+            + "\"jobType\":\"Wiretap\",\"timeToLive\":\"200\"}]", result.getResponse().getContentAsString());
+
+    }
 
     private String createTriggerDto() throws JsonProcessingException
     {

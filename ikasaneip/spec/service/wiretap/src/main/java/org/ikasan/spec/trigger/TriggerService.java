@@ -55,9 +55,16 @@ public interface TriggerService
 {
 
     /**
+     * Returns all triggers associated with a particular module
+     *
+     * @return - List of triggers
+     * */
+    List<Trigger> getTriggers();
+
+    /**
      * Returns a Map all the triggers associated with a particular flow
      *
-     * @param moduleName - THe name of the module
+     * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      *
      * @return - List of triggers that apply in flow specified by the parameters
@@ -66,7 +73,7 @@ public interface TriggerService
     /**
      * Returns a safe List of all the triggers associated with a particular point in a particular flow
      *
-     * @param moduleName - THe name of the module
+     * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param relationship - The Trigger relationship (before or after)
      * @param flowElementName - The flow element name
