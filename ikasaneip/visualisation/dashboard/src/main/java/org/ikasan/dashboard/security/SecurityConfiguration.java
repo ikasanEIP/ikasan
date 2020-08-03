@@ -120,7 +120,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         //            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
+
+        // todo discuss with Andrzej about bad url context redirects when not logged in.
+//        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
         //formatter:on
     }
 }
