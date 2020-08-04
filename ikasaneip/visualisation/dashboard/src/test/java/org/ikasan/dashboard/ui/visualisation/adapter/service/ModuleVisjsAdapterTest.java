@@ -293,7 +293,7 @@ public class ModuleVisjsAdapterTest
         Assertions.assertEquals("electronicTrade", module.getName(), "module name equals");
         Assertions.assertEquals(null, module.getVersion(), "module version equals");
         Assertions.assertEquals("Region to Region Electronic Trading", module.getDescription(), "module descriptions equals");
-        Assertions.assertEquals(12, module.getFlows().size(), "number of flows equal");
+        Assertions.assertEquals(13, module.getFlows().size(), "number of flows equal");
     }
 
     @Test

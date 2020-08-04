@@ -2,14 +2,9 @@ package org.ikasan.dashboard.ui.visualisation.layout;
 
 
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
-import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
-import org.ikasan.vaadin.visjs.network.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -51,7 +46,7 @@ public class IkasanFlowLayoutManager extends LayoutManagerBase implements Layout
 
         this.networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
 
-        this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 200));
+        this.destinations.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 200));
     }
 
 }

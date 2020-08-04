@@ -1,9 +1,6 @@
 package org.ikasan.dashboard.ui.visualisation.layout;
 
-import org.ikasan.dashboard.ui.visualisation.model.flow.Logo;
-import org.ikasan.dashboard.ui.visualisation.model.flow.MessageChannel;
-import org.ikasan.dashboard.ui.visualisation.model.flow.MultiTransition;
-import org.ikasan.dashboard.ui.visualisation.model.flow.SingleTransition;
+import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.vaadin.visjs.network.Edge;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
@@ -23,7 +20,7 @@ public abstract class LayoutManagerBase
     protected NetworkDiagram networkDiagram;
     protected List<Edge> edgeList;
     protected List<Node> nodeList;
-    protected List<MessageChannel> channels;
+    protected List<Destination> destinations;
     protected Logo logo;
 
     // The below set of values are used internally
@@ -47,7 +44,7 @@ public abstract class LayoutManagerBase
         this.networkDiagram = networkDiagram;
         this.edgeList = new ArrayList<>();
         this.nodeList = new ArrayList<>();
-        this.channels = new ArrayList<>();
+        this.destinations = new ArrayList<>();
         this.logo = logo;
     }
 
@@ -110,7 +107,7 @@ public abstract class LayoutManagerBase
 
             if(transition instanceof MessageChannel)
             {
-                this.channels.add((MessageChannel)transition);
+                this.destinations.add((Destination)transition);
             }
         }
 

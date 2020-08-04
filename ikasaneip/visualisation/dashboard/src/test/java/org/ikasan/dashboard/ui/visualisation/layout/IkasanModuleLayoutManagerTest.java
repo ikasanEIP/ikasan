@@ -92,8 +92,11 @@ public class IkasanModuleLayoutManagerTest
                 oneOf(networkDiagram).drawFlow(-100, 7850, 2600, 2000, "Ack Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
+                oneOf(networkDiagram).drawFlow(-100, 9950, 2400, 500, "Some Trade Flow");
+                oneOf(networkDiagram).setNodes(with(any(List.class)));
+                oneOf(networkDiagram).setEdges(with(any(List.class)));
 
-                oneOf(networkDiagram).drawModule(-200, -200, 3000, 10150, "electronicTrade");
+                oneOf(networkDiagram).drawModule(-200, -200, 3000, 10750, "electronicTrade");
             }
         });
 
@@ -154,8 +157,11 @@ public class IkasanModuleLayoutManagerTest
                 oneOf(networkDiagram).drawFlow(-100, 4750, 800, 800, "Ack Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
+                oneOf(networkDiagram).drawFlow(-100, 5650, 750, 300, "Some Trade Flow");
+                oneOf(networkDiagram).setNodes(with(any(List.class)));
+                oneOf(networkDiagram).setEdges(with(any(List.class)));
 
-                oneOf(networkDiagram).drawModule(-200, -200, 1200, 5850, "electronicTrade");
+                oneOf(networkDiagram).drawModule(-200, -200, 1200, 6250, "electronicTrade");
             }
         });
 
