@@ -105,7 +105,7 @@ public abstract class LayoutManagerBase
             transition.setX(x + xSpacing);
             transition.setY(y);
 
-            if(transition instanceof MessageChannel)
+            if(transition instanceof Destination)
             {
                 this.destinations.add((Destination)transition);
             }
