@@ -319,7 +319,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      * @param type
      * @return String
      */
-    protected String buildIdQuery(Long id, String type)
+    protected String buildIdQuery(String id, String type)
     {
         StringBuffer idBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();

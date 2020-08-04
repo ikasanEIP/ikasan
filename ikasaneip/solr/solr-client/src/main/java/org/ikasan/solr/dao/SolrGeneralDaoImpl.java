@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implements SolrGeneralDao<IkasanSolrDocumentSearchResults>
+public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implements SolrGeneralDao<IkasanSolrDocumentSearchResults, IkasanSolrDocument>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
@@ -119,6 +119,35 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
         catch (Exception e)
         {
             throw new RuntimeException("Caught exception perform general ikasan search!", e);
+        }
+    }
+
+    @Override
+    public IkasanSolrDocument findById(String type, String id) {
+
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(super.buildIdQuery(id, type));
+
+        try
+        {
+            logger.debug("query: " + solrQuery.getQuery());
+
+            QueryRequest req = new QueryRequest(solrQuery);
+            req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
+
+            QueryResponse rsp = req.process(this.solrClient, SolrConstants.CORE);
+
+            List<IkasanSolrDocument> beans = rsp.getBeans(IkasanSolrDocument.class);
+
+            if(beans.size() == 0) {
+                return null;
+            } else {
+                return beans.get(0);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Caught exception perform id ikasan solr search!", e);
         }
     }
 

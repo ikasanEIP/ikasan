@@ -115,6 +115,13 @@ public interface SolrGeneralService<ENTITY, RESULTS>
         , String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
+     * Method to find a document in the solr index by type and id.
+     *
+     * @param type
+     */
+    public ENTITY findById(String type, String id);
+
+    /**
      * Save or update an ENTITY
      *
      * @param entity
