@@ -11,14 +11,11 @@ import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.InitialPageSettings;
-import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.security.CustomRequestCache;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -35,7 +32,7 @@ import java.util.HashMap;
 @HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
 @Component
 @UIScope
-public class LoginView extends VerticalLayout implements PageConfigurator
+public class LoginView extends VerticalLayout implements PageConfigurator, HasUrlParameter<String>
 {
     public static final String ROUTE = "login";
 
@@ -44,6 +41,8 @@ public class LoginView extends VerticalLayout implements PageConfigurator
 
 
     private LoginForm login = new LoginForm();
+    private CustomRequestCache customRequestCache;
+    private String route;
 
     public LoginView()
     {
@@ -78,7 +77,12 @@ public class LoginView extends VerticalLayout implements PageConfigurator
                 login.setError(true);
             }
 
-            UI.getCurrent().navigate("");
+            if(this.route != null && !this.route.isEmpty()) {
+                UI.getCurrent().navigate(this.route);
+            }
+            else {
+                UI.getCurrent().navigate("");
+            }
         });
 
         this.add(layout);
@@ -90,5 +94,10 @@ public class LoginView extends VerticalLayout implements PageConfigurator
         attributes.put("rel", "shortcut icon");
         attributes.put("type", "image/png");
         settings.addLink("icons/icon.png", attributes);
+    }
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, String parameter) {
+        this.route = parameter;
     }
 }

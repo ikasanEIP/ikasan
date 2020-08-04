@@ -1,8 +1,10 @@
 package org.ikasan.dashboard.ui.general.component;
 
+
 import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -12,22 +14,35 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PreserveOnRefresh;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
+import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.solr.SolrGeneralService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.olli.FileDownloadWrapper;
 
@@ -36,8 +51,18 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
+@HtmlImport("frontend://styles/shared-styles.html")
+@HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
+@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
+@Theme(Lumo.class)
+@PreserveOnRefresh
+@Route(value = "exclusion")
+@UIScope
+@org.springframework.stereotype.Component
+public class HospitalView extends AbstractEntityView<IkasanSolrDocument> implements HasUrlParameter<String>
 {
+    Logger logger = LoggerFactory.getLogger(HospitalView.class);
+
     private TextField moduleNameTf;
     private TextField flowNameTf;
     private TextField eventIdTf;
@@ -64,11 +89,13 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
     private ResubmissionRestServiceImpl resubmissionRestService;
     private ModuleMetaDataService moduleMetadataService;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
     private String translatedEventActionMessage;
 
-    public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
-                          ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService)
+    public HospitalView(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
+                        ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService,
+                        SolrGeneralService solrGeneralService)
     {
         this.errorReportingService = errorReportingService;
         if(this.errorReportingService == null)
@@ -89,6 +116,11 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         if(this.moduleMetadataService == null)
         {
             throw new IllegalArgumentException("moduleMetadataService cannot be null!");
+        }
+        this.solrGeneralService = solrGeneralService;
+        if(this.solrGeneralService == null)
+        {
+            throw new IllegalArgumentException("solrGeneralService cannot be null!");
         }
 
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
@@ -194,7 +226,6 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
                             NotificationHelper.showUserNotification("resubmission complete");
-                            this.close();
                         });
                     });
                 }
@@ -248,7 +279,6 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
                             NotificationHelper.showUserNotification("hospital event ignore complete");
-                            this.close();
                         });
                     });
                 }
@@ -339,5 +369,13 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     protected void onAttach(AttachEvent attachEvent)
     {
         this.downloadButtonTooltip.attachToComponent(downloadButton);
+    }
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, String parameter) {
+        logger.info(parameter);
+
+        IkasanSolrDocument solrDocument = this.solrGeneralService.findById("exclusion", parameter);
+        this.populate(solrDocument);
     }
 }

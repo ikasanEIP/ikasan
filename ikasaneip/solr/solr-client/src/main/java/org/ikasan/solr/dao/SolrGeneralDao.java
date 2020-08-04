@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public interface SolrGeneralDao<RESULTS>
+public interface SolrGeneralDao<RESULTS, DOCUMENT>
 {
     /**
      * Perform general search against ikasan solr index.
@@ -122,6 +122,13 @@ public interface SolrGeneralDao<RESULTS>
      * Method to remove expired records from the solr index.
      */
     public void removeExpired();
+
+    /**
+     * Method to find a document in the solr index by type and id.
+     *
+     * @param type
+     */
+    public DOCUMENT findById(String type, String id);
 
     /**
      * Method to remove records from the solr index by type and id.

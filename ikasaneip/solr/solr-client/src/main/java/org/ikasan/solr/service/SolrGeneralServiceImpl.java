@@ -16,14 +16,14 @@ import java.util.Set;
  */
 public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults>, HousekeepService, SolrDeleteService
 {
-    private SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralDao;
+    private SolrGeneralDao<IkasanSolrDocumentSearchResults, IkasanSolrDocument> solrGeneralDao;
 
     /**
      * Constructor
      *
      * @param solrGeneralSearchDao
      */
-    public SolrGeneralServiceImpl(SolrGeneralDao<IkasanSolrDocumentSearchResults> solrGeneralSearchDao)
+    public SolrGeneralServiceImpl(SolrGeneralDao<IkasanSolrDocumentSearchResults, IkasanSolrDocument> solrGeneralSearchDao)
     {
         this.solrGeneralDao = solrGeneralSearchDao;
         if(this.solrGeneralDao == null)
@@ -76,6 +76,14 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrGener
         this.solrGeneralDao.setSolrUsername(this.solrUsername);
         this.solrGeneralDao.setSolrPassword(this.solrPassword);
         return this.solrGeneralDao.search(moduleNames, flowNames, componentNames, eventId, searchString, startTime, endTime, offset, resultSize, entityTypes, negateQuery, sortField, sortOrder);
+    }
+
+    @Override
+    public IkasanSolrDocument findById(String type, String id) {
+        this.solrGeneralDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralDao.setSolrPassword(this.solrPassword);
+
+        return this.solrGeneralDao.findById(type, id);
     }
 
     @Override

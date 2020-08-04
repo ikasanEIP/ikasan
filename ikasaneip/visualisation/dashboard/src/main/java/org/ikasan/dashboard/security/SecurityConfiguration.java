@@ -122,7 +122,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         // todo discuss with Andrzej about bad url context redirects when not logged in.
-//        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
+        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
         //formatter:on
     }
 }

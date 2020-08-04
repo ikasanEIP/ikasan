@@ -13,8 +13,8 @@ public class IkasanAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException arg2)
             throws IOException, ServletException {
+        String conextPath = request.getRequestURI();
         response.sendRedirect("/");
-
     }
 
 }
