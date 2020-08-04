@@ -7,7 +7,7 @@ import org.ikasan.vaadin.visjs.network.util.Shape;
 /**
  * Created by stewmi on 07/11/2018.
  */
-public class FtpLocation extends Node
+public class FtpLocation extends Node implements Destination
 {
 	public static final String IMAGE = "frontend/images/ftp-location.png";
 

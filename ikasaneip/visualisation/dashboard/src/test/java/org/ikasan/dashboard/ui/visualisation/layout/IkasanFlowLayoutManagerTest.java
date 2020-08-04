@@ -102,7 +102,6 @@ public class IkasanFlowLayoutManagerTest
                 oneOf(networkDiagram).drawFlow(100, -100, 1600, 500, "E2 Amend Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1400, 1100, "Inbound Routing Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
                 oneOf(networkDiagram).drawFlow(100, -100, 1400, 350, "E2 Cancel Flow");
@@ -126,6 +125,7 @@ public class IkasanFlowLayoutManagerTest
                 oneOf(networkDiagram).drawFlow(100, -100, 2600, 2000, "Ack Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
+                oneOf(networkDiagram).drawFlow(100, -100, 2400, 500, "Some Trade Flow");
             }
         });
 
@@ -141,60 +141,132 @@ public class IkasanFlowLayoutManagerTest
 
         layoutManager.layout();
 
+        Assertions.assertEquals(1400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(900, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(17, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(18, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(1),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(2400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(2700, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(66, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(67, layoutManager.nodeList.size(), "node list size equals!");
 
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(2),
             networkDiagram, null);
 
         layoutManager.layout();
 
+        Assertions.assertEquals(1000, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(0, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(6, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(7, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(3),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(1200, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(0, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(7, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(8, layoutManager.nodeList.size(), "node list size equals!");
 
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(4),
             networkDiagram, null);
 
         layoutManager.layout();
 
+        Assertions.assertEquals(1600, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(300, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(13, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(14, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(5),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(1400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(150, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(10, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(11, layoutManager.nodeList.size(), "node list size equals!");
 
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(6),
             networkDiagram, null);
 
         layoutManager.layout();
 
+        Assertions.assertEquals(400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(0, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(3, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(4, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(7),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(1200, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(0, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(7, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(8, layoutManager.nodeList.size(), "node list size equals!");
 
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(8),
             networkDiagram, null);
 
         layoutManager.layout();
 
+        Assertions.assertEquals(1600, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(300, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(13, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(14, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(9),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(1400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(150, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(10, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(11, layoutManager.nodeList.size(), "node list size equals!");
 
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(10),
             networkDiagram, null);
 
         layoutManager.layout();
 
+        Assertions.assertEquals(600, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(150, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(5, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(6, layoutManager.nodeList.size(), "node list size equals!");
+
         layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(11),
             networkDiagram, null);
 
         layoutManager.layout();
+
+        Assertions.assertEquals(2600, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(1800, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(45, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(46, layoutManager.nodeList.size(), "node list size equals!");
+
+        layoutManager = new IkasanFlowLayoutManager(module.getFlows().get(12),
+            networkDiagram, null);
+
+        layoutManager.layout();
+
+        Assertions.assertEquals(2400, layoutManager.xExtent, "X extent equals!");
+        Assertions.assertEquals(300, layoutManager.yExtent, "Y extent equals!");
+        Assertions.assertEquals(18, layoutManager.edgeList.size(), "edge list size equals!");
+        Assertions.assertEquals(19, layoutManager.nodeList.size(), "node list size equals!");
+
+        mockery.assertIsSatisfied();
     }
 
     protected String loadDataFile(String fileName) throws IOException

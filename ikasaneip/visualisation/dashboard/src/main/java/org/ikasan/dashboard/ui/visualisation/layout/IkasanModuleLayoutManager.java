@@ -58,7 +58,7 @@ public class IkasanModuleLayoutManager extends LayoutManagerBase implements Layo
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
-        this.channels.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
+        this.destinations.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 300));
 
         this.networkDiagram.drawModule(xStart - 200, yStart - 200, xExtentFinal + 600, yExtent + 400, module.getName());
 

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by stewmi on 07/11/2018.
  */
-public class MessageChannel extends Node
+public class MessageChannel extends Node implements Destination
 {
 	public static final String IMAGE = "frontend/images/message-channel.png";
 
