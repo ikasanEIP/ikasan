@@ -96,8 +96,8 @@ public abstract class AbstractEntityView<ENTITY> extends VerticalLayout
         juicyAceEditor = new JuicyAceEditor();
         juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
         juicyAceEditor.setMode(JuicyAceMode.xml);
-        juicyAceEditor.setWidth("1400px");
-        juicyAceEditor.setHeight("55vh");
+        juicyAceEditor.setWidth("100%");
+        juicyAceEditor.setHeight("60vh");
         juicyAceEditor.setFontsize(12);
         juicyAceEditor.setSofttabs(false);
         juicyAceEditor.setTabsize(12);

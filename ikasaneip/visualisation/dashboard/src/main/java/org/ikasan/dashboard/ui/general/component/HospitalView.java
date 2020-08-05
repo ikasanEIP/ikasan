@@ -26,7 +26,6 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
@@ -48,8 +47,6 @@ import org.vaadin.olli.FileDownloadWrapper;
 
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @HtmlImport("frontend://styles/shared-styles.html")
 @HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
@@ -177,8 +174,8 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);
 
-        resubmitButton = new Button(getTranslation("button.resubmit", UI.getCurrent().getLocale(), null));
-        ignoreButton = new Button(getTranslation("button.ignore", UI.getCurrent().getLocale(), null));
+        resubmitButton = new Button(getTranslation("button.resubmit", UI.getCurrent().getLocale()));
+        ignoreButton = new Button(getTranslation("button.ignore", UI.getCurrent().getLocale()));
 
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
@@ -196,37 +193,33 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
                     final UI current = UI.getCurrent();
 
                     ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
-                    progressIndicatorDialog.open(String.format("re-submitting hospital event"));
+                    progressIndicatorDialog.open(getTranslation("notification.re-submitting-hospital-event", UI.getCurrent().getLocale()));
 
-                    Executor executor = Executors.newSingleThreadExecutor();
-                    executor.execute(() ->
+                    ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
+                    boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
+                        ikasanSolrDocument.getFlowName(), "resubmit", ikasanSolrDocument.getId());
+
+                    if(!result)
                     {
-                        ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
-                        boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
-                            ikasanSolrDocument.getFlowName(), "resubmit", ikasanSolrDocument.getId());
-
-                        if(!result)
-                        {
-                            current.access(() ->
-                            {
-                                progressIndicatorDialog.close();
-                                NotificationHelper.showErrorNotification("An error has occurred resubmitting. Please contact Ikasan support.");
-                            });
-
-                            return;
-                        }
-
-                        ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.RESUBMIT,
-                            this.ikasanSolrDocument, authentication.getName());
-                        this.hospitalAuditService.save(eventAction);
-
                         current.access(() ->
                         {
-                            resubmitButton.setVisible(false);
-                            ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("resubmission complete");
+                            NotificationHelper.showErrorNotification(getTranslation("error.exclusion-resubmission-error", UI.getCurrent().getLocale()));
                         });
+
+                        return;
+                    }
+
+                    ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.RESUBMIT,
+                        this.ikasanSolrDocument, authentication.getName());
+                    this.hospitalAuditService.save(eventAction);
+
+                    current.access(() ->
+                    {
+                        resubmitButton.setVisible(false);
+                        ignoreButton.setVisible(false);
+                        progressIndicatorDialog.close();
+                        NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-resubmit-success", UI.getCurrent().getLocale()));
                     });
                 }
             });
@@ -248,38 +241,34 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
                     final UI current = UI.getCurrent();
 
                     ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
-                    progressIndicatorDialog.open(String.format("ignoring hospital event"));
+                    progressIndicatorDialog.open(getTranslation("notification.ignoring-hospital-event", UI.getCurrent().getLocale()));
 
-                    Executor executor = Executors.newSingleThreadExecutor();
-                    executor.execute(() ->
+                    ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
+                    boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
+                        ikasanSolrDocument.getFlowName(), "ignore", ikasanSolrDocument.getId());
+
+                    if(!result)
                     {
-                        ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
-                        boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
-                            ikasanSolrDocument.getFlowName(), "ignore", ikasanSolrDocument.getId());
-
-                        if(!result)
-                        {
-                            current.access(() ->
-                            {
-                                progressIndicatorDialog.close();
-                                NotificationHelper.showErrorNotification("An error has occurred ignoring. Please contact Ikasan support.");
-                            });
-
-                            return;
-                        }
-
-                        ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.IGNORED,
-                            this.ikasanSolrDocument, authentication.getName());
-
-                        this.hospitalAuditService.save(eventAction);
-
                         current.access(() ->
                         {
-                            resubmitButton.setVisible(false);
-                            ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("hospital event ignore complete");
+                            NotificationHelper.showErrorNotification(getTranslation("error.exclusion-ignore-error", UI.getCurrent().getLocale()));
                         });
+
+                        return;
+                    }
+
+                    ExclusionEventAction eventAction = this.getExclusionEventAction(exclusionEventAction.getComment(), ExclusionEventAction.IGNORED,
+                        this.ikasanSolrDocument, authentication.getName());
+
+                    this.hospitalAuditService.save(eventAction);
+
+                    current.access(() ->
+                    {
+                        progressIndicatorDialog.close();
+                        resubmitButton.setVisible(false);
+                        ignoreButton.setVisible(false);
+                        NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-ignore-success", UI.getCurrent().getLocale()));
                     });
                 }
             });

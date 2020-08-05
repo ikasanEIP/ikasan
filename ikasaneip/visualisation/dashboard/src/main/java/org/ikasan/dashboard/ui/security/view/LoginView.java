@@ -15,6 +15,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.ikasan.dashboard.security.ContextCache;
 import org.ikasan.dashboard.security.CustomRequestCache;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 
 @Tag("sa-login-view")
 @Route(value = LoginView.ROUTE)
@@ -77,8 +79,9 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
                 login.setError(true);
             }
 
-            if(this.route != null && !this.route.isEmpty()) {
-                UI.getCurrent().navigate(this.route);
+            String context = ContextCache.getContext(UI.getCurrent().getSession().getSession().getId());
+            if(context != null && isRouteValid(context)) {
+                UI.getCurrent().navigate(context);
             }
             else {
                 UI.getCurrent().navigate("");
@@ -86,6 +89,24 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
         });
 
         this.add(layout);
+    }
+
+    private boolean isRouteValid(String context) {
+        if(context.isEmpty()) {
+            return true;
+        }
+
+        List<RouteData> routes = RouteConfiguration.forApplicationScope().getAvailableRoutes();
+
+        return routes.stream().anyMatch(route -> {
+            String url = route.getUrl();
+
+            if(!url.isEmpty() && context.startsWith(url + "/")){
+                return true;
+            }
+
+            return false;
+        });
     }
 
     @Override

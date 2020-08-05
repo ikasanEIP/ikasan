@@ -18,6 +18,5 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
     }
 }

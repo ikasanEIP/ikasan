@@ -325,7 +325,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         StringBuffer typeBuffer = new StringBuffer();
 
 
-        idBuffer.append(ID + COLON + id);
+        idBuffer.append(ID).append(COLON).append("\"").append(id).append("\"");
 
         if(type != null && !type.trim().isEmpty())
         {
