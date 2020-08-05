@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.security;
 
+import com.vaadin.flow.component.UI;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -11,9 +12,14 @@ import java.io.IOException;
 public class IkasanAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException arg2)
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException)
             throws IOException, ServletException {
-        String conextPath = request.getRequestURI();
+        String context = request.getRequestURI();
+        if(context.startsWith("/")) {
+            context = context.substring(1);
+        }
+
+        ContextCache.addContext(request.getSession().getId(), context);
         response.sendRedirect("/");
     }
 

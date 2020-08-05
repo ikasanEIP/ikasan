@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Configures spring security, doing the following:
@@ -111,7 +112,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 
             // Configure logout
             .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL).and().exceptionHandling()
-            .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+            .defaultAuthenticationEntryPointFor(jwtAuthenticationEntryPoint, new AntPathRequestMatcher("/rest/**"));
         /**
          * Session Management should be set to stateless for JWT token, but due to VAADIN utilising
          * cookies we cannot do that
@@ -120,9 +121,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         //            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // todo discuss with Andrzej about bad url context redirects when not logged in.
-        http.exceptionHandling().authenticationEntryPoint(new IkasanAuthenticationEntryPoint());
+        http.exceptionHandling().defaultAuthenticationEntryPointFor(new IkasanAuthenticationEntryPoint()
+            , new AntPathRequestMatcher("/**"));
         //formatter:on
     }
 }

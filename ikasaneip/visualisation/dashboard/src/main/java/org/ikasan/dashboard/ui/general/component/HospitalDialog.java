@@ -164,7 +164,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                     final UI current = UI.getCurrent();
 
                     ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
-                    progressIndicatorDialog.open(String.format("re-submitting hospital event"));
+                    progressIndicatorDialog.open(getTranslation("notification.re-submitting-hospital-event", UI.getCurrent().getLocale()));
 
                     Executor executor = Executors.newSingleThreadExecutor();
                     executor.execute(() ->
@@ -178,7 +178,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             current.access(() ->
                             {
                                 progressIndicatorDialog.close();
-                                NotificationHelper.showErrorNotification("An error has occurred resubmitting. Please contact Ikasan support.");
+                                NotificationHelper.showErrorNotification(getTranslation("error.exclusion-resubmission-error", UI.getCurrent().getLocale()));
                             });
 
                             return;
@@ -193,7 +193,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             resubmitButton.setVisible(false);
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("resubmission complete");
+                            NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-resubmit-success", UI.getCurrent().getLocale()));
                             this.close();
                         });
                     });
@@ -217,7 +217,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                     final UI current = UI.getCurrent();
 
                     ProgressIndicatorDialog progressIndicatorDialog = new ProgressIndicatorDialog(true);
-                    progressIndicatorDialog.open(String.format("ignoring hospital event"));
+                    progressIndicatorDialog.open(String.format(getTranslation("notification.ignoring-hospital-event", UI.getCurrent().getLocale())));
 
                     Executor executor = Executors.newSingleThreadExecutor();
                     executor.execute(() ->
@@ -231,7 +231,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             current.access(() ->
                             {
                                 progressIndicatorDialog.close();
-                                NotificationHelper.showErrorNotification("An error has occurred ignoring. Please contact Ikasan support.");
+                                NotificationHelper.showErrorNotification(getTranslation("error.exclusion-ignore-error", UI.getCurrent().getLocale()));
                             });
 
                             return;
@@ -247,7 +247,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             resubmitButton.setVisible(false);
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
-                            NotificationHelper.showUserNotification("hospital event ignore complete");
+                            NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-ignore-success", UI.getCurrent().getLocale()));
                             this.close();
                         });
                     });
