@@ -72,7 +72,7 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
             if (this.shouldActionEvent(document)) {
                 ModuleMetaData moduleMetaData = super.getModuleMetaData(document.getModuleName());
                 boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), document.getModuleName(),
-                    document.getFlowName(), action, document.getId());
+                    document.getFlowName(), action, this.getErrorUri(document.getId()));
 
                 if (!result) {
                     current.access(() ->
@@ -114,7 +114,7 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
      * @return
      */
     protected ExclusionEventAction getExclusionEventAction(String comment, String action, IkasanSolrDocument document, String user) {
-        ErrorOccurrence errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(document.getId());
+        ErrorOccurrence errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(this.getErrorUri(document.getId()));
         ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
         exclusionEventAction.setComment(comment);
         exclusionEventAction.setActionedBy(user);
@@ -148,5 +148,12 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
         }
 
         return "";
+    }
+
+    private String getErrorUri(String id){
+        if(id.contains(":")) {
+            id = id.substring(id.lastIndexOf(":") + 1);
+        }
+        return id;
     }
 }

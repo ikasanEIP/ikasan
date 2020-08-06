@@ -37,7 +37,7 @@ public class SolrExclusionEventDao extends SolrDaoBase<ExclusionEvent> implement
     protected SolrInputDocument getSolrInputFields(Long expiry, ExclusionEvent exclusionEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, "" + exclusionEvent.getErrorUri());
+        document.addField(ID, exclusionEvent.getModuleName() + ":" + "exclusion" + ":" + exclusionEvent.getErrorUri());
         document.addField(TYPE, EXCLUSION);
         document.addField(MODULE_NAME, exclusionEvent.getModuleName());
         document.addField(FLOW_NAME, exclusionEvent.getFlowName());
