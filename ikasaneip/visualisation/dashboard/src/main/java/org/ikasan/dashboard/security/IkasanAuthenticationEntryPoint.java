@@ -1,6 +1,5 @@
 package org.ikasan.dashboard.security;
 
-import com.vaadin.flow.component.UI;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
