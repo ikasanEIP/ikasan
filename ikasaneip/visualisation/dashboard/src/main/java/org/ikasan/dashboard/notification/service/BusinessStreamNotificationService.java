@@ -61,7 +61,7 @@ public class BusinessStreamNotificationService {
         if(results.getResultList().size() > 0) {
             Map<String, ErrorOccurrence> errorOccurrencesMap = results.getResultList()
                 .stream()
-                .map(ikasanDoc -> errorReportingService.find(ikasanDoc.getId()))
+                .map(ikasanDoc -> errorReportingService.find(this.getErrorUri(ikasanDoc.getId())))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(ErrorOccurrence::getUri, Function.identity()));
 
@@ -69,7 +69,7 @@ public class BusinessStreamNotificationService {
 
             results.getResultList().forEach(ikasanSolrDocument -> {
                 BusinessStreamExclusion businessStreamExclusion = new BusinessStreamExclusion(ikasanSolrDocument,
-                    errorOccurrencesMap.get(ikasanSolrDocument.getId()));
+                    errorOccurrencesMap.get(this.getErrorUri(ikasanSolrDocument.getId())));
 
                 businessStreamExclusionsList.add(businessStreamExclusion);
             });
@@ -78,5 +78,12 @@ public class BusinessStreamNotificationService {
         }
 
         return new ArrayList<>();
+    }
+
+    private String getErrorUri(String id){
+        if(id.contains(":")) {
+            id = id.substring(id.lastIndexOf(":") + 1);
+        }
+        return id;
     }
 }

@@ -197,7 +197,7 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
 
                     ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
                     boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
-                        ikasanSolrDocument.getFlowName(), "resubmit", ikasanSolrDocument.getId());
+                        ikasanSolrDocument.getFlowName(), "resubmit", this.getErrorUri(ikasanSolrDocument.getId()));
 
                     if(!result)
                     {
@@ -245,7 +245,7 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
 
                     ModuleMetaData moduleMetaData = this.moduleMetadataService.findById(ikasanSolrDocument.getModuleName());
                     boolean result = this.resubmissionRestService.resubmit(moduleMetaData.getUrl(), ikasanSolrDocument.getModuleName(),
-                        ikasanSolrDocument.getFlowName(), "ignore", ikasanSolrDocument.getId());
+                        ikasanSolrDocument.getFlowName(), "ignore", this.getErrorUri(ikasanSolrDocument.getId()));
 
                     if(!result)
                     {
@@ -316,10 +316,11 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         this.moduleNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getModuleName()).orElse(""));
         this.flowNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getFlowName()).orElse(""));
         this.eventIdTf.setValue(Optional.ofNullable(ikasanSolrDocument.getEventId()).orElse(""));
-        this.errorUriTf.setValue(Optional.ofNullable(ikasanSolrDocument.getId()).orElse(""));
+        this.errorUriTf.setValue(Optional.ofNullable(this.getErrorUri(ikasanSolrDocument.getId())).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(ikasanSolrDocument.getTimestamp()));
 
-        this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(ikasanSolrDocument.getId());
+        this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService
+            .find(this.getErrorUri(ikasanSolrDocument.getId()));
         this.exclusionPayload = ikasanSolrDocument.getEvent();
         this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
 
@@ -366,5 +367,12 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
 
         IkasanSolrDocument solrDocument = this.solrGeneralService.findById("exclusion", parameter);
         this.populate(solrDocument);
+    }
+
+    private String getErrorUri(String id){
+        if(id.contains(":")) {
+            id = id.substring(id.lastIndexOf(":") + 1);
+        }
+        return id;
     }
 }
