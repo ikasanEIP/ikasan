@@ -78,24 +78,10 @@ public class SearchViewTest
         MockVaadin.tearDown();
     }
 
-//    @Test
-//    public void testGraphView()
-//    {
-//        final IkasanAppLayout main = (IkasanAppLayout) UI.getCurrent().getChildren().findFirst().get();
-//        Router router = UI.getCurrent().getRouter();
-//        Map<Class<? extends RouterLayout>, List<RouteData>> routesByParent = router.getRoutesByParent();
-//        List<RouteData> myRoutes = routesByParent.get(IkasanAppLayout.class);
-//
-//        Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!");
-//        Assertions.assertEquals("", myRoutes.get(0).getUrl(), "URL is empty string!");
-//        Assertions.assertEquals(HomeView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is HomeView.class!");
-//    }
-
-    @Ignore
     @Test
     public void testSearchView() throws IOException
     {
-        UI.getCurrent().navigate("search");
+        UI.getCurrent().navigate("");
 
         try
         {
@@ -106,27 +92,5 @@ public class SearchViewTest
         {
             e.printStackTrace();
         }
-
-//        JsonModuleMetaDataProvider provider = new JsonModuleMetaDataProvider(new JsonFlowMetaDataProvider());
-//
-//        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_JSON)));
-//
-//        NetworkDiagram networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(8, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 12 nodes in the network diagram!");
-//        Assertions.assertEquals(7, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 12 nodes in the network diagram!");
-//
-//        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
-//
-//        networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 28 nodes in the network diagram!");
-//        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 27 nodes in the network diagram!");
     }
 }
