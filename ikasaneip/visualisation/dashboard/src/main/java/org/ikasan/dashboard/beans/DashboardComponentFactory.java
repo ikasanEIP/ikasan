@@ -60,7 +60,7 @@ public class DashboardComponentFactory
 
 
     @Bean
-    public SolrGeneralService solrSearchService()
+    public SolrGeneralServiceImpl solrSearchService()
     {
         SolrGeneralDaoImpl dao = new SolrGeneralDaoImpl();
         dao.initStandalone(solrUrl, 30);
@@ -84,7 +84,7 @@ public class DashboardComponentFactory
     }
 
     @Bean("errorOccurrenceBatchInsert")
-    public ErrorReportingService solrErrorReportingService()
+    public SolrErrorReportingManagementServiceImpl solrErrorReportingService()
     {
         SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
         dao.initStandalone(solrUrl, 30);
