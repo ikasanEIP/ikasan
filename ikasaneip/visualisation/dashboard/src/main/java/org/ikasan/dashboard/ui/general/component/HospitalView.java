@@ -285,8 +285,8 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, buttonWrapper);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
 
-        Tab exclusionTab = new Tab(getTranslation("tab-label.exclusion", UI.getCurrent().getLocale(), null));
-        Tab errorTab = new Tab(getTranslation("tab-label.error", UI.getCurrent().getLocale(), null));
+        Tab exclusionTab = new Tab(getTranslation("tab-label.exclusion", UI.getCurrent().getLocale()));
+        Tab errorTab = new Tab(getTranslation("tab-label.error", UI.getCurrent().getLocale()));
         Tabs tabs = new Tabs(exclusionTab, errorTab);
 
         tabs.addSelectedChangeListener(event ->
@@ -322,7 +322,10 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService
             .find(this.getErrorUri(ikasanSolrDocument.getId()));
         this.exclusionPayload = ikasanSolrDocument.getEvent();
-        this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
+
+        if(errorOccurrence != null) {
+            this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
+        }
 
         ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
         ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
@@ -358,7 +361,9 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
     @Override
     protected void onAttach(AttachEvent attachEvent)
     {
-        this.downloadButtonTooltip.attachToComponent(downloadButton);
+        if(this.downloadButtonTooltip != null) {
+            this.downloadButtonTooltip.attachToComponent(downloadButton);
+        }
     }
 
     @Override
@@ -366,6 +371,12 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         logger.info(parameter);
 
         IkasanSolrDocument solrDocument = this.solrGeneralService.findById("exclusion", parameter);
+
+        if(solrDocument == null) {
+            beforeEvent.rerouteTo("pageNotFound");
+            return;
+        }
+
         this.populate(solrDocument);
     }
 

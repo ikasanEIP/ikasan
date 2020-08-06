@@ -18,7 +18,6 @@ import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +88,7 @@ public class HospitalViewTest {
     }
 
     @Test
-    public void testSearchView() throws IOException
+    public void test_hospital_view_success() throws IOException
     {
         IkasanSolrDocument document = new IkasanSolrDocument();
         document.setId("id");
@@ -142,6 +141,22 @@ public class HospitalViewTest {
 
             JuicyAceEditor juicyAceEditor = (JuicyAceEditor)ReflectionTestUtils.getField(hospitalView, "juicyAceEditor");
             Assertions.assertEquals("event", juicyAceEditor.getValue(), "juicyAceEditor field equals");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test_hospital_view_redirect_not_found() throws IOException
+    {
+        UI.getCurrent().navigate("exclusion/12345");
+
+        try
+        {
+            PageNotFoundView pageNotFoundView = _get(PageNotFoundView.class);
+            Assertions.assertNotNull(pageNotFoundView);
         }
         catch (Exception e)
         {
