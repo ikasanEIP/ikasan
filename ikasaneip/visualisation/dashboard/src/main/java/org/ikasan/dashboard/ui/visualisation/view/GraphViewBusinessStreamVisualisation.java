@@ -8,16 +8,19 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
+import org.ikasan.dashboard.ui.general.component.SearchResultsDialog;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamVisualisation;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
-import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
+import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +52,23 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private Registration broadcasterRegistration;
 
+    private ErrorReportingService errorReportingService;
+
+    private HospitalAuditService hospitalAuditService;
+
+    private ResubmissionRestServiceImpl resubmissionRestService;
+
+    private ReplayRestServiceImpl replayRestService;
+
+    private BatchInsert replayAuditService;
+
     /**
      * Constructor
      */
     public GraphViewBusinessStreamVisualisation(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ModuleControlRestServiceImpl moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService)
+        , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
     {
         this.setMargin(true);
         this.setSizeFull();
@@ -82,6 +96,26 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         this.configurationMetadataService = configurationMetadataService;
         if(this.configurationMetadataService == null){
             throw new IllegalArgumentException("configurationMetadataService cannot be null!");
+        }
+        this.errorReportingService = errorReportingService;
+        if (this.errorReportingService == null) {
+            throw new IllegalArgumentException("errorReportingService cannot be null!");
+        }
+        this.hospitalAuditService = hospitalAuditService;
+        if (this.hospitalAuditService == null) {
+            throw new IllegalArgumentException("hospitalAuditService cannot be null!");
+        }
+        this.resubmissionRestService = resubmissionRestService;
+        if (this.resubmissionRestService == null) {
+            throw new IllegalArgumentException("resubmissionRestService cannot be null!");
+        }
+        this.replayRestService = replayRestService;
+        if (this.replayRestService == null) {
+            throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
+        this.replayAuditService = replayAuditService;
+        if (this.replayAuditService == null) {
+            throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
 
         init();
@@ -113,7 +147,8 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
         businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
             this.configurationRestService, this.triggerRestService, this.moduleMetadataService
-            , this.configurationMetadataService, this.solrSearchService);
+            , this.configurationMetadataService, this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+            this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(businessStreamMetaData);
 
@@ -143,6 +178,14 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
     {
         broadcasterRegistration.remove();
         broadcasterRegistration = null;
+    }
+
+    public BusinessStream getBusinessStream() {
+        if(this.businessStreamVisualisation != null) {
+            return this.businessStreamVisualisation.getBusinessStream();
+        }
+
+        return null;
     }
 }
 

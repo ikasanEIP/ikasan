@@ -19,14 +19,16 @@ import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
-import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 
 
@@ -60,11 +62,26 @@ public class FlowVisualisationDialog extends Dialog {
 
     private Flow flow;
 
+    private ErrorReportingService errorReportingService;
+
+    private HospitalAuditService hospitalAuditService;
+
+    private ResubmissionRestServiceImpl resubmissionRestService;
+
+    private ReplayRestServiceImpl replayRestService;
+
+    private ModuleMetaDataService moduleMetadataService;
+
+    private BatchInsert replayAuditService;
+
     public FlowVisualisationDialog(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService
         , ModuleMetaData moduleMetaData, Flow flow, SolrGeneralService<IkasanSolrDocument
-        , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus)
+        , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus
+        , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService
+        , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService)
     {
         this.moduleControlRestService = moduleControlRestService;
         if(this.moduleControlRestService == null){
@@ -96,6 +113,30 @@ public class FlowVisualisationDialog extends Dialog {
         }
         if(moduleMetaData == null){
             throw new IllegalArgumentException("moduleMetaData cannot be null!");
+        }
+        this.errorReportingService = errorReportingService;
+        if (this.errorReportingService == null) {
+            throw new IllegalArgumentException("errorReportingService cannot be null!");
+        }
+        this.hospitalAuditService = hospitalAuditService;
+        if (this.hospitalAuditService == null) {
+            throw new IllegalArgumentException("hospitalAuditService cannot be null!");
+        }
+        this.resubmissionRestService = resubmissionRestService;
+        if (this.resubmissionRestService == null) {
+            throw new IllegalArgumentException("resubmissionRestService cannot be null!");
+        }
+        this.replayRestService = replayRestService;
+        if (this.replayRestService == null) {
+            throw new IllegalArgumentException("replayRestService cannot be null!");
+        }
+        this.moduleMetadataService = moduleMetadataService;
+        if (this.moduleMetadataService == null) {
+            throw new IllegalArgumentException("moduleMetadataService cannot be null!");
+        }
+        this.replayAuditService = replayAuditService;
+        if (this.replayAuditService == null) {
+            throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
 
         this.init(moduleMetaData, flow.getFlowName());
@@ -242,7 +283,8 @@ public class FlowVisualisationDialog extends Dialog {
      */
     protected void search(String type)
     {
-        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService);
+        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+            this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
         searchResultsDialog.search(this.searchFoundStatus.getStartTime(), this.searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm()
             , type, false, flow.getModuleName(), flow.getFlowName());
         searchResultsDialog.open();

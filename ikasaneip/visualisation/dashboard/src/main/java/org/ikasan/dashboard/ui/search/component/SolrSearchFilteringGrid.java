@@ -17,7 +17,6 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
-import org.ikasan.spec.metadata.BusinessStreamMetadataSearchResults;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
             throw new IllegalArgumentException("SearchFilter cannot be null!");
         }
         this.resultsLabel = resultsLabel;
-        if(this.searchFilter ==  null)
+        if(this.resultsLabel ==  null)
         {
             throw new IllegalArgumentException("resultsLabel cannot be null!");
         }
@@ -212,7 +211,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     {
         Set<String> moduleNames = null;
 
-        if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty())
+        if(filter.getModuleNamesFilter() != null && !filter.getModuleNamesFilter().isEmpty())
         {
             moduleNames = new HashSet<>();
 
@@ -221,7 +220,9 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                 Set<String> allowedModuleNames = SecurityUtils.getAccessibleModules(authentication);
 
                 moduleNames.addAll(allowedModuleNames.stream()
-                    .filter(name -> name.startsWith(filter.getModuleNameFilter()))
+                    .filter(name -> filter.getModuleNamesFilter()
+                        .stream()
+                        .anyMatch(moduleName -> moduleName.startsWith(name)))
                     .collect(Collectors.toList()));
 
                 if(moduleNames.isEmpty()){
@@ -230,16 +231,21 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
             }
             else
             {
-                moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+                moduleNames = filter.getModuleNamesFilter()
+                    .stream()
+                    .map(moduleName -> "*" + ClientUtils.escapeQueryChars(moduleName) + "*")
+                    .collect(Collectors.toSet());
             }
         }
 
-        HashSet<String> flowNames = null;
+        Set<String> flowNames = null;
 
-        if(filter.getFlowNameFilter() != null && !filter.getFlowNameFilter().isEmpty())
+        if(filter.getFlowNamesFilter() != null && !filter.getFlowNamesFilter().isEmpty())
         {
-            flowNames = new HashSet<>();
-            flowNames.add("*" + ClientUtils.escapeQueryChars(filter.getFlowNameFilter()) + "*");
+            flowNames = filter.getFlowNamesFilter()
+                .stream()
+                .map(flowName -> "*" + ClientUtils.escapeQueryChars(flowName) + "*")
+                .collect(Collectors.toSet());
         }
 
         HashSet<String> componentNames = null;
