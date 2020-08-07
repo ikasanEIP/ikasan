@@ -1,40 +1,57 @@
 package org.ikasan.dashboard.ui.search.component.filter;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
-import org.ikasan.dashboard.ui.general.component.Filter;
 import org.ikasan.security.model.IkasanPrincipalLite;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class SearchFilter
 {
-    private String moduleNameFilter = null;
-    private String flowNameFilter = null;
+    private List<String> moduleNamesFilter = new ArrayList<>();
+    private List<String> flowNamesFilter = new ArrayList<>();
     private String componentNameFilter = null;
     private String eventIdFilter = null;
 
+    public List<String> getModuleNamesFilter()
+    {
+        return moduleNamesFilter;
+    }
+
+    public void setModuleNamesFilter(List<String> moduleNameFilter)
+    {
+        this.moduleNamesFilter = moduleNameFilter;
+    }
+
+    public List<String> getFlowNamesFilter()
+    {
+        return flowNamesFilter;
+    }
+
+    public void setFlowNamesFilter(List<String> flowNameFilter)
+    {
+        this.flowNamesFilter = flowNameFilter;
+    }
+
     public String getModuleNameFilter()
     {
-        return moduleNameFilter;
+        return moduleNamesFilter.get(0);
     }
 
     public void setModuleNameFilter(String moduleNameFilter)
     {
-        this.moduleNameFilter = moduleNameFilter;
+        this.moduleNamesFilter = new ArrayList<>();
+        this.moduleNamesFilter.add(moduleNameFilter);
     }
 
     public String getFlowNameFilter()
     {
-        return flowNameFilter;
+        return flowNamesFilter.get(0);
     }
 
     public void setFlowNameFilter(String flowNameFilter)
     {
-        this.flowNameFilter = flowNameFilter;
+        this.flowNamesFilter = new ArrayList<>();
+        this.flowNamesFilter.add(flowNameFilter);
     }
 
     public String getComponentNameFilter()
