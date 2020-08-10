@@ -458,6 +458,13 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
     @Override
     public void search(String searchTerm, List<String> entityTypes, boolean negateQuery, long startDate, long endDate) {
+
+        if(this.businessStreamVisualisation == null) {
+            NotificationHelper.showUserNotification(getTranslation("notification.select-business-stream"
+                , UI.getCurrent().getLocale()));
+            return;
+        }
+
         BusinessStream businessStream = this.businessStreamVisualisation.getBusinessStream();
 
         List<String> moduleNames = businessStream.getFlows()
