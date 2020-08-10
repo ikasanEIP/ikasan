@@ -318,50 +318,54 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             });
         });
 
-//        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchTerm, startTime
-//            , endTime, 1000, entityTypes, false, null, null);
-//
-//        logger.info("Results: " + results.getTotalNumberOfResults());
-
         this.drawFoundStatus(errorMap, wiretapMap, exclusionMap, replayMap);
     }
 
     public void drawFoundStatus(HashMap<String, Boolean> errorMap, HashMap<String, Boolean> wiretapMap
         , HashMap<String, Boolean> exclusionMap, HashMap<String, Boolean> replayMap) {
 
+        stringSearchFoundStatusMap.values().forEach(status -> {
+            status.setErrorFound(false);
+            status.setExclusionFound(false);
+            status.setWiretapFound(false);
+            status.setReplayFound(false);
+        });
+
+        this.flows.forEach(flow -> {
+            flow.setWiretapFoundStatus(NodeFoundStatus.NOT_FOUND);
+            flow.setErrorFoundStatus(NodeFoundStatus.NOT_FOUND);
+            flow.setExclusionFoundStatus(NodeFoundStatus.NOT_FOUND);
+            flow.setReplayFoundStatus(NodeFoundStatus.NOT_FOUND);
+        });
+
         this.flows = (ArrayList<Flow>) this.flows.stream().map(flow -> {
             SearchFoundStatus searchFoundStatus = this.stringSearchFoundStatusMap.get(flow.getId());
-            if (wiretapMap.get(flow.getId())) {
-                flow.setWiretapFoundStatus(NodeFoundStatus.FOUND);
-                searchFoundStatus.setWiretapFound(true);
-            } else {
-                flow.setWiretapFoundStatus(NodeFoundStatus.NOT_FOUND);
-                searchFoundStatus.setWiretapFound(false);
-            }
-            if (errorMap.get(flow.getId())) {
-                flow.setErrorFoundStatus(NodeFoundStatus.FOUND);
-                searchFoundStatus.setErrorFound(true);
-            } else {
-                flow.setErrorFoundStatus(NodeFoundStatus.NOT_FOUND);
-                searchFoundStatus.setErrorFound(false);
-            }
-            if (exclusionMap.get(flow.getId())) {
-                flow.setExclusionFoundStatus(NodeFoundStatus.FOUND);
-                searchFoundStatus.setExclusionFound(true);
-            } else {
-                flow.setExclusionFoundStatus(NodeFoundStatus.NOT_FOUND);
-                searchFoundStatus.setExclusionFound(false);
-            }
-            if (replayMap.get(flow.getId())) {
-                flow.setReplayFoundStatus(NodeFoundStatus.FOUND);
-                searchFoundStatus.setReplayFound(true);
-            } else {
-                flow.setReplayFoundStatus(NodeFoundStatus.NOT_FOUND);
-                searchFoundStatus.setReplayFound(false);
+
+            if(searchFoundStatus != null) {
+                if (wiretapMap.get(flow.getId()) != null && wiretapMap.get(flow.getId())) {
+                    flow.setWiretapFoundStatus(NodeFoundStatus.FOUND);
+                    searchFoundStatus.setWiretapFound(true);
+                }
+
+                if (errorMap.get(flow.getId()) != null && errorMap.get(flow.getId())) {
+                    flow.setErrorFoundStatus(NodeFoundStatus.FOUND);
+                    searchFoundStatus.setErrorFound(true);
+                }
+
+                if (exclusionMap.get(flow.getId()) != null && exclusionMap.get(flow.getId())) {
+                    flow.setExclusionFoundStatus(NodeFoundStatus.FOUND);
+                    searchFoundStatus.setExclusionFound(true);
+                }
+
+                if (replayMap.get(flow.getId()) != null && replayMap.get(flow.getId())) {
+                    flow.setReplayFoundStatus(NodeFoundStatus.FOUND);
+                    searchFoundStatus.setReplayFound(true);
+                }
+
+                this.stringSearchFoundStatusMap.put(flow.getModuleName() + flow.getFlowName()
+                    , searchFoundStatus);
             }
 
-            this.stringSearchFoundStatusMap.put(flow.getModuleName() + flow.getFlowName()
-                , searchFoundStatus);
             return flow;
         }).collect(Collectors.toList());
 

@@ -193,8 +193,8 @@ public class FlowVisualisationDialog extends Dialog {
             headerLayout.setMargin(false);
             layout.add(headerLayout);
         }
-        this.moduleVisualisation.setWidth("1600px");
-        this.moduleVisualisation.setHeight("800px");
+        this.moduleVisualisation.setWidth("1400px");
+        this.moduleVisualisation.setHeight("700px");
         this.moduleVisualisation.getStyle().set( "border" , "1px dashed Grey" );
         this.moduleVisualisation.getStyle().set( "-webkit-border-radius" , "22px" );
         this.moduleVisualisation.getStyle().set( "-moz-border-radius" , "22px" );

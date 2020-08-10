@@ -11,7 +11,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.shared.Registration;
@@ -357,14 +356,6 @@ public class SearchResults extends Div {
                 }
             });
 
-//        exclusionDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-//        {
-//            if (!dialogOpenedChangeEvent.isOpened())
-//            {
-//                searchResultsGrid.getDataProvider().refreshAll();
-//            }
-//        });
-
         // Add filtering to the relevant columns.
         HeaderRow hr = searchResultsGrid.appendHeaderRow();
         this.searchResultsGrid.addGridFiltering(hr, searchFilter::setModuleNameFilter, "modulename");
@@ -410,7 +401,6 @@ public class SearchResults extends Div {
         }
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
-//        functionalGroupSetup();
     }
 
     /**
@@ -499,6 +489,10 @@ public class SearchResults extends Div {
         SearchFilter searchFilter = new SearchFilter();
         searchFilter.setModuleNamesFilter(moduleNames);
         searchFilter.setFlowNamesFilter(flowNames);
+
+        if(searchTerm != null && !searchTerm.isEmpty()){
+            searchTerm = "\""+searchTerm+"\"";
+        }
 
         this.searchResultsGrid.init(startTime, endTime, searchTerm, types, negateQuery, searchFilter);
         this.resultsLabel.setVisible(true);
