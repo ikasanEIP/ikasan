@@ -110,10 +110,6 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
             .get(getTranslation("menu-item.administration", UI.getCurrent().getLocale(), null), VaadinIcon.TOOLS.create());
 
         this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
-            UI.getCurrent().getLocale(), null), VaadinIcon.ENVELOPE.create(), UserManagementView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementItem);
-
-        this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
             UI.getCurrent().getLocale(), null), VaadinIcon.USERS.create(), UserManagementView.class);
         leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementItem);
 
