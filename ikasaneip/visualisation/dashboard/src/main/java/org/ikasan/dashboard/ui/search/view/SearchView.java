@@ -605,6 +605,10 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         this.selectionBoxes = new HashMap<>();
         this.selectionItems = new HashMap<>();
 
+        if(searchTerm != null && !searchTerm.isEmpty()){
+            searchTerm = "\""+searchTerm+"\"";
+        }
+
         this.searchResultsGrid.init(startDate, endDate, searchTerm, types, this.negateQueryCheckbox.getValue());
 
         if(selected)
