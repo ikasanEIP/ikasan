@@ -5,6 +5,7 @@ import org.ikasan.dashboard.notification.service.BusinessStreamNotificationServi
 import org.ikasan.dashboard.ui.UITest;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.general.component.HospitalViewTest;
+import org.ikasan.dashboard.ui.general.component.SearchResultTest;
 import org.ikasan.dashboard.ui.org.ikasan.dashboard.broadcast.FlowStateBroadcasterTest;
 import org.ikasan.dashboard.ui.search.view.SearchViewTest;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapterTest;
@@ -35,6 +36,7 @@ import org.junit.runners.Suite;
     IkasanModuleLayoutManagerTest.class,
     BusinessStreamViewTest.class,
     HospitalViewTest.class,
+    SearchResultTest.class,
     UITest.class
 })
 public class TestSuite {

@@ -250,5 +250,13 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         broadcasterRegistration.remove();
         broadcasterRegistration = null;
     }
+
+    public Module getModule() {
+        return this.moduleVisualisation.getModule();
+    }
+
+    public Flow getCurrentFlow() {
+        return this.moduleVisualisation.getCurrentFlow();
+    }
 }
 

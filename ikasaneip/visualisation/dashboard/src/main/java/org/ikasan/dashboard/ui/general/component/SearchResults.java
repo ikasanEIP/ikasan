@@ -81,6 +81,8 @@ public class SearchResults extends Div {
 
     private String translatedEventActionMessage;
 
+    private List<String> searchTypes;
+
     public SearchResults(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
                          ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
                          ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService,
@@ -401,6 +403,7 @@ public class SearchResults extends Div {
         }
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
+        this.functionalGroupSetup(this.searchTypes);
     }
 
     /**
@@ -429,7 +432,7 @@ public class SearchResults extends Div {
 
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
-        this.resubmitHospitalEventSubmissionListener = new ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
+        this.resubmitHospitalEventSubmissionListener = new  ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
             , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems, authentication);
         this.resubmitHospitalEventRegistration = this.resubmitButton.addClickListener(this.resubmitHospitalEventSubmissionListener);
     }
@@ -486,6 +489,8 @@ public class SearchResults extends Div {
     }
 
     public void search(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery, List<String> moduleNames, List<String> flowNames) {
+        this.searchTypes = types;
+        this.selected = false;
         SearchFilter searchFilter = new SearchFilter();
         searchFilter.setModuleNamesFilter(moduleNames);
         searchFilter.setFlowNamesFilter(flowNames);

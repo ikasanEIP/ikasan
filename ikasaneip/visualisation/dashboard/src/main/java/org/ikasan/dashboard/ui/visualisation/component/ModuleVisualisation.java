@@ -162,7 +162,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                 if((x > currentFlow.getX() && x < (currentFlow.getX() + currentFlow.getW()))
                     && (y > currentFlow.getY() && y < (currentFlow.getY() + currentFlow.getH())))
                 {
-                    logger.info("Inside flow!");
+                    logger.debug("Inside flow!");
                     FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService);
                     flowOptionsDialog.open();
                 }
@@ -302,5 +302,13 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                 this.drawFlowStatus(flowState.getState());
             }
         });
+    }
+
+    public Module getModule() {
+        return this.module;
+    }
+
+    public Flow getCurrentFlow() {
+        return this.currentFlow;
     }
 }

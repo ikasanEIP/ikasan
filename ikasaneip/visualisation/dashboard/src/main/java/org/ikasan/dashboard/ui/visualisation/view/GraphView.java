@@ -149,7 +149,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     public GraphView()
     {
         this.setMargin(true);
-        this.setSizeFull();
+        this.setWidth("100%");
+        this.setHeight("88vh");
     }
 
     private void init()
@@ -187,6 +188,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
                 {
                     this.toolSlider.collapse();
                 }
+
+                this.businessStreamVisualisation = null;
             });
 
         HeaderRow hr = this.modulesGrid.appendHeaderRow();
@@ -227,6 +230,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             {
                 this.createBusinessStreamGraph(doubleClickEvent.getItem().getName(), doubleClickEvent.getItem());
                 this.moduleLabel.setText(doubleClickEvent.getItem().getName());
+                this.moduleVisualisation = null;
             }
             catch (IOException e)
             {
@@ -459,25 +463,31 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     @Override
     public void search(String searchTerm, List<String> entityTypes, boolean negateQuery, long startDate, long endDate) {
 
-        if(this.businessStreamVisualisation == null) {
+        if(this.businessStreamVisualisation == null && this.moduleVisualisation == null) {
             NotificationHelper.showUserNotification(getTranslation("notification.select-business-stream"
                 , UI.getCurrent().getLocale()));
             return;
         }
 
-        BusinessStream businessStream = this.businessStreamVisualisation.getBusinessStream();
+        if(this.businessStreamVisualisation != null) {
+            BusinessStream businessStream = this.businessStreamVisualisation.getBusinessStream();
 
-        List<String> moduleNames = businessStream.getFlows()
-            .stream()
-            .map(flow -> flow.getModuleName())
-            .collect(Collectors.toList());
+            List<String> moduleNames = businessStream.getFlows()
+                .stream()
+                .map(flow -> flow.getModuleName())
+                .collect(Collectors.toList());
 
-        List<String> flowNames = businessStream.getFlows()
-            .stream()
-            .map(flow -> flow.getFlowName())
-            .collect(Collectors.toList());
+            List<String> flowNames = businessStream.getFlows()
+                .stream()
+                .map(flow -> flow.getFlowName())
+                .collect(Collectors.toList());
 
-        this.searchResults.search(startDate, endDate, searchTerm, entityTypes, negateQuery, moduleNames, flowNames);
+            this.searchResults.search(startDate, endDate, searchTerm, entityTypes, negateQuery, moduleNames, flowNames);
+        }
+        else {
+            this.searchResults.search(startDate, endDate, searchTerm, entityTypes, negateQuery
+                , List.of(this.moduleVisualisation.getModule().getName()), List.of(this.moduleVisualisation.getCurrentFlow().getName()));
+        }
     }
 }
 
