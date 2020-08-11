@@ -62,7 +62,6 @@ import org.vaadin.tabs.PagedTabs;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "visualisation", layout = IkasanAppLayout.class)
@@ -72,9 +71,6 @@ import java.util.stream.Collectors;
 public class GraphView extends VerticalLayout implements BeforeEnterObserver, SearchListener
 {
     Logger logger = LoggerFactory.getLogger(GraphView.class);
-
-    @Resource
-    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>, String> solrWiretapService;
 
     @Resource
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
