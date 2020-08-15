@@ -70,7 +70,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
         , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
     {
-        this.setMargin(true);
+        this.setMargin(false);
         this.setSizeFull();
 
         this.solrSearchService = solrSearchService;

@@ -274,15 +274,15 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         {
             if(tabs.getSelectedTab().equals(exclusionTab))
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.exclusionPayload)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(this.exclusionPayload)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.errorOccurrence.getErrorDetail())).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(this.errorOccurrence.getErrorDetail())).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });
 
-        juicyAceEditor.setHeight("48vh");
+        super.aceEditor.setHeight("48vh");
 
         layout.add(tabs);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.START, tabs);

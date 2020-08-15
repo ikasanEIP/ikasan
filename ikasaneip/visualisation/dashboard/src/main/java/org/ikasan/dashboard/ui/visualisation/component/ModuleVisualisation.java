@@ -62,6 +62,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
         this.setSizeFull();
+        this.setMargin(false);
         this.flowMap = new HashMap<>();
     }
 

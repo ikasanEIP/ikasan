@@ -146,6 +146,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
         current = UI.getCurrent();
 
+        this.setMargin(false);
         this.setSizeFull();
     }
 

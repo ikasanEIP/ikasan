@@ -214,8 +214,8 @@ public class FlowVisualisationDialog extends Dialog {
         layout.add(bottomLayout);
 
         this.add(layout);
-        this.setWidth("90%");
-        this.setHeight("90%");
+        this.setWidth("98%");
+        this.setHeight("98%");
     }
 
     private VerticalLayout buildSearchLayout(){

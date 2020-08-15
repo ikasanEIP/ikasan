@@ -1,16 +1,19 @@
 package org.ikasan.dashboard.ui.layout;
 
-import com.github.appreciated.app.layout.behaviour.Behaviour;
-import com.github.appreciated.app.layout.builder.AppLayoutBuilder;
+
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
 import com.github.appreciated.app.layout.component.appbar.IconButton;
+import com.github.appreciated.app.layout.component.applayout.LeftLayouts;
+import com.github.appreciated.app.layout.component.builder.AppLayoutBuilder;
 import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder;
 import com.github.appreciated.app.layout.component.menu.left.builder.LeftSubMenuBuilder;
 import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
-import com.github.appreciated.app.layout.router.AppLayoutRouterLayout;
+import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
@@ -36,15 +39,15 @@ import java.util.Locale;
 
 
 @Push
-@HtmlImport("frontend://styles/shared-styles.html")
-@HtmlImport("frontend://bower_components/vaadin-lumo-styles/presets/compact.html")
+@JsModule("./styles/shared-styles.js")
+@CssImport("./styles/shared-styles.css")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @Theme(Lumo.class)
 @PreserveOnRefresh
 @PWA(name = "Ikasan Visualisation Dashboard",
     shortName = "Ikasan",
     enableInstallPrompt = false)
-public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfigurator
+public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybridSmall> implements PageConfigurator
 {
     private Component leftAppMenu;
     private Component leftSubmenu;
@@ -65,7 +68,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
         IconButton logout = new IconButton(VaadinIcon.SIGN_OUT.create());
         logout.getElement().setProperty("title", "Log Out");
 
-        logout.addClickListener((ComponentEventListener<ClickEvent<Div>>) divClickEvent ->
+        logout.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->
         {
             SecurityContextHolder.getContext().setAuthentication(null);
             UI.getCurrent().navigate("");
@@ -88,7 +91,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
         deButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->UI.getCurrent().setLocale(Locale.GERMAN));
 
         AppLayoutBuilder appLayoutBuilder = AppLayoutBuilder
-            .get(Behaviour.LEFT_HYBRID_SMALL)
+            .get(LeftLayouts.LeftHybridSmall.class)
             .withIconComponent(ikasan)
             .withAppBar(AppBarBuilder.get()
                 .add(enButton)
@@ -137,7 +140,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout implements PageConfig
 
         this.leftAppMenu = leftAppMenuBuilder.build();
 
-        init(appLayoutBuilder.withAppMenu(leftAppMenu).build());
+        init((LeftLayouts.LeftHybridSmall)appLayoutBuilder.withAppMenu(leftAppMenu).build());
     }
 
     @Override

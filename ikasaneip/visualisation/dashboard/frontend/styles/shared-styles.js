@@ -1,9 +1,7 @@
-<link rel="import" href="version.html">
-<link rel="import" href="../polymer/lib/elements/custom-style.html">
-<link rel="import" href="../polymer/lib/elements/dom-module.html">
-<link rel="icon" sizes="96x96" href="../images/mr-squid-head.png" >
+import '@polymer/polymer/lib/elements/custom-style.js';
+const $_documentContainer = document.createElement('template');
 
-<custom-style>
+$_documentContainer.innerHTML = `<custom-style>
     <style>
         html {
             --lumo-primary-color-10pct: rgba(241, 90, 35, 0.1);
@@ -75,33 +73,6 @@
                 color: red;
                 background-color: rgba(241, 90, 35, 0.1);
             }
-
-            /*vaadin-text-field {*/
-
-                /*--lumo-size-xs: 10px;*/
-                /*--lumo-size-s: 12px;*/
-                /*--lumo-size-m: 14px;*/
-                /*--lumo-size-l: 16px;*/
-                /*--lumo-size-xl: 20px;*/
-                /*!* Font sizes (will affect spacing also) *!*/
-                /*--lumo-font-size-xxs: 7px;*/
-                /*--lumo-font-size-xs: 8px;*/
-                /*--lumo-font-size-s: 9px;*/
-                /*--lumo-font-size-m: 10px;*/
-                /*--lumo-font-size-l: 11px;*/
-                /*--lumo-font-size-xl: 13px;*/
-                /*--lumo-font-size-xxl: 15px;*/
-                /*--lumo-font-size-xxxl: 19px;*/
-                /*!* Icon size *!*/
-                /*--lumo-icon-size-s: 1em;*/
-                /*--lumo-icon-size-m: 1.25em;*/
-                /*--lumo-icon-size-l: 1.5em;*/
-                /*!* Line height *!*/
-                /*--lumo-line-height-xs: 1.1;*/
-                /*--lumo-line-height-s: 1.3;*/
-                /*--lumo-line-height-m: 1.5;*/
-            /*}*/
-
         </style>
     </template>
 </dom-module>
@@ -195,6 +166,6 @@
 
 
     </template>
-</dom-module>
+</dom-module>`;
 
-
+document.head.appendChild($_documentContainer.content);
