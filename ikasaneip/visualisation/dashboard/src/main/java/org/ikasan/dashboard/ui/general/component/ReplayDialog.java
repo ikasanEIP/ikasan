@@ -107,7 +107,7 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-replay-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("replay.txt"
-            , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
+            , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes()));
 
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);

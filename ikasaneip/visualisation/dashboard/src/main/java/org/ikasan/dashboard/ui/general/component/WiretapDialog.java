@@ -78,7 +78,7 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-wiretap-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("wiretap.txt"
-            , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
+            , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes() ));
 
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);

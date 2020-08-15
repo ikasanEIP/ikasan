@@ -140,7 +140,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-hospital-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("exclusion.txt"
-            , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
+            , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes()));
 
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);

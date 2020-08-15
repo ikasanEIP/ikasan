@@ -28,8 +28,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 {
     protected DocumentBuilder documentBuilder;
     protected Transformer transformer;
-    protected JuicyAceEditor juicyAceEditor;
-    protected VaadinCKEditor classicEditor;
     protected AceEditor aceEditor;
     protected boolean initialised = false;
     protected VerticalLayout layout = new VerticalLayout();
