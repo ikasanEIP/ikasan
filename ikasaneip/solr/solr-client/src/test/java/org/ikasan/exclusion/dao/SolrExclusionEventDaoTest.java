@@ -123,7 +123,7 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
 
             Thread.sleep(2000);
 
-            dao.delete("uri");
+            dao.delete("moduleName:exclusion:uri");
 
             assertEquals(0, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(0, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
@@ -228,7 +228,7 @@ public class SolrExclusionEventDaoTest extends SolrTestCaseJ4
 
             dao.save(event);
 
-            Assert.assertNotNull(dao.find("uri"));
+            Assert.assertNotNull(dao.find("moduleName:exclusion:uri"));
 
             server.close();
 
