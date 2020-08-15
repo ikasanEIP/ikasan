@@ -59,7 +59,7 @@ public class SolrExclusionEventDao extends SolrDaoBase<ExclusionEvent> implement
     public void delete(String errorUri)
     {
         StringBuffer query = new StringBuffer();
-        query.append(ID).append(COLON).append(errorUri);
+        query.append(ID).append(COLON).append("\""+errorUri+"\"");
 
         deleteByQuery(query.toString());
     }
