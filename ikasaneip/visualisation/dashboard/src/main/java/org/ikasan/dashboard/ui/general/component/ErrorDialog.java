@@ -98,7 +98,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
             , getTranslation("tooltip.download-error-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("error.txt"
-            , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes() ));
+            , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes() ));
 
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);
