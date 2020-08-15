@@ -1,25 +1,11 @@
 package org.ikasan.vaadin.visjs.network;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.DomEvent;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.JavaScript;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -27,83 +13,29 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.JsonUtils;
 import com.vaadin.flow.shared.Registration;
-
+import elemental.json.JsonArray;
+import elemental.json.impl.JreJsonString;
 import org.ikasan.vaadin.visjs.network.api.Event;
-import org.ikasan.vaadin.visjs.network.event.AfterDrawingEvent;
-import org.ikasan.vaadin.visjs.network.event.AnimationFinshedEvent;
-import org.ikasan.vaadin.visjs.network.event.BeforeDrawingEvent;
-import org.ikasan.vaadin.visjs.network.event.BlurEdgeEvent;
-import org.ikasan.vaadin.visjs.network.event.BlurNodeEvent;
 import org.ikasan.vaadin.visjs.network.event.ClickEvent;
-import org.ikasan.vaadin.visjs.network.event.ConfigChangeEvent;
-import org.ikasan.vaadin.visjs.network.event.DeselectEdgeEvent;
-import org.ikasan.vaadin.visjs.network.event.DeselectNodeEvent;
-import org.ikasan.vaadin.visjs.network.event.DoubleClickEvent;
-import org.ikasan.vaadin.visjs.network.event.DragEndEvent;
-import org.ikasan.vaadin.visjs.network.event.DragStartEvent;
-import org.ikasan.vaadin.visjs.network.event.DraggingEvent;
-import org.ikasan.vaadin.visjs.network.event.HidePopupEvent;
-import org.ikasan.vaadin.visjs.network.event.HoldEvent;
-import org.ikasan.vaadin.visjs.network.event.HoverEdgeEvent;
-import org.ikasan.vaadin.visjs.network.event.HoverNodeEvent;
-import org.ikasan.vaadin.visjs.network.event.InitRedrawEvent;
-import org.ikasan.vaadin.visjs.network.event.OnContextEvent;
-import org.ikasan.vaadin.visjs.network.event.ReleaseEvent;
-import org.ikasan.vaadin.visjs.network.event.ResizeEvent;
-import org.ikasan.vaadin.visjs.network.event.SelectEdgeEvent;
-import org.ikasan.vaadin.visjs.network.event.SelectEvent;
-import org.ikasan.vaadin.visjs.network.event.SelectNodeEvent;
-import org.ikasan.vaadin.visjs.network.event.ShowPopupEvent;
-import org.ikasan.vaadin.visjs.network.event.StabilizationIterationsDoneEvent;
-import org.ikasan.vaadin.visjs.network.event.StabilizationProgressEvent;
-import org.ikasan.vaadin.visjs.network.event.StabilizedEvent;
-import org.ikasan.vaadin.visjs.network.event.StartStabilizingEvent;
-import org.ikasan.vaadin.visjs.network.event.ZoomEvent;
-import org.ikasan.vaadin.visjs.network.listener.AfterDrawingListener;
-import org.ikasan.vaadin.visjs.network.listener.AnimationFinishedListener;
-import org.ikasan.vaadin.visjs.network.listener.BeforeDrawingListener;
-import org.ikasan.vaadin.visjs.network.listener.BlurEdgeListener;
-import org.ikasan.vaadin.visjs.network.listener.BlurNodeListener;
-import org.ikasan.vaadin.visjs.network.listener.ClickListener;
-import org.ikasan.vaadin.visjs.network.listener.ConfigChangeListener;
-import org.ikasan.vaadin.visjs.network.listener.DeselectEdgeListener;
-import org.ikasan.vaadin.visjs.network.listener.DeselectNodeListener;
-import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
-import org.ikasan.vaadin.visjs.network.listener.DragEndListener;
-import org.ikasan.vaadin.visjs.network.listener.DragStartListener;
-import org.ikasan.vaadin.visjs.network.listener.DraggingListener;
-import org.ikasan.vaadin.visjs.network.listener.HidePopupListener;
-import org.ikasan.vaadin.visjs.network.listener.HoldListener;
-import org.ikasan.vaadin.visjs.network.listener.HoverEdgeListener;
-import org.ikasan.vaadin.visjs.network.listener.HoverNodeListener;
-import org.ikasan.vaadin.visjs.network.listener.InitRedrawListener;
-import org.ikasan.vaadin.visjs.network.listener.OnContextListener;
-import org.ikasan.vaadin.visjs.network.listener.ReleaseListener;
-import org.ikasan.vaadin.visjs.network.listener.ResizeListener;
-import org.ikasan.vaadin.visjs.network.listener.SelectEdgeListener;
-import org.ikasan.vaadin.visjs.network.listener.SelectListener;
-import org.ikasan.vaadin.visjs.network.listener.SelectNodeListener;
-import org.ikasan.vaadin.visjs.network.listener.ShowPopupListener;
-import org.ikasan.vaadin.visjs.network.listener.StabilizationIterationsDoneListener;
-import org.ikasan.vaadin.visjs.network.listener.StabilizedListener;
-import org.ikasan.vaadin.visjs.network.listener.StabilizingProgressListener;
-import org.ikasan.vaadin.visjs.network.listener.StartStabilizingListener;
-import org.ikasan.vaadin.visjs.network.listener.ZoomListener;
+import org.ikasan.vaadin.visjs.network.event.*;
+import org.ikasan.vaadin.visjs.network.listener.*;
 import org.ikasan.vaadin.visjs.network.options.Manipulation;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.util.PairCollater;
-import elemental.json.JsonArray;
-import elemental.json.impl.JreJsonString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Wraps a visjs network diagram. See http://visjs.org/network_examples.html
  */
 @SuppressWarnings("serial")
 @Tag("div")
-@JavaScript("frontend://de/wathoserver/vaadin/visjs/vis-patched.min.js")
-@JavaScript("frontend://de/wathoserver/vaadin/visjs/networkDiagram-connector-flow.js")
-@StyleSheet("frontend://de/wathoserver/vaadin/visjs/vis-network.min.css")
-@StyleSheet("frontend://de/wathoserver/vaadin/visjs/networkDiagram.css")
+@StyleSheet("./de/wathoserver/vaadin/visjs/vis-network.min.css")
+@StyleSheet("./de/wathoserver/vaadin/visjs/networkDiagram.css")
 public class NetworkDiagram extends Component implements HasSize {
 
   Logger log = LoggerFactory.getLogger(NetworkDiagram.class);
@@ -120,10 +52,11 @@ public class NetworkDiagram extends Component implements HasSize {
   private Registration edgeDataProviderListenerRegistration;
   private Registration nodeDataProviderListenerRegistration;
 
-  private int x, y, w, h;
 
   public NetworkDiagram(final Options options) {
     super();
+    UI.getCurrent().getPage().addJavaScript("./de/wathoserver/vaadin/visjs/vis-patched.min.js");
+    UI.getCurrent().getPage().addJavaScript("./de/wathoserver/vaadin/visjs/networkDiagram-connector-flow.js");
     // Dont transfer empty options.
     mapper.setSerializationInclusion(Include.NON_EMPTY);
     // Dont transfer getter and setter
@@ -160,7 +93,7 @@ public class NetworkDiagram extends Component implements HasSize {
         .orElseThrow(() -> new IllegalStateException(
             "Connector can only be initialized for an attached NetworkDiagram"))
         .getPage()
-        .executeJavaScript("window.Vaadin.Flow.networkDiagramConnector.initLazy($0, $1, $2, $3)",
+        .executeJs("window.Vaadin.Flow.networkDiagramConnector.initLazy($0, $1, $2, $3)",
             getElement(), nodesArray, edgesArray, optionsToJson(options));
     // TODO reinitialise listener
     // getEventBus().hasListener(eventType)
@@ -253,7 +186,7 @@ public class NetworkDiagram extends Component implements HasSize {
   private void addNodes(final Node... node) {
     runBeforeClientResponse(ui -> {
       try {
-        getElement().callFunction("$connector.addNodes", mapper.writeValueAsString(node));
+        getElement().callJsFunction("$connector.addNodes", mapper.writeValueAsString(node));
       } catch (final JsonProcessingException e) {
         e.printStackTrace();
       }
@@ -263,7 +196,7 @@ public class NetworkDiagram extends Component implements HasSize {
   public void updateNodesStates(final Collection<Node> nodes) {
     runBeforeClientResponse(ui -> {
       try {
-        getElement().callFunction("$connector.updateNodeStates", mapper.writeValueAsString(nodes));
+        getElement().callJsFunction("$connector.updateNodeStates", mapper.writeValueAsString(nodes));
       } catch (final JsonProcessingException e) {
         e.printStackTrace();
       }
@@ -277,7 +210,7 @@ public class NetworkDiagram extends Component implements HasSize {
   private void addEdges(final Edge... edge) {
     runBeforeClientResponse(ui -> {
       try {
-        getElement().callFunction("$connector.addEdges", mapper.writeValueAsString(edge));
+        getElement().callJsFunction("$connector.addEdges", mapper.writeValueAsString(edge));
       } catch (final JsonProcessingException e) {
         e.printStackTrace();
       }
@@ -286,13 +219,13 @@ public class NetworkDiagram extends Component implements HasSize {
 
   private void removeAllEdges() {
     runBeforeClientResponse(ui -> {
-      getElement().callFunction("$connector.clearEdges");
+      getElement().callJsFunction("$connector.clearEdges");
     });
   }
 
   private void removeAllNodes() {
     runBeforeClientResponse(ui -> {
-      getElement().callFunction("$connector.clearNodes");
+      getElement().callJsFunction("$connector.clearNodes");
     });
   }
 
@@ -345,72 +278,72 @@ public class NetworkDiagram extends Component implements HasSize {
 
   // ==== Diagram-Methods ====
   public void diagamRedraw() {
-    runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.redraw"));
+    runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.diagram.redraw"));
   }
 
   public void diagramSetSize(final String width, final String height) {
     this.setWidth(width);
     this.setHeight(height);
     runBeforeClientResponse(
-        ui -> getElement().callFunction("$connector.diagram.setSize", width, height));
+        ui -> getElement().callJsFunction("$connector.diagram.setSize", width, height));
   }
 
   public void diagramSelectNodes(Iterable<String> nodeIds) {
     final JsonArray nodeIdArray = StreamSupport.stream(nodeIds.spliterator(), false)
         .map(JreJsonString::new).collect(JsonUtils.asArray());
     runBeforeClientResponse(
-        ui -> getElement().callFunction("$connector.diagram.selectNodes", nodeIdArray));
+        ui -> getElement().callJsFunction("$connector.diagram.selectNodes", nodeIdArray));
   }
 
   public void diagramSelectEdges(Iterable<String> edgeIds) {
     final JsonArray edgeIdArray = StreamSupport.stream(edgeIds.spliterator(), false)
         .map(JreJsonString::new).collect(JsonUtils.asArray());
     runBeforeClientResponse(
-        ui -> getElement().callFunction("$connector.diagram.selectEdges", edgeIdArray));
+        ui -> getElement().callJsFunction("$connector.diagram.selectEdges", edgeIdArray));
   }
 
   public void diagramUnselectAll() {
-    runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.unselectAll"));
+    runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.diagram.unselectAll"));
   }
 
   public void diagramFit() {
-    runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.fit"));
+    runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.diagram.fit"));
   }
 
   @Override
   public void setSizeFull() {
     HasSize.super.setSizeFull();
     runBeforeClientResponse(
-        ui -> getElement().callFunction("$connector.diagram.setSize", getWidth(), getHeight()));
+        ui -> getElement().callJsFunction("$connector.diagram.setSize", getWidth(), getHeight()));
   }
 
   public void diagamDestroy() {
-    runBeforeClientResponse(ui -> getElement().callFunction("$connector.diagram.destroy"));
+    runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.diagram.destroy"));
   }
 
   public void drawModule(Integer x, Integer y, Integer w, Integer h, String text) {
       runBeforeClientResponse(
-          ui -> getElement().callFunction("$connector.drawModuleSquare", x, y ,w, h, text));
+          ui -> getElement().callJsFunction("$connector.drawModuleSquare", x, y ,w, h, text));
   }
 
   public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) {
       runBeforeClientResponse(
-          ui -> getElement().callFunction("$connector.drawFlowBorder", x, y ,w, h, text));
+          ui -> getElement().callJsFunction("$connector.drawFlowBorder", x, y ,w, h, text));
   }
 
   public void drawStatus(Integer x, Integer y, Integer radius, String colour) {
       runBeforeClientResponse(
-          ui -> getElement().callFunction("$connector.drawStatus", x, y ,radius, colour));
+          ui -> getElement().callJsFunction("$connector.drawStatus", x, y ,radius, colour));
   }
 
   public void drawStatusBorder(Integer x, Integer y, Integer w, Integer h, String colour) {
       runBeforeClientResponse(
-          ui -> getElement().callFunction("$connector.drawStatusBorder", x, y ,w, h, colour));
+          ui -> getElement().callJsFunction("$connector.drawStatusBorder", x, y ,w, h, colour));
   }
 
   public void drawNodeFoundStatus() {
       runBeforeClientResponse(
-            ui -> getElement().callFunction("$connector.drawNodeFoundStatus"));
+            ui -> getElement().callJsFunction("$connector.drawNodeFoundStatus"));
       this.diagamRedraw();
   }
 
@@ -420,7 +353,7 @@ public class NetworkDiagram extends Component implements HasSize {
     runBeforeClientResponse(ui -> {
       if (!enabledEvents.contains(clazz)) {
         enabledEvents.add(clazz);
-        getElement().callFunction("$connector.enableEventDispatching",
+        getElement().callJsFunction("$connector.enableEventDispatching",
             clazz.getAnnotation(DomEvent.class).value());
       }
     });

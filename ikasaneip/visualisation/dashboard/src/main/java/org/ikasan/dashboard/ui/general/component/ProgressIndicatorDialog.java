@@ -46,7 +46,7 @@ public class ProgressIndicatorDialog extends Dialog
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, progressBar);
         layout.setSizeFull();
 
-        this.setSizeFull();
+//        this.setSizeFull();
         this.add(layout);
 
 

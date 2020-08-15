@@ -1,13 +1,5 @@
 package org.ikasan.dashboard.ui.layout;
 
-import com.github.appreciated.app.layout.behaviour.Behaviour;
-import com.github.appreciated.app.layout.builder.AppLayoutBuilder;
-import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
-import com.github.appreciated.app.layout.component.appbar.IconButton;
-import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder;
-import com.github.appreciated.app.layout.component.menu.left.builder.LeftSubMenuBuilder;
-import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
-import com.github.appreciated.app.layout.router.AppLayoutRouterLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
@@ -24,9 +16,6 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.shared.ui.Transport;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import org.ikasan.dashboard.ui.administration.view.*;
-import org.ikasan.dashboard.ui.visualisation.view.GraphView;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @Push(transport = Transport.LONG_POLLING)

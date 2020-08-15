@@ -93,7 +93,7 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
 
     private void init() {
         this.controlPanel = new ControlPanel(this.moduleControlRestService);
-        this.setMargin(true);
+        this.setMargin(false);
         this.setSizeFull();
         this.createModuleViewHeader();
     }

@@ -3,7 +3,7 @@ Business Stream: [( ${businessStreamModel.businessStreamMetaData.name} )]
 
 The following exclusions have been recorded:
 [# th:each="businessStreamExclusion : ${businessStreamModel.businessStreamExclusions}"]
- - [( ${businessStreamExclusion.errorOccurrence.uri} )]
+ - [( ${businessStreamExclusion.exclusionEvent.eventId} )]
 [/]
 
 Please log into the Ikasan dashboard to remediate these events.

@@ -41,14 +41,10 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.persistence.BatchInsert;
-import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrGeneralService;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +140,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
      */
     public GraphView()
     {
-        this.setMargin(true);
+        this.setMargin(false);
+
         this.setWidth("100%");
         this.setHeight("88vh");
     }

@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title th:remove="all">検索件数: %s 検索時間: %s ミリ秒</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <style>
-            div.container {
-                display: inline-block;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <img src="http://localhost:9090/frontend/images/hospital-service.png" height="200px"/>
-        </div>
-        <div class="container">
-            <img src="http://localhost:9090/frontend/images/ikasan-titling-transparent.png" height="150px"/>
-        </div>
-        <p>
-            検索件数 検索時間 ミリ秒: <span th:utext="${businessStreamModel.businessStreamMetaData.name}"></span>
-        </p>
-        <p th:if="${businessStreamModel.businessStreamMetaData.name.length() > 10}">
-            検索件数 検索時間 ミリ秒
-        </p>
-        <p>検索件数: %s 検索時間: %s ミリ秒</p>
-        <ul th:remove="all-but-first">
-            <li th:each="businessStreamExclusion : ${businessStreamModel.businessStreamExclusions}"
-                th:text="${businessStreamExclusion.errorOccurrence.uri}">Reading
-            </li>
-        </ul>
-        <p>
-            検索件数 検索時間 ミリ秒
-        </p>
-        <p>
-            検索件数:, <br/>
-            <em>検索件数 検索時間 ミリ秒</em>
-        </p>
-    </body>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        div.container {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<p>
+    Business Stream: <span th:utext="${businessStreamModel.businessStreamMetaData.name}"></span>
+</p>
+
+<p>The following exclusions have been recorded for business stream [<span th:utext="${businessStreamModel.businessStreamMetaData.name}"></span>]</p>
+
+<table>
+    <tr>
+        <th>Excluded Event</th>
+        <th>Event Life Identifier</th>
+    </tr>
+    <tr th:each="businessStreamExclusion : ${businessStreamModel.businessStreamExclusions}">
+        <td>
+            To access the exclusion click [<a th:href="@{http://localhost:9090/exclusion/{id}(id=${businessStreamExclusion.exclusionEvent.id})}">here</a>].
+        </td>
+        <td>
+            To access all events for the life identifier click [<a th:href="@{http://localhost:9090/eventLifeId/{eventId}(eventId=${businessStreamExclusion.exclusionEvent.eventId})}">
+            <span th:text="${businessStreamExclusion.exclusionEvent.eventId}"></span>
+        </a>].
+        </td>
+    </tr>
+</table>
+<br/>
+<br/>
+<p>
+    検索件数 検索時間 ミリ秒
+</p>
+<p>
+    検索件数:, <br/>
+    <em>検索件数 検索時間 ミリ秒</em>
+</p>
+</body>
 </html>

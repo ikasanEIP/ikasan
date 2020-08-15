@@ -132,7 +132,7 @@ public class HospitalCommentsDialog extends Dialog
         buttonLayout.add(cancel);
 
         this.setWidth("600px");
-        this.setHeight("100%");
+//        this.setHeight("400px");
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, formLayout, buttonLayout);

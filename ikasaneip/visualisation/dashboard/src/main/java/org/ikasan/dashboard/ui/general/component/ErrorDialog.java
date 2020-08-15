@@ -116,12 +116,12 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         {
             if(tabs.getSelectedTab().equals(errorTab))
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorDetails))
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(errorDetails))
                     .orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(errorEvent))
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(errorEvent))
                     .orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });

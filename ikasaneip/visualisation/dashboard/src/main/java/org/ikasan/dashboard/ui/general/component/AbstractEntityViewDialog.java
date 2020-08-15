@@ -7,6 +7,10 @@ import com.juicy.theme.JuicyAceTheme;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.wontlost.ckeditor.*;
+import io.github.ciesielskis.AceEditor;
+import io.github.ciesielskis.AceMode;
+import io.github.ciesielskis.AceTheme;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -25,6 +29,8 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     protected DocumentBuilder documentBuilder;
     protected Transformer transformer;
     protected JuicyAceEditor juicyAceEditor;
+    protected VaadinCKEditor classicEditor;
+    protected AceEditor aceEditor;
     protected boolean initialised = false;
     protected VerticalLayout layout = new VerticalLayout();
 
@@ -54,7 +60,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     {
         layout.setWidth("100%");
 
-        layout.add(this.getEntityDetailsLayout(), juicyAceEditor);
+        layout.add(this.getEntityDetailsLayout(), this.aceEditor);
 
         this.add(layout);
     }
@@ -67,11 +73,11 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
             initialised = true;
         }
 
-        String xmlString = formatXml(event);
-
-        juicyAceEditor.setValue(xmlString);
-
         open();
+
+        String xmlString = formatXml(event);
+        aceEditor.setValue(xmlString);
+
     }
 
     protected String formatXml(String event)
@@ -97,15 +103,36 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
     protected void initialiseEditor()
     {
-        juicyAceEditor = new JuicyAceEditor();
-        juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
-        juicyAceEditor.setMode(JuicyAceMode.xml);
-        juicyAceEditor.setWidth("1400px");
-        juicyAceEditor.setHeight("55vh");
-        juicyAceEditor.setFontsize(12);
-        juicyAceEditor.setSofttabs(false);
-        juicyAceEditor.setTabsize(12);
-        juicyAceEditor.setReadonly(true);
-        juicyAceEditor.setWrapmode(true);
+//        juicyAceEditor = new JuicyAceEditor();
+//        juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
+//        juicyAceEditor.setMode(JuicyAceMode.xml);
+//        juicyAceEditor.setWidth("100%");
+//        juicyAceEditor.setHeight("55vh");
+//        juicyAceEditor.setFontsize(12);
+//        juicyAceEditor.setSofttabs(false);
+//        juicyAceEditor.setTabsize(12);
+//        juicyAceEditor.setReadonly(true);
+//        juicyAceEditor.setWrapmode(true);
+
+//        /**Classic Editor*/
+//        classicEditor = new VaadinCKEditorBuilder().with(builder -> {
+//            builder.editorType = EditorType.BALLOON;
+//            builder.theme = ThemeType.DARK;
+//            builder.toolbar = new Toolbar[]{};
+//        }).createVaadinCKEditor();
+//        classicEditor.setVisible(true);
+//        classicEditor.setWidth("100%");
+//        classicEditor.setHeight("550px");
+
+        aceEditor = new AceEditor();
+
+        aceEditor.setTheme(AceTheme.dracula);
+        aceEditor.setMode(AceMode.xml);
+        aceEditor.setFontSize(11);
+        aceEditor.setSoftTabs(false);
+        aceEditor.setTabSize(4);
+        aceEditor.setWidth("100%");
+        aceEditor.setHeight("500px");
+        aceEditor.setReadOnly(true);
     }
 }
