@@ -103,27 +103,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
     protected void initialiseEditor()
     {
-//        juicyAceEditor = new JuicyAceEditor();
-//        juicyAceEditor.setTheme(JuicyAceTheme.idle_fingers);
-//        juicyAceEditor.setMode(JuicyAceMode.xml);
-//        juicyAceEditor.setWidth("100%");
-//        juicyAceEditor.setHeight("55vh");
-//        juicyAceEditor.setFontsize(12);
-//        juicyAceEditor.setSofttabs(false);
-//        juicyAceEditor.setTabsize(12);
-//        juicyAceEditor.setReadonly(true);
-//        juicyAceEditor.setWrapmode(true);
-
-//        /**Classic Editor*/
-//        classicEditor = new VaadinCKEditorBuilder().with(builder -> {
-//            builder.editorType = EditorType.BALLOON;
-//            builder.theme = ThemeType.DARK;
-//            builder.toolbar = new Toolbar[]{};
-//        }).createVaadinCKEditor();
-//        classicEditor.setVisible(true);
-//        classicEditor.setWidth("100%");
-//        classicEditor.setHeight("550px");
-
         aceEditor = new AceEditor();
 
         aceEditor.setTheme(AceTheme.dracula);
