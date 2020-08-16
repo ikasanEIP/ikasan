@@ -819,10 +819,9 @@
             </activation>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactid>maven-gpg-plugin</artifactid>
+                        <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
                         <executions>
                             <execution>
