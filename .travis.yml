@@ -11,8 +11,8 @@ before_install:
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 
-install:
-  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
+#install:
+#  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 
 ## Build and release to maven central
 script:
