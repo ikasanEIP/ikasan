@@ -13,12 +13,12 @@ before_install:
 
 install:
 #  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
-  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
+  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean release:prepare -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
 
 ## Build and release to maven central
 #script:
   ##  mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
-  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
+#  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
 
 
 
