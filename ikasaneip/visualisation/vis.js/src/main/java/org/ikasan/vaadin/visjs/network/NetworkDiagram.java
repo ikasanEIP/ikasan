@@ -347,6 +347,11 @@ public class NetworkDiagram extends Component implements HasSize {
       this.diagamRedraw();
   }
 
+    public void removeImage(Double x, Double y, Integer w, Integer h) {
+        runBeforeClientResponse(
+            ui -> getElement().callJsFunction("$connector.removeImage", x, y ,w, h));
+    }
+
 
     // ==== Events ====
   private void enableEventDispatching(Class<? extends Event> clazz) {

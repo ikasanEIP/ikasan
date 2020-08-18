@@ -8,5 +8,4 @@ import java.util.Map;
 public interface MultiTransition
 {
     public Map<String, Node> getTransitions();
-
 }
