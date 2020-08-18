@@ -128,7 +128,7 @@ public class ModuleVisjsAdapter
      * @param flowElements
      * @return
      */
-    protected Node manageFlowElement(FlowElementMetaData flowElement, List<Transition> transitions,
+    protected AbstractWiretapNode manageFlowElement(FlowElementMetaData flowElement, List<Transition> transitions,
                                      Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName())
@@ -139,16 +139,43 @@ public class ModuleVisjsAdapter
             || flowElement.getComponentType().equals(Broker.class.getName())
             || flowElement.getComponentType().equals(Producer.class.getName()))
         {
-            return manageSingleTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
+            AbstractWiretapNode node =  manageSingleTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
+            this.decorateWiretap(flowElement, node);
+            return node;
         }
         else if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName())||
             flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
         {
-            return manageMultiTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
+            AbstractWiretapNode node = manageMultiTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
+            this.decorateWiretap(flowElement, node);
+            return node;
         }
         else
         {
             throw new IllegalArgumentException("Unknown component type encountered");
+        }
+    }
+
+    private void decorateWiretap(FlowElementMetaData flowElement, AbstractWiretapNode node) {
+        if(flowElement.getDecorators() != null) {
+            flowElement.getDecorators().forEach(decoratorMetaData -> {
+                if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
+                    node.setHasWiretapBefore(true);
+                    node.setDecoratorMetaDataList(flowElement.getDecorators());
+                }
+                else if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
+                    node.setHasWiretapAfter(true);
+                    node.setDecoratorMetaDataList(flowElement.getDecorators());
+                }
+                else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
+                    node.setHasLogWiretapBefore(true);
+                    node.setDecoratorMetaDataList(flowElement.getDecorators());
+                }
+                else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
+                    node.setHasLogWiretapAfter(true);
+                    node.setDecoratorMetaDataList(flowElement.getDecorators());
+                }
+            });
         }
     }
 
@@ -231,7 +258,7 @@ public class ModuleVisjsAdapter
      * @param flowElements
      * @return
      */
-    protected Node manageSingleTransition(FlowElementMetaData flowElement, List<Transition> transitions,
+    protected AbstractWiretapNode manageSingleTransition(FlowElementMetaData flowElement, List<Transition> transitions,
                                                       Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
 
@@ -282,7 +309,7 @@ public class ModuleVisjsAdapter
      * @param flowElements
      * @return
      */
-    protected Node manageMultiTransition(FlowElementMetaData flowElement, List<Transition> transitions,
+    protected AbstractWiretapNode manageMultiTransition(FlowElementMetaData flowElement, List<Transition> transitions,
                                                     Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         List<FlowElementMetaData> flowElementMetaDataTransitions
@@ -309,7 +336,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageProducers(FlowElementMetaData flowElement, Map<String, ConfigurationMetaData> configurationMetaDataMap)
+    private AbstractWiretapNode manageProducers(FlowElementMetaData flowElement, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
         this.manageModuleMaps(nodeId, configurationMetaDataMap, flowElement);
@@ -377,7 +404,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageConsumers(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
+    private AbstractWiretapNode manageConsumers(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                  Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         ConfigurationMetaData configurationMetaData = configurationMetaDataMap.get(flowElement.getConfigurationId());
@@ -446,7 +473,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions, Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
+    private AbstractWiretapNode manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions, Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
         this.manageModuleMaps(nodeId, configurationMetaDataMap, flowElement);
@@ -469,7 +496,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageTranslator(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
+    private AbstractWiretapNode manageTranslator(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                  Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
@@ -493,7 +520,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageSplitter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
+    private AbstractWiretapNode manageSplitter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                   Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
@@ -517,7 +544,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageFilter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
+    private AbstractWiretapNode manageFilter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                                 Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
@@ -541,7 +568,7 @@ public class ModuleVisjsAdapter
      * @param configurationMetaDataMap
      * @return
      */
-    private Node manageBroker(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
+    private AbstractWiretapNode manageBroker(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
                               Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
         String nodeId = flowElement.getComponentName() + identifier++;
@@ -565,7 +592,7 @@ public class ModuleVisjsAdapter
      * @param flowElementMetaDataTransitions
      * @return
      */
-    private Node manageSingleRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
+    private AbstractWiretapNode manageSingleRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
                                              Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
                                              List<FlowElementMetaData> flowElementMetaDataTransitions)
     {
@@ -595,7 +622,7 @@ public class ModuleVisjsAdapter
      * @param flowElementMetaDataTransitions
      * @return
      */
-    private Node manageMultiRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
+    private AbstractWiretapNode manageMultiRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
                                              Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
                                              List<FlowElementMetaData> flowElementMetaDataTransitions)
     {

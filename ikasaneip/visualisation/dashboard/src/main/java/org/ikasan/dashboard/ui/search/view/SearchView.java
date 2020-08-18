@@ -290,6 +290,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         checkboxLayout.add(this.negateQueryCheckbox);
         checkboxLayout.setVerticalComponentAlignment(Alignment.CENTER, this.negateQueryCheckbox);
 
+
         HorizontalLayout searchIconLayout = new HorizontalLayout();
         searchIconLayout.setSpacing(true);
         searchIconLayout.add(wiretapFilterLayout, replayFilterLayout, hospitalFilterLayout, errorFilterLayout, checkboxLayout);

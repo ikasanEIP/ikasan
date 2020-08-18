@@ -4,7 +4,7 @@ import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.options.nodes.Nodes;
 import org.ikasan.vaadin.visjs.network.util.Shape;
 
-public class AbstractSingleTransition extends Node implements SingleTransition
+public class AbstractSingleTransition extends AbstractWiretapNode implements SingleTransition
 {
     protected Node transition;
     protected String transitionLabel;
@@ -20,7 +20,7 @@ public class AbstractSingleTransition extends Node implements SingleTransition
      */
     public AbstractSingleTransition(String id,  String name, Node transition, String label, String image)
     {
-        super(id, name, Nodes.builder().withShape(Shape.image).withImage(image));
+        super(id, name, image);
         this.transition = transition;
         this.transitionLabel = label;
     }

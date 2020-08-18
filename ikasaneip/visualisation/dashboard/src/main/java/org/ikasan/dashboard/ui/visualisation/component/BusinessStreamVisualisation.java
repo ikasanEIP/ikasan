@@ -378,16 +378,6 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         this.networkDiagram.diagamRedraw();
     }
 
-    private HashMap<String, IkasanSolrDocument> createResultMap(IkasanSolrDocumentSearchResults results, String type) {
-        return (HashMap<String, IkasanSolrDocument>) results
-            .getResultList()
-            .stream()
-            .filter(result -> result.getType().equals(type))
-            .collect(toMap(ikasanSolrDocument -> ikasanSolrDocument.getModuleName() + ikasanSolrDocument.getFlowName()
-                , Function.identity(), (existing, replacement) -> existing));
-    }
-
-
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         this.redraw();
