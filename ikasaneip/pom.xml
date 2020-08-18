@@ -60,6 +60,8 @@
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
+    <url>http://www.ikasan.org</url>
+
 
     <organization>
         <name>Ikasan</name>
