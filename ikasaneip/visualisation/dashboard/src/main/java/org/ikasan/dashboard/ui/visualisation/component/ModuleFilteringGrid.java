@@ -172,7 +172,7 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
                 .filter(metadata -> accessibleModules.contains(metadata.getName()))
                 .collect(Collectors.toList());
 
-             results = new ModuleMetadataSearchResults(resultsList, resultsList.size(), results.getQueryResponseTime());
+             results = new ModuleMetadataSearchResults(resultsList, results.getTotalNumberOfResults(), results.getQueryResponseTime());
         }
 
         return results;
