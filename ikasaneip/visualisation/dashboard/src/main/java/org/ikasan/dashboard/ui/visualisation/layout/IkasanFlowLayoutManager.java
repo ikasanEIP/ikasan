@@ -42,7 +42,7 @@ public class IkasanFlowLayoutManager extends LayoutManagerBase implements Layout
         this.networkDiagram.setNodes(this.nodeList);
         this.networkDiagram.setEdges(this.edgeList);
 
-        flow.setBorder(x + 100, y - 100, xExtent - x , yExtent + 200 - y);
+        flow.setBorder(x + 100, y - 150, xExtent - x , yExtent + 250 - y);
 
         this.networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
 

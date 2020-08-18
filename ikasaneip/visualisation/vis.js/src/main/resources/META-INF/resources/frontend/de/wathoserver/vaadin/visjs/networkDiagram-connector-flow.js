@@ -9,10 +9,8 @@ window.Vaadin.Flow.networkDiagramConnector = {
 
         graph.$connector = {};
 
-        var drawn = false;
-
         console.log(initialNodes);
-        var nodesParent = JSON.parse(initialNodes);
+        let nodesParent = JSON.parse(initialNodes);
 
         graph.nodes = new vis.DataSet(nodesParent);
         graph.edges = new vis.DataSet(JSON.parse(initialEdges));
@@ -21,13 +19,18 @@ window.Vaadin.Flow.networkDiagramConnector = {
             nodesParent = JSON.parse(nodesStates);
         };
 
-        var self = this;
-        var customNodeifAdded = false;
-        var customNodeID;
-        var customNodeLabel;
-        var customEdgeifAdded = false;
-        var customEdgeID;
-        var customEdgeLabel;
+        let self = this;
+        let customNodeifAdded = false;
+        let customNodeID;
+        let customNodeLabel;
+        let customEdgeifAdded = false;
+        let customEdgeID;
+        let customEdgeLabel;
+
+        let wiretapBeforeImg = undefined;
+        let wiretapAfterImg = undefined;
+        let logWiretapBeforeImage = undefined;
+        let logWiretapAfterImage = undefined;
 
         graph.options = JSON.parse(options);
         graph.options.manipulation.addNode = function (nodeData, callback) {
@@ -104,15 +107,16 @@ window.Vaadin.Flow.networkDiagramConnector = {
 
         graph.$connector.drawNodeFoundStatus = function () {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
-                var inode;
-                var nodePositions = graph.$connector.diagram.getPositions();
-                var arrayLength = graph.nodes.length;
+                let inode;
+                let nodePositions = graph.$connector.diagram.getPositions();
+                let arrayLength = graph.nodes.length;
+
                 for (inode = 0; inode < arrayLength; inode++) {
-                    var node = nodesParent[inode];
-                    var nodePosition = nodePositions[node.id];
+                    let node = nodesParent[inode];
+                    let nodePosition = nodePositions[node.id];
 
                     if (node.wiretapFoundStatus === "FOUND") {
-                        var img = new Image();
+                        let img = new Image();
                         img.src = node.wiretapFoundImage;
                         ctx.drawImage(img, nodePosition.x + node.wiretapFoundImageX
                             , nodePosition.y + node.wiretapFoundImageY
@@ -120,7 +124,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
                             , node.wiretapFoundImageH);
                     }
                     if (node.errorFoundStatus === "FOUND") {
-                        var img = new Image();
+                        let img = new Image();
                         img.src = node.errorFoundImage;
                         ctx.drawImage(img, nodePosition.x + node.errorFoundImageX
                             , nodePosition.y + node.errorFoundImageY
@@ -128,7 +132,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
                             , node.errorFoundImageH);
                     }
                     if (node.exclusionFoundStatus === "FOUND") {
-                        var img = new Image();
+                        let img = new Image();
                         img.src = node.exclusionFoundImage;
                         ctx.drawImage(img, nodePosition.x + node.exclusionFoundImageX
                             , nodePosition.y + node.exclusionFoundImageY
@@ -136,14 +140,89 @@ window.Vaadin.Flow.networkDiagramConnector = {
                             , node.exclusionFoundImageH);
                     }
                     if (node.replayFoundStatus === "FOUND") {
-                        var img = new Image();
+                        let img = new Image();
                         img.src = node.replayFoundImage;
                         ctx.drawImage(img, nodePosition.x + node.replayFoundImageX
                             , nodePosition.y + node.exclusionFoundImageY
                             , node.exclusionFoundImageW
                             , node.exclusionFoundImageH);
                     }
+                    if (node.wiretapBeforeStatus === "FOUND") {
+
+                        if (wiretapBeforeImg === undefined) {
+                            wiretapBeforeImg = new Image();
+                            wiretapBeforeImg.src = node.wiretapBeforeImage;
+                        }
+
+                        ctx.drawImage(wiretapBeforeImg, nodePosition.x + node.wiretapBeforeImageX
+                            , nodePosition.y + node.wiretapBeforeImageY
+                            , node.wiretapBeforeImageW
+                            , node.wiretapBeforeImageH);
+                    }
+                    if (node.wiretapAfterStatus === "FOUND") {
+
+                        if (wiretapAfterImg === undefined) {
+                            wiretapAfterImg = new Image();
+                            wiretapAfterImg.src = node.wiretapBeforeImage;
+                        }
+
+                        ctx.drawImage(wiretapAfterImg, nodePosition.x + node.wiretapAfterImageX
+                            , nodePosition.y + node.wiretapAfterImageY
+                            , node.wiretapAfterImageW
+                            , node.wiretapAfterImageH);
+                    }
+                    if (node.logWiretapBeforeStatus === "FOUND") {
+
+                        if (logWiretapBeforeImage === undefined) {
+                            logWiretapBeforeImage = new Image();
+                            logWiretapBeforeImage.src = node.logWiretapBeforeImage;
+                        }
+
+                        // Let's not stack the images unless we have to.
+                        if(node.wiretapBeforeStatus != "FOUND") {
+                            ctx.drawImage(logWiretapBeforeImage, nodePosition.x + node.wiretapBeforeImageX
+                                , nodePosition.y + node.wiretapBeforeImageY
+                                , node.wiretapBeforeImageW
+                                , node.wiretapBeforeImageH);
+                        }
+                        else {
+                            ctx.drawImage(logWiretapBeforeImage, nodePosition.x + node.logWiretapBeforeImageX
+                                , nodePosition.y + node.logWiretapBeforeImageY
+                                , node.logWiretapBeforeImageW
+                                , node.logWiretapBeforeImageH);
+                        }
+                    }
+                    if (node.logWiretapAfterStatus === "FOUND") {
+
+                        if (logWiretapAfterImage === undefined) {
+                            logWiretapAfterImage = new Image();
+                            logWiretapAfterImage.src = node.logWiretapAfterImage;
+                        }
+
+                        // Let's not stack the images unless we have to.
+                        if (node.wiretapAfterStatus != "FOUND") {
+                            ctx.drawImage(logWiretapAfterImage, nodePosition.x + node.wiretapAfterImageX
+                                , nodePosition.y + node.wiretapAfterImageY
+                                , node.wiretapAfterImageW
+                                , node.wiretapAfterImageH);
+                        }
+                        else {
+                            ctx.drawImage(logWiretapAfterImage, nodePosition.x + node.logWiretapAfterImageX
+                                , nodePosition.y + node.logWiretapAfterImageY
+                                , node.logWiretapAfterImageW
+                                , node.logWiretapAfterImageH);
+                        }
+                    }
                 }
+            });
+        }
+
+        graph.$connector.removeImage = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                debugger;
+                ctx.clearRect(x, y, h, w);
+                ctx.fillStyle = 'rgba(224,224,224,0.6)';
+                ctx.fillRect(x, y, h, w);
             });
         }
 
@@ -171,15 +250,15 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.setLineDash([]);
                 ctx.strokeStyle = 'black';
 
-                var stroke = true;
-                var radius = 20;
-                var fill = false;
+                let stroke = true;
+                let radius = 20;
+                let fill = false;
 
                 if (typeof radius === 'number') {
                     radius = {tl: radius, tr: radius, br: radius, bl: radius};
                 } else {
-                    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-                    for (var side in defaultRadius) {
+                    let defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (let side in defaultRadius) {
                         radius[side] = radius[side] || defaultRadius[side];
                     }
                 }
@@ -200,11 +279,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 if (stroke) {
                     ctx.stroke();
                 }
-
-                // ctx.drawImage(HTMLImageElement("/images/ikasan-titling-transparent.png"), 0, 0);
             });
-
-            // graph.draw();
         }
 
         graph.$connector.drawFlowBorder = function (x, y, width, height, text) {
@@ -218,17 +293,16 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.setLineDash([10, 10]);
                 ctx.strokeStyle = '#000';
                 ctx.fillStyle = 'rgba(224,224,224,0.5)';
-                // ctx.back
 
-                var stroke = true;
-                var radius = 20;
-                var fill = true;
+                let stroke = true;
+                let radius = 20;
+                let fill = true;
 
                 if (typeof radius === 'number') {
                     radius = {tl: radius, tr: radius, br: radius, bl: radius};
                 } else {
-                    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-                    for (var side in defaultRadius) {
+                    let defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (let side in defaultRadius) {
                         radius[side] = radius[side] || defaultRadius[side];
                     }
                 }
@@ -256,19 +330,7 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.lineWidth=2.0
                 ctx.setLineDash([0, 0]);
             });
-
-            // graph.draw();
         }
-
-        // var animateStatus = true;
-        // var updateSrarusVar = setInterval(function() { updateFrameTimer(); }, 1000);
-        //
-        // function updateFrameTimer() {
-        //     if (animateStatus) {
-        //
-        //         currentRadius += 0.05;
-        //     }
-        // }
 
         graph.$connector.drawStatusBorder = function (x, y, width, height, colour) {
             graph.$connector.diagram.on("beforeDrawing", function (ctx) {
@@ -280,15 +342,15 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.fillStyle = 'rgba(224,224,224,0.5)';
                 // ctx.back
 
-                var stroke = true;
-                var radius = 20;
-                var fill = false;
+                let stroke = true;
+                let radius = 20;
+                let fill = false;
 
                 if (typeof radius === 'number') {
                     radius = {tl: radius, tr: radius, br: radius, bl: radius};
                 } else {
-                    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-                    for (var side in defaultRadius) {
+                    let defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (let side in defaultRadius) {
                         radius[side] = radius[side] || defaultRadius[side];
                     }
                 }
@@ -313,8 +375,6 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.lineWidth=2.0
                 ctx.setLineDash([0, 0]);
             });
-
-            // graph.draw();
         }
 
 		// not used yet

@@ -12,15 +12,13 @@ import java.util.Map;
 /**
  * Created by stewmi on 07/11/2018.
  */
-public class SingleRecipientRouter extends Node implements MultiTransition
+public class SingleRecipientRouter extends AbstractMultiTransition
 {
 	private static final String IMAGE = "frontend/images/message-router.png";
 
-	private Map<String, Node> transitions;
-
 	public SingleRecipientRouter(String id, String name)
 	{
-        super(id, name, Nodes.builder().withShape(Shape.image).withImage(IMAGE));
+        super(id, name, IMAGE);
 		transitions = new HashMap<>();
 	}
 
