@@ -567,14 +567,18 @@
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
-                            <configuration>
-                                <doclint>none</doclint>
-                            </configuration>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
-                        </execution>
+                            <configuration>
+                                <additionalOptions>-Xdoclint:all -Xdoclint:-missing</additionalOptions>
+                                <additionalJOptions>
+                                    <additionalJOption>-Xdoclint:all</additionalJOption>
+                                    <additionalJOption>-Xdoclint:-missing</additionalJOption>
+                                </additionalJOptions>
+                            </configuration>
 
+                        </execution>
                     </executions>
                 </plugin>
                 <plugin>
@@ -678,12 +682,17 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <configuration>
-                            <doclint>none</doclint>
-                        </configuration>
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <additionalOptions>-Xdoclint:all -Xdoclint:-missing</additionalOptions>
+                            <additionalJOptions>
+                                <additionalJOption>-Xdoclint:all</additionalJOption>
+                                <additionalJOption>-Xdoclint:-missing</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+
                     </execution>
                 </executions>
             </plugin>
