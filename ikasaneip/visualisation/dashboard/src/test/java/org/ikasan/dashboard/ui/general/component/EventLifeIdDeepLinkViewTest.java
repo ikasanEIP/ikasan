@@ -58,7 +58,7 @@ public class EventLifeIdDeepLinkViewTest {
     public void setup()
     {
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        rootLogger.setLevel(Level.INFO);
+        rootLogger.setLevel(Level.WARN);
 
         final SpringServlet servlet = new SpringServlet(ctx, true) {
             @Override
