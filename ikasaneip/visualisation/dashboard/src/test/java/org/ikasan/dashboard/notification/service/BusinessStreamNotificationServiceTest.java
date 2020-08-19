@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.notification.service;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -19,6 +21,7 @@ import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
@@ -38,6 +41,8 @@ public class BusinessStreamNotificationServiceTest extends SolrTestCaseJ4 {
     @Before
     public void setup()
     {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
 
         Path path = createTempDir();
 

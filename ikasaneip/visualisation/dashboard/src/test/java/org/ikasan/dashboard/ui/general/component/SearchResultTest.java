@@ -77,7 +77,7 @@ public class SearchResultTest {
     public void setup() throws Exception
     {
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        rootLogger.setLevel(Level.INFO);
+        rootLogger.setLevel(Level.WARN);
 
         final SpringServlet servlet = new SpringServlet(ctx, true) {
             @Override
