@@ -37,16 +37,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.vaadin.componentfactory</groupId>
-            <artifactId>tooltip</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.tabs</groupId>
-            <artifactId>paged-tabs</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-data</artifactId>
             <exclusions>
@@ -286,6 +276,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

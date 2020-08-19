@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.notification;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -28,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -65,7 +68,6 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     private EmailNotifier emailNotifier = mockery.mock(EmailNotifier.class);
     private JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
     private BusinessStreamExclusions businessStreamExclusions = mockery.mock(BusinessStreamExclusions.class);
-
 
     @Test
     public void test_job_success_no_exclusions_found() throws JobExecutionException {
@@ -277,6 +279,8 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     @Before
     public void setup()
     {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
 
         Path path = createTempDir();
 
