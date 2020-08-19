@@ -562,19 +562,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>3.0.1</version>
+
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
+                            <configuration>
+                                <doclint>none</doclint>
+                            </configuration>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
-                            <configuration>
-                                <additionalparam>-Xdoclint:none</additionalparam>
-                                <additionalOptions>-Xdoclint:none</additionalOptions>
-                                <additionalJOption>-Xdoclint:none</additionalJOption>
-                            </configuration>
                         </execution>
+
                     </executions>
                 </plugin>
                 <plugin>
@@ -673,18 +673,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10</version>
+                <version>3.0.1</version>
+
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            <additionalOptions>-Xdoclint:none</additionalOptions>
-                            <additionalJOption>-Xdoclint:none</additionalJOption>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -725,7 +724,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10</version>
+                <version>3.0.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
