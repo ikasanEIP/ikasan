@@ -25,6 +25,7 @@ appearing to the left of the component, denoting a wiretap 'BEFORE' the componen
 <br/>
 <br/>
 <br/>
+<br/>
 
 ### Adding a wiretap
 <img src="../../developer/docs/quickstart-images/component-options.png" width="300px" align="left">In order to add a wiretap to a component, navigate to the visualisation screen of the component you would like to add the wiretap to. Double click on the component and you will be presented with the 'Component Options' screen. You will be able to choose to add: 
@@ -34,6 +35,7 @@ appearing to the left of the component, denoting a wiretap 'BEFORE' the componen
 <br/>- A log wiretap after the component.
 <br/><br/>Once a wiretap is added an icon will appear next to the component.
 <br/><br/><br/>
+<br/>
 ### Removing a wiretap
 <img src="../../developer/docs/quickstart-images/wiretap-management.png" width="300px" align="left"> In order to remove a wiretap, navigate to the visualisation screen of the component you would like to remove the wiretap from. Double click on the wiretap icon that you wish to remove and you will be presented with the 'Wiretap Management' screen. Click the 'Remove Wiretap' button and the wiretap will be removed.
 
