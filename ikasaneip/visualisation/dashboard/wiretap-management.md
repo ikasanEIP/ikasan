@@ -8,11 +8,13 @@ from within the visualisation screens within the dashboard.
  
 Ikasan supports 2 different kinds of wiretaps. 
 <br/>
+<br/>
 <img src="../../developer/docs/quickstart-images/wiretap.png" width="100px" align="left"> Indexed wiretaps that are written to Ikasan's underlying text index, which can subsequently be searched for in the Ikasan Dashboard.
 <br/>
 <br/> 
 <br/>
-<img src="../../developer/docs/quickstart-images/log-wiretap.png" width="100px" align="left">Log wiretaps that record the data event in the module log file that the wiretap was added to.
+<br/>
+<img src="../../developer/docs/quickstart-images/log-wiretap.png" width="100px" align="left">Log wiretaps that record the data event in the module log file, of the module that the wiretap was added to.
 <br/>
 <br/>
 <br/>
@@ -25,6 +27,14 @@ appearing to the left of the component, denoting a wiretap 'BEFORE' the componen
 <br/>
 
 ### Adding a wiretap
-
+<img src="../../developer/docs/quickstart-images/component-options.png" width="300px" align="left">In order to add a wiretap to a component, navigate to the visualisation screen of the component you would like to add the wiretap to. Double click on the component and you will be presented with the 'Component Options' screen. You will be able to choose to add: 
+<br/>- An indexed wiretap before the component.
+<br/>- An indexed wiretap after the component.
+<br/>- A log wiretap before the component.
+<br/>- A log wiretap after the component.
+<br/><br/>Once a wiretap is added an icon will appear next to the component.
+<br/><br/><br/>
 ### Removing a wiretap
+<img src="../../developer/docs/quickstart-images/wiretap-management.png" width="300px" align="left"> In order to remove a wiretap, navigate to the visualisation screen of the component you would like to remove the wiretap from. Double click on the wiretap icon that you wish to remove and you will be presented with the 'Wiretap Management' screen. Click the 'Remove Wiretap' button and the wiretap will be removed.
+
 
