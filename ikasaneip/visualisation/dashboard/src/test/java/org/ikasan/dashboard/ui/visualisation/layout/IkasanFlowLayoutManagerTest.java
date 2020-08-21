@@ -56,7 +56,7 @@ public class IkasanFlowLayoutManagerTest
         {
             {
                 // set event factory
-                oneOf(networkDiagram).drawFlow(100, -100, 1200, 200, "Simple Flow 1");
+                oneOf(networkDiagram).drawFlow(100, -150, 1200, 250, "Simple Flow 1");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
             }
@@ -87,45 +87,45 @@ public class IkasanFlowLayoutManagerTest
         {
             {
                 // set event factory
-                oneOf(networkDiagram).drawFlow(100, -100, 1400, 1100, "Inbound Routing Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1400, 1150, "Inbound Routing Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 2400, 2900, "E1 Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 2400, 2950, "E1 Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1000, 200, "E1 Stamping Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1000, 250, "E1 Stamping Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1200, 200, "E2 Create Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1200, 250, "E2 Create Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1600, 500, "E2 Amend Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1600, 550, "E2 Amend Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1400, 350, "E2 Cancel Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1400, 400, "E2 Cancel Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 400, 200, "E2 Allocation Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 400, 250, "E2 Allocation Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1200, 200, "E3 Create Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1200, 250, "E3 Create Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1600, 500, "E3 Amend Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1600, 550, "E3 Amend Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 1400, 350, "E3 Cancel Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 1400, 400, "E3 Cancel Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 600, 350, "E3 Allocation Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 600, 400, "E3 Allocation Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 2600, 2000, "Ack Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 2600, 2050, "Ack Flow");
                 oneOf(networkDiagram).setNodes(with(any(List.class)));
                 oneOf(networkDiagram).setEdges(with(any(List.class)));
-                oneOf(networkDiagram).drawFlow(100, -100, 2400, 500, "Some Trade Flow");
+                oneOf(networkDiagram).drawFlow(100, -150, 2400, 550, "Some Trade Flow");
             }
         });
 
