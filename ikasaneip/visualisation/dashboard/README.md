@@ -3,6 +3,7 @@
 # Ikasan Visualisation Dashboard
 
 - [Notifications](./notifications.md)
+- [Wiretap Management](./wiretap-management.md)
 
 Import the project to the IDE of your choosing as a Maven project. 
 
