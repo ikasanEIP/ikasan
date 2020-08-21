@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.MockedUI;
 import com.github.mvysny.kaributesting.v10.Routes;
-import com.juicy.JuicyAceEditor;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.DeploymentConfiguration;
@@ -102,7 +101,7 @@ public class HospitalViewTest {
         document.setModuleName("module");
         document.setPayloadRaw("payload".getBytes());
         document.setExceptionClass("exception.class");
-        document.setEvent("event");
+        document.setEvent("event payload");
         document.setEventId("eventId");
 
         Mockito.when(this.solrSearchService.findById("exclusion", "12345"))
@@ -138,9 +137,6 @@ public class HospitalViewTest {
 
             TextField moduleNameTf = (TextField)ReflectionTestUtils.getField(hospitalView, "moduleNameTf");
             Assertions.assertEquals("module", moduleNameTf.getValue(), "Module name text field equals");
-
-            JuicyAceEditor juicyAceEditor = (JuicyAceEditor)ReflectionTestUtils.getField(hospitalView, "juicyAceEditor");
-            Assertions.assertEquals("event", juicyAceEditor.getValue(), "juicyAceEditor field equals");
         }
         catch (Exception e)
         {

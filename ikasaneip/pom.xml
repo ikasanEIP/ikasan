@@ -458,7 +458,8 @@
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
         <version.org.junit.jupiter>5.5.2</version.org.junit.jupiter>
-        <version.com.juicy>1.0.9</version.com.juicy>
+        <version.ace.editor>1.0.3-Beta</version.ace.editor>
+        <version.thymeleaf>3.0.11.RELEASE</version.thymeleaf>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -2082,9 +2083,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.juicy</groupId>
-                <artifactId>juicyaceeditor</artifactId>
-                <version>${version.com.juicy}</version>
+                <groupId>io.github.ciesielskis</groupId>
+                <artifactId>ace-editor</artifactId>
+                <version>${version.ace.editor}</version>
             </dependency>
 
             <dependency>
@@ -2506,6 +2507,19 @@
                 <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${version.com.jcraft.jsch}</version>
+            </dependency>
+
+            <!-- Thymeleaf -->
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf</artifactId>
+                <version>${version.thymeleaf}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring5</artifactId>
+                <version>${version.thymeleaf}</version>
             </dependency>
 
             <dependency>
