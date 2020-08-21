@@ -15,11 +15,14 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.rest.client.MetaDataApplicationRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
@@ -55,16 +58,19 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private ModuleControlRestServiceImpl moduleControlRestService;
     private ConfigurationRestServiceImpl configurationRestService;
     private TriggerRestServiceImpl triggerRestService;
+    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
 
     private UI current;
 
     public  ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService)
+        , TriggerRestServiceImpl triggerRestService, MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
+        this.metaDataApplicationRestService = metaDataApplicationRestService;
+
         this.setSizeFull();
         this.setMargin(false);
         this.flowMap = new HashMap<>();
@@ -84,9 +90,9 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
     protected void add(Flow flow)
     {
-        logger.info("Adding flow [{}] to visualisation.", flow.getName());
+        logger.debug("Adding flow [{}] to visualisation.", flow.getName());
         this.flowMap.put(flow.getName(), flow);
-        logger.info("Finished adding flow [{}] to visualisation.", flow.getName());
+        logger.debug("Finished adding flow [{}] to visualisation.", flow.getName());
     }
 
     /**
@@ -96,14 +102,14 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
      */
     protected NetworkDiagram createNetworkDiagram(Flow flow)
     {
-        logger.info("Creating network diagram for flow [{}] to visualisation.", flow.getName());
+        logger.debug("Creating network diagram for flow [{}] to visualisation.", flow.getName());
 
         NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
 
         IkasanFlowLayoutManager layoutManager = new IkasanFlowLayoutManager(flow, networkDiagram, null);
         layoutManager.layout();
 
-        logger.info("Finished creating network diagram for flow [{}] to visualisation.", flow.getName());
+        logger.debug("Finished creating network diagram for flow [{}] to visualisation.", flow.getName());
         return networkDiagram;
     }
 
@@ -114,7 +120,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
      */
     protected NetworkDiagram createNetworkDiagram(Module module)
     {
-        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
+        logger.debug("Creating network diagram for module [{}] to visualisation.", module.getName());
         NetworkDiagram networkDiagram = this.initialiseNetworkDiagram();
 
         IkasanModuleLayoutManager layoutManager = new IkasanModuleLayoutManager(module, networkDiagram, null);
@@ -125,13 +131,13 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
     protected NetworkDiagram initialiseNetworkDiagram()
     {
-        logger.info("Creating network diagram for module [{}] to visualisation.", module.getName());
+        logger.debug("Creating network diagram for module [{}] to visualisation.", module.getName());
         Physics physics = new Physics();
         physics.setEnabled(false);
 
         NetworkDiagram networkDiagram = new NetworkDiagram
             (Options.builder()
-                .withAutoResize(true)
+                .withAutoResize(false)
                 .withPhysics(physics)
                 .withInteraction(Interaction.builder().withDragNodes(false).build())
                 .withEdges(
@@ -152,121 +158,57 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         {
             logger.info(doubleClickEvent.getParams().toString());
 
+            JsonObject coordinates = doubleClickEvent.getParams().getObject("pointer").getObject("canvas");
+
+            Double x = coordinates.getNumber("x");
+            Double y = coordinates.getNumber("y");
+
             JsonArray nodes = doubleClickEvent.getParams().getArray("nodes");
 
             if(nodes.length() == 0)
             {
-                JsonObject coordinates = doubleClickEvent.getParams().getObject("pointer").getObject("canvas");
-
-                Double x = coordinates.getNumber("x");
-                Double y = coordinates.getNumber("y");
-
                 AbstractWiretapNode node = this.wiretapClickedOn(this.currentFlow.getConsumer(), x, y);
 
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                if(node != null) {
+                if(node != null && ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_ADMIN,
+                    SecurityConstants.WIRETAP_WRITE, SecurityConstants.ALL_AUTHORITY)) {
                     if(node.wiretapBeforeClickedOn(x, y)) {
-//                        NotificationHelper.showUserNotification("Clicked on wiretap before: " + node.getLabel() + " "
-//                            + node.getDecoratorMetaDataList().stream().map(decoratorMetaData -> {
-//                            try {
-//                                return objectMapper.writeValueAsString(decoratorMetaData);
-//                            }
-//                            catch (JsonProcessingException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            return  "";
-//                        }).collect(Collectors.joining(", ")));
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
                                 .filter(decoratorMetaData -> decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("BEFORE"))
                                 .collect(Collectors.toList()),
-                            node.getX() + node.getWiretapBeforeImageX(),
-                            node.getY() + node.getWiretapBeforeImageY(),
-                            node.getWiretapBeforeImageW(),
-                            node.getWiretapBeforeImageH(),
-                            networkDiagram);
+                            node, networkDiagram, WiretapManagementDialog.WIRETAP, WiretapManagementDialog.BEFORE);
                         wiretapManagementDialog.open();
                         return;
                     }
                     else if(node.wiretapAfterClickedOn(x, y)) {
-//                        NotificationHelper.showUserNotification("Clicked on wiretap after: " + node.getLabel() + " "
-//                            + node.getDecoratorMetaDataList().stream().map(decoratorMetaData -> {
-//                            try {
-//                                return objectMapper.writeValueAsString(decoratorMetaData);
-//                            }
-//                            catch (JsonProcessingException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            return  "";
-//                        }).collect(Collectors.joining(", ")));
-
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
                                 .filter(decoratorMetaData -> decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("AFTER"))
                                 .collect(Collectors.toList()),
-                            node.getX() + node.getWiretapBeforeImageX(),
-                            node.getY() + node.getWiretapBeforeImageY(),
-                            node.getWiretapBeforeImageW(),
-                            node.getWiretapBeforeImageH(),
-                            networkDiagram);
+                            node, networkDiagram, WiretapManagementDialog.WIRETAP, WiretapManagementDialog.AFTER);
                         wiretapManagementDialog.open();
                         return;
                     }
                     else if(node.logWiretapBeforeClickedOn(x, y)) {
-//                        NotificationHelper.showUserNotification("Clicked on log wiretap before: " + node.getLabel() + " "
-//                            + node.getDecoratorMetaDataList().stream().map(decoratorMetaData -> {
-//                            try {
-//                                return objectMapper.writeValueAsString(decoratorMetaData);
-//                            }
-//                            catch (JsonProcessingException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            return  "";
-//                        }).collect(Collectors.joining(", ")));
-
-                        WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
+                       WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
                                 .filter(decoratorMetaData -> decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("BEFORE"))
                                 .collect(Collectors.toList()),
-                            node.getX() + node.getLogWiretapBeforeImageX(),
-                            node.getY() + node.getLogWiretapBeforeImageY(),
-                            node.getLogWiretapBeforeImageW(),
-                            node.getLogWiretapBeforeImageH(),
-                            networkDiagram);
+                            node, networkDiagram, WiretapManagementDialog.LOG, WiretapManagementDialog.BEFORE);
                         wiretapManagementDialog.open();
 
                         return;
                     }
                     else if(node.logWiretapAfterClickedOn(x, y)) {
-//                        NotificationHelper.showUserNotification("Clicked on log wiretap after: " + node.getLabel() + " "
-//                            + node.getDecoratorMetaDataList().stream().map(decoratorMetaData -> {
-//                            try {
-//                                return objectMapper.writeValueAsString(decoratorMetaData);
-//                            }
-//                            catch (JsonProcessingException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            return  "";
-//                        }).collect(Collectors.joining(", ")));
-
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
                                 .filter(decoratorMetaData -> decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("AFTER"))
                                 .collect(Collectors.toList()),
-                            node.getX() + node.getLogWiretapAfterImageX(),
-                            node.getY() + node.getLogWiretapAfterImageY(),
-                            node.getLogWiretapAfterImageW(),
-                            node.getLogWiretapAfterImageH(),
-                            networkDiagram);
+                            node, networkDiagram, WiretapManagementDialog.LOG, WiretapManagementDialog.AFTER);
                         wiretapManagementDialog.open();
 
                         return;
@@ -276,7 +218,6 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                 if((x > currentFlow.getX() && x < (currentFlow.getX() + currentFlow.getW()))
                     && (y > currentFlow.getY() && y < (currentFlow.getY() + currentFlow.getH())))
                 {
-                    logger.debug("Inside flow!");
                     FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService);
                     flowOptionsDialog.open();
                 }
@@ -286,20 +227,21 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             String node = nodes.get(0).asString();
 
-            logger.info("Node: " + node);
-
             if(this.module.getComponentMap().get(node) != null)
             {
+                AbstractWiretapNode abstractWiretapNode = this.nodeClickedOn(this.currentFlow.getConsumer(), x, y);
+
                 ComponentOptionsDialog componentNodeActionDialog = new ComponentOptionsDialog(this.module,
                     this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
                     this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService,
-                    this.triggerRestService);
+                    this.triggerRestService, networkDiagram, abstractWiretapNode, this.metaDataApplicationRestService);
 
                 componentNodeActionDialog.open();
             }
         });
 
-        logger.info("Finished creating network diagram for module [{}] to visualisation.", module.getName());
+        logger.debug("Finished creating network diagram for module [{}] to visualisation.", module.getName());
+
 
         return networkDiagram;
     }
@@ -333,6 +275,31 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
             for (String key: ((MultiTransition) transition).getTransitions().keySet())
             {
                 AbstractWiretapNode node = wiretapClickedOn((AbstractWiretapNode)((MultiTransition) transition).getTransitions().get(key), x, y);
+
+                if(node!=null)return node;
+            }
+        }
+
+        return null;
+    }
+
+    protected AbstractWiretapNode nodeClickedOn(AbstractWiretapNode transition, double x, double y)
+    {
+        if(transition.clickedOn(x, y)) {
+            return transition;
+        }
+
+        if (transition instanceof SingleTransition && ((SingleTransition) transition).getTransition() != null)
+        {
+            if(((SingleTransition) transition).getTransition() instanceof AbstractWiretapNode) {
+                return nodeClickedOn((AbstractWiretapNode) ((SingleTransition) transition).getTransition(), x, y);
+            }
+        }
+        else if (transition instanceof MultiTransition)
+        {
+            for (String key: ((MultiTransition) transition).getTransitions().keySet())
+            {
+                AbstractWiretapNode node = nodeClickedOn((AbstractWiretapNode)((MultiTransition) transition).getTransitions().get(key), x, y);
 
                 if(node!=null)return node;
             }
@@ -405,13 +372,13 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
         UI ui = attachEvent.getUI();
         flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             this.drawFlowStatus(ui, flowState);
         });
 
         cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             this.drawFlowStatus(ui, flowState);
         });
     }

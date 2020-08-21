@@ -287,17 +287,12 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
             catch(Exception e)
             {
                 logger.error("An error occurred testing an LDAP connection", e);
-
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-
-                Notification.show("Error occurred while testing connection! " + e, 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showErrorNotification(getTranslation("notification.error-testing-connection", UI.getCurrent().getLocale()));
 
                 return;
             }
 
-            Notification.show("Connection Successful!", 3000, Notification.Position.MIDDLE);
+            NotificationHelper.showUserNotification(getTranslation("notification.connection-successful", UI.getCurrent().getLocale()));
         });
 
 
@@ -331,20 +326,19 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
             {
                 logger.error("An error occurred saving an authentication method", e);
 
-                Notification.show("Error trying to enable/disable the authentication method!");
-
+                NotificationHelper.showErrorNotification(getTranslation("notification.error-enable-disable-auth-method", UI.getCurrent().getLocale()));
                 return;
             }
 
             if(authenticationMethod.isEnabled())
             {
                 disable.setText("Disable");
-                Notification.show("Enabled!", 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showUserNotification(getTranslation("notification.enabled", UI.getCurrent().getLocale()));
             }
             else
             {
                 disable.setText("Enable");
-                Notification.show("Disabled!", 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showUserNotification(getTranslation("notification.disabled", UI.getCurrent().getLocale()));
             }
         });
 
@@ -372,8 +366,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
             catch(RuntimeException e)
             {
                 logger.error("An error occurred deleting an authentication method", e);
-
-                Notification.show("Error trying to delete the authentication method!" , 3000, Notification.Position.MIDDLE);
+                NotificationHelper.showErrorNotification(getTranslation("notification.error-deleting-auth-method", UI.getCurrent().getLocale()));
 
                 return;
             }
@@ -405,7 +398,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
                     {
                         populateAll();
                         progressIndicatorDialog.close();
-                        NotificationHelper.showUserNotification("User directory synchronisation complete.");
+                        NotificationHelper.showUserNotification(getTranslation("notification.user-sync-complete", UI.getCurrent().getLocale()));
                     });
                 }
                 catch(Exception e)
@@ -414,7 +407,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
                     current.access(() ->
                     {
                         progressIndicatorDialog.close();
-                        NotificationHelper.showErrorNotification("Error occurred while synchronizing! " + e.getLocalizedMessage());
+                        NotificationHelper.showErrorNotification(getTranslation("notification.error-sync-ldap", UI.getCurrent().getLocale()));
                     });
 
                     return;

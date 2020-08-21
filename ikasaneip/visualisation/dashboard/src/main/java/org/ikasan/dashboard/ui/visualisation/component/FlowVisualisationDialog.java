@@ -19,6 +19,7 @@ import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
+import org.ikasan.dashboard.ui.visualisation.view.GraphViewModuleVisualisation;
 import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -30,6 +31,8 @@ import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.Arrays;
@@ -38,6 +41,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FlowVisualisationDialog extends Dialog {
+    Logger logger = LoggerFactory.getLogger(FlowVisualisationDialog.class);
+
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
 
     private ModuleControlRestServiceImpl moduleControlRestService;
@@ -74,6 +79,8 @@ public class FlowVisualisationDialog extends Dialog {
 
     private BatchInsert replayAuditService;
 
+    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+
     public FlowVisualisationDialog(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService
@@ -81,7 +88,8 @@ public class FlowVisualisationDialog extends Dialog {
         , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
         , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService
-        , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService)
+        , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
+        , MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         if(this.moduleControlRestService == null){
@@ -138,6 +146,11 @@ public class FlowVisualisationDialog extends Dialog {
         if (this.replayAuditService == null) {
             throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
+        this.metaDataApplicationRestService = metaDataApplicationRestService;
+        if (this.metaDataApplicationRestService == null) {
+            throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
+        }
+
 
         this.init(moduleMetaData, flow.getFlowName());
     }
@@ -159,7 +172,7 @@ public class FlowVisualisationDialog extends Dialog {
 
 
         this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService);
+            this.configurationRestService, this.triggerRestService, metaDataApplicationRestService);
         this.moduleVisualisation.addModule(module);
 
         VerticalLayout layout = new VerticalLayout();
