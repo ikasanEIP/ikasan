@@ -169,7 +169,7 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-hospital-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("exclusion.txt"
-            , () -> new ByteArrayInputStream(super.juicyAceEditor.getValue().getBytes()));
+            , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes()));
 
         buttonWrapper = new FileDownloadWrapper(this.streamResource);
         buttonWrapper.wrapComponent(downloadButton);
@@ -293,15 +293,15 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         {
             if(tabs.getSelectedTab().equals(exclusionTab))
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.exclusionPayload)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(this.exclusionPayload)).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
             else
             {
-                super.juicyAceEditor.setValue(Optional.ofNullable(formatXml(this.errorOccurrence.getErrorDetail())).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
+                super.aceEditor.setValue(Optional.ofNullable(formatXml(this.errorOccurrence.getErrorDetail())).orElse(getTranslation("placeholder.not-content", UI.getCurrent().getLocale())));
             }
         });
 
-        juicyAceEditor.setHeight("48vh");
+        aceEditor.setHeight("48vh");
 
         layout.add(tabs);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.START, tabs);
