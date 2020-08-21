@@ -62,13 +62,15 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private BatchInsert replayAuditService;
 
+    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+
     /**
      * Constructor
      */
     public GraphViewBusinessStreamVisualisation(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ModuleControlRestServiceImpl moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationRestServiceImpl configurationRestService
         , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
-        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
+        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
     {
         this.setMargin(false);
         this.setSizeFull();
@@ -117,6 +119,10 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         if (this.replayAuditService == null) {
             throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
+        this.metaDataApplicationRestService = metaDataApplicationRestService;
+        if (this.metaDataApplicationRestService == null) {
+            throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
+        }
 
         init();
     }
@@ -148,7 +154,8 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
             this.configurationRestService, this.triggerRestService, this.moduleMetadataService
             , this.configurationMetadataService, this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
-            this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
+            this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService,
+            this.metaDataApplicationRestService);
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(businessStreamMetaData);
 

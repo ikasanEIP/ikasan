@@ -34,6 +34,7 @@ import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
+import org.ikasan.vaadin.visjs.network.options.Manipulation;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
 import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
@@ -87,6 +88,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private BatchInsert replayAuditService;
 
+    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+
     public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
         , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
         , ModuleMetaDataService moduleMetaDataService
@@ -94,7 +97,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
         , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService
-        , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService) {
+        , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
+        , MetaDataApplicationRestServiceImpl metaDataApplicationRestService) {
         this.moduleControlRestService = moduleControlRestService;
         if (this.moduleControlRestService == null) {
             throw new IllegalArgumentException("moduleControlRestService cannot be null!");
@@ -143,6 +147,10 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         if (this.replayAuditService == null) {
             throw new IllegalArgumentException("replayAuditService cannot be null!");
         }
+        this.metaDataApplicationRestService = metaDataApplicationRestService;
+        if (this.metaDataApplicationRestService == null) {
+            throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
+        }
 
         current = UI.getCurrent();
 
@@ -188,7 +196,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
         networkDiagram = new NetworkDiagram
             (Options.builder()
-                .withAutoResize(true)
+                .withAutoResize(false)
                 .withPhysics(physics)
                 .withInteraction(Interaction.builder().withDragNodes(false).build())
                 .withEdges(
@@ -229,7 +237,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                         this.triggerRestService, this.configurationMetadataService, moduleMetaData
                         , this.flowMap.get(nodeId), this.solrSearchService
                         , this.stringSearchFoundStatusMap.get(nodeId), this.errorReportingService, this.hospitalAuditService
-                        , this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
+                        , this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService
+                        , this.metaDataApplicationRestService);
 
                     flowVisualisationDialog.open();
                 }
@@ -273,6 +282,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                 });
             }
         });
+
+        this.networkDiagram.diagramFit();
 
     }
 
@@ -370,9 +381,9 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             return flow;
         }).collect(Collectors.toList());
 
-        current.access(() ->
+        UI.getCurrent().access(() ->
             networkDiagram.updateNodesStates((ArrayList<Node>) ((ArrayList<?>) this.flows)));
-        current.access(() ->
+        UI.getCurrent().access(() ->
             this.networkDiagram.drawNodeFoundStatus());
 
         this.networkDiagram.diagamRedraw();

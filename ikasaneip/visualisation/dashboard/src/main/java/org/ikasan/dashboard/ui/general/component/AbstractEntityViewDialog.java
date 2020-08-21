@@ -1,13 +1,9 @@
 package org.ikasan.dashboard.ui.general.component;
 
 
-import com.juicy.JuicyAceEditor;
-import com.juicy.mode.JuicyAceMode;
-import com.juicy.theme.JuicyAceTheme;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.wontlost.ckeditor.*;
 import io.github.ciesielskis.AceEditor;
 import io.github.ciesielskis.AceMode;
 import io.github.ciesielskis.AceTheme;

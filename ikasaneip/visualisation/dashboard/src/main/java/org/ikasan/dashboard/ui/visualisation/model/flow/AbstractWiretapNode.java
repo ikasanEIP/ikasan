@@ -11,88 +11,207 @@ import java.util.List;
 public abstract class AbstractWiretapNode extends Node {
     private static final String WIRETAP_IMAGE = "frontend/images/wiretap.png";
     private static final String LOG_WIRETAP_IMAGE = "frontend/images/log-wiretap.png";
-    private boolean hasWiretapBefore = false;
-    private boolean hasWiretapAfter = false;
-    private boolean hasLogWiretapBefore = false;
-    private boolean hasLogWiretapAfter = false;
+
+    private String wiretapBeforeStatus = NodeFoundStatus.EMPTY;
+    private String wiretapAfterStatus = NodeFoundStatus.EMPTY;
+    private String logWiretapBeforeStatus = NodeFoundStatus.EMPTY;
+    private String logWiretapAfterStatus = NodeFoundStatus.EMPTY;
+
+    protected double wiretapBeforeImageX = -80;
+    protected double wiretapBeforeImageY = -40;
+    protected int wiretapBeforeImageH = 30;
+    protected int wiretapBeforeImageW = 30;
+
+    protected double wiretapAfterImageX = 50;
+    protected double wiretapAfterImageY = -40;
+    protected int wiretapAfterImageH = 30;
+    protected int wiretapAfterImageW = 30;
+
+    protected double logWiretapBeforeImageX = -80;
+    protected double logWiretapBeforeImageY = -80;
+    protected int logWiretapBeforeImageH = 30;
+    protected int logWiretapBeforeImageW = 30;
+
+    protected double logWiretapAfterImageX = 50;
+    protected double logWiretapAfterImageY = -80;
+    protected int logWiretapAfterImageH = 30;
+    protected int logWiretapAfterImageW = 30;
+
 
     private List<DecoratorMetaData> decoratorMetaDataList;
 
     public AbstractWiretapNode(String id,  String name, String image) {
         super(id, name, Nodes.builder().withShape(Shape.image).withImage(image));
-        super.setWiretapAfterImage(WIRETAP_IMAGE);
-        super.setWiretapBeforeImage(WIRETAP_IMAGE);
-        super.setLogWiretapAfterImage(LOG_WIRETAP_IMAGE);
-        super.setLogWiretapBeforeImage(LOG_WIRETAP_IMAGE);
     }
 
-    public boolean hasWiretapBefore() {
-        return hasWiretapBefore;
+    public String getWiretapBeforeStatus() {
+        return wiretapBeforeStatus;
     }
 
-    public void setHasWiretapBefore(boolean hasWiretapBefore) {
-        this.hasWiretapBefore = hasWiretapBefore;
-        if(this.hasWiretapBefore) {
-            super.setWiretapBeforeStatus(NodeFoundStatus.FOUND);
-        }
-        else if(this.hasWiretapBefore) {
-            super.setWiretapBeforeStatus(NodeFoundStatus.NOT_FOUND);
-        }
+    public void setWiretapBeforeStatus(String wiretapBeforeStatus) {
+        this.wiretapBeforeStatus = wiretapBeforeStatus;
     }
 
-    public boolean hasWiretapAfter() {
-        return hasWiretapAfter;
+    public String getWiretapAfterStatus() {
+        return wiretapAfterStatus;
     }
 
-    public void setHasWiretapAfter(boolean hasWiretapAfter) {
-        this.hasWiretapAfter = hasWiretapAfter;
-
-        if(this.hasWiretapAfter) {
-            super.setWiretapAfterStatus(NodeFoundStatus.FOUND);
-        }
-        else if(this.hasWiretapAfter) {
-            super.setWiretapAfterStatus(NodeFoundStatus.NOT_FOUND);
-        }
+    public void setWiretapAfterStatus(String wiretapAfterStatus) {
+        this.wiretapAfterStatus = wiretapAfterStatus;
     }
 
-    public boolean hasLogWiretapBefore() {
-        return hasLogWiretapBefore;
+    public double getWiretapBeforeImageX() {
+        return wiretapBeforeImageX;
     }
 
-    public void setHasLogWiretapBefore(boolean hasLogWiretapBefore) {
-        this.hasLogWiretapBefore = hasLogWiretapBefore;
-
-        if(this.hasLogWiretapBefore) {
-            super.setLogWiretapBeforeStatus(NodeFoundStatus.FOUND);
-        }
-        else if(this.hasLogWiretapBefore) {
-            super.setLogWiretapBeforeStatus(NodeFoundStatus.NOT_FOUND);
-        }
+    public void setWiretapBeforeImageX(double wiretapBeforeImageX) {
+        this.wiretapBeforeImageX = wiretapBeforeImageX;
     }
 
-    public boolean hasLogWiretapAfter() {
-        return hasLogWiretapAfter;
+    public double getWiretapBeforeImageY() {
+        return wiretapBeforeImageY;
     }
 
-    public void setHasLogWiretapAfter(boolean hasLogWiretapAfter) {
-        this.hasLogWiretapAfter = hasLogWiretapAfter;
+    public void setWiretapBeforeImageY(double wiretapBeforeImageY) {
+        this.wiretapBeforeImageY = wiretapBeforeImageY;
+    }
 
-        if(this.hasLogWiretapAfter) {
-            super.setLogWiretapAfterStatus(NodeFoundStatus.FOUND);
-        }
-        else if(this.hasLogWiretapAfter) {
-            super.setLogWiretapAfterStatus(NodeFoundStatus.NOT_FOUND);
-        }
+    public int getWiretapBeforeImageH() {
+        return wiretapBeforeImageH;
+    }
+
+    public void setWiretapBeforeImageH(int wiretapBeforeImageH) {
+        this.wiretapBeforeImageH = wiretapBeforeImageH;
+    }
+
+    public int getWiretapBeforeImageW() {
+        return wiretapBeforeImageW;
+    }
+
+    public void setWiretapBeforeImageW(int wiretapBeforeImageW) {
+        this.wiretapBeforeImageW = wiretapBeforeImageW;
+    }
+
+    public double getWiretapAfterImageX() {
+        return wiretapAfterImageX;
+    }
+
+    public void setWiretapAfterImageX(double wiretapAfterImageX) {
+        this.wiretapAfterImageX = wiretapAfterImageX;
+    }
+
+    public double getWiretapAfterImageY() {
+        return wiretapAfterImageY;
+    }
+
+    public void setWiretapAfterImageY(double wiretapAfterImageY) {
+        this.wiretapAfterImageY = wiretapAfterImageY;
+    }
+
+    public int getWiretapAfterImageH() {
+        return wiretapAfterImageH;
+    }
+
+    public void setWiretapAfterImageH(int wiretapAfterImageH) {
+        this.wiretapAfterImageH = wiretapAfterImageH;
+    }
+
+    public int getWiretapAfterImageW() {
+        return wiretapAfterImageW;
+    }
+
+    public void setWiretapAfterImageW(int wiretapAfterImageW) {
+        this.wiretapAfterImageW = wiretapAfterImageW;
+    }
+
+    public String getLogWiretapBeforeStatus() {
+        return logWiretapBeforeStatus;
+    }
+
+    public void setLogWiretapBeforeStatus(String logWiretapBeforeStatus) {
+        this.logWiretapBeforeStatus = logWiretapBeforeStatus;
+    }
+
+    public String getLogWiretapAfterStatus() {
+        return logWiretapAfterStatus;
+    }
+
+    public void setLogWiretapAfterStatus(String logWiretapAfterStatus) {
+        this.logWiretapAfterStatus = logWiretapAfterStatus;
+    }
+
+    public double getLogWiretapBeforeImageX() {
+        return logWiretapBeforeImageX;
+    }
+
+    public void setLogWiretapBeforeImageX(double logWiretapBeforeImageX) {
+        this.logWiretapBeforeImageX = logWiretapBeforeImageX;
+    }
+
+    public double getLogWiretapBeforeImageY() {
+        return logWiretapBeforeImageY;
+    }
+
+    public void setLogWiretapBeforeImageY(double logWiretapBeforeImageY) {
+        this.logWiretapBeforeImageY = logWiretapBeforeImageY;
+    }
+
+    public int getLogWiretapBeforeImageH() {
+        return logWiretapBeforeImageH;
+    }
+
+    public void setLogWiretapBeforeImageH(int logWiretapBeforeImageH) {
+        this.logWiretapBeforeImageH = logWiretapBeforeImageH;
+    }
+
+    public int getLogWiretapBeforeImageW() {
+        return logWiretapBeforeImageW;
+    }
+
+    public void setLogWiretapBeforeImageW(int logWiretapBeforeImageW) {
+        this.logWiretapBeforeImageW = logWiretapBeforeImageW;
+    }
+
+    public double getLogWiretapAfterImageX() {
+        return logWiretapAfterImageX;
+    }
+
+    public void setLogWiretapAfterImageX(double logWiretapAfterImageX) {
+        this.logWiretapAfterImageX = logWiretapAfterImageX;
+    }
+
+    public double getLogWiretapAfterImageY() {
+        return logWiretapAfterImageY;
+    }
+
+    public void setLogWiretapAfterImageY(double logWiretapAfterImageY) {
+        this.logWiretapAfterImageY = logWiretapAfterImageY;
+    }
+
+    public int getLogWiretapAfterImageH() {
+        return logWiretapAfterImageH;
+    }
+
+    public void setLogWiretapAfterImageH(int logWiretapAfterImageH) {
+        this.logWiretapAfterImageH = logWiretapAfterImageH;
+    }
+
+    public int getLogWiretapAfterImageW() {
+        return logWiretapAfterImageW;
+    }
+
+    public void setLogWiretapAfterImageW(int logWiretapAfterImageW) {
+        this.logWiretapAfterImageW = logWiretapAfterImageW;
     }
 
     public boolean wiretapBeforeClickedOn(double x, double y)
     {
-        if(super.getWiretapBeforeStatus().equals(NodeFoundStatus.FOUND))
+        if(this.getWiretapBeforeStatus().equals(NodeFoundStatus.FOUND))
         {
-            if(x >= super.getX() + super.wiretapBeforeImageX
-                && x <= super.getX() + super.wiretapBeforeImageX + super.wiretapBeforeImageW
-                && y >= super.getY() + super.wiretapBeforeImageY
-                && y <= super.getY() + super.wiretapBeforeImageY + super.wiretapBeforeImageH)
+            if(x >= super.getX() + this.wiretapBeforeImageX
+                && x <= super.getX() + this.wiretapBeforeImageX + this.wiretapBeforeImageW
+                && y >= super.getY() + this.wiretapBeforeImageY
+                && y <= super.getY() + this.wiretapBeforeImageY + this.wiretapBeforeImageH)
             {
                 return true;
             }
@@ -103,12 +222,12 @@ public abstract class AbstractWiretapNode extends Node {
 
     public boolean wiretapAfterClickedOn(double x, double y)
     {
-        if(super.getWiretapAfterStatus().equals(NodeFoundStatus.FOUND))
+        if(this.getWiretapAfterStatus().equals(NodeFoundStatus.FOUND))
         {
-            if(x >= super.getX() + super.wiretapAfterImageX
-                && x <= super.getX() + super.wiretapAfterImageX + super.wiretapAfterImageW
-                && y >= super.getY() + super.wiretapAfterImageY
-                && y <= super.getY() + super.wiretapAfterImageY + super.wiretapAfterImageH)
+            if(x >= super.getX() + this.wiretapAfterImageX
+                && x <= super.getX() + this.wiretapAfterImageX + this.wiretapAfterImageW
+                && y >= super.getY() + this.wiretapAfterImageY
+                && y <= super.getY() + this.wiretapAfterImageY + this.wiretapAfterImageH)
             {
                 return true;
             }
@@ -119,12 +238,12 @@ public abstract class AbstractWiretapNode extends Node {
 
     public boolean logWiretapBeforeClickedOn(double x, double y)
     {
-        if(super.getLogWiretapBeforeStatus().equals(NodeFoundStatus.FOUND))
+        if(this.getLogWiretapBeforeStatus().equals(NodeFoundStatus.FOUND))
         {
-            if(x >= super.getX() + super.getLogWiretapBeforeImageX()
-                && x <= super.getX() + super.getLogWiretapBeforeImageX() + super.logWiretapBeforeImageW
-                && y >= super.getY() + super.getLogWiretapBeforeImageY()
-                && y <= super.getY() + super.getLogWiretapBeforeImageY() + super.logWiretapBeforeImageH)
+            if(x >= super.getX() + this.getLogWiretapBeforeImageX()
+                && x <= super.getX() + this.getLogWiretapBeforeImageX() + this.logWiretapBeforeImageW
+                && y >= super.getY() + this.getLogWiretapBeforeImageY()
+                && y <= super.getY() + this.getLogWiretapBeforeImageY() + this.logWiretapBeforeImageH)
             {
                 return true;
             }
@@ -135,12 +254,12 @@ public abstract class AbstractWiretapNode extends Node {
 
     public boolean logWiretapAfterClickedOn(double x, double y)
     {
-        if(super.getLogWiretapAfterStatus().equals(NodeFoundStatus.FOUND))
+        if(this.getLogWiretapAfterStatus().equals(NodeFoundStatus.FOUND))
         {
-            if(x >= super.getX() + super.getLogWiretapAfterImageX()
-                && x <= super.getX() + super.getLogWiretapAfterImageX() + super.logWiretapAfterImageW
-                && y >= super.getY() + super.getLogWiretapAfterImageY()
-                && y <= super.getY() + super.getLogWiretapAfterImageY() + super.logWiretapAfterImageH)
+            if(x >= super.getX() + this.getLogWiretapAfterImageX()
+                && x <= super.getX() + this.getLogWiretapAfterImageX() + this.logWiretapAfterImageW
+                && y >= super.getY() + this.getLogWiretapAfterImageY()
+                && y <= super.getY() + this.getLogWiretapAfterImageY() + this.logWiretapAfterImageH)
             {
                 return true;
             }
