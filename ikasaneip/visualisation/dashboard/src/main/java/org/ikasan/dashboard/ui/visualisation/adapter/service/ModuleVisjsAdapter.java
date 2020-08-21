@@ -11,10 +11,8 @@ import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.*;
-import org.ikasan.topology.model.Component;
-import org.ikasan.vaadin.visjs.network.Node;
+import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,19 +158,19 @@ public class ModuleVisjsAdapter
         if(flowElement.getDecorators() != null) {
             flowElement.getDecorators().forEach(decoratorMetaData -> {
                 if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
-                    node.setHasWiretapBefore(true);
+                    node.setWiretapBeforeStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
                 else if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
-                    node.setHasWiretapAfter(true);
+                    node.setWiretapAfterStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
                 else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
-                    node.setHasLogWiretapBefore(true);
+                    node.setLogWiretapBeforeStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
                 else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
-                    node.setHasLogWiretapAfter(true);
+                    node.setLogWiretapAfterStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
             });

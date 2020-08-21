@@ -40,4 +40,9 @@ public class ModuleRestClientAutoConfiguration
         return new TriggerRestServiceImpl(environment);
     }
 
+    @Bean
+    public MetaDataApplicationRestServiceImpl metaDataApplicationRestService(Environment environment){
+        return new MetaDataApplicationRestServiceImpl(environment);
+    }
+
 }

@@ -555,6 +555,12 @@
                             </goals>
                             <configuration>
                                 <additionalJOption>${javadoc.opts}</additionalJOption>
+                                <additionalparam>-Xdoclint:all -Xdoclint:-missing</additionalparam>
+                                <additionalOptions>-Xdoclint:all -Xdoclint:-missing</additionalOptions>
+                                <additionalJOptions>
+                                    <additionalJOption>-Xdoclint:all</additionalJOption>
+                                    <additionalJOption>-Xdoclint:-missing</additionalJOption>
+                                </additionalJOptions>
                             </configuration>
                         </execution>
                     </executions>

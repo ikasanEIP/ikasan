@@ -27,10 +27,29 @@ window.Vaadin.Flow.networkDiagramConnector = {
         let customEdgeID;
         let customEdgeLabel;
 
-        let wiretapBeforeImg = undefined;
-        let wiretapAfterImg = undefined;
-        let logWiretapBeforeImage = undefined;
-        let logWiretapAfterImage = undefined;
+        let wiretapBeforeImage = new Image();
+        wiretapBeforeImage.src = "frontend/images/wiretap.png";
+
+        let wiretapAfterImage = new Image();
+        wiretapAfterImage.src = "frontend/images/wiretap.png";
+
+        let logWiretapBeforeImage = new Image();
+        logWiretapBeforeImage.src = "frontend/images/log-wiretap.png";
+
+        let logWiretapAfterImage= new Image();
+        logWiretapAfterImage.src = "frontend/images/log-wiretap.png";
+
+        let wiretapImage = new Image();
+        wiretapImage.src = "frontend/images/wiretap-service.png";
+
+        let replayImage = new Image();
+        replayImage.src = "frontend/images/replay-service.png";
+
+        let hospitalImage = new Image();
+        hospitalImage.src = "frontend/images/hospital-service.png";
+
+        let errorImage = new Image();
+        errorImage.src = "frontend/images/error-service.png";
 
         graph.options = JSON.parse(options);
         graph.options.manipulation.addNode = function (nodeData, callback) {
@@ -66,6 +85,10 @@ window.Vaadin.Flow.networkDiagramConnector = {
             nodes: graph.nodes,
             edges: graph.edges
         }, graph.options);
+
+        let scaleOption = { scale : 0.6,
+            animation: false};
+        graph.$connector.diagram.moveTo(scaleOption);
 
         // Enable event dispatching to vaadin only for registered eventTypes to
         // avoid too much overhead.
@@ -116,112 +139,85 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     let nodePosition = nodePositions[node.id];
 
                     if (node.wiretapFoundStatus === "FOUND") {
-                        let img = new Image();
-                        img.src = node.wiretapFoundImage;
-                        ctx.drawImage(img, nodePosition.x + node.wiretapFoundImageX
+                        ctx.drawImage(wiretapImage, nodePosition.x + node.wiretapFoundImageX
                             , nodePosition.y + node.wiretapFoundImageY
                             , node.wiretapFoundImageW
                             , node.wiretapFoundImageH);
                     }
                     if (node.errorFoundStatus === "FOUND") {
-                        let img = new Image();
-                        img.src = node.errorFoundImage;
-                        ctx.drawImage(img, nodePosition.x + node.errorFoundImageX
+                        ctx.drawImage(errorImage, nodePosition.x + node.errorFoundImageX
                             , nodePosition.y + node.errorFoundImageY
                             , node.errorFoundImageW
                             , node.errorFoundImageH);
                     }
                     if (node.exclusionFoundStatus === "FOUND") {
-                        let img = new Image();
-                        img.src = node.exclusionFoundImage;
-                        ctx.drawImage(img, nodePosition.x + node.exclusionFoundImageX
+                        ctx.drawImage(hospitalImage, nodePosition.x + node.exclusionFoundImageX
                             , nodePosition.y + node.exclusionFoundImageY
                             , node.exclusionFoundImageW
                             , node.exclusionFoundImageH);
                     }
                     if (node.replayFoundStatus === "FOUND") {
-                        let img = new Image();
-                        img.src = node.replayFoundImage;
-                        ctx.drawImage(img, nodePosition.x + node.replayFoundImageX
+                        ctx.drawImage(replayImage, nodePosition.x + node.replayFoundImageX
                             , nodePosition.y + node.exclusionFoundImageY
                             , node.exclusionFoundImageW
                             , node.exclusionFoundImageH);
                     }
                     if (node.wiretapBeforeStatus === "FOUND") {
-
-                        if (wiretapBeforeImg === undefined) {
-                            wiretapBeforeImg = new Image();
-                            wiretapBeforeImg.src = node.wiretapBeforeImage;
-                        }
-
-                        ctx.drawImage(wiretapBeforeImg, nodePosition.x + node.wiretapBeforeImageX
+                        ctx.drawImage(wiretapBeforeImage, nodePosition.x + node.wiretapBeforeImageX
                             , nodePosition.y + node.wiretapBeforeImageY
                             , node.wiretapBeforeImageW
                             , node.wiretapBeforeImageH);
                     }
                     if (node.wiretapAfterStatus === "FOUND") {
-
-                        if (wiretapAfterImg === undefined) {
-                            wiretapAfterImg = new Image();
-                            wiretapAfterImg.src = node.wiretapBeforeImage;
-                        }
-
-                        ctx.drawImage(wiretapAfterImg, nodePosition.x + node.wiretapAfterImageX
+                        ctx.drawImage(wiretapAfterImage, nodePosition.x + node.wiretapAfterImageX
                             , nodePosition.y + node.wiretapAfterImageY
                             , node.wiretapAfterImageW
                             , node.wiretapAfterImageH);
                     }
                     if (node.logWiretapBeforeStatus === "FOUND") {
-
-                        if (logWiretapBeforeImage === undefined) {
-                            logWiretapBeforeImage = new Image();
-                            logWiretapBeforeImage.src = node.logWiretapBeforeImage;
-                        }
-
-                        // Let's not stack the images unless we have to.
-                        if(node.wiretapBeforeStatus != "FOUND") {
-                            ctx.drawImage(logWiretapBeforeImage, nodePosition.x + node.wiretapBeforeImageX
-                                , nodePosition.y + node.wiretapBeforeImageY
-                                , node.wiretapBeforeImageW
-                                , node.wiretapBeforeImageH);
-                        }
-                        else {
-                            ctx.drawImage(logWiretapBeforeImage, nodePosition.x + node.logWiretapBeforeImageX
-                                , nodePosition.y + node.logWiretapBeforeImageY
-                                , node.logWiretapBeforeImageW
-                                , node.logWiretapBeforeImageH);
-                        }
+                        ctx.drawImage(logWiretapBeforeImage, nodePosition.x + node.logWiretapBeforeImageX
+                            , nodePosition.y + node.logWiretapBeforeImageY
+                            , node.logWiretapBeforeImageW
+                            , node.logWiretapBeforeImageH);
                     }
                     if (node.logWiretapAfterStatus === "FOUND") {
-
-                        if (logWiretapAfterImage === undefined) {
-                            logWiretapAfterImage = new Image();
-                            logWiretapAfterImage.src = node.logWiretapAfterImage;
-                        }
-
-                        // Let's not stack the images unless we have to.
-                        if (node.wiretapAfterStatus != "FOUND") {
-                            ctx.drawImage(logWiretapAfterImage, nodePosition.x + node.wiretapAfterImageX
-                                , nodePosition.y + node.wiretapAfterImageY
-                                , node.wiretapAfterImageW
-                                , node.wiretapAfterImageH);
-                        }
-                        else {
-                            ctx.drawImage(logWiretapAfterImage, nodePosition.x + node.logWiretapAfterImageX
-                                , nodePosition.y + node.logWiretapAfterImageY
-                                , node.logWiretapAfterImageW
-                                , node.logWiretapAfterImageH);
-                        }
+                        ctx.drawImage(logWiretapAfterImage, nodePosition.x + node.logWiretapAfterImageX
+                            , nodePosition.y + node.logWiretapAfterImageY
+                            , node.logWiretapAfterImageW
+                            , node.logWiretapAfterImageH);
                     }
                 }
             });
         }
 
+        graph.$connector.addWiretapBefore = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                ctx.drawImage(wiretapBeforeImage, x, y, w, h);
+            });
+        }
+
+        graph.$connector.addWiretapAfter = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                ctx.drawImage(wiretapAfterImage, x, y, w, h);
+            });
+        }
+
+        graph.$connector.addLogWiretapAfter = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                ctx.drawImage(logWiretapAfterImage, x, y, w, h);
+            });
+        }
+
+        graph.$connector.addLogWiretapBefore = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                ctx.drawImage(logWiretapBeforeImage, x, y, w, h);
+            });
+        }
+
         graph.$connector.removeImage = function (x, y, h, w) {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
-                debugger;
                 ctx.clearRect(x, y, h, w);
-                ctx.fillStyle = 'rgba(224,224,224,0.6)';
+                ctx.fillStyle = 'rgba(224,224,224,0.8)';
                 ctx.fillRect(x, y, h, w);
             });
         }
