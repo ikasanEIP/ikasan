@@ -18,6 +18,7 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Flow currentFlow;
 
     private Registration broadcasterRegistration;
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
 
     private Tooltip runningButtonTooltip;
     private Tooltip stoppedButtonTooltip;
@@ -43,7 +44,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Tooltip recoveringButtonTooltip;
     private Tooltip pauseButtonTooltip;
 
-    public StatusPanel(ModuleControlRestServiceImpl moduleControlRestService)
+    public StatusPanel(ModuleControlService moduleControlRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         init();

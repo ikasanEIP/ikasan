@@ -1,15 +1,15 @@
 package org.ikasan.rest.client;
 
 import org.ikasan.rest.client.dto.ResubmissionRequestDto;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestClientException;
 
-public class ResubmissionRestServiceImpl extends ModuleRestService
+public class ResubmissionRestServiceImpl extends ModuleRestService implements ResubmissionService
 {
     Logger logger = LoggerFactory.getLogger(ResubmissionRestServiceImpl.class);
 
@@ -21,6 +21,7 @@ public class ResubmissionRestServiceImpl extends ModuleRestService
         super(environment);
     }
 
+    @Override
     public boolean resubmit(String contextUrl, String moduleName, String flowName, String action, String errorUri)
     {
         ResubmissionRequestDto dto = new ResubmissionRequestDto(moduleName, flowName, errorUri, action);

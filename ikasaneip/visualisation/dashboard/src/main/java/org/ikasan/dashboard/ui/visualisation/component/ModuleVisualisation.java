@@ -1,6 +1,5 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
@@ -22,9 +21,13 @@ import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.MetaDataApplicationRestServiceImpl;
+import org.ikasan.rest.client.MetaDataRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
+import org.ikasan.spec.module.client.ConfigurationService;
+import org.ikasan.spec.module.client.MetaDataService;
+import org.ikasan.spec.module.client.ModuleControlService;
+import org.ikasan.spec.module.client.TriggerService;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -55,16 +58,16 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private Registration flowStateBroadcasterRegistration;
     private Registration cacheStateBroadcasterRegistration;
 
-    private ModuleControlRestServiceImpl moduleControlRestService;
-    private ConfigurationRestServiceImpl configurationRestService;
-    private TriggerRestServiceImpl triggerRestService;
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private ModuleControlService moduleControlRestService;
+    private ConfigurationService configurationRestService;
+    private TriggerService triggerRestService;
+    private MetaDataService metaDataApplicationRestService;
 
     private UI current;
 
-    public  ModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService, MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
+    public  ModuleVisualisation(ModuleControlService moduleControlRestService
+        , ConfigurationService configurationRestService
+        , TriggerService triggerRestService, MetaDataService metaDataApplicationRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;

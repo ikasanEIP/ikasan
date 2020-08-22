@@ -20,6 +20,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,13 +36,12 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
     private Logger logger = LoggerFactory.getLogger(IgnoreHospitalEventSubmissionListener.class);
 
     private HospitalAuditService hospitalAuditService;
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
-    public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
+    public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService,
                                                  ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid
         , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
-        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService,
-            searchResultsGrid, selectionBoxes, selectionItems, ikasanAuthentication);
+        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService, searchResultsGrid, selectionBoxes, selectionItems, ikasanAuthentication);
 
         this.hospitalAuditService = hospitalAuditService;
         if (this.hospitalAuditService == null) {

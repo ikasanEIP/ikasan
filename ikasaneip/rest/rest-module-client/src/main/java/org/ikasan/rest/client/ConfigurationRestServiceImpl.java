@@ -2,6 +2,7 @@ package org.ikasan.rest.client;
 
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.ikasan.spec.module.client.ConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConfigurationRestServiceImpl extends ModuleRestService
+public class ConfigurationRestServiceImpl extends ModuleRestService implements ConfigurationService
 {
     Logger logger = LoggerFactory.getLogger(ConfigurationRestServiceImpl.class);
 
@@ -39,6 +40,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         this.configurationMetaDataProvider = configurationMetaDataProvider;
     }
 
+    @Override
     public List<ConfigurationMetaData> getComponents(String contextUrl)
     {
 
@@ -46,6 +48,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,null,null);
     }
 
+    @Override
     public List<ConfigurationMetaData> getFlowComponents(String contextUrl, String moduleName, String flowName)
     {
 
@@ -53,7 +56,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
-
+    @Override
     public List<ConfigurationMetaData> getInvokers(String contextUrl)
     {
 
@@ -61,6 +64,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,null,null);
     }
 
+    @Override
     public ConfigurationMetaData getComponentInvoker(String contextUrl, String moduleName, String flowName, String componentName)
     {
 
@@ -68,6 +72,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfiguration(url,moduleName,flowName, componentName);
     }
 
+    @Override
     public List<ConfigurationMetaData> getFlowInvokers(String contextUrl, String moduleName, String flowName)
     {
 
@@ -75,18 +80,21 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         return getConfigurations(url,moduleName,flowName);
     }
 
+    @Override
     public ConfigurationMetaData getFlowConfiguration(String contextUrl, String moduleName, String flowName)
     {
         String url = contextUrl + FLOW_CONFIGURATION_URL;
         return getConfiguration(url, moduleName, flowName);
     }
 
+    @Override
     public ConfigurationMetaData getConfiguredResourceConfiguration(String contextUrl, String moduleName, String flowName, String componentName)
     {
         String url = contextUrl + CONFIGURED_RESOURCE_CONFIGURATION_URL;
         return getConfiguration(url,moduleName,flowName, componentName);
     }
 
+    @Override
     public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration)
     {
         HttpHeaders headers = createHttpHeaders();
@@ -105,6 +113,7 @@ public class ConfigurationRestServiceImpl extends ModuleRestService
         }
     }
 
+    @Override
     public boolean delete(String contextUrl, String configurationId)
     {
         HttpHeaders headers = createHttpHeaders();

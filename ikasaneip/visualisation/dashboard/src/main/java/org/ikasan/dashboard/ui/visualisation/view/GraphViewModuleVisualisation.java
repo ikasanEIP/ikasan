@@ -23,12 +23,16 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.MetaDataApplicationRestServiceImpl;
+import org.ikasan.rest.client.MetaDataRestServiceImpl;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.module.client.ConfigurationService;
+import org.ikasan.spec.module.client.MetaDataService;
+import org.ikasan.spec.module.client.ModuleControlService;
+import org.ikasan.spec.module.client.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +43,11 @@ import java.util.stream.Collectors;
 public class GraphViewModuleVisualisation extends VerticalLayout {
     Logger logger = LoggerFactory.getLogger(GraphViewModuleVisualisation.class);
 
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
 
-    private ConfigurationRestServiceImpl configurationRestService;
+    private ConfigurationService configurationRestService;
 
-    private TriggerRestServiceImpl triggerRestService;
+    private TriggerService triggerRestService;
 
     private ConfigurationMetaDataService configurationMetadataService;
 
@@ -62,16 +66,16 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
 
     private List<GraphViewChangeListener> graphViewChangeListeners;
 
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
     /**
      * Constructor
      */
-    public GraphViewModuleVisualisation(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService
+    public GraphViewModuleVisualisation(ModuleControlService moduleControlRestService
+        , ConfigurationService configurationRestService
+        , TriggerService triggerRestService
         , ConfigurationMetaDataService configurationMetadataService
-        , MetaDataApplicationRestServiceImpl metaDataApplicationRestService) {
+        , MetaDataService metaDataApplicationRestService) {
 
         this.graphViewChangeListeners = new ArrayList<>();
 

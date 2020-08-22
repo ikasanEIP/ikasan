@@ -36,13 +36,18 @@ import org.ikasan.dashboard.ui.visualisation.component.ModuleFilteringGrid;
 import org.ikasan.dashboard.ui.visualisation.component.filter.BusinessStreamSearchFilter;
 import org.ikasan.dashboard.ui.visualisation.component.filter.ModuleSearchFilter;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.rest.client.*;
+import org.ikasan.rest.client.ReplayRestServiceImpl;
+import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.module.client.ConfigurationService;
+import org.ikasan.spec.module.client.MetaDataService;
+import org.ikasan.spec.module.client.ModuleControlService;
+import org.ikasan.spec.module.client.TriggerService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
@@ -78,16 +83,16 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     private ExclusionManagementService solrExclusionService;
 
     @Resource
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
 
     @Autowired
     private ModuleMetaDataService moduleMetadataService;
 
     @Autowired
-    private ConfigurationRestServiceImpl configurationRestService;
+    private ConfigurationService configurationRestService;
 
     @Autowired
-    private TriggerRestServiceImpl triggerRestService;
+    private TriggerService triggerRestService;
 
     @Resource
     private ConfigurationMetaDataService configurationMetadataService;
@@ -114,7 +119,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     private BatchInsert replayAuditService;
 
     @Resource
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
     private SearchResults searchResults;
 

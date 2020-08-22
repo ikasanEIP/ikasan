@@ -8,10 +8,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.general.component.SearchResultsDialog;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamVisualisation;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
+import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -20,6 +21,7 @@ import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.*;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
@@ -34,13 +36,13 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
 
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
 
     private ModuleMetaDataService moduleMetadataService;
 
-    private ConfigurationRestServiceImpl configurationRestService;
+    private ConfigurationService configurationRestService;
 
-    private TriggerRestServiceImpl triggerRestService;
+    private TriggerService triggerRestService;
 
     private ConfigurationMetaDataService configurationMetadataService;
 
@@ -56,21 +58,21 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private HospitalAuditService hospitalAuditService;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
 
     private BatchInsert replayAuditService;
 
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
     /**
      * Constructor
      */
     public GraphViewBusinessStreamVisualisation(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
-        , ModuleControlRestServiceImpl moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
-        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
+        , ModuleControlService moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationService configurationRestService
+        , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , ResubmissionService resubmissionRestService, ReplayService replayRestService, BatchInsert replayAuditService, MetaDataService metaDataApplicationRestService)
     {
         this.setMargin(false);
         this.setSizeFull();

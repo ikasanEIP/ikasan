@@ -65,13 +65,20 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-metadata</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-standalone-persistence</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-module-client</artifactId>
         </dependency>
 
         <dependency>

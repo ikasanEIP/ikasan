@@ -2,6 +2,7 @@ package org.ikasan.rest.client;
 
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.slf4j.Logger;
@@ -17,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class MetaDataApplicationRestServiceImpl extends ModuleRestService {
-    Logger logger = LoggerFactory.getLogger(MetaDataApplicationRestServiceImpl.class);
+public class MetaDataRestServiceImpl extends ModuleRestService implements MetaDataService {
+    Logger logger = LoggerFactory.getLogger(MetaDataRestServiceImpl.class);
 
     public static final String FLOW_METADATA_URL = "/rest/metadata/flow/{moduleName}/{flowName}";
     public static final String MODULE_METADATA_URL = "/rest/metadata/module/{moduleName}";
@@ -26,13 +27,14 @@ public class MetaDataApplicationRestServiceImpl extends ModuleRestService {
     private JsonFlowMetaDataProvider jsonFlowMetaDataProvider;
     private JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
 
-    public MetaDataApplicationRestServiceImpl(Environment environment)
+    public MetaDataRestServiceImpl(Environment environment)
     {
         super(environment);
         this.jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         this.jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(this.jsonFlowMetaDataProvider);
     }
 
+    @Override
     public Optional<FlowMetaData> getFlowMetadata(String contextUrl, String moduleName, String flowName)
     {
 
@@ -53,6 +55,7 @@ public class MetaDataApplicationRestServiceImpl extends ModuleRestService {
         }
     }
 
+    @Override
     public Optional<ModuleMetaData> getModuleMetadata(String contextUrl, String moduleName)
     {
 

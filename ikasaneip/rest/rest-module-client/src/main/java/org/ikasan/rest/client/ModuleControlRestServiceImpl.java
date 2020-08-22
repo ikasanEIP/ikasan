@@ -4,6 +4,7 @@ import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.client.dto.ChangeFlowStateDto;
 import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.rest.client.dto.ModuleDto;
+import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ModuleControlRestServiceImpl extends ModuleRestService
+public class ModuleControlRestServiceImpl extends ModuleRestService implements ModuleControlService<ModuleDto, FlowDto>
 {
     Logger logger = LoggerFactory.getLogger(ModuleControlRestServiceImpl.class);
 
@@ -32,6 +33,7 @@ public class ModuleControlRestServiceImpl extends ModuleRestService
         super(environment);
     }
 
+    @Override
     public Optional<ModuleDto> getFlowStates(String contextUrl, String moduleName)
     {
 
@@ -52,7 +54,7 @@ public class ModuleControlRestServiceImpl extends ModuleRestService
         }
     }
 
-
+    @Override
     public Optional<FlowDto> getFlowState(String contextUrl, String moduleName, String flowName)
     {
 
@@ -73,6 +75,7 @@ public class ModuleControlRestServiceImpl extends ModuleRestService
         }
     }
 
+    @Override
     public boolean changeFlowState(String contextUrl, String moduleName, String flowName, String action)
     {
         ChangeFlowStateDto dto = new ChangeFlowStateDto(moduleName,flowName,action);
@@ -95,6 +98,7 @@ public class ModuleControlRestServiceImpl extends ModuleRestService
         }
     }
 
+    @Override
     public boolean changeFlowStartupType(String contextUrl, String moduleName, String flowName, String startupType,
                                          String comment)
     {

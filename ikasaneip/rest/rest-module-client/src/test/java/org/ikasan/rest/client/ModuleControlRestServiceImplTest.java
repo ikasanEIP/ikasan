@@ -2,6 +2,7 @@ package org.ikasan.rest.client;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.rest.client.dto.ModuleDto;
 import org.junit.Before;

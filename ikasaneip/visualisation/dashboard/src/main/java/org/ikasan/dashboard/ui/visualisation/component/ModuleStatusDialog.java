@@ -1,10 +1,8 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridMultiSelectionModel;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.icon.Icon;
@@ -22,6 +20,7 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +32,12 @@ public class ModuleStatusDialog extends Dialog
 
     private Grid<Flow> flowGrid = new Grid<>();
     private Module currentModule;
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
     private ControlPanel controlPanel;
 
     private Registration cacheStateBroadcasterRegistration;
 
-    public ModuleStatusDialog(Module currentModule, ModuleControlRestServiceImpl moduleControlRestService)
+    public ModuleStatusDialog(Module currentModule, ModuleControlService moduleControlRestService)
     {
         this.currentModule = currentModule;
         this.moduleControlRestService = moduleControlRestService;
@@ -49,9 +48,7 @@ public class ModuleStatusDialog extends Dialog
         HorizontalLayout topLayout = new HorizontalLayout();
         topLayout.setWidth("100%");
         topLayout.add(moduleLabel);
-//        topLayout.add(controlPanel);
         topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.START, moduleLabel);
-//        topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.END, controlPanel);
 
         topLayout.setFlexGrow(2, moduleLabel);
         topLayout.setFlexGrow(5, controlPanel);

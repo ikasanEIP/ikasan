@@ -1,6 +1,7 @@
 package org.ikasan.rest.client;
 
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
+import org.ikasan.spec.module.client.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -16,33 +17,33 @@ public class ModuleRestClientAutoConfiguration
     private JsonConfigurationMetaDataProvider jsonConfigurationMetaDataProvider;
 
     @Bean
-    public ConfigurationRestServiceImpl configurationRestService(Environment environment){
+    public ConfigurationService configurationRestService(Environment environment){
         return new ConfigurationRestServiceImpl(environment, this.jsonConfigurationMetaDataProvider);
     }
 
     @Bean
-    public ReplayRestServiceImpl replayRestService(){
+    public ReplayService replayRestService(){
         return new ReplayRestServiceImpl();
     }
 
     @Bean
-    public ResubmissionRestServiceImpl resubmissionRestService(Environment environment){
+    public ResubmissionService resubmissionRestService(Environment environment){
         return new ResubmissionRestServiceImpl(environment);
     }
 
     @Bean
-    public ModuleControlRestServiceImpl moduleControlRestService(Environment environment){
+    public ModuleControlService moduleControlRestService(Environment environment){
         return new ModuleControlRestServiceImpl(environment);
     }
 
     @Bean
-    public TriggerRestServiceImpl triggerRestService(Environment environment){
+    public TriggerService triggerRestService(Environment environment){
         return new TriggerRestServiceImpl(environment);
     }
 
     @Bean
-    public MetaDataApplicationRestServiceImpl metaDataApplicationRestService(Environment environment){
-        return new MetaDataApplicationRestServiceImpl(environment);
+    public MetaDataService metaDataApplicationRestService(Environment environment){
+        return new MetaDataRestServiceImpl(environment);
     }
 
 }

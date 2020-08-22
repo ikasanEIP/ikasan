@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.MockedUI;
 import com.github.mvysny.kaributesting.v10.Routes;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;

@@ -1,7 +1,5 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
@@ -17,13 +15,11 @@ import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.AbstractWiretapNode;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.MetaDataApplicationRestServiceImpl;
-import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.rest.client.dto.TriggerDto;
 import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
-import org.ikasan.topology.metadata.model.FlowMetaDataImpl;
+import org.ikasan.spec.module.client.ConfigurationService;
+import org.ikasan.spec.module.client.MetaDataService;
+import org.ikasan.spec.module.client.TriggerService;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.slf4j.Logger;
@@ -34,9 +30,9 @@ import java.util.Optional;
 public class ComponentOptionsDialog extends Dialog {
     Logger logger = LoggerFactory.getLogger(ComponentOptionsDialog.class);
 
-    protected ConfigurationRestServiceImpl configurationRestService;
+    protected ConfigurationService configurationRestService;
 
-    protected TriggerRestServiceImpl triggerRestService;
+    protected TriggerService triggerRestService;
 
     protected Module module;
 
@@ -48,14 +44,14 @@ public class ComponentOptionsDialog extends Dialog {
 
     protected AbstractWiretapNode abstractWiretapNode;
 
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
     protected boolean configuredResource;
 
     protected ComponentOptionsDialog(Module module, String flowName, String componentName, boolean configuredResource,
-                                     ConfigurationRestServiceImpl configurationRestService,
-                                     TriggerRestServiceImpl triggerRestService, NetworkDiagram networkDiagram,
-                                     AbstractWiretapNode abstractWiretapNode, MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
+                                     ConfigurationService configurationRestService,
+                                     TriggerService triggerRestService, NetworkDiagram networkDiagram,
+                                     AbstractWiretapNode abstractWiretapNode, MetaDataService metaDataApplicationRestService)
     {
         this.module = module;
         this.flowName = flowName;

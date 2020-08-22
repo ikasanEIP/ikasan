@@ -18,6 +18,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.spec.metadata.DecoratorMetaData;
+import org.ikasan.spec.module.client.TriggerService;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 
@@ -31,7 +32,7 @@ public class WiretapManagementDialog extends Dialog
     public static final String WIRETAP = "wiretap";
     public static final String LOG = "log";
 
-    private TriggerRestServiceImpl triggerRestService;
+    private TriggerService triggerRestService;
     private List<DecoratorMetaData> decoratorMetaDataList;
     private Module module;
     private Flow flow;
@@ -40,7 +41,7 @@ public class WiretapManagementDialog extends Dialog
     private String type;
     private String relationship;
 
-    protected WiretapManagementDialog(TriggerRestServiceImpl triggerRestService
+    protected WiretapManagementDialog(TriggerService triggerRestService
         , Module module, Flow flow, List<DecoratorMetaData> decoratorMetaDataList
         , AbstractWiretapNode abstractWiretapNode, NetworkDiagram networkDiagram
         , String type, String relationship)

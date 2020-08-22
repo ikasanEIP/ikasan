@@ -100,6 +100,7 @@
         <module>mapping</module>
         <module>solr</module>
         <module>dashboard-client</module>
+        <module>module-client</module>
         <module>persistence</module>
         <module>cache</module>
     </modules>
