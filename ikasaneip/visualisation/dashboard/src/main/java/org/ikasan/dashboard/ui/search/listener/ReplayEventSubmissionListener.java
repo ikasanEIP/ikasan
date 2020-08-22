@@ -21,6 +21,7 @@ import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ReplayService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.slf4j.Logger;
@@ -39,10 +40,10 @@ public class ReplayEventSubmissionListener extends IkasanEventActionListener imp
 {
     Logger logger = LoggerFactory.getLogger(ReplayEventSubmissionListener.class);
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
     private BatchInsert replayAuditService;
 
-    public ReplayEventSubmissionListener(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid
+    public ReplayEventSubmissionListener(ReplayService replayRestService, BatchInsert replayAuditService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid
         , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems)
     {
         super(moduleMetadataService, searchResultsGrid, selectionBoxes, selectionItems);

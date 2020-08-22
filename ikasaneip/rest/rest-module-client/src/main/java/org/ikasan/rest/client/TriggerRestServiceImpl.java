@@ -1,6 +1,7 @@
 package org.ikasan.rest.client;
 
 import org.ikasan.rest.client.dto.TriggerDto;
+import org.ikasan.spec.module.client.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestClientException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TriggerRestServiceImpl extends ModuleRestService
+public class TriggerRestServiceImpl extends ModuleRestService implements TriggerService<TriggerDto>
 {
     Logger logger = LoggerFactory.getLogger(TriggerRestServiceImpl.class);
 
@@ -23,7 +24,6 @@ public class TriggerRestServiceImpl extends ModuleRestService
     {
         super(environment);
     }
-
 
     public boolean create(String contextUrl, TriggerDto triggerDto)
     {

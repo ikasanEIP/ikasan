@@ -23,6 +23,7 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     public static final String SELECT = "SELECT";
 
     private HorizontalLayout controlPanelLayout = new HorizontalLayout();
-    private ModuleControlRestServiceImpl moduleControlRestService;
+    private ModuleControlService moduleControlRestService;
 
     private Button startButton;
     private Button stopButton;
@@ -69,7 +70,7 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     private Tooltip pauseButtonTooltip;
     private Tooltip startPauseButtonTooltip;
 
-    public ControlPanel(ModuleControlRestServiceImpl moduleControlRestService)
+    public ControlPanel(ModuleControlService moduleControlRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         playImage = new Image("/frontend/images/start-control-small.png", "");

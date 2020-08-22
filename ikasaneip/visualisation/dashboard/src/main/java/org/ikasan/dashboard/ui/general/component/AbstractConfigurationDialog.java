@@ -19,9 +19,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.ikasan.spec.module.client.ConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.olli.FileDownloadWrapper;
@@ -33,7 +33,7 @@ public abstract class AbstractConfigurationDialog extends Dialog
 {
     private static Logger logger = LoggerFactory.getLogger(AbstractConfigurationDialog.class);
 
-    protected ConfigurationRestServiceImpl configurationRestService;
+    protected ConfigurationService configurationRestService;
     protected ConfigurationMetaData configurationMetaData;
     protected Module module;
     protected String flowName;
@@ -47,7 +47,7 @@ public abstract class AbstractConfigurationDialog extends Dialog
     protected Map<ConfigurationParameterMetaData, Object> parameterMetaDataComponentMap;
 
     protected AbstractConfigurationDialog(Module module, String flowName, String componentName
-        , ConfigurationRestServiceImpl configurationRestService)
+        , ConfigurationService configurationRestService)
     {
         this.module = module;
         this.flowName = flowName;

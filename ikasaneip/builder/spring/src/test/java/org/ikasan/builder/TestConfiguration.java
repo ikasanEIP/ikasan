@@ -1,12 +1,6 @@
 package org.ikasan.builder;
 
-import org.ikasan.module.IkasanModuleAutoConfiguration;
-import org.ikasan.rest.module.IkasanRestAutoConfiguration;
-import org.ikasan.transaction.IkasanTransactionConfiguration;
-import org.ikasan.web.IkasanWebAutoConfiguration;
-import org.ikasan.web.WebSecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration

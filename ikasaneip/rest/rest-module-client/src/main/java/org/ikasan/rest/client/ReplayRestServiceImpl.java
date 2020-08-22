@@ -3,6 +3,7 @@ package org.ikasan.rest.client;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.codec.binary.Base64;
 import org.ikasan.rest.client.dto.ReplayRequestDto;
+import org.ikasan.spec.module.client.ReplayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
-public class ReplayRestServiceImpl
+public class ReplayRestServiceImpl implements ReplayService
 {
     Logger logger = LoggerFactory.getLogger(ReplayRestServiceImpl.class);
 
@@ -31,6 +32,7 @@ public class ReplayRestServiceImpl
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
     }
 
+    @Override
     public boolean replay(String contextUrl, String username, String password, String moduleName, String flowName,
                           byte[] event)
     {

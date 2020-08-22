@@ -22,6 +22,7 @@ import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.spec.module.client.ReplayService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.slf4j.Logger;
@@ -52,10 +53,10 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
     private BatchInsert replayAuditService;
 
-    public ReplayDialog(ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
+    public ReplayDialog(ReplayService replayRestService, BatchInsert replayAuditService)
     {
         this.replayRestService = replayRestService;
         if(this.replayRestService == null)

@@ -30,6 +30,8 @@ import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ReplayService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -67,9 +69,9 @@ public class SearchResults extends Div {
 
     private HospitalAuditService hospitalAuditService;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
 
     private ModuleMetaDataService moduleMetadataService;
 
@@ -85,7 +87,7 @@ public class SearchResults extends Div {
 
     public SearchResults(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
                          ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
-                         ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService,
+                         ResubmissionService resubmissionRestService, ReplayService replayRestService,
                          ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
         this.solrGeneralService = solrGeneralService;
         if(this.solrGeneralService == null) {

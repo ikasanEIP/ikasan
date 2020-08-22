@@ -15,14 +15,15 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.spec.module.client.ConfigurationService;
 
 public class FlowOptionsDialog extends Dialog
 {
-    protected ConfigurationRestServiceImpl configurationRestService;
+    protected ConfigurationService configurationRestService;
     protected Module module;
     protected Flow flow;
 
-    protected FlowOptionsDialog(Module module, Flow flow, ConfigurationRestServiceImpl configurationRestService)
+    protected FlowOptionsDialog(Module module, Flow flow, ConfigurationService configurationRestService)
     {
         this.module = module;
         this.flow = flow;

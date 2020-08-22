@@ -3,6 +3,7 @@ package org.ikasan.dashboard.ui.visualisation.component;
 import org.ikasan.dashboard.ui.general.component.AbstractConfigurationDialog;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.spec.module.client.ConfigurationService;
 
 public class FlowConfigurationDialog extends AbstractConfigurationDialog
 {
@@ -14,7 +15,7 @@ public class FlowConfigurationDialog extends AbstractConfigurationDialog
      * @param configurationRestService
      */
     public FlowConfigurationDialog(Module module, String flowName
-        , ConfigurationRestServiceImpl configurationRestService)
+        , ConfigurationService configurationRestService)
     {
         super(module, flowName, null, configurationRestService);
     }

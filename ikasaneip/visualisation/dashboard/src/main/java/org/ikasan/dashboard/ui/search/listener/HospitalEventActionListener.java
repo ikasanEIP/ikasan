@@ -18,6 +18,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +32,11 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
 
     private String translatedEventActionMessage;
     private ErrorReportingService errorReportingService;
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
     private IkasanAuthentication ikasanAuthentication;
 
     public HospitalEventActionListener(String translatedEventActionMessage, ErrorReportingService errorReportingService,
-                                       ModuleMetaDataService moduleMetadataService, ResubmissionRestServiceImpl resubmissionRestService,
+                                       ModuleMetaDataService moduleMetadataService, ResubmissionService resubmissionRestService,
                                        SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes,
                                        HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
         super(moduleMetadataService, searchResultsGrid, selectionBoxes, selectionItems);

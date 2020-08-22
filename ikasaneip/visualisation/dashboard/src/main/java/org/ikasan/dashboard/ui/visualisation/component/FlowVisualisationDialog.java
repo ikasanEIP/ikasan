@@ -19,7 +19,8 @@ import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.dashboard.ui.visualisation.view.GraphViewModuleVisualisation;
+import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -29,13 +30,13 @@ import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.*;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,9 +46,9 @@ public class FlowVisualisationDialog extends Dialog {
 
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
 
-    private ModuleControlRestServiceImpl moduleControlRestService;
-    private ConfigurationRestServiceImpl configurationRestService;
-    private TriggerRestServiceImpl triggerRestService;
+    private ModuleControlService moduleControlRestService;
+    private ConfigurationService configurationRestService;
+    private TriggerService triggerRestService;
     private ModuleVisualisation moduleVisualisation;
     private ConfigurationMetaDataService configurationMetadataService;
     private ControlPanel flowControlPanel;
@@ -71,25 +72,25 @@ public class FlowVisualisationDialog extends Dialog {
 
     private HospitalAuditService hospitalAuditService;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
 
     private ModuleMetaDataService moduleMetadataService;
 
     private BatchInsert replayAuditService;
 
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
-    public FlowVisualisationDialog(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService
-        , TriggerRestServiceImpl triggerRestService, ConfigurationMetaDataService configurationMetadataService
+    public FlowVisualisationDialog(ModuleControlService moduleControlRestService
+        , ConfigurationService configurationRestService
+        , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService
         , ModuleMetaData moduleMetaData, Flow flow, SolrGeneralService<IkasanSolrDocument
         , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
-        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService
+        , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
-        , MetaDataApplicationRestServiceImpl metaDataApplicationRestService)
+        , MetaDataService metaDataApplicationRestService)
     {
         this.moduleControlRestService = moduleControlRestService;
         if(this.moduleControlRestService == null){

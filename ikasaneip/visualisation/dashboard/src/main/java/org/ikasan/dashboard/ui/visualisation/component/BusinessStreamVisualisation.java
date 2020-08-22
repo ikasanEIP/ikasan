@@ -18,6 +18,8 @@ import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjs
 import org.ikasan.dashboard.ui.visualisation.component.util.SearchFoundStatus;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Flow;
+import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -27,6 +29,7 @@ import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.*;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.ikasan.vaadin.visjs.network.Edge;
@@ -34,7 +37,6 @@ import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.Node;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
-import org.ikasan.vaadin.visjs.network.options.Manipulation;
 import org.ikasan.vaadin.visjs.network.options.Options;
 import org.ikasan.vaadin.visjs.network.options.edges.ArrowHead;
 import org.ikasan.vaadin.visjs.network.options.edges.Arrows;
@@ -44,7 +46,6 @@ import org.ikasan.vaadin.visjs.network.options.physics.Physics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
@@ -61,9 +62,9 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
     private Registration flowStateBroadcasterRegistration;
     private Registration cacheStateBroadcasterRegistration;
 
-    private ModuleControlRestServiceImpl moduleControlRestService;
-    private ConfigurationRestServiceImpl configurationRestService;
-    private TriggerRestServiceImpl triggerRestService;
+    private ModuleControlService moduleControlRestService;
+    private ConfigurationService configurationRestService;
+    private TriggerService triggerRestService;
     private ModuleMetaDataService moduleMetaDataService;
     private ConfigurationMetaDataService configurationMetadataService;
 
@@ -80,25 +81,25 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private HospitalAuditService hospitalAuditService;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
 
     private ModuleMetaDataService moduleMetadataService;
 
     private BatchInsert replayAuditService;
 
-    private MetaDataApplicationRestServiceImpl metaDataApplicationRestService;
+    private MetaDataService metaDataApplicationRestService;
 
-    public BusinessStreamVisualisation(ModuleControlRestServiceImpl moduleControlRestService
-        , ConfigurationRestServiceImpl configurationRestService, TriggerRestServiceImpl triggerRestService
+    public BusinessStreamVisualisation(ModuleControlService moduleControlRestService
+        , ConfigurationService configurationRestService, TriggerService triggerRestService
         , ModuleMetaDataService moduleMetaDataService
         , ConfigurationMetaDataService configurationMetadataService
         , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
-        , ResubmissionRestServiceImpl resubmissionRestService, ReplayRestServiceImpl replayRestService
+        , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
-        , MetaDataApplicationRestServiceImpl metaDataApplicationRestService) {
+        , MetaDataService metaDataApplicationRestService) {
         this.moduleControlRestService = moduleControlRestService;
         if (this.moduleControlRestService == null) {
             throw new IllegalArgumentException("moduleControlRestService cannot be null!");

@@ -28,6 +28,7 @@ import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.olli.FileDownloadWrapper;
 
@@ -62,13 +63,13 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
     private ModuleMetaDataService moduleMetadataService;
 
     private String translatedEventActionMessage;
 
     public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
-                          ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService)
+                          ResubmissionService resubmissionRestService, ModuleMetaDataService moduleMetadataService)
     {
         this.errorReportingService = errorReportingService;
         if(this.errorReportingService == null)
