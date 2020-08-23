@@ -126,7 +126,7 @@ public class JobAwareFlowListenerTest
 
 		assertEquals( 2, triggers.size());
 
-		List<Trigger> result = triggers.get("before");
+		List<Trigger> result = triggers.get(TriggerRelationship.BEFORE.getDescription());
         assertEquals(1, result.size());
         assertEquals(MODULE_1, result.get(0).getModuleName());
         assertEquals("trigger1Before", result.get(0).getJobName());

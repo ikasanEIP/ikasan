@@ -20,6 +20,7 @@ import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.slf4j.Logger;
@@ -116,7 +117,7 @@ public class ComponentOptionsDialog extends Dialog {
             getTranslation("button.wiretap-before-component-oneday", UI.getCurrent().getLocale()));
         createWiretapBeforeComponentWithTTLOneDayButton.setWidthFull();
         createWiretapBeforeComponentWithTTLOneDayButton.addClickListener(
-            (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay("before"));
+            (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay(TriggerRelationship.BEFORE.getDescription()));
         verticalLayout.add(createWiretapBeforeComponentWithTTLOneDayButton);
 
         ComponentSecurityVisibility.applySecurity(createWiretapBeforeComponentWithTTLOneDayButton, SecurityConstants.ALL_AUTHORITY
@@ -127,7 +128,7 @@ public class ComponentOptionsDialog extends Dialog {
             getTranslation("button.wiretap-after-component-oneday", UI.getCurrent().getLocale()));
         createWiretapAfterComponentWithTTLOneDayButton.setWidthFull();
         createWiretapAfterComponentWithTTLOneDayButton.addClickListener(
-            (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay("after"));
+            (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createWiretapWithTTLOneDay(TriggerRelationship.AFTER.getDescription()));
         verticalLayout.add(createWiretapAfterComponentWithTTLOneDayButton);
 
         ComponentSecurityVisibility.applySecurity(createWiretapAfterComponentWithTTLOneDayButton, SecurityConstants.ALL_AUTHORITY
@@ -138,7 +139,7 @@ public class ComponentOptionsDialog extends Dialog {
             getTranslation("button.log-before-component", UI.getCurrent().getLocale()));
         createLogBeforeComponentButton.setWidthFull();
         createLogBeforeComponentButton
-            .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog("before"));
+            .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog(TriggerRelationship.BEFORE.getDescription()));
         verticalLayout.add(createLogBeforeComponentButton);
 
         ComponentSecurityVisibility.applySecurity(createLogBeforeComponentButton, SecurityConstants.ALL_AUTHORITY
@@ -149,7 +150,7 @@ public class ComponentOptionsDialog extends Dialog {
             getTranslation("button.log-after-component", UI.getCurrent().getLocale()));
         createLogAfterComponentButton.setWidthFull();
         createLogAfterComponentButton
-            .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog("after"));
+            .addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> createLog(TriggerRelationship.AFTER.getDescription()));
         verticalLayout.add(createLogAfterComponentButton);
 
         ComponentSecurityVisibility.applySecurity(createLogAfterComponentButton, SecurityConstants.ALL_AUTHORITY
@@ -222,13 +223,13 @@ public class ComponentOptionsDialog extends Dialog {
 
     private void updateDiagramState(String job, String relationship){
         if(job.equals("wiretapJob")){
-            if(relationship.equals("after")) {
+            if(relationship.equals(TriggerRelationship.AFTER.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addWiretapAfter(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getWiretapAfterImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getWiretapAfterImageY(),
                     this.abstractWiretapNode.getWiretapAfterImageW(), this.abstractWiretapNode.getWiretapAfterImageH()));
                 abstractWiretapNode.setWiretapAfterStatus(NodeFoundStatus.FOUND);
             }
-            else if(relationship.equals("before")) {
+            else if(relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addWiretapBefore(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getWiretapBeforeImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getWiretapBeforeImageY(),
                     this.abstractWiretapNode.getWiretapBeforeImageW(), this.abstractWiretapNode.getWiretapBeforeImageH()));
@@ -236,13 +237,13 @@ public class ComponentOptionsDialog extends Dialog {
             }
         }
         else if(job.equals("loggingJob")){
-            if(relationship.equals("after")) {
+            if(relationship.equals(TriggerRelationship.AFTER.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addLogWiretapAfter(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getLogWiretapAfterImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getLogWiretapAfterImageY(),
                     this.abstractWiretapNode.getLogWiretapAfterImageW(), this.abstractWiretapNode.getLogWiretapAfterImageH()));
                 abstractWiretapNode.setLogWiretapAfterStatus(NodeFoundStatus.FOUND);
             }
-            else if(relationship.equals("before")) {
+            else if(relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addLogWiretapBefore(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getLogWiretapBeforeImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getLogWiretapBeforeImageY(),
                     this.abstractWiretapNode.getLogWiretapBeforeImageW(), this.abstractWiretapNode.getLogWiretapBeforeImageH()));

@@ -28,6 +28,8 @@ import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.trigger.TriggerJobType;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.listener.DoubleClickListener;
 import org.ikasan.vaadin.visjs.network.options.Interaction;
@@ -178,7 +180,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
-                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("BEFORE"))
+                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals(TriggerJobType.WIRETAP.getDescription()) && decoratorMetaData.getName()
+                                    .startsWith(TriggerRelationship.BEFORE.getDescription().toUpperCase()))
                                 .collect(Collectors.toList()),
                             node, networkDiagram, WiretapManagementDialog.WIRETAP, WiretapManagementDialog.BEFORE);
                         wiretapManagementDialog.open();
@@ -188,7 +191,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
-                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("AFTER"))
+                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals(TriggerJobType.WIRETAP.getDescription()) && decoratorMetaData.getName()
+                                    .startsWith(TriggerRelationship.AFTER.getDescription().toUpperCase()))
                                 .collect(Collectors.toList()),
                             node, networkDiagram, WiretapManagementDialog.WIRETAP, WiretapManagementDialog.AFTER);
                         wiretapManagementDialog.open();
@@ -198,7 +202,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                        WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
-                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("BEFORE"))
+                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals(TriggerJobType.LOG_WIRETAP.getDescription()) && decoratorMetaData.getName()
+                                    .startsWith(TriggerRelationship.BEFORE.getDescription().toUpperCase()))
                                 .collect(Collectors.toList()),
                             node, networkDiagram, WiretapManagementDialog.LOG, WiretapManagementDialog.BEFORE);
                         wiretapManagementDialog.open();
@@ -209,7 +214,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                         WiretapManagementDialog wiretapManagementDialog = new WiretapManagementDialog(this.triggerRestService,
                             this.getModule(), this.currentFlow,
                             node.getDecoratorMetaDataList().stream()
-                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("AFTER"))
+                                .filter(decoratorMetaData -> decoratorMetaData.getType().equals(TriggerJobType.LOG_WIRETAP.getDescription()) && decoratorMetaData.getName()
+                                    .startsWith(TriggerRelationship.AFTER.getDescription().toUpperCase()))
                                 .collect(Collectors.toList()),
                             node, networkDiagram, WiretapManagementDialog.LOG, WiretapManagementDialog.AFTER);
                         wiretapManagementDialog.open();

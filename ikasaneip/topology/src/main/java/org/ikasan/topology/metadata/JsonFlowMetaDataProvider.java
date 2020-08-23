@@ -18,6 +18,7 @@ import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.topology.metadata.model.DecoratorMetaDataImpl;
 import org.ikasan.topology.metadata.model.FlowElementMetaDataImpl;
 import org.ikasan.topology.metadata.model.FlowMetaDataImpl;
@@ -303,24 +304,24 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
 
     protected boolean hasBeforeWiretap(Map<String, List<Trigger>> triggers, String componentName)
     {
-        return triggers.entrySet().stream().anyMatch(e -> e.getKey().equals("before" + componentName));
+        return triggers.entrySet().stream().anyMatch(e -> e.getKey().equals(TriggerRelationship.BEFORE.getDescription() + componentName));
     }
 
     protected List<Trigger> getBeforeWiretaps(Map<String, List<Trigger>> triggers, String componentName)
     {
-        return triggers.entrySet().stream().filter(e -> e.getKey().equals("before" + componentName))
+        return triggers.entrySet().stream().filter(e -> e.getKey().equals(TriggerRelationship.BEFORE.getDescription() + componentName))
                        .map(e -> e.getValue()).findAny().get();
     }
 
     protected boolean hasAfterWiretap(Map<String, List<Trigger>> triggers, String componentName)
     {
-        return triggers.entrySet().stream().anyMatch(e -> e.getKey().equals("after" + componentName));
+        return triggers.entrySet().stream().anyMatch(e -> e.getKey().equals(TriggerRelationship.AFTER.getDescription() + componentName));
     }
 
     protected List<Trigger> getAfterWiretaps(Map<String, List<Trigger>> triggers, String componentName)
     {
         //
-        return triggers.entrySet().stream().filter(e -> e.getKey().equals("after" + componentName))
+        return triggers.entrySet().stream().filter(e -> e.getKey().equals(TriggerRelationship.AFTER.getDescription() + componentName))
                        .map(e -> e.getValue()).findAny().get();
     }
 }

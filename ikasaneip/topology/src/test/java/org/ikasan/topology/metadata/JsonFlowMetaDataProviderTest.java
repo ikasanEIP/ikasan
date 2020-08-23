@@ -6,6 +6,7 @@ import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.topology.metadata.components.*;
 import org.ikasan.topology.metadata.flow.TestFlow;
@@ -129,12 +130,12 @@ public class JsonFlowMetaDataProviderTest
         Flow flow = new TestFlow("Flow Name", "Module Name", flowConfiguration);
 
         flow.setTriggerService(triggerService);
-        Trigger beforeConsumer = new TriggerImpl("Module Name", "Flow Name", "before", "beforeConsumer", "Test Consumer");
-        Trigger beforeConsumer2 = new TriggerImpl("Module Name", "Flow Name", "before", "beforeConsumer2", "Test Consumer");
-        Trigger afterProducer = new TriggerImpl("Module Name", "Flow Name", "after", "afterProducer", "Test Producer");
-        Trigger afterProducer2 = new TriggerImpl("Module Name", "Flow Name", "after", "afterProducer2", "Test Producer");
-        Trigger afterConverter = new TriggerImpl("Module Name", "Flow Name", "after", "afterConverter", "Test Converter");
-        Trigger beforeConverter = new TriggerImpl("Module Name", "Flow Name", "before", "beforeConverter", "Test Converter");
+        Trigger beforeConsumer = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.BEFORE.getDescription(), "beforeConsumer", "Test Consumer");
+        Trigger beforeConsumer2 = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.BEFORE.getDescription(), "beforeConsumer2", "Test Consumer");
+        Trigger afterProducer = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.AFTER.getDescription(), "afterProducer", "Test Producer");
+        Trigger afterProducer2 = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.AFTER.getDescription(), "afterProducer2", "Test Producer");
+        Trigger afterConverter = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.AFTER.getDescription(), "afterConverter", "Test Converter");
+        Trigger beforeConverter = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.BEFORE.getDescription(), "beforeConverter", "Test Converter");
         triggers.put("beforeTest Consumer", Arrays.asList(beforeConsumer,beforeConsumer2));
         triggers.put("afterTest Producer", Arrays.asList(afterProducer,afterProducer2));
         triggers.put("beforeTest Converter", Arrays.asList(beforeConverter));
@@ -202,8 +203,8 @@ public class JsonFlowMetaDataProviderTest
         Flow flow = new TestFlow("Flow Name", "Module Name", flowConfiguration);
         flow.setTriggerService(triggerService);
 
-        Trigger beforeMMR = new TriggerImpl("Module Name", "Flow Name", "before", "beforeTest Multi Recipient Router", "Test Multi Recipient Router");
-        Trigger afterMMR = new TriggerImpl("Module Name", "Flow Name", "after", "afterTest Multi Recipient Router", "Test Multi Recipient Router");
+        Trigger beforeMMR = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.BEFORE.getDescription(), "beforeTest Multi Recipient Router", "Test Multi Recipient Router");
+        Trigger afterMMR = new TriggerImpl("Module Name", "Flow Name", TriggerRelationship.AFTER.getDescription(), "afterTest Multi Recipient Router", "Test Multi Recipient Router");
 
         triggers.put("beforeTest Multi Recipient Router", Arrays.asList(beforeMMR));
         triggers.put("afterTest Multi Recipient Router", Arrays.asList(afterMMR));

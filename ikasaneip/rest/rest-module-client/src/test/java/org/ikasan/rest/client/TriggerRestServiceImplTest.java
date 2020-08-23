@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.rest.client.dto.TriggerDto;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class TriggerRestServiceImplTest
     @Test
     public void crete() throws JsonProcessingException
     {
-        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", "after", "wiretap", "100" );
+        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", TriggerRelationship.AFTER.getDescription(), "wiretap", "100" );
 
         stubFor(put(urlEqualTo(TriggerRestServiceImpl.PUT_TRIGGER_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -56,7 +57,7 @@ public class TriggerRestServiceImplTest
     @Test
     public void createreturns400() throws JsonProcessingException
     {
-        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", "after", "wiretap", "100" );
+        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", TriggerRelationship.AFTER.getDescription(), "wiretap", "100" );
 
         stubFor(put(urlEqualTo(TriggerRestServiceImpl.PUT_TRIGGER_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -71,7 +72,7 @@ public class TriggerRestServiceImplTest
     @Test
     public void resubmit_returns404() throws JsonProcessingException
     {
-        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", "after", "wiretap", "100" );
+        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", TriggerRelationship.AFTER.getDescription(), "wiretap", "100" );
 
         stubFor(put(urlEqualTo(TriggerRestServiceImpl.PUT_TRIGGER_URL))
                     .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -88,7 +89,7 @@ public class TriggerRestServiceImplTest
     public void resubmit_returns500() throws JsonProcessingException
     {
 
-        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", "after", "wiretap", "100" );
+        TriggerDto dto = new TriggerDto("testModule", "testFlow", "component", TriggerRelationship.AFTER.getDescription(), "wiretap", "100" );
 
         stubFor(put(urlEqualTo(TriggerRestServiceImpl.PUT_TRIGGER_URL))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
