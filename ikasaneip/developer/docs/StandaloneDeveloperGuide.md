@@ -109,7 +109,7 @@ In this case we are adding the ikasan-eip-standalone main library; an h2 standal
     <!-- Add project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.0.0</version.ikasan>
+        <version.ikasan>3.0.1</version.ikasan>
         <version.org.springboot>2.0.9.RELEASE</version.org.springboot>
     </properties>
 
