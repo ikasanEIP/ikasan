@@ -19,6 +19,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.spec.metadata.DecoratorMetaData;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 
@@ -27,8 +28,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WiretapManagementDialog extends Dialog
 {
-    public static final String BEFORE = "before";
-    public static final String AFTER = "after";
+    public static final String BEFORE = TriggerRelationship.BEFORE.getDescription();
+    public static final String AFTER = TriggerRelationship.AFTER.getDescription();
     public static final String WIRETAP = "wiretap";
     public static final String LOG = "log";
 

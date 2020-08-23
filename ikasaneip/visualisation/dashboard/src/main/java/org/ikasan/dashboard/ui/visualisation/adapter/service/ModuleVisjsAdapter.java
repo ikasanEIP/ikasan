@@ -12,6 +12,8 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.trigger.TriggerJobType;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,19 +159,23 @@ public class ModuleVisjsAdapter
     private void decorateWiretap(FlowElementMetaData flowElement, AbstractWiretapNode node) {
         if(flowElement.getDecorators() != null) {
             flowElement.getDecorators().forEach(decoratorMetaData -> {
-                if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
+                if (decoratorMetaData.getType().equals(TriggerJobType.WIRETAP.getDescription()) && decoratorMetaData.getName()
+                    .startsWith(TriggerRelationship.BEFORE.getDescription().toUpperCase())) {
                     node.setWiretapBeforeStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
-                else if (decoratorMetaData.getType().equals("Wiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
+                else if (decoratorMetaData.getType().equals(TriggerJobType.WIRETAP.getDescription()) && decoratorMetaData.getName()
+                    .startsWith(TriggerRelationship.AFTER.getDescription().toUpperCase())) {
                     node.setWiretapAfterStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
-                else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("BEFORE")) {
+                else if (decoratorMetaData.getType().equals(TriggerJobType.LOG_WIRETAP.getDescription()) && decoratorMetaData.getName()
+                    .startsWith(TriggerRelationship.BEFORE.getDescription().toUpperCase())) {
                     node.setLogWiretapBeforeStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }
-                else if (decoratorMetaData.getType().equals("LogWiretap") && decoratorMetaData.getName().startsWith("AFTER")) {
+                else if (decoratorMetaData.getType().equals(TriggerJobType.LOG_WIRETAP.getDescription()) && decoratorMetaData.getName()
+                    .startsWith(TriggerRelationship.AFTER.getDescription().toUpperCase())) {
                     node.setLogWiretapAfterStatus(NodeFoundStatus.FOUND);
                     node.setDecoratorMetaDataList(flowElement.getDecorators());
                 }

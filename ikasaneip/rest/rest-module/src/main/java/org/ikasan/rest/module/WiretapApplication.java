@@ -46,6 +46,7 @@ import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.trigger.TriggerJobType;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.spec.trigger.Trigger;
@@ -215,10 +216,10 @@ public class WiretapApplication
         dto.setRelationship(trigger.getRelationship().toString());
         if(trigger.getParams()!=null && !trigger.getParams().isEmpty() && trigger.getParams().containsKey("timeToLive"))
         {
-            dto.setJobType("Wiretap");
+            dto.setJobType(TriggerJobType.WIRETAP.getDescription());
             dto.setTimeToLive(trigger.getParams().get("timeToLive"));
         }else{
-            dto.setJobType("LogWiretap");
+            dto.setJobType(TriggerJobType.LOG_WIRETAP.getDescription());
         }
         return dto;
     }
