@@ -5,6 +5,8 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.topology.metadata.components.*;
@@ -26,6 +28,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class JsonModuleMetaDataProviderTest
@@ -52,7 +56,7 @@ public class JsonModuleMetaDataProviderTest
         testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
         testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
 
-        String json = jsonModuleMetaDataProvider.describeModule(testModule);
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, new HashMap<>());
 
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
@@ -72,7 +76,7 @@ public class JsonModuleMetaDataProviderTest
         testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
         testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
 
-        String json = jsonModuleMetaDataProvider.describeModule(testModule);
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, new HashMap<>());
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
@@ -80,6 +84,255 @@ public class JsonModuleMetaDataProviderTest
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+    }
+
+    @Test
+    public void test_module_json_to_object_disabled_statup_types() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.DISABLED;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        HashMap<String, StartupControl> startupControlMap = new HashMap<>();
+        startupControlMap.put("Simple Flow 1", startupControl);
+        startupControlMap.put("Simple Flow 2", startupControl);
+        startupControlMap.put("Multi Flow 1", startupControl);
+        startupControlMap.put("Multi Flow 2", startupControl);
+        startupControlMap.put("Single Flow 1", startupControl);
+        startupControlMap.put("Single Flow 2", startupControl);
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, startupControlMap);
+
+        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
+
+        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
+        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
+        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+
+        moduleMetaData.getFlows().forEach(
+            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.DISABLED.name(), flowMetaData.getFlowStartupType())
+        );
+    }
+
+    @Test
+    public void test_module_json_to_object_automatic_statup_types() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.AUTOMATIC;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        HashMap<String, StartupControl> startupControlMap = new HashMap<>();
+        startupControlMap.put("Simple Flow 1", startupControl);
+        startupControlMap.put("Simple Flow 2", startupControl);
+        startupControlMap.put("Multi Flow 1", startupControl);
+        startupControlMap.put("Multi Flow 2", startupControl);
+        startupControlMap.put("Single Flow 1", startupControl);
+        startupControlMap.put("Single Flow 2", startupControl);
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, startupControlMap);
+
+        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
+
+        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
+        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
+        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+
+        moduleMetaData.getFlows().forEach(
+            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType())
+        );
+    }
+
+    @Test
+    public void test_module_json_to_object_manual_statup_types() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.MANUAL;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestModule testModule = new TestModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        HashMap<String, StartupControl> startupControlMap = new HashMap<>();
+        startupControlMap.put("Simple Flow 1", startupControl);
+        startupControlMap.put("Simple Flow 2", startupControl);
+        startupControlMap.put("Multi Flow 1", startupControl);
+        startupControlMap.put("Multi Flow 2", startupControl);
+        startupControlMap.put("Single Flow 1", startupControl);
+        startupControlMap.put("Single Flow 2", startupControl);
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, startupControlMap);
+
+        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
+
+        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
+        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
+        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+
+        moduleMetaData.getFlows().forEach(
+            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType())
+        );
     }
 
     private Flow createSimpleFlow(String flowName)
