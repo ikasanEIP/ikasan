@@ -78,7 +78,7 @@ public interface StartupControl
     /**
      * Setter for startupType
      * 
-     * @param action
+     * @param startupType
      */
     public void setStartupType(StartupType startupType);
 

@@ -1,10 +1,13 @@
 package org.ikasan.rest.module;
 
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.FlowMetaDataProvider;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.module.StartupControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -37,6 +43,9 @@ public class MetaDataApplication
     @Autowired
     private ModuleMetaDataProvider<String> moduleMetaDataProvider;
 
+    @Autowired
+    private ModuleService moduleService;
+
     /**
      * TODO: work out how to get annotation security working.
      *
@@ -55,7 +64,9 @@ public class MetaDataApplication
 
         Flow flow = module.getFlow(flowName);
 
-        return new ResponseEntity(this.flowMetaDataProvider.describeFlow(flow), HttpStatus.OK);
+        StartupControl startupControl = this.moduleService.getStartupControl(moduleName, flowName);
+
+        return new ResponseEntity(this.flowMetaDataProvider.describeFlow(flow, startupControl), HttpStatus.OK);
     }
 
     /**
@@ -72,6 +83,15 @@ public class MetaDataApplication
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
 
-        return new ResponseEntity(this.moduleMetaDataProvider.describeModule(module), HttpStatus.OK);
+        Map<String,StartupControl> stringStartupControlMap = new HashMap<>();
+
+        module.getFlows().forEach(flow -> {
+            StartupControl startupControl = moduleService.getStartupControl(moduleName, flow.getName());
+            if(startupControl != null) {
+                stringStartupControlMap.put(flow.getName(), startupControl);
+            }
+        });
+
+        return new ResponseEntity(this.moduleMetaDataProvider.describeModule(module, stringStartupControlMap), HttpStatus.OK);
     }
 }

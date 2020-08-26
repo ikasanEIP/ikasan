@@ -14,6 +14,7 @@ public class FlowMetaDataImpl implements FlowMetaData
     private List<Transition> transitions = new ArrayList<>();
     private List<FlowElementMetaData> flowElements = new ArrayList<>();
     private String configurationId;
+    private String flowStartupType;
 
     @Override
     public void setName(String name)
@@ -73,5 +74,15 @@ public class FlowMetaDataImpl implements FlowMetaData
     public void setConfigurationId(String configurationId)
     {
         this.configurationId = configurationId;
+    }
+
+    @Override
+    public String getFlowStartupType() {
+        return this.flowStartupType;
+    }
+
+    @Override
+    public void setFlowStartupType(String flowStartupType) {
+        this.flowStartupType = flowStartupType;
     }
 }

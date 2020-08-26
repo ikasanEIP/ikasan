@@ -17,6 +17,8 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.topology.metadata.model.DecoratorMetaDataImpl;
 import org.ikasan.topology.metadata.model.FlowElementMetaDataImpl;
@@ -57,7 +59,7 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
     }
 
     @Override
-    public String describeFlow(Flow flow)
+    public String describeFlow(Flow flow, StartupControl startupControl)
     {
         String result;
 
@@ -76,6 +78,12 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
             if ( flow instanceof ConfiguredResource )
             {
                 flowMetaData.setConfigurationId(((ConfiguredResource) flow).getConfiguredResourceId());
+            }
+
+            if(startupControl != null) {
+                flowMetaData.setFlowStartupType(startupControl.getStartupType().name());
+            } else {
+                flowMetaData.setFlowStartupType(StartupType.MANUAL.name());
             }
 
             result = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(flowMetaData);

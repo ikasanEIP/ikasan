@@ -5,6 +5,8 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.FlowMetaData;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.topology.metadata.components.*;
@@ -49,7 +51,7 @@ public class JsonFlowMetaDataProviderTest
     public void test_simple_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
-        String json = jsonFlowMetaDataProvider.describeFlow(createSimpleFlow());
+        String json = jsonFlowMetaDataProvider.describeFlow(createSimpleFlow(), null);
 
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(SIMPLE_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
@@ -58,7 +60,7 @@ public class JsonFlowMetaDataProviderTest
     public void test_multi_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
-        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow());
+        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), null);
 
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MULTI_RECIPIENT_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
@@ -67,7 +69,7 @@ public class JsonFlowMetaDataProviderTest
     public void test_single_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
-        String json = jsonFlowMetaDataProvider.describeFlow(createSingleRecipientListFlow());
+        String json = jsonFlowMetaDataProvider.describeFlow(createSingleRecipientListFlow(), null);
 
         JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(SINGLE_RECIPIENT_FLOW_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
@@ -76,11 +78,207 @@ public class JsonFlowMetaDataProviderTest
     public void test_single_json_to_object() throws IOException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
-        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow());
+        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), null);
 
         FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
 
         assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
+        assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType());
+        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
+        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
+        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
+        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
+        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+
+    }
+
+    @Test
+    public void test_single_json_to_object_disabled_startup_type() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.DISABLED;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), startupControl);
+
+        FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
+
+        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
+        assertEquals("Flow start up type equals!", StartupType.DISABLED.name(), flowMetaData.getFlowStartupType());
+        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
+        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
+        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
+        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
+        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+
+    }
+
+    @Test
+    public void test_single_json_to_object_automatic_startup_type() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.AUTOMATIC;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), startupControl);
+
+        FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
+
+        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
+        assertEquals("Flow start up type equals!", StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType());
+        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
+        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
+        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
+        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
+        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+
+    }
+
+    @Test
+    public void test_single_json_to_object_manual_startup_type() throws IOException
+    {
+        StartupControl startupControl = new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return StartupType.MANUAL;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return null;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
+
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), startupControl);
+
+        FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
+
+        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
+        assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType());
         assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
         assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
         assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
