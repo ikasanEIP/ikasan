@@ -1,11 +1,13 @@
 package org.ikasan.dashboard;
 
+import org.ikasan.dashboard.component.ModuleMetadataConverter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -75,17 +77,23 @@ public class DashboardClientAutoConfiguration
 
     @Bean
     public DashboardRestService moduleMetadataDashboardRestService(Environment environment,
-        ModuleMetaDataProvider<String> jsonModuleMetaDataProvider)
+        ModuleMetadataConverter moduleMetadataConverter)
     {
-        return new DashboardRestServiceImpl(environment, METADATA_PATH,
-            (Converter<Module, String>) module -> jsonModuleMetaDataProvider.describeModule(module));
+        return new DashboardRestServiceImpl(environment, METADATA_PATH, moduleMetadataConverter);
 
+    }
+
+    @Bean
+    public ModuleMetadataConverter moduleMetadataConverter(ModuleMetaDataProvider<String> jsonModuleMetaDataProvider
+        , ModuleService moduleService) {
+        return new ModuleMetadataConverter(jsonModuleMetaDataProvider,moduleService);
     }
 
     @Bean
     public DashboardRestService configurationMetadataDashboardRestService(Environment environment,
         ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
+
         return new DashboardRestServiceImpl(environment, CONFIGURATION_METADATA_PATH,
             (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
 
