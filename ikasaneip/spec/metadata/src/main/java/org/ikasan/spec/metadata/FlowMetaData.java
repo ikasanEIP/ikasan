@@ -73,4 +73,19 @@ public interface FlowMetaData
      * @param configurationId
      */
     public void setConfigurationId(String configurationId);
+
+    /**
+     * Get the flow startup type.
+     *
+     * @return
+     */
+    public String getFlowStartupType();
+
+    /**
+     * Set the flow startup type.
+     *
+     * @param flowStartupType
+     * @return
+     */
+    public void setFlowStartupType(String flowStartupType);
 }

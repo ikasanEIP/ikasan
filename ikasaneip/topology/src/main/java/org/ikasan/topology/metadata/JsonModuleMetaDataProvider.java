@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.StartupControl;
 import org.ikasan.topology.metadata.model.*;
+
+import java.util.Map;
 
 public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String>
 {
@@ -33,7 +36,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
     }
 
     @Override
-    public String describeModule(Module<Flow> module)
+    public String describeModule(Module<Flow> module, Map<String, StartupControl> stringStartupControlMap)
     {
         String result;
 
@@ -48,7 +51,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             for(Flow flow: module.getFlows())
             {
                 moduleMetaData.getFlows().add(flowMetaDataProvider
-                    .deserialiseFlow(flowMetaDataProvider.describeFlow(flow)));
+                    .deserialiseFlow(flowMetaDataProvider.describeFlow(flow, stringStartupControlMap.get(flow.getName()))));
             }
 
             result = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(moduleMetaData);
