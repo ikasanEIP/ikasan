@@ -59,7 +59,7 @@ public interface Module<FLOW>
     /**
      * Set the url of the module.
      *
-     * @return
+     * @param url
      */
     public void setUrl(String url);
 
@@ -78,9 +78,9 @@ public interface Module<FLOW>
     public String getName();
 
     /**
-     * Returns a {@link Map} of this module's <code>Flow</code>s
+     * Returns a {@link List} of this module's <code>Flow</code>s
      * 
-     * @return a map of <code>Flow</code> using the {@link Flow#getName()} as key
+     * @return a {@link List} of <code>FLOW</code>.
      */
     public List<FLOW> getFlows();
 
@@ -102,7 +102,7 @@ public interface Module<FLOW>
     /**
      * Sets a human readable description of this module
      * 
-     * @param String description
+     * @param description
      */
     public void setDescription(String description);
 }
