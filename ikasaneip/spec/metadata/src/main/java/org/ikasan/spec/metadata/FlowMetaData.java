@@ -88,4 +88,20 @@ public interface FlowMetaData
      * @return
      */
     public void setFlowStartupType(String flowStartupType);
+
+    /**
+     * Get the flow startup comment.
+     *
+     * @return
+     */
+    public String getFlowStartupComment();
+
+    /**
+     * Set the flow startup type.
+     *
+     * @param flowStartupComment
+     * @return
+     */
+    public void setFlowStartupComment(String flowStartupComment);
+
 }

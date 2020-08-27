@@ -83,6 +83,7 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
 
             if(startupControl != null) {
                 flowMetaData.setFlowStartupType(startupControl.getStartupType().name());
+                flowMetaData.setFlowStartupComment(startupControl.getComment());
             } else {
                 flowMetaData.setFlowStartupType(StartupType.MANUAL.name());
             }

@@ -15,6 +15,8 @@ public class FlowMetaDataImpl implements FlowMetaData
     private List<FlowElementMetaData> flowElements = new ArrayList<>();
     private String configurationId;
     private String flowStartupType;
+    private String flowStartupComment;
+    private String moduleVersion;
 
     @Override
     public void setName(String name)
@@ -84,5 +86,15 @@ public class FlowMetaDataImpl implements FlowMetaData
     @Override
     public void setFlowStartupType(String flowStartupType) {
         this.flowStartupType = flowStartupType;
+    }
+
+    @Override
+    public String getFlowStartupComment() {
+        return flowStartupComment;
+    }
+
+    @Override
+    public void setFlowStartupComment(String flowStartupComment) {
+        this.flowStartupComment = flowStartupComment;
     }
 }
