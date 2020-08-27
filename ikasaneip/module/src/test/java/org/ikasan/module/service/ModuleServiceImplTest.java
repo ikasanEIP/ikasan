@@ -41,6 +41,7 @@
 package org.ikasan.module.service;
 
 import org.ikasan.module.startup.dao.StartupControlDao;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
@@ -70,6 +71,7 @@ public class ModuleServiceImplTest
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     SystemEventService systemEventService = mockery.mock(SystemEventService.class);
     StartupControlDao startupControlDao = mockery.mock(StartupControlDao.class);
+    DashboardRestService moduleMetadataDashboardRestService = mockery.mock(DashboardRestService.class);
 
     Module module = mockery.mock(Module.class);
     Flow flow = mockery.mock(Flow.class);
@@ -80,24 +82,30 @@ public class ModuleServiceImplTest
     private static final String ACTOR = "actor";
 
     /** Class under test */
-    ModuleServiceImpl moduleService = new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao);
+    ModuleServiceImpl moduleService = new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao, moduleMetadataDashboardRestService);
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer()
     {
-        new ModuleServiceImpl(null, systemEventService, startupControlDao);
+        new ModuleServiceImpl(null, systemEventService, startupControlDao, moduleMetadataDashboardRestService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService()
     {
-        new ModuleServiceImpl(moduleContainer, null, startupControlDao);
+        new ModuleServiceImpl(moduleContainer, null, startupControlDao, moduleMetadataDashboardRestService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_startupControlDao()
     {
-        new ModuleServiceImpl(moduleContainer, systemEventService, null);
+        new ModuleServiceImpl(moduleContainer, systemEventService, null, moduleMetadataDashboardRestService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_constructor_null_moduleMetadataDashboardRestService()
+    {
+        new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao, null);
     }
 
     @Test
@@ -244,6 +252,8 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.AUTOMATIC.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
+                oneOf(moduleContainer).getModule("moduleName");
+                oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.AUTOMATIC, "comment", ACTOR);
         mockery.assertIsSatisfied();
@@ -262,6 +272,8 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.MANUAL.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.MANUAL));
+            oneOf(moduleContainer).getModule("moduleName");
+            oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.MANUAL, "comment", ACTOR);
         mockery.assertIsSatisfied();
@@ -280,6 +292,8 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.DISABLED.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.DISABLED));
+            oneOf(moduleContainer).getModule("moduleName");
+            oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.DISABLED, "comment", ACTOR);
         mockery.assertIsSatisfied();
