@@ -90,8 +90,8 @@ public class IkasanModuleAutoConfiguration
 
     @Bean
     public ModuleServiceImpl moduleService(ModuleContainer moduleContainer, SystemEventService systemEventService,
-        StartupControlDao startupControlDao){
-        return new ModuleServiceImpl(moduleContainer, systemEventService,startupControlDao);
+        StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService){
+        return new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao, moduleMetadataDashboardRestService);
     }
 
     @Bean

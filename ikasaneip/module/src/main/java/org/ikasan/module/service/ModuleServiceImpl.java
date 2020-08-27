@@ -44,6 +44,7 @@ import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.*;
 
@@ -107,12 +108,18 @@ public class ModuleServiceImpl implements ModuleService
     private StartupControlDao startupControlDao;
 
     /**
+     * Dashboard client used for publishing module metadata to dashboard
+     */
+    private DashboardRestService moduleMetadataDashboardRestService;
+
+    /**
      * Constructor
      * 
      * @param moduleContainer
      * @param systemEventService 
      */
-    public ModuleServiceImpl(ModuleContainer moduleContainer, SystemEventService systemEventService, StartupControlDao startupControlDao)
+    public ModuleServiceImpl(ModuleContainer moduleContainer, SystemEventService systemEventService
+        , StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -131,6 +138,12 @@ public class ModuleServiceImpl implements ModuleService
         if(startupControlDao == null)
         {
             throw new IllegalArgumentException("startupControlDao cannot be 'null'");
+        }
+
+        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
+        if(moduleMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("moduleMetadataDashboardRestService cannot be 'null'");
         }
     }
 
@@ -304,6 +317,7 @@ public class ModuleServiceImpl implements ModuleService
         this.startupControlDao.save(startupControl);
         
         this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + startupControl.getStartupType().name(),  actor);
+        moduleMetadataDashboardRestService.publish(this.getModule(moduleName));
     }
 
     @Override
