@@ -15,6 +15,7 @@ public class SolrFlowMetaDataImpl implements FlowMetaData
     private List<FlowElementMetaData> flowElements = new ArrayList<>();
     private String configurationId;
     private String flowStartupType;
+    private String flowStartupComment;
 
     @Override
     public void setName(String name)
@@ -84,5 +85,15 @@ public class SolrFlowMetaDataImpl implements FlowMetaData
     @Override
     public void setFlowStartupType(String flowStartupType) {
         this.flowStartupType = flowStartupType;
+    }
+
+    @Override
+    public String getFlowStartupComment() {
+        return flowStartupComment;
+    }
+
+    @Override
+    public void setFlowStartupComment(String flowStartupComment) {
+        this.flowStartupComment = flowStartupComment;
     }
 }
