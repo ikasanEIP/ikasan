@@ -2,7 +2,7 @@ package org.ikasan.spec.module.client;
 
 import java.util.Optional;
 
-public interface ModuleControlService<M, F>
+public interface ModuleControlService<M, F, C>
 {
     /**
      * Get a metadata object containing the states for all flows in a module.
@@ -51,5 +51,15 @@ public interface ModuleControlService<M, F>
      */
     public boolean changeFlowStartupType(String contextUrl, String moduleName, String flowName, String startupType,
                                          String comment);
+
+    /**
+     * Get the startup type of the flow.
+     *
+     * @param contextUrl
+     * @param moduleName
+     * @param flowName
+     * @return
+     */
+    public Optional<C> getFlowStartupType(String contextUrl, String moduleName, String flowName);
 
 }

@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.dto.FlowDto;
+import org.ikasan.rest.client.dto.FlowStartupTypeDto;
 import org.ikasan.rest.client.dto.ModuleDto;
 import org.junit.Before;
 import org.junit.Rule;
@@ -97,7 +98,6 @@ public class ModuleControlRestServiceImplTest
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                 .withStatus(404)
             ));
@@ -152,5 +152,38 @@ public class ModuleControlRestServiceImplTest
                                ));
         boolean result = uut.changeFlowStartupType(contexBaseUrl,"test Module Name","flow Test","automatic",null);
         assertEquals(true, result);
+    }
+
+    @Test
+    public void getFlowStartup()
+    {
+
+        stubFor(get(urlEqualTo("/rest/moduleControl/startupMode/testModuleName/flowTest"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"startupType\":\"AUTOMATIC\"}")
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .withStatus(200)
+            ));
+
+        Optional<FlowStartupTypeDto> result = uut.getFlowStartupType(contexBaseUrl,"testModuleName","flowTest");
+        assertEquals(true, result.isPresent());
+    }
+
+    @Test
+    public void getFlowStartup_404()
+    {
+
+        stubFor(get(urlEqualTo("/rest/moduleControl/startupMode/testModuleName/flowTest"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .withStatus(404)
+            ));
+
+        Optional<FlowStartupTypeDto> result = uut.getFlowStartupType(contexBaseUrl,"testModuleName","flowTest");
+        assertEquals(false, result.isPresent());
     }
 }

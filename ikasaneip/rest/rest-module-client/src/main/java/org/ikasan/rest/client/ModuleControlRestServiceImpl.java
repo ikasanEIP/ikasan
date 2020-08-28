@@ -1,9 +1,6 @@
 package org.ikasan.rest.client;
 
-import org.ikasan.rest.client.dto.ChangeFlowStartupModeDto;
-import org.ikasan.rest.client.dto.ChangeFlowStateDto;
-import org.ikasan.rest.client.dto.FlowDto;
-import org.ikasan.rest.client.dto.ModuleDto;
+import org.ikasan.rest.client.dto.*;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ModuleControlRestServiceImpl extends ModuleRestService implements ModuleControlService<ModuleDto, FlowDto>
+public class ModuleControlRestServiceImpl extends ModuleRestService implements ModuleControlService<ModuleDto, FlowDto, FlowStartupTypeDto>
 {
     Logger logger = LoggerFactory.getLogger(ModuleControlRestServiceImpl.class);
 
     protected final static String CHANGE_FLOW_STATE_URL= "/rest/moduleControl";
     protected final static String CHANGE_FLOW_STARTUP_MODE_URL= "/rest/moduleControl/startupMode";
+    protected final static String GET_FLOW_STARTUP_MODE_URL= "/rest/moduleControl/startupMode/{moduleName}/{flowName}";
     protected final static String FLOWS_STATUS_URL= "/rest/moduleControl/{moduleName}";
     protected final static String SINGLE_FLOW_STATUS_URL= "/rest/moduleControl/{moduleName}/{flowName}";
 
@@ -121,4 +119,26 @@ public class ModuleControlRestServiceImpl extends ModuleRestService implements M
         }
     }
 
+    @Override
+    public Optional<FlowStartupTypeDto> getFlowStartupType(String contextUrl, String moduleName, String flowName) {
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+        String url = contextUrl + GET_FLOW_STARTUP_MODE_URL;
+        Map<String, String> parameters = new HashMap<String, String>(){{put("moduleName",moduleName);put("flowName",flowName);}};
+        try
+        {
+            ResponseEntity<FlowStartupTypeDto> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, FlowStartupTypeDto.class, parameters);
+
+            return Optional.of(responseEntity.getBody());
+        }
+        catch (RestClientException e)
+        {
+            logger.warn(
+                "Could not get flow startup type with module [" + moduleName + "] " + "and flow ["
+                    + flowName + "] " + " with response [{" + e.getLocalizedMessage()
+                    + "}]");
+
+            return Optional.empty();
+        }
+    }
 }
