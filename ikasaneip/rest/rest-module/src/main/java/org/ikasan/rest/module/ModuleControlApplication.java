@@ -1,6 +1,8 @@
 package org.ikasan.rest.module;
 
 import org.ikasan.rest.module.dto.*;
+import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.module.StartupControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.Flow;
@@ -31,6 +33,13 @@ public class ModuleControlApplication
 
     @Autowired
     private ModuleService moduleService;
+
+
+    /**
+     * Dashboard client used for publishing module metadata to dashboard
+     */
+    @Autowired
+    private DashboardRestService moduleMetadataDashboardRestService;
 
     @Deprecated
     @RequestMapping(method = RequestMethod.PUT,
@@ -121,6 +130,7 @@ public class ModuleControlApplication
                 throw new IllegalArgumentException("Comment must be provided when disabling Flow startup");
             }
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
+            moduleMetadataDashboardRestService.publish(this.moduleService.getModule(moduleName));
         }
     }
 
@@ -148,12 +158,28 @@ public class ModuleControlApplication
                 return new ResponseEntity(new ErrorDto("Comment must be provided when disabling Flow startup"), HttpStatus.BAD_REQUEST);
             }
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType.toUpperCase()), startupComment, user);
+            moduleMetadataDashboardRestService.publish(this.moduleService.getModule(moduleName));
             return new ResponseEntity(HttpStatus.OK);
         }
         else{
             return new ResponseEntity(new ErrorDto("Invalid startupType["+startupType+"]."), HttpStatus.BAD_REQUEST);
 
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/startupMode/{moduleName}/{flowName}")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getStartupMode(@PathVariable("moduleName") String moduleName,
+                                  @PathVariable("flowName") String flowName)
+    {
+        StartupControl startupControl = moduleService.getStartupControl(moduleName, flowName);
+
+        if(startupControl == null) {
+            return new ResponseEntity(new FlowStartupTypeDto(moduleName, flowName, StartupType.MANUAL.name(), ""), HttpStatus.OK);
+        }
+
+        return new ResponseEntity(new FlowStartupTypeDto(moduleName, flowName, startupControl.getStartupType().name(), startupControl.getComment()), HttpStatus.OK);
     }
 
     @Deprecated

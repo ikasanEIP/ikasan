@@ -82,31 +82,26 @@ public class ModuleServiceImplTest
     private static final String ACTOR = "actor";
 
     /** Class under test */
-    ModuleServiceImpl moduleService = new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao, moduleMetadataDashboardRestService);
+    ModuleServiceImpl moduleService = new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao);
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer()
     {
-        new ModuleServiceImpl(null, systemEventService, startupControlDao, moduleMetadataDashboardRestService);
+        new ModuleServiceImpl(null, systemEventService, startupControlDao);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService()
     {
-        new ModuleServiceImpl(moduleContainer, null, startupControlDao, moduleMetadataDashboardRestService);
+        new ModuleServiceImpl(moduleContainer, null, startupControlDao);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_startupControlDao()
     {
-        new ModuleServiceImpl(moduleContainer, systemEventService, null, moduleMetadataDashboardRestService);
+        new ModuleServiceImpl(moduleContainer, systemEventService, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_moduleMetadataDashboardRestService()
-    {
-        new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao, null);
-    }
 
     @Test
     public void test_startFlow_not_disabled()
@@ -252,8 +247,6 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.AUTOMATIC.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
-                oneOf(moduleContainer).getModule("moduleName");
-                oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.AUTOMATIC, "comment", ACTOR);
         mockery.assertIsSatisfied();
@@ -272,8 +265,6 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.MANUAL.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.MANUAL));
-            oneOf(moduleContainer).getModule("moduleName");
-            oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.MANUAL, "comment", ACTOR);
         mockery.assertIsSatisfied();
@@ -292,8 +283,6 @@ public class ModuleServiceImplTest
                 oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + StartupType.DISABLED.name(), ACTOR);
                 oneOf(startupControl).getStartupType();
                 will(returnValue(StartupType.DISABLED));
-            oneOf(moduleContainer).getModule("moduleName");
-            oneOf(moduleMetadataDashboardRestService).publish(with(any(Object.class)));
             }});
         moduleService.setStartupType(MODULE_NAME, FLOW_NAME, StartupType.DISABLED, "comment", ACTOR);
         mockery.assertIsSatisfied();

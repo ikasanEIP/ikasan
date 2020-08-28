@@ -8,8 +8,10 @@ import org.ikasan.rest.module.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.module.dto.ChangeFlowStateDto;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.util.DateTimeConverter;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +19,6 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -55,6 +56,9 @@ public class ModuleControlApplicationTest
 
     @MockBean
     protected ModuleService moduleService;
+
+    @MockBean
+    private DashboardRestService moduleMetadataDashboardRestService;
 
     @Autowired
     protected ModuleControlApplication moduleControlApplication;
@@ -176,6 +180,8 @@ public class ModuleControlApplicationTest
         Mockito
             .verify(moduleService).setStartupType(Mockito.eq("testModule"),Mockito.eq("testFlow"),Mockito.eq(
             StartupType.AUTOMATIC),Mockito.eq("comment"),Mockito.anyString());
+        Mockito
+            .verify(moduleService).getModule(Mockito.eq("testModule"));
         Mockito.verifyNoMoreInteractions(moduleService);
         assertEquals(200, result.getResponse().getStatus());
 
@@ -211,6 +217,94 @@ public class ModuleControlApplicationTest
 
     }
 
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getFlowStartupMode_nullStartupControl() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleService.getStartupControl(Mockito.eq("testModule"),Mockito.eq("testFlow")))
+            .thenReturn(null);
+
+
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"startupType\":\"MANUAL\"}",
+            result.getResponse().getContentAsString(),
+            JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getFlowStartupMode_manualStartupControl() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleService.getStartupControl(Mockito.eq("testModule"),Mockito.eq("testFlow")))
+            .thenReturn(getStartupControl(StartupType.MANUAL, null));
+
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"startupType\":\"MANUAL\"}",
+            result.getResponse().getContentAsString(),
+            JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getFlowStartupMode_automaticStartupControl() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleService.getStartupControl("testModule","testFlow"))
+            .thenReturn(getStartupControl(StartupType.AUTOMATIC, null));
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"startupType\":\"AUTOMATIC\"}",
+            result.getResponse().getContentAsString(),
+            JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getFlowStartupMode_disabledStartupControl() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleService.getStartupControl(Mockito.eq("testModule"),Mockito.eq("testFlow")))
+            .thenReturn(getStartupControl(StartupType.DISABLED, "disabled"));
+
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"startupType\":\"DISABLED\",\"comment\":\"disabled\"}",
+            result.getResponse().getContentAsString(),
+            JSONCompareMode.LENIENT);
+    }
+
 
     private String createChangeStateDto(String action) throws JsonProcessingException
     {
@@ -222,5 +316,54 @@ public class ModuleControlApplicationTest
     {
         ChangeFlowStartupModeDto dto = new ChangeFlowStartupModeDto("testModule","testFlow",action, comment);
         return mapper.writeValueAsString(dto);
+    }
+
+    private StartupControl getStartupControl(StartupType startupType, String comment){
+        return  new StartupControl() {
+            @Override
+            public String getModuleName() {
+                return null;
+            }
+
+            @Override
+            public String getFlowName() {
+                return null;
+            }
+
+            @Override
+            public StartupType getStartupType() {
+                return startupType;
+            }
+
+            @Override
+            public void setStartupType(StartupType startupType) {
+
+            }
+
+            @Override
+            public boolean isAutomatic() {
+                return false;
+            }
+
+            @Override
+            public boolean isManual() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return false;
+            }
+
+            @Override
+            public String getComment() {
+                return comment;
+            }
+
+            @Override
+            public void setComment(String comment) {
+
+            }
+        };
     }
 }
