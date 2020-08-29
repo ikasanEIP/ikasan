@@ -22,10 +22,6 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.MetaDataRestServiceImpl;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
-import org.ikasan.rest.client.TriggerRestServiceImpl;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaData;
@@ -126,7 +122,10 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         moduleViewHeaderLayout.setWidth("100%");
         moduleViewHeaderLayout.setMargin(false);
 
-        statusPanel = new StatusPanel(this.moduleControlRestService);
+        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
+            this.configurationRestService, this.triggerRestService, this.metaDataApplicationRestService);
+
+        statusPanel = new StatusPanel(this.moduleControlRestService, this.moduleVisualisation);
 
         moduleViewHeaderLayout.setFlexGrow(1, moduleNameLayout);
         moduleViewHeaderLayout.setFlexGrow(1, statusPanel);
@@ -135,9 +134,6 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
 
         moduleViewHeaderLayout.add(moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
         moduleViewHeaderLayout.setVerticalComponentAlignment(Alignment.BASELINE, moduleNameLayout, statusPanel, comboBoxLayout, controlPanel);
-
-        moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, this.metaDataApplicationRestService);
 
         this.add(moduleViewHeaderLayout);
 
@@ -229,6 +225,7 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         moduleVisualisation.redraw();
         this.flowComboBox.setCurrentModule(module);
 
+        this.statusPanel.setModuleVisualisation(this.moduleVisualisation);
         this.add(moduleVisualisation);
     }
 

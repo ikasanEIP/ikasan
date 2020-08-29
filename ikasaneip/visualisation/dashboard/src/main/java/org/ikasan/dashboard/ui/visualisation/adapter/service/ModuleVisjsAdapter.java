@@ -12,6 +12,8 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.module.StartupType;
+import org.ikasan.spec.module.client.ModuleControlService;
 import org.ikasan.spec.trigger.TriggerJobType;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
@@ -33,6 +35,7 @@ public class ModuleVisjsAdapter
     private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
     private HashMap<String, ConfigurationMetaData> configurationMetaDataHashMap;
     private HashMap<String, FlowElementMetaData> componentMap;
+
 
     /**
      * Adapt module meta data into a Module structure suitable for rendering to a VisJs visualisation.
@@ -79,7 +82,22 @@ public class ModuleVisjsAdapter
 
         Consumer consumer = (Consumer) manageFlowElement(flowMetaData.getConsumer(), uniqueTransitions, flowElements, configurationMetaDataMap);
 
-        return new Flow(flowMetaData.getName(), flowMetaData.getConfigurationId(), consumer);
+        StartupType startupType = null;
+
+        if(flowMetaData.getFlowStartupType() != null && flowMetaData.getFlowStartupType().equalsIgnoreCase(StartupType.AUTOMATIC.name())) {
+            startupType = StartupType.AUTOMATIC;
+        }
+        else if(flowMetaData.getFlowStartupType() != null && flowMetaData.getFlowStartupType().equalsIgnoreCase(StartupType.DISABLED.name())) {
+            startupType = StartupType.DISABLED;
+        }
+        else if(flowMetaData.getFlowStartupType() != null && flowMetaData.getFlowStartupType().equalsIgnoreCase(StartupType.MANUAL.name())) {
+            startupType = StartupType.MANUAL;
+        }
+        else {
+
+        }
+
+        return new Flow(flowMetaData.getName(), flowMetaData.getConfigurationId(), consumer, startupType, flowMetaData.getFlowStartupComment());
     }
 
     /**

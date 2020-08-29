@@ -131,7 +131,12 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private void init() {
         this.headerLayout = new HorizontalLayout();
-        headerLayout.add(this.moduleLabel);
+        this.headerLayout.setWidth("100%");
+        this.headerLayout.setHeight("50px");
+        this.headerLayout.add(this.moduleLabel);
+        this.headerLayout.setVerticalComponentAlignment(Alignment.CENTER, this.moduleLabel);
+        this.headerLayout.setSpacing(false);
+        this.headerLayout.setMargin(false);
         this.add(this.headerLayout);
     }
 

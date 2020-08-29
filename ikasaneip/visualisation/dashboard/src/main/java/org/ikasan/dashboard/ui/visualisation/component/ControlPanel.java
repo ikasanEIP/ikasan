@@ -13,8 +13,8 @@ import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
-import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
@@ -22,7 +22,6 @@ import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,13 +335,13 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         UI ui = attachEvent.getUI();
         flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             setFlowState(ui, flowState);
         });
 
         cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             setFlowState(ui, flowState);
         });
 

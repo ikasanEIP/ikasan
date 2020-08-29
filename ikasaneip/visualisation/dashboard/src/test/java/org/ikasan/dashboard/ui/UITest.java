@@ -26,6 +26,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -42,6 +44,9 @@ public class UITest
 {
     @Autowired
     private ApplicationContext ctx;
+
+    @Autowired
+    BuildProperties buildProperties;
 
     @Before
     public void setup() throws Exception
@@ -92,5 +97,10 @@ public class UITest
         Assertions.assertEquals(10, myRoutes.size(), "Number of Routes is 1!0");
         Assertions.assertEquals("", myRoutes.get(0).getUrl(), "URL is empty string!");
         Assertions.assertEquals(SearchView.class, myRoutes.get(0).getNavigationTarget(), "Navigation target is SearchView.class!");
+    }
+
+    @Test
+    public void testBuildDetails(){
+        Assertions.assertNotNull(this.buildProperties);
     }
 }

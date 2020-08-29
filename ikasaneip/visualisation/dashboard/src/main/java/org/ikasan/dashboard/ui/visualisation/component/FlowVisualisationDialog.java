@@ -176,9 +176,6 @@ public class FlowVisualisationDialog extends Dialog {
             this.configurationRestService, this.triggerRestService, metaDataApplicationRestService);
         this.moduleVisualisation.addModule(module);
 
-        VerticalLayout layout = new VerticalLayout();
-        layout.setSizeFull();
-
         Optional<org.ikasan.dashboard.ui.visualisation.model.flow.Flow> flow
             = this.getCurrentFlow(module.getFlows(), flowName);
         if(flow.isPresent()) {
@@ -205,17 +202,10 @@ public class FlowVisualisationDialog extends Dialog {
 
             headerLayout.add(flowImage, flowLabel, controlPanelLayout);
             headerLayout.setMargin(false);
-            layout.add(headerLayout);
+            this.add(headerLayout);
         }
         this.moduleVisualisation.setWidth("1400px");
         this.moduleVisualisation.setHeight("700px");
-        this.moduleVisualisation.getStyle().set( "border" , "1px dashed Grey" );
-        this.moduleVisualisation.getStyle().set( "-webkit-border-radius" , "22px" );
-        this.moduleVisualisation.getStyle().set( "-moz-border-radius" , "22px" );
-        this.moduleVisualisation.getStyle().set( "border-radius" , "22px" );
-        this.moduleVisualisation.getStyle().set( "background-size" , "10px 1px" );
-
-        this.moduleVisualisation.redraw();
 
         this.searchLayout = this.buildSearchLayout();
 
@@ -225,9 +215,7 @@ public class FlowVisualisationDialog extends Dialog {
 
         bottomLayout.add(this.moduleVisualisation, this.searchLayout);
 
-        layout.add(bottomLayout);
-
-        this.add(layout);
+        this.add(bottomLayout);
         this.setWidth("98%");
         this.setHeight("98%");
     }
@@ -272,7 +260,7 @@ public class FlowVisualisationDialog extends Dialog {
             serviceLayout.add(createSearchButtonLayout(hospitalButton), hospitalButtonTooltip);
         }
 
-        Image replayButtonImage = new Image("frontend/images/all-services-icon.png", "");
+        Image replayButtonImage = new Image("frontend/images/replay-service.png", "");
         replayButtonImage.setHeight("40px");
         replayButton = new Button(replayButtonImage);
         replayButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replayButton, getTranslation("tooltip.search-replay-events"
