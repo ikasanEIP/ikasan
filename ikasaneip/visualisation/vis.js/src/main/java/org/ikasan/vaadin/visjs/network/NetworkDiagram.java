@@ -378,6 +378,11 @@ public class NetworkDiagram extends Component implements HasSize {
             ui -> getElement().callJsFunction("$connector.addLogWiretapBefore", x, y, w, h));
     }
 
+    public void drawFlowControl(Integer x, Integer y, Integer w, Integer h, String startupType) {
+        runBeforeClientResponse(
+            ui -> getElement().callJsFunction("$connector.drawFlowControl", x, y, w, h, startupType));
+    }
+
     // ==== Events ====
     private void enableEventDispatching(Class<? extends Event> clazz) {
         runBeforeClientResponse(ui -> {

@@ -48,8 +48,6 @@ public class IkasanModuleLayoutManager extends LayoutManagerBase implements Layo
 
             manageTransition(flow.getConsumer().getTransition(), x, y);
 
-            this.networkDiagram.drawFlow(x - 100, y - 100, xExtent + 200 - x , yExtent + 200 - y , flow.getName());
-
             x = xStart;
             xExtent = x;
             y = yExtent + flowSpacing;

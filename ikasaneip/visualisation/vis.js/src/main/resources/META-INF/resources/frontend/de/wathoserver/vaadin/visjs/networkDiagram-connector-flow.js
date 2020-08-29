@@ -51,6 +51,15 @@ window.Vaadin.Flow.networkDiagramConnector = {
         let errorImage = new Image();
         errorImage.src = "frontend/images/error-service.png";
 
+        let flowManualImage = new Image();
+        flowManualImage.src = "frontend/images/flow-manual.png";
+
+        let flowAutoImage = new Image();
+        flowAutoImage.src = "frontend/images/flow-automatic.png";
+
+        let flowDisabledImage = new Image();
+        flowDisabledImage.src = "frontend/images/flow-disabled.png";
+
         graph.options = JSON.parse(options);
         graph.options.manipulation.addNode = function (nodeData, callback) {
             if (customNodeifAdded == true) {
@@ -211,6 +220,20 @@ window.Vaadin.Flow.networkDiagramConnector = {
         graph.$connector.addLogWiretapBefore = function (x, y, h, w) {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
                 ctx.drawImage(logWiretapBeforeImage, x, y, w, h);
+            });
+        }
+
+        graph.$connector.drawFlowControl = function (x, y, h, w, startupType) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                if ("manual"=== startupType) {
+                    ctx.drawImage(flowManualImage, x, y, w, h);
+                }
+                else if ("automatic"=== startupType) {
+                    ctx.drawImage(flowAutoImage, x, y, w, h);
+                }
+                else if ("disabled"=== startupType) {
+                    ctx.drawImage(flowDisabledImage, x, y, w, h);
+                }
             });
         }
 

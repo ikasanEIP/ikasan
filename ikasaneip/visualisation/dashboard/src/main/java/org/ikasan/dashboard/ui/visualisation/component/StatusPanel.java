@@ -37,6 +37,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
     private Registration broadcasterRegistration;
     private ModuleControlService moduleControlRestService;
+    private ModuleVisualisation moduleVisualisation;
 
     private Tooltip runningButtonTooltip;
     private Tooltip stoppedButtonTooltip;
@@ -44,9 +45,10 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Tooltip recoveringButtonTooltip;
     private Tooltip pauseButtonTooltip;
 
-    public StatusPanel(ModuleControlService moduleControlRestService)
+    public StatusPanel(ModuleControlService moduleControlRestService, ModuleVisualisation moduleVisualisation)
     {
         this.moduleControlRestService = moduleControlRestService;
+        this.moduleVisualisation = moduleVisualisation;
         init();
     }
 
@@ -120,7 +122,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         statusButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             ModuleStatusDialog moduleStatusDialog = new ModuleStatusDialog(currentModule
-                , this.moduleControlRestService);
+                , this.moduleControlRestService, this.moduleVisualisation);
             moduleStatusDialog.open();
         });
 
@@ -236,5 +238,9 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         this.currentFlow = event.getFlow();
 
         calculateStatus();
+    }
+
+    public void setModuleVisualisation(ModuleVisualisation moduleVisualisation) {
+        this.moduleVisualisation = moduleVisualisation;
     }
 }

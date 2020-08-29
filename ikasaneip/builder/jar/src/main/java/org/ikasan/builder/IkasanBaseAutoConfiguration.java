@@ -78,8 +78,6 @@ import org.springframework.context.annotation.ImportResource;
 @Import({ IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
-
-
     @Bean
     public BuilderFactory builderFactory(){
          return new BuilderFactory();

@@ -12,9 +12,7 @@ import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -28,10 +26,13 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.ikasan.dashboard.ui.administration.view.*;
+import org.ikasan.dashboard.ui.general.component.AboutIkasanDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.HashMap;
@@ -53,7 +54,6 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
     private Component leftSubmenu;
     private LeftNavigationItem searchItem;
     private LeftNavigationItem visualisationItem;
-    private LeftNavigationItem notificationManagementItem;
     private LeftNavigationItem userManagementItem;
     private LeftNavigationItem groupManagementItem;
     private LeftNavigationItem roleManagementItem;
@@ -74,6 +74,13 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
             UI.getCurrent().navigate("");
             VaadinSession.getCurrent().getSession().invalidate();
             UI.getCurrent().getPage().executeJs("window.location.href=''");
+        });
+
+
+        Button aboutButton = new Button(new Icon(VaadinIcon.QUESTION));
+        aboutButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+            AboutIkasanDialog aboutIkasanDialog = new AboutIkasanDialog();
+            aboutIkasanDialog.open();
         });
 
         Button jpButton = new Button("JP", new Icon(VaadinIcon.ARROW_RIGHT));
@@ -97,6 +104,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
                 .add(enButton)
                 .add(jpButton)
                 .add(deButton)
+                .add(aboutButton)
                 .add(logout)
                 .build());
 
