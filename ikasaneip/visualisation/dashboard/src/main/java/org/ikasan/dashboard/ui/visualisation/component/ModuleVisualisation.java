@@ -16,16 +16,17 @@ import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FlowControlManagementDialog;
-import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManager;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.dashboard.ui.visualisation.model.flow.*;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.trigger.TriggerJobType;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
@@ -63,16 +64,20 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
     private TriggerService triggerRestService;
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataService;
+
     private UI current;
 
     public  ModuleVisualisation(ModuleControlService moduleControlRestService
         , ConfigurationService configurationRestService
-        , TriggerService triggerRestService, MetaDataService metaDataApplicationRestService)
+        , TriggerService triggerRestService, MetaDataService metaDataApplicationRestService
+        , BatchInsert<ModuleMetaData> moduleMetaDataService)
     {
         this.moduleControlRestService = moduleControlRestService;
         this.configurationRestService = configurationRestService;
         this.triggerRestService = triggerRestService;
         this.metaDataApplicationRestService = metaDataApplicationRestService;
+        this.moduleMetaDataService = moduleMetaDataService;
 
         this.setSizeFull();
         this.setMargin(false);
@@ -240,7 +245,8 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                     ComponentOptionsDialog componentNodeActionDialog = new ComponentOptionsDialog(this.module,
                         this.currentFlow.getName(), this.module.getComponentMap().get(node).getComponentName(),
                         this.module.getComponentMap().get(node).isConfigurable(), this.configurationRestService,
-                        this.triggerRestService, networkDiagram, abstractWiretapNode, this.metaDataApplicationRestService);
+                        this.triggerRestService, networkDiagram, abstractWiretapNode, this.metaDataApplicationRestService,
+                        this.moduleMetaDataService);
 
                     componentNodeActionDialog.open();
                 }
@@ -338,7 +344,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
     public void redrawFlowControl() {
         this.networkDiagram.drawFlowControl(currentFlow.getControlX(), currentFlow.getControlY(), currentFlow.getControlImageW(), currentFlow.getControlImageH()
-            , this.currentFlow.getStartupType().name().toLowerCase());
+            , this.currentFlow.getStartupType() != null ? this.currentFlow.getStartupType().name().toLowerCase() : null);
         this.networkDiagram.diagamRedraw();
     }
 
@@ -352,7 +358,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                 , this.currentFlow.getH(), this.currentFlow.getName());
 
             this.networkDiagram.drawFlowControl(currentFlow.getControlX(), currentFlow.getControlY(), currentFlow.getControlImageW(), currentFlow.getControlImageH()
-                , this.currentFlow.getStartupType().name().toLowerCase());
+                , this.currentFlow.getStartupType() != null ? this.currentFlow.getStartupType().name().toLowerCase() : null);
 
             FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
 

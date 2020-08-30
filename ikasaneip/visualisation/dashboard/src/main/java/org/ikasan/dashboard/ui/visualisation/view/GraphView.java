@@ -121,6 +121,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     @Resource
     private MetaDataService metaDataApplicationRestService;
 
+    @Resource
+    private BatchInsert<ModuleMetaData> moduleMetadataBatchInsert;
+
     private SearchResults searchResults;
 
 
@@ -302,7 +305,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
         this.moduleVisualisation = new GraphViewModuleVisualisation(this.moduleControlRestService,
             this.configurationRestService, this.triggerRestService, this.configurationMetadataService,
-            this.metaDataApplicationRestService);
+            this.metaDataApplicationRestService, this.moduleMetadataBatchInsert);
 
         this.moduleVisualisation.createModuleVisualisation(moduleMetaData);
         this.add(moduleVisualisation);
@@ -321,7 +324,8 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         businessStreamVisualisation = new GraphViewBusinessStreamVisualisation(this.solrSearchService,
             this.moduleControlRestService, this.moduleMetadataService, this.configurationRestService
             , this.triggerRestService, this.configurationMetadataService, this.errorReportingService, this.hospitalAuditService,
-            this.resubmissionRestService, this.replayRestService, this.replayAuditService, this.metaDataApplicationRestService);
+            this.resubmissionRestService, this.replayRestService, this.replayAuditService, this.metaDataApplicationRestService,
+            this.moduleMetadataBatchInsert);
 
         businessStreamVisualisation.createBusinessStreamGraph(name, businessStreamMetaData);
 

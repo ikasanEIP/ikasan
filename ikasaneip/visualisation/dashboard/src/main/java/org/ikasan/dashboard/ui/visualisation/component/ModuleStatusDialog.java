@@ -107,7 +107,7 @@ public class ModuleStatusDialog extends Dialog
             VerticalLayout wrapper = new VerticalLayout();
             HorizontalLayout layout = new HorizontalLayout();
 
-            if(node.getStartupType().equals(StartupType.AUTOMATIC)) {
+            if(node.getStartupType() != null && node.getStartupType().equals(StartupType.AUTOMATIC)) {
                 Image autoImage  = new Image("/frontend/images/flow-automatic.png", "");
                 autoImage.setHeight("40px");
 
@@ -134,7 +134,7 @@ public class ModuleStatusDialog extends Dialog
                 wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
                 return wrapper;
             }
-            else if(node.getStartupType().equals(StartupType.DISABLED)) {
+            else if(node.getStartupType() != null && node.getStartupType().equals(StartupType.DISABLED)) {
                 Image disabledImage  = new Image("/frontend/images/flow-disabled.png", "");
                 disabledImage.setHeight("40px");
 
@@ -161,7 +161,7 @@ public class ModuleStatusDialog extends Dialog
                 wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
                 return wrapper;
             }
-            else if(node.getStartupType().equals(StartupType.MANUAL)) {
+            else if(node.getStartupType() != null && node.getStartupType().equals(StartupType.MANUAL)) {
                 Image manualImage  = new Image("/frontend/images/flow-manual.png", "");
                 manualImage.setHeight("40px");
 
@@ -189,7 +189,7 @@ public class ModuleStatusDialog extends Dialog
                 return wrapper;
             }
 
-            return null;
+            return wrapper;
         })).setHeader("Flow Startup Type").setKey("flowStartupType").setFlexGrow(1);
         flowGrid.addColumn(new ComponentRenderer<>((Flow node) ->
         {

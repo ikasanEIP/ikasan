@@ -82,6 +82,8 @@ public class FlowVisualisationDialog extends Dialog {
 
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataService;
+
     public FlowVisualisationDialog(ModuleControlService moduleControlRestService
         , ConfigurationService configurationRestService
         , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService
@@ -90,7 +92,7 @@ public class FlowVisualisationDialog extends Dialog {
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
         , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
-        , MetaDataService metaDataApplicationRestService)
+        , MetaDataService metaDataApplicationRestService, BatchInsert<ModuleMetaData> moduleMetaDataService)
     {
         this.moduleControlRestService = moduleControlRestService;
         if(this.moduleControlRestService == null){
@@ -151,6 +153,10 @@ public class FlowVisualisationDialog extends Dialog {
         if (this.metaDataApplicationRestService == null) {
             throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
         }
+        this.moduleMetaDataService = moduleMetaDataService;
+        if (this.moduleMetaDataService == null) {
+            throw new IllegalArgumentException("moduleMetaDataService cannot be null!");
+        }
 
 
         this.init(moduleMetaData, flow.getFlowName());
@@ -173,7 +179,8 @@ public class FlowVisualisationDialog extends Dialog {
 
 
         this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, metaDataApplicationRestService);
+            this.configurationRestService, this.triggerRestService, metaDataApplicationRestService,
+            this.moduleMetaDataService);
         this.moduleVisualisation.addModule(module);
 
         Optional<org.ikasan.dashboard.ui.visualisation.model.flow.Flow> flow

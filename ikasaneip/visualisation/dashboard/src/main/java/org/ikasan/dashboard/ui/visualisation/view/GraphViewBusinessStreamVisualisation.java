@@ -20,6 +20,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.module.client.*;
 import org.ikasan.spec.persistence.BatchInsert;
@@ -66,13 +67,16 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert;
+
     /**
      * Constructor
      */
     public GraphViewBusinessStreamVisualisation(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ModuleControlService moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationService configurationRestService
         , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
-        , ResubmissionService resubmissionRestService, ReplayService replayRestService, BatchInsert replayAuditService, MetaDataService metaDataApplicationRestService)
+        , ResubmissionService resubmissionRestService, ReplayService replayRestService, BatchInsert replayAuditService, MetaDataService metaDataApplicationRestService
+        , BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert)
     {
         this.setMargin(false);
         this.setSizeFull();
@@ -125,6 +129,10 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         if (this.metaDataApplicationRestService == null) {
             throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
         }
+        this.moduleMetaDataBatchInsert = moduleMetaDataBatchInsert;
+        if (this.moduleMetaDataBatchInsert == null) {
+            throw new IllegalArgumentException("moduleMetaDataBatchInsert cannot be null!");
+        }
 
         init();
     }
@@ -162,7 +170,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
             this.configurationRestService, this.triggerRestService, this.moduleMetadataService
             , this.configurationMetadataService, this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService,
-            this.metaDataApplicationRestService);
+            this.metaDataApplicationRestService, this.moduleMetaDataBatchInsert);
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(businessStreamMetaData);
 
