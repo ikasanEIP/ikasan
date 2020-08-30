@@ -71,7 +71,6 @@ public class ModuleServiceImplTest
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     SystemEventService systemEventService = mockery.mock(SystemEventService.class);
     StartupControlDao startupControlDao = mockery.mock(StartupControlDao.class);
-    DashboardRestService moduleMetadataDashboardRestService = mockery.mock(DashboardRestService.class);
 
     Module module = mockery.mock(Module.class);
     Flow flow = mockery.mock(Flow.class);
