@@ -225,13 +225,13 @@ window.Vaadin.Flow.networkDiagramConnector = {
 
         graph.$connector.drawFlowControl = function (x, y, h, w, startupType) {
             graph.$connector.diagram.on("afterDrawing", function (ctx) {
-                if ("manual"=== startupType) {
+                if ("manual" === startupType) {
                     ctx.drawImage(flowManualImage, x, y, w, h);
                 }
-                else if ("automatic"=== startupType) {
+                else if ("automatic" === startupType) {
                     ctx.drawImage(flowAutoImage, x, y, w, h);
                 }
-                else if ("disabled"=== startupType) {
+                else if ("disabled" === startupType) {
                     ctx.drawImage(flowDisabledImage, x, y, w, h);
                 }
             });

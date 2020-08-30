@@ -46,7 +46,6 @@ public class IkasanFlowLayoutManager extends LayoutManagerBase implements Layout
 
         this.networkDiagram.drawFlow(flow.getX(), flow.getY(), flow.getW(), flow.getH(), flow.getName());
 
-        this.networkDiagram.drawFlowControl(flow.getX() - 137, flow.getY(), 75, 75, "disabled");
 
         this.destinations.forEach(messageChannel -> messageChannel.setX(xExtentFinal + 200));
     }

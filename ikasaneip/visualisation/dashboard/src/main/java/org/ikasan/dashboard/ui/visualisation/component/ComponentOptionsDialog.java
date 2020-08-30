@@ -16,16 +16,19 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.model.flow.AbstractWiretapNode;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.rest.client.dto.TriggerDto;
-import org.ikasan.spec.metadata.FlowMetaData;
+import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
 import org.ikasan.vaadin.visjs.network.NodeFoundStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ComponentOptionsDialog extends Dialog {
@@ -47,13 +50,15 @@ public class ComponentOptionsDialog extends Dialog {
 
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataService;
+
     protected boolean configuredResource;
 
     protected ComponentOptionsDialog(Module module, String flowName, String componentName, boolean configuredResource,
                                      ConfigurationService configurationRestService,
                                      TriggerService triggerRestService, NetworkDiagram networkDiagram,
-                                     AbstractWiretapNode abstractWiretapNode, MetaDataService metaDataApplicationRestService)
-    {
+                                     AbstractWiretapNode abstractWiretapNode, MetaDataService metaDataApplicationRestService,
+                                     BatchInsert<ModuleMetaData> moduleMetaDataService) {
         this.module = module;
         this.flowName = flowName;
         this.componentName = componentName;
@@ -63,12 +68,12 @@ public class ComponentOptionsDialog extends Dialog {
         this.networkDiagram = networkDiagram;
         this.abstractWiretapNode = abstractWiretapNode;
         this.metaDataApplicationRestService = metaDataApplicationRestService;
+        this.moduleMetaDataService = moduleMetaDataService;
 
         init();
     }
 
-    private void init()
-    {
+    private void init() {
         VerticalLayout verticalLayout = new VerticalLayout();
 
         Image mrSquidImage = new Image("/frontend/images/mr-squid-head.png", "");
@@ -84,8 +89,7 @@ public class ComponentOptionsDialog extends Dialog {
         verticalLayout.add(header);
         verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, header);
 
-        if ( this.configuredResource )
-        {
+        if (this.configuredResource) {
             Button componentConfigurationButton = new Button(
                 getTranslation("button.component-configuration", UI.getCurrent().getLocale()));
             componentConfigurationButton.setWidthFull();
@@ -160,8 +164,7 @@ public class ComponentOptionsDialog extends Dialog {
         this.add(verticalLayout);
     }
 
-    private void openComponentConfiguration()
-    {
+    private void openComponentConfiguration() {
         ComponentConfigurationDialog componentConfigurationDialog = new ComponentConfigurationDialog(module,
             flowName, componentName, configurationRestService
         );
@@ -170,8 +173,7 @@ public class ComponentOptionsDialog extends Dialog {
         componentConfigurationDialog.open();
     }
 
-    private void openInvokerConfiguration()
-    {
+    private void openInvokerConfiguration() {
         InvokerConfigurationDialog componentConfigurationDialog = new InvokerConfigurationDialog(module, flowName,
             componentName, configurationRestService
         );
@@ -180,40 +182,43 @@ public class ComponentOptionsDialog extends Dialog {
         componentConfigurationDialog.open();
     }
 
-    private void createWiretapWithTTLOneDay(String relationship)
-    {
-        createTrigger(relationship,"wiretapJob", "720");
+    private void createWiretapWithTTLOneDay(String relationship) {
+        createTrigger(relationship, "wiretapJob", "720");
     }
 
-    private void createLog(String relationship)
-    {
-        createTrigger(relationship,"loggingJob",null);
+    private void createLog(String relationship) {
+        createTrigger(relationship, "loggingJob", null);
     }
 
-    private void createTrigger(String relationship, String job, String ttl)
-    {
+    private void createTrigger(String relationship, String job, String ttl) {
         TriggerDto triggeDto = new TriggerDto(this.module.getName(), this.flowName, this.componentName, relationship,
             job, ttl
         );
         boolean success = this.triggerRestService.create(this.module.getUrl(), triggeDto);
-        if ( success )
-        {
+        if (success) {
             this.updateDiagramState(job, relationship);
             NotificationHelper
                 .showUserNotification(getTranslation("message.wiretap-save-successful", UI.getCurrent().getLocale()));
 
-            Optional<FlowMetaData> flowMetaDataOptional = this.metaDataApplicationRestService.getFlowMetadata(module.getUrl(), module.getName(), flowName);
+            Optional<ModuleMetaData> moduleMetaDataOptional = this.metaDataApplicationRestService.getModuleMetadata(module.getUrl(), module.getName());
 
-            flowMetaDataOptional.ifPresent(flowMetaData -> {
-                logger.info(flowMetaData.toString());
+            moduleMetaDataOptional.ifPresent(moduleMetaData -> {
 
-                flowMetaData.getFlowElements().stream()
-                    .filter(flowElementMetaData -> flowElementMetaData.getComponentName().equals(this.componentName))
-                    .findFirst().ifPresent(decorators -> this.abstractWiretapNode.setDecoratorMetaDataList(decorators.getDecorators()));
+                moduleMetaData.getFlows().stream().filter(flow -> flowName.equals(flow.getName())).findFirst().ifPresent(flowMetaData -> {
+                    logger.info(flowMetaData.toString());
+
+                    flowMetaData.getFlowElements().stream()
+                        .filter(flowElementMetaData -> flowElementMetaData.getComponentName().equals(this.componentName))
+                        .findFirst().ifPresent(decorators -> this.abstractWiretapNode.setDecoratorMetaDataList(decorators.getDecorators()));
+                });
+
+                List<ModuleMetaData> entities = new ArrayList<>();
+                entities.add(moduleMetaData);
+
+                this.moduleMetaDataService.insert(entities);
             });
-        }
-        else
-        {
+
+        } else {
             NotificationHelper.showErrorNotification(
                 getTranslation("message.wiretap-save-unsuccessful", UI.getCurrent().getLocale()));
         }
@@ -221,29 +226,26 @@ public class ComponentOptionsDialog extends Dialog {
         this.close();
     }
 
-    private void updateDiagramState(String job, String relationship){
-        if(job.equals("wiretapJob")){
-            if(relationship.equals(TriggerRelationship.AFTER.getDescription())) {
+    private void updateDiagramState(String job, String relationship) {
+        if (job.equals("wiretapJob")) {
+            if (relationship.equals(TriggerRelationship.AFTER.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addWiretapAfter(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getWiretapAfterImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getWiretapAfterImageY(),
                     this.abstractWiretapNode.getWiretapAfterImageW(), this.abstractWiretapNode.getWiretapAfterImageH()));
                 abstractWiretapNode.setWiretapAfterStatus(NodeFoundStatus.FOUND);
-            }
-            else if(relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
+            } else if (relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addWiretapBefore(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getWiretapBeforeImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getWiretapBeforeImageY(),
                     this.abstractWiretapNode.getWiretapBeforeImageW(), this.abstractWiretapNode.getWiretapBeforeImageH()));
                 abstractWiretapNode.setWiretapBeforeStatus(NodeFoundStatus.FOUND);
             }
-        }
-        else if(job.equals("loggingJob")){
-            if(relationship.equals(TriggerRelationship.AFTER.getDescription())) {
+        } else if (job.equals("loggingJob")) {
+            if (relationship.equals(TriggerRelationship.AFTER.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addLogWiretapAfter(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getLogWiretapAfterImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getLogWiretapAfterImageY(),
                     this.abstractWiretapNode.getLogWiretapAfterImageW(), this.abstractWiretapNode.getLogWiretapAfterImageH()));
                 abstractWiretapNode.setLogWiretapAfterStatus(NodeFoundStatus.FOUND);
-            }
-            else if(relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
+            } else if (relationship.equals(TriggerRelationship.BEFORE.getDescription())) {
                 UI.getCurrent().access(() -> this.networkDiagram.addLogWiretapBefore(this.abstractWiretapNode.getX() + this.abstractWiretapNode.getLogWiretapBeforeImageX(),
                     this.abstractWiretapNode.getY() + this.abstractWiretapNode.getLogWiretapBeforeImageY(),
                     this.abstractWiretapNode.getLogWiretapBeforeImageW(), this.abstractWiretapNode.getLogWiretapBeforeImageH()));

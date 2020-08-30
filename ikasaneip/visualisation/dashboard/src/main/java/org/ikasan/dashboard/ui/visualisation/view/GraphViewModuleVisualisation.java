@@ -29,6 +29,7 @@ import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.ikasan.spec.module.client.TriggerService;
+import org.ikasan.spec.persistence.BatchInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,8 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
 
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataService;
+
     /**
      * Constructor
      */
@@ -71,7 +74,8 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         , ConfigurationService configurationRestService
         , TriggerService triggerRestService
         , ConfigurationMetaDataService configurationMetadataService
-        , MetaDataService metaDataApplicationRestService) {
+        , MetaDataService metaDataApplicationRestService
+        , BatchInsert<ModuleMetaData> moduleMetaDataService) {
 
         this.graphViewChangeListeners = new ArrayList<>();
 
@@ -94,6 +98,10 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         this.metaDataApplicationRestService = metaDataApplicationRestService;
         if(this.metaDataApplicationRestService == null){
             throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
+        }
+        this.moduleMetaDataService = moduleMetaDataService;
+        if(this.moduleMetaDataService == null){
+            throw new IllegalArgumentException("moduleMetaDataService cannot be null!");
         }
 
         this.init();
@@ -123,7 +131,8 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         moduleViewHeaderLayout.setMargin(false);
 
         moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, this.metaDataApplicationRestService);
+            this.configurationRestService, this.triggerRestService, this.metaDataApplicationRestService,
+            this.moduleMetaDataService);
 
         statusPanel = new StatusPanel(this.moduleControlRestService, this.moduleVisualisation);
 
@@ -219,7 +228,8 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         this.fireModuleFlowChangeEvent();
 
         this.moduleVisualisation = new ModuleVisualisation(this.moduleControlRestService,
-            this.configurationRestService, this.triggerRestService, metaDataApplicationRestService);
+            this.configurationRestService, this.triggerRestService, metaDataApplicationRestService,
+            moduleMetaDataService);
         moduleVisualisation.addModule(module);
         moduleVisualisation.setCurrentFlow(module.getFlows().get(0));
         moduleVisualisation.redraw();

@@ -91,6 +91,8 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private MetaDataService metaDataApplicationRestService;
 
+    private BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert;
+
     public BusinessStreamVisualisation(ModuleControlService moduleControlRestService
         , ConfigurationService configurationRestService, TriggerService triggerRestService
         , ModuleMetaDataService moduleMetaDataService
@@ -99,7 +101,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
         , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
-        , MetaDataService metaDataApplicationRestService) {
+        , MetaDataService metaDataApplicationRestService, BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert) {
         this.moduleControlRestService = moduleControlRestService;
         if (this.moduleControlRestService == null) {
             throw new IllegalArgumentException("moduleControlRestService cannot be null!");
@@ -151,6 +153,10 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         this.metaDataApplicationRestService = metaDataApplicationRestService;
         if (this.metaDataApplicationRestService == null) {
             throw new IllegalArgumentException("metaDataApplicationRestService cannot be null!");
+        }
+        this.moduleMetaDataBatchInsert = moduleMetaDataBatchInsert;
+        if (this.moduleMetaDataBatchInsert == null) {
+            throw new IllegalArgumentException("moduleMetaDataBatchInsert cannot be null!");
         }
 
         current = UI.getCurrent();
@@ -240,7 +246,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                         , this.flowMap.get(nodeId), this.solrSearchService
                         , this.stringSearchFoundStatusMap.get(nodeId), this.errorReportingService, this.hospitalAuditService
                         , this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService
-                        , this.metaDataApplicationRestService);
+                        , this.metaDataApplicationRestService, this.moduleMetaDataBatchInsert);
 
                     flowVisualisationDialog.open();
                 }
