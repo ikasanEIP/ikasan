@@ -1,6 +1,11 @@
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.model.*;
+import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -12,6 +17,9 @@ import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +37,29 @@ import java.util.stream.Collectors;
 @RestController
 public class ConfigurationApplication
 {
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationApplication.class);
+
     @Autowired
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
     @Autowired
     private ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataExtractor;
 
-    /**
-     * The module service
-     */
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private SystemEventService systemEventService;
+
+    private ObjectMapper mapper;
+
+    public ConfigurationApplication() {
+        this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        SimpleModule m = new SimpleModule();
+        this.mapper.registerModule(m);
+    }
 
     @Deprecated
     @RequestMapping(method = RequestMethod.GET,
@@ -291,6 +311,26 @@ public class ConfigurationApplication
     public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData)
     {
         Configuration configuration = convert(configurationMetaData);
+
+        try
+        {
+            Configuration oldConfig = this.configurationManagement.getConfiguration(configuration.getConfigurationId());
+            String oldConfigJson = null;
+            if(oldConfig!=null){
+                oldConfigJson = mapper.writeValueAsString(oldConfig);
+            }
+            String newConfigJson = mapper.writeValueAsString(configuration);
+
+            this.systemEventService.logSystemEvent(
+                configuration.getConfigurationId(),
+                String.format("Configuration Updated OldConfig [%s] NewConfig [%s]", oldConfigJson, newConfigJson),
+                UserUtil.getUser());
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.warn("Issue converting configuration to json.", e);
+        }
+
         this.configurationManagement.saveConfiguration(configuration);
 
         return new ResponseEntity(HttpStatus.OK);
@@ -366,6 +406,19 @@ public class ConfigurationApplication
         if ( configuration != null )
         {
             this.configurationManagement.deleteConfiguration(configuration);
+            try
+            {
+                String deletedConfigJson = mapper.writeValueAsString(configuration);
+
+                this.systemEventService.logSystemEvent(
+                    configuration.getConfigurationId(),
+                    String.format("Configuration Deleted OldConfig [%s]", deletedConfigJson),
+                    UserUtil.getUser());
+            }
+            catch (JsonProcessingException e)
+            {
+                logger.warn("Issue converting configuration to json.", e);
+            }
             return new ResponseEntity(HttpStatus.OK);
         }
         else
