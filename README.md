@@ -17,7 +17,7 @@
     - [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
     - [Standalone Developer Guide](ikasaneip/developer/docs/StandaloneDeveloperGuide.md) 
     - [Component Guide](ikasaneip/component/Readme.md)
-    - [Dashboard Guide](ikasaneip/visualisation/dashboard/Readme.md)
+    - [Dashboard Guide](ikasaneip/visualisation/dashboard/README.md)
     
  - Samples overview
     - [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md)
