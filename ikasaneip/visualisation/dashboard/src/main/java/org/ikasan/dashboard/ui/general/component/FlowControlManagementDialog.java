@@ -19,16 +19,32 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.module.client.ModuleControlService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class FlowControlManagementDialog extends Dialog
 {
-    private Flow flow;
+    private Set<Flow> flows;
     private Module module;
     private ModuleControlService moduleControlService;
     private ModuleVisualisation moduleVisualisation;
 
     public FlowControlManagementDialog(Module module, Flow flow, ModuleControlService moduleRestService, ModuleVisualisation moduleVisualisation)
     {
-        this.flow = flow;
+        this.flows = new HashSet<>();
+        this.flows.add(flow);
+        this.module = module;
+        this.moduleControlService = moduleRestService;
+        this.moduleVisualisation = moduleVisualisation;
+
+        init();
+    }
+
+    public FlowControlManagementDialog(Module module, Set<Flow> flows, ModuleControlService moduleRestService, ModuleVisualisation moduleVisualisation)
+    {
+        this.flows = flows;
         this.module = module;
         this.moduleControlService = moduleRestService;
         this.moduleVisualisation = moduleVisualisation;
@@ -75,7 +91,11 @@ public class FlowControlManagementDialog extends Dialog
             }
         });
 
-        startupTypeCombo.setValue(flow.getStartupType());
+        if(flows.size() == 1) {
+            flows.stream()
+                .findFirst()
+                .ifPresent(flow -> startupTypeCombo.setValue(flow.getStartupType()));
+        }
 
         Binder<Flow> binder = new Binder<>();
         binder
@@ -85,17 +105,23 @@ public class FlowControlManagementDialog extends Dialog
                 || (startupTypeCombo.getValue() == StartupType.DISABLED
                 && value.length() > 0), getTranslation("error.comment-mandatory", UI.getCurrent().getLocale()))
             .bind(Flow::getStartupComment, Flow::setStartupComment);
-        binder.setBean(flow);
+
+        flows.stream()
+            .findFirst()
+            .ifPresent(flow -> binder.setBean(flow));
 
         Button saveButton = new Button(getTranslation("button.save", UI.getCurrent().getLocale()));
         saveButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
            BinderValidationStatus<Flow> binderValidationStatus = binder.validate();
 
            if(binderValidationStatus.isOk()) {
-               this.moduleControlService.changeFlowStartupType(module.getUrl(), module.getName(), flow.getName(),
-                   startupTypeCombo.getValue().name().toLowerCase(), startupTypeCombo.getValue() == StartupType.DISABLED ? textArea.getValue() : "");
+               this.flows.forEach(flow -> {
+                   this.moduleControlService.changeFlowStartupType(module.getUrl(), module.getName(), flow.getName(),
+                       startupTypeCombo.getValue().name().toLowerCase(), startupTypeCombo.getValue() == StartupType.DISABLED ? textArea.getValue() : "");
 
-               this.flow.setStartupType(startupTypeCombo.getValue());
+                   flow.setStartupType(startupTypeCombo.getValue());
+                   flow.setStartupComment(startupTypeCombo.getValue() == StartupType.DISABLED ? textArea.getValue() : "");
+               });
                this.moduleVisualisation.redrawFlowControl();
 
                this.close();

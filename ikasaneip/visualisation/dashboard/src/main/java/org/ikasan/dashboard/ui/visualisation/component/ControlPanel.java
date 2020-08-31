@@ -40,13 +40,12 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     public static final String SELECT = "SELECT";
 
     private HorizontalLayout controlPanelLayout = new HorizontalLayout();
-    private ModuleControlService moduleControlRestService;
+    protected ModuleControlService moduleControlRestService;
 
-    private Button startButton;
-    private Button stopButton;
-    private Button pauseButton;
-    private Button startPauseButton;
-    private Button all;
+    protected Button startButton;
+    protected Button stopButton;
+    protected Button pauseButton;
+    protected Button startPauseButton;
 
     private Image playImage;
     private Image playImageDisabled;
@@ -61,13 +60,15 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     private Registration flowStateBroadcasterRegistration;
     private Registration cacheStateBroadcasterRegistration;
 
-    private Module module;
-    private Flow currentFlow;
+    protected Module module;
+    protected Flow currentFlow;
 
     private Tooltip startButtonTooltip;
     private Tooltip stopButtonTooltip;
     private Tooltip pauseButtonTooltip;
     private Tooltip startPauseButtonTooltip;
+
+    protected boolean asActionListener = true;
 
     public ControlPanel(ModuleControlService moduleControlRestService)
     {
@@ -102,9 +103,6 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
 
         startPauseButton = createButton(startPauseImage, START_PAUSE, true);
         startPauseButtonTooltip = TooltipHelper.getTooltipForComponentBottom(startPauseButton, getTranslation("tooltip.start-pause-flow", UI.getCurrent().getLocale()));
-
-
-        all = createButton(selectAllImageOff, SELECT, true);
 
         controlPanelLayout.add(startButton, startButtonTooltip, stopButton, stopButtonTooltip, pauseButton, pauseButtonTooltip, startPauseButton, startPauseButtonTooltip);
         controlPanelLayout.setVerticalComponentAlignment(Alignment.BASELINE, startButton, stopButton, pauseButton, startPauseButton);
@@ -192,7 +190,9 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
 
         button.setId(id);
 
-        button.addClickListener(this.asButtonClickedListener());
+        if(asActionListener) {
+            button.addClickListener(this.asButtonClickedListener());
+        }
         button.setEnabled(enabled);
         return button;
     }
@@ -395,5 +395,15 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
         this.stopButton.setVisible(visible);
         this.startPauseButton.setVisible(visible);
         this.pauseButton.setVisible(visible);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        this.startButton.setEnabled(enabled);
+        this.stopButton.setEnabled(enabled);
+        this.startPauseButton.setEnabled(enabled);
+        this.pauseButton.setEnabled(enabled);
     }
 }
