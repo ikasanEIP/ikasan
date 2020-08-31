@@ -42,6 +42,7 @@ package org.ikasan.rest.module;
 
 import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.ResubmissionRequestDto;
+import org.ikasan.rest.module.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.hospital.service.HospitalService;
@@ -148,10 +149,14 @@ public class ResubmissionApplication
             switch (requestDto.getAction())
             {
             case "ignore":
-                this.hospitalService.ignore(requestDto.getModuleName(), requestDto.getFlowName(), requestDto.getErrorUri(),  getUser());
+                this.hospitalService.ignore(requestDto.getModuleName(), requestDto.getFlowName(),
+                    requestDto.getErrorUri(),
+                    UserUtil.getUser());
                 break;
             case "resubmit":
-                this.hospitalService.resubmit(requestDto.getModuleName(), requestDto.getFlowName(), requestDto.getErrorUri(), getUser());
+                this.hospitalService.resubmit(requestDto.getModuleName(), requestDto.getFlowName(),
+                    requestDto.getErrorUri(),
+                    UserUtil.getUser());
                 break;
             default:
                 return new ResponseEntity(
@@ -180,17 +185,6 @@ public class ResubmissionApplication
             return (Principal) context.getAuthentication().getPrincipal();
         }
         return null;
-    }
-
-    private String getUser()
-    {
-        String user = "unknown";
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null)
-        {
-            user = context.getAuthentication().getPrincipal().toString();
-        }
-        return user;
     }
 
 }

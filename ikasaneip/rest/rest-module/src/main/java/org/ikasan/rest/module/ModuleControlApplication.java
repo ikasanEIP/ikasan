@@ -1,6 +1,7 @@
 package org.ikasan.rest.module;
 
 import org.ikasan.rest.module.dto.*;
+import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.module.StartupControl;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class ModuleControlApplication
     {
         try
         {
-            String user = getUser();
+            String user = UserUtil.getUser();
 
             switch (action){
             case "start":
@@ -83,7 +84,7 @@ public class ModuleControlApplication
     {
         try
         {
-            String user = getUser();
+            String user = UserUtil.getUser();
 
             switch (changeFlowStateDto.getAction()){
             case "start":
@@ -118,7 +119,7 @@ public class ModuleControlApplication
         @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
         @RequestBody String startupComment)
     {
-        String user = getUser();
+        String user = UserUtil.getUser();
         if ("manual".equalsIgnoreCase(startupType)
             || "automatic".equalsIgnoreCase(startupType)
             || "disabled".equalsIgnoreCase(startupType))
@@ -140,7 +141,7 @@ public class ModuleControlApplication
     public ResponseEntity changeFlowStartupMode(
         @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
     {
-        String user = getUser();
+        String user = UserUtil.getUser();
 
         String startupType = changeFlowStartupModeDto.getStartupType();
         String moduleName = changeFlowStartupModeDto.getModuleName();
@@ -269,7 +270,7 @@ public class ModuleControlApplication
     {
         try
         {
-            String user = getUser();
+            String user = UserUtil.getUser();
             if (action.equalsIgnoreCase("start"))
             {
                 this.moduleService.startContextListeners(moduleName, flowName, user);
@@ -290,15 +291,5 @@ public class ModuleControlApplication
         return new ResponseEntity("Context Listeners state changed successfully!", HttpStatus.OK);
     }
 
-    private String getUser()
-    {
-        String user = "unknown";
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null)
-        {
-            user = context.getAuthentication().getPrincipal().toString();
-        }
-        return user;
-    }
 
 }

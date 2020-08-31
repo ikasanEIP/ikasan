@@ -40,14 +40,20 @@
  */
 package org.ikasan.web.service;
 
-import org.ikasan.spec.module.ModuleService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.systemevent.SystemEventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,14 +67,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class ConfigurationManagementService
 {
-    /** constant for logging new configuration */
-    public static final String CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION = "Configuration created";
-
-    /** constant for logging updated configuration */
-    public static final String CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION = "Configuration updated";
-
-    /** constant for logging deleted configuration */
-    public static final String CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION = "Configuration deleted";
+    /**
+     * Logger
+     */
+    private final static Logger logger = LoggerFactory.getLogger(ConfigurationManagementService.class);
 
     /** configuration service */
     private ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement;
@@ -78,7 +80,9 @@ public class ConfigurationManagementService
     
     /** module service */
     private ModuleService moduleService;
-    
+
+    private ObjectMapper mapper;
+
     /**
      * Constructor
      * @param configurationManagement
@@ -105,6 +109,13 @@ public class ConfigurationManagementService
         {
             throw new IllegalArgumentException("moduleService cannot be 'null'");
         }
+
+        this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        SimpleModule m = new SimpleModule();
+        this.mapper.registerModule(m);
+
     }
    
     /**
@@ -241,7 +252,21 @@ public class ConfigurationManagementService
      */
     public void insertConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+
+        try
+        {
+            String newConfigJson = mapper.writeValueAsString(configuration);
+            this.systemEventService.logSystemEvent(
+                configuration.getConfigurationId(),
+                String.format("Configuration created, NewConfig [%s]", newConfigJson),
+                getAuthentication().getName());
+
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.warn("Issue converting configuration to json.", e);
+        }
+
         this.configurationManagement.saveConfiguration(configuration);
     }
     
@@ -251,7 +276,25 @@ public class ConfigurationManagementService
      */
     public void updateConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+
+        Configuration oldConfig = this.configurationManagement.getConfiguration(configuration.getConfigurationId());
+
+        try
+        {
+            String oldConfigJson = mapper.writeValueAsString(oldConfig);
+            String newConfigJson = mapper.writeValueAsString(configuration);
+
+            this.systemEventService.logSystemEvent(
+                configuration.getConfigurationId(),
+                String.format("Configuration Updated OldConfig [%s] NewConfig [%s]", oldConfigJson, newConfigJson),
+                getAuthentication().getName());
+
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.warn("Issue converting configuration to json.", e);
+        }
+
         this.configurationManagement.saveConfiguration(configuration);
     }
     
@@ -261,7 +304,22 @@ public class ConfigurationManagementService
      */
     public void deleteConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+
+        try
+        {
+            String newConfigJson = mapper.writeValueAsString(configuration);
+            this.systemEventService.logSystemEvent(
+                configuration.getConfigurationId(),
+                String.format("Configuration deleted, OldConfig [%s]", newConfigJson),
+                getAuthentication().getName());
+
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.warn("Issue converting configuration to json.", e);
+        }
+
+
         this.configurationManagement.deleteConfiguration(configuration);
     }
 

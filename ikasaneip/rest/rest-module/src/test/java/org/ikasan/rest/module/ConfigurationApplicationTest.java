@@ -3,6 +3,7 @@ package org.ikasan.rest.module;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.model.TestFlowConfiguration;
@@ -15,6 +16,7 @@ import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,6 +67,9 @@ public class ConfigurationApplicationTest
 
     @MockBean
     protected ModuleService moduleService;
+
+    @MockBean
+    protected SystemEventService systemEventService;
 
     @MockBean
     protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
@@ -163,11 +168,21 @@ public class ConfigurationApplicationTest
             MockMvcRequestBuilders.put("/rest/configuration").contentType(MediaType.APPLICATION_JSON_VALUE)
                                   .content(loadDataFile("/data/componentConfig.json"))).andReturn();
 
+        Mockito.when(configurationManagement.getConfiguration("consumerConfiguredResourceId"))
+               .thenReturn(null);
+
+
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.OK.value(), status);
 
         Mockito.verify(configurationManagement).saveConfiguration(Mockito.any(Configuration.class));
-        Mockito.verifyNoMoreInteractions(configurationManagement);
+        Mockito.verify(configurationManagement).getConfiguration("consumerConfiguredResourceId");
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("consumerConfiguredResourceId"),
+            Mockito.anyString(),
+            Mockito.anyString()
+            );
+        Mockito.verifyNoMoreInteractions(configurationManagement,systemEventService);
 
     }
 
@@ -175,7 +190,7 @@ public class ConfigurationApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void testDeleteConfiguration() throws Exception
     {
-        Configuration configuration = Mockito.mock(Configuration.class);
+        Configuration configuration = new DefaultConfiguration("testConfigId");
         Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(configuration);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/rest/configuration/testConfigId")
@@ -187,7 +202,12 @@ public class ConfigurationApplicationTest
 
         Mockito.verify(configurationManagement).getConfiguration("testConfigId");
         Mockito.verify(configurationManagement).deleteConfiguration(configuration);
-        Mockito.verifyNoMoreInteractions(configurationManagement);
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testConfigId"),
+            Mockito.anyString(),
+            Mockito.anyString()
+                                                         );
+        Mockito.verifyNoMoreInteractions(configurationManagement,systemEventService);
     }
 
     @Test
