@@ -11,6 +11,7 @@ import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.StartupType;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,6 +58,9 @@ public class ResubmissionApplicationTest
     @MockBean
     protected HospitalService hospitalService;
 
+    @MockBean
+    protected SystemEventService systemEventService;
+
     @Autowired
     protected ResubmissionApplication resubmissionApplication;
 
@@ -95,7 +99,12 @@ public class ResubmissionApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito
             .verify(hospitalService).ignore(Mockito.eq("testModule"), Mockito.eq("testFlow"),Mockito.eq("TEST"),Mockito.any(String.class));
-        Mockito.verifyNoMoreInteractions(hospitalService);
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule-testFlow:TEST"),
+            Mockito.eq("Ignoring Exclusion"),
+            Mockito.anyString()
+                                                         );
+        Mockito.verifyNoMoreInteractions(hospitalService,systemEventService);
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -115,7 +124,12 @@ public class ResubmissionApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito
             .verify(hospitalService).resubmit(Mockito.eq("testModule"), Mockito.eq("testFlow"),Mockito.eq("TEST"),Mockito.any(String.class));
-        Mockito.verifyNoMoreInteractions(hospitalService);
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule-testFlow:TEST"),
+            Mockito.eq("Resubmitting Exclusion"),
+            Mockito.anyString()
+                                                         );
+        Mockito.verifyNoMoreInteractions(hospitalService,systemEventService);
 
         assertEquals(200, result.getResponse().getStatus());
 

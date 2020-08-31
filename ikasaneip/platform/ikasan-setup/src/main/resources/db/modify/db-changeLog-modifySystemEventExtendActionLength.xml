@@ -49,7 +49,7 @@
 
     <changeSet author="ikasan dev" id="modifySystemEventExtendActionLength" context="postBaseline">
     
-		<modifyDataType  tableName="SystemEvent" columnName="Action" newDataType="clob"/>
+		<modifyDataType  tableName="SystemEvent" columnName="Action" newDataType="TEXT"/>
 
     </changeSet>
 
