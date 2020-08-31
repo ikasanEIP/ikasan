@@ -43,14 +43,14 @@ package org.ikasan.rest.module;
 import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.ResubmissionRequestDto;
 import org.ikasan.rest.module.util.UserUtil;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.spec.hospital.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,6 +67,9 @@ public class ResubmissionApplication
 
     @Autowired
     private HospitalService hospitalService;
+
+    @Autowired
+    private SystemEventService systemEventService;
 
     /**
      * REST endpoint to resubmit excluded event.
@@ -146,17 +149,26 @@ public class ResubmissionApplication
         try
         {
             logger.debug("Request " + requestDto);
+            String userName = requestDto.getUserName()!=null?requestDto.getUserName():UserUtil.getUser();
             switch (requestDto.getAction())
             {
             case "ignore":
                 this.hospitalService.ignore(requestDto.getModuleName(), requestDto.getFlowName(),
                     requestDto.getErrorUri(),
                     UserUtil.getUser());
+                systemEventService.logSystemEvent(
+                    String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),requestDto.getErrorUri()),
+                    "Ignoring Exclusion",
+                    userName);
                 break;
             case "resubmit":
                 this.hospitalService.resubmit(requestDto.getModuleName(), requestDto.getFlowName(),
                     requestDto.getErrorUri(),
                     UserUtil.getUser());
+                systemEventService.logSystemEvent(
+                    String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),requestDto.getErrorUri()),
+                    "Resubmitting Exclusion",
+                    userName);
                 break;
             default:
                 return new ResponseEntity(
