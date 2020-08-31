@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.HasEnabled;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -33,6 +33,29 @@ public class ComponentSecurityVisibility
             if(authentication.hasGrantedAuthority(securityConstant))
             {
                 component.setVisible(true);
+            }
+        }
+    }
+
+    public static void applyEnabledSecurity(IkasanAuthentication authentication, HasEnabled component, String ... securityConstants)
+    {
+        if(component == null)
+        {
+            return;
+        }
+
+        component.setEnabled(false);
+
+        if(authentication == null)
+        {
+            return;
+        }
+
+        for(String securityConstant: securityConstants)
+        {
+            if(authentication.hasGrantedAuthority(securityConstant))
+            {
+                component.setEnabled(true);
             }
         }
     }

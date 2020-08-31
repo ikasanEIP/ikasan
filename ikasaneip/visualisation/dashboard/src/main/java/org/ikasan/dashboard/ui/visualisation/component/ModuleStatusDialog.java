@@ -24,7 +24,6 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.module.client.ModuleControlService;
@@ -32,10 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.util.Optional;
 
-public class ModuleStatusDialog extends Dialog
-{
+public class ModuleStatusDialog extends Dialog {
     private Logger logger = LoggerFactory.getLogger(ModuleStatusDialog.class);
 
     private Grid<Flow> flowGrid = new Grid<>();
@@ -47,8 +46,7 @@ public class ModuleStatusDialog extends Dialog
     private Registration cacheStateBroadcasterRegistration;
 
     public ModuleStatusDialog(Module currentModule, ModuleControlService moduleControlRestService,
-                              ModuleVisualisation moduleVisualisation)
-    {
+                              ModuleVisualisation moduleVisualisation) {
         this.currentModule = currentModule;
         this.moduleControlRestService = moduleControlRestService;
         this.controlPanel = new ControlPanel(moduleControlRestService);
@@ -76,8 +74,7 @@ public class ModuleStatusDialog extends Dialog
         this.setWidth("1100px");
     }
 
-    protected Grid createFlowGrid()
-    {
+    protected Grid createFlowGrid() {
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
         // Create a modulesGrid bound to the list
@@ -93,8 +90,7 @@ public class ModuleStatusDialog extends Dialog
 
             State state = State.UNKNOWN_STATE;
 
-            if(flowState != null)
-            {
+            if (flowState != null) {
                 state = flowState.getState();
             }
 
@@ -107,96 +103,106 @@ public class ModuleStatusDialog extends Dialog
             VerticalLayout wrapper = new VerticalLayout();
             HorizontalLayout layout = new HorizontalLayout();
 
-            if(node.getStartupType() != null && node.getStartupType().equals(StartupType.AUTOMATIC)) {
-                Image autoImage  = new Image("/frontend/images/flow-automatic.png", "");
-                autoImage.setHeight("40px");
+            Image buttonImage;
 
-                Button button = new Button(autoImage);
-                button.setHeight("40px");
-                button.setWidth("40px");
+            if (node.getStartupType() != null && node.getStartupType().equals(StartupType.AUTOMATIC)) {
+                buttonImage = new Image("/frontend/images/flow-automatic.png", "");
+                buttonImage.setHeight("40px");
+            } else if (node.getStartupType() != null && node.getStartupType().equals(StartupType.DISABLED)) {
+                buttonImage = new Image("/frontend/images/flow-disabled.png", "");
+                buttonImage.setHeight("40px");
+            } else if (node.getStartupType() != null && node.getStartupType().equals(StartupType.MANUAL)) {
+                buttonImage = new Image("/frontend/images/flow-manual.png", "");
+                buttonImage.setHeight("40px");
+            } else {
+                // We have an  unknown image for module versions that do not report their flow control startup type.
+                buttonImage = new Image("/frontend/images/flow-unknown.png", "");
+                buttonImage.setHeight("40px");
+            }
 
-                button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-                    FlowControlManagementDialog flowControlManagementDialog = new FlowControlManagementDialog(this.currentModule,
+            Button button = new Button(buttonImage);
+            button.setHeight("40px");
+            button.setWidth("40px");
+
+            UI.getCurrent().access(() -> ComponentSecurityVisibility.applyEnabledSecurity(authentication, button, SecurityConstants.ALL_AUTHORITY
+                , SecurityConstants.MODULE_CONTROL_WRITE
+                , SecurityConstants.MODULE_CONTROL_ADMIN));
+
+            button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+                FlowControlManagementDialog flowControlManagementDialog;
+                if (this.flowGrid.getSelectedItems().isEmpty()) {
+                    flowControlManagementDialog = new FlowControlManagementDialog(this.currentModule,
                         node, this.moduleControlRestService, moduleVisualisation);
+                } else {
+                    flowControlManagementDialog = new FlowControlManagementDialog(this.currentModule,
+                        this.flowGrid.getSelectedItems(), this.moduleControlRestService, moduleVisualisation);
+                }
 
-                    flowControlManagementDialog.open();
+                flowControlManagementDialog.open();
 
-                    flowControlManagementDialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent -> {
-                        if(!dialogOpenedChangeEvent.isOpened()){
+                flowControlManagementDialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent -> {
+                    if (!dialogOpenedChangeEvent.isOpened()) {
+                        if (!this.flowGrid.getSelectedItems().isEmpty()) {
+                            this.flowGrid.getSelectedItems().forEach(flow -> this.flowGrid.getDataProvider().refreshItem(flow));
+                        }
+                        else {
                             this.flowGrid.getDataProvider().refreshItem(node);
                         }
-                    });
+                    }
                 });
+            });
 
-                layout.add(button);
-                layout.setVerticalComponentAlignment(FlexComponent.Alignment.BASELINE, button);
-                wrapper.add(layout);
-                wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
-                return wrapper;
-            }
-            else if(node.getStartupType() != null && node.getStartupType().equals(StartupType.DISABLED)) {
-                Image disabledImage  = new Image("/frontend/images/flow-disabled.png", "");
-                disabledImage.setHeight("40px");
-
-                Button button = new Button(disabledImage);
-                button.setHeight("40px");
-                button.setWidth("40px");
-
-                button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-                    FlowControlManagementDialog flowControlManagementDialog = new FlowControlManagementDialog(this.currentModule,
-                        node, this.moduleControlRestService, moduleVisualisation);
-
-                    flowControlManagementDialog.open();
-
-                    flowControlManagementDialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent -> {
-                        if(!dialogOpenedChangeEvent.isOpened()){
-                            this.flowGrid.getDataProvider().refreshItem(node);
-                        }
-                    });
-                });
-
-                layout.add(button);
-                layout.setVerticalComponentAlignment(FlexComponent.Alignment.BASELINE, button);
-                wrapper.add(layout);
-                wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
-                return wrapper;
-            }
-            else if(node.getStartupType() != null && node.getStartupType().equals(StartupType.MANUAL)) {
-                Image manualImage  = new Image("/frontend/images/flow-manual.png", "");
-                manualImage.setHeight("40px");
-
-                Button button = new Button(manualImage);
-                button.setHeight("40px");
-                button.setWidth("40px");
-
-                button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
-                    FlowControlManagementDialog flowControlManagementDialog = new FlowControlManagementDialog(this.currentModule,
-                        node, this.moduleControlRestService, moduleVisualisation);
-
-                    flowControlManagementDialog.open();
-
-                    flowControlManagementDialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent -> {
-                        if(!dialogOpenedChangeEvent.isOpened()){
-                            this.flowGrid.getDataProvider().refreshItem(node);
-                        }
-                    });
-                });
-
-                layout.add(button);
-                layout.setVerticalComponentAlignment(FlexComponent.Alignment.BASELINE, button);
-                wrapper.add(layout);
-                wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
-                return wrapper;
-            }
+            layout.add(button);
+            layout.setVerticalComponentAlignment(FlexComponent.Alignment.BASELINE, button);
+            wrapper.add(layout);
+            wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
 
             return wrapper;
         })).setHeader("Flow Startup Type").setKey("flowStartupType").setFlexGrow(1);
         flowGrid.addColumn(new ComponentRenderer<>((Flow node) ->
         {
-            ControlPanel controlPanel = new ControlPanel(this.moduleControlRestService);
+            MultiFlowControlPanel controlPanel = new MultiFlowControlPanel(this.moduleControlRestService);
             controlPanel.onChange(new GraphViewChangeEvent(this.currentModule, node));
 
-            UI.getCurrent().access(() -> ComponentSecurityVisibility.applySecurity(authentication, controlPanel, SecurityConstants.ALL_AUTHORITY
+            controlPanel.addStartButtonClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+                if(this.flowGrid.getSelectedItems().isEmpty()) {
+                    controlPanel.performFlowControlAction(ControlPanel.START, List.of(node));
+                }
+                else {
+                    controlPanel.performFlowControlAction(ControlPanel.START, this.flowGrid.getSelectedItems());
+                }
+            });
+
+            controlPanel.addStopButtonClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+                if(this.flowGrid.getSelectedItems().isEmpty()) {
+                    controlPanel.performFlowControlAction(ControlPanel.STOP, List.of(node));
+                }
+                else {
+                    controlPanel.performFlowControlAction(ControlPanel.STOP, this.flowGrid.getSelectedItems());
+                }
+            });
+
+            controlPanel.addStartPauseButtonClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+                if(this.flowGrid.getSelectedItems().isEmpty()) {
+                    controlPanel.performFlowControlAction(ControlPanel.START_PAUSE, List.of(node));
+                }
+                else {
+                    controlPanel.performFlowControlAction(ControlPanel.START_PAUSE, this.flowGrid.getSelectedItems());
+                }
+            });
+
+            controlPanel.addPauseButtonClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+                if(this.flowGrid.getSelectedItems().isEmpty()) {
+                    controlPanel.performFlowControlAction(ControlPanel.PAUSE, List.of(node));
+                }
+                else {
+                    controlPanel.performFlowControlAction(ControlPanel.PAUSE, this.flowGrid.getSelectedItems());
+                }
+            });
+
+            controlPanel.setVisible(true);
+
+            UI.getCurrent().access(() -> ComponentSecurityVisibility.applyEnabledSecurity(authentication, controlPanel, SecurityConstants.ALL_AUTHORITY
                 , SecurityConstants.MODULE_CONTROL_WRITE
                 , SecurityConstants.MODULE_CONTROL_ADMIN));
 
@@ -208,8 +214,7 @@ public class ModuleStatusDialog extends Dialog
 
             State state = State.UNKNOWN_STATE;
 
-            if(flowState != null)
-            {
+            if (flowState != null) {
                 state = flowState.getState();
             }
 
@@ -219,8 +224,7 @@ public class ModuleStatusDialog extends Dialog
         return flowGrid;
     }
 
-    protected HorizontalLayout getStatusLabelLayout(State state)
-    {
+    protected HorizontalLayout getStatusLabelLayout(State state) {
         Icon icon = new Icon(VaadinIcon.CIRCLE);
         icon.setColor(state.getStateColour());
         icon.setSize("20px");
@@ -228,7 +232,7 @@ public class ModuleStatusDialog extends Dialog
         HorizontalLayout layout = new HorizontalLayout();
         layout.setSizeFull();
 
-        H6 statusLabel = new H6(getTranslation("label.status-"+state.getFlowState(), UI.getCurrent().getLocale()));
+        H6 statusLabel = new H6(getTranslation("label.status-" + state.getFlowState(), UI.getCurrent().getLocale()));
         layout.add(icon, statusLabel);
 
         layout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, icon, statusLabel);
@@ -237,8 +241,7 @@ public class ModuleStatusDialog extends Dialog
     }
 
     @Override
-    protected void onAttach(AttachEvent attachEvent)
-    {
+    protected void onAttach(AttachEvent attachEvent) {
         UI ui = attachEvent.getUI();
 
         cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
@@ -252,8 +255,7 @@ public class ModuleStatusDialog extends Dialog
     }
 
     @Override
-    protected void onDetach(DetachEvent detachEvent)
-    {
+    protected void onDetach(DetachEvent detachEvent) {
         this.cacheStateBroadcasterRegistration.remove();
         this.cacheStateBroadcasterRegistration = null;
     }
