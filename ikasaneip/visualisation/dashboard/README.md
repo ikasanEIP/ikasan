@@ -4,6 +4,7 @@
 
 - [Notifications](./notifications.md)
 - [Wiretap Management](./wiretap-management.md)
+- [Start Up Control Management](./startup-control-management.md)
 
 Import the project to the IDE of your choosing as a Maven project. 
 
