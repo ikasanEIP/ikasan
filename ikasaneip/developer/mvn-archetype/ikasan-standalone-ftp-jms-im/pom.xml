@@ -51,6 +51,9 @@
     <packaging>maven-plugin</packaging>
     <name>IkasanEIP Maven Archetype for a standalone FTP - JMS Integration Module</name>
 
+    <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
 
     <build>
         <plugins>
