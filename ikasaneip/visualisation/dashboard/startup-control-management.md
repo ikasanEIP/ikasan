@@ -68,5 +68,5 @@ It is possible to manage the flow start up types for an entire module. In order 
 
 <img src="../../developer/docs/quickstart-images/status-icons.png" width="50%">
 
-Once seleceted the following screen will appear. Flow startup types can be individually set by double clicking on the icon associated with each flow. If multiple flows are selected (check boxes) and a startup type icon double clicked on, all selected flows will have the startup type that is chosen set on it.   
+Once selected the following screen will appear. Flow startup types can be individually set by double clicking on the icon associated with each flow. If multiple flows are selected (check boxes) and a startup type icon double clicked on, all selected flows will have the startup type that is chosen set on it.   
 <img src="../../developer/docs/quickstart-images/module-startup-management.png" width="100%">
