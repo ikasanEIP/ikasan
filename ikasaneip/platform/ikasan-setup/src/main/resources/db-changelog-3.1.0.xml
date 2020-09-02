@@ -12,6 +12,7 @@
 
     <!-- 3.1.x data creation -->
     <include file="db/data/db-changelog-updateAdmin.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-updateModuleControlWritePolicy.xml" relativeToChangelogFile="true" />
 
     <!-- 3.1.x index creation -->
 
