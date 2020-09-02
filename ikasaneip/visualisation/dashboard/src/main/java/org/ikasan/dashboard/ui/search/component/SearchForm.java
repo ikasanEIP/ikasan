@@ -247,15 +247,23 @@ public class SearchForm extends VerticalLayout {
         filterImage.setHeight("40px");
         filterImage.setWidth("40px");
 
+        HorizontalLayout imageLayout = new HorizontalLayout();
+        imageLayout.setHeight("40px");
+        imageLayout.setWidth("40px");
+        imageLayout.add(filterImage);
+
         checkbox.setHeight("10px");
-        buttonLayout.add(filterImage, checkbox);
+        buttonLayout.add(imageLayout, checkbox);
         buttonLayout.setHorizontalComponentAlignment(Alignment.CENTER, checkbox);
         buttonLayout.setFlexGrow(1.0, checkbox);
 
-        buttonLayout.setHorizontalComponentAlignment(Alignment.CENTER, filterImage);
+        buttonLayout.setHorizontalComponentAlignment(Alignment.CENTER, imageLayout);
         buttonLayout.setWidth("50px");
 
-        buttonLayout.setFlexGrow(2.0, filterImage);
+        buttonLayout.setFlexGrow(2.0, imageLayout);
+
+        checkbox.setEnabled(true);
+        checkbox.setReadOnly(false);
 
         return buttonLayout;
     }
