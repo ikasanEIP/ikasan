@@ -108,10 +108,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private boolean renderSearchImages;
 
     private SolrSearchFilteringGrid searchResultsGrid;
-    private WiretapDialog wiretapDialog = new WiretapDialog();
-    private ErrorDialog errorDialog = new ErrorDialog();
-    private ReplayDialog replayDialog;
-    private HospitalDialog exclusionDialog;
 
     private TextArea searchText = new TextArea();
     private DatePicker startDate;
@@ -517,29 +513,35 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             {
                 if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(WIRETAP))
                 {
+                    WiretapDialog wiretapDialog = new WiretapDialog();
                     wiretapDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
                 }
                 else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(ERROR))
                 {
+                    ErrorDialog errorDialog = new ErrorDialog();
                     errorDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
                 }
                 else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(REPLAY))
                 {
+                    ReplayDialog replayDialog = new ReplayDialog(this.replayRestService, this.replayAuditService);
                     replayDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
                 }
                 else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(EXCLUSION))
                 {
+                    HospitalDialog exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService
+                        , this.resubmissionRestService, this.moduleMetadataService);
+
                     exclusionDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
+
+                    exclusionDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
+                    {
+                        if (!dialogOpenedChangeEvent.isOpened())
+                        {
+                            searchResultsGrid.getDataProvider().refreshAll();
+                        }
+                    });
                 }
             });
-
-        exclusionDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
-        {
-            if (!dialogOpenedChangeEvent.isOpened())
-            {
-                searchResultsGrid.getDataProvider().refreshAll();
-            }
-        });
 
         // Add filtering to the relevant columns.
         HeaderRow hr = searchResultsGrid.appendHeaderRow();
@@ -801,11 +803,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     {
         if(!initialised)
         {
-            this.exclusionDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService
-                , this.resubmissionRestService, this.moduleMetadataService);
-
-            this.replayDialog = new ReplayDialog(this.replayRestService, this.replayAuditService);
-
             this.createSearchForm();
             this.createSearchResultGridLayout();
 

@@ -71,7 +71,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
         String xmlString = formatXml(event);
         aceEditor.setValue(xmlString);
-
     }
 
     protected String formatXml(String event)
@@ -105,7 +104,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         aceEditor.setSoftTabs(false);
         aceEditor.setTabSize(4);
         aceEditor.setWidth("100%");
-        aceEditor.setHeight("500px");
+        aceEditor.setHeight("50vh");
         aceEditor.setReadOnly(true);
     }
 }

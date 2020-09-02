@@ -212,7 +212,7 @@ public class FlowVisualisationDialog extends Dialog {
             this.add(headerLayout);
         }
         this.moduleVisualisation.setWidth("1400px");
-        this.moduleVisualisation.setHeight("700px");
+        this.moduleVisualisation.setHeight("80vh");
 
         this.searchLayout = this.buildSearchLayout();
 
@@ -223,8 +223,8 @@ public class FlowVisualisationDialog extends Dialog {
         bottomLayout.add(this.moduleVisualisation, this.searchLayout);
 
         this.add(bottomLayout);
-        this.setWidth("98%");
-        this.setHeight("98%");
+        this.setWidth("98vw");
+        this.setHeight("98vh");
     }
 
     private VerticalLayout buildSearchLayout(){

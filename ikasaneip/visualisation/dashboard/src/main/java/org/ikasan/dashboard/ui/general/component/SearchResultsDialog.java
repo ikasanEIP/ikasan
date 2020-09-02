@@ -1,6 +1,7 @@
 package org.ikasan.dashboard.ui.general.component;
 
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
@@ -26,9 +27,14 @@ public class SearchResultsDialog extends Dialog {
         searchResults = new SearchResults(solrGeneralService, errorReportingService, hospitalAuditService,
             resubmissionRestService, replayRestService, moduleMetadataService, replayAuditService);
 
-        searchResults.setWidth("1600px");
-        searchResults.setHeight("800px");
-        this.add(searchResults);
+        searchResults.setSizeFull();
+
+        HorizontalLayout wrapper = new HorizontalLayout();
+        wrapper.setWidthFull();
+        wrapper.setHeight("95%");
+        wrapper.add(searchResults);
+        this.add(wrapper);
+
         this.setSizeFull();
     }
 

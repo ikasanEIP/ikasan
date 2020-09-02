@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -162,7 +163,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         this.searchResults = new SearchResults(this.solrGeneralService, this.solrErrorReportingService,
             this.hospitalAuditService, this.resubmissionRestService, this.replayRestService,
             this.moduleMetadataService, this.replayAuditService);
-        this.searchResults.setHeight("450px");
+        this.searchResults.setHeight("50vh");
         this.searchResults.setWidth("100%");
 
         this.createModuleGrid();
@@ -178,7 +179,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         modulesGrid = new ModuleFilteringGrid(this.moduleMetadataService, moduleSearchFilter);
         modulesGrid.removeAllColumns();
         modulesGrid.setVisible(true);
-        modulesGrid.setHeight("800px");
+        modulesGrid.setHeight("80vh");
         modulesGrid.setWidth("100%");
 
         modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name").setKey("name");
@@ -208,7 +209,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             businessStreamSearchFilter);
         businessStreamGrid.removeAllColumns();
         businessStreamGrid.setVisible(true);
-        businessStreamGrid.setHeight("800px");
+        businessStreamGrid.setHeight("80vh");
         businessStreamGrid.setWidth("100%");
 
         businessStreamGrid.addColumn(BusinessStreamMetaData::getName).setHeader("Name").setKey("name").setFlexGrow(8);
@@ -422,9 +423,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         wrapperDiv.setMargin(false);
         wrapperDiv.setSpacing(false);
 
-        Div searchDiv = new Div();
+        HorizontalLayout searchDiv = new HorizontalLayout();
         searchDiv.setWidth("100%");
-        searchDiv.setHeight("220px");
+        searchDiv.setHeight("260px");
         searchDiv.getStyle().set("background", "white");
         searchDiv.getStyle().set("color", "black");
         searchDiv.add(searchForm);
