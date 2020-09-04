@@ -42,6 +42,7 @@ import java.util.Locale;
 @Push
 @JsModule("./styles/shared-styles.js")
 @CssImport("./styles/shared-styles.css")
+@CssImport(value = "./styles/dialog-overlay.css", themeFor = "vaadin-dialog-overlay")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @Theme(Lumo.class)
 @PreserveOnRefresh
