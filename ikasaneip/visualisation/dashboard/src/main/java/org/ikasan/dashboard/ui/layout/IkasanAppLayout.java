@@ -25,6 +25,7 @@ import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.theme.material.Material;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.general.component.AboutIkasanDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
@@ -44,7 +45,7 @@ import java.util.Locale;
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/dialog-overlay.css", themeFor = "vaadin-dialog-overlay")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
-@Theme(Lumo.class)
+@Theme(Material.class)
 @PreserveOnRefresh
 @PWA(name = "Ikasan Visualisation Dashboard",
     shortName = "Ikasan",
