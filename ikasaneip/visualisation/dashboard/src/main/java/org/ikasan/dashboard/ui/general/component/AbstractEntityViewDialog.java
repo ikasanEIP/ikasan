@@ -2,8 +2,16 @@ package org.ikasan.dashboard.ui.general.component;
 
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Footer;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.theme.lumo.Lumo;
 import io.github.ciesielskis.AceEditor;
 import io.github.ciesielskis.AceMode;
 import io.github.ciesielskis.AceTheme;
@@ -20,13 +28,25 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+@CssImport("./styles/ikasan-dialog.css")
 public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 {
     protected DocumentBuilder documentBuilder;
     protected Transformer transformer;
     protected AceEditor aceEditor;
     protected boolean initialised = false;
-    protected VerticalLayout layout = new VerticalLayout();
+
+    public String DOCK = "dock";
+    public String FULLSCREEN = "fullscreen";
+
+    private boolean isDocked = false;
+    private boolean isFullScreen = true;
+
+    private Header header;
+    private Button min;
+    private Button max;
+
+    private VerticalLayout content;
 
     public abstract Component getEntityDetailsLayout();
 
@@ -35,6 +55,33 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     public AbstractEntityViewDialog()
     {
         this.setSizeFull();
+        setDraggable(true);
+        setModal(false);
+        setResizable(true);
+
+        // Dialog theming
+        getElement().getThemeList().add("ikasan-dialog");
+
+        // Accessibility
+        getElement().setAttribute("aria-labelledby", "dialog-title");
+
+
+        min = new Button(VaadinIcon.DOWNLOAD_ALT.create());
+        min.addClickListener(event -> minimise());
+
+        max = new Button(VaadinIcon.COMPRESS_SQUARE.create());
+        max.addClickListener(event -> maximise());
+
+        Button close = new Button(VaadinIcon.CLOSE_SMALL.create());
+        close.addClickListener(event -> close());
+
+        H2 title = new H2("Dialog Title");
+        title.addClassName("dialog-title");
+
+        header = new Header(title, min, max, close);
+        header.getElement().getThemeList().add(Lumo.DARK);
+        add(header);
+
         try
         {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -52,11 +99,13 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
     private void init()
     {
-        layout.setWidth("100%");
+        content = new VerticalLayout(this.getEntityDetailsLayout(), this.aceEditor);
+        content.setMargin(false);
+        content.setSpacing(false);
+        content.addClassName("dialog-content");
+        content.setAlignItems(FlexComponent.Alignment.STRETCH);
 
-        layout.add(this.getEntityDetailsLayout(), this.aceEditor);
-
-        this.add(layout);
+        add(content);
     }
 
     public void open(String event)
@@ -99,12 +148,54 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         aceEditor = new AceEditor();
 
         aceEditor.setTheme(AceTheme.dracula);
-        aceEditor.setMode(AceMode.xml);
+        aceEditor.setMode(AceMode.text);
         aceEditor.setFontSize(11);
         aceEditor.setSoftTabs(false);
         aceEditor.setTabSize(4);
-        aceEditor.setWidth("100%");
+        aceEditor.setWidth("auto");
         aceEditor.setHeight("50vh");
         aceEditor.setReadOnly(true);
+        aceEditor.setWrap(false);
+    }
+
+    private void minimise() {
+        if (isDocked) {
+            initialSize();
+        } else {
+            if (isFullScreen) {
+                initialSize();
+            }
+            min.setIcon(VaadinIcon.UPLOAD_ALT.create());
+            getElement().getThemeList().add(DOCK);
+            setWidth("320px");
+        }
+        isDocked = !isDocked;
+        isFullScreen = false;
+        content.setVisible(!isDocked);
+    }
+
+    private void initialSize() {
+        min.setIcon(VaadinIcon.DOWNLOAD_ALT.create());
+        getElement().getThemeList().remove(DOCK);
+        max.setIcon(VaadinIcon.EXPAND_SQUARE.create());
+        getElement().getThemeList().remove(FULLSCREEN);
+        setHeight("auto");
+        setWidth("600px");
+    }
+
+    private void maximise() {
+        if (isFullScreen) {
+            initialSize();
+        } else {
+            if (isDocked) {
+                initialSize();
+            }
+            max.setIcon(VaadinIcon.COMPRESS_SQUARE.create());
+            getElement().getThemeList().add(FULLSCREEN);
+            setSizeFull();
+            content.setVisible(true);
+        }
+        isFullScreen = !isFullScreen;
+        isDocked = false;
     }
 }

@@ -1,0 +1,55 @@
+[theme~="ikasan-dialog"] flow-component-renderer > div {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* HEADER */
+[theme~="ikasan-dialog"] header {
+    align-items: center;
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+[theme~="ikasan-dialog"] header .dialog-title {
+    font-size: var(--lumo-font-size-m);
+    margin: 0 auto 0 5px;
+}
+
+[theme~="ikasan-dialog"] header vaadin-button:not(:last-child) {
+    margin-right: var(--lumo-space-xs);
+}
+
+/* CONTENT */
+[theme~="ikasan-dialog"] .dialog-content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+/* FOOTER */
+[theme~="ikasan-dialog"] footer {
+    box-shadow: 0 -1px var(--lumo-contrast-20pct);
+    display: flex;
+    padding: var(--lumo-space-xs) var(--lumo-space-m);
+    z-index: 1;
+}
+
+[theme~="ikasan-dialog"] footer vaadin-button:not(:last-child) {
+    margin-right: var(--lumo-space-xs);
+}
+
+[theme~="ikasan-dialog"] footer vaadin-button:last-child {
+    margin-left: auto;
+}
+
+/* DRAGGABLE and RESIZABLE */
+[theme~="ikasan-dialog"] header,
+[theme~="ikasan-dialog"] footer {
+    pointer-events: none;
+}
+
+[theme~="ikasan-dialog"] header *,
+[theme~="ikasan-dialog"] footer * {
+    pointer-events: auto;
+}
