@@ -211,7 +211,15 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     {
         Set<String> moduleNames = null;
 
-        if(filter.getModuleNamesFilter() != null && !filter.getModuleNamesFilter().isEmpty())
+        if(filter.isValidModuleNameFilter()) {
+            moduleNames = new HashSet<>();
+            moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+        }
+        else if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty()) {
+            moduleNames = new HashSet<>();
+            moduleNames.add("----");
+        }
+        else if(filter.getModuleNamesFilterList() != null && !filter.getModuleNamesFilterList().isEmpty())
         {
             moduleNames = new HashSet<>();
 
@@ -220,18 +228,18 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                 Set<String> allowedModuleNames = SecurityUtils.getAccessibleModules(authentication);
 
                 moduleNames.addAll(allowedModuleNames.stream()
-                    .filter(name -> filter.getModuleNamesFilter()
+                    .filter(name -> filter.getModuleNamesFilterList()
                         .stream()
                         .anyMatch(moduleName -> moduleName.startsWith(name)))
                     .collect(Collectors.toList()));
 
                 if(moduleNames.isEmpty()){
-                    moduleNames.add("--");
+                    moduleNames.add("----");
                 }
             }
             else
             {
-                moduleNames = filter.getModuleNamesFilter()
+                moduleNames = filter.getModuleNamesFilterList()
                     .stream()
                     .map(moduleName -> "*" + ClientUtils.escapeQueryChars(moduleName) + "*")
                     .collect(Collectors.toSet());
@@ -240,9 +248,17 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 
         Set<String> flowNames = null;
 
-        if(filter.getFlowNamesFilter() != null && !filter.getFlowNamesFilter().isEmpty())
+        if(filter.isValidFlowNameFilter()) {
+            flowNames = new HashSet<>();
+            flowNames.add("*" + ClientUtils.escapeQueryChars(filter.getFlowNameFilter()) + "*");
+        }
+        else if(filter.getFlowNameFilter() != null && !filter.getFlowNameFilter().isEmpty()) {
+            flowNames = new HashSet<>();
+            flowNames.add("----");
+        }
+        else if(filter.getFlowNamesFilterList() != null && !filter.getFlowNamesFilterList().isEmpty())
         {
-            flowNames = filter.getFlowNamesFilter()
+            flowNames = filter.getFlowNamesFilterList()
                 .stream()
                 .map(flowName -> "*" + ClientUtils.escapeQueryChars(flowName) + "*")
                 .collect(Collectors.toSet());
