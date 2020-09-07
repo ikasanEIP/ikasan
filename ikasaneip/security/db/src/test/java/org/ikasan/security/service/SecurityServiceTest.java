@@ -263,7 +263,6 @@ public class SecurityServiceTest
 
         role.setPolicies(policies);
         this.xaSecurityService.saveRole(role);
-        policies = new HashSet<Policy>();
 
         principal.getRoles().add(role);
 
@@ -606,7 +605,7 @@ public class SecurityServiceTest
     
     @Test
     @DirtiesContext
-    public void test_success_get_all_policy_lonk_types()
+    public void test_success_get_all_policy_link_types()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
 
@@ -697,6 +696,54 @@ public class SecurityServiceTest
         Assert.assertNotNull(role);
 
         Assert.assertEquals(role.getName(), "role1");
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_add_all_policies_to_role_with_different_policy_()
+    {
+        Role role = this.xaSecurityService.findRoleByName("role1");
+
+        List<Policy> policies = this.xaSecurityService.getAllPolicies();
+        policies.forEach(policy -> role.addPolicy(policy));
+        this.xaSecurityService.saveRole(role);
+
+        Role role2 = this.xaSecurityService.findRoleByName("role2");
+
+        policies.forEach(policy -> role2.addPolicy(policy));
+        this.xaSecurityService.saveRole(role2);
+
+        // load the policies again so that there are 2 objects
+        // in the session that reference the same row in the DB.
+        List<Policy> policies2 = this.xaSecurityService.getAllPolicies();
+        policies2.forEach(policy -> role.addPolicy(policy));
+
+        this.xaSecurityService.saveRole(role);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_confirm_deleting_role_does_not_delete_policies()
+    {
+        Role role = this.xaSecurityService.findRoleByName("role1");
+
+        List<Policy> policies = this.xaSecurityService.getAllPolicies();
+        policies.forEach(policy -> role.addPolicy(policy));
+        this.xaSecurityService.saveRole(role);
+
+        List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole(role.getName());
+
+        principals.forEach(principal -> {
+            principal.getRoles().remove(role);
+            this.xaSecurityService.savePrincipal(principal);
+        });
+
+        this.xaSecurityService.deleteRole(role);
+
+        List<Policy> policies2 = this.xaSecurityService.getAllPolicies();
+
+        // Make sure deleting roles does not delete policies too.
+        Assert.assertEquals(policies.size(), policies2.size());
     }
 
 }
