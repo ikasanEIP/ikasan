@@ -59,7 +59,7 @@
           <generator class="identity" />
         </id>
 
-        <set name="policies" table="RolePolicy" cascade="all" lazy="false" fetch="select" inverse="false">
+        <set name="policies" table="RolePolicy" cascade="merge" lazy="false" fetch="select" inverse="false">
             <key column="RoleId"/>
             <many-to-many column="PolicyId"
                 class="org.ikasan.security.model.Policy"/>
