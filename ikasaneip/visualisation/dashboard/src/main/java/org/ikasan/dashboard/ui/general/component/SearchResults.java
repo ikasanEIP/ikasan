@@ -22,8 +22,6 @@ import org.ikasan.dashboard.ui.search.listener.ReplayEventSubmissionListener;
 import org.ikasan.dashboard.ui.search.listener.ResubmitHospitalEventSubmissionListener;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
-import org.ikasan.rest.client.ReplayRestServiceImpl;
-import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
@@ -84,6 +82,8 @@ public class SearchResults extends Div {
     private String translatedEventActionMessage;
 
     private List<String> searchTypes;
+
+    private SearchFilter searchFilter = new SearchFilter();
 
     public SearchResults(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
                          ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
@@ -186,8 +186,6 @@ public class SearchResults extends Div {
      */
     private void createSearchResultsGrid()
     {
-        SearchFilter searchFilter = new SearchFilter();
-
         this.searchResultsGrid = new SolrSearchFilteringGrid(this.solrGeneralService, searchFilter, this.resultsLabel);
 
         // Add the icon column to the grid
@@ -493,15 +491,14 @@ public class SearchResults extends Div {
     public void search(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery, List<String> moduleNames, List<String> flowNames) {
         this.searchTypes = types;
         this.selected = false;
-        SearchFilter searchFilter = new SearchFilter();
-        searchFilter.setModuleNamesFilter(moduleNames);
-        searchFilter.setFlowNamesFilter(flowNames);
+        searchFilter.setModuleNamesFilterList(moduleNames);
+        searchFilter.setFlowNamesFilterList(flowNames);
 
         if(searchTerm != null && !searchTerm.isEmpty()){
             searchTerm = "\""+searchTerm+"\"";
         }
 
-        this.searchResultsGrid.init(startTime, endTime, searchTerm, types, negateQuery, searchFilter);
+        this.searchResultsGrid.init(startTime, endTime, searchTerm, types, negateQuery, null);
         this.resultsLabel.setVisible(true);
 
         this.functionalGroupSetup(types);
