@@ -7,10 +7,9 @@ import org.ikasan.security.model.RoleModule;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class RoleModuleFilter implements Filter<RoleModule, Optional<RoleModuleFilter>>
+public class RoleModuleFilter implements Filter<RoleModule>
 {
     private Collection<RoleModule> roleModules;
     private String moduleNameFilter = null;

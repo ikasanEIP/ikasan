@@ -7,10 +7,9 @@ import org.ikasan.spec.metadata.ModuleMetaData;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ModuleFilter implements Filter<ModuleMetaData, Optional<ModuleFilter>>
+public class ModuleFilter implements Filter<ModuleMetaData>
 {
     private Collection<ModuleMetaData> modules;
     private String moduleNameFilter = null;

@@ -7,10 +7,9 @@ import org.ikasan.security.model.IkasanPrincipalLite;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class GroupFilter implements Filter<IkasanPrincipalLite, Optional<GroupFilter>>
+public class GroupFilter implements Filter<IkasanPrincipalLite>
 {
     private Collection<IkasanPrincipalLite> principals;
     private String nameFilter = null;

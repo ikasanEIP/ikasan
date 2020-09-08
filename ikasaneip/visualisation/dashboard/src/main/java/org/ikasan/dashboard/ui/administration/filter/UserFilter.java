@@ -1,16 +1,15 @@
 package org.ikasan.dashboard.ui.administration.filter;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
-import org.ikasan.security.model.User;
 import org.ikasan.dashboard.ui.general.component.Filter;
+import org.ikasan.security.model.User;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class UserFilter implements Filter<User, Optional<UserFilter>>
+public class UserFilter implements Filter<User>
 {
     private Collection<User> users;
     private String usernameFilter = null;

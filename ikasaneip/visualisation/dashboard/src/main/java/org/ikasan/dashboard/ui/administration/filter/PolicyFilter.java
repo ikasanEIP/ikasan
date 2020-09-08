@@ -3,16 +3,13 @@ package org.ikasan.dashboard.ui.administration.filter;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import org.ikasan.dashboard.ui.general.component.Filter;
 import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class PolicyFilter implements Filter<Policy, Optional<PolicyFilter>>
+public class PolicyFilter implements Filter<Policy>
 {
     private Collection<Policy> policies;
     private String nameFilter = null;
