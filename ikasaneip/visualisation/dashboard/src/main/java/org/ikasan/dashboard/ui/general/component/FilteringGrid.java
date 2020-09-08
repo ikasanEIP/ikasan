@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -55,7 +54,9 @@ public class FilteringGrid<T> extends Grid<T>
 
             setFilter.accept(ev.getValue());
 
-            filteredDataProvider.refreshAll();
+            if(filteredDataProvider != null) {
+                filteredDataProvider.refreshAll();
+            }
         });
 
         hr.getCell(getColumnByKey(columnKey)).setComponent(textField);
