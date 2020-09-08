@@ -165,7 +165,6 @@ public class RoleManagementView extends VerticalLayout implements BeforeEnterObs
     protected void updateRoles()
     {
         List<Role> roles = this.securityService.getAllRoles();
-
         this.roleGrid.setItems(roles);
     }
 
