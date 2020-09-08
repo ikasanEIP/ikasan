@@ -18,6 +18,7 @@ import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,10 @@ public class SelectModuleForRoleDialog extends Dialog
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
     private List<ModuleMetaData> moduleMetaDataList;
-    private ListDataProvider<RoleModule> roleModuleDataProvider;
+    private FilteringGrid<RoleModule> roleModuleFilteringGrid;
 
     public SelectModuleForRoleDialog(Role role, ModuleMetaDataService moduleMetadataService,  SecurityService securityService
-        , SystemEventLogger systemEventLogger, ListDataProvider<RoleModule> roleModuleDataProvider)
+        , SystemEventLogger systemEventLogger, FilteringGrid<RoleModule> roleModuleFilteringGrid)
     {
         this.role = role;
         if(this.role == null)
@@ -53,10 +54,10 @@ public class SelectModuleForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.roleModuleDataProvider = roleModuleDataProvider;
-        if(this.roleModuleDataProvider == null)
+        this.roleModuleFilteringGrid = roleModuleFilteringGrid;
+        if(this.roleModuleFilteringGrid == null)
         {
-            throw new IllegalArgumentException("roleModuleDataProvider cannot be null!");
+            throw new IllegalArgumentException("roleModuleFilteringGrid cannot be null!");
         }
 
         init();
@@ -103,7 +104,11 @@ public class SelectModuleForRoleDialog extends Dialog
             moduleGrid.setItems(removeAlreadyAssociatedModules(moduleMetaDataList));
             moduleGrid.getDataProvider().refreshAll();
 
-            this.roleModuleDataProvider.refreshAll();
+            Collection<RoleModule> items = this.roleModuleFilteringGrid.getItems();
+            items.add(roleModule);
+
+            this.roleModuleFilteringGrid.setItems(items);
+            this.roleModuleFilteringGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = moduleGrid.appendHeaderRow();

@@ -64,4 +64,9 @@ public class ModuleFilter implements Filter<ModuleMetaData, Optional<ModuleFilte
 
         return comparator;
     }
+
+    @Override
+    public Collection<ModuleMetaData> getItems() {
+        return this.modules;
+    }
 }

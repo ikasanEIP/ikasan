@@ -97,4 +97,9 @@ public class RoleFilter implements Filter<Role, Optional<RoleFilter>>
 
         return comparator;
     }
+
+    @Override
+    public Collection<Role> getItems() {
+        return this.roles;
+    }
 }
