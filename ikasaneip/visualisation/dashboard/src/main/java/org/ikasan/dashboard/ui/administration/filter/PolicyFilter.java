@@ -96,4 +96,9 @@ public class PolicyFilter implements Filter<Policy, Optional<PolicyFilter>>
 
         return comparator;
     }
+
+    @Override
+    public Collection<Policy> getItems() {
+        return this.policies;
+    }
 }

@@ -195,4 +195,9 @@ public class UserLiteFilter implements Filter<UserLite, Optional<UserLiteFilter>
 
         return comparator;
     }
+
+    @Override
+    public Collection<UserLite> getItems() {
+        return this.users;
+    }
 }

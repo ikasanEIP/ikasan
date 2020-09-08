@@ -11,6 +11,8 @@ public interface Filter<ENTITY, FILTER>
 {
     public void setItems(Collection<ENTITY> users);
 
+    public Collection<ENTITY> getItems();
+
     public Stream<ENTITY> getFilterStream();
 
     public Comparator getSortComparator(List<QuerySortOrder> querySortOrders);

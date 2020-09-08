@@ -53,16 +53,12 @@ public class RoleManagementDialog extends Dialog
     private ModuleMetaDataService moduleMetadataService;
 
     private FilteringGrid<UserLite> userGrid;
-    private ListDataProvider<UserLite> userDataProvider;
 
     private FilteringGrid<IkasanPrincipalLite> groupGrid;
-    private ListDataProvider<IkasanPrincipalLite> groupDataProvider;
 
     private FilteringGrid<Policy> policyGrid;
-    private ListDataProvider<Policy> policyDataProvider;
 
     private FilteringGrid<RoleModule> roleModuleGrid;
-    private ListDataProvider<RoleModule> roleModuleDataProvider;
 
     /**
      * Constructor
@@ -189,7 +185,7 @@ public class RoleManagementDialog extends Dialog
         Button addPolicyButton = new Button(getTranslation("button.add-policy", UI.getCurrent().getLocale(), null));
         addPolicyButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger, this.policyDataProvider);
+            SelectPolicyForRoleDialog dialog = new SelectPolicyForRoleDialog(this.role, this.securityService, this.systemEventLogger, this.policyGrid);
 
             dialog.open();
         });
@@ -204,8 +200,7 @@ public class RoleManagementDialog extends Dialog
      */
     private void updatePoliciesGrid()
     {
-        policyDataProvider = new ListDataProvider<>(role.getPolicies());
-        this.policyGrid.setDataProvider(policyDataProvider);
+        this.policyGrid.setItems(role.getPolicies());
     }
 
     /**
@@ -265,7 +260,7 @@ public class RoleManagementDialog extends Dialog
         addUser.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectUserForRoleDialog dialog = new SelectUserForRoleDialog(this.role, this.userService, this.getAssociatedUsers(),
-                this.securityService, this.systemEventLogger, this.userDataProvider);
+                this.securityService, this.systemEventLogger, this.userGrid);
 
             dialog.open();
         });
@@ -316,8 +311,7 @@ public class RoleManagementDialog extends Dialog
      */
     private void updateAssociatedUsersGrid()
     {
-        userDataProvider = new ListDataProvider<>(this.getAssociatedUsers());
-        this.userGrid.setDataProvider(userDataProvider);
+        this.userGrid.setItems(this.getAssociatedUsers());
     }
 
     /**
@@ -370,7 +364,7 @@ public class RoleManagementDialog extends Dialog
         addGroup.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectGroupForRoleDialog dialog = new SelectGroupForRoleDialog(this.role, getAssociatedGroups()
-                , this.securityService, this.systemEventLogger, groupDataProvider);
+                , this.securityService, this.systemEventLogger, this.groupGrid);
             dialog.addOpenedChangeListener((ComponentEventListener<OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->
             {
                 if(dialogOpenedChangeEvent.isOpened() == false)
@@ -428,8 +422,7 @@ public class RoleManagementDialog extends Dialog
      */
     private void updateAssociatedGroupsGrid()
     {
-        this.groupDataProvider = new ListDataProvider<>(this.getAssociatedGroups());
-        this.groupGrid.setDataProvider(this.groupDataProvider);
+        this.groupGrid.setItems(this.getAssociatedGroups());
     }
 
     /**
@@ -519,7 +512,7 @@ public class RoleManagementDialog extends Dialog
         addModule.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectModuleForRoleDialog dialog = new SelectModuleForRoleDialog(this.role, this.moduleMetadataService,
-                this.securityService, this.systemEventLogger, this.roleModuleDataProvider);
+                this.securityService, this.systemEventLogger, this.roleModuleGrid);
 
             dialog.open();
         });
@@ -533,8 +526,7 @@ public class RoleManagementDialog extends Dialog
 
     protected void updateRoleModuleGrid()
     {
-        roleModuleDataProvider = DataProvider.ofCollection(this.role.getRoleModules());
-        this.roleModuleGrid.setDataProvider(roleModuleDataProvider);
+        this.roleModuleGrid.setItems(this.role.getRoleModules());
     }
 
     /**

@@ -138,8 +138,7 @@ public class FilteringGrid<T> extends Grid<T>
         this.setDataProvider(filteredDataProvider);
     }
 
-    public DataProvider getDataProvider() {
-        return this.filteredDataProvider;
+    public Collection<T> getItems() {
+        return this.filter.getItems();
     }
-
 }
