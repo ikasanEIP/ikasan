@@ -17,7 +17,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
@@ -37,7 +36,7 @@ public class PolicyManagementDialog extends Dialog
     private SystemEventLogger systemEventLogger;
 
     private FilteringGrid<Role> roleGrid;
-    private ListDataProvider<Role> roleListDataProvider;
+
 
     /**
      * Constructor
@@ -128,7 +127,7 @@ public class PolicyManagementDialog extends Dialog
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             SelectRoleForPolicyDialog dialog = new SelectRoleForPolicyDialog(policy, this.securityService, this.systemEventLogger
-                , this.roleListDataProvider);
+                , this.roleGrid);
 
             dialog.open();
         });
@@ -158,8 +157,7 @@ public class PolicyManagementDialog extends Dialog
 
     private void updateRolesGrid()
     {
-        this.roleListDataProvider = new ListDataProvider<>(this.policy.getRoles());
-        roleGrid.setDataProvider(this.roleListDataProvider);
+        roleGrid.setItems(this.policy.getRoles());
     }
 
 
@@ -169,13 +167,13 @@ public class PolicyManagementDialog extends Dialog
 
         FormLayout formLayout = new FormLayout();
 
-        TextField policyName = new TextField(getTranslation("test-field.policy-name", UI.getCurrent().getLocale(), null));
+        TextField policyName = new TextField(getTranslation("text-field.policy-name", UI.getCurrent().getLocale(), null));
         policyName.setValue(this.policy.getName());
         policyName.setReadOnly(true);
         formLayout.add(policyName);
         formLayout.setColspan(policyName, 1);
 
-        TextArea description = new TextArea(getTranslation("test-field.policy-description", UI.getCurrent().getLocale(), null));
+        TextArea description = new TextArea(getTranslation("text-field.policy-description", UI.getCurrent().getLocale(), null));
         description.setValue(this.policy.getDescription());
         description.setHeight("150px");
         description.setReadOnly(true);

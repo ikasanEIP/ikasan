@@ -16,6 +16,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 
+import java.util.Collection;
 import java.util.List;
 
 public class SelectRoleForPolicyDialog extends Dialog
@@ -23,10 +24,10 @@ public class SelectRoleForPolicyDialog extends Dialog
     private Policy policy;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
-    private ListDataProvider<Role> roleListDataProvider;
+    private FilteringGrid<Role> roleFilteringGrid;
 
     public SelectRoleForPolicyDialog(Policy policy, SecurityService securityService, SystemEventLogger systemEventLogger,
-                                     ListDataProvider<Role> roleListDataProvider)
+                                     FilteringGrid<Role> roleFilteringGrid)
     {
         this.policy = policy;
         if(this.policy == null)
@@ -43,10 +44,10 @@ public class SelectRoleForPolicyDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.roleListDataProvider = roleListDataProvider;
-        if(this.roleListDataProvider == null)
+        this.roleFilteringGrid = roleFilteringGrid;
+        if(this.roleFilteringGrid == null)
         {
-            throw new IllegalArgumentException("roleListDataProvider cannot be null!");
+            throw new IllegalArgumentException("roleFilteringGrid cannot be null!");
         }
 
         init();
@@ -62,10 +63,8 @@ public class SelectRoleForPolicyDialog extends Dialog
         RoleFilter roleFilter = new RoleFilter();
 
         FilteringGrid<Role> roleGrid = new FilteringGrid<>(roleFilter);
-        roleGrid.setSizeFull();
-
-        ListDataProvider<Role> roleDataProvider = new ListDataProvider<>(roleList);
-        roleGrid.setDataProvider(roleDataProvider);
+        roleGrid.setItems(roleList);
+        roleGrid.setSizeFull();;
 
         roleGrid.setClassName("my-grid");
         roleGrid.addColumn(Role::getName).setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setKey("name").setSortable(true).setFlexGrow(2);
@@ -81,11 +80,14 @@ public class SelectRoleForPolicyDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action,null);
 
-            this.roleListDataProvider.getItems().add(roleItemDoubleClickEvent.getItem());
-            this.roleListDataProvider.refreshAll();
+            Collection<Role> items = this.roleFilteringGrid.getItems();
+            items.add(roleItemDoubleClickEvent.getItem());
 
-            roleDataProvider.getItems().remove(roleItemDoubleClickEvent.getItem());
-            roleDataProvider.refreshAll();
+            this.roleFilteringGrid.setItems(items);
+            this.roleFilteringGrid.getDataProvider().refreshAll();
+
+            roleGrid.getItems().remove(roleItemDoubleClickEvent.getItem());
+            roleGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = roleGrid.appendHeaderRow();
