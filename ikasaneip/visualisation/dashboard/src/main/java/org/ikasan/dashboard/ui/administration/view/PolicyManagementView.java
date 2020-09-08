@@ -108,7 +108,6 @@ public class PolicyManagementView extends VerticalLayout implements BeforeEnterO
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
     {
         List<Policy> policies = this.securityService.getAllPolicies();
-
         this.policyGrid.setItems(policies);
     }
 }
