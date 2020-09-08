@@ -2,18 +2,14 @@ package org.ikasan.dashboard.ui.administration.filter;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import org.ikasan.dashboard.ui.general.component.Filter;
-import org.ikasan.security.model.IkasanPrincipalLite;
-import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class RoleFilter implements Filter<Role, Optional<RoleFilter>>
+public class RoleFilter implements Filter<Role>
 {
     private Collection<Role> roles;
     private String nameFilter = null;
