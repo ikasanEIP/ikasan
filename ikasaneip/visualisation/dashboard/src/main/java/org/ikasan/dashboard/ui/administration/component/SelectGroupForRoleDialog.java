@@ -15,8 +15,10 @@ import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.IkasanPrincipalLite;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.SecurityService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +28,10 @@ public class SelectGroupForRoleDialog extends Dialog
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
     private List<IkasanPrincipalLite> associatedGroups;
-    private ListDataProvider<IkasanPrincipalLite> groupDataProvider;
+    private FilteringGrid<IkasanPrincipalLite> ikasanPrincipalLiteFilteringGrid;
 
     public SelectGroupForRoleDialog(Role role, List<IkasanPrincipalLite> associatedGroups, SecurityService securityService
-        , SystemEventLogger systemEventLogger, ListDataProvider<IkasanPrincipalLite> groupDataProvider)
+        , SystemEventLogger systemEventLogger, FilteringGrid<IkasanPrincipalLite> ikasanPrincipalLiteFilteringGrid)
     {
         this.role = role;
         if(this.role == null)
@@ -51,8 +53,8 @@ public class SelectGroupForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.groupDataProvider = groupDataProvider;
-        if(this.groupDataProvider == null)
+        this.ikasanPrincipalLiteFilteringGrid = ikasanPrincipalLiteFilteringGrid;
+        if(this.ikasanPrincipalLiteFilteringGrid == null)
         {
             throw new IllegalArgumentException("groupDataProvider cannot be null!");
         }
@@ -101,8 +103,11 @@ public class SelectGroupForRoleDialog extends Dialog
 
                 this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-                this.groupDataProvider.getItems().add(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
-                this.groupDataProvider.refreshAll();
+                Collection<IkasanPrincipalLite> items = this.ikasanPrincipalLiteFilteringGrid.getItems();
+                items.add(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
+
+                this.ikasanPrincipalLiteFilteringGrid.setItems(items);
+                this.ikasanPrincipalLiteFilteringGrid.getDataProvider().refreshAll();
 
                 groupLiteDataProvider.getItems().remove(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
                 groupLiteDataProvider.refreshAll();

@@ -14,8 +14,10 @@ import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.RoleModule;
 import org.ikasan.security.service.SecurityService;
 
+import java.util.Collection;
 import java.util.List;
 
 public class SelectPolicyForRoleDialog extends Dialog
@@ -25,10 +27,10 @@ public class SelectPolicyForRoleDialog extends Dialog
     private SystemEventLogger systemEventLogger;
     private FilteringGrid<Policy> policyGrid;
     private List<Policy> policiesList;
-    private ListDataProvider<Policy> policyDataProvider;
+    private FilteringGrid<Policy> policyFilteringGrid;
 
     public SelectPolicyForRoleDialog(Role role, SecurityService securityService, SystemEventLogger systemEventLogger,
-                                     ListDataProvider<Policy> policyDataProvider)
+                                     FilteringGrid<Policy> policyFilteringGrid)
     {
         this.role = role;
         if(this.role == null)
@@ -45,8 +47,8 @@ public class SelectPolicyForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.policyDataProvider = policyDataProvider;
-        if(this.policyDataProvider == null)
+        this.policyFilteringGrid = policyFilteringGrid;
+        if(this.policyFilteringGrid == null)
         {
             throw new IllegalArgumentException("policyDataProvider cannot be null!");
         }
@@ -84,8 +86,11 @@ public class SelectPolicyForRoleDialog extends Dialog
 
             this.updatePolicyGrid();
 
-            this.policyDataProvider.getItems().add(policyItemDoubleClickEvent.getItem());
-            this.policyDataProvider.refreshAll();
+            Collection<Policy> items = this.policyFilteringGrid.getItems();
+            items.add(policyItemDoubleClickEvent.getItem());
+
+            this.policyFilteringGrid.setItems(items);
+            this.policyFilteringGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = policyGrid.appendHeaderRow();

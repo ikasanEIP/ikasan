@@ -194,4 +194,9 @@ public class UserFilter implements Filter<User, Optional<UserFilter>>
 
         return comparator;
     }
+
+    @Override
+    public Collection<User> getItems() {
+        return this.users;
+    }
 }

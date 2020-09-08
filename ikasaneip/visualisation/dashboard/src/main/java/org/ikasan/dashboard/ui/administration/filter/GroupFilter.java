@@ -12,14 +12,14 @@ import java.util.stream.Stream;
 
 public class GroupFilter implements Filter<IkasanPrincipalLite, Optional<GroupFilter>>
 {
-    private Collection<IkasanPrincipalLite> groups;
+    private Collection<IkasanPrincipalLite> principals;
     private String nameFilter = null;
     private String typeFilter = null;
     private String descriptionFilter = null;
 
     public void setItems(Collection<IkasanPrincipalLite> groups)
     {
-        this.groups = groups;
+        this.principals = groups;
     }
 
     public String getNameFilter()
@@ -55,7 +55,7 @@ public class GroupFilter implements Filter<IkasanPrincipalLite, Optional<GroupFi
     @Override
     public Stream<IkasanPrincipalLite> getFilterStream()
     {
-        return groups
+        return principals
             .stream()
             .filter(group ->
             {
@@ -123,5 +123,10 @@ public class GroupFilter implements Filter<IkasanPrincipalLite, Optional<GroupFi
         }
 
         return comparator;
+    }
+
+    @Override
+    public Collection<IkasanPrincipalLite> getItems() {
+        return this.principals;
     }
 }

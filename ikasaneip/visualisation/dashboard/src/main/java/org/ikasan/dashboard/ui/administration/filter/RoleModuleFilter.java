@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 
 public class RoleModuleFilter implements Filter<RoleModule, Optional<RoleModuleFilter>>
 {
-    private Collection<RoleModule> groups;
+    private Collection<RoleModule> roleModules;
     private String moduleNameFilter = null;
 
-    public void setItems(Collection<RoleModule> groups)
+    public void setItems(Collection<RoleModule> roleModules)
     {
-        this.groups = groups;
+        this.roleModules = roleModules;
     }
 
     public String getModuleNameFilter()
@@ -33,7 +33,7 @@ public class RoleModuleFilter implements Filter<RoleModule, Optional<RoleModuleF
     @Override
     public Stream<RoleModule> getFilterStream()
     {
-        return groups
+        return roleModules
             .stream()
             .filter(group ->
             {
@@ -63,5 +63,10 @@ public class RoleModuleFilter implements Filter<RoleModule, Optional<RoleModuleF
         }
 
         return comparator;
+    }
+
+    @Override
+    public Collection<RoleModule> getItems() {
+        return this.roleModules;
     }
 }

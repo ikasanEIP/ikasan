@@ -13,11 +13,13 @@ import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
+import java.util.Collection;
 import java.util.List;
 
 public class SelectUserForRoleDialog extends Dialog
@@ -27,10 +29,10 @@ public class SelectUserForRoleDialog extends Dialog
     private SystemEventLogger systemEventLogger;
     private UserService userService;
     private List<UserLite> associatedUsers;
-    private ListDataProvider<UserLite> userDataProvider;
+    private FilteringGrid<UserLite> userLiteFilteringGrid;
 
     public SelectUserForRoleDialog(Role role, UserService userService, List<UserLite> associatedUsers, SecurityService securityService
-        , SystemEventLogger systemEventLogger, ListDataProvider<UserLite> userDataProvider)
+        , SystemEventLogger systemEventLogger, FilteringGrid<UserLite> userLiteFilteringGrid)
     {
         this.role = role;
         if(this.role == null)
@@ -57,8 +59,8 @@ public class SelectUserForRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.userDataProvider = userDataProvider;
-        if(this.userDataProvider == null)
+        this.userLiteFilteringGrid = userLiteFilteringGrid;
+        if(this.userLiteFilteringGrid == null)
         {
             throw new IllegalArgumentException("userDataProvider cannot be null!");
         }
@@ -119,8 +121,11 @@ public class SelectUserForRoleDialog extends Dialog
             userLiteListDataProvider.getItems().remove(userLiteItemDoubleClickEvent.getItem());
             userLiteListDataProvider.refreshAll();
 
-            userDataProvider.getItems().add(userLiteItemDoubleClickEvent.getItem());
-            userDataProvider.refreshAll();
+            Collection<UserLite> items = this.userLiteFilteringGrid.getItems();
+            items.add(userLiteItemDoubleClickEvent.getItem());
+
+            this.userLiteFilteringGrid.setItems(items);
+            this.userLiteFilteringGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = userGrid.appendHeaderRow();
