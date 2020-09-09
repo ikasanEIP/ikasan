@@ -6,6 +6,7 @@
 - [Group Management](./group-management.md)
 - [Role Management](./role-management.md)
 - [Policy Management](./policy-management.md)
+- [LDAP Management](./ldap-management.md)
 
 
 
