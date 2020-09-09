@@ -57,7 +57,7 @@ public class RoleFilter implements Filter<Role>
                 }
                 else
                 {
-                    return role.getName().toLowerCase().startsWith(getNameFilter().toLowerCase());
+                    return role.getName().toLowerCase().contains(getNameFilter().toLowerCase());
                 }
             })
             .filter(role ->

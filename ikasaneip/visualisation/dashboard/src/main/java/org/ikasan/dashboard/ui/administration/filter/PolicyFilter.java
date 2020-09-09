@@ -57,7 +57,7 @@ public class PolicyFilter implements Filter<Policy>
                 }
                 else
                 {
-                    return policy.getName().toLowerCase().startsWith(getNameFilter().toLowerCase());
+                    return policy.getName().toLowerCase().contains(getNameFilter().toLowerCase());
                 }
             })
             .filter(policy ->
