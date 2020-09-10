@@ -17,8 +17,8 @@ By double clicking on the a 'Policy' in the above grid, users will be presented 
 
 ![Policy Management Associated Roles](../../developer/docs/quickstart-images/policy-management-associated-roles.png)
 
-## Assigning Policy to Roles
-It is possible to assing a 'Policy' to a 'Role'. By pressing the 'Associate policy with role' button seen on the screen above, the user will be presented with a dialog containing all 'Policies' that can be assigned to the 'Role'. Double click on the desired 'Policy' and this will be added to the 'Role'. 'Policies' can also be removed from a 'Role' by clicking on the trash can icon in in the 'Ikasan Roles' grid above.
+## Associating Policies with Roles
+It is possible to associate a 'Policy' with a 'Role'. By pressing the 'Associate policy with role' button seen on the screen above, the user will be presented with a dialog containing all 'Policies' that can be assigned to the 'Role'. Double click on the desired 'Policy' and this will be added to the 'Role'. 'Policies' can also be removed from a 'Role' by clicking on the trash can icon in in the 'Ikasan Roles' grid above.
 
 ![Policy Management Add Role](../../developer/docs/quickstart-images/policy-management-add-role.png)
 
