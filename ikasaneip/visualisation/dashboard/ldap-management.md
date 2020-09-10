@@ -14,7 +14,7 @@ The 'LDAP Directory Management' screen can be navigated to from the left hand me
 
 If there are multiple directories configured, is it also possible to order the directories in which the user validation will be attempted against. 
 
-It is also possible to add a new configuration by pressing the 'Add Directory' button.
+New configurations can be added by pressing the 'Add Directory' button.
 
 ![LDAP Management](../../developer/docs/quickstart-images/ldap-directory-management.png)
 
