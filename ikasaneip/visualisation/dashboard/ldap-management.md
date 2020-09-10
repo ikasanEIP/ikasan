@@ -1,7 +1,7 @@
 ![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
 # Ikasan Visualisation Dashboard Security - LDAP Management
-Is is possible to configure Ikasan to delegate to LDAP for authorisation, as well as synchronise users and groups against LDAP directories. This allows Ikasan to leveage enterprise management of user group assignments which can then be associated with Ikasan 'Roles'. Once a group is assigned an Ikasan 'Role', it can be left to external it teams to manage the enterprise security and simply manage this access by assigning a given LDAP users, an LDAP group.
+Is is possible to configure Ikasan to delegate to LDAP for authorisation, as well as synchronise users and groups against LDAP directories. This allows Ikasan to leverage enterprise management of user and group assignments which can then be associated with Ikasan 'Roles'. Once a group is assigned an Ikasan 'Role', it can be left to external IT teams to manage the enterprise security and simply manage access and authorisation to Ikasan by assigning a given LDAP users, an LDAP group.
 
 ### Managing LDAP Directory Configurations
 The 'LDAP Directory Management' screen can be navigated to from the left hand menu in the Ikasan dashboard. This screen provides a grid containing all 'LDAP Directory Configurations'. There are a number of actions that can be performed against an 'LDAP Directory':
