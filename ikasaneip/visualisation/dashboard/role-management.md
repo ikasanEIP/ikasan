@@ -8,7 +8,7 @@ The 'Role Management' screen provides the ability for users to be able to view a
 - Assign and unassign 'Integration Modules' to/from 'Roles'
 
 ## Viewing Groups
-The 'Role' search view can be navigated to from the left hand menu in the Ikasan dashboard. This view provides sortable and filterable grid containing all 'Roles'. From this screen users can remove 'Roles' by clicking on the trash can icon in the grid. 
+The 'Role' search view can be navigated to from the left hand menu in the Ikasan dashboard. This view provides a sortable and filterable grid containing all 'Roles'. From this screen users can remove 'Roles' by clicking on the trash can icon in the grid. 
 
 ![Role Management](../../developer/docs/quickstart-images/role-management-screen.png)
 
