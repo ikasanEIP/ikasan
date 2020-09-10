@@ -2,12 +2,14 @@
 
 # Ikasan Visualisation Dashboard Security - User Management
 The user management screen provides a view on all Ikasan users. These users may have been configured locally, or sourced from an LDAP server. Users can be narrowed by using the filtering provided in the column headers of the user grid on this screen. New local users can be added by clicking on the '+' button in the right hand corner of the screen.
+
 ![User Management](../../developer/docs/quickstart-images/user-management-screen.png)
 
 When the '+' button is selected the 'New User' dailog will open. Populate all fields and press 'Save'. The user will be prompted to change their password when they first log in.
 
 <img src="../../developer/docs/quickstart-images/new-user.png" width="400" />
 
+## Viewing User Details
 By double clicking on any 'User' records in the grid, the 'User Details' screen will open. This screen is broken into a number of sections.
 
 ### User Details Section
