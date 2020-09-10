@@ -17,7 +17,7 @@ By double clicking on the a 'Group' in the above grid, users will be presented w
 ![Group Management Role](../../developer/docs/quickstart-images/group-management-role.png)
 
 ### Assigning Roles to Groups
-It is possible to assing a 'Role' to a 'Group'. By pressing the 'Add Role' button seen on the screen above, the user will be presented with a dialog containing all 'Roles' that can be assigned to the 'Group'. Double click on the desired 'Role' and this will be added to the 'Group'. 'Roles' can also be removed from a 'Group' by clickin on the trash can icon in in the 'Associated Groups' view above.
+It is possible to assign a 'Role' to a 'Group'. By pressing the 'Add Role' button seen on the screen above, the user will be presented with a dialog containing all 'Roles' that can be assigned to the 'Group'. Double click on the desired 'Role' and this will be added to the 'Group'. 'Roles' can also be removed from a 'Group' by clickin on the trash can icon in in the 'Associated Groups' view above.
 ![Group Management Select Role](../../developer/docs/quickstart-images/group-management-select-role.png)
 
 ### Associated Users
