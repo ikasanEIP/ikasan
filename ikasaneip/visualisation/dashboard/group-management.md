@@ -1,7 +1,7 @@
 ![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
 # Ikasan Visualisation Dashboard Security - Group Management
-A group within the Ikasan security model is a direct mapping to an 'Active Directory' or 'LDAP' group. If Ikasan is configured against LDAP, groups will be populated within Ikasan as part of the 'Synchronisation' process with LDAP. This feature allows 'Roles' to be added to a 'Group', which subsequently assgns that 'Role' to all users who are part of that 'LDAP' group.
+A 'Group' within the Ikasan security model is a direct mapping to an 'Active Directory' or 'LDAP' group. If Ikasan is configured against LDAP, 'Groups' will be populated within Ikasan as part of the 'Synchronisation' process with LDAP. This feature allows 'Roles' to be added to a 'Group', which subsequently assgns that 'Role' to all users who are part of that 'LDAP' group.
 
 ## Viewing Groups
 The 'Group' search view can be navigated to from the left hand menu in the Ikasan dashboard. This view provides sortable and filterable grid containing all 'Groups'. It is not possible to remove a 'Group' as these are LDAP entities. Subsequent synchronisations against the LDAP repository will add and remove 'Groups' from this view as the changes within 'LDAP'. 
