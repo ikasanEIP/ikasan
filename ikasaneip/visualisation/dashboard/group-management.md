@@ -5,6 +5,7 @@ A group within the Ikasan security model is a direct mapping to an 'Active Direc
 
 ## Viewing Groups
 The 'Group' search view can be navigated to from the left hand menu in the Ikasan dashboard. This view provides sortable and filterable grid containing all 'Groups'. It is not possible to remove a 'Group' as these are LDAP entities. Subsequent synchronisations against the LDAP repository will add and remove 'Groups' from this view as the changes within 'LDAP'. 
+
 ![Group Management](../../developer/docs/quickstart-images/group-management-screen.png)
 
 ## Managing Groups
