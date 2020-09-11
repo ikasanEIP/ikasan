@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.validator.xml;
 
-
 /**
  * Configuration bean for the SchematronValidator
  */
@@ -83,19 +82,23 @@ public class XMLValidatorConfiguration
         this.throwExceptionOnValidationFailure = throwExceptionOnValidationFailure;
     }
 
-    public boolean isReturnValidationResult() {
+    public boolean isReturnValidationResult()
+    {
         return returnValidationResult;
     }
 
-    public void setReturnValidationResult(boolean returnValidationResult) {
+    public void setReturnValidationResult(boolean returnValidationResult)
+    {
         this.returnValidationResult = returnValidationResult;
     }
 
-    public String getCatalogUrl() {
+    public String getCatalogUrl()
+    {
         return catalogUrl;
     }
 
-    public void setCatalogUrl(String catalogUrl) {
+    public void setCatalogUrl(String catalogUrl)
+    {
         this.catalogUrl = catalogUrl;
     }
 }
