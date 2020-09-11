@@ -224,13 +224,13 @@ public class SearchResults extends Div {
 
         // Add the module name column to the grid
         this.searchResultsGrid.addColumn(IkasanSolrDocument::getModuleName)
-            .setKey("modulename")
+            .setKey("moduleName")
             .setHeader(getTranslation("table-header.module-name", UI.getCurrent().getLocale()))
             .setSortable(true)
             .setFlexGrow(4);
 
         // Add the flow name column to the grid
-        this.searchResultsGrid.addColumn(IkasanSolrDocument::getFlowName).setKey("flowname")
+        this.searchResultsGrid.addColumn(IkasanSolrDocument::getFlowName).setKey("flowName")
             .setHeader(getTranslation("table-header.flow-name", UI.getCurrent().getLocale()))
             .setSortable(true)
             .setFlexGrow(6);
@@ -240,7 +240,7 @@ public class SearchResults extends Div {
             "<div>[[item.componentName]]</div>")
             .withProperty("componentName",
                 ikasanSolrDocument -> Optional.ofNullable(ikasanSolrDocument.getComponentName()).orElse(getTranslation("label.not-applicable", UI.getCurrent().getLocale()))))
-            .setKey("componentname")
+            .setKey("componentName")
             .setHeader(getTranslation("table-header.component-name", UI.getCurrent().getLocale()))
             .setSortable(true)
             .setFlexGrow(6);
@@ -250,7 +250,7 @@ public class SearchResults extends Div {
             "<div>[[item.eventIdentifier]]</div>")
             .withProperty("eventIdentifier",
                 ikasanSolrDocument -> ikasanSolrDocument.getEventId()))
-            .setKey("eventId")
+            .setKey("event")
             .setHeader(getTranslation("table-header.event-id", UI.getCurrent().getLocale()))
             .setSortable(true)
             .setFlexGrow(8);
@@ -283,9 +283,9 @@ public class SearchResults extends Div {
                         }
                     }
                 }))
-            .setKey("event")
+            .setKey("payload")
             .setHeader(getTranslation("table-header.event-details", UI.getCurrent().getLocale()))
-            .setSortable(true)
+            .setSortable(false)
             .setFlexGrow(12);
 
         // Add the timestamp column to the grid
@@ -294,6 +294,7 @@ public class SearchResults extends Div {
             .withProperty("date",
                 ikasanSolrDocument -> DateFormatter.getFormattedDate(ikasanSolrDocument.getTimeStamp()))).setHeader(getTranslation("table-header.timestamp", UI.getCurrent().getLocale()))
             .setSortable(true)
+            .setKey("timestamp")
             .setFlexGrow(2);
 
         // Add the select column to the grid
@@ -360,10 +361,10 @@ public class SearchResults extends Div {
 
         // Add filtering to the relevant columns.
         HeaderRow hr = searchResultsGrid.appendHeaderRow();
-        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setModuleNameFilter, "modulename");
-        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setFlowNameFilter, "flowname");
-        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setComponentNameFilter, "componentname");
-        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setEventIdFilter, "eventId");
+        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setModuleNameFilter, "moduleName");
+        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setFlowNameFilter, "flowName");
+        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setComponentNameFilter, "componentName");
+        this.searchResultsGrid.addGridFiltering(hr, searchFilter::setEventIdFilter, "event");
 
         this.searchResultsGrid.setSizeFull();
     }
