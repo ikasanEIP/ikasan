@@ -40,15 +40,14 @@
  */
 package org.ikasan.security.service;
 
-import java.util.List;
-
-import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
 import org.ikasan.security.model.UserLite;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
+
+import java.util.List;
 
 /**
  * User and Authority service interface
@@ -154,7 +153,7 @@ public interface UserService extends UserDetailsManager
     /**
      * Retrieves a List of <code>User</code> whose firstname like firstname%
      * 
-     * @param username
+     * @param firstname
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserByFirstnameLike(String firstname);
@@ -162,8 +161,19 @@ public interface UserService extends UserDetailsManager
     /**
      * Retrieves a List of <code>User</code> whose surname like surname%
      * 
-     * @param username
+     * @param surname
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserBySurnameLike(String surname);
+
+    /**
+     * Authenticate the user based on username and password.
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    default public boolean authenticate(String username, String password) {
+        throw new UnsupportedOperationException();
+    }
 }

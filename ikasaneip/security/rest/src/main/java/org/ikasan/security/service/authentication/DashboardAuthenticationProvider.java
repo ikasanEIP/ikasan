@@ -40,11 +40,9 @@
  */
 package org.ikasan.security.service.authentication;
 
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.DashboardUserServiceImpl;
+import org.ikasan.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -52,11 +50,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -68,12 +63,12 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
 {
     private static Logger logger = LoggerFactory.getLogger(DashboardAuthenticationProvider.class);
 
-    private DashboardUserServiceImpl dashboardUserService;
+    private UserService dashboardUserService;
 
     /**
      * @param dashboardUserService
      */
-    public DashboardAuthenticationProvider(DashboardUserServiceImpl dashboardUserService)
+    public DashboardAuthenticationProvider(UserService dashboardUserService)
     {
         super();
         this.dashboardUserService = dashboardUserService;
