@@ -46,7 +46,6 @@ public class GroupManagementDialog extends Dialog
     private SystemEventLogger systemEventLogger;
 
     private FilteringGrid<Role> roleGrid;
-    private ListDataProvider<Role> roleListDataProvider;
 
     /**
      * Constructor
@@ -80,6 +79,8 @@ public class GroupManagementDialog extends Dialog
 
     private void init()
     {
+        this.roleGrid = new FilteringGrid<>(new RoleFilter());
+
         Accordion accordion = new Accordion();
         accordion.add(getTranslation("accordian-label.associated-roles", UI.getCurrent().getLocale(), null), createRolesAccessGrid());
         accordion.add(getTranslation("accordian-label.associated-users", UI.getCurrent().getLocale(), null), createAssociatedUserGrid());
@@ -147,7 +148,7 @@ public class GroupManagementDialog extends Dialog
         {
             IkasanPrincipal principal = securityService.findPrincipalByName(group.getName());
 
-            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger, this.roleListDataProvider);
+            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger, this.roleGrid);
 
             dialog.open();
         });
@@ -182,8 +183,7 @@ public class GroupManagementDialog extends Dialog
         IkasanPrincipal principal = securityService.findPrincipalByName(this.group.getName());
         if(principal!=null)
         {
-            this.roleListDataProvider = new ListDataProvider<>(principal.getRoles());
-            roleGrid.setDataProvider(this.roleListDataProvider);
+            roleGrid.setItems(principal.getRoles());
         }
     }
 

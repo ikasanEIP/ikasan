@@ -77,8 +77,8 @@ public class SelectUserForRoleDialog extends Dialog
 
         UserLiteFilter userFilter = new UserLiteFilter();
 
-        ListDataProvider<UserLite> userLiteListDataProvider = new ListDataProvider<>(usersList);
         FilteringGrid<UserLite> userGrid = new FilteringGrid<>(userFilter);
+        userGrid.setItems(usersList);
         userGrid.setSizeFull();
 
         userGrid.addColumn(UserLite::getUsername)
@@ -118,8 +118,8 @@ public class SelectUserForRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, null);
 
-            userLiteListDataProvider.getItems().remove(userLiteItemDoubleClickEvent.getItem());
-            userLiteListDataProvider.refreshAll();
+            userGrid.getItems().remove(userLiteItemDoubleClickEvent.getItem());
+            userGrid.getDataProvider().refreshAll();
 
             Collection<UserLite> items = this.userLiteFilteringGrid.getItems();
             items.add(userLiteItemDoubleClickEvent.getItem());
@@ -135,7 +135,6 @@ public class SelectUserForRoleDialog extends Dialog
         userGrid.addGridFiltering(hr, userFilter::setEmailFilter, "email");
         userGrid.addGridFiltering(hr, userFilter::setDepartmentFilter, "department");
 
-        userGrid.setDataProvider(userLiteListDataProvider);
 
         userGrid.setSizeFull();
 
