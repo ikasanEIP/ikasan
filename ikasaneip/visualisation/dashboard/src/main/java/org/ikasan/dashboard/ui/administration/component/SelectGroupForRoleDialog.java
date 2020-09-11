@@ -75,11 +75,9 @@ public class SelectGroupForRoleDialog extends Dialog
         groupGrid.setSizeFull();
         groupGrid.setClassName("my-grid");
 
-        ListDataProvider<IkasanPrincipalLite> groupLiteDataProvider = new ListDataProvider<>(principals.stream()
+        groupGrid.setItems(principals.stream()
             .filter(principal -> principal.getType() != null && principal.getType().equals("application"))
             .collect(Collectors.toList()));
-
-        groupGrid.setDataProvider(groupLiteDataProvider);
 
         groupGrid.addColumn(IkasanPrincipalLite::getName)
             .setHeader(getTranslation("table-header.group-name", UI.getCurrent().getLocale(), null))
@@ -109,8 +107,8 @@ public class SelectGroupForRoleDialog extends Dialog
                 this.ikasanPrincipalLiteFilteringGrid.setItems(items);
                 this.ikasanPrincipalLiteFilteringGrid.getDataProvider().refreshAll();
 
-                groupLiteDataProvider.getItems().remove(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
-                groupLiteDataProvider.refreshAll();
+                groupGrid.getItems().remove(ikasanPrincipalLiteItemDoubleClickEvent.getItem());
+                groupGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = groupGrid.appendHeaderRow();

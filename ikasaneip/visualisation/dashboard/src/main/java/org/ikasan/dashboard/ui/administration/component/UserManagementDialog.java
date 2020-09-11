@@ -18,7 +18,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
+import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
@@ -44,8 +46,7 @@ public class UserManagementDialog extends Dialog
     private SystemEventLogger systemEventLogger;
     private Grid<SystemEvent> securityChangesGrid = new Grid<>();
 
-    private Grid<Role> roleGrid = new Grid<>();
-    private ListDataProvider<Role> roleListDataProvider;
+    private FilteringGrid<Role> roleGrid;
 
     /**
      * Constructor
@@ -90,6 +91,8 @@ public class UserManagementDialog extends Dialog
 
     private void init()
     {
+        roleGrid = new FilteringGrid<>(new RoleFilter());
+
         FluentGridLayout layout = new FluentGridLayout()
             .withTemplateRows(new Flex(1), new Flex(1.5), new Flex(1.5))
             .withTemplateColumns(new Flex(1.5), new Flex(1.5), new Flex(2))
@@ -101,6 +104,7 @@ public class UserManagementDialog extends Dialog
             .withPadding(true)
             .withSpacing(true)
             .withOverflow(FluentGridLayout.Overflow.AUTO);
+
         layout.setSizeFull();
         this.setWidth("1400px");
         this.setHeight("100%");
@@ -182,7 +186,7 @@ public class UserManagementDialog extends Dialog
         addRoleButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             IkasanPrincipal principal = securityService.findPrincipalByName(this.user.getUsername());
-            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger, this.roleListDataProvider);
+            SelectRoleDialog dialog = new SelectRoleDialog(principal, this.securityService, this.systemEventLogger, this.roleGrid);
 
             dialog.open();
         });
@@ -215,8 +219,7 @@ public class UserManagementDialog extends Dialog
         IkasanPrincipal principal = securityService.findPrincipalByName(user.getUsername());
         if(principal!=null)
         {
-            this.roleListDataProvider = new ListDataProvider<>(principal.getRoles());
-            this.roleGrid.setDataProvider(this.roleListDataProvider);
+            this.roleGrid.setItems(principal.getRoles());
         }
     }
 

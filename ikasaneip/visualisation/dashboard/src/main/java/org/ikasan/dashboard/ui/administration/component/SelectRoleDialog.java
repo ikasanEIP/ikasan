@@ -24,10 +24,10 @@ public class SelectRoleDialog extends Dialog
     private IkasanPrincipal principal;
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
-    private ListDataProvider<Role> roleListDataProvider;
+    private FilteringGrid<Role> roleGrid;
 
     public SelectRoleDialog(IkasanPrincipal principal, SecurityService securityService, SystemEventLogger systemEventLogger,
-                            ListDataProvider<Role> roleListDataProvider)
+                            FilteringGrid<Role> roleGrid)
     {
         this.principal = principal;
         if(this.principal == null)
@@ -44,10 +44,10 @@ public class SelectRoleDialog extends Dialog
         {
             throw new IllegalArgumentException("systemEventLogger cannot be null!");
         }
-        this.roleListDataProvider = roleListDataProvider;
-        if(this.roleListDataProvider == null)
+        this.roleGrid = roleGrid;
+        if(this.roleGrid == null)
         {
-            throw new IllegalArgumentException("roleListDataProvider cannot be null!");
+            throw new IllegalArgumentException("roleGrid cannot be null!");
         }
 
         init();
@@ -67,8 +67,7 @@ public class SelectRoleDialog extends Dialog
         FilteringGrid<Role> roleGrid = new FilteringGrid<>(roleFilter);
         roleGrid.setSizeFull();
 
-        ListDataProvider<Role> roleDataProvider = new ListDataProvider<>(roles);
-        roleGrid.setDataProvider(roleDataProvider);
+        roleGrid.setItems(roles);
 
         roleGrid.setClassName("my-grid");
         roleGrid.addColumn(Role::getName).setKey("role").setFlexGrow(5);
@@ -91,11 +90,11 @@ public class SelectRoleDialog extends Dialog
 
             this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS, action, principal.getName());
 
-            this.roleListDataProvider.getItems().add(roleItemDoubleClickEvent.getItem());
-            this.roleListDataProvider.refreshAll();
+            this.roleGrid.getItems().add(roleItemDoubleClickEvent.getItem());
+            this.roleGrid.getDataProvider().refreshAll();
 
-            roleDataProvider.getItems().remove(roleItemDoubleClickEvent.getItem());
-            roleDataProvider.refreshAll();
+            roleGrid.getItems().remove(roleItemDoubleClickEvent.getItem());
+            roleGrid.getDataProvider().refreshAll();
         });
 
         HeaderRow hr = roleGrid.appendHeaderRow();
