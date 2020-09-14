@@ -91,6 +91,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     @Resource WiretapService wiretapService;
 
     @Resource Map platformHibernateProperties;
+
     @Autowired
     @Qualifier("ikasan.ds")
     DataSource ikasands;
@@ -155,7 +156,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     }
 
     @Bean
-    public DashboardUserServiceImpl dashboardUserService(Environment environment)
+    public UserService dashboardUserService(Environment environment)
     {
         return new DashboardUserServiceImpl(environment);
     }

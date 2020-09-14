@@ -64,7 +64,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
 
     private UserService userService;
 
-    private DashboardUserServiceImpl dashboardUserService;
+    private UserService dashboardUserService;
 
     private SecurityService securityService;
 
@@ -77,7 +77,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
      * @param securityService
      */
     public ModuleAuthenticationProviderFactoryImpl(UserService userService,
-        DashboardUserServiceImpl dashboardUserService,
+                                                   UserService dashboardUserService,
         SecurityService securityService, Environment environment)
     {
         super();
