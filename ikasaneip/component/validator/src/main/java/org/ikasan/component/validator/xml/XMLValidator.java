@@ -57,11 +57,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import javax.xml.catalog.CatalogFeatures;
+import javax.xml.catalog.CatalogManager;
+import javax.xml.catalog.CatalogResolver;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +76,8 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration>
+public class XMLValidator<SOURCE, TARGET>
+        implements Converter<SOURCE, Object>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration>
 {
     /**
      * Logger instance
@@ -201,7 +206,8 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
             catch (IOException ioe)
             {
                 logger.error("Cannot convert to String", ioe);
-                payload = String.format("An exception occurred whilst converting the payload to a String: %s", ioe.getMessage());
+                payload = String.format("An exception occurred whilst converting the payload to a String: %s",
+                        ioe.getMessage());
             }
         }
         String errorMessage = String.format("XML validation error: %s\n\nXML:\n%s", e.getMessage(), payload);
@@ -225,8 +231,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         XMLReader reader = null;
         try
         {
-            Class poolClass =
-                    Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
+            Class poolClass = Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
             Object grammarPool = poolClass.newInstance();
             factory.setValidating(true);
             factory.setNamespaceAware(true);
@@ -235,9 +240,14 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
                     "http://www.w3.org/2001/XMLSchema");
             reader = parser.getXMLReader();
             reader.setErrorHandler(this.errorHandler);
-            reader.setProperty(
-                    "http://apache.org/xml/properties/internal/grammar-pool",
-                    grammarPool);
+            reader.setProperty("http://apache.org/xml/properties/internal/grammar-pool", grammarPool);
+            if (configuration.getCatalogUrl() != null)
+            {
+                logger.debug("Setting up Xml Reader with catalog.xml file [{}]", configuration.getCatalogUrl());
+                CatalogResolver cr = CatalogManager
+                        .catalogResolver(CatalogFeatures.defaults(), new URI(configuration.getCatalogUrl()));
+                reader.setEntityResolver(cr);
+            }
         }
         catch (Exception e)
         {
@@ -276,7 +286,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     {
         this.xmlReaders = new HashMap<Long, XMLReader>();
         // Make sure we can initialise one of these.
-        this.createXMLReader();
+        this.xmlReaders.put(Thread.currentThread().getId(), this.createXMLReader());
     }
 
     @Override
@@ -301,7 +311,8 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     {
     }
 
-    public void setSourceToByteArrayInputStreamConverter(Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter)
+    public void setSourceToByteArrayInputStreamConverter(
+            Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter)
     {
         this.sourceToByteArrayInputStreamConverter = sourceToByteArrayInputStreamConverter;
     }

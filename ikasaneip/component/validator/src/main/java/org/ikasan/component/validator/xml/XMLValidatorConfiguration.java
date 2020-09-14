@@ -40,8 +40,6 @@
  */
 package org.ikasan.component.validator.xml;
 
-import java.util.List;
-
 /**
  * Configuration bean for the SchematronValidator
  */
@@ -62,6 +60,7 @@ public class XMLValidatorConfiguration
      */
     public boolean returnValidationResult = false;
 
+    private String catalogUrl;
 
     public boolean isSkipValidation()
     {
@@ -83,11 +82,23 @@ public class XMLValidatorConfiguration
         this.throwExceptionOnValidationFailure = throwExceptionOnValidationFailure;
     }
 
-    public boolean isReturnValidationResult() {
+    public boolean isReturnValidationResult()
+    {
         return returnValidationResult;
     }
 
-    public void setReturnValidationResult(boolean returnValidationResult) {
+    public void setReturnValidationResult(boolean returnValidationResult)
+    {
         this.returnValidationResult = returnValidationResult;
+    }
+
+    public String getCatalogUrl()
+    {
+        return catalogUrl;
+    }
+
+    public void setCatalogUrl(String catalogUrl)
+    {
+        this.catalogUrl = catalogUrl;
     }
 }
