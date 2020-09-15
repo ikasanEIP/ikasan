@@ -73,6 +73,8 @@ public class AuthenticationMethod
 	private String memberofAttributeName = "";
 	private String userSynchronisationFilter = "";
 	private String groupSynchronisationFilter = "";
+	private boolean isScheduled;
+	private String synchronisationCronExpression;
 	
 	public AuthenticationMethod()
 	{
@@ -466,7 +468,23 @@ public class AuthenticationMethod
 		this.groupSynchronisationFilter = groupFilter;
 	}
 
-	/* (non-Javadoc)
+    public boolean getIsScheduled() {
+        return isScheduled;
+    }
+
+    public void setIsScheduled(boolean scheduled) {
+        isScheduled = scheduled;
+    }
+
+    public String getSynchronisationCronExpression() {
+        return synchronisationCronExpression;
+    }
+
+    public void setSynchronisationCronExpression(String synchronisationCronExpression) {
+        this.synchronisationCronExpression = synchronisationCronExpression;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

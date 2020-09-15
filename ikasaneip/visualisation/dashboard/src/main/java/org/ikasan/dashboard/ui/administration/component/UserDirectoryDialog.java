@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -47,6 +48,8 @@ public class UserDirectoryDialog extends Dialog
     @Resource
     private SecurityService securityService;
 
+    private Checkbox isScheduled;
+    private TextField synchronisationSchedule;
     private TextField directoryName;
     private TextField ldapServerUrl;
     private TextField ldapBindUserDn;
@@ -111,6 +114,25 @@ public class UserDirectoryDialog extends Dialog
 
 
         FormLayout formLayout = new FormLayout();
+
+        this.isScheduled  = new Checkbox("Is sychronisation scheduled");
+
+        formLayout.add(isScheduled);
+        formLayout.add(new Div());
+
+        this.synchronisationSchedule = new TextField("Sychronisation schedule cron expression");
+        this.synchronisationSchedule.setWidth("600px");
+        this.synchronisationSchedule.setVisible(this.isScheduled.getValue());
+
+        Div synchronisationScheduleDiv = new Div();
+        synchronisationScheduleDiv.add(this.synchronisationSchedule);
+
+        this.isScheduled.addValueChangeListener(checkboxClickEvent -> {
+            this.synchronisationSchedule.setVisible(checkboxClickEvent.getValue());
+        });
+
+        formLayout.add(synchronisationScheduleDiv);
+        formLayout.add(new Div());
 
         final H3 serverSettings = new H3(getTranslation("label.user-directory-server-settings", UI.getCurrent().getLocale(), null));
 
