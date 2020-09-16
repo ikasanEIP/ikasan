@@ -41,11 +41,14 @@ public class LdapDirectorySynchronisationJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
+            logger.info("Running ldap synchronisation " + authenticationMethod.getName());
             this.ldapService.synchronize(authenticationMethod);
             this.authenticationMethod.setLastSynchronised(new Date());
             this.securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+            logger.info("Finished running ldap synchronisation " + authenticationMethod.getName());
         }
         catch (LdapServiceException e) {
+            logger.error("Error running ldap synchronisation " + authenticationMethod.getName(), e);
             throw new JobExecutionException(e);
         }
     }

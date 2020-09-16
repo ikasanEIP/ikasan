@@ -2,22 +2,21 @@ package org.ikasan.dashboard.notification.service;
 
 import org.ikasan.dashboard.notification.BusinessStreamNotificationJob;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
-public class BusinessStreamNotificationSchedulerService implements InitializingBean {
+public class BusinessStreamNotificationSchedulerService  {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(HarvestingSchedulerService.class);
+    private static Logger logger = LoggerFactory.getLogger
+        (BusinessStreamNotificationSchedulerService.class);
 
     /**
      * Scheduler
@@ -62,6 +61,7 @@ public class BusinessStreamNotificationSchedulerService implements InitializingB
         }
     }
 
+    @PostConstruct
     public void registerJobs()
     {
         for(JobDetail jobDetail: this.businessStreamJobDetails)
@@ -98,7 +98,7 @@ public class BusinessStreamNotificationSchedulerService implements InitializingB
                 JobKey jobkey = jobDetail.getKey();
                 Trigger trigger = getCronTrigger(jobkey, this.businessStreamJobs.get(jobkey.toString()).getCronExpression());
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                logger.info("Scheduled harvesting job ["
+                logger.info("Scheduled notification job ["
                     + jobkey.toString()
                     + "] starting at [" + scheduledDate + "] using cron expression ["
                     + this.businessStreamJobs.get(jobkey.toString()).getCronExpression() + "]");
@@ -126,24 +126,4 @@ public class BusinessStreamNotificationSchedulerService implements InitializingB
         return triggerBuilder.build();
     }
 
-    /**
-     * Start the underlying tech
-     */
-    public void startScheduler()
-    {
-        try
-        {
-            this.scheduler.start();
-            this.registerJobs();
-        }
-        catch (SchedulerException e)
-        {
-            throw new RuntimeException("Could not start scheduler!", e);
-        }
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.startScheduler();
-    }
 }

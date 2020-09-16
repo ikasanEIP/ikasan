@@ -78,6 +78,8 @@
 		<property name="ldapUserDescriptionAttributeName" column="LdapUserDescAttributeName" type="java.lang.String" not-null="false"/>
 		<property name="memberofAttributeName" column="MemberofAttributeName" type="java.lang.String" not-null="false"/>
 		<property name="userSynchronisationFilter" column="UserSynchronisationFilter" type="java.lang.String" not-null="false"/>
-		<property name="GroupSynchronisationFilter" column="GroupSynchronisationFilter" type="java.lang.String" not-null="false"/>
+		<property name="groupSynchronisationFilter" column="GroupSynchronisationFilter" type="java.lang.String" not-null="false"/>
+        <property name="scheduled" column="Scheduled" type="java.lang.Boolean"/>
+        <property name="synchronisationCronExpression" column="SynchronisationCronExpression" type="java.lang.String" not-null="false"/>
 	</class>
 </hibernate-mapping>
