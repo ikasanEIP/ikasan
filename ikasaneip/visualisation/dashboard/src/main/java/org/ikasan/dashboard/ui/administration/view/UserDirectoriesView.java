@@ -62,6 +62,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
+import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationService;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
@@ -108,6 +109,9 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
     @Resource
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
+
+    @Resource
+    private LdapDirectorySynchronisationService ldapDirectorySynchronisationService;
 
     private Grid<AuthenticationMethod> directoryTable;
     private Button newDirectoryButton;
@@ -447,7 +451,8 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 
 	protected void openUserDirectoryDialog(AuthenticationMethod authenticationMethod)
     {
-        UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(securityService, authenticationMethod);
+        UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(this.securityService, authenticationMethod,
+            this.ldapDirectorySynchronisationService);
         userDirectoryDialog.open();
 
         userDirectoryDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->

@@ -73,7 +73,7 @@ public class AuthenticationMethod
 	private String memberofAttributeName = "";
 	private String userSynchronisationFilter = "";
 	private String groupSynchronisationFilter = "";
-	private boolean isScheduled;
+	private boolean scheduled;
 	private String synchronisationCronExpression;
 	
 	public AuthenticationMethod()
@@ -468,12 +468,12 @@ public class AuthenticationMethod
 		this.groupSynchronisationFilter = groupFilter;
 	}
 
-    public boolean getIsScheduled() {
-        return isScheduled;
+    public boolean isScheduled() {
+        return scheduled;
     }
 
-    public void setIsScheduled(boolean scheduled) {
-        isScheduled = scheduled;
+    public void setScheduled(boolean scheduled) {
+        this.scheduled = scheduled;
     }
 
     public String getSynchronisationCronExpression() {
