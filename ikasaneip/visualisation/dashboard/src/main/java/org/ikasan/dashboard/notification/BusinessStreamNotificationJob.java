@@ -5,6 +5,7 @@ import org.ikasan.dashboard.notification.model.BusinessStreamExclusions;
 import org.ikasan.dashboard.notification.model.BusinessStreamNotification;
 import org.ikasan.dashboard.notification.model.EmailNotification;
 import org.ikasan.dashboard.notification.service.BusinessStreamNotificationService;
+import org.ikasan.dashboard.schedule.DashboardJob;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -16,7 +17,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Optional;
 
-public class BusinessStreamNotificationJob implements Job {
+public class BusinessStreamNotificationJob implements Job, DashboardJob {
 
     private static Logger logger = LoggerFactory.getLogger(BusinessStreamNotificationJob.class);
 
@@ -111,10 +112,12 @@ public class BusinessStreamNotificationJob implements Job {
         this.saveLastRunTimestamp();
     }
 
+    @Override
     public String getJobName() {
         return this.businessStreamNotification.getJobName();
     }
 
+    @Override
     public String getCronExpression() {
         return this.businessStreamNotification.getCronExpression();
     }

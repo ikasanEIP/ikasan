@@ -9,24 +9,28 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import org.ikasan.dashboard.security.SecurityConfiguration;
+import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationConfiguration;
+import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationService;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.SecurityService;
+import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
 
-@ContextConfiguration(classes = {SecurityConfiguration.class})
 public class UserDirectoryDialog extends Dialog
 {
     private static final String APPLICATION_SECURITY_GROUP_ATTRIBUTE_NAME = "sAMAccountName";
@@ -45,8 +49,9 @@ public class UserDirectoryDialog extends Dialog
 
     private Logger logger = LoggerFactory.getLogger(UserDirectoryDialog.class);
 
-    @Resource
     private SecurityService securityService;
+
+    private LdapDirectorySynchronisationService ldapDirectorySynchronisationService;
 
     private Checkbox isScheduled;
     private TextField synchronisationSchedule;
@@ -78,7 +83,8 @@ public class UserDirectoryDialog extends Dialog
      *
      * @param authenticationMethod
      */
-    public UserDirectoryDialog(SecurityService securityService, AuthenticationMethod authenticationMethod)
+    public UserDirectoryDialog(SecurityService securityService, AuthenticationMethod authenticationMethod,
+                               LdapDirectorySynchronisationService ldapDirectorySynchronisationService)
     {
         super();
 
@@ -91,6 +97,11 @@ public class UserDirectoryDialog extends Dialog
         if(this.authenticationMethod == null)
         {
             throw new IllegalArgumentException("authenticationMethod cannot be null!");
+        }
+        this.ldapDirectorySynchronisationService = ldapDirectorySynchronisationService;
+        if(this.ldapDirectorySynchronisationService == null)
+        {
+            throw new IllegalArgumentException("ldapDirectorySynchronisationService cannot be null!");
         }
 
         init();
@@ -109,18 +120,18 @@ public class UserDirectoryDialog extends Dialog
     protected void init()
     {
 
-        final H2 configureUserDirectories = new H2(getTranslation("label.configure-user-directory", UI.getCurrent().getLocale(), null));
+        final H2 configureUserDirectories = new H2(getTranslation("label.configure-user-directory", UI.getCurrent().getLocale()));
         this.add(configureUserDirectories);
 
 
         FormLayout formLayout = new FormLayout();
 
-        this.isScheduled  = new Checkbox("Is sychronisation scheduled");
+        this.isScheduled  = new Checkbox(getTranslation("label.user-directory-is-synchronisation-scheduled", UI.getCurrent().getLocale()));
 
         formLayout.add(isScheduled);
         formLayout.add(new Div());
 
-        this.synchronisationSchedule = new TextField("Sychronisation schedule cron expression");
+        this.synchronisationSchedule = new TextField(getTranslation("label.user-directory-synchronisation-schedule-cron-expression", UI.getCurrent().getLocale()));
         this.synchronisationSchedule.setWidth("600px");
         this.synchronisationSchedule.setVisible(this.isScheduled.getValue());
 
@@ -329,6 +340,7 @@ public class UserDirectoryDialog extends Dialog
                     }
 
                     securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+                    this.ldapDirectorySynchronisationService.scheduleJobs();
                 }
                 catch(RuntimeException e)
                 {
@@ -353,12 +365,17 @@ public class UserDirectoryDialog extends Dialog
         cancel.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> close());
 
         HorizontalLayout actions = new HorizontalLayout();
+        actions.setMargin(true);
+        actions.setSpacing(true);
         actions.add(save, cancel);
         save.getStyle().set("marginRight", "10px");
 
-        formLayout.add(actions);
+        VerticalLayout buttonLayout = new VerticalLayout();
+        buttonLayout.setWidthFull();
+        buttonLayout.add(actions);
+        buttonLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, actions);
 
-        this.add(formLayout);
+        this.add(formLayout, buttonLayout);
     }
 
     /**
@@ -371,6 +388,24 @@ public class UserDirectoryDialog extends Dialog
         Binder<AuthenticationMethod> binder = new Binder<>();
 
         binder.setBean(this.authenticationMethod);
+
+        binder.forField(this.isScheduled)
+            .bind(AuthenticationMethod::isScheduled, AuthenticationMethod::setScheduled);
+
+        binder.forField(this.synchronisationSchedule)
+            .withValidator((s, valueContext) -> {
+                if(this.isScheduled.getValue()) {
+                    if(!CronExpression.isValidExpression(s)){
+                        return ValidationResult.error(getTranslation("form-validation.user-directory-cron-schedule", UI.getCurrent().getLocale(), null));
+                    }
+
+                    return ValidationResult.ok();
+                }
+                else {
+                    return ValidationResult.ok();
+                }
+            })
+            .bind(AuthenticationMethod::getSynchronisationCronExpression, AuthenticationMethod::setSynchronisationCronExpression);
 
         binder.forField(this.directoryName)
             .withValidator(new StringLengthValidator(

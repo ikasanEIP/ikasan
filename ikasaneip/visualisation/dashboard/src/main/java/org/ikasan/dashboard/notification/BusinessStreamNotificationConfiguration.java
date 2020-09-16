@@ -14,6 +14,7 @@ import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -78,6 +79,7 @@ public class BusinessStreamNotificationConfiguration {
     }
 
     @Bean
+    @DependsOn("dashboardSchedulerService")
     public BusinessStreamNotificationSchedulerService businessStreamNotificationSchedulerService(List<BusinessStreamNotificationJob> businessStreamNotificationJobs) {
         return new BusinessStreamNotificationSchedulerService(SchedulerFactory.getInstance().getScheduler()
             , CachingScheduledJobFactory.getInstance(), businessStreamNotificationJobs);
