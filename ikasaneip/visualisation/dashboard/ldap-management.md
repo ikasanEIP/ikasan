@@ -23,5 +23,8 @@ New configurations can be added by pressing the 'Add Directory' button.
 When editing or creating a new configuration, the user will be presented with the following screen. All feilds are mandatory, however the majority of fields on the configuration screen can use the provided default values.
 ![LDAP Configuration Management](../../developer/docs/quickstart-images/manage-ldap-configuration.png)
 
+It is possible to schedule the synchronisation of LDAP repositories to run automatically as seen below. The cron expression must be a valid [quartz](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) expression.
+![LDAP Configuration Management](../../developer/docs/quickstart-images/schedule-ldap.png) 
+
 
 
