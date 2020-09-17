@@ -7,7 +7,6 @@ import org.ikasan.dashboard.notification.model.EmailNotification;
 import org.ikasan.dashboard.notification.service.BusinessStreamNotificationService;
 import org.ikasan.dashboard.schedule.DashboardJob;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Optional;
 
-public class BusinessStreamNotificationJob implements Job, DashboardJob {
+public class BusinessStreamNotificationJob implements DashboardJob {
 
     private static Logger logger = LoggerFactory.getLogger(BusinessStreamNotificationJob.class);
 

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class DashboardScheduleConfiguration {
 
     @Bean
-    public DashboardSchedulerService dashboardSchedulerService() {
-        return new DashboardSchedulerService(SchedulerFactory.getInstance().getScheduler());
+    public DashboardSchedulerLifeCycleService dashboardSchedulerService() {
+        return new DashboardSchedulerLifeCycleService(SchedulerFactory.getInstance().getScheduler());
     }
 
 }

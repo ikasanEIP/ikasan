@@ -4,15 +4,16 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
-public class DashboardSchedulerService {
+public class DashboardSchedulerLifeCycleService {
 
     /**
      * Scheduler
      */
     private Scheduler scheduler;
 
-    public DashboardSchedulerService(Scheduler scheduler) {
+    public DashboardSchedulerLifeCycleService(Scheduler scheduler) {
         this.scheduler = scheduler;
         if(this.scheduler == null)
         {
@@ -33,6 +34,22 @@ public class DashboardSchedulerService {
         catch (SchedulerException e)
         {
             throw new RuntimeException("Could not start scheduler!", e);
+        }
+    }
+
+    /**
+     * Start the underlying tech
+     */
+    @PreDestroy
+    public void stopScheduler()
+    {
+        try
+        {
+            this.scheduler.isShutdown();
+        }
+        catch (SchedulerException e)
+        {
+            throw new RuntimeException("Could not stop scheduler!", e);
         }
     }
 

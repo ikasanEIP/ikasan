@@ -1,4 +1,4 @@
-package org.ikasan.dashboard.ui.administration.schedule;
+package org.ikasan.dashboard.security.schedule;
 
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -13,8 +13,8 @@ public class LdapDirectorySynchronisationConfiguration {
 
     @Bean
     @DependsOn("dashboardSchedulerService")
-    public LdapDirectorySynchronisationService ldapDirectorySynchronisationService(SecurityService securityService, LdapService ldapService) {
-        return new LdapDirectorySynchronisationService(SchedulerFactory.getInstance().getScheduler()
+    public LdapDirectorySynchronisationSchedulerService ldapDirectorySynchronisationService(SecurityService securityService, LdapService ldapService) {
+        return new LdapDirectorySynchronisationSchedulerService(SchedulerFactory.getInstance().getScheduler()
             , CachingScheduledJobFactory.getInstance(), securityService, ldapService);
     }
 }
