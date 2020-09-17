@@ -67,7 +67,6 @@ public class BusinessStreamNotificationJobTest extends SolrTestCaseJ4 {
     private PlatformConfigurationService platformConfigurationService = mockery.mock(PlatformConfigurationService.class);
     private EmailNotifier emailNotifier = mockery.mock(EmailNotifier.class);
     private JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
-    private BusinessStreamExclusions businessStreamExclusions = mockery.mock(BusinessStreamExclusions.class);
 
     @Test
     public void test_job_success_no_exclusions_found() throws JobExecutionException {

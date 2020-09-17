@@ -78,7 +78,7 @@ public class UserDirectoriesViewTest
     }
 
     @Test
-    public void testuserDirectoriesView() throws IOException
+    public void testUserDirectoriesView() throws IOException
     {
         UI.getCurrent().navigate("userDirectories");
 

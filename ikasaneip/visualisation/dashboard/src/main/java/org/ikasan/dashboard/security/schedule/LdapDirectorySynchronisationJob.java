@@ -1,10 +1,10 @@
-package org.ikasan.dashboard.ui.administration.schedule;
+package org.ikasan.dashboard.security.schedule;
 
+import org.ikasan.dashboard.schedule.DashboardJob;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
 import org.ikasan.security.service.LdapServiceException;
 import org.ikasan.security.service.SecurityService;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
-public class LdapDirectorySynchronisationJob implements Job {
+public class LdapDirectorySynchronisationJob implements DashboardJob {
 
     private static Logger logger = LoggerFactory.getLogger(LdapDirectorySynchronisationJob.class);
 
@@ -53,10 +53,12 @@ public class LdapDirectorySynchronisationJob implements Job {
         }
     }
 
+    @Override
     public String getJobName() {
         return this.authenticationMethod.getName();
     }
 
+    @Override
     public String getCronExpression() {
         return this.authenticationMethod.getSynchronisationCronExpression();
     }
