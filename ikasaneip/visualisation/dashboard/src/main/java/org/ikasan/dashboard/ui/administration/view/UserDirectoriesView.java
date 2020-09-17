@@ -62,7 +62,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.ui.administration.component.UserDirectoryDialog;
-import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationService;
+import org.ikasan.dashboard.security.schedule.LdapDirectorySynchronisationSchedulerService;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.ProgressIndicatorDialog;
@@ -79,8 +79,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,7 +109,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
 
     @Resource
-    private LdapDirectorySynchronisationService ldapDirectorySynchronisationService;
+    private LdapDirectorySynchronisationSchedulerService ldapDirectorySynchronisationSchedulerService;
 
     private Grid<AuthenticationMethod> directoryTable;
     private Button newDirectoryButton;
@@ -452,7 +450,7 @@ public class UserDirectoriesView extends VerticalLayout implements BeforeEnterOb
 	protected void openUserDirectoryDialog(AuthenticationMethod authenticationMethod)
     {
         UserDirectoryDialog userDirectoryDialog = new UserDirectoryDialog(this.securityService, authenticationMethod,
-            this.ldapDirectorySynchronisationService);
+            this.ldapDirectorySynchronisationSchedulerService);
         userDirectoryDialog.open();
 
         userDirectoryDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>) dialogOpenedChangeEvent ->

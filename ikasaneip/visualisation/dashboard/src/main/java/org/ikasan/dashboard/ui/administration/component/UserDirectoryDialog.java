@@ -17,9 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.StringLengthValidator;
-import org.ikasan.dashboard.security.SecurityConfiguration;
-import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationConfiguration;
-import org.ikasan.dashboard.ui.administration.schedule.LdapDirectorySynchronisationService;
+import org.ikasan.dashboard.security.schedule.LdapDirectorySynchronisationSchedulerService;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -27,9 +25,6 @@ import org.ikasan.security.service.SecurityService;
 import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-
-import javax.annotation.Resource;
 
 public class UserDirectoryDialog extends Dialog
 {
@@ -51,7 +46,7 @@ public class UserDirectoryDialog extends Dialog
 
     private SecurityService securityService;
 
-    private LdapDirectorySynchronisationService ldapDirectorySynchronisationService;
+    private LdapDirectorySynchronisationSchedulerService ldapDirectorySynchronisationSchedulerService;
 
     private Checkbox isScheduled;
     private TextField synchronisationSchedule;
@@ -84,7 +79,7 @@ public class UserDirectoryDialog extends Dialog
      * @param authenticationMethod
      */
     public UserDirectoryDialog(SecurityService securityService, AuthenticationMethod authenticationMethod,
-                               LdapDirectorySynchronisationService ldapDirectorySynchronisationService)
+                               LdapDirectorySynchronisationSchedulerService ldapDirectorySynchronisationSchedulerService)
     {
         super();
 
@@ -98,8 +93,8 @@ public class UserDirectoryDialog extends Dialog
         {
             throw new IllegalArgumentException("authenticationMethod cannot be null!");
         }
-        this.ldapDirectorySynchronisationService = ldapDirectorySynchronisationService;
-        if(this.ldapDirectorySynchronisationService == null)
+        this.ldapDirectorySynchronisationSchedulerService = ldapDirectorySynchronisationSchedulerService;
+        if(this.ldapDirectorySynchronisationSchedulerService == null)
         {
             throw new IllegalArgumentException("ldapDirectorySynchronisationService cannot be null!");
         }
@@ -340,7 +335,7 @@ public class UserDirectoryDialog extends Dialog
                     }
 
                     securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
-                    this.ldapDirectorySynchronisationService.scheduleJobs();
+                    this.ldapDirectorySynchronisationSchedulerService.registerJobs();
                 }
                 catch(RuntimeException e)
                 {

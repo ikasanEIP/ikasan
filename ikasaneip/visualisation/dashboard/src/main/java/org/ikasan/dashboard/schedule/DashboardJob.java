@@ -1,18 +1,20 @@
 package org.ikasan.dashboard.schedule;
 
-public interface DashboardJob {
+import org.quartz.Job;
+
+public interface DashboardJob extends Job {
 
     /**
      * Get the job name.
      *
      * @return
      */
-    public String getJobName();
+    String getJobName();
 
     /**
      * Get the cron expression.
      *
      * @return
      */
-    public String getCronExpression();
+    String getCronExpression();
 }
