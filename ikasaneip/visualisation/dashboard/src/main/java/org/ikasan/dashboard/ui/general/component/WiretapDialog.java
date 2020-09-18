@@ -93,6 +93,7 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public void populate(IkasanSolrDocument wiretapEvent)
     {
+        super.title.setText("Wiretap " + wiretapEvent.getEventId());
         this.moduleNameTf.setValue(wiretapEvent.getModuleName());
         this.flowNameTf.setValue(wiretapEvent.getFlowName());
         this.componentNameTf.setValue(wiretapEvent.getComponentName());

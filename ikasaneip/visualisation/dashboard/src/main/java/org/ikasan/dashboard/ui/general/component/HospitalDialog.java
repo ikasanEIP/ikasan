@@ -295,6 +295,9 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     public void populate(IkasanSolrDocument ikasanSolrDocument)
     {
         this.ikasanSolrDocument = ikasanSolrDocument;
+
+        super.title.setText("Exclusion " + ikasanSolrDocument.getEventId());
+
         this.moduleNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getModuleName()).orElse(""));
         this.flowNameTf.setValue(Optional.ofNullable(ikasanSolrDocument.getFlowName()).orElse(""));
         this.eventIdTf.setValue(Optional.ofNullable(ikasanSolrDocument.getEventId()).orElse(""));

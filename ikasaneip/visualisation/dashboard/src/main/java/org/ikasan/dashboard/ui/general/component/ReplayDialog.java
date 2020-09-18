@@ -199,6 +199,8 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public void populate(IkasanSolrDocument replayEvent)
     {
+        super.title.setText("Replay " + replayEvent.getEventId());
+
         this.replayEvent = replayEvent;
         this.moduleNameTf.setValue(replayEvent.getModuleName());
         this.flowNameTf.setValue(replayEvent.getFlowName());

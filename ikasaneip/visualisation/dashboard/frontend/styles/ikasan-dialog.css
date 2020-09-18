@@ -13,7 +13,7 @@
 }
 
 [theme~="ikasan-dialog"] header .dialog-title {
-    font-size: var(--lumo-font-size-m);
+    font-size: var(--lumo-font-size-s);
     margin: 0 auto 0 5px;
 }
 
