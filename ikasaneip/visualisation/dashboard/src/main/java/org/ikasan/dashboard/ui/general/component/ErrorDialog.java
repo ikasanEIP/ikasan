@@ -135,6 +135,7 @@ public class ErrorDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     @Override
     public void populate(IkasanSolrDocument errorEvent)
     {
+        super.title.setText("Error " + errorEvent.getErrorUri());
         this.moduleNameTf.setValue(Optional.ofNullable(errorEvent.getModuleName()).orElse(""));
         this.flowNameTf.setValue(Optional.ofNullable(errorEvent.getFlowName()).orElse(""));
         this.componentNameTf.setValue(Optional.ofNullable(errorEvent.getComponentName()).orElse(""));
