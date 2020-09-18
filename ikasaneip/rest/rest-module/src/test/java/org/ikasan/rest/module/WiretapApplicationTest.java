@@ -7,6 +7,8 @@ import org.ikasan.rest.module.dto.TriggerDto;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.trigger.model.TriggerImpl;
@@ -58,8 +60,10 @@ public class WiretapApplicationTest
     protected ModuleService moduleService;
 
     @MockBean
-    protected WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
+    protected SystemEventService systemEventService;
 
+    @MockBean
+    protected WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -101,6 +105,13 @@ public class WiretapApplicationTest
         assertEquals(201, result.getResponse().getStatus());
         Mockito.verify(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(TriggerImpl.class));
 
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule,flowName=testFlow,flowElementName=component,params={timeToLive=100},jobName=wiretap,relationship=AFTER]"),
+            Mockito.eq("Create Wiretap"),
+            Mockito.anyString());
+
+        Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener, systemEventService );
+
     }
 
     @Test
@@ -130,7 +141,8 @@ public class WiretapApplicationTest
     public void deleteTrigger_when_returns_200() throws Exception
     {
 
-
+        Mockito.when(jobAwareFlowEventListener.getTrigger(1202l))
+               .thenReturn(new TriggerImpl("testModule","testFlow","after","test"));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -140,7 +152,16 @@ public class WiretapApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
+        Mockito.verify(jobAwareFlowEventListener).getTrigger(1202l);
         Mockito.verify(jobAwareFlowEventListener).deleteDynamicTrigger(1202l);
+
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule,flowName=testFlow,flowElementName=null,params={},jobName=test,relationship=AFTER]"),
+            Mockito.eq("Delete Wiretap"),
+            Mockito.anyString());
+
+        Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener, systemEventService );
+
 
     }
 

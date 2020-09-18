@@ -12,6 +12,7 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,6 +55,9 @@ public class ReplayApplicationTest
 
     @MockBean
     protected ModuleContainer moduleContainer;
+
+    @MockBean
+    protected SystemEventService systemEventService;
 
     @Mock
     protected FlowConfiguration flowConfiguration;
@@ -119,9 +123,14 @@ public class ReplayApplicationTest
 
         Mockito.verify(resubmissionService).onResubmission(deserialisedObject);
 
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.startsWith("testModule-testFlow:"),
+            Mockito.eq("Replaying Event"),
+            Mockito.anyString()
+                                                         );
+
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, serialiserFactory,
-            serialiser
-                                        );
+            serialiser, systemEventService );
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -147,8 +156,7 @@ public class ReplayApplicationTest
         Mockito.verify(moduleContainer).getModule(Mockito.eq("testModule"));
 
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, serialiserFactory,
-            serialiser
-                                        );
+            serialiser, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
         assertEquals("{\"errorMessage\":\"Could not get module from module container using name:  "
@@ -174,7 +182,7 @@ public class ReplayApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito.verify(moduleContainer).getModule(Mockito.eq("testModule"));
 
-        Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService);
+        Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
         assertEquals("{\"errorMessage\":\"Could not get flow from module container using name:  "
@@ -201,8 +209,7 @@ public class ReplayApplicationTest
         Mockito.verify(moduleContainer).getModule(Mockito.eq("testModule"));
 
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, serialiserFactory,
-            serialiser
-                                        );
+            serialiser, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
         assertEquals("{\"errorMessage\":\"Events cannot be replayed when the flow that is being "
@@ -233,8 +240,7 @@ public class ReplayApplicationTest
         Mockito.verify(flowConfiguration).getResubmissionService();
 
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, serialiserFactory,
-            serialiser
-                                        );
+            serialiser, systemEventService );
 
         assertEquals(400, result.getResponse().getStatus());
         assertEquals("{\"errorMessage\":\"The resubmission service on the flow you are "
@@ -275,8 +281,7 @@ public class ReplayApplicationTest
         Mockito.verify(resubmissionService).onResubmission(deserialisedObject);
 
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, serialiserFactory,
-            serialiser
-                                        );
+            serialiser, systemEventService  );
 
         assertEquals(404, result.getResponse().getStatus());
 
