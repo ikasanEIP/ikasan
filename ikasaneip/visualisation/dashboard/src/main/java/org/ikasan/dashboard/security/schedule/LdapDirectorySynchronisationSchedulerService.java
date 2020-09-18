@@ -58,15 +58,14 @@ public class LdapDirectorySynchronisationSchedulerService extends AbstractDashbo
                 LdapDirectorySynchronisationJob job = new LdapDirectorySynchronisationJob(authenticationMethod,
                     this.ldapService, this.securityService);
                 JobDetail jobDetail = this.scheduledJobFactory.createJobDetail
-                    (job, BusinessStreamNotificationJob.class, job.getJobName(), "scheduled-ldap");
+                    (job, LdapDirectorySynchronisationJob.class, job.getJobName(), "scheduled-ldap");
 
-                super.jobDetails.add(jobDetail);
                 super.dashboardJobDetailsMap.put(job.getJobName(), jobDetail);
-                this.dashboardJobsMap.put(jobDetail.getKey().toString(), job);
+                super.dashboardJobsMap.put(jobDetail.getKey().toString(), job);
             }
         });
 
-        for (JobDetail jobDetail : this.jobDetails) {
+        for (JobDetail jobDetail : super.dashboardJobDetailsMap.values()) {
             logger.info(String.format("Registering ldap synchronisation job[%s]", jobDetail.getKey().getName()));
             this.addJob(jobDetail.getKey().getName());
         }
