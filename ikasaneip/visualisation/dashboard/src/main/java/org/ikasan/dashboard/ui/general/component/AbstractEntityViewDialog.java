@@ -35,6 +35,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     protected Transformer transformer;
     protected AceEditor aceEditor;
     protected boolean initialised = false;
+    protected H2 title = new H2("");
 
     public String DOCK = "dock";
     public String FULLSCREEN = "fullscreen";
@@ -58,6 +59,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         setDraggable(true);
         setModal(false);
         setResizable(true);
+        setCloseOnEsc(true);
 
         // Dialog theming
         getElement().getThemeList().add("ikasan-dialog");
@@ -68,6 +70,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
         min = new Button(VaadinIcon.DOWNLOAD_ALT.create());
         min.addClickListener(event -> minimise());
+        this.min.setVisible(false);
 
         max = new Button(VaadinIcon.COMPRESS_SQUARE.create());
         max.addClickListener(event -> maximise());
@@ -75,7 +78,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         Button close = new Button(VaadinIcon.CLOSE_SMALL.create());
         close.addClickListener(event -> close());
 
-        H2 title = new H2("Dialog Title");
         title.addClassName("dialog-title");
 
         header = new Header(title, min, max, close);
@@ -167,7 +169,8 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
             }
             min.setIcon(VaadinIcon.UPLOAD_ALT.create());
             getElement().getThemeList().add(DOCK);
-            setWidth("320px");
+            getElement().getStyle().set("right", "500px !important");
+            setWidth("300px");
         }
         isDocked = !isDocked;
         isFullScreen = false;
