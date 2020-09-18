@@ -24,8 +24,6 @@ public abstract class AbstractDashboardSchedulerService {
 
     protected ScheduledJobFactory scheduledJobFactory;
 
-    protected List<JobDetail> jobDetails;
-
     protected Map<String, DashboardJob> dashboardJobsMap;
 
     protected Map<String, JobDetail> dashboardJobDetailsMap;
@@ -46,7 +44,6 @@ public abstract class AbstractDashboardSchedulerService {
 
         this.dashboardJobsMap = new HashMap<>();
         this.dashboardJobDetailsMap = new HashMap<>();
-        this.jobDetails = new ArrayList<>();
     }
 
     @PostConstruct
