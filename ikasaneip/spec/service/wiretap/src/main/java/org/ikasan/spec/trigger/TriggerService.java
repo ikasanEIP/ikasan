@@ -92,4 +92,12 @@ public interface TriggerService
      */
     void deleteDynamicTrigger(Long triggerId);
 
+    /**
+     * Get a dynamic trigger, specified by trigger id. <br>
+     *
+     * @param triggerId - The dynamic Trigger to get
+     *
+     * @return trigger stored in local db
+     */
+    Trigger getTrigger(Long triggerId);
 }

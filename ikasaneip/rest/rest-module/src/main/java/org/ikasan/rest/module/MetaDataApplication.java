@@ -47,7 +47,6 @@ public class MetaDataApplication
     private ModuleService moduleService;
 
     /**
-     * TODO: work out how to get annotation security working.
      *
      * @param moduleName
      * @param flowName
@@ -70,7 +69,6 @@ public class MetaDataApplication
     }
 
     /**
-     * TODO: work out how to get annotation security working.
      *
      * @param moduleName
      * @return

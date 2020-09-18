@@ -42,12 +42,14 @@ package org.ikasan.rest.module;
 
 import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.ReplayRequestDto;
+import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,9 @@ public class ReplayApplication
 
     @Autowired
     private ModuleContainer moduleContainer;
+
+    @Autowired
+    private SystemEventService systemEventService;
 
     /**
      * REST endpoint to replay given event.
@@ -139,28 +144,29 @@ public class ReplayApplication
     /**
      * REST endpoint to replay given events.
      *
-     * @param event The event we are replaying.
+     * @param requestDto The event we are replaying.
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity replay(@RequestBody ReplayRequestDto event)
+    public ResponseEntity replay(@RequestBody ReplayRequestDto requestDto)
     {
         try
         {
-            Module<Flow> module = moduleContainer.getModule(event.getModuleName());
+            String userName = requestDto.getUserName()!=null?requestDto.getUserName(): UserUtil.getUser();
+            Module<Flow> module = moduleContainer.getModule(requestDto.getModuleName());
             if ( module == null )
             {
                 return new ResponseEntity(new ErrorDto(
-                    "Could not get module from module container using name:  [" + event.getModuleName() + "]"),
+                    "Could not get module from module container using name:  [" + requestDto.getModuleName() + "]"),
                     HttpStatus.BAD_REQUEST);
             }
 
-            Flow flow = module.getFlow(event.getFlowName());
+            Flow flow = module.getFlow(requestDto.getFlowName());
             if ( flow == null )
             {
                 return new ResponseEntity(
-                    new ErrorDto("Could not get flow from module container using name:  [" + event.getFlowName() + "]"),
+                    new ErrorDto("Could not get flow from module container using name:  [" + requestDto.getFlowName() + "]"),
                     HttpStatus.BAD_REQUEST);
             }
 
@@ -168,7 +174,7 @@ public class ReplayApplication
             {
                 return new ResponseEntity(new ErrorDto(
                     "Events cannot be replayed when the flow that is being replayed to is in a " + flow.getState()
-                        + " state.  Module[" + event.getModuleName() + "] Flow[" + event.getFlowName() + "]"),
+                        + " state.  Module[" + requestDto.getModuleName() + "] Flow[" + requestDto.getFlowName() + "]"),
                     HttpStatus.BAD_REQUEST);
             }
 
@@ -184,10 +190,15 @@ public class ReplayApplication
             }
 
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
-            Object deserialisedEvent = serialiser.deserialise(event.getEvent());
+            Object deserialisedEvent = serialiser.deserialise(requestDto.getEvent());
             logger.debug("deserialised event [" + deserialisedEvent + "]");
 
             resubmissionService.onResubmission(deserialisedEvent);
+
+            systemEventService.logSystemEvent(
+                String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),deserialisedEvent.toString()),
+                "Replaying Event",
+                userName);
             return new ResponseEntity(HttpStatus.OK);
         }
         catch (Exception e)

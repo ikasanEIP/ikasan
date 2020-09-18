@@ -43,10 +43,13 @@ package org.ikasan.rest.module;
 import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.TriggerDto;
 import org.ikasan.rest.module.util.DateTimeConverter;
+import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.spec.trigger.TriggerJobType;
+import org.ikasan.spec.trigger.TriggerService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.spec.trigger.Trigger;
@@ -75,11 +78,15 @@ public class WiretapApplication
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     @Autowired
-    /** The wiretap service */ private WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
+    /** The wiretap service */
+    private WiretapService<FlowEvent, PagedSearchResult<WiretapEvent>, Long> wiretapService;
 
     @Autowired
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
+
+    @Autowired
+    private SystemEventService systemEventService;
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
@@ -122,7 +129,7 @@ public class WiretapApplication
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createTrigger(@RequestBody TriggerDto triggerDto)
     {
-
+        String userName = triggerDto.getUserName()!=null?triggerDto.getUserName(): UserUtil.getUser();
         HashMap<String, String> params = new HashMap<String, String>();
 
         if ( triggerDto.getTimeToLive() != null && !triggerDto.getTimeToLive().isEmpty() )
@@ -137,6 +144,10 @@ public class WiretapApplication
         try
         {
             this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
+            systemEventService.logSystemEvent(
+                String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
+                "Create Wiretap",
+                userName);
             return new ResponseEntity(HttpStatus.CREATED);
 
         }
@@ -180,7 +191,14 @@ public class WiretapApplication
     {
         try
         {
+            Trigger trigger = jobAwareFlowEventListener.getTrigger(triggerId);
             this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
+            if(trigger!=null){
+                systemEventService.logSystemEvent(
+                    String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
+                    "Delete Wiretap",
+                    UserUtil.getUser());
+            }
             return new ResponseEntity(HttpStatus.OK);
 
         }

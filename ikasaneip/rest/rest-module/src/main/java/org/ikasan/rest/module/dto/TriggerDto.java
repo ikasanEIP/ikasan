@@ -12,6 +12,7 @@ public class TriggerDto implements Serializable
     private String relationship;
     private String jobType;
     private String timeToLive;
+    private String userName;
 
     public TriggerDto()
     {
@@ -96,6 +97,16 @@ public class TriggerDto implements Serializable
     public void setTimeToLive(String timeToLive)
     {
         this.timeToLive = timeToLive;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
     }
 
     @Override

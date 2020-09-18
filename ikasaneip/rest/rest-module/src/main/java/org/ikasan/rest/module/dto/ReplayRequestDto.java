@@ -9,6 +9,7 @@ public class ReplayRequestDto implements Serializable
     private String moduleName;
     private String flowName;
     private byte[] event;
+    private String userName;
 
     public ReplayRequestDto(){
 
@@ -49,6 +50,16 @@ public class ReplayRequestDto implements Serializable
     public void setEvent(byte[] event)
     {
         this.event = event;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
     }
 
     @Override

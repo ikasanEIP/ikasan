@@ -336,6 +336,12 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         }
     }
 
+    @Override
+    public Trigger getTrigger(Long triggerId)
+    {
+        return this.triggerDao.findById(triggerId);
+    }
+
     /**
      * Unmaps the specified trigger if it is mapped
      * 
