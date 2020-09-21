@@ -44,6 +44,11 @@ An exclusive 'Replay Search' will provide all search results in the grid as seen
 
 There are 2 other controls that appear on the search results grid.
 
+![Replay Controls](../../developer/docs/quickstart-images/replay-controls.png)
+
+![Replay Controls](../../developer/docs/quickstart-images/select-all.png)
+
+![Replay Controls](../../developer/docs/quickstart-images/replay-dialog.png)
 
 ![Replay View](../../developer/docs/quickstart-images/replay-view.png)
 
