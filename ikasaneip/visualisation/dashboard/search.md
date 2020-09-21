@@ -42,23 +42,23 @@ An exclusive 'Replay Search' will provide all search results in the grid as seen
 
 ![Replay Search](../../developer/docs/quickstart-images/replay-search.png)
 
-There are 2 other controls that appear on the search results grid when the search is nn exclusive 'Replay Search' that allow for replay events to be administered in bulk. 
+There are 2 other controls that appear on the search results grid when the search is an exclusive 'Replay Search' that allow for replay events to be administered in bulk. 
 
 ![Replay Controls](../../developer/docs/quickstart-images/replay-controls.png)
 
 The left hand button is the 'Replay' button and the right hand button with the tick allow users to 'Select All' results in the results grid.
 
-![Replay Controls](../../developer/docs/quickstart-images/select-all.png)
+<img src="../../developer/docs/quickstart-images/select-all.png" height="200" />
 
-When the 'Replay' button is selected the 'replay' doalog will be presented. It requires the following fields to be entered in order to replay the events:
+When the 'Replay' button is selected the 'replay' dialog will be presented. It requires the following fields to be entered in order to replay the events:
 - The url of the module that the events are to be replayed to.
 - The username who has the permission to execute the replay events in the environment being targeted.
 - The associated password.
 - Comments relating to the replay of the events. The could be a change control ticket reference or something more informal.
 
-Once the form is completed, the events can be replayed by proessing the replay button.
+Once the form is completed, the events can be replayed by pressing the replay button.
 
-![Replay Controls](../../developer/docs/quickstart-images/replay-dialog.png)
+<img src="../../developer/docs/quickstart-images/replay-dialog.png" width="400" />
 
 it is also possible to view an individual replay event by double clicking a record in the search results grid. This view provides the following:
 - The 'Module Name' and 'Flow Name' where the event was recorded.
@@ -69,15 +69,26 @@ It is possible to download the event or replay the individual event from this sc
 
 ![Replay View](../../developer/docs/quickstart-images/replay-view.png)
 
-### Exclusion Search
+### Hospital Search
+An exclusive 'Hosptial Search' will provide all search results in the grid as seen below.
 
 ![Exclusion Search](../../developer/docs/quickstart-images/exclusion-search.png)
 
+There are 3 other controls that appear on the search results grid when the search is an exclusive 'Hospital Search' that allow for hospital events to be administered in bulk.
+
+![Exclusion Controls](../../developer/docs/quickstart-images/exclusion-controls.png)
+
+The left hand button is the 'Resubmit' button, the middle 'Ignore' and the right hand button with the tick allow users to 'Select All' results in the results grid.
+
 ![Exclusion View Error](../../developer/docs/quickstart-images/exclusion-view-error-details.png)
+
+<img src="../../developer/docs/quickstart-images/resubmit-dialog.png" width="400" />
+
+<img src="../../developer/docs/quickstart-images/ignore-dialog.png" width="400" />
 
 ![Exclusion View Event](../../developer/docs/quickstart-images/exclusion-view-excluded-event.png)
 
-### Exclusion Search
+### Error Search
 
 ![Error Search](../../developer/docs/quickstart-images/error-search.png)
 
@@ -91,8 +102,8 @@ It is possible to download the event or replay the individual event from this sc
 
 ![Visualisation Search Results](../../developer/docs/quickstart-images/visualisation-search-results.png)
 
-![Visualisation Icon Search Results](../../developer/docs/quickstart-images/visualisation-icon-search-results.png)
+<img src="../../developer/docs/quickstart-images/visualisation-icon-search-results.png" height="600" />
 
-![Visualisation Flow Search Results](../../developer/docs/quickstart-images/visualisation-flow-view-search-results.png)
+<img src="../../developer/docs/quickstart-images/visualisation-flow-view-search-results.png" height="600" />
 
 ![Visualisation Icon Search Results](../../developer/docs/quickstart-images/visualisation-icon-select_search_results.png)
