@@ -705,7 +705,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
             ComponentSecurityVisibility.applySecurity(selectAllButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
 
-            buttonLayout.setWidth("120px");
+            buttonLayout.setWidth("140px");
         }
     }
 
