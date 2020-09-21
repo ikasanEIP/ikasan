@@ -42,13 +42,30 @@ An exclusive 'Replay Search' will provide all search results in the grid as seen
 
 ![Replay Search](../../developer/docs/quickstart-images/replay-search.png)
 
-There are 2 other controls that appear on the search results grid.
+There are 2 other controls that appear on the search results grid when the search is nn exclusive 'Replay Search' that allow for replay events to be administered in bulk. 
 
 ![Replay Controls](../../developer/docs/quickstart-images/replay-controls.png)
 
+The left hand button is the 'Replay' button and the right hand button with the tick allow users to 'Select All' results in the results grid.
+
 ![Replay Controls](../../developer/docs/quickstart-images/select-all.png)
 
+When the 'Replay' button is selected the 'replay' doalog will be presented. It requires the following fields to be entered in order to replay the events:
+- The url of the module that the events are to be replayed to.
+- The username who has the permission to execute the replay events in the environment being targeted.
+- The associated password.
+- Comments relating to the replay of the events. The could be a change control ticket reference or something more informal.
+
+Once the form is completed, the events can be replayed by proessing the replay button.
+
 ![Replay Controls](../../developer/docs/quickstart-images/replay-dialog.png)
+
+it is also possible to view an individual replay event by double clicking a record in the search results grid. This view provides the following:
+- The 'Module Name' and 'Flow Name' where the event was recorded.
+- The 'Life Identifier' of the event.
+- The 'Date and Time' that the event was captured.
+
+It is possible to download the event or replay the individual event from this screen.
 
 ![Replay View](../../developer/docs/quickstart-images/replay-view.png)
 
