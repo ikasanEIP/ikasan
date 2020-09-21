@@ -125,13 +125,21 @@ Along with the contents of the event that caused the error.
 ![Error View Event](../../developer/docs/quickstart-images/error-view-event-details.png)
 
 ### Visualisation Screen Search
-
+All search features are also available from the module and business stream visualisation screens. In order to perform a search, select the search card from the bottom of the screen.
 ![Visualisation Search Tab](../../developer/docs/quickstart-images/visualisation-search-tab.png)
+
+All searches performed will only show results for flows in the module or business stream selected. All above search features mentioned in the proceeding sections are supported.
 
 ![Visualisation Search Results](../../developer/docs/quickstart-images/visualisation-search-results.png)
 
+Icons will also be presented to the business stream visualisation denoting where various event types have occurred within flows of the business stream.
+
 <img src="../../developer/docs/quickstart-images/visualisation-icon-search-results.png" height="600" />
 
+Double clicking on a flow from the business stream visualisation will also present icons to the right of the diagram, denoting which events are part of the search results.
+
 <img src="../../developer/docs/quickstart-images/visualisation-flow-view-search-results.png" height="600" />
+
+All entity icons can be double clicked in order to display the results. Once again, all aforementioned functionality is available from this search results screen for the variious entity types.
 
 ![Visualisation Icon Search Results](../../developer/docs/quickstart-images/visualisation-icon-select_search_results.png)
