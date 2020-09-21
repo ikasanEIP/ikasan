@@ -80,12 +80,25 @@ There are 3 other controls that appear on the search results grid when the searc
 
 The left hand button is the 'Resubmit' button, the middle 'Ignore' and the right hand button with the tick allow users to 'Select All' results in the results grid.
 
-![Exclusion View Error](../../developer/docs/quickstart-images/exclusion-view-error-details.png)
+If the 'Resubmit' button is selected, the user will be presented with the following dialog. The comment field is required. The 'resubmit' button will then send all selected events to the flow from where they originated to be executed. They will be resubmitted in chronological order (oldest to youngest).
 
 <img src="../../developer/docs/quickstart-images/resubmit-dialog.png" width="400" />
 
+If the 'Ignore' button is selected, the user will be presented with the following dialog. The comment field is required. The 'ignore' button will remove all 'ignored' events from the hospital service. An audit record for each 'ignored' event will be created.
+
 <img src="../../developer/docs/quickstart-images/ignore-dialog.png" width="400" />
 
+It is possible to view each individual event by double clicking a record in the results grid. This view provides the following:
+- The 'Module Name' and 'Flow Name' where the event was recorded.
+- The 'Life Identifier' of the event.
+- The 'Error URI' that was generated.
+- The 'Error Action' that Ikasan took.
+- The 'Date and Time' that the event was captured.
+
+The error details will also be presented.
+![Exclusion View Error](../../developer/docs/quickstart-images/exclusion-view-error-details.png)
+
+Along with the contents of the excluded event.
 ![Exclusion View Event](../../developer/docs/quickstart-images/exclusion-view-excluded-event.png)
 
 ### Error Search
