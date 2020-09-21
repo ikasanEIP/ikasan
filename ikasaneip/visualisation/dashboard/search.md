@@ -60,12 +60,12 @@ Once the form is completed, the events can be replayed by pressing the replay bu
 
 <img src="../../developer/docs/quickstart-images/replay-dialog.png" width="400" />
 
-it is also possible to view an individual replay event by double clicking a record in the search results grid. This view provides the following:
+It is also possible to view an individual replay event by double clicking a record in the search results grid. This view provides the following:
 - The 'Module Name' and 'Flow Name' where the event was recorded.
 - The 'Life Identifier' of the event.
 - The 'Date and Time' that the event was captured.
 
-It is possible to download the event or replay the individual event from this screen.
+Events can be downloaded the individual event replayed from this screen.
 
 ![Replay View](../../developer/docs/quickstart-images/replay-view.png)
 
