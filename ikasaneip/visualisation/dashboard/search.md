@@ -96,16 +96,31 @@ It is possible to view each individual event by double clicking a record in the 
 - The 'Date and Time' that the event was captured.
 
 The error details will also be presented.
+
 ![Exclusion View Error](../../developer/docs/quickstart-images/exclusion-view-error-details.png)
 
 Along with the contents of the excluded event.
+
 ![Exclusion View Event](../../developer/docs/quickstart-images/exclusion-view-excluded-event.png)
 
 ### Error Search
+An exclusive 'Error Search' will provide all search results in the grid as seen below.
 
 ![Error Search](../../developer/docs/quickstart-images/error-search.png)
 
+It is possible to view each individual error event by double clicking a record in the results grid. This view provides the following:
+- The 'Module Name' and 'Flow Name' where the event was recorded.
+- The 'Life Identifier' of the event.
+- The 'Error URI' that was generated.
+- The 'Error Action' that Ikasan took.
+- The 'Date and Time' that the event was captured.
+- The 'Exception Generating' class.
+
+The error details will also be presented.
+
 ![Error View Error](../../developer/docs/quickstart-images/error-view-error-details.png)
+
+Along with the contents of the event that caused the error.
 
 ![Error View Event](../../developer/docs/quickstart-images/error-view-event-details.png)
 
