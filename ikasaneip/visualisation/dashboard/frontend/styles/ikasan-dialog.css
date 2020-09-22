@@ -13,12 +13,12 @@
 }
 
 [theme~="ikasan-dialog"] header .dialog-title {
-    font-size: var(--lumo-font-size-s);
+    font-size: var(--material-font-size-s);
     margin: 0 auto 0 5px;
 }
 
 [theme~="ikasan-dialog"] header vaadin-button:not(:last-child) {
-    margin-right: var(--lumo-space-xs);
+    margin-right: var(--material-space-xs);
 }
 
 /* CONTENT */
@@ -27,16 +27,8 @@
     overflow: auto;
 }
 
-/* FOOTER */
-[theme~="ikasan-dialog"] footer {
-    box-shadow: 0 -1px var(--lumo-contrast-20pct);
-    display: flex;
-    padding: var(--lumo-space-xs) var(--lumo-space-m);
-    z-index: 1;
-}
-
 [theme~="ikasan-dialog"] footer vaadin-button:not(:last-child) {
-    margin-right: var(--lumo-space-xs);
+    margin-right: var(--material-space-xs);
 }
 
 [theme~="ikasan-dialog"] footer vaadin-button:last-child {

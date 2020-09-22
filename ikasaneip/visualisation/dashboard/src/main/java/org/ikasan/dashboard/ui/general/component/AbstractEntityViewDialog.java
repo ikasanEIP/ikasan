@@ -5,13 +5,12 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.theme.material.Material;
 import io.github.ciesielskis.AceEditor;
 import io.github.ciesielskis.AceMode;
 import io.github.ciesielskis.AceTheme;
@@ -56,6 +55,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
     public AbstractEntityViewDialog()
     {
         this.setSizeFull();
+        this.setWidth("1024px");
         setDraggable(true);
         setModal(false);
         setResizable(true);
@@ -81,7 +81,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         title.addClassName("dialog-title");
 
         header = new Header(title, min, max, close);
-        header.getElement().getThemeList().add(Lumo.DARK);
+        header.getElement().getThemeList().add(Material.DARK);
         add(header);
 
         try

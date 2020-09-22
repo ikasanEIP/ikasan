@@ -2019,7 +2019,7 @@
             <dependency>
                 <groupId>com.github.appreciated</groupId>
                 <artifactId>app-layout-addon</artifactId>
-                <version>4.0.0.rc5</version>
+                <version>4.0.0</version>
             </dependency>
 
             <dependency>

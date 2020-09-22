@@ -110,9 +110,23 @@ $_documentContainer.innerHTML = `<custom-style>
     </template>
 </dom-module>
 
+<dom-module id="dialog-fix" theme-for="vaadin-dialog-overlay">
+    <template>
+        <style>
+            [part~="overlay"]{
+                max-width: none !important;
+            }
+        </style>
+    </template>
+</dom-module>
+
 <dom-module id="my-grid-styles" theme-for="vaadin-grid">
     <template>
         <style>
+            [part~="cell"] {
+                font-size: 8pt;
+            }
+            
             /* Background needs a stronger selector to not be overridden */
             [part~="cell"].running {
                 background-color: rgba(5,227,108, 0.3);

@@ -24,7 +24,6 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.material.Material;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.general.component.AboutIkasanDialog;
@@ -32,8 +31,6 @@ import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.HashMap;
@@ -112,7 +109,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         LeftAppMenuBuilder leftAppMenuBuilder = LeftAppMenuBuilder.get();
 
-        this.searchItem = new LeftNavigationItem(getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
+        this.searchItem = new LeftNavigationItem("          " + getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
         leftAppMenuBuilder = leftAppMenuBuilder.add(searchItem);
 
 
