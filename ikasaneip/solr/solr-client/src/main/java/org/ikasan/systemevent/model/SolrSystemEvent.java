@@ -61,11 +61,11 @@ public class SolrSystemEvent implements SystemEvent
     }
 
 
+    @Override
     public String getModuleName()
     {
         return this.moduleName;
     }
-
 
     @Override
     public String getAction()
