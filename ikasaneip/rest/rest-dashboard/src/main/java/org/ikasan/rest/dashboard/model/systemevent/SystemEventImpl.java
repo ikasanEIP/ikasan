@@ -50,7 +50,8 @@ import java.util.StringJoiner;
 @JsonIgnoreProperties(value = { "harvested",  "harvestedDateTime"})
 public class SystemEventImpl implements SystemEvent
 {
-	
+	private String moduleName;
+
 	private String action;
 	
 	private String actor;
@@ -68,6 +69,15 @@ public class SystemEventImpl implements SystemEvent
 	 */
 	@SuppressWarnings("unused")
 	private SystemEventImpl(){}
+
+    @Override
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
 
     @Override
     public String getAction()
