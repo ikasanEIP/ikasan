@@ -42,6 +42,7 @@ package org.ikasan.systemevent.model;
 
 import org.ikasan.spec.systemevent.SystemEvent;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -57,6 +58,7 @@ import java.util.StringJoiner;
  */
 public class SystemEventImpl implements SystemEvent
 {
+
 	
 	/**
 	 * What happened?
@@ -121,8 +123,14 @@ public class SystemEventImpl implements SystemEvent
 		this.expiry = expiry;
 	}
 
+    @Override
+    public String getModuleName() {
+	    // This is not persisted to the database. Each Ikasan module has
+        // its own database and the module name can be derived by context.
+        throw new UnsupportedOperationException();
+    }
 
-	/**
+    /**
 	 * Accessor for action
 	 * 
 	 * @return action

@@ -4,6 +4,8 @@ import java.util.Date;
 
 public interface SystemEvent
 {
+    String getModuleName();
+
     String getAction();
 
     String getActor();
