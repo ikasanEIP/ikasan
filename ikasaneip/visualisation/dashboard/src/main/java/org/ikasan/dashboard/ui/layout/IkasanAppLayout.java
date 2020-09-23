@@ -109,7 +109,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         LeftAppMenuBuilder leftAppMenuBuilder = LeftAppMenuBuilder.get();
 
-        this.searchItem = new LeftNavigationItem("          " + getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
+        this.searchItem = new LeftNavigationItem(getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
         leftAppMenuBuilder = leftAppMenuBuilder.add(searchItem);
 
 
