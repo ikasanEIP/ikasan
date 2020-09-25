@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.ui.visualisation.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
@@ -12,15 +14,15 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
@@ -59,9 +61,11 @@ import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
+import org.vaadin.olli.FileDownloadWrapper;
 import org.vaadin.tabs.PagedTabs;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,9 +83,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
     @Resource
     private ErrorReportingService solrErrorReportingService;
-
-    @Resource
-    private ExclusionManagementService solrExclusionService;
 
     @Resource
     private ModuleControlService moduleControlRestService;
@@ -130,8 +131,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
     private ModuleFilteringGrid modulesGrid;
     private BusinessStreamFilteringGrid businessStreamGrid;
-    private Button viewListButton;
-    private RadioButtonGroup<String> group = new RadioButtonGroup<>();
     private GraphViewBusinessStreamVisualisation businessStreamVisualisation;
     private GraphViewModuleVisualisation moduleVisualisation;
     private H2 moduleLabel = new H2();
@@ -182,7 +181,43 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         modulesGrid.setHeight("80vh");
         modulesGrid.setWidth("100%");
 
-        modulesGrid.addColumn(ModuleMetaData::getName).setHeader("Name").setKey("name");
+        modulesGrid.addColumn(ModuleMetaData::getName)
+            .setHeader(getTranslation("table-header.module-name", UI.getCurrent().getLocale())).setKey("name")
+            .setFlexGrow(16);
+        modulesGrid.addColumn(TemplateRenderer.<ModuleMetaData>of("<div style='white-space:normal'>[[item.description]]</div>")
+            .withProperty("description", ModuleMetaData::getDescription))
+            .setHeader(getTranslation("table-header.module-description", UI.getCurrent().getLocale()))
+            .setKey("description")
+            .setFlexGrow(32);
+        modulesGrid.addColumn(ModuleMetaData::getVersion)
+            .setHeader(getTranslation("table-header.module-version", UI.getCurrent().getLocale())).setKey("version")
+            .setFlexGrow(8);
+        modulesGrid.addColumn(new ComponentRenderer<>(moduleMetaData->
+        {
+            ObjectMapper objectMapper = new ObjectMapper();
+            byte[] metaData = null;
+
+            try {
+                metaData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(moduleMetaData);
+            }
+            catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+            Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
+            byte[] finalMetaData = metaData;
+            StreamResource streamResource = new StreamResource(moduleMetaData.getName().concat(".json")
+                , () -> new ByteArrayInputStream(finalMetaData));
+
+            FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
+            buttonWrapper.wrapComponent(downloadButton);
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(buttonWrapper);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonWrapper);
+            return layout;
+        })).setWidth("30px");
 
         modulesGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>)
             doubleClickEvent ->
@@ -212,7 +247,48 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         businessStreamGrid.setHeight("80vh");
         businessStreamGrid.setWidth("100%");
 
-        businessStreamGrid.addColumn(BusinessStreamMetaData::getName).setHeader("Name").setKey("name").setFlexGrow(8);
+        businessStreamGrid.addColumn(TemplateRenderer.<BusinessStreamMetaData>of("<div style='white-space:normal'>[[item.name]]</div>")
+            .withProperty("name", BusinessStreamMetaData::getName))
+            .setHeader(getTranslation("table-header.business-stream-name", UI.getCurrent().getLocale()))
+            .setKey("name")
+            .setFlexGrow(16);
+        businessStreamGrid.addColumn(TemplateRenderer.<BusinessStreamMetaData>of("<div style='white-space:normal'>[[item.description]]</div>")
+            .withProperty("description", BusinessStreamMetaData::getDescription)).setHeader(getTranslation("table-header.business-stream-description", UI.getCurrent().getLocale()))
+            .setKey("description")
+            .setFlexGrow(32);
+        businessStreamGrid.addColumn(new ComponentRenderer<>(businessStreamMetaData->
+        {
+            Button editButton = new TableButton(VaadinIcon.EDIT.create());
+            editButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                BusinessStreamUploadDialog uploadDialog = new  BusinessStreamUploadDialog(businessStreamMetaData, this.businessStreamMetaDataService);
+                uploadDialog.open();
+
+                uploadDialog.addOpenedChangeListener((ComponentEventListener<GeneratedVaadinDialog.OpenedChangeEvent<Dialog>>)
+                    dialogOpenedChangeEvent -> populateBusinessStreamGrid());
+            });
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(editButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, editButton);
+            return layout;
+        })).setWidth("30px");
+        businessStreamGrid.addColumn(new ComponentRenderer<>(businessStreamMetaData->
+        {
+            Button downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
+            StreamResource streamResource = new StreamResource(businessStreamMetaData.getName().concat(".json")
+                , () -> new ByteArrayInputStream(businessStreamMetaData.getJson().getBytes()));
+
+            FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(streamResource);
+            buttonWrapper.wrapComponent(downloadButton);
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(buttonWrapper);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonWrapper);
+            return layout;
+        })).setWidth("30px");
         businessStreamGrid.addColumn(new ComponentRenderer<>(businessStreamMetaData->
         {
             Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
@@ -227,7 +303,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             layout.add(deleteButton);
             layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
             return layout;
-        })).setFlexGrow(1);
+        })).setWidth("30px");
 
         businessStreamGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<BusinessStreamMetaData>>) doubleClickEvent ->
         {
@@ -341,17 +417,20 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     protected void createToolsSlider()
     {
         PagedTabs tabs = new PagedTabs();
+        tabs.getElement().getThemeList().remove("padding");
         tabs.setSizeFull();
 
         VerticalLayout modulesLayout = new VerticalLayout();
+        modulesLayout.getThemeList().remove("padding");
         modulesLayout.setSizeFull();
         modulesLayout.add(this.modulesGrid);
 
 
         VerticalLayout businessStreamLayout = new VerticalLayout();
+        businessStreamLayout.getThemeList().remove("padding");
         businessStreamLayout.setSizeFull();
 
-        uploadBusinssStreamButton = new Button(VaadinIcon.UPLOAD.create());
+        uploadBusinssStreamButton = new Button(VaadinIcon.PLUS.create());
         uploadBusinssStreamButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             BusinessStreamUploadDialog uploadDialog = new  BusinessStreamUploadDialog(this.businessStreamMetaDataService);
@@ -381,11 +460,11 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
         Image transparent = new Image("frontend/images/transparent.png", "");
         transparent.setHeight("60px");
-        transparent.setWidth("350px");
+        transparent.setWidth("550px");
 
         Div card = new Div();
         card.setSizeFull();
-        card.setWidth("370px");
+        card.setWidth("670px");
         card.setHeight("100%");
         card.getStyle().set("background", "white");
         card.getStyle().set("position" , "absolute");
@@ -399,7 +478,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             .mode(SlideMode.RIGHT)
             .caption("Tools")
             .tabPosition(SlideTabPosition.MIDDLE)
-            .fixedContentSize(397)
+            .fixedContentSize(697)
             .zIndex(1)
             .flowInContent(true)
             .build();
@@ -423,14 +502,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         wrapperDiv.setMargin(false);
         wrapperDiv.setSpacing(false);
 
-        HorizontalLayout searchDiv = new HorizontalLayout();
-        searchDiv.setWidth("100%");
-        searchDiv.setHeight("260px");
-        searchDiv.getStyle().set("background", "white");
-        searchDiv.getStyle().set("color", "black");
-        searchDiv.add(searchForm);
-
-        wrapperDiv.add(searchDiv, this.searchResults);
+        wrapperDiv.add(searchForm, this.searchResults);
 
         searchSlider = new SlideTabBuilder(wrapperDiv)
             .expanded(false)

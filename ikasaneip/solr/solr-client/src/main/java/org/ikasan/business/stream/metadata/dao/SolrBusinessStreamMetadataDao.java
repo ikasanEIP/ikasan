@@ -57,6 +57,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         document.addField(ID, "businessStream-"+businessStreamMetaData.getId());
         document.addField(TYPE, BUSINESS_STREAM_METADATA);
         document.addField(MODULE_NAME, businessStreamMetaData.getName());
+        document.addField(FLOW_NAME, businessStreamMetaData.getDescription());
         document.addField(PAYLOAD_CONTENT, businessStreamMetaData.getBusinessStreamMetaData());
         document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
 
@@ -181,6 +182,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
         BusinessStreamMetaData businessStreamMetaData = new BusinessStreamMetaDataImpl();
         businessStreamMetaData.setId(businessStreamDocument.getId());
         businessStreamMetaData.setName(businessStreamDocument.getName());
+        businessStreamMetaData.setDescription(businessStreamDocument.getDescription());
         businessStreamMetaData.setJson(businessStreamDocument.getBusinessStreamMetaData());
 
         return businessStreamMetaData;

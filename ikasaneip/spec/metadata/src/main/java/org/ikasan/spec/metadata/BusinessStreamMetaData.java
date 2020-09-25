@@ -30,6 +30,20 @@ public interface BusinessStreamMetaData<BUSINESS_STREAM>
     public void setName(String name);
 
     /**
+     * Get the business description.
+     *
+     * @return
+     */
+    public String getDescription();
+
+    /**
+     * Set the business stream description.
+     *
+     * @param name
+     */
+    public void setDescription(String name);
+
+    /**
      * Get the business stream json.
      *
      * @return
