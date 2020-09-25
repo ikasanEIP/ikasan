@@ -29,7 +29,7 @@ import org.vaadin.olli.FileDownloadWrapper;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
-public abstract class AbstractConfigurationDialog extends Dialog
+public abstract class AbstractConfigurationDialog extends AbstractCloseableResizableDialog
 {
     private static Logger logger = LoggerFactory.getLogger(AbstractConfigurationDialog.class);
 
@@ -111,37 +111,32 @@ public abstract class AbstractConfigurationDialog extends Dialog
             if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"))
             {
                 layout.add(this.manageBooleanConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"))
             {
                 layout.add(this.manageIntegerConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterStringImpl"))
             {
                 layout.add(this.manageStringConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterLongImpl"))
             {
                 layout.add(this.manageLongConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterMapImpl"))
             {
-                layout.add(this.manageMapConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
+                Component mapLayout = this.manageMapConfiguration(configurationParameterMetaData);
+                layout.add(mapLayout);
+                layout.setHorizontalComponentAlignment(FlexComponent.Alignment.START, mapLayout);
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterListImpl"))
             {
                 layout.add(this.manageListConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
             else if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"))
             {
                 layout.add(this.manageMaskedStringConfiguration(configurationParameterMetaData));
-                layout.add(new Divider());
             }
         }
 
@@ -165,6 +160,8 @@ public abstract class AbstractConfigurationDialog extends Dialog
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setMargin(true);
+        buttonLayout.setSpacing(true);
         buttonLayout.add(saveButton, deleteButton);
 
         ComponentSecurityVisibility.applySecurity(saveButton, SecurityConstants.ALL_AUTHORITY
@@ -179,7 +176,7 @@ public abstract class AbstractConfigurationDialog extends Dialog
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
 
         this.setWidth("700px");
-        this.add(layout);
+        super.content.add(layout);
     }
 
     private void save()
@@ -401,13 +398,16 @@ public abstract class AbstractConfigurationDialog extends Dialog
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
         verticalLayout.setSpacing(false);
-        verticalLayout.setWidthFull();
+        verticalLayout.getThemeList().remove("padding");
+
 
         Button addButton = new Button(VaadinIcon.PLUS.create());
         this.addMapItemButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(addButton, getTranslation("tooltip.add-configuration-map-item", UI.getCurrent().getLocale()));
         addButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
             HorizontalLayout layout = new HorizontalLayout();
+            layout.setMargin(false);
+            layout.setSpacing(true);
             layout.setWidthFull();
 
             final TextField nameTextField;
@@ -454,6 +454,9 @@ public abstract class AbstractConfigurationDialog extends Dialog
         Label mapLabel = new Label(configurationParameterMetaData.getName());
 
         HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.setWidthFull();
+        topLayout.setSpacing(false);
+        topLayout.setMargin(false);
         topLayout.add(mapLabel, addButton, this.addMapItemButtonTooltip);
         topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, mapLabel, addButton);
 
@@ -469,6 +472,8 @@ public abstract class AbstractConfigurationDialog extends Dialog
             for(String key: configurationMap.keySet())
             {
                 HorizontalLayout layout = new HorizontalLayout();
+                layout.setMargin(false);
+                layout.setSpacing(true);
                 layout.setWidthFull();
 
                 final TextField nameTextField;

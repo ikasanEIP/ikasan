@@ -36,7 +36,6 @@ public class BusinessStreamFilteringGrid extends Grid<BusinessStreamMetaData>
     private BusinessStreamSearchFilter searchFilter;
 
     private long resultSize = 0;
-    private long queryTime = 0;
 
     /**
      * Constructors
@@ -120,7 +119,6 @@ public class BusinessStreamFilteringGrid extends Grid<BusinessStreamMetaData>
             }
 
             this.resultSize = results.getTotalNumberOfResults();
-            this.queryTime = results.getQueryResponseTime();
 
 
             return (int) results.getTotalNumberOfResults();

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.theme.material.Material;
 import io.github.ciesielskis.AceEditor;
 import io.github.ciesielskis.AceMode;
@@ -27,24 +28,13 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-@CssImport("./styles/ikasan-dialog.css")
-public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
+public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseableResizableDialog
 {
     protected DocumentBuilder documentBuilder;
     protected Transformer transformer;
     protected AceEditor aceEditor;
+    protected TextArea textArea;
     protected boolean initialised = false;
-    protected H2 title = new H2("");
-
-    public String DOCK = "dock";
-    public String FULLSCREEN = "fullscreen";
-
-    private boolean isDocked = false;
-    private boolean isFullScreen = true;
-
-    private Header header;
-    private Button min;
-    private Button max;
 
     private VerticalLayout content;
 
@@ -54,35 +44,12 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
     public AbstractEntityViewDialog()
     {
+        this.setWidth("1px");
         this.setSizeFull();
-        this.setWidth("1024px");
         setDraggable(true);
         setModal(false);
         setResizable(true);
         setCloseOnEsc(true);
-
-        // Dialog theming
-        getElement().getThemeList().add("ikasan-dialog");
-
-        // Accessibility
-        getElement().setAttribute("aria-labelledby", "dialog-title");
-
-
-        min = new Button(VaadinIcon.DOWNLOAD_ALT.create());
-        min.addClickListener(event -> minimise());
-        this.min.setVisible(false);
-
-        max = new Button(VaadinIcon.COMPRESS_SQUARE.create());
-        max.addClickListener(event -> maximise());
-
-        Button close = new Button(VaadinIcon.CLOSE_SMALL.create());
-        close.addClickListener(event -> close());
-
-        title.addClassName("dialog-title");
-
-        header = new Header(title, min, max, close);
-        header.getElement().getThemeList().add(Material.DARK);
-        add(header);
 
         try
         {
@@ -122,6 +89,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
 
         String xmlString = formatXml(event);
         aceEditor.setValue(xmlString);
+        this.textArea.setValue(xmlString);
     }
 
     protected String formatXml(String event)
@@ -158,47 +126,14 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends Dialog
         aceEditor.setHeight("50vh");
         aceEditor.setReadOnly(true);
         aceEditor.setWrap(false);
-    }
 
-    private void minimise() {
-        if (isDocked) {
-            initialSize();
-        } else {
-            if (isFullScreen) {
-                initialSize();
-            }
-            min.setIcon(VaadinIcon.UPLOAD_ALT.create());
-            getElement().getThemeList().add(DOCK);
-            getElement().getStyle().set("right", "500px !important");
-            setWidth("300px");
-        }
-        isDocked = !isDocked;
-        isFullScreen = false;
-        content.setVisible(!isDocked);
-    }
-
-    private void initialSize() {
-        min.setIcon(VaadinIcon.DOWNLOAD_ALT.create());
-        getElement().getThemeList().remove(DOCK);
-        max.setIcon(VaadinIcon.EXPAND_SQUARE.create());
-        getElement().getThemeList().remove(FULLSCREEN);
-        setHeight("auto");
-        setWidth("600px");
-    }
-
-    private void maximise() {
-        if (isFullScreen) {
-            initialSize();
-        } else {
-            if (isDocked) {
-                initialSize();
-            }
-            max.setIcon(VaadinIcon.COMPRESS_SQUARE.create());
-            getElement().getThemeList().add(FULLSCREEN);
-            setSizeFull();
-            content.setVisible(true);
-        }
-        isFullScreen = !isFullScreen;
-        isDocked = false;
+        this.textArea = new TextArea();
+//        this.textArea.setSizeFull();
+        textArea.setWidth("auto");
+        textArea.setHeight("50vh");
+        this.textArea.setReadOnly(true);
+//        this.textArea.getElement().getStyle().set("white-space", "nowrap");
+//        this.textArea.getElement().getStyle().set("overflow-x", "auto");
+        this.textArea.setThemeName(Material.DARK);
     }
 }
