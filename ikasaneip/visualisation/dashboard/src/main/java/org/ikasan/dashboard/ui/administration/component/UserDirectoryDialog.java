@@ -18,6 +18,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import org.ikasan.dashboard.security.schedule.LdapDirectorySynchronisationSchedulerService;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -26,7 +27,7 @@ import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserDirectoryDialog extends Dialog
+public class UserDirectoryDialog extends AbstractCloseableResizableDialog
 {
     private static final String APPLICATION_SECURITY_GROUP_ATTRIBUTE_NAME = "sAMAccountName";
     private static final String LDAP_USER_SEARCH_FILTER = "(sAMAccountName={0})";
@@ -102,21 +103,11 @@ public class UserDirectoryDialog extends Dialog
         init();
     }
 
-    /**
-     * Constructor
-     */
-    public UserDirectoryDialog()
-    {
-        super();
-
-        init();
-    }
-
     protected void init()
     {
-
+        super.title.setText(getTranslation("label.configure-user-directory", UI.getCurrent().getLocale()));
         final H2 configureUserDirectories = new H2(getTranslation("label.configure-user-directory", UI.getCurrent().getLocale()));
-        this.add(configureUserDirectories);
+        this.content.add(configureUserDirectories);
 
 
         FormLayout formLayout = new FormLayout();
@@ -370,7 +361,7 @@ public class UserDirectoryDialog extends Dialog
         buttonLayout.add(actions);
         buttonLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, actions);
 
-        this.add(formLayout, buttonLayout);
+        super.content.add(formLayout, buttonLayout);
     }
 
     /**

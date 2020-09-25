@@ -24,18 +24,19 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.material.Material;
 import org.ikasan.dashboard.ui.administration.view.*;
 import org.ikasan.dashboard.ui.general.component.AboutIkasanDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -52,6 +53,9 @@ import java.util.Locale;
     enableInstallPrompt = false)
 public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybridSmall> implements PageConfigurator
 {
+    @Resource
+    private SystemEventLogger systemEventLogger;
+
     private Component leftAppMenu;
     private Component leftSubmenu;
     private LeftNavigationItem searchItem;
@@ -72,6 +76,10 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         logout.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->
         {
+            IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext()
+                .getAuthentication();
+            this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_LOGOUT_CONSTANTS
+                , SystemEventConstants.DASHBOARD_LOGOUT_CONSTANTS, authentication.getName());
             SecurityContextHolder.getContext().setAuthentication(null);
             UI.getCurrent().navigate("");
             VaadinSession.getCurrent().getSession().invalidate();

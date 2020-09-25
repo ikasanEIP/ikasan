@@ -2,18 +2,16 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.SecurityService;
@@ -22,7 +20,7 @@ import org.ikasan.security.service.UserService;
 import java.util.Collection;
 import java.util.List;
 
-public class SelectUserForRoleDialog extends Dialog
+public class SelectUserForRoleDialog extends AbstractCloseableResizableDialog
 {
     private Role role;
     private SecurityService securityService;
@@ -70,7 +68,8 @@ public class SelectUserForRoleDialog extends Dialog
 
     private void init()
     {
-        H3 selectUserLabel = new H3(getTranslation("label.select-user", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-user", UI.getCurrent().getLocale()));
+        H3 selectUserLabel = new H3(getTranslation("label.select-user", UI.getCurrent().getLocale()));
 
         List<UserLite> usersList = this.userService.getUserLites();
         usersList.removeAll(associatedUsers);
@@ -139,11 +138,11 @@ public class SelectUserForRoleDialog extends Dialog
         userGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.add(selectUserLabel, userGrid);
 
-        layout.setWidth("1200px");
-        layout.setHeight("700px");
-
-        this.add(layout);
+        super.content.add(layout);
+        super.setWidth("1200px");
+        super.setHeight("700px");
     }
 }

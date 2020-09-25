@@ -15,13 +15,14 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
 
-public class NewUserDialog extends Dialog
+public class NewUserDialog extends AbstractCloseableResizableDialog
 {
     private UserService userService;
     private SystemEventLogger systemEventLogger;
@@ -132,7 +133,8 @@ public class NewUserDialog extends Dialog
         layout.setWidthFull();
         layout.add(newRoleLabel, formLayout, buttonLayout);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
-        this.add(layout);
-        this.setWidth("400px");
+        this.content.add(layout);
+        this.setHeight("550px");
+        this.setWidth("600px");
     }
 }

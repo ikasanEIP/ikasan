@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -22,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SelectGroupForRoleDialog extends Dialog
+public class SelectGroupForRoleDialog extends AbstractCloseableResizableDialog
 {
     private Role role;
     private SecurityService securityService;
@@ -64,7 +65,8 @@ public class SelectGroupForRoleDialog extends Dialog
 
     private void init()
     {
-        H3 selectGroupLabel = new H3(getTranslation("label.select-group", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-group", UI.getCurrent().getLocale()));
+        H3 selectGroupLabel = new H3(getTranslation("label.select-group", UI.getCurrent().getLocale()));
 
         List<IkasanPrincipalLite> principals = this.securityService.getAllPrincipalLites();
         principals.removeAll(associatedGroups);
@@ -118,11 +120,11 @@ public class SelectGroupForRoleDialog extends Dialog
         groupGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.add(selectGroupLabel, groupGrid);
 
-        layout.setWidth("1200px");
-        layout.setHeight("700px");
-
-        this.add(layout);
+        this.content.add(layout);
+        super.setWidth("1200px");
+        super.setHeight("700px");
     }
 }

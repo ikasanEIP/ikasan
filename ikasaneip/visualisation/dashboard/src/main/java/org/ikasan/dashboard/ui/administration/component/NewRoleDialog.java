@@ -5,23 +5,24 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 
-public class NewRoleDialog extends Dialog
+public class NewRoleDialog extends AbstractCloseableResizableDialog
 {
     private SecurityService securityService;
     private SystemEventLogger systemEventLogger;
@@ -104,11 +105,13 @@ public class NewRoleDialog extends Dialog
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setWidthFull();
         buttonLayout.add(save, cancel);
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(newRoleLabel, formLayout, buttonLayout);
-        this.add(layout);
+        layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
+        this.content.add(layout);
+        this.setHeight("475px");
+        this.setWidth("600px");
     }
 }

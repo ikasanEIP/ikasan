@@ -66,6 +66,20 @@ $_documentContainer.innerHTML = `<custom-style>
     </style>
 </custom-style>
 
+<custom-style>
+    <template>
+        <style include="material-color-light material-typography">
+
+            :host,
+            [theme~="dark"] {
+                --material-primary-color: rgba(241, 90, 35, 0.5);
+            }
+
+        </style>
+
+    </template>
+</custom-style>
+
 <dom-module theme-for="vaadin-grid" id="my-grid">
     <template>
         <style>

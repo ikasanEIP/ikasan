@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.ModuleFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -22,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SelectModuleForRoleDialog extends Dialog
+public class SelectModuleForRoleDialog extends AbstractCloseableResizableDialog
 {
     private Role role;
     private ModuleMetaDataService moduleMetadataService;
@@ -65,7 +66,8 @@ public class SelectModuleForRoleDialog extends Dialog
 
     private void init()
     {
-        H3 selectUserLabel = new H3(getTranslation("label.select-module", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-module", UI.getCurrent().getLocale()));
+        H3 selectUserLabel = new H3(getTranslation("label.select-module", UI.getCurrent().getLocale()));
 
         moduleMetaDataList = this.moduleMetadataService.findAll();
         moduleMetaDataList = this.removeAlreadyAssociatedModules(moduleMetaDataList);
@@ -119,12 +121,12 @@ public class SelectModuleForRoleDialog extends Dialog
         moduleGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.add(selectUserLabel, moduleGrid);
 
-        layout.setWidth("1200px");
-        layout.setHeight("700px");
-
-        this.add(layout);
+        super.content.add(layout);
+        super.setWidth("1200px");
+        super.setHeight("700px");
     }
 
     protected List<ModuleMetaData> removeAlreadyAssociatedModules(List<ModuleMetaData> moduleMetaDataList)
