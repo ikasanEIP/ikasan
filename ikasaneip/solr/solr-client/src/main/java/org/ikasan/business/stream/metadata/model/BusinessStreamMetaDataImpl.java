@@ -8,6 +8,7 @@ public class BusinessStreamMetaDataImpl implements BusinessStreamMetaData<Busine
 {
     private String id;
     private String name;
+    private String description;
     private String json;
 
     @Override
@@ -26,6 +27,16 @@ public class BusinessStreamMetaDataImpl implements BusinessStreamMetaData<Busine
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

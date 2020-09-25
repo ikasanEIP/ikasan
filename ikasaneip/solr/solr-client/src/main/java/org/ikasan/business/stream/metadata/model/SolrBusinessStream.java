@@ -11,6 +11,9 @@ public class SolrBusinessStream
     @Field(SolrDaoBase.MODULE_NAME)
     private String name;
 
+    @Field(SolrDaoBase.FLOW_NAME)
+    private String description;
+
     @Field(SolrDaoBase.PAYLOAD_CONTENT)
     private String businessStreamMetadata;
 
@@ -23,6 +26,10 @@ public class SolrBusinessStream
     public String getName()
     {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String getBusinessStreamMetaData()
@@ -38,6 +45,10 @@ public class SolrBusinessStream
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setRawBusinessStreamMetadata(String businessStreamMetadata)

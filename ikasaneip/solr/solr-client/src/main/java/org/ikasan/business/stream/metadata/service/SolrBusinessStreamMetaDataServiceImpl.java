@@ -48,6 +48,7 @@ public class SolrBusinessStreamMetaDataServiceImpl extends SolrServiceBase imple
         SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
         solrBusinessStream.setId(metaData.getId());
         solrBusinessStream.setName(metaData.getName());
+        solrBusinessStream.setDescription(metaData.getDescription());
         solrBusinessStream.setRawBusinessStreamMetadata(metaData.getJson());
 
         dao.setSolrUsername(super.solrUsername);
