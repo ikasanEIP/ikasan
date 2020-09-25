@@ -26,13 +26,11 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.general.component.NotificationHelper;
-import org.ikasan.dashboard.ui.general.component.SearchResults;
-import org.ikasan.dashboard.ui.general.component.TableButton;
-import org.ikasan.dashboard.ui.general.component.TooltipHelper;
+import org.ikasan.dashboard.ui.general.component.*;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.component.SearchForm;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamFilteringGrid;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamUploadDialog;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleFilteringGrid;
@@ -268,6 +266,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
                     dialogOpenedChangeEvent -> populateBusinessStreamGrid());
             });
 
+            ComponentSecurityVisibility.applySecurity(editButton, SecurityConstants.PLATORM_CONFIGURATON_ADMIN,
+                SecurityConstants.PLATORM_CONFIGURATON_WRITE, SecurityConstants.ALL_AUTHORITY);
+
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
             layout.add(editButton);
@@ -297,6 +298,9 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
                 this.businessStreamMetaDataService.delete(businessStreamMetaData.getId());
                 this.populateBusinessStreamGrid();
             });
+
+            ComponentSecurityVisibility.applySecurity(deleteButton, SecurityConstants.PLATORM_CONFIGURATON_ADMIN,
+                SecurityConstants.PLATORM_CONFIGURATON_WRITE, SecurityConstants.ALL_AUTHORITY);
 
             VerticalLayout layout = new VerticalLayout();
             layout.setSizeFull();
