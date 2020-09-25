@@ -1,12 +1,10 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.github.appreciated.css.grid.sizes.Flex;
-import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -16,9 +14,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
@@ -37,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserManagementDialog extends Dialog
+public class UserManagementDialog extends AbstractCloseableResizableDialog
 {
     private User user;
     private UserService userService;
@@ -93,29 +91,26 @@ public class UserManagementDialog extends Dialog
     {
         roleGrid = new FilteringGrid<>(new RoleFilter());
 
-        FluentGridLayout layout = new FluentGridLayout()
-            .withTemplateRows(new Flex(1), new Flex(1.5), new Flex(1.5))
-            .withTemplateColumns(new Flex(1.5), new Flex(1.5), new Flex(2))
-            .withRowAndColumn(initUserForm(), 1,1, 1, 3)
-            .withRowAndColumn(createLastAccessGrid(), 2,3, 3, 3)
-            .withRowAndColumn(createRolesAccessGrid(), 2,1,  2, 3)
-            .withRowAndColumn(createSecurityChangesGrid(), 3, 3)
-            .withRowAndColumn(createLdapGroupGrid(), 3,1, 3, 3)
-            .withPadding(true)
-            .withSpacing(true)
-            .withOverflow(FluentGridLayout.Overflow.AUTO);
+        Accordion accordion = new Accordion();
+        accordion.setWidthFull();
+        accordion.add(getTranslation("label.ikasan-roles", UI.getCurrent().getLocale()), createRolesAccessGrid());
+        accordion.add(getTranslation("label.ldap-groups", UI.getCurrent().getLocale()), createLdapGroupGrid());
+        accordion.add(getTranslation("label.user-security-changes", UI.getCurrent().getLocale()), createSecurityChangesGrid());
+        accordion.add(getTranslation("label.dashboard-activity", UI.getCurrent().getLocale()), createLastAccessGrid());
+
+        accordion.close();
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.add(initUserForm(), accordion);
 
         layout.setSizeFull();
         this.setWidth("1400px");
         this.setHeight("100%");
-        add(layout);
-
+        super.content.add(layout);
     }
 
     private VerticalLayout createLastAccessGrid()
     {
-        H3 dashboardActivityLabel = new H3(getTranslation("label.dashboard-activity", UI.getCurrent().getLocale(), null));
-
         Grid<SystemEvent> dashboardActivityGrid = new Grid<>();
 
         dashboardActivityGrid.setClassName("my-grid");
@@ -137,18 +132,17 @@ public class UserManagementDialog extends Dialog
 
         HorizontalLayout labelLayout = new HorizontalLayout();
         labelLayout.setWidthFull();
-        labelLayout.add(dashboardActivityLabel, dummy);
+        labelLayout.add(dummy);
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(labelLayout, dashboardActivityGrid);
+        layout.setHeight("400px");
 
         return layout;
     }
 
     private VerticalLayout createRolesAccessGrid()
     {
-        H3 rolesLabel = new H3("Ikasan Roles");
-
         roleGrid.setClassName("my-grid");
         roleGrid.addColumn(Role::getName).setKey("username").setHeader(getTranslation("table-header.role-name", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
         roleGrid.addColumn(Role::getDescription).setKey("firstname").setHeader(getTranslation("table-header.role-description", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(6);
@@ -194,10 +188,7 @@ public class UserManagementDialog extends Dialog
         ComponentSecurityVisibility.applySecurity(addRoleButton, SecurityConstants.ALL_AUTHORITY
             , SecurityConstants.USER_ADMINISTRATION_ADMIN
             , SecurityConstants.USER_ADMINISTRATION_WRITE);
-
-        HorizontalLayout labelLayout = new HorizontalLayout();
-        labelLayout.setWidthFull();
-        labelLayout.add(rolesLabel);
+        
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(addRoleButton);
@@ -207,10 +198,11 @@ public class UserManagementDialog extends Dialog
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.setWidthFull();
-        headerLayout.add(labelLayout, buttonLayout);
+        headerLayout.add(buttonLayout);
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, this.roleGrid);
+        layout.setHeight("400px");
         return layout;
     }
 
@@ -225,7 +217,6 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout createLdapGroupGrid()
     {
-        H3 ldapGroupsLabel = new H3(getTranslation("label.ldap-groups", UI.getCurrent().getLocale(), null));
         Grid<IkasanPrincipal> grid = new Grid<>();
 
         grid.setClassName("my-grid");
@@ -247,14 +238,13 @@ public class UserManagementDialog extends Dialog
         grid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(ldapGroupsLabel, grid);
+        layout.add(grid);
+        layout.setHeight("400px");
         return layout;
     }
 
     private VerticalLayout createSecurityChangesGrid()
     {
-        H3 userSecurityChangesLabel = new H3(getTranslation("label.user-security-changes", UI.getCurrent().getLocale(), null));
-
         securityChangesGrid.setClassName("my-grid");
         securityChangesGrid.addColumn(SystemEvent::getAction).setKey("action").setHeader(getTranslation("table-header.action", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(4);
         securityChangesGrid.addColumn(SystemEvent::getTimestamp).setKey("datetime").setHeader(getTranslation("table-header.date-time", UI.getCurrent().getLocale(), null)).setSortable(true).setFlexGrow(1);
@@ -264,7 +254,8 @@ public class UserManagementDialog extends Dialog
         this.updateSecurityChangesGrid();
 
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userSecurityChangesLabel, securityChangesGrid);
+        layout.add(securityChangesGrid);
+        layout.setHeight("400px");
         return layout;
     }
 
@@ -280,6 +271,7 @@ public class UserManagementDialog extends Dialog
 
     private VerticalLayout initUserForm()
     {
+        super.title.setText(String.format(getTranslation("label.user-profile", UI.getCurrent().getLocale(), null),  this.user.getUsername()));
         H3 userProfileLabel = new H3(String.format(getTranslation("label.user-profile", UI.getCurrent().getLocale(), null),  this.user.getUsername()));
 
         FormLayout formLayout = new FormLayout();

@@ -18,6 +18,7 @@ import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
 import org.ikasan.dashboard.cache.FlowStateCache;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FlowControlManagementDialog;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
@@ -34,13 +35,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 import java.util.Optional;
 
-public class ModuleStatusDialog extends Dialog {
+public class ModuleStatusDialog extends AbstractCloseableResizableDialog {
     private Logger logger = LoggerFactory.getLogger(ModuleStatusDialog.class);
 
     private Grid<Flow> flowGrid = new Grid<>();
     private Module currentModule;
     private ModuleControlService moduleControlRestService;
-    private ControlPanel controlPanel;
     private ModuleVisualisation moduleVisualisation;
 
     private Registration cacheStateBroadcasterRegistration;
@@ -49,29 +49,22 @@ public class ModuleStatusDialog extends Dialog {
                               ModuleVisualisation moduleVisualisation) {
         this.currentModule = currentModule;
         this.moduleControlRestService = moduleControlRestService;
-        this.controlPanel = new ControlPanel(moduleControlRestService);
         this.moduleVisualisation = moduleVisualisation;
+
+        super.title.setText(String.format(getTranslation("label.module", UI.getCurrent().getLocale(), null), currentModule.getName()));
 
         H3 moduleLabel = new H3(String.format(getTranslation("label.module", UI.getCurrent().getLocale(), null), currentModule.getName()));
 
-        HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("100%");
-        topLayout.add(moduleLabel);
-        topLayout.setVerticalComponentAlignment(FlexComponent.Alignment.START, moduleLabel);
-
-        topLayout.setFlexGrow(2, moduleLabel);
-        topLayout.setFlexGrow(5, controlPanel);
-
-
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setWidth("100%");
-        verticalLayout.setHeight("60vh");
-        verticalLayout.add(topLayout, createFlowGrid());
+        verticalLayout.setSizeFull();
+        verticalLayout.add(moduleLabel, createFlowGrid());
 
         this.flowGrid.setItems(currentModule.getFlows());
 
-        this.add(verticalLayout);
+        super.content.add(verticalLayout);
+        this.setModal(true);
         this.setWidth("1100px");
+        this.setMinWidth("950px");
     }
 
     protected Grid createFlowGrid() {
@@ -81,6 +74,7 @@ public class ModuleStatusDialog extends Dialog {
         flowGrid.removeAllColumns();
         flowGrid.setVisible(true);
         flowGrid.setSizeFull();
+        flowGrid.setMinHeight("50vh");
         flowGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         flowGrid.addColumn(Flow::getName).setHeader("Name").setFlexGrow(10);
@@ -121,8 +115,8 @@ public class ModuleStatusDialog extends Dialog {
             }
 
             Button button = new Button(buttonImage);
-            button.setHeight("40px");
-            button.setWidth("40px");
+            button.setHeight("44px");
+            button.setWidth("44px");
 
             UI.getCurrent().access(() -> ComponentSecurityVisibility.applyEnabledSecurity(authentication, button, SecurityConstants.ALL_AUTHORITY
                 , SecurityConstants.MODULE_CONTROL_WRITE
@@ -158,7 +152,7 @@ public class ModuleStatusDialog extends Dialog {
             wrapper.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, layout);
 
             return wrapper;
-        })).setHeader("Flow Startup Type").setKey("flowStartupType").setFlexGrow(1);
+        })).setHeader("Flow Startup Type").setKey("flowStartupType").setWidth("150px");
         flowGrid.addColumn(new ComponentRenderer<>((Flow node) ->
         {
             MultiFlowControlPanel controlPanel = new MultiFlowControlPanel(this.moduleControlRestService);
@@ -207,7 +201,7 @@ public class ModuleStatusDialog extends Dialog {
                 , SecurityConstants.MODULE_CONTROL_ADMIN));
 
             return controlPanel;
-        })).setHeader("Flow Control").setKey("flowControl").setFlexGrow(10);
+        })).setHeader("Flow Control").setKey("flowControl").setWidth("300px");
 
         flowGrid.getColumnByKey("status").setClassNameGenerator(item -> {
             FlowState flowState = FlowStateCache.instance().get(this.currentModule, item);

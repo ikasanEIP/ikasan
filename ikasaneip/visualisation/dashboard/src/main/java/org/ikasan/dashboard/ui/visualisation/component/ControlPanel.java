@@ -185,8 +185,8 @@ public class ControlPanel extends HorizontalLayout implements GraphViewChangeLis
     private Button createButton(Image image, String id, boolean enabled)
     {
         Button button = new Button(image);
-        button.setHeight("40px");
-        button.setWidth("40px");
+        button.setHeight("44px");
+        button.setWidth("44px");
 
         button.setId(id);
 

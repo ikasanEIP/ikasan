@@ -120,11 +120,26 @@ $_documentContainer.innerHTML = `<custom-style>
     </template>
 </dom-module>
 
+<dom-module id="material-button-min-width" theme-for="vaadin-button">
+  <template>
+    <style>
+      :host {
+        min-width: 0px !important;
+      }
+      </style>
+    </template>
+</dom-module>
+
 <dom-module id="my-grid-styles" theme-for="vaadin-grid">
     <template>
         <style>
-            [part~="cell"] {
-                font-size: 8pt;
+            [part~="header-cell"] {
+                font-size: 11pt;
+                height: 20px;
+            }
+            
+            [part~="body-cell"] {
+                font-size: 9pt;
             }
             
             /* Background needs a stronger selector to not be overridden */

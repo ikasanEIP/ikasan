@@ -19,6 +19,9 @@ public class InvokerConfigurationDialog extends AbstractConfigurationDialog
         , ConfigurationService configurationRestService)
     {
         super(module, flowName, componentName, configurationRestService);
+        super.title.setText("Invoker Configuration");
+        super.setWidth("60vw");
+        super.setHeight("40vh");
     }
 
     @Override

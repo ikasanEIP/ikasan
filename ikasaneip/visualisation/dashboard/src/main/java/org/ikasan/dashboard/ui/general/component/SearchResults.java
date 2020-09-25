@@ -140,20 +140,28 @@ public class SearchResults extends Div {
         Image selectAllImage = new Image("/frontend/images/all-small-off-icon.png", "");
         selectAllImage.setHeight("30px");
         selectAllButton = new Button(selectAllImage);
+        selectAllButton.setHeight("35px");
+        selectAllButton.setWidth("35px");
         Image replayImage = new Image("/frontend/images/replay-service.png", "");
         replayImage.setHeight("30px");
         replayButton = new Button(replayImage);
+        replayButton.setHeight("35px");
+        replayButton.setWidth("35px");
         Image resubmitImage = new Image("/frontend/images/resubmit-icon.png", "");
         resubmitImage.setHeight("30px");
         resubmitButton = new Button(resubmitImage);
+        resubmitButton.setHeight("35px");
+        resubmitButton.setWidth("35px");
         Image ignoreImage = new Image("/frontend/images/ignore-icon.png", "");
         ignoreImage.setHeight("30px");
         ignoreButton = new Button(ignoreImage);
+        ignoreButton.setHeight("35px");
+        ignoreButton.setWidth("35px");
 
-        selectAllTooltip = TooltipHelper.getTooltipForComponentBottom(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
-        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentBottom(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
-        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentBottom(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
-        replayButtonTooltip = TooltipHelper.getTooltipForComponentBottom(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
+        selectAllTooltip = TooltipHelper.getTooltipForComponentTopLeft(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
+        resubmitButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
+        ignoreButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(ignoreButton, getTranslation("tooltip.bulk-ignore", UI.getCurrent().getLocale()));
+        replayButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replayButton, getTranslation("tooltip.bulk-replay", UI.getCurrent().getLocale()));
 
         selectAllButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> toggleSelected());
 
@@ -175,7 +183,6 @@ public class SearchResults extends Div {
         controlLayout.setMargin(false);
         controlLayout.getStyle().set("background", "white");
         controlLayout.getStyle().set("color", "black");
-        controlLayout.setHeight("50px");
         controlLayout.add(resultsLayout, buttonLayoutWrapper);
 
         this.add(controlLayout, searchResultsGrid);
@@ -382,6 +389,8 @@ public class SearchResults extends Div {
             selectedImage.setHeight("30px");
 
             this.selectAllButton = new Button(selectedImage);
+            selectAllButton.setHeight("35px");
+            selectAllButton.setWidth("35px");
             this.selectionItems.clear();
 
             this.selected = Boolean.FALSE;
@@ -396,6 +405,8 @@ public class SearchResults extends Div {
             deSelectedImage.setHeight("30px");
 
             this.selectAllButton = new Button(deSelectedImage);
+            selectAllButton.setHeight("35px");
+            selectAllButton.setWidth("35px");
 
             this.selected = Boolean.TRUE;
             this.replayEventSubmissionListener.setSelected(Boolean.TRUE);
@@ -485,7 +496,7 @@ public class SearchResults extends Div {
             ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
             ComponentSecurityVisibility.applySecurity(selectAllButton, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
 
-            buttonLayout.setWidth("120px");
+            buttonLayout.setWidth("130px");
         }
     }
 

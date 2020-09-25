@@ -155,10 +155,15 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     private Tooltip resubmitButtonTooltip;
     private Tooltip ignoreButtonTooltip;
 
-    private Checkbox wiretapCheckbox;
-    private Checkbox errorCheckbox;
-    private Checkbox hospitalCheckbox;
-    private Checkbox replayCheckbox;
+    private Button wiretapCheckButton;
+    private Button errorCheckButton;
+    private Button hospitalCheckButton;
+    private Button replayCheckButton;
+
+    private boolean wiretapChecked = true;
+    private boolean errorChecked = true;
+    private boolean hospitalChecked = true;
+    private boolean replayChecked = true;
 
 
     private String currentSearchType = "";
@@ -228,8 +233,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         Image searchButtonImage = new Image("frontend/images/search-icon.png", "");
         searchButtonImage.setHeight("50px");
         this.searchButton = new Button(searchButtonImage);
-        this.searchButton.setHeight("50px");
-        this.searchButton.setWidth("50px");
+        this.searchButton.setHeight("54px");
+        this.searchButton.setWidth("54px");
 
         addButtonSearchListener(this.searchButton);
 
@@ -242,43 +247,97 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         searchLayout.add(dateTimePickersLayout, searchTextLayout);
 
-        this.wiretapImage = new Image("frontend/images/wiretap-service.png", "");
+        this.wiretapImage = new Image("frontend/images/wiretap-inverse.png", "");
         this.wiretapImage.setHeight("40px");
-        this.wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.wiretapImage, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
+        this.wiretapCheckButton = new Button(this.wiretapImage);
+        this.wiretapCheckButton.setHeight("44px");
+        this.wiretapCheckButton.setWidth("44px");
 
+        this.wiretapCheckButton.addClickListener(buttonClickEvent -> {
+            this.wiretapChecked = !this.wiretapChecked;
 
-        this.wiretapCheckbox = new Checkbox();
-        this.wiretapCheckbox.setValue(true);
-        VerticalLayout wiretapFilterLayout = createSearchFilterLayout(this.wiretapImage, this.wiretapCheckbox);
-        wiretapFilterLayout.add(this.wiretapButtonTooltip);
+            if(wiretapChecked) {
+                this.wiretapImage = new Image("frontend/images/wiretap-inverse.png", "");
+                this.wiretapImage.setHeight("40px");
+                this.wiretapCheckButton.setIcon(this.wiretapImage);
+            }
+            else {
+                this.wiretapImage = new Image("frontend/images/wiretap-service.png", "");
+                this.wiretapImage.setHeight("40px");
+                this.wiretapCheckButton.setIcon(this.wiretapImage);
+            }
+        });
 
-        this.errorImage = new Image("frontend/images/error-service.png", "");
+        this.wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.wiretapCheckButton, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
+
+        this.errorImage = new Image("frontend/images/error-inverse.png", "");
         this.errorImage.setHeight("40px");
-        this.errorButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.errorImage, getTranslation("tooltip.search-error-events", UI.getCurrent().getLocale()));
+        this.errorCheckButton = new Button(errorImage);
+        this.errorCheckButton.setHeight("44px");
+        this.errorCheckButton.setWidth("44px");
 
-        this.errorCheckbox = new Checkbox();
-        this.errorCheckbox.setValue(true);
+        this.errorCheckButton.addClickListener(buttonClickEvent -> {
+            this.errorChecked = !this.errorChecked;
 
-        VerticalLayout errorFilterLayout = createSearchFilterLayout(this.errorImage, this.errorCheckbox);
-        errorFilterLayout.add(this.errorButtonTooltip);
+            if(this.errorChecked) {
+                this.errorImage = new Image("frontend/images/error-inverse.png", "");
+                this.errorImage.setHeight("40px");
+                this.errorCheckButton.setIcon(this.errorImage);
+            }
+            else {
+                this.errorImage = new Image("frontend/images/error-service.png", "");
+                this.errorImage.setHeight("40px");
+                this.errorCheckButton.setIcon(this.errorImage);
+            }
+        });
 
-        this.hospitalImage = new Image("frontend/images/hospital-service.png", "");
+        this.errorButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.errorCheckButton, getTranslation("tooltip.search-error-events", UI.getCurrent().getLocale()));
+
+        this.hospitalImage = new Image("frontend/images/hospital-inverse.png", "");
         this.hospitalImage.setHeight("40px");
-        this.hospitalButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.hospitalImage, getTranslation("tooltip.search-hospital-events", UI.getCurrent().getLocale()));
+        this.hospitalCheckButton = new Button(hospitalImage);
+        this.hospitalCheckButton.setHeight("44px");
+        this.hospitalCheckButton.setWidth("44px");
 
-        this.hospitalCheckbox = new Checkbox();
-        this.hospitalCheckbox.setValue(true);
-        VerticalLayout hospitalFilterLayout = createSearchFilterLayout(this.hospitalImage, this.hospitalCheckbox);
-        hospitalFilterLayout.add(this.hospitalButtonTooltip);
+        this.hospitalCheckButton.addClickListener(buttonClickEvent -> {
+            this.hospitalChecked = !this.hospitalChecked;
 
-        this.replayImage = new Image("frontend/images/replay-service.png", "");
+            if(this.hospitalChecked) {
+                this.hospitalImage = new Image("frontend/images/hospital-inverse.png", "");
+                this.hospitalImage.setHeight("40px");
+                this.hospitalCheckButton.setIcon(this.hospitalImage);
+            }
+            else {
+                this.hospitalImage = new Image("frontend/images/hospital-service.png", "");
+                this.hospitalImage.setHeight("40px");
+                this.hospitalCheckButton.setIcon(this.hospitalImage);
+            }
+        });
+
+        this.hospitalButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.hospitalCheckButton, getTranslation("tooltip.search-hospital-events", UI.getCurrent().getLocale()));
+
+        this.replayImage = new Image("frontend/images/replay-inverse.png", "");
         this.replayImage.setHeight("40px");
-        this.replaySearchButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.replayImage, getTranslation("tooltip.search-replay-events", UI.getCurrent().getLocale()));
+        this.replayCheckButton = new Button(replayImage);
+        this.replayCheckButton.setHeight("44px");
+        this.replayCheckButton.setWidth("44px");
 
-        this.replayCheckbox = new Checkbox();
-        this.replayCheckbox.setValue(true);
-        VerticalLayout replayFilterLayout = createSearchFilterLayout(replayImage, replayCheckbox);
-        replayFilterLayout.add(replaySearchButtonTooltip);
+        this.replayCheckButton.addClickListener(buttonClickEvent -> {
+            this.replayChecked = !this.replayChecked;
+
+            if(this.replayChecked) {
+                this.replayImage = new Image("frontend/images/replay-inverse.png", "");
+                this.replayImage.setHeight("40px");
+                this.replayCheckButton.setIcon(this.replayImage);
+            }
+            else {
+                this.replayImage = new Image("frontend/images/replay-service.png", "");
+                this.replayImage.setHeight("40px");
+                this.replayCheckButton.setIcon(this.replayImage);
+            }
+        });
+
+        this.replaySearchButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(this.replayCheckButton, getTranslation("tooltip.search-replay-events", UI.getCurrent().getLocale()));
 
         this.negateQueryCheckbox = new Checkbox(getTranslation("checkbox-label.negate-search", UI.getCurrent().getLocale()));
         this.negateQueryCheckbox.setWidth("100px");
@@ -290,15 +349,18 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         HorizontalLayout searchIconLayout = new HorizontalLayout();
         searchIconLayout.setSpacing(true);
-        searchIconLayout.add(wiretapFilterLayout, replayFilterLayout, hospitalFilterLayout, errorFilterLayout, checkboxLayout);
+        searchIconLayout.add(this.wiretapCheckButton, this.wiretapButtonTooltip, this.replayCheckButton
+            , this.replaySearchButtonTooltip, this.hospitalCheckButton, this.hospitalButtonTooltip
+            , this.errorCheckButton, this.errorButtonTooltip, checkboxLayout);
         searchIconLayout.setVerticalComponentAlignment(Alignment.CENTER, checkboxLayout);
 
-        ComponentSecurityVisibility.applySecurity(replayFilterLayout, SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY);
-        ComponentSecurityVisibility.applySecurity(errorFilterLayout, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_ADMIN,SecurityConstants.ALL_AUTHORITY);
-        ComponentSecurityVisibility.applySecurity(hospitalFilterLayout, SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN,SecurityConstants.ALL_AUTHORITY);
-        ComponentSecurityVisibility.applySecurity(replayFilterLayout, SecurityConstants.REPLAY_READ, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+        ComponentSecurityVisibility.applySecurity(this.wiretapCheckButton, SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY);
+        ComponentSecurityVisibility.applySecurity(this.errorCheckButton, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_ADMIN,SecurityConstants.ALL_AUTHORITY);
+        ComponentSecurityVisibility.applySecurity(this.hospitalCheckButton, SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN,SecurityConstants.ALL_AUTHORITY);
+        ComponentSecurityVisibility.applySecurity(this.replayCheckButton, SecurityConstants.REPLAY_READ, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
 
         this.add(searchLayout, searchIconLayout);
+        this.setSpacing(false);
         this.setHorizontalComponentAlignment(Alignment.CENTER, searchLayout);
         this.setHorizontalComponentAlignment(Alignment.CENTER, searchIconLayout);
     }
@@ -315,15 +377,23 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         Image selectAllImage = new Image("/frontend/images/all-small-off-icon.png", "");
         selectAllImage.setHeight("30px");
         selectAllButton = new Button(selectAllImage);
+        selectAllButton.setHeight("34px");
+        selectAllButton.setWidth("34px");
         Image replayImage = new Image("/frontend/images/replay-service.png", "");
         replayImage.setHeight("30px");
         replayButton = new Button(replayImage);
+        replayButton.setHeight("34px");
+        replayButton.setWidth("34px");
         Image resubmitImage = new Image("/frontend/images/resubmit-icon.png", "");
         resubmitImage.setHeight("30px");
         resubmitButton = new Button(resubmitImage);
+        resubmitButton.setHeight("34px");
+        resubmitButton.setWidth("34px");
         Image ignoreImage = new Image("/frontend/images/ignore-icon.png", "");
         ignoreImage.setHeight("30px");
         ignoreButton = new Button(ignoreImage);
+        ignoreButton.setHeight("34px");
+        ignoreButton.setWidth("34px");
 
         selectAllTooltip = TooltipHelper.getTooltipForComponentBottom(selectAllButton, getTranslation("tooltip.select-all", UI.getCurrent().getLocale()));
         resubmitButtonTooltip = TooltipHelper.getTooltipForComponentBottom(resubmitButton, getTranslation("tooltip.bulk-resubmit", UI.getCurrent().getLocale()));
@@ -564,11 +634,11 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
      */
     protected void search(String searchTerm, long startDate, long endDate)
     {
-        if(this.replayCheckbox.getValue() && !this.errorCheckbox.getValue() && !this.hospitalCheckbox.getValue() && !this.wiretapCheckbox.getValue())
+        if(this.replayChecked && !this.errorChecked && !this.hospitalChecked && !this.wiretapChecked)
         {
             this.currentSearchType = REPLAY;
         }
-        else if(this.hospitalCheckbox.getValue() && !this.replayCheckbox.getValue() && !this.errorCheckbox.getValue() && !this.wiretapCheckbox.getValue())
+        else if(this.hospitalChecked && !this.replayChecked && !this.errorChecked && !this.wiretapChecked)
         {
             this.currentSearchType = EXCLUSION;
         }
@@ -580,7 +650,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         ArrayList<String> types = new ArrayList<>();
 
         if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY)
-            && this.replayCheckbox.getValue())
+            && this.replayChecked)
         {
             types.add(SolrReplayDao.REPLAY);
         }
@@ -588,19 +658,19 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
         if (ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_WRITE, SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.ALL_AUTHORITY))
         {
             if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_READ, SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.ALL_AUTHORITY)
-                && this.wiretapCheckbox.getValue())
+                && this.wiretapChecked)
             {
                 types.add(SolrWiretapDao.WIRETAP);
             }
 
             if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.ALL_AUTHORITY)
-                && this.hospitalCheckbox.getValue())
+                && this.hospitalChecked)
             {
                 types.add(SolrExclusionEventDao.EXCLUSION);
             }
 
             if(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_ADMIN, SecurityConstants.ALL_AUTHORITY)
-                && this.errorCheckbox.getValue())
+                && this.errorChecked)
             {
                 types.add(SolrErrorReportingServiceDao.ERROR);
             }
@@ -612,6 +682,11 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
 
         if(searchTerm != null && !searchTerm.isEmpty()){
             searchTerm = "\""+searchTerm+"\"";
+        }
+
+        if(types.isEmpty()) {
+            NotificationHelper.showUserNotification(getTranslation("notification.select-search-entity", UI.getCurrent().getLocale()));
+            return;
         }
 
         this.searchResultsGrid.init(startDate, endDate, searchTerm, types, this.negateQueryCheckbox.getValue());
@@ -774,6 +849,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             selectedImage.setHeight("30px");
 
             this.selectAllButton = new Button(selectedImage);
+            selectAllButton.setHeight("34px");
+            selectAllButton.setWidth("34px");
             this.selectionItems.clear();
 
             this.selected = Boolean.FALSE;
@@ -788,6 +865,8 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
             deSelectedImage.setHeight("30px");
 
             this.selectAllButton = new Button(deSelectedImage);
+            selectAllButton.setHeight("34px");
+            selectAllButton.setWidth("34px");
 
             this.selected = Boolean.TRUE;
             this.replayEventSubmissionListener.setSelected(Boolean.TRUE);
@@ -848,10 +927,10 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver
     protected void onAttach(AttachEvent attachEvent)
     {
         this.allButtonTooltip.attachToComponent(this.searchButton);
-        this.wiretapButtonTooltip.attachToComponent(this.wiretapImage);
-        this.errorButtonTooltip.attachToComponent(this.errorImage);
-        this.hospitalButtonTooltip.attachToComponent(this.hospitalImage);
-        this.replaySearchButtonTooltip.attachToComponent(this.replayImage);
+        this.wiretapButtonTooltip.attachToComponent(this.wiretapCheckButton);
+        this.errorButtonTooltip.attachToComponent(this.errorCheckButton);
+        this.hospitalButtonTooltip.attachToComponent(this.hospitalCheckButton);
+        this.replaySearchButtonTooltip.attachToComponent(this.replayCheckButton);
         this.replayButtonTooltip.attachToComponent(this.replayButton);
         this.selectAllTooltip.attachToComponent(this.selectAllButton);
         this.resubmitButtonTooltip.attachToComponent(this.resubmitButton);
