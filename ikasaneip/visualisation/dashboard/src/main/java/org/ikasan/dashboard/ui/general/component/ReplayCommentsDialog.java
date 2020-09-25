@@ -19,7 +19,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import org.ikasan.dashboard.ui.search.model.replay.ReplayDialogDto;
 
-public class ReplayCommentsDialog extends Dialog
+public class ReplayCommentsDialog extends AbstractCloseableResizableDialog
 {
     private ReplayDialogDto replayDialogDto;
     private boolean isSaved;
@@ -38,12 +38,14 @@ public class ReplayCommentsDialog extends Dialog
     private void init()
     {
         H3 replayLabel = new H3(getTranslation("label.replay", UI.getCurrent().getLocale()));
+        super.title.setText(getTranslation("label.replay", UI.getCurrent().getLocale()));
         Image replayImage = new Image("/frontend/images/replay-service.png", "");
 
         replayImage.setHeight("50px");
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.add(replayImage, replayLabel);
+        headerLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, replayImage, replayLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -112,12 +114,12 @@ public class ReplayCommentsDialog extends Dialog
         buttonLayout.add(save, cancel);
 
         this.setWidth("600px");
-        this.setHeight("100%");
+        this.setHeight("700px");
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, formLayout, buttonLayout);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
-        this.add(layout);
+        this.content.add(layout);
     }
 
     public boolean isSaved()

@@ -18,7 +18,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 
-public class HospitalCommentsDialog extends Dialog
+public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
 {
     private ExclusionEventAction exclusionEventAction;
     private boolean isSaved;
@@ -52,17 +52,20 @@ public class HospitalCommentsDialog extends Dialog
         {
             hospitalImage = new Image("/frontend/images/resubmit-icon.png", "");
             hospitalLabel = new H3(getTranslation("label.resubmit-hospital-events", UI.getCurrent().getLocale()));
+            super.title.setText(getTranslation("label.resubmit-hospital-events", UI.getCurrent().getLocale()));
         }
         else
         {
             hospitalImage = new Image("/frontend/images/ignore-icon.png", "");
             hospitalLabel = new H3(getTranslation("label.ignore-hospital-events", UI.getCurrent().getLocale()));
+            super.title.setText(getTranslation("label.ignore-hospital-events", UI.getCurrent().getLocale()));
         }
 
         hospitalImage.setHeight("50px");
 
         HorizontalLayout headerLayout = new HorizontalLayout();
         headerLayout.add(hospitalImage, hospitalLabel);
+        headerLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, hospitalImage, hospitalLabel);
 
         FormLayout formLayout = new FormLayout();
 
@@ -132,12 +135,12 @@ public class HospitalCommentsDialog extends Dialog
         buttonLayout.add(cancel);
 
         this.setWidth("600px");
-//        this.setHeight("400px");
+        this.setHeight("500px");
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(headerLayout, formLayout, buttonLayout);
         layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonLayout);
-        this.add(layout);
+        this.content.add(layout);
     }
 
     public boolean isActioned()
