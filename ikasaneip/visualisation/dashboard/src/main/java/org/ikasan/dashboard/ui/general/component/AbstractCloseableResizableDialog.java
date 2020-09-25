@@ -45,19 +45,23 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
 
 
         min = new Button(VaadinIcon.DOWNLOAD_ALT.create());
+        min.getIcon().getElement().getStyle().set("color", "#FFFFFF");
         min.addClickListener(event -> minimise());
         this.min.setVisible(false);
 
         max = new Button(VaadinIcon.COMPRESS_SQUARE.create());
+        max.getIcon().getElement().getStyle().set("color", "#FFFFFF");
         max.addClickListener(event -> maximise());
 
         Button close = new Button(VaadinIcon.CLOSE_SMALL.create());
+        close.getIcon().getElement().getStyle().set("color", "#FFFFFF");
         close.addClickListener(event -> close());
 
         title.addClassName("dialog-title");
 
         header = new Header(title, min, max, close);
-        header.getElement().getThemeList().add(Material.DARK);
+        header.getElement().getStyle().set("background-color", "#232F34");
+        this.title.getElement().getStyle().set("color", "#FFFFFF");
         add(header);
 
         content = new VerticalLayout();
@@ -77,6 +81,7 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
                 initialSize();
             }
             min.setIcon(VaadinIcon.UPLOAD_ALT.create());
+            min.getIcon().getElement().getStyle().set("color", "#FFFFFF");
             getElement().getThemeList().add(DOCK);
             getElement().getStyle().set("right", "500px !important");
             setWidth("300px");
@@ -88,8 +93,10 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
 
     private void initialSize() {
         min.setIcon(VaadinIcon.DOWNLOAD_ALT.create());
+        min.getIcon().getElement().getStyle().set("color", "#FFFFFF");
         getElement().getThemeList().remove(DOCK);
         max.setIcon(VaadinIcon.EXPAND_SQUARE.create());
+        max.getIcon().getElement().getStyle().set("color", "#FFFFFF");
         getElement().getThemeList().remove(FULLSCREEN);
         setHeight("auto");
         setWidth("600px");
@@ -103,6 +110,7 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
                 initialSize();
             }
             max.setIcon(VaadinIcon.COMPRESS_SQUARE.create());
+            max.getIcon().getElement().getStyle().set("color", "#FFFFFF");
             getElement().getThemeList().add(FULLSCREEN);
             setSizeFull();
             content.setVisible(true);

@@ -26,6 +26,7 @@ import org.ikasan.dashboard.ui.administration.filter.GroupFilter;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
 import org.ikasan.dashboard.ui.administration.filter.RoleModuleFilter;
 import org.ikasan.dashboard.ui.administration.filter.UserLiteFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
@@ -43,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class RoleManagementDialog extends Dialog
+public class RoleManagementDialog extends AbstractCloseableResizableDialog
 {
     private Role role;
     private SecurityService securityService;
@@ -132,8 +133,7 @@ public class RoleManagementDialog extends Dialog
         layout.setSizeFull();
         this.setWidth("1400px");
         this.setHeight("100%");
-        add(layout);
-
+        this.content.add(layout);
     }
 
     /**
@@ -143,7 +143,8 @@ public class RoleManagementDialog extends Dialog
      */
     private VerticalLayout createIkasanPoliciesLayout()
     {
-        H3 policyLabel = new H3(getTranslation("label.role-ikasan-policies", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.role-ikasan-policies", UI.getCurrent().getLocale()));
+        H3 policyLabel = new H3(getTranslation("label.role-ikasan-policies", UI.getCurrent().getLocale()));
 
         PolicyFilter policyFilter = new PolicyFilter();
 

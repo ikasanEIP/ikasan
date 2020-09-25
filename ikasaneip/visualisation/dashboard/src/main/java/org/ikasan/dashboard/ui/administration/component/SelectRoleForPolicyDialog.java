@@ -2,13 +2,12 @@ package org.ikasan.dashboard.ui.administration.component;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -19,7 +18,7 @@ import org.ikasan.security.service.SecurityService;
 import java.util.Collection;
 import java.util.List;
 
-public class SelectRoleForPolicyDialog extends Dialog
+public class SelectRoleForPolicyDialog extends AbstractCloseableResizableDialog
 {
     private Policy policy;
     private SecurityService securityService;
@@ -55,7 +54,8 @@ public class SelectRoleForPolicyDialog extends Dialog
 
     private void init()
     {
-        H3 selectRoleLabel = new H3(getTranslation("label.select-role", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-role", UI.getCurrent().getLocale()));
+        H3 selectRoleLabel = new H3(getTranslation("label.select-role", UI.getCurrent().getLocale()));
 
         List<Role> roleList = this.securityService.getAllRoles();
         roleList.removeAll(policy.getRoles());
@@ -95,11 +95,11 @@ public class SelectRoleForPolicyDialog extends Dialog
         roleGrid.addGridFiltering(hr, roleFilter::setDescriptionFilter, "description");
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.add(selectRoleLabel, roleGrid);
 
-        layout.setWidth("600px");
-        layout.setHeight("300px");
-
-        this.add(layout);
+        this.content.add(layout);
+        super.setWidth("700px");
+        super.setHeight("600px");
     }
 }

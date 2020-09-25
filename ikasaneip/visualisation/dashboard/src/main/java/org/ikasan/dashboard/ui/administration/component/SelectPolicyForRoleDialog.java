@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.PolicyFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -20,7 +21,7 @@ import org.ikasan.security.service.SecurityService;
 import java.util.Collection;
 import java.util.List;
 
-public class SelectPolicyForRoleDialog extends Dialog
+public class SelectPolicyForRoleDialog extends AbstractCloseableResizableDialog
 {
     private Role role;
     private SecurityService securityService;
@@ -58,7 +59,8 @@ public class SelectPolicyForRoleDialog extends Dialog
 
     private void init()
     {
-        H3 selectGroupLabel = new H3(getTranslation("label.select-policy", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-policy", UI.getCurrent().getLocale()));
+        H3 selectGroupLabel = new H3(getTranslation("label.select-policy", UI.getCurrent().getLocale()));
 
         policiesList = this.securityService.getAllPolicies();
         policiesList.removeAll(role.getPolicies());
@@ -103,11 +105,11 @@ public class SelectPolicyForRoleDialog extends Dialog
 
         VerticalLayout layout = new VerticalLayout();
         layout.add(selectGroupLabel, policyGrid);
+        layout.setSizeFull();
 
-        layout.setWidth("1200px");
-        layout.setHeight("700px");
-
-        this.add(layout);
+        this.content.add(layout);
+        super.setWidth("1200px");
+        super.setHeight("700px");
     }
 
     private void updatePolicyGrid()

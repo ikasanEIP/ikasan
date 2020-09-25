@@ -16,7 +16,8 @@ import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.security.ContextCache;
-import org.ikasan.dashboard.security.CustomRequestCache;
+import org.ikasan.dashboard.ui.util.SystemEventConstants;
+import org.ikasan.dashboard.ui.util.SystemEventLogger;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -41,10 +42,13 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
     @Resource
     private AuthenticationService authenticationService;
 
+    @Resource
+    private SystemEventLogger systemEventLogger;
+
 
     private LoginForm login = new LoginForm();
-    private CustomRequestCache customRequestCache;
-    private String route;
+//    private CustomRequestCache customRequestCache;
+//    private String route;
 
     public LoginView()
     {
@@ -73,6 +77,9 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
                     loginEvent.getPassword());
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                this.systemEventLogger.logEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS
+                    , SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, authentication.getName());
             }
             catch (AuthenticationServiceException e)
             {
@@ -119,6 +126,6 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, String parameter) {
-        this.route = parameter;
+//        this.route = parameter;
     }
 }

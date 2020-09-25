@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
@@ -19,7 +20,7 @@ import org.ikasan.security.service.SecurityService;
 import java.util.List;
 import java.util.Set;
 
-public class SelectRoleDialog extends Dialog
+public class SelectRoleDialog extends AbstractCloseableResizableDialog
 {
     private IkasanPrincipal principal;
     private SecurityService securityService;
@@ -55,7 +56,8 @@ public class SelectRoleDialog extends Dialog
 
     private void init()
     {
-        H3 selectRoleLabel = new H3(getTranslation("label.select-role", UI.getCurrent().getLocale(), null));
+        super.title.setText(getTranslation("label.select-role", UI.getCurrent().getLocale()));
+        H3 selectRoleLabel = new H3(getTranslation("label.select-role", UI.getCurrent().getLocale()));
 
         List<Role> roles = this.securityService.getAllRoles();
 
@@ -70,7 +72,7 @@ public class SelectRoleDialog extends Dialog
         roleGrid.setItems(roles);
 
         roleGrid.setClassName("my-grid");
-        roleGrid.addColumn(Role::getName).setKey("role").setFlexGrow(5);
+        roleGrid.addColumn(Role::getName).setKey("role").setFlexGrow(2);
 
         roleGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Role>>) roleItemDoubleClickEvent ->
         {
@@ -103,11 +105,11 @@ public class SelectRoleDialog extends Dialog
         roleGrid.setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.add(selectRoleLabel, roleGrid);
 
-        layout.setWidth("500px");
-        layout.setHeight("300px");
-
-        this.add(layout);
+        super.content.add(layout);
+        super.setWidth("700px");
+        super.setHeight("500px");
     }
 }

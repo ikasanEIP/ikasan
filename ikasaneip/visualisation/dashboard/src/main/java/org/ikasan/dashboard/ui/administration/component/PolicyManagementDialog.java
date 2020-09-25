@@ -1,12 +1,10 @@
 package org.ikasan.dashboard.ui.administration.component;
 
-import com.github.appreciated.css.grid.sizes.Flex;
-import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -19,6 +17,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
@@ -29,7 +28,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 
-public class PolicyManagementDialog extends Dialog
+public class PolicyManagementDialog extends AbstractCloseableResizableDialog
 {
     private Policy policy;
     private SecurityService securityService;
@@ -65,24 +64,24 @@ public class PolicyManagementDialog extends Dialog
 
     private void init()
     {
-        FluentGridLayout layout = new FluentGridLayout()
-            .withTemplateRows(new Flex(1.5), new Flex(2.5))
-            .withTemplateColumns(new Flex(1))
-            .withRowAndColumn(initPolicyForm(), 1, 1, 1, 1)
-            .withRowAndColumn(createRolesAccessGrid(), 2, 1, 2, 1)
-            .withPadding(true)
-            .withSpacing(true)
-            .withOverflow(FluentGridLayout.Overflow.AUTO);
+        Accordion accordion = new Accordion();
+        accordion.setWidthFull();
+        accordion.add(getTranslation("label.policy-roles", UI.getCurrent().getLocale()), createRolesAccessGrid());
+        accordion.close();
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+        layout.add(initPolicyForm(), accordion);
+
         layout.setSizeFull();
         this.setWidth("1400px");
         this.setHeight("100%");
-        add(layout);
-
+        super.content.add(layout);
     }
 
     private VerticalLayout createRolesAccessGrid()
     {
-        H3 rolesLabel = new H3(getTranslation("label.policy-roles", UI.getCurrent().getLocale(), null));
+        H3 rolesLabel = new H3(getTranslation("label.policy-roles", UI.getCurrent().getLocale()));
 
         RoleFilter roleFilter = new RoleFilter();
 
@@ -151,6 +150,9 @@ public class PolicyManagementDialog extends Dialog
         headerLayout.add(labelLayout, buttonLayout);
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setWidthFull();
+        layout.setMargin(false);
+        layout.setHeight("600px");
         layout.add(headerLayout, this.roleGrid);
         return layout;
     }
@@ -163,7 +165,8 @@ public class PolicyManagementDialog extends Dialog
 
     private VerticalLayout initPolicyForm()
     {
-        H3 userProfileLabel = new H3(String.format(getTranslation("label.policy-profile", UI.getCurrent().getLocale(), null) ,this.policy.getName()));
+        super.title.setText(String.format(getTranslation("label.policy-profile", UI.getCurrent().getLocale()) ,this.policy.getName()));
+        H3 userProfileLabel = new H3(String.format(getTranslation("label.policy-profile", UI.getCurrent().getLocale()) ,this.policy.getName()));
 
         FormLayout formLayout = new FormLayout();
 

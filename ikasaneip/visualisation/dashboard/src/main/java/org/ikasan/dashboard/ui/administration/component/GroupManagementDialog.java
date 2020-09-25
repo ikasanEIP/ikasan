@@ -7,7 +7,6 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -18,10 +17,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.ikasan.dashboard.ui.administration.filter.RoleFilter;
 import org.ikasan.dashboard.ui.administration.filter.UserFilter;
+import org.ikasan.dashboard.ui.general.component.AbstractCloseableResizableDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.FilteringGrid;
 import org.ikasan.dashboard.ui.general.component.TableButton;
@@ -38,7 +37,7 @@ import org.ikasan.spec.systemevent.SystemEventService;
 import java.util.List;
 
 
-public class GroupManagementDialog extends Dialog
+public class GroupManagementDialog extends AbstractCloseableResizableDialog
 {
     private IkasanPrincipalLite group;
     private SecurityService securityService;
@@ -98,8 +97,7 @@ public class GroupManagementDialog extends Dialog
         layout.setSizeFull();
         this.setWidth("1400px");
         this.setHeight("100%");
-        add(layout);
-
+        super.content.add(layout);
     }
 
     private VerticalLayout createRolesAccessGrid()

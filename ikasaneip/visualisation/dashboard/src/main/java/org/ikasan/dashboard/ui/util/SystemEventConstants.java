@@ -49,7 +49,7 @@ package org.ikasan.dashboard.ui.util;
 public class SystemEventConstants
 {
 	public static final String DASHBOARD_LOGIN_CONSTANTS = "Dashboard login";
-	public static final String DASHBOARD_LOGOUT_CONSTANTS = "Dashboard log Out";
+	public static final String DASHBOARD_LOGOUT_CONSTANTS = "Dashboard log out";
 	public static final String DASHBOARD_SESSION_EXPIRED_CONSTANTS = "Dashboard session expired";
 	public static final String DASHBOARD_PRINCIPAL_ROLE_CHANGED_CONSTANTS = "Principal role change";
     public static final String DASHBOARD_MODULE_ROLE_CHANGE_CONSTANTS = "Module role change";
