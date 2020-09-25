@@ -167,9 +167,9 @@ window.Vaadin.Flow.networkDiagramConnector = {
                     }
                     if (node.replayFoundStatus === "FOUND") {
                         ctx.drawImage(replayImage, nodePosition.x + node.replayFoundImageX
-                            , nodePosition.y + node.exclusionFoundImageY
-                            , node.exclusionFoundImageW
-                            , node.exclusionFoundImageH);
+                            , nodePosition.y + node.replayFoundImageY
+                            , node.replayFoundImageW
+                            , node.replayFoundImageH);
                     }
                     if (node.wiretapBeforeStatus === "FOUND") {
                         ctx.drawImage(wiretapBeforeImage, nodePosition.x + node.wiretapBeforeImageX

@@ -116,7 +116,7 @@ public class NetworkDiagram extends Component implements HasSize {
 
     private String optionsToJson(final Options options) {
         try {
-            log.info("Options: {}", mapper.writeValueAsString(options));
+            log.debug("Options: {}", mapper.writeValueAsString(options));
             return mapper.writeValueAsString(options);
         }
         catch (final JsonProcessingException e) {
