@@ -224,21 +224,21 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
         networkDiagram.addDoubleClickListener(doubleClickEvent ->
         {
-            logger.info(doubleClickEvent.getParams().toString());
+            logger.debug(doubleClickEvent.getParams().toString());
 
             JsonArray nodesArray = doubleClickEvent.getParams().getArray("nodes");
 
             if (nodesArray.length() > 0) {
                 String nodeId = nodesArray.get(0).asString();
 
-                logger.info(nodeId);
-                logger.info("Flow + " + this.flowMap.get(nodeId));
+                logger.debug(nodeId);
+                logger.debug("Flow + " + this.flowMap.get(nodeId));
 
                 if (this.flowMap.get(nodeId) != null) {
                     ModuleMetaData moduleMetaData = this.moduleMetaDataService
                         .findById(nodeId.substring(0, nodeId.indexOf(".")));
 
-                    logger.info("ModuleMetaData + " + moduleMetaData);
+                    logger.debug("ModuleMetaData + " + moduleMetaData);
 
                     FlowVisualisationDialog flowVisualisationDialog
                         = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
@@ -442,13 +442,13 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         UI ui = attachEvent.getUI();
         flowStateBroadcasterRegistration = FlowStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             this.drawFlowStatus(ui, flowState);
         });
 
         cacheStateBroadcasterRegistration = CacheStateBroadcaster.register(flowState ->
         {
-            logger.info("Received flow state: " + flowState);
+            logger.debug("Received flow state: " + flowState);
             this.drawFlowStatus(ui, flowState);
         });
     }

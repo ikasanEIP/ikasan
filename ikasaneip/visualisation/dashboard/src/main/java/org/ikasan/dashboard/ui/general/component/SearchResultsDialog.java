@@ -1,9 +1,6 @@
 package org.ikasan.dashboard.ui.general.component;
 
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import org.ikasan.rest.client.ReplayRestServiceImpl;
-import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -16,7 +13,7 @@ import org.ikasan.spec.solr.SolrGeneralService;
 
 import java.util.List;
 
-public class SearchResultsDialog extends Dialog {
+public class SearchResultsDialog extends AbstractCloseableResizableDialog {
 
     private SearchResults searchResults;
 
@@ -26,6 +23,7 @@ public class SearchResultsDialog extends Dialog {
                                ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
         searchResults = new SearchResults(solrGeneralService, errorReportingService, hospitalAuditService,
             resubmissionRestService, replayRestService, moduleMetadataService, replayAuditService);
+        searchResults.tooltipBottom();
 
         searchResults.setSizeFull();
 
@@ -33,7 +31,8 @@ public class SearchResultsDialog extends Dialog {
         wrapper.setWidthFull();
         wrapper.setHeight("95%");
         wrapper.add(searchResults);
-        this.add(wrapper);
+        this.content.add(wrapper);
+
 
         this.setSizeFull();
     }
