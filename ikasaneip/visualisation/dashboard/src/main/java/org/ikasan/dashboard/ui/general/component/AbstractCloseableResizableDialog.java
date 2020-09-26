@@ -71,6 +71,7 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
         content.setAlignItems(FlexComponent.Alignment.STRETCH);
 
         this.add(content);
+        this.setModal(true);
     }
 
     private void minimise() {
