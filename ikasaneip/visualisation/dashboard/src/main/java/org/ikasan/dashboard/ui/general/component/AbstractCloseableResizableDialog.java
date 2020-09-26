@@ -72,6 +72,8 @@ public abstract class AbstractCloseableResizableDialog extends Dialog
 
         this.add(content);
         this.setModal(true);
+        this.setCloseOnEsc(true);
+        this.setCloseOnOutsideClick(false);
     }
 
     private void minimise() {
