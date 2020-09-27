@@ -64,6 +64,7 @@
         <module>email-endpoint</module>
         <module>filetransfer</module>
         <module>test-endpoint</module>
+        <module>kafka-client</module>
     </modules>
 
 </project>
