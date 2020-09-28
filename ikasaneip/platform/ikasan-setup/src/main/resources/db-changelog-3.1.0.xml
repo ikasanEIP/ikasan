@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <!-- 3.1.x table creation -->
 
     <!-- 3.1.x table alterations -->
-    <include file="db/alter/db-changeLog-alterAuthenticationMethodAddSchedule.xml" relativeToChangelogFile="true" />
+    <include file="db/alter/db-changeLog-alterAuthenticationMethodAddSchedule.xml" relativeToChangelogFile="true"/>
 
     <!-- 3.1.x cardinality creation -->
 
+    <include file="db/alter/db-changeLog-alterUsersAuthoritiesFk.xml" relativeToChangelogFile="true"/>
+
     <!-- 3.1.x data creation -->
-    <include file="db/data/db-changelog-updateAdmin.xml" relativeToChangelogFile="true" />
-    <include file="db/data/db-changelog-updateModuleControlWritePolicy.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-updateAdmin.xml" relativeToChangelogFile="true"/>
+    <include file="db/data/db-changelog-updateModuleControlWritePolicy.xml" relativeToChangelogFile="true"/>
 
     <!-- 3.1.x index creation -->
 
