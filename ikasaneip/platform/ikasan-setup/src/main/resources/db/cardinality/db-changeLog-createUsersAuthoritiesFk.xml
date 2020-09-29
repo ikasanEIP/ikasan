@@ -41,7 +41,7 @@
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Authorities" />
 
 		<addForeignKeyConstraint baseColumnNames="UserId"
-			baseTableName="UsersAuthorities" constraintName="USER_AUTH_USER_FK2	"
+			baseTableName="UsersAuthorities" constraintName="USER_AUTH_USER_FK2"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Users" />
 
 	</changeSet>
