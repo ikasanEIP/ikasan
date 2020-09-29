@@ -29,10 +29,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet dbms="sybase, h2, mssql" author="ikasan dev" id="UsersAuthoritiesFk" context="baseline">
+		<validCheckSum>ANY</validCheckSum>
 
 		<preConditions onFail="MARK_RAN">
 			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_AUTH_FK1" /></not>
-			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_USER_FK2	" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_USER_FK2" /></not>
 		</preConditions>
 		
 		<addForeignKeyConstraint baseColumnNames="AuthorityId"
