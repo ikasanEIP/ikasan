@@ -47,6 +47,7 @@ import javax.annotation.Resource;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEventImpl;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,7 +65,7 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
-        "/systemevent-service-conf.xml"
+        "/systemevent-service-conf.xml", "/test-conf.xml"
 })
 public class HibernateSystemEventDaoTest
 {
@@ -142,7 +143,6 @@ public class HibernateSystemEventDaoTest
 
         assertEquals(15, result.stream()
                                .filter(systemEvent -> ((SystemEventImpl)systemEvent).isHarvested()).count());
-
     }
 
 
