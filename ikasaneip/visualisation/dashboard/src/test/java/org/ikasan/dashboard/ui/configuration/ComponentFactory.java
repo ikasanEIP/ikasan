@@ -33,6 +33,11 @@ public class ComponentFactory
             public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize) {
                 return null;
             }
+
+            @Override
+            public void deleteById(String name) {
+
+            }
         };
     }
 
