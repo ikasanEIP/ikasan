@@ -6,12 +6,16 @@ import org.ikasan.systemevent.model.SystemEventImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class SystemEventServiceImplTest
 {
@@ -33,8 +37,13 @@ public class SystemEventServiceImplTest
     @Test
     public void harvest()
     {
+        uut = new SystemEventServiceImpl(systemEventDao, 100l, new TestModuleContainer());
 
-        List<SystemEvent> events = Arrays.asList();
+        List<SystemEvent> events = new ArrayList<>();
+
+        for(int i=0; i<10; i++) {
+            events.add(new SystemEventImpl("subject", "action", new Date(), "actor", new Date()));
+        }
 
         mockery.checking(new Expectations()
         {
@@ -44,10 +53,11 @@ public class SystemEventServiceImplTest
             }
         });
 
-        uut.harvest(10);
+        List<SystemEvent> results = uut.harvest(10);
 
         mockery.assertIsSatisfied();
 
+        events.forEach(systemEvent -> Assert.assertEquals("Module name equals!", "name", systemEvent.getModuleName()));
     }
 
     @Test
