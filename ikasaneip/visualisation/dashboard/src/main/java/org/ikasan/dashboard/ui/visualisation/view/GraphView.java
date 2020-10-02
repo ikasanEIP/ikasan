@@ -216,6 +216,24 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, buttonWrapper);
             return layout;
         })).setWidth("30px");
+        modulesGrid.addColumn(new ComponentRenderer<>(moduleMetaData->
+        {
+            Button deleteButton = new TableButton(VaadinIcon.TRASH.create());
+            deleteButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            {
+                this.moduleMetadataService.deleteById(moduleMetaData.getName());
+                this.populateModulesGrid();
+            });
+
+            ComponentSecurityVisibility.applySecurity(deleteButton, SecurityConstants.PLATORM_CONFIGURATON_ADMIN,
+                SecurityConstants.PLATORM_CONFIGURATON_WRITE, SecurityConstants.ALL_AUTHORITY);
+
+            VerticalLayout layout = new VerticalLayout();
+            layout.setSizeFull();
+            layout.add(deleteButton);
+            layout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, deleteButton);
+            return layout;
+        })).setWidth("30px");
 
         modulesGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<ModuleMetaData>>)
             doubleClickEvent ->

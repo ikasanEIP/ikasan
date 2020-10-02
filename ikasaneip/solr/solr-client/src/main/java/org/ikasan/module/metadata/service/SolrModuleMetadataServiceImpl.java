@@ -67,4 +67,11 @@ public class SolrModuleMetadataServiceImpl extends SolrServiceBase implements Ba
         dao.setSolrPassword(super.solrPassword);
         return this.dao.find(modulesNames, startOffset, resultSize);
     }
+
+    @Override
+    public void deleteById(String name) {
+        dao.setSolrUsername(super.solrUsername);
+        dao.setSolrPassword(super.solrPassword);
+        this.dao.deleteById(name);
+    }
 }

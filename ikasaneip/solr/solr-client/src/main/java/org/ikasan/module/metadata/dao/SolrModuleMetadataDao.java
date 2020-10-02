@@ -7,9 +7,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.ikasan.business.stream.metadata.model.SolrBusinessStream;
 import org.ikasan.module.metadata.model.*;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.solr.SolrConstants;
@@ -17,9 +15,7 @@ import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -115,6 +111,15 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
         {
             return null;
         }
+    }
+
+    public void deleteById(String id)
+    {
+        String queryString = "id:\"" + id + "\" AND type:\"" + MODULE_METADATA + "\"";
+
+        logger.debug("queryString: " + queryString);
+
+        super.deleteByQuery(queryString);
     }
 
     public List<ModuleMetaData> findAll(Integer startOffset, Integer resultSize)

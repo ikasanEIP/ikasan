@@ -30,4 +30,11 @@ public interface ModuleMetaDataService
      */
     public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize);
 
+    /**
+     * Delete the module meta data by its name.
+     *
+     * @param name
+     */
+    public void deleteById(String name);
+
 }
