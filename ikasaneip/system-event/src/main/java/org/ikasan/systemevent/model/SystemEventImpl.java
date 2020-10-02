@@ -58,8 +58,8 @@ import java.util.StringJoiner;
  */
 public class SystemEventImpl implements SystemEvent
 {
+	private String moduleName;
 
-	
 	/**
 	 * What happened?
 	 */
@@ -125,9 +125,12 @@ public class SystemEventImpl implements SystemEvent
 
     @Override
     public String getModuleName() {
-	    // This is not persisted to the database. Each Ikasan module has
-        // its own database and the module name can be derived by context.
-        throw new UnsupportedOperationException();
+	    return this.moduleName;
+    }
+
+    @Override
+    public void setModuleName(String moduleName) {
+	    this.moduleName = moduleName;
     }
 
     /**

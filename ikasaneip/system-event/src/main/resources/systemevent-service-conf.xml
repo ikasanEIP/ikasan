@@ -52,6 +52,7 @@
     <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
         <constructor-arg name="systemEventDao" ref="systemEventDao" />
         <constructor-arg name="eventExpiryMinutes" value="10080" /> <!-- system events expire after 1 week -->
+        <constructor-arg name="moduleContainer" ref="moduleContainer" />
     </bean>
     
     <bean id="systemEventDao"
