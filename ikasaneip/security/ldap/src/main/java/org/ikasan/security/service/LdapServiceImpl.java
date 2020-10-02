@@ -468,12 +468,32 @@ public class LdapServiceImpl implements LdapService
 
     protected boolean isValidEncoding(LdapUser ldapUser){
 
-        if(!VALID_CHARSET_ENCODER.canEncode(ldapUser.accountName)){
+        if(ldapUser.accountName != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.accountName)){
             logger.warn(String.format("User[%s] has character encoding issue for accountName='%s'", ldapUser.accountName, ldapUser.accountName));
             return false;
         }
 
-        if(!VALID_CHARSET_ENCODER.canEncode(ldapUser.department)){
+        if(ldapUser.firstName != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.firstName)){
+            logger.warn(String.format("User[%s] has character encoding issue for firstName='%s'", ldapUser.accountName, ldapUser.firstName));
+            return false;
+        }
+
+        if(ldapUser.surname != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.surname)){
+            logger.warn(String.format("User[%s] has character encoding issue for surname='%s'", ldapUser.accountName, ldapUser.surname));
+            return false;
+        }
+
+        if(ldapUser.email != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.email)){
+            logger.warn(String.format("User[%s] has character encoding issue for email='%s'", ldapUser.accountName, ldapUser.email));
+            return false;
+        }
+
+        if(ldapUser.description != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.description)){
+            logger.warn(String.format("User[%s] has character encoding issue for description='%s'", ldapUser.accountName, ldapUser.description));
+            return false;
+        }
+
+        if(ldapUser.department != null && !VALID_CHARSET_ENCODER.canEncode(ldapUser.department)){
             logger.warn(String.format("User[%s] has character encoding issue for department='%s'", ldapUser.accountName, ldapUser.department));
             return false;
         }
