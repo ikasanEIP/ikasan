@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.systemevent.model.SystemEventImpl;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
@@ -75,6 +76,8 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
      */
     private Long eventExpiryMinutes;
 
+    private ModuleContainer moduleContainer;
+
     private SystemEventServiceConfiguration systemEventServiceConfiguration;
 
     /**
@@ -88,6 +91,21 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
     {
         this.systemEventDao = systemEventDao;
         this.eventExpiryMinutes = eventExpiryMinutes;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param systemEventDao
+     * @param eventExpiryMinutes - no of minutes for this event to be kept until
+     *            eligible for housekeep
+     */
+    public SystemEventServiceImpl(SystemEventDao systemEventDao, Long eventExpiryMinutes,
+                                  ModuleContainer moduleContainer)
+    {
+        this.systemEventDao = systemEventDao;
+        this.eventExpiryMinutes = eventExpiryMinutes;
+        this.moduleContainer = moduleContainer;
     }
 
     /*
@@ -190,7 +208,12 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
     @Override
     public List<SystemEvent> harvest(int transactionBatchSize)
     {
-        return new ArrayList<>(this.systemEventDao.getHarvestableRecords(transactionBatchSize));
+        ArrayList<SystemEvent> systemEvents = new ArrayList<>(this.systemEventDao.getHarvestableRecords(transactionBatchSize));
+        if(this.moduleContainer != null && !this.moduleContainer.getModules().isEmpty()) {
+            systemEvents.forEach(systemEvent -> systemEvent.setModuleName(this.moduleContainer.getModules().stream().findFirst().get().getName()));
+        }
+
+        return systemEvents;
     }
 
     @Override
