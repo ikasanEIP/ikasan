@@ -5,6 +5,7 @@ import com.vaadin.componentfactory.TooltipAlignment;
 import com.vaadin.componentfactory.TooltipPosition;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class TooltipHelper
 {
@@ -22,11 +23,18 @@ public class TooltipHelper
     {
         Tooltip tooltip = new Tooltip();
 
+        tooltip.getElement().getStyle().set("background-color", "#232F34");
+        tooltip.getElement().getStyle().set("color", "#FFFFFF");
+        tooltip.getElement().getStyle().set("border-radius", "10px");
+        tooltip.getElement().getStyle().set("padding", "10px");
+
         tooltip.attachToComponent(component);
 
         tooltip.setPosition(position);
         tooltip.setAlignment(alignment);
 
+        VerticalLayout layout = new VerticalLayout();
+        layout.add(new Paragraph(message));
         tooltip.add(new Paragraph(message));
 
         return tooltip;
