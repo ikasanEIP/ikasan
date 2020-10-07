@@ -12,7 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.ikasan.dashboard.ui.util.ApplicationContextProvider;
 import org.springframework.boot.info.BuildProperties;
 
-public class AboutIkasanDialog extends Dialog
+public class AboutIkasanDialog extends AbstractCloseableResizableDialog
 {
 
     public AboutIkasanDialog()
@@ -70,7 +70,8 @@ public class AboutIkasanDialog extends Dialog
 
         verticalLayout.add(applicationNameLayout, buildVersionLayout, buildTimestampLayout);
 
-        this.add(verticalLayout);
+        super.content.add(verticalLayout);
         this.setWidth("600px");
+        this.setHeight("500px");
     }
 }
