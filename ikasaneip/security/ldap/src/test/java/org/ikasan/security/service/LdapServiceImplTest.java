@@ -54,6 +54,24 @@ public class LdapServiceImplTest {
     }
 
     @Test
+    public void testIsValidEncoding_happyPath_with_kanji_characters() {
+
+        LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
+        ldapUser.accountName = "username 例外クラス";
+        ldapUser.department = "Sample department 例外クラス";
+        ldapUser.firstName = "Sample firstname 例外クラス";
+        ldapUser.surname = "Sample surname 例外クラス";
+        ldapUser.description = "Sample description 例外クラス";
+        ldapUser.email = "test@there.com 例外クラス";
+        ldapUser.memberOf = new String[]{"group 1 例外クラス ", "group 2 例外クラス"};
+
+        boolean validEncoding = ldapService.isValidEncoding(ldapUser);
+
+        Assert.assertTrue(validEncoding);
+
+    }
+
+    @Test
     public void testIsValidEncoding_withoutMemberGroups() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
@@ -84,7 +102,7 @@ public class LdapServiceImplTest {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
-        ldapUser.department = "Special chars department ¡—";
+        ldapUser.department = "Special chars department ¡" + '\uD835';
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
@@ -110,7 +128,7 @@ public class LdapServiceImplTest {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
-        ldapUser.firstName = "Special chars firstname ¡—";
+        ldapUser.firstName = "Special chars firstname ¡—" + '\uD835';
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
@@ -136,7 +154,7 @@ public class LdapServiceImplTest {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
-        ldapUser.surname = "Special chars surname ¡—";
+        ldapUser.surname = "Special chars surname ¡—" + '\uD835';
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
@@ -162,7 +180,7 @@ public class LdapServiceImplTest {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
-        ldapUser.email = "Special chars email ¡—";
+        ldapUser.email = "Special chars email ¡—" + '\uD835';
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
@@ -188,7 +206,7 @@ public class LdapServiceImplTest {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
-        ldapUser.description = "Special chars description ¡—";
+        ldapUser.description = "Special chars description ¡—" + '\uD835';
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
@@ -213,7 +231,7 @@ public class LdapServiceImplTest {
     public void testIsValidEncoding_invalidAccountName() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
-        ldapUser.accountName = "invalidName-with-EmDash—";
+        ldapUser.accountName = "invalidName-with-EmDash—" + '\uD835';
         ldapUser.department = "Some department";
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
@@ -228,7 +246,7 @@ public class LdapServiceImplTest {
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "userName";
         ldapUser.department = "Some department";
-        ldapUser.memberOf = new String[]{"Special chars group ¡—", "another group"};
+        ldapUser.memberOf = new String[]{"Special chars group ¡—" + '\uD835', "another group"};
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
