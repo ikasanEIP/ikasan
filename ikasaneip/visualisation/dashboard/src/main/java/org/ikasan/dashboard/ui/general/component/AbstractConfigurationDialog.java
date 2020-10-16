@@ -381,9 +381,13 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         TextField textField = new TextField(configurationParameterMetaData.getName());
         textField.setWidth("100%");
 
-        if(configurationParameterMetaData.getValue() != null)
+        if(configurationParameterMetaData.getValue() != null && configurationParameterMetaData.getValue() instanceof Long)
         {
             textField.setValue(((Long)configurationParameterMetaData.getValue()).toString());
+        }
+        else
+        {
+            textField.setValue(((Integer)configurationParameterMetaData.getValue()).toString());
         }
 
         layout.add(textField);

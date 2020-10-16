@@ -34,9 +34,6 @@ public class IkasanFlowLayoutManagerTest
         setThreadingPolicy(new Synchroniser());
     }};
 
-    /**
-     * mocked container, listener and dao
-     */
     NetworkDiagram networkDiagram = mockery.mock(NetworkDiagram.class);
 
     JsonModuleMetaDataProvider jsonModuleMetaDataProvider

@@ -54,6 +54,8 @@ public class ComponentOptionsDialog extends Dialog {
 
     protected boolean configuredResource;
 
+    private Button componentConfigurationButton;
+
     protected ComponentOptionsDialog(Module module, String flowName, String componentName, boolean configuredResource,
                                      ConfigurationService configurationRestService,
                                      TriggerService triggerRestService, NetworkDiagram networkDiagram,
@@ -90,7 +92,7 @@ public class ComponentOptionsDialog extends Dialog {
         verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, header);
 
         if (this.configuredResource) {
-            Button componentConfigurationButton = new Button(
+            componentConfigurationButton = new Button(
                 getTranslation("button.component-configuration", UI.getCurrent().getLocale()));
             componentConfigurationButton.setWidthFull();
             componentConfigurationButton.addClickListener((ComponentEventListener<ClickEvent<Button>>)
