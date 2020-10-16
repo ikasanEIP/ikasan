@@ -2,6 +2,7 @@
   "name": "module name",
   "description": "module description",
   "version": "module version",
+  "url": "www.some-url.com",
   "flows": [
     {
       "name": "Simple Flow 1",
@@ -10,9 +11,9 @@
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
         "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-        "configurationId": null,
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-        "configurable": false
+        "configurable": true
       },
       "transitions": [
         {
@@ -92,9 +93,9 @@
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
           "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-          "configurationId": null,
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-          "configurable": false
+          "configurable": true
         }
       ],
       "configurationId": "FLOW_CONFIGURATION_ID"
@@ -106,9 +107,9 @@
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
         "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-        "configurationId": null,
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-        "configurable": false
+        "configurable": true
       },
       "transitions": [
         {
@@ -188,9 +189,9 @@
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
           "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-          "configurationId": null,
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-          "configurable": false
+          "configurable": true
         }
       ],
       "configurationId": "FLOW_CONFIGURATION_ID"
@@ -201,8 +202,8 @@
         "componentName": "Test Consumer",
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-        "implementingClass": "org.ikasan.topology.metadata.components.ConfiguredConsumer",
-        "configurationId": "CONFIGURATION_ID",
+        "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
         "configurable": true
       },
@@ -311,8 +312,8 @@
           "componentName": "Test Consumer",
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-          "implementingClass": "org.ikasan.topology.metadata.components.ConfiguredConsumer",
-          "configurationId": "CONFIGURATION_ID",
+          "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
           "configurable": true
         }
@@ -325,8 +326,8 @@
         "componentName": "Test Consumer",
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-        "implementingClass": "org.ikasan.topology.metadata.components.ConfiguredConsumer",
-        "configurationId": "CONFIGURATION_ID",
+        "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
         "configurable": true
       },
@@ -435,8 +436,8 @@
           "componentName": "Test Consumer",
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-          "implementingClass": "org.ikasan.topology.metadata.components.ConfiguredConsumer",
-          "configurationId": "CONFIGURATION_ID",
+          "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
           "configurable": true
         }
@@ -450,9 +451,9 @@
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
         "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-        "configurationId": null,
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-        "configurable": false
+        "configurable": true
       },
       "transitions": [
         {
@@ -556,9 +557,9 @@
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
           "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-          "configurationId": null,
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-          "configurable": false
+          "configurable": true
         }
       ],
       "configurationId": "FLOW_CONFIGURATION_ID"
@@ -570,9 +571,9 @@
         "description": "Test Consumer Description",
         "componentType": "org.ikasan.spec.component.endpoint.Consumer",
         "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-        "configurationId": null,
+        "configurationId": "configurationId",
         "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-        "configurable": false
+        "configurable": true
       },
       "transitions": [
         {
@@ -676,9 +677,9 @@
           "description": "Test Consumer Description",
           "componentType": "org.ikasan.spec.component.endpoint.Consumer",
           "implementingClass": "org.ikasan.topology.metadata.components.TestConsumer",
-          "configurationId": null,
+          "configurationId": "consumer_id",
           "invokerConfigurationId": "FLOW_INVOKER_CONFIGURATION_ID",
-          "configurable": false
+          "configurable": true
         }
       ],
       "configurationId": "FLOW_CONFIGURATION_ID"
