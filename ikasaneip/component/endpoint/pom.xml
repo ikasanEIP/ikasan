@@ -65,6 +65,7 @@
         <module>filetransfer</module>
         <module>test-endpoint</module>
         <module>kafka-client</module>
+        <module>kafka-client-reactive</module>
     </modules>
 
 </project>
