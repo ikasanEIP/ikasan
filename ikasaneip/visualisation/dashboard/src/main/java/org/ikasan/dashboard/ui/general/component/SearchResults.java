@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.ui.search.SearchConstants;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
@@ -34,6 +36,7 @@ import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -241,13 +244,15 @@ public class SearchResults extends Div {
             .setKey("moduleName")
             .setHeader(getTranslation("table-header.module-name", UI.getCurrent().getLocale()))
             .setSortable(true)
-            .setFlexGrow(4);
+            .setFlexGrow(4)
+            .setResizable(true);
 
         // Add the flow name column to the grid
         this.searchResultsGrid.addColumn(IkasanSolrDocument::getFlowName).setKey("flowName")
             .setHeader(getTranslation("table-header.flow-name", UI.getCurrent().getLocale()))
             .setSortable(true)
-            .setFlexGrow(6);
+            .setFlexGrow(6)
+            .setResizable(true);
 
         // Add the component name column to the grid
         this.searchResultsGrid.addColumn(TemplateRenderer.<IkasanSolrDocument>of(
@@ -257,17 +262,47 @@ public class SearchResults extends Div {
             .setKey("componentName")
             .setHeader(getTranslation("table-header.component-name", UI.getCurrent().getLocale()))
             .setSortable(true)
-            .setFlexGrow(6);
+            .setFlexGrow(6)
+            .setResizable(true);
 
         // Add the event identifier column to the grid
-        this.searchResultsGrid.addColumn(TemplateRenderer.<IkasanSolrDocument>of(
-            "<div>[[item.eventIdentifier]]</div>")
-            .withProperty("eventIdentifier",
-                ikasanSolrDocument -> ikasanSolrDocument.getEventId()))
+        this.searchResultsGrid.addColumn(new ComponentRenderer<>(ikasanSolrDocument -> {
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+
+            if(ikasanSolrDocument.getType().equals("wiretap")) {
+                String route = RouteConfiguration.forSessionScope()
+                    .getUrl(EventLifeIdDeepLinkView.class, ikasanSolrDocument.getEventId());
+                Anchor link = new Anchor(route, ikasanSolrDocument.getEventId());
+                link.setTarget("_blank");
+                add(link);
+                horizontalLayout.add(link);
+                link.getStyle().set("color", "blue");
+            }
+            else if(ikasanSolrDocument.getType().equals("error") || ikasanSolrDocument.getType().equals("exclusion")) {
+                Div div = new Div();
+
+                String identifier = new String();
+
+                if(ikasanSolrDocument.getEventId() != null && !ikasanSolrDocument.getEventId().isBlank()) {
+                    identifier = ikasanSolrDocument.getEventId() + " / ";
+                }
+
+                div.add(identifier + ikasanSolrDocument.getErrorUri());
+                horizontalLayout.add(div);
+            }
+            else {
+                Div div = new Div();
+                div.add(ikasanSolrDocument.getEventId());
+                horizontalLayout.add(div);
+            }
+
+            return horizontalLayout;
+        }))
             .setKey("event")
             .setHeader(getTranslation("table-header.event-id", UI.getCurrent().getLocale()))
             .setSortable(true)
-            .setFlexGrow(8);
+            .setFlexGrow(8)
+            .setResizable(true);
 
         // Add the event details column to the grid
         this.searchResultsGrid.addColumn(TemplateRenderer.<IkasanSolrDocument>of(
@@ -300,7 +335,8 @@ public class SearchResults extends Div {
             .setKey("payload")
             .setHeader(getTranslation("table-header.event-details", UI.getCurrent().getLocale()))
             .setSortable(false)
-            .setFlexGrow(12);
+            .setFlexGrow(12)
+            .setResizable(true);
 
         // Add the timestamp column to the grid
         this.searchResultsGrid.addColumn(TemplateRenderer.<IkasanSolrDocument>of(
@@ -309,7 +345,8 @@ public class SearchResults extends Div {
                 ikasanSolrDocument -> DateFormatter.getFormattedDate(ikasanSolrDocument.getTimeStamp()))).setHeader(getTranslation("table-header.timestamp", UI.getCurrent().getLocale()))
             .setSortable(true)
             .setKey("timestamp")
-            .setFlexGrow(2);
+            .setFlexGrow(2)
+            .setResizable(true);
 
         // Add the select column to the grid
         this.searchResultsGrid.addColumn(new ComponentRenderer<>(ikasanSolrDocument ->
