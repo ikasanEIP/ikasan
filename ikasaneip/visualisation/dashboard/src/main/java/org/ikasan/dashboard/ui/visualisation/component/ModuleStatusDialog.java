@@ -115,7 +115,7 @@ public class ModuleStatusDialog extends AbstractCloseableResizableDialog {
             }
 
             Button button = new Button(buttonImage);
-            button.setHeight("44px");
+            button.setHeight("46px");
             button.setWidth("44px");
 
             UI.getCurrent().access(() -> ComponentSecurityVisibility.applyEnabledSecurity(authentication, button, SecurityConstants.ALL_AUTHORITY

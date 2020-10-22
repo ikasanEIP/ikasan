@@ -139,7 +139,7 @@ public class SearchForm extends VerticalLayout {
         this.wiretapImage = new Image("frontend/images/wiretap-inverse.png", "");
         this.wiretapImage.setHeight("40px");
         this.wiretapCheckButton = new Button(this.wiretapImage);
-        this.wiretapCheckButton.setHeight("44px");
+        this.wiretapCheckButton.setHeight("46px");
         this.wiretapCheckButton.setWidth("44px");
 
         this.wiretapCheckButton.addClickListener(buttonClickEvent -> {
@@ -162,7 +162,7 @@ public class SearchForm extends VerticalLayout {
         this.errorImage = new Image("frontend/images/error-inverse.png", "");
         this.errorImage.setHeight("40px");
         this.errorCheckButton = new Button(errorImage);
-        this.errorCheckButton.setHeight("44px");
+        this.errorCheckButton.setHeight("46px");
         this.errorCheckButton.setWidth("44px");
 
         this.errorCheckButton.addClickListener(buttonClickEvent -> {
@@ -185,7 +185,7 @@ public class SearchForm extends VerticalLayout {
         this.hospitalImage = new Image("frontend/images/hospital-inverse.png", "");
         this.hospitalImage.setHeight("40px");
         this.hospitalCheckButton = new Button(hospitalImage);
-        this.hospitalCheckButton.setHeight("44px");
+        this.hospitalCheckButton.setHeight("46px");
         this.hospitalCheckButton.setWidth("44px");
 
         this.hospitalCheckButton.addClickListener(buttonClickEvent -> {
@@ -208,7 +208,7 @@ public class SearchForm extends VerticalLayout {
         this.replayImage = new Image("frontend/images/replay-inverse.png", "");
         this.replayImage.setHeight("40px");
         this.replayCheckButton = new Button(replayImage);
-        this.replayCheckButton.setHeight("44px");
+        this.replayCheckButton.setHeight("46px");
         this.replayCheckButton.setWidth("44px");
 
         this.replayCheckButton.addClickListener(buttonClickEvent -> {
