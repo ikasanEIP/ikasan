@@ -375,14 +375,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.org.hibernate>5.4.10.Final</version.org.hibernate>
+        <version.org.hibernate>5.4.21.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.18.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.2.3.RELEASE</version.org.springframework>
+        <version.org.springframework>5.2.9.RELEASE</version.org.springframework>
         <version.org.springframework.security>5.3.3.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.spring.cloud.config.client>2.2.1.RELEASE</version.spring.cloud.config.client>
-        <version.org.springboot>2.2.4.RELEASE</version.org.springboot>
+        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
         <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
