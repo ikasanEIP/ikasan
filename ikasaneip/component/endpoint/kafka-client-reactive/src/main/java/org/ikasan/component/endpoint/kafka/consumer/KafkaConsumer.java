@@ -41,27 +41,19 @@
 package org.ikasan.component.endpoint.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.TopicPartition;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
-import org.ikasan.exceptionResolver.action.RetryAction;
-import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.resubmission.ResubmissionEventFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.KafkaReceiver;
@@ -69,14 +61,7 @@ import reactor.kafka.receiver.ReceiverOffset;
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.receiver.ReceiverRecord;
 
-import java.time.Duration;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 
 /**
  * Implementation of a Kafka client consumer.
@@ -86,8 +71,8 @@ import java.util.function.BiConsumer;
 public class KafkaConsumer<KEY, VALUE>
     implements Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<ConsumerRecord<KEY, VALUE>,Throwable>,
-        ConfiguredResource<KafkaConsumerConfiguration>, ResubmissionService<ConsumerRecord<KEY, VALUE>>, //Converter<ConsumerRecord<KEY, VALUE>,Object>,
-        MultiThreadedCapable, IsExclusionServiceAware, MessageProcessor<ConsumerRecord<KEY, VALUE>>
+        ConfiguredResource<KafkaConsumerConfiguration>, ResubmissionService<ConsumerRecord<KEY, VALUE>>,
+        MultiThreadedCapable, MessageProcessor<ConsumerRecord<KEY, VALUE>>
 {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
@@ -176,16 +161,8 @@ public class KafkaConsumer<KEY, VALUE>
     public void onMessage(ConsumerRecord<KEY, VALUE> consumerRecord) {
         logger.info("Received message " + consumerRecord.value());
 
-//        try {
         FlowEvent<?, ?> flowEvent = flowEventFactory.newEvent(consumerRecord.value(), "", consumerRecord.value());
         invoke(flowEvent);
-//        }
-//        catch (Exception e) {
-//            if(this.eventListener != null) {
-//                this.eventListener.invoke(e);
-//            }
-//
-//        }
     }
 
     @Override
@@ -195,13 +172,8 @@ public class KafkaConsumer<KEY, VALUE>
 
     @Override
     public boolean isActive() {
-        return false;
+        return this.isRunning();
     }
-
-//    @Override
-//    public Object convert(ConsumerRecord<KEY, VALUE> payload) throws TransformationException {
-//        return payload.value();
-//    }
 
     @Override
     public String getConfiguredResourceId() {
@@ -239,11 +211,6 @@ public class KafkaConsumer<KEY, VALUE>
     @Override
     public void setResubmissionEventFactory(ResubmissionEventFactory resubmissionEventFactory) {
         this.resubmissionEventFactory = resubmissionEventFactory;
-    }
-
-    @Override
-    public void setExclusionService(ExclusionService exclusionService) {
-
     }
 
     private void subscribe() {
