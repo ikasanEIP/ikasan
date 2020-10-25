@@ -40,6 +40,9 @@
  */
 package org.ikasan.component.endpoint.kafka.producer;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -48,42 +51,68 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import reactor.core.publisher.Flux;
+import reactor.kafka.sender.KafkaSender;
+import reactor.kafka.sender.SenderOptions;
+import reactor.kafka.sender.SenderRecord;
+import reactor.kafka.sender.TransactionManager;
+
+import java.util.Date;
 
 /**
  * Implementation of a producer based on the JMS specification.
  *
  * @author Ikasan Development Team
  */
-public class KafkaProducer<T>
-        implements Producer<T>, ManagedIdentifierService<ManagedEventIdentifierService>,
+public class KafkaProducer<VALUE>
+        implements Producer<VALUE>, ManagedIdentifierService<ManagedEventIdentifierService>,
         ManagedResource, ConfiguredResource<KafkaProducerConfiguration>
 {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
-    @Override
-    public void invoke(T payload) throws EndpointException {
+    private KafkaSender<String, VALUE> sender;
 
+    private KafkaProducerConfiguration configuration;
+    private String configurationId;
+
+    @Override
+    public void invoke(VALUE payload) throws EndpointException {
+        sender.send(Flux.just(payload)
+            .map(t -> SenderRecord.create(new ProducerRecord<>(this.configuration.getTopicName(), "key", t), t)))
+            .doOnError(e -> {
+                logger.error("Send failed", e);
+                throw new EndpointException(e);
+            })
+            .subscribe(r -> {
+                RecordMetadata metadata = r.recordMetadata();
+                System.out.printf("Message sent successfully: \n" +
+                    r.correlationMetadata() + "\n" +
+                    metadata.topic() + "\n" +
+                    metadata.partition() + "\n" +
+                    metadata.offset() + "\n" +
+                    new Date(metadata.timestamp()));
+            });
     }
 
     @Override
     public String getConfiguredResourceId() {
-        return null;
+        return configurationId;
     }
 
     @Override
     public void setConfiguredResourceId(String id) {
-
+        this.configurationId = id;
     }
 
     @Override
     public KafkaProducerConfiguration getConfiguration() {
-        return null;
+        return this.configuration;
     }
 
     @Override
     public void setConfiguration(KafkaProducerConfiguration configuration) {
-
+        this.configuration = configuration;
     }
 
     @Override
@@ -93,12 +122,18 @@ public class KafkaProducer<T>
 
     @Override
     public void startManagedResource() {
-
+        try {
+            SenderOptions<String, VALUE> senderOptions = SenderOptions.create(this.configuration.getProducerProps());
+            sender = KafkaSender.create(senderOptions);
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void stopManagedResource() {
-
+        sender.close();
     }
 
     @Override
