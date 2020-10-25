@@ -1,10 +1,8 @@
 package org.ikasan.component.endpoint.kafka.producer;
 
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.testharness.flow.kafka.MessageListenerVerifier;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -18,13 +16,20 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @DirtiesContext
 @EmbeddedKafka(partitions = 1,
     topics = {
-        "test-topic" }  )
+        "test-topic" },
+    brokerProperties = {
+        "transaction.state.log.replication.factor=1",
+        "transaction.state.log.min.isr=1",
+        "auto.create.topics.enable=false"} )
 public class KafkaProducerTest {
 
     @Autowired
@@ -41,11 +46,6 @@ public class KafkaProducerTest {
         }
     };
 
-    // mocked Message Consumer
-    EventListener eventListener = mockery.mock(EventListener.class);
-
-    EventFactory flowEventFactory = mockery.mock(EventFactory.class);
-
     private KafkaProducerConfiguration producerConfiguration;
 
     @Before
@@ -55,34 +55,31 @@ public class KafkaProducerTest {
         this.producerConfiguration.setAcks("all");
         this.producerConfiguration.setKeySerializer("org.apache.kafka.common.serialization.StringSerializer");
         this.producerConfiguration.setValueSerializer("org.apache.kafka.common.serialization.StringSerializer");
-//        this.producerConfiguration.setTransactionalId("TransactionalSend");
+        this.producerConfiguration.setTransactionTimeoutMillis(1000);
+        this.producerConfiguration.setRetries(0);
+        this.producerConfiguration.setRequestTimeoutMillis(500);
+        this.producerConfiguration.setLingerMillis(50L);
+        this.producerConfiguration.setDeliveryTimeoutMillis(1000);
+        this.producerConfiguration.setMaxBlockMillis(1000L);
+        this.producerConfiguration.setTransactionalId("test-transaction");
+
+        Map<String, String> props = new HashMap<>();
+        props.put("transaction.state.log.replication.factor", "1");
+        embeddedKafka.brokerProperties(props);
     }
 
     @Test
     @DirtiesContext
     public void test_publish_message_success() throws InterruptedException {
-        
-        mockery.checking(new Expectations()
-        {
-//            {
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//            }
-        });
-
         this.producerConfiguration.setClientId("testClient");
         this.producerConfiguration.setTopicName("test-topic");
 
-        KafkaProducer<String> kafkaProducer = new KafkaProducer<>();
+        KafkaProducer<String> kafkaProducer = new KafkaProducer<>(new StringKeyProvider());
         kafkaProducer.setConfiguration(this.producerConfiguration);
 
         kafkaProducer.startManagedResource();
 
-        kafkaProducer.invoke("test message");
+        IntStream.range(0, 100).forEach(i -> kafkaProducer.invoke("test message"));
 
         MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(this.embeddedKafka.getBrokersAsString(),
             "test-topic", StringDeserializer.class, StringDeserializer.class, "testClient");
@@ -93,177 +90,47 @@ public class KafkaProducerTest {
         kafkaProducer.stopManagedResource();
         mockery.assertIsSatisfied();
 
-        Assert.assertEquals(1, messageListenerVerifier.getCaptureResults().size());
+        Assert.assertEquals(100, messageListenerVerifier.getCaptureResults().size());
 
         messageListenerVerifier.stop();
     }
 
-//    @Test
-//    @DirtiesContext
-//    public void test_consume_message_success_stop_start_with_offset() throws InterruptedException {
-//        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-//
-//        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-//        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
-//
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//            }
-//        });
-//
-//        this.producerConfiguration.setGroupId("testGroup");
-//        this.producerConfiguration.setTopicName("test-topic");
-//        this.producerConfiguration.setOffset(0L);
-//
-//        KafkaConsumer<Integer, String> kafkaConsumer = new KafkaConsumer<>();
-//        kafkaConsumer.setConfiguration(this.producerConfiguration);
-//        kafkaConsumer.setListener(this.eventListener);
-//        kafkaConsumer.setEventFactory(this.flowEventFactory);
-//        kafkaConsumer.setMessageProcessor(kafkaConsumer);
-//
-//
-//        producer.send(new ProducerRecord<>("test-topic", 1, "my-test-value1"));
-//        producer.send(new ProducerRecord<>("test-topic", 2, "my-test-value2"));
-//        producer.flush();
-//
-//        BrokerTopicMetrics metrics = this.embeddedKafka.getKafkaServer(0).brokerTopicStats().allTopicsStats();
-//
-//        Long count = metrics.messagesInRate().count();
-//
-//        kafkaConsumer.start();
-//
-//        Thread.sleep(1000);
-//
-//        kafkaConsumer.stop();
-//
-//        producer.send(new ProducerRecord<>("test-topic", 3, "my-test-value3"));
-//        producer.send(new ProducerRecord<>("test-topic", 4, "my-test-value4"));
-//        producer.flush();
-//
-//        kafkaConsumer.start();
-//
-//        Thread.sleep(1000);
-//
-//        kafkaConsumer.stop();
-//        mockery.assertIsSatisfied();
-//    }
-//
-//    @Test
-//    @DirtiesContext
-//    public void test_consume_message_success_reset_offset() throws InterruptedException {
-//        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-//
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//            }
-//        });
-//
-//        this.producerConfiguration.setGroupId("testGroup");
-//        this.producerConfiguration.setTopicName("test-topic");
-//        this.producerConfiguration.setOffset(0L);
-//
-//        KafkaConsumer<Integer, String> kafkaConsumer = new KafkaConsumer<>();
-//        kafkaConsumer.setConfiguration(this.producerConfiguration);
-//        kafkaConsumer.setListener(this.eventListener);
-//        kafkaConsumer.setEventFactory(this.flowEventFactory);
-//        kafkaConsumer.setMessageProcessor(kafkaConsumer);
-//
-//        kafkaConsumer.start();
-//
-//        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-//        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
-//        producer.send(new ProducerRecord<>("test-topic", 1, "my-test-value1"));
-//        producer.send(new ProducerRecord<>("test-topic", 2, "my-test-value2"));
-//        producer.flush();
-//
-//        Thread.sleep(1000);
-//
-//        kafkaConsumer.stop();
-//
-//        this.producerConfiguration.setOffset(0L);
-//
-//        kafkaConsumer.start();
-//
-//        producer.send(new ProducerRecord<>("test-topic", 3, "my-test-value3"));
-//        producer.send(new ProducerRecord<>("test-topic", 4, "my-test-value4"));
-//        producer.flush();
-//
-//        Thread.sleep(1000);
-//
-//        kafkaConsumer.stop();
-//        mockery.assertIsSatisfied();
-//    }
-//
-//    @Test
-//    @DirtiesContext
-//    public void test_consume_message_invoke_exception() throws InterruptedException {
-//        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-//        final Exception exception = new RuntimeException("test exception");
-//
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                exactly(1).of(flowEventFactory).newEvent(with(any(String.class)), with(any(String.class)), with(any(String.class)));
-//                will(returnValue(mockFlowEvent));
-//                exactly(1).of(eventListener).invoke(with(any(Object.class)));
-//                will(throwException(exception));
-////                exactly(1).of(eventListener).invoke(exception);
-//            }
-//        });
-//
-//        this.producerConfiguration.setGroupId("testGroup");
-//        this.producerConfiguration.setMaxPollRecords(1);
-//        this.producerConfiguration.setTopicName("test-topic");
-//
-//        KafkaConsumer<Integer, String> kafkaConsumer = new KafkaConsumer<>();
-//        kafkaConsumer.setConfiguration(this.producerConfiguration);
-//        kafkaConsumer.setListener(this.eventListener);
-//        kafkaConsumer.setEventFactory(this.flowEventFactory);
-//        kafkaConsumer.setMessageProcessor(kafkaConsumer);
-//
-//        kafkaConsumer.start();
-//
-//        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-//        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
-//        producer.send(new ProducerRecord<>("test-topic", 1, "my-test-value1"));
-//        producer.flush();
-//
-//        Thread.sleep(1000);
-//
-//        kafkaConsumer.stop();
-//        mockery.assertIsSatisfied();
-//    }
+    @Test (expected = EndpointException.class)
+    @DirtiesContext
+    public void test_publish_message_exception_broker_not_available() throws InterruptedException {
+        this.producerConfiguration.setClientId("testClient");
+        this.producerConfiguration.setTopicName("test-topic");
+
+        KafkaProducer<String> kafkaProducer = new KafkaProducer<>(new StringKeyProvider());
+        kafkaProducer.setConfiguration(this.producerConfiguration);
+
+        kafkaProducer.startManagedResource();
+
+
+        this.embeddedKafka.destroy();
+
+        IntStream.range(0, 1).forEach(i ->kafkaProducer.invoke("test message"));
+    }
+
+    @Test (expected = EndpointException.class)
+    @DirtiesContext
+    public void test_publish_message_exception_bad_topic_name() throws InterruptedException {
+        this.producerConfiguration.setClientId("testClient");
+        this.producerConfiguration.setTopicName("bad-topic");
+
+        KafkaProducer<String> kafkaProducer = new KafkaProducer<>(new StringKeyProvider());
+        kafkaProducer.setConfiguration(this.producerConfiguration);
+
+        kafkaProducer.startManagedResource();
+
+        IntStream.range(0, 1).forEach(i ->kafkaProducer.invoke("test message"));
+    }
+
+    private class StringKeyProvider implements KafkaKeyProvider<String> {
+        @Override
+        public String getKey() {
+            return "key";
+        }
+    }
 
 }
