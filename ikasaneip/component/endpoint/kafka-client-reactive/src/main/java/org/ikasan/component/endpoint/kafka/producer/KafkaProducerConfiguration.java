@@ -223,7 +223,7 @@ public class KafkaProducerConfiguration
      *
      * Default:	120000 (2 minutes)
      */
-    private Long deliveryTimeoutMillis;
+    private Integer deliveryTimeoutMillis;
 
     /**
      * The producer groups together any records that arrive in between request transmissions into a single batched request.
@@ -282,7 +282,7 @@ public class KafkaProducerConfiguration
      *
      * Default:	30000 (30 seconds)
      */
-    private Long requestTimeoutMillis;
+    private Integer requestTimeoutMillis;
 
     /**
      * The fully qualified name of a SASL client callback handler class that implements the AuthenticateCallbackHandler interface.
@@ -599,7 +599,7 @@ public class KafkaProducerConfiguration
      *
      * Default:	60000 (1 minute)
      */
-    private Long transactionTimeoutMillis;
+    private Integer transactionTimeoutMillis;
 
     /**
      * The TransactionalId to use for transactional delivery. This enables reliability semantics which span multiple producer
@@ -748,11 +748,11 @@ public class KafkaProducerConfiguration
         this.connectionsMaxIdleMillis = connectionsMaxIdleMillis;
     }
 
-    public Long getDeliveryTimeoutMillis() {
+    public Integer getDeliveryTimeoutMillis() {
         return deliveryTimeoutMillis;
     }
 
-    public void setDeliveryTimeoutMillis(Long deliveryTimeoutMillis) {
+    public void setDeliveryTimeoutMillis(Integer deliveryTimeoutMillis) {
         this.deliveryTimeoutMillis = deliveryTimeoutMillis;
     }
 
@@ -796,11 +796,11 @@ public class KafkaProducerConfiguration
         this.receiveBufferBytes = receiveBufferBytes;
     }
 
-    public Long getRequestTimeoutMillis() {
+    public Integer getRequestTimeoutMillis() {
         return requestTimeoutMillis;
     }
 
-    public void setRequestTimeoutMillis(Long requestTimeoutMillis) {
+    public void setRequestTimeoutMillis(Integer requestTimeoutMillis) {
         this.requestTimeoutMillis = requestTimeoutMillis;
     }
 
@@ -1124,11 +1124,11 @@ public class KafkaProducerConfiguration
         this.sslTrustmanagerAlgorithm = sslTrustmanagerAlgorithm;
     }
 
-    public Long getTransactionTimeoutMillis() {
+    public Integer getTransactionTimeoutMillis() {
         return transactionTimeoutMillis;
     }
 
-    public void setTransactionTimeoutMillis(Long transactionTimeoutMillis) {
+    public void setTransactionTimeoutMillis(Integer transactionTimeoutMillis) {
         this.transactionTimeoutMillis = transactionTimeoutMillis;
     }
 
@@ -1157,6 +1157,26 @@ public class KafkaProducerConfiguration
 
         if(this.getTransactionalId() != null && !this.getTransactionalId().isEmpty()) {
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, this.getTransactionalId());
+        }
+
+        if(this.transactionTimeoutMillis != null) {
+            props.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, this.getTransactionTimeoutMillis());
+        }
+
+        if(this.deliveryTimeoutMillis != null) {
+            props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, this.getDeliveryTimeoutMillis());
+        }
+
+        if(this.requestTimeoutMillis != null) {
+            props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, this.getRequestTimeoutMillis());
+        }
+
+        if(this.lingerMillis != null) {
+            props.put(ProducerConfig.LINGER_MS_CONFIG, this.getLingerMillis());
+        }
+
+        if(this.maxBlockMillis != null) {
+            props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, this.getMaxBlockMillis());
         }
 
         if(this.getBootstrapServers() != null && !this.getBootstrapServers().isEmpty()) {
