@@ -40,9 +40,10 @@
  */
 package org.ikasan.component.endpoint.kafka.producer;
 
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.ikasan.spec.configuration.Masked;
 
-import javax.jms.Session;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,15 +55,20 @@ import java.util.Map;
 public class KafkaProducerConfiguration
 {
     /**
+     * The name of the topic to subscribe to.
+     */
+    private String topicName;
+
+    /**
      * Deserializer class for key that implements the org.apache.kafka.common.serialization.Deserializer interface.
      */
-    private String keyDeserializer;
+    private String keySerializer;
 
 
     /**
      * Deserializer class for value that implements the org.apache.kafka.common.serialization.Deserializer interface.
      */
-    private String valueDeserializer;
+    private String valueSerializer;
 
     /**
      * The number of acknowledgments the producer requires the leader to have received before considering a request complete.
@@ -606,20 +612,28 @@ public class KafkaProducerConfiguration
      */
     private String transactionalId;
 
-    public String getKeyDeserializer() {
-        return keyDeserializer;
+    public String getTopicName() {
+        return topicName;
     }
 
-    public void setKeyDeserializer(String keyDeserializer) {
-        this.keyDeserializer = keyDeserializer;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 
-    public String getValueDeserializer() {
-        return valueDeserializer;
+    public String getKeySerializer() {
+        return keySerializer;
     }
 
-    public void setValueDeserializer(String valueDeserializer) {
-        this.valueDeserializer = valueDeserializer;
+    public void setKeySerializer(String keySerializer) {
+        this.keySerializer = keySerializer;
+    }
+
+    public String getValueSerializer() {
+        return valueSerializer;
+    }
+
+    public void setValueSerializer(String valueSerializer) {
+        this.valueSerializer = valueSerializer;
     }
 
     public String getAcks() {
@@ -1126,6 +1140,90 @@ public class KafkaProducerConfiguration
         this.transactionalId = transactionalId;
     }
 
+    public Map<String, Object> getProducerProps() throws ClassNotFoundException {
+        Map<String, Object> props = new HashMap<>();
 
+        if(this.getKeySerializer() != null && !this.getKeySerializer().isEmpty()) {
+            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Class.forName(this.getKeySerializer()));
+        }
+
+        if(this.getValueSerializer() != null && !this.getValueSerializer().isEmpty()) {
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Class.forName(this.getValueSerializer()));
+        }
+
+        if(this.getAcks() != null && !this.getAcks().isEmpty()) {
+            props.put(ProducerConfig.ACKS_CONFIG, this.getAcks());
+        }
+
+        if(this.getTransactionalId() != null && !this.getTransactionalId().isEmpty()) {
+            props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, this.getTransactionalId());
+        }
+
+        if(this.getBootstrapServers() != null && !this.getBootstrapServers().isEmpty()) {
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.getBootstrapServers());
+        }
+
+        if(this.getClientDnsLookup() != null && !this.getClientDnsLookup().isEmpty()) {
+            props.put(ProducerConfig.CLIENT_DNS_LOOKUP_CONFIG, this.getClientDnsLookup());
+        }
+
+        if(this.getClientId() != null && !this.getClientId().isEmpty()) {
+            props.put(ProducerConfig.CLIENT_ID_CONFIG, this.getClientId());
+        }
+
+        if(this.getConnectionsMaxIdleMillis() != null) {
+            props.put(ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, this.getConnectionsMaxIdleMillis());
+        }
+
+        if(this.getMetadataMaxAgeMillis() != null) {
+            props.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, this.getMetadataMaxAgeMillis());
+        }
+
+        if(this.getMetricReporters() != null && !this.getMetricReporters().isEmpty()) {
+            props.put(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, this.getMetricReporters());
+        }
+
+        if(this.getMetricsNumSamples() != null) {
+            props.put(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG, this.getMetricsNumSamples());
+        }
+
+        if(this.getMetricsRecordingLevel() != null && !this.getMetricsRecordingLevel().isEmpty()) {
+            props.put(ProducerConfig.METRICS_RECORDING_LEVEL_CONFIG, this.getMetricsRecordingLevel());
+        }
+
+        if(this.getMetricsSampleWindowMillis() != null) {
+            props.put(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG, this.getMetricsSampleWindowMillis());
+        }
+
+        if(this.getReceiveBufferBytes() != null) {
+            props.put(ProducerConfig.RECEIVE_BUFFER_CONFIG, this.getReceiveBufferBytes());
+        }
+
+        if(this.getReconnectBackoffMaxMillis() != null) {
+            props.put(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, this.getReconnectBackoffMaxMillis());
+        }
+
+        if(this.getReconnectBackoffMillis() != null) {
+            props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, this.getReconnectBackoffMillis());
+        }
+
+        if(this.getRequestTimeoutMillis() != null) {
+            props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, this.getRequestTimeoutMillis());
+        }
+
+        if(this.getRetryBackoffMillis() != null) {
+            props.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, this.getRetryBackoffMillis());
+        }
+
+        if(this.getSecurityProviders() != null && !this.getSecurityProviders().isEmpty()) {
+            props.put(ProducerConfig.SECURITY_PROVIDERS_CONFIG, this.getSecurityProviders());
+        }
+
+        if(this.getSendBufferBytes() != null) {
+            props.put(ProducerConfig.SEND_BUFFER_CONFIG, this.getSendBufferBytes());
+        }
+
+        return props;
+    }
 }
 
