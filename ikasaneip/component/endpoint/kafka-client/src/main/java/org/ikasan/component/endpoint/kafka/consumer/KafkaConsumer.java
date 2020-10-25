@@ -148,31 +148,31 @@ public class KafkaConsumer<KEY, VALUE>
     @Override
     public void start() {
         try {
-            this.consumerFactory = new DefaultKafkaConsumerFactory<>(this.kafkaConsumerConfiguration.getConsumerProps());
-            this.consumer = consumerFactory.createConsumer();
+                this.consumerFactory = new DefaultKafkaConsumerFactory<>(this.kafkaConsumerConfiguration.getConsumerProps());
+                this.consumer = consumerFactory.createConsumer();
 
-            TopicPartition topicPartition = new TopicPartition(this.kafkaConsumerConfiguration.getTopicName(), 0);
-            this.consumer.assign(List.of(topicPartition));
-            this.consumer.seek(topicPartition, this.kafkaConsumerConfiguration.getOffset());
+                TopicPartition topicPartition = new TopicPartition(this.kafkaConsumerConfiguration.getTopicName(), 0);
+                this.consumer.assign(List.of(topicPartition));
+                this.consumer.seek(topicPartition, this.kafkaConsumerConfiguration.getOffset());
 
-            this.executor = Executors.newSingleThreadExecutor();
-            this.isRunning = true;
-            executor.submit(() -> {
-                while(this.isRunning) {
-                    ConsumerRecords<KEY, VALUE> messages = consumer.poll(Duration.ofMillis(1000));
+                this.executor = Executors.newSingleThreadExecutor();
+                this.isRunning = true;
+                executor.submit(() -> {
+                    while(this.isRunning) {
+                        ConsumerRecords<KEY, VALUE> messages = consumer.poll(Duration.ofMillis(1000));
 
-                    if (!messages.isEmpty()) {
-                        messages.forEach(consumerRecord -> {
-                            this.onMessage(consumerRecord);
+                        if (!messages.isEmpty()) {
+                            messages.forEach(consumerRecord -> {
+                                this.onMessage(consumerRecord);
 
-                            // Update the offset against the dynamic configuration.
-                            this.kafkaConsumerConfiguration.setOffset(consumerRecord.offset() + 1);
-                        });
+                                // Update the offset against the dynamic configuration.
+                                this.kafkaConsumerConfiguration.setOffset(consumerRecord.offset() + 1);
+                            });
+                        }
+
+                        consumer.commitSync();
                     }
-
-                    consumer.commitSync();
-                }
-            });
+                });
 
         }
         catch (ClassNotFoundException e) {
