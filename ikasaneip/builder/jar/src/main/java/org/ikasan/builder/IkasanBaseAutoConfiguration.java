@@ -41,6 +41,7 @@
 package org.ikasan.builder;
 
 import org.ikasan.module.IkasanModuleAutoConfiguration;
+import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
@@ -60,7 +61,6 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:scheduler-service-conf.xml",
         "classpath:error-reporting-service-conf.xml",
         "classpath:recoveryManager-service-conf.xml",
-        "classpath:monitor-service-conf.xml",
         "classpath:filter-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
@@ -75,7 +75,8 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:springapp-servlet-boot.xml",
 
 } )
-@Import({ IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,WebSecurityConfig.class,IkasanRestAutoConfiguration.class})
+@Import({ IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
+            WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
     @Bean
