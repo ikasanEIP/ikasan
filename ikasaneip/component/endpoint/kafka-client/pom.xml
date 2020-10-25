@@ -84,6 +84,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <scope>test</scope>
