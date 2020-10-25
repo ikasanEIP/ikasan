@@ -41,9 +41,6 @@
 package org.ikasan.component.endpoint.kafka.producer;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.reactivestreams.Publisher;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -51,13 +48,12 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import reactor.core.publisher.Flux;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import reactor.kafka.sender.KafkaSender;
-import reactor.kafka.sender.SenderOptions;
-import reactor.kafka.sender.SenderRecord;
-import reactor.kafka.sender.TransactionManager;
 
-import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Implementation of a producer based on the JMS specification.
@@ -71,28 +67,45 @@ public class KafkaProducer<VALUE>
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
-    private KafkaSender<String, VALUE> sender;
+    private KafkaSender<Object, VALUE> sender;
+
+    private KafkaKeyProvider keyProvider;
+
+    org.apache.kafka.clients.producer.Producer<Object, VALUE> producer;
 
     private KafkaProducerConfiguration configuration;
     private String configurationId;
 
+    public KafkaProducer(KafkaKeyProvider keyProvider) {
+        this.keyProvider = keyProvider;
+        if(this.keyProvider == null) {
+            throw new IllegalArgumentException("keyProvider cannot be null!");
+        }
+    }
+
     @Override
     public void invoke(VALUE payload) throws EndpointException {
-        sender.send(Flux.just(payload)
-            .map(t -> SenderRecord.create(new ProducerRecord<>(this.configuration.getTopicName(), "key", t), t)))
-            .doOnError(e -> {
-                logger.error("Send failed", e);
-                throw new EndpointException(e);
-            })
-            .subscribe(r -> {
-                RecordMetadata metadata = r.recordMetadata();
-                System.out.printf("Message sent successfully: \n" +
-                    r.correlationMetadata() + "\n" +
-                    metadata.topic() + "\n" +
-                    metadata.partition() + "\n" +
-                    metadata.offset() + "\n" +
-                    new Date(metadata.timestamp()));
+        AtomicReference<Throwable> throwable = new AtomicReference<>();
+
+        try {
+            producer.beginTransaction();
+            producer.send(new ProducerRecord<>(this.configuration.getTopicName(), this.keyProvider.getKey(), payload), (metadata, exception) -> {
+                if (exception != null) {
+                    logger.warn("Failed to send a record to Kafka: {}", "", exception);
+                    throwable.set(exception);;
+                }
             });
+            this.producer.flush();
+            producer.commitTransaction();
+        }
+        catch (Exception e) {
+            producer.abortTransaction();
+            throw new EndpointException(e);
+        }
+
+        if(throwable.get() != null) {
+            throw new EndpointException(throwable.get());
+        }
     }
 
     @Override
@@ -123,8 +136,10 @@ public class KafkaProducer<VALUE>
     @Override
     public void startManagedResource() {
         try {
-            SenderOptions<String, VALUE> senderOptions = SenderOptions.create(this.configuration.getProducerProps());
-            sender = KafkaSender.create(senderOptions);
+            DefaultKafkaProducerFactory<Object, VALUE> defaultKafkaProducerFactory
+                = new DefaultKafkaProducerFactory<>(this.configuration.getProducerProps());
+
+            this.producer = defaultKafkaProducerFactory.createProducer();
         }
         catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -133,7 +148,7 @@ public class KafkaProducer<VALUE>
 
     @Override
     public void stopManagedResource() {
-        sender.close();
+        this.producer.close();
     }
 
     @Override
