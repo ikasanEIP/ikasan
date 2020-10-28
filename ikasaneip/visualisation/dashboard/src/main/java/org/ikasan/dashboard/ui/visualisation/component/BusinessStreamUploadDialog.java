@@ -143,7 +143,9 @@ public class BusinessStreamUploadDialog extends AbstractCloseableResizableDialog
                 return;
             }
 
-            this.businessStreamMetaDataService.delete(businessStreamMetaData.getId());
+            if(businessStreamMetaData != null) {
+                this.businessStreamMetaDataService.delete(businessStreamMetaData.getId());
+            }
 
             BusinessStreamMetaData saveBusinessStreamMetaData = new BusinessStreamMetaDataImpl();
             saveBusinessStreamMetaData.setId(businessStreamNameTextfield.getValue());
