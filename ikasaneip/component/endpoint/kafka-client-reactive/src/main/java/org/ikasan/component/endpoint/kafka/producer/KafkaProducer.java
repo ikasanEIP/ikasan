@@ -88,18 +88,18 @@ public class KafkaProducer<VALUE>
         AtomicReference<Throwable> throwable = new AtomicReference<>();
 
         try {
-            producer.beginTransaction();
+//            producer.beginTransaction();
             producer.send(new ProducerRecord<>(this.configuration.getTopicName(), this.keyProvider.getKey(), payload), (metadata, exception) -> {
                 if (exception != null) {
                     logger.warn("Failed to send a record to Kafka: {}", "", exception);
                     throwable.set(exception);;
                 }
             });
-            this.producer.flush();
-            producer.commitTransaction();
+//            this.producer.flush();
+//            producer.commitTransaction();
         }
         catch (Exception e) {
-            producer.abortTransaction();
+//            producer.abortTransaction();
             throw new EndpointException(e);
         }
 
