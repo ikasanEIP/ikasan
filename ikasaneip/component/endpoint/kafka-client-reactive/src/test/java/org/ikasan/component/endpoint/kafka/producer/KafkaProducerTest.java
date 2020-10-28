@@ -61,7 +61,7 @@ public class KafkaProducerTest {
         this.producerConfiguration.setLingerMillis(50L);
         this.producerConfiguration.setDeliveryTimeoutMillis(1000);
         this.producerConfiguration.setMaxBlockMillis(1000L);
-        this.producerConfiguration.setTransactionalId("test-transaction");
+//        this.producerConfiguration.setTransactionalId("test-transaction");
 
         Map<String, String> props = new HashMap<>();
         props.put("transaction.state.log.replication.factor", "1");
@@ -79,7 +79,7 @@ public class KafkaProducerTest {
 
         kafkaProducer.startManagedResource();
 
-        IntStream.range(0, 100).forEach(i -> kafkaProducer.invoke("test message"));
+        IntStream.range(0, 100000).forEach(i -> kafkaProducer.invoke("test message"));
 
         MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(this.embeddedKafka.getBrokersAsString(),
             "test-topic", StringDeserializer.class, StringDeserializer.class, "testClient");
@@ -90,7 +90,7 @@ public class KafkaProducerTest {
         kafkaProducer.stopManagedResource();
         mockery.assertIsSatisfied();
 
-        Assert.assertEquals(100, messageListenerVerifier.getCaptureResults().size());
+        Assert.assertEquals(100000, messageListenerVerifier.getCaptureResults().size());
 
         messageListenerVerifier.stop();
     }
