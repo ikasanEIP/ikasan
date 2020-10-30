@@ -41,13 +41,13 @@
 package org.ikasan.cli.shell.operation;
 
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
+import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.PersistenceService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -82,7 +82,7 @@ public class DefaultOperationImpl implements Operation
     {
         List<String> commands = new ArrayList<>();
         commands.add("java");
-        commands.add("-Dmodule.name=pickle");
+        commands.add("-Dmodule.name=" + name);
         commands.add("-classpath");
         commands.add("/Users/jeff/dev/runtime/h2/h2-1.4.199.jar");
         commands.add("org.h2.tools.Server");
@@ -106,38 +106,34 @@ public class DefaultOperationImpl implements Operation
             System.out.println("Not Started");
         }
 
+        // persist the process
         try
         {
-            Optional<String> commandLine = process.info().commandLine();
-            if(!commandLine.isEmpty())
-            {
-                commandLine.get();
-            }
-            persistenceService.persist(new IkasanProcess(processType, process));
-            List<String> lines = Files.lines(log.toPath()).collect(Collectors.toList());
-            System.out.println( lines.toString() );
-            return process;
+            persistenceService.persist(processType.name(), name, process);
         }
         catch(Exception e)
         {
+            // TODO log a warning about failed persistence
             System.out.println( e.getCause() );
         }
 
-        return null;
+        Optional<String> commandLine = process.info().commandLine();
+        if(!commandLine.isEmpty())
+        {
+            commandLine.get();
+        }
+        List<String> lines = Files.lines(log.toPath()).collect(Collectors.toList());
+        System.out.println( lines.toString() );
+        return process;
     }
 
-    public boolean isRunning(ProcessType processType, String name)
+    protected ProcessHandle getProcess(String type, String name)
     {
         // first check if we have the process persisted
-        Process process = persistenceService.find(processType + name);
-        if(process != null)
+        ProcessHandle processHandle = persistenceService.find(type, name);
+        if (processHandle != null)
         {
-            if(process.isAlive())
-            {
-                return true;
-            }
-
-            return false;
+            return processHandle;
         }
 
         // not persisted, try checking if we can see a process running for that module of that type for that user
@@ -155,13 +151,41 @@ public class DefaultOperationImpl implements Operation
         // not running as that user, try checking if we can see a process running for that module
 
         // does look like its running
+        return null;
+    }
+
+    public boolean isRunning(ProcessType processType, String name)
+    {
+        ProcessHandle processHandle = getProcess(processType.name(), name);
+        if(processHandle != null && processHandle.isAlive())
+        {
+            return true;
+        }
+
         return false;
     }
 
     @Override
     public void stop(ProcessType processType, String name) throws IOException
     {
+        ProcessHandle processHandle = getProcess(processType.name(), name);
+        if(processHandle != null && processHandle.isAlive())
+        {
+            processHandle.destroy();
+        }
 
+        // remove persistence
+        persistenceService.remove(processType.name(), name);
+    }
+
+    @Override
+    public void kill(ProcessType processType, String name) throws IOException
+    {
+        ProcessHandle processHandle = getProcess(processType.name(), name);
+        if(processHandle.isAlive())
+        {
+            processHandle.destroyForcibly();
+        }
     }
 
     public String printInfo(ProcessHandle processHandle)

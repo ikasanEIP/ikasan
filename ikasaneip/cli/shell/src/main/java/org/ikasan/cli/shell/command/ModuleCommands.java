@@ -41,7 +41,7 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.Operation;
-import org.ikasan.cli.shell.operation.ProcessType;
+import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -49,58 +49,64 @@ import org.springframework.shell.standard.ShellOption;
 import java.io.IOException;
 
 @ShellComponent
-public class StartH2
+public class ModuleCommands
 {
 //    @Value("${ikasan.version}")
 //    String ikasanVersion;
+String processName = "replaceModuleName";
+
     Operation operation = Operation.getInstance();
 
-    @ShellMethod(value = "Start H2 persistence.", group = "Ikasan Commands", key = "start-h2")
-    public String startH2(@ShellOption(arity=1, defaultValue="") String optionalModuleName)
+    @ShellMethod(value = "start module", group = "Ikasan Commands", key = "start-module")
+    public String startModule(@ShellOption(value = "-name", defaultValue = "")  String optionalProcessName)
     {
+        StringBuilder sb = new StringBuilder();
+        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        {
+            this.processName = optionalProcessName;
+        }
+
         try
         {
-            if(operation.isRunning(ProcessType.H2, optionalModuleName))
+            if (operation.isRunning(ProcessType.MODULE, processName))
             {
-                return "H2 process for [" + optionalModuleName + "] already running!";
+                sb.append(ProcessType.MODULE.name() + " already running for [" + processName + "]\n");
             }
-
-            Process process = operation.start(ProcessType.H2, optionalModuleName);
-            return "H2 process started [" + process.info().command().get() + "]";
-        }
-        catch(IOException e)
-        {
-            return "H2 process failed to start!";
-        }
-    }
-
-    @ShellMethod(value = "Check H2 persistence.", group = "Ikasan Commands", key = "check-h2")
-    public String checkH2(@ShellOption(arity=1, defaultValue="") String optionalModuleName)
-    {
-        if(operation.isRunning(ProcessType.H2, optionalModuleName))
-        {
-            return "H2 process for [" + optionalModuleName + "] is running!";
-        }
-
-        return "H2 process is not running";
-    }
-
-    @ShellMethod(value = "Stop H2 persistence.", group = "Ikasan Commands", key = "stop-h2")
-    public String stopH2(@ShellOption(arity=1, defaultValue="") String optionalModuleName)
-    {
-        try
-        {
-            if (!operation.isRunning(ProcessType.H2, optionalModuleName))
+            else
             {
-                return "H2 process for [" + optionalModuleName + "] is already stopped!";
+                Process proc = operation.start(ProcessType.MODULE, processName);
+                sb.append(ProcessType.MODULE.name() + " process started [" + proc.info().command().get() + "]\n");
             }
-
-            operation.stop(ProcessType.H2, optionalModuleName);
-            return "H2 process is not running";
         }
         catch (IOException e)
         {
-            return "Problem checking if H2 process is not running";
+            sb.append(ProcessType.MODULE.name() + " process failed to start for [" + processName + "]\n");
+            return sb.toString();
+        }
+        return sb.toString();
+    }
+
+    @ShellMethod(value = "Stop module", group = "Ikasan Commands", key = "stop-module")
+    public String stopModule(@ShellOption(arity=1, defaultValue="") String optionalProcessName)
+    {
+        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        {
+            this.processName = optionalProcessName;
+        }
+
+        try
+        {
+            if (!operation.isRunning(ProcessType.MODULE, optionalProcessName))
+            {
+                return "Module process [" + optionalProcessName + "] not running";
+            }
+
+            operation.stop(ProcessType.MODULE, optionalProcessName);
+            return "Module process stopped";
+        }
+        catch (IOException e)
+        {
+            return "Problem checking if Module process is not running";
         }
     }
 }

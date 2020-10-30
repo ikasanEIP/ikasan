@@ -40,30 +40,89 @@
  */
 package org.ikasan.cli.shell.operation.model;
 
-import org.ikasan.cli.shell.operation.ProcessType;
-
 /**
  *
  * @author Ikasan Development Team
  */
 public class IkasanProcess
 {
-    ProcessType processType;
-    Process process;
+    String type;
+    String name;
+    long pid;
+    String user;
 
-    public IkasanProcess(ProcessType processType, Process process)
+    /**
+     * Default constructor required by Kyro.
+     */
+    private IkasanProcess()
     {
-        this.processType = processType;
-        this.process = process;
+        // required by Kryo for instantiation
     }
 
-    public ProcessType getProcessType()
+    /**
+     * Constructor
+     * @param type
+     * @param name
+     * @param pid
+     * @param user
+     */
+    public IkasanProcess(String type, String name, long pid, String user)
     {
-        return processType;
+        this.type = type;
+        this.name = name;
+        this.pid = pid;
+        this.user = user;
     }
 
-    public Process getProcess()
+    public String getType()
     {
-        return process;
+        return type;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public long getPid()
+    {
+        return pid;
+    }
+
+    public String getUser()
+    {
+        return user;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IkasanProcess that = (IkasanProcess) o;
+
+        if (pid != that.pid) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        return user.equals(that.user);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (int) (pid ^ (pid >>> 32));
+        result = 31 * result + user.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "IkasanProcess{" +
+            "type='" + type + '\'' +
+            ", pid=" + pid +
+            ", user='" + user + '\'' +
+            '}';
     }
 }

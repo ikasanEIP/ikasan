@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.operation;
+package org.ikasan.cli.shell.operation.model;
 
 /**
  * ProcessType enum literals.

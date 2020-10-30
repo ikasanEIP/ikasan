@@ -40,20 +40,47 @@
  */
 package org.ikasan.cli.shell.command;
 
+import org.ikasan.cli.shell.operation.Operation;
+import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
-public class StartModule
+public class PsCommand
 {
 //    @Value("${ikasan.version}")
 //    String ikasanVersion;
+    String processName = "replaceModuleName";
+    Operation operation = Operation.getInstance();
 
-    @ShellMethod(value = "Start Module.", group = "Ikasan Commands", key = "start-module")
-    public String startH2(@ShellOption(arity=1, defaultValue="false") boolean force)
+    @ShellMethod(value = "Check process.", group = "Ikasan Commands", key = "ps")
+    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalProcessName)
     {
-        return "You said " + force;
+        StringBuilder sb = new StringBuilder();
+        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        {
+            this.processName = optionalProcessName;
+        }
+
+        if (operation.isRunning(ProcessType.H2, processName))
+        {
+            sb.append(ProcessType.H2.name() + " [" + processName + "] running\n");
+        } else
+        {
+            sb.append(ProcessType.H2.name() + " [" + processName + "] not running\n");
+        }
+
+        if(operation.isRunning(ProcessType.MODULE, processName))
+        {
+            sb.append( ProcessType.MODULE.name() + " [" + processName + "] running\n" );
+        }
+        else
+        {
+            sb.append( ProcessType.MODULE.name() + " [" + processName + "] not running\n" );
+        }
+
+        return sb.toString();
     }
 
 }

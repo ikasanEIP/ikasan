@@ -40,8 +40,6 @@
  */
 package org.ikasan.cli.shell.operation.service;
 
-import org.ikasan.cli.shell.operation.model.IkasanProcess;
-
 /**
  * Persistence service contract.
  *
@@ -51,14 +49,24 @@ public interface PersistenceService
 {
     /**
      *
+     * @param type
      * @param name
      * @return
      */
-    Process find(String name);
+    ProcessHandle find(String type, String name);
 
     /**
      *
-     * @param ikasanProcess
+     * @param type
+     * @param name
+     * @param process
      */
-    void persist(IkasanProcess ikasanProcess);
+    void persist(String type, String name, Process process);
+
+    /**
+     *
+     * @param type
+     * @param name
+     */
+     void remove(String type, String name);
 }

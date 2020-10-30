@@ -43,6 +43,8 @@ package org.ikasan.cli.shell.operation.service;
 import org.ikasan.cli.shell.operation.dao.ProcessPersistenceDao;
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
 
+import java.util.Optional;
+
 /**
  * Implementation of the Persistence Service contract.
  *
@@ -66,14 +68,33 @@ public class DefaultPersistenceServiceImpl implements PersistenceService
     }
 
     @Override
-    public Process find(String name)
+    public ProcessHandle find(String type, String name)
     {
-        return processPersistenceDao.find(name);
+        IkasanProcess ikasanProcess = processPersistenceDao.find(type, name);
+        if(ikasanProcess != null)
+        {
+            Optional<ProcessHandle> processHandle = ProcessHandle.of(ikasanProcess.getPid());
+            if(processHandle.isEmpty())
+            {
+                return null;
+            }
+
+            return processHandle.get();
+        }
+
+        return null;
     }
 
     @Override
-    public void persist(IkasanProcess ikasanProcess)
+    public void persist(String type, String name, Process process)
     {
-        processPersistenceDao.save(ikasanProcess);
+        processPersistenceDao.save(new IkasanProcess(type, name, process.pid(),
+            (process.info().user().isEmpty() ? null : process.info().user().get())));
+    }
+
+    @Override
+    public void remove(String type, String name)
+    {
+        processPersistenceDao.delete(type, name);
     }
 }

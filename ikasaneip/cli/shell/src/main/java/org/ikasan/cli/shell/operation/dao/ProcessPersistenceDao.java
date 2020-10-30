@@ -42,8 +42,6 @@ package org.ikasan.cli.shell.operation.dao;
 
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
 
-import java.io.FileNotFoundException;
-
 /**
  *
  * @author Ikasan Development Team
@@ -61,10 +59,10 @@ public interface ProcessPersistenceDao
      * @param name
      * @return
      */
-    Process find(String name);
+    IkasanProcess find(String type, String name);
 
     /**
      *
      */
-    void remove();
+    void delete(String type, String name);
 }

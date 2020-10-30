@@ -48,6 +48,9 @@ import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  *
@@ -61,7 +64,8 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         protected Kryo initialValue()
         {
             Kryo kryo = new Kryo();
-            kryo.register(IkasanProcess.class);
+            kryo.register(org.ikasan.cli.shell.operation.model.IkasanProcess.class);
+            kryo.register(org.ikasan.cli.shell.operation.model.ProcessType.class);
             return kryo;
         }
     };
@@ -69,13 +73,15 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     @Override
     public void save(IkasanProcess ikasanProcess)
     {
-//        Kryo kryo = kryoThreadLocal.get();
-        Kryo kryo = new Kryo();
+        Kryo kryo = kryoThreadLocal.get();
+//        Kryo kryo = new Kryo();
+//        kryo.register(org.ikasan.cli.shell.operation.model.IkasanProcess.class);
+//        kryo.register(org.ikasan.cli.shell.operation.model.ProcessType.class);
 
         try
         {
-            Output output = new Output(new FileOutputStream("file.dat"));
-            kryo.writeObject(output, ikasanProcess);
+            Output output = new Output(new FileOutputStream( ikasanProcess.getType() + "_" + ikasanProcess.getName() ) );
+            kryo.writeClassAndObject(output, ikasanProcess);
             output.close(); // flush should be called within the close() method
         }
         catch(FileNotFoundException e)
@@ -85,14 +91,14 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     }
 
     @Override
-    public Process find(String name)
+    public IkasanProcess find(String type, String name)
     {
         Kryo kryo = kryoThreadLocal.get();
 
         try
         {
-            Input input = new Input(new FileInputStream("file.dat"));
-            return (Process)kryo.readClassAndObject(input);
+            Input input = new Input(new FileInputStream(type + "_" + name));
+            return (IkasanProcess)kryo.readClassAndObject(input);
         }
         catch(FileNotFoundException e)
         {
@@ -101,9 +107,16 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     }
 
     @Override
-    public void remove()
+    public void delete(String type, String name)
     {
-
+        try
+        {
+            Files.delete(Path.of(type + "_" + name));
+        }
+        catch(IOException e)
+        {
+            // TODO
+        }
     }
 
 

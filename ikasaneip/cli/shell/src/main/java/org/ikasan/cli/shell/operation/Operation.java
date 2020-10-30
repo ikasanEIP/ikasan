@@ -41,6 +41,7 @@
 package org.ikasan.cli.shell.operation;
 
 import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
+import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
 
 import java.io.IOException;
@@ -84,4 +85,13 @@ public interface Operation
      * @throws IOException
      */
     void stop(ProcessType processType, String name) throws IOException;
+
+    /**
+     *
+     * @param processType
+     * @param name
+     * @throws IOException
+     */
+    void kill(ProcessType processType, String name) throws IOException;
+
 }
