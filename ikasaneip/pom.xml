@@ -465,10 +465,18 @@
         <version.org.apache.httpcomponents>4.5.10</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
-        <version.org.junit.jupiter>5.5.2</version.org.junit.jupiter>
+        <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
         <version.ace.editor>1.0.3-Beta</version.ace.editor>
         <version.thymeleaf>3.0.11.RELEASE</version.thymeleaf>
+        <version.jacoco>0.8.1</version.jacoco>
+        <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
+        <version.apiguardian.api>1.1.0</version.apiguardian.api>
+        <version.opentest4j>1.2.0</version.opentest4j>
+        <version.app.layout.addon>4.0.0</version.app.layout.addon>
+        <version.vaadin.css.grid>2.0.0.beta3</version.vaadin.css.grid>
+        <version.karibu.testing.v10>1.1.12</version.karibu.testing.v10>
     </properties>
+
     <!-- Distribution for releases -->
     <distributionManagement>
         <repository>
@@ -2021,19 +2029,19 @@
             <dependency>
                 <groupId>com.github.appreciated</groupId>
                 <artifactId>app-layout-addon</artifactId>
-                <version>4.0.0</version>
+                <version>${version.app.layout.addon}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github.appreciated</groupId>
                 <artifactId>vaadin-css-grid</artifactId>
-                <version>2.0.0.beta3</version>
+                <version>${version.vaadin.css.grid}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github.mvysny.kaributesting</groupId>
                 <artifactId>karibu-testing-v10</artifactId>
-                <version>1.1.12</version>
+                <version>${version.karibu.testing.v10}</version>
             </dependency>
 
             <dependency>
@@ -2063,7 +2071,7 @@
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.agent</artifactId>
-                <version>0.8.1</version>
+                <version>${version.jacoco}</version>
                 <classifier>runtime</classifier>
             </dependency>
 
@@ -2076,19 +2084,19 @@
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-commons</artifactId>
-                <version>1.5.2</version>
+                <version>${version.junit.platform.commons}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apiguardian</groupId>
                 <artifactId>apiguardian-api</artifactId>
-                <version>1.1.0</version>
+                <version>${version.apiguardian.api}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opentest4j</groupId>
                 <artifactId>opentest4j</artifactId>
-                <version>1.2.0</version>
+                <version>${version.opentest4j}</version>
             </dependency>
 
             <dependency>
