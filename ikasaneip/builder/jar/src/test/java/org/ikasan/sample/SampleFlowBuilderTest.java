@@ -130,6 +130,9 @@ public class SampleFlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(1).of(consumer).isRunning();
+                will(returnValue(true));
+
                 oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
                 will(returnValue(exclusionService));
             }
