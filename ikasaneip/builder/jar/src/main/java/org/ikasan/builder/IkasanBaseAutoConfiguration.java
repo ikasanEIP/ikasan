@@ -40,12 +40,19 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.exceptionResolver.ExceptionConfig;
+import org.ikasan.exceptionResolver.ExceptionResolver;
+import org.ikasan.exceptionResolver.action.ExcludeEventAction;
+import org.ikasan.exceptionResolver.action.IgnoreAction;
+import org.ikasan.exceptionResolver.action.RetryAction;
+import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -53,7 +60,6 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @ImportResource( {
-        "classpath:exception-conf.xml",
         "classpath:ikasan-transaction-conf.xml",
         "classpath:ikasan-transaction-pointcut-resubmission.xml",
         "classpath:ikasan-transaction-pointcut-quartz.xml",
@@ -75,10 +81,11 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:springapp-servlet-boot.xml",
 
 } )
-@Import({ IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
+@Import({ ExceptionConfig.class, IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
             WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
+
     @Bean
     public BuilderFactory builderFactory(){
          return new BuilderFactory();
@@ -88,4 +95,41 @@ public class IkasanBaseAutoConfiguration
     {
         return new AopProxyProviderSpringImpl();
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "ikasan.exceptions")
+    public ExceptionConfig exceptionConfig(){
+        return new ExceptionConfig();
+    }
+    @Bean
+    public ExceptionResolver exceptionResolver(BuilderFactory builderFactory,ExceptionConfig exceptionConfig)
+    {
+        ExceptionResolverBuilder builder = builderFactory.getExceptionResolverBuilder();
+
+        if( exceptionConfig.getExcludedClasses() !=null)
+        {
+            exceptionConfig.getExcludedClasses().stream().forEach(
+                exclusion -> builder.addExceptionToAction(exclusion, ExcludeEventAction.instance()));
+        }
+
+        if( exceptionConfig.getIgnoredClasses() !=null)
+        {
+            exceptionConfig.getIgnoredClasses().stream().forEach(ignore -> builder.addExceptionToAction(ignore, IgnoreAction.instance()));
+        }
+
+        if( exceptionConfig.getRetryConfigs() !=null)
+        {
+            exceptionConfig.getRetryConfigs().stream().forEach(r -> builder
+                .addExceptionToAction(r.getClassName(), new RetryAction(r.getDelayInMillis(), r.getMaxRetries())));
+        }
+
+        if( exceptionConfig.getScheduledRetryConfigs() !=null)
+        {
+            exceptionConfig.getScheduledRetryConfigs().stream().forEach(r -> builder.addExceptionToAction(r.getClassName(),
+                new ScheduledRetryAction(r.getCronExpression(), r.getMaxRetries())
+                                                                                    ));
+        }
+        return builder.build();
+    }
+
 }
