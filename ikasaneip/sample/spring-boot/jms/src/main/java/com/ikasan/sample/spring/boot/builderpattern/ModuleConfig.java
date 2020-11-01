@@ -40,27 +40,21 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import liquibase.integration.spring.SpringLiquibase;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.OnException;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
-import javax.sql.DataSource;
 
 @Configuration
 @ImportResource( {
@@ -71,9 +65,6 @@ public class ModuleConfig
 {
     @Resource
     private BuilderFactory builderFactory;
-
-    @Resource
-    private ErrorReportingServiceFactory errorReportingServiceFactory;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
@@ -104,10 +95,6 @@ public class ModuleConfig
 
         Flow flow = fb
                 .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
-                .withExceptionResolver(builderFactory.getExceptionResolverBuilder()
-                        .addExceptionToAction(SampleGeneratedException.class, OnException.excludeEvent())
-                        .addExceptionToAction(EndpointException.class, OnException.retryIndefinitely(10000)).build())
-                .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("JMS Consumer", jmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .broker( "Delay Generating Broker", new DelayGenerationBroker())
