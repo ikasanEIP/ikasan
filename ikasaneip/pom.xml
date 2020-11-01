@@ -844,6 +844,7 @@
                 <module>transaction</module>
                 <module>replay</module>
                 <module>persistence</module>
+                <module>cli</module>
                 <module>sample</module>
                 <module>visualisation</module>
             </modules>
@@ -880,6 +881,7 @@
                 <module>compatibility</module>
                 <module>replay</module>
                 <module>persistence</module>
+                <module>cli</module>
             </modules>
         </profile>
 
