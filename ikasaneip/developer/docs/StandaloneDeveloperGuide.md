@@ -712,10 +712,13 @@ it resolves to stopping the flow in error. This stoppedInError state can also be
 ![Login](quickstart-images/new-project-embeddedConsole-screen13.png)
 
 Lets tell the Recovery Manager to take a different action on this exception.
-As this is a setting on the flow we need to update the code on the flowBuilder to add
+
+* Option one set exception resolver on given flow
+  
+  As this is a setting on the flow we need to update the code on the flowBuilder to add
 a different exceptionResolver. In this case when we see a TransformationException we are now going to exclude the event
-that caused the exception.
-```java
+that caused the exception. 
+  ```java
         // create a flow from the module builder and add required orchestration components
         Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
                 .withExceptionResolver(builderFactory
@@ -725,7 +728,30 @@ that caused the exception.
                 .converter("My Converter", new MyConverter())
                 .producer("My Target Producer", componentBuilder.logProducer())
                 .build();
-```
+   ```
+* Option two configure default exception resolver through properties
+
+   In this case when we see a TransformationException we are now going to exclude the event
+   that caused the exception. Update application properties with following  
+  ```java
+  # In order to configure exclusion behavior 
+  ikasan.exceptions.excludedClasses[0]=org.ikasan.spec.component.transformation.TransformationException
+  
+  # In order to configure ignore behavior  ignoredClasses
+  #ikasan.exceptions.ignoredClasses[0]=org.ikasan.spec.component.transformation.TransformationException
+     
+  # In order to configure Retry
+  #ikasan.exceptions.retry-configs.[0].className=org.ikasan.spec.component.transformation.TransformationException
+  #ikasan.exceptions.retry-configs.[0].delayInMillis=10000
+  #ikasan.exceptions.retry-configs.[0].maxRetries=10
+  
+  # In order to configure Scheduled Retry
+  #ikasan.exceptions.scheduled-retry-configs.[0].className=org.ikasan.spec.component.transformation.TransformationException
+  #ikasan.exceptions.scheduled-retry-configs.[0].cronExpression=0 0/1 * * * ?
+  #ikasan.exceptions.scheduled-retry-configs.[0].maxRetries=10
+  
+   ```
+
 Build it, run it, and start the flow from the Browser.
 
 Now we see the same error occuring, but the Recovery Manager excludes the event and allows the flow to keep running.
