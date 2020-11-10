@@ -1,6 +1,7 @@
 package org.ikasan.systemevent.model;
 
 import org.apache.solr.client.solrj.beans.Field;
+import org.ikasan.spec.solr.SolrDaoBase;
 import org.ikasan.spec.systemevent.SystemEvent;
 
 import java.util.Date;
@@ -12,25 +13,25 @@ import java.util.StringJoiner;
 public class SolrSystemEvent implements SystemEvent
 {
 
-    @Field("id")
+    @Field(SolrDaoBase.ID)
     private String id;
 
-    @Field("moduleName")
+    @Field(SolrDaoBase.MODULE_NAME)
     private String moduleName;
 
-    @Field("actor")
+    @Field(SolrDaoBase.FLOW_NAME)
     private String actor;
 
-    @Field("action")
+    @Field(SolrDaoBase.PAYLOAD_CONTENT)
     private String action;
 
-    @Field("subject")
+    @Field(SolrDaoBase.EVENT)
     private String subject;
 
-    @Field("timestamp")
+    @Field(SolrDaoBase.CREATED_DATE_TIME)
     private long timestampLong;
 
-    @Field("expiry")
+    @Field(SolrDaoBase.EXPIRY)
     private long expiryLong;
 
 

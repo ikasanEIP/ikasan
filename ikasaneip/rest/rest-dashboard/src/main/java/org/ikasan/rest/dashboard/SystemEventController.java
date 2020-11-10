@@ -87,7 +87,7 @@ public class SystemEventController
     @RequestMapping(method = RequestMethod.PUT,
         value = "/harvest/systemevents")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity harvestError(@RequestBody String systemEventsJsonPayload)
+    public ResponseEntity harvestSystemEvents(@RequestBody String systemEventsJsonPayload)
     {
         try
         {
