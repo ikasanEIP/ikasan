@@ -44,7 +44,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
 
-        List<SolrErrorOccurrence> beans = null;
+        List<SolrErrorOccurrence> beans;
 
         try
         {
@@ -62,7 +62,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase<ErrorOccurrence> i
 
         if(beans.size() > 0)
         {
-            return (ErrorOccurrence)beans.get(0);
+            return beans.get(0);
         }
         else
         {

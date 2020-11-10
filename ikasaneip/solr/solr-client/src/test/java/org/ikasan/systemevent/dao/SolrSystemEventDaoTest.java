@@ -99,7 +99,6 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
         }
     }
 
-    @Ignore
     @Test
     @DirtiesContext
     public void test_query_system_events_with_payload_content() throws Exception
@@ -126,10 +125,7 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
 
             dao.save(systemEvent1);
 
-            ArrayList flowNames = new ArrayList<>();
-            flowNames.add("flowName");
-
-            List<SystemEvent> systemEvents = dao.list(null, "*test*",null,null);
+            List<SystemEvent> systemEvents = dao.list(null, "test*",null,null);
 
             assertEquals(1, systemEvents.size());
 
@@ -137,47 +133,26 @@ public class SolrSystemEventDaoTest extends SolrTestCaseJ4
     }
 
 
-
-
     @Test
     @DirtiesContext
     public void test_housekeep_success() throws Exception
     {
-
-
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
         {
-            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
-            createRequest.setCoreName("ikasan");
-            createRequest.setConfigSet("minimal");
-            server.request(createRequest);
+            init(server);
 
-            SolrReplayDao dao = new SolrReplayDao();
-            dao.setSolrClient(server);
-            dao.setDaysToKeep(0);
+            SolrSystemEvent systemEvent = new SolrSystemEvent(1l, "moduleName",
+                "actor", "action", "subject", System.currentTimeMillis());
 
-            SolrReplayEvent replayEvent = new SolrReplayEvent();
-            replayEvent.setModuleName("moduleName");
-            replayEvent.setFlowName("flowName");
-            replayEvent.setEventAsString("");
-            replayEvent.setEvent("event".getBytes());
-            replayEvent.setTimestamp(System.currentTimeMillis());
-            replayEvent.setExpiry(System.currentTimeMillis());
-            replayEvent.setId(1l);
+            dao.save(systemEvent);
 
-            dao.saveOrUpdate(replayEvent);
-
-            List<ReplayEvent> replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>(), null, null,
-                new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
-                                                                   );
+            List<SystemEvent> replayEventList = dao.list(null, "*actor*",null,null);
 
             assertEquals(1, replayEventList.size());
 
-            dao.housekeep(100);
+            dao.deleteExpired();
 
-            replayEventList = dao.getReplayEvents(new ArrayList<>(), new ArrayList<>(), null, null,
-                new Date(System.currentTimeMillis() - 10000000l), new Date(System.currentTimeMillis() + 10000000l), 10
-                                                 );
+            replayEventList = dao.list(null, "actor",null,null);
 
             assertEquals(0, replayEventList.size());
         }

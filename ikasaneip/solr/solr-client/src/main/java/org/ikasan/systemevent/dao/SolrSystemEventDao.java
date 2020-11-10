@@ -34,7 +34,8 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent> implements Syst
         document.addField(TYPE, SYSTEM_EVENT);
         document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
         if(systemEvent instanceof SolrSystemEvent){
-            document.addField(ID, ((SolrSystemEvent) systemEvent).getModuleName() + "-" + SYSTEM_EVENT + "-" + systemEvent.getId());
+            document.addField(ID, ((SolrSystemEvent) systemEvent).getModuleName()
+                + "-" + SYSTEM_EVENT + "-" + systemEvent.getId());
             document.addField(MODULE_NAME, ((SolrSystemEvent) systemEvent).getModuleName());
         }
         else {

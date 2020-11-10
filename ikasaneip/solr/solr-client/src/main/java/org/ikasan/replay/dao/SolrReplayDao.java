@@ -82,22 +82,22 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent> implements ReplayDao
 
         if(moduleNames == null)
         {
-            moduleNamesSet = new HashSet<String>();
+            moduleNamesSet = new HashSet<>();
         }
         else
         {
-            moduleNamesSet = new HashSet<String>(moduleNames);
+            moduleNamesSet = new HashSet<>(moduleNames);
         }
 
         Set<String> flowNamesSet = null;
 
         if(flowNames == null)
         {
-            flowNamesSet = new HashSet<String>();
+            flowNamesSet = new HashSet<>();
         }
         else
         {
-            flowNamesSet = new HashSet<String>(flowNames);
+            flowNamesSet = new HashSet<>(flowNames);
         }
 
         String queryString;

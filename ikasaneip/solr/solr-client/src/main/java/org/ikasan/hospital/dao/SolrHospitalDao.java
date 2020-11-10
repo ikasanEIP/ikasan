@@ -1,18 +1,10 @@
 package org.ikasan.hospital.dao;
 
-import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
-import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
-import org.ikasan.spec.systemevent.SystemEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.

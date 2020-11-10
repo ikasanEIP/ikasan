@@ -100,9 +100,6 @@ public class SolrExclusionEventDao extends SolrDaoBase<ExclusionEvent> implement
     {
         String queryString = "id:\"" + errorUri + "\" AND type:" + EXCLUSION;
 
-
-        logger.debug("queryString: " + queryString);
-
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
 
