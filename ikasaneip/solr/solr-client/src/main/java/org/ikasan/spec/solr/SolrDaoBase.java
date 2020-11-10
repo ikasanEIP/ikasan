@@ -109,10 +109,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
      */
     protected String buildQuery(Collection<String> moduleNames, Collection<String> flowNames, Collection<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type, boolean negateQuery) throws IOException {
-        ArrayList<String> types = new ArrayList<String>();
-        types.add(type);
-
-        return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, types, negateQuery);
+        return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, List.of(type), negateQuery);
     }
 
     /**
