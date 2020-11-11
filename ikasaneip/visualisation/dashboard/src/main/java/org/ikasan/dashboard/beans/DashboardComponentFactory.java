@@ -22,12 +22,15 @@ import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.cache.FlowStateCacheAdapter;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.persistence.BatchInsert;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.dao.SolrSystemEventDao;
 import org.ikasan.systemevent.service.SolrSystemEventServiceImpl;
@@ -70,7 +73,7 @@ public class DashboardComponentFactory
     }
 
     @Bean("wiretapEventBatchInsert")
-    public WiretapService solrWiretapService()
+    public BatchInsert<WiretapEvent> solrWiretapService()
     {
         SolrWiretapDao dao = new SolrWiretapDao();
         dao.initStandalone(solrUrl, 30);
@@ -94,7 +97,7 @@ public class DashboardComponentFactory
     }
 
     @Bean("exclusionEventBatchInsert")
-    public ExclusionManagementService solrExclusionService()
+    public BatchInsert<ExclusionEvent> solrExclusionService()
     {
         SolrExclusionEventDao dao = new SolrExclusionEventDao();
         dao.initStandalone(solrUrl, 30);
@@ -106,12 +109,12 @@ public class DashboardComponentFactory
     }
 
     @Bean("replayEventBatchInsert")
-    public ReplayManagementService solrReplayService()
+    public BatchInsert<ReplayEvent> solrReplayService()
     {
         SolrReplayDao dao = new SolrReplayDao();
         dao.initStandalone(solrUrl, 30);
 
-        SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao, dao);
+        SolrReplayServiceImpl service = new SolrReplayServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 

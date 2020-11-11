@@ -19,7 +19,6 @@ import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.persistence.BatchInsert;
@@ -45,14 +44,13 @@ public class EventLifeIdDeepLinkView extends VerticalLayout implements HasUrlPar
 
     private SearchResults searchResults;
 
-    public EventLifeIdDeepLinkView(ErrorReportingService solrErrorReportingService, ModuleMetaDataService moduleMetadataService,
+    public EventLifeIdDeepLinkView(ModuleMetaDataService moduleMetadataService,
                                    SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
                                    HospitalAuditService hospitalAuditService, ResubmissionRestServiceImpl resubmissionRestService,
                                    ReplayRestServiceImpl replayRestService, BatchInsert replayAuditService)
     {
-        this.searchResults = new SearchResults(solrGeneralService, solrErrorReportingService,
-            hospitalAuditService, resubmissionRestService, replayRestService,
-            moduleMetadataService, replayAuditService);
+        this.searchResults = new SearchResults(solrGeneralService, hospitalAuditService, resubmissionRestService
+            , replayRestService, moduleMetadataService, replayAuditService);
         this.searchResults.setSizeFull();
 
         Button returnToDashboardButton = new Button("Return to dashboard");

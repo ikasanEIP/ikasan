@@ -44,9 +44,6 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver, S
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
     @Resource
-    private ErrorReportingService errorReportingService;
-
-    @Resource
     private HospitalAuditService hospitalAuditService;
 
     @Resource
@@ -91,8 +88,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver, S
      * Create the results grid layout.
      */
     protected void createSearchResults() {
-        this.searchResults = new SearchResults(solrGeneralService, errorReportingService,
-            hospitalAuditService, resubmissionRestService, replayRestService,
+        this.searchResults = new SearchResults(solrGeneralService, hospitalAuditService, resubmissionRestService, replayRestService,
             moduleMetadataService, replayAuditService);
         this.searchResults.setSizeFull();
     }

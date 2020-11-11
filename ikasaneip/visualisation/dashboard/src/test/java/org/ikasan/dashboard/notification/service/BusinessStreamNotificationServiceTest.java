@@ -157,10 +157,8 @@ public class BusinessStreamNotificationServiceTest extends SolrTestCaseJ4 {
         SolrGeneralServiceImpl solrGeneralService = new SolrGeneralServiceImpl(solrGeneralDao);
         SolrBusinessStreamMetaDataServiceImpl solrBusinessStreamMetaDataService
             = new SolrBusinessStreamMetaDataServiceImpl(solrBusinessStreamMetadataDao);
-        SolrErrorReportingManagementServiceImpl solrErrorReportingManagementService
-            = new SolrErrorReportingManagementServiceImpl(solrErrorReportingServiceDao);
 
-        return new BusinessStreamNotificationService(solrBusinessStreamMetaDataService, solrErrorReportingManagementService,
+        return new BusinessStreamNotificationService(solrBusinessStreamMetaDataService,
             solrGeneralService);
     }
 

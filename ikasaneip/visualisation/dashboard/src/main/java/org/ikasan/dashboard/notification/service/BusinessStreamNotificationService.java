@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 
 public class BusinessStreamNotificationService {
     private BusinessStreamMetaDataService<BusinessStreamMetaData> businessStreamMetaDataService;
-    private ErrorReportingService<ErrorOccurrence<byte[]>, ErrorOccurrence> errorReportingService;
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
     public BusinessStreamNotificationService(BusinessStreamMetaDataService businessStreamMetaDataService
-        , ErrorReportingService errorReportingService, SolrGeneralService solrGeneralService) {
+        , SolrGeneralService solrGeneralService) {
         this.businessStreamMetaDataService = businessStreamMetaDataService;
-        this.errorReportingService = errorReportingService;
         this.solrGeneralService = solrGeneralService;
     }
 
@@ -59,11 +57,11 @@ public class BusinessStreamNotificationService {
 
     private List<BusinessStreamExclusion> getBusinessStreamExclusions(IkasanSolrDocumentSearchResults results) {
         if(results.getResultList().size() > 0) {
-            Map<String, ErrorOccurrence> errorOccurrencesMap = results.getResultList()
+            Map<String, IkasanSolrDocument> errorOccurrencesMap = results.getResultList()
                 .stream()
-                .map(ikasanDoc -> errorReportingService.find(this.getErrorUri(ikasanDoc.getId())))
+                .map(ikasanDoc -> this.solrGeneralService.findByErrorUri("error", this.getErrorUri(ikasanDoc.getId())))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toMap(ErrorOccurrence::getUri, Function.identity()));
+                .collect(Collectors.toMap(IkasanSolrDocument::getErrorUri, Function.identity()));
 
             List<BusinessStreamExclusion> businessStreamExclusionsList = new ArrayList<>();
 

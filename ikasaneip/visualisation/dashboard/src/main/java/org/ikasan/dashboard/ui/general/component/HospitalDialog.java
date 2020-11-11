@@ -22,6 +22,7 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
@@ -29,6 +30,7 @@ import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.module.client.ResubmissionService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.olli.FileDownloadWrapper;
 
@@ -48,9 +50,9 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
     private StreamResource streamResource;
     private FileDownloadWrapper buttonWrapper;
-    private ErrorReportingService errorReportingService;
 
-    private ErrorOccurrence<String> errorOccurrence;
+    private IkasanSolrDocument errorOccurrence;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
     private String exclusionPayload;
 
     private Button resubmitButton;
@@ -68,11 +70,11 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
     private String translatedEventActionMessage;
 
-    public HospitalDialog(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
+    public HospitalDialog(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService, HospitalAuditService hospitalAuditService,
                           ResubmissionService resubmissionRestService, ModuleMetaDataService moduleMetadataService)
     {
-        this.errorReportingService = errorReportingService;
-        if(this.errorReportingService == null)
+        this.solrGeneralService = solrGeneralService;
+        if(this.solrGeneralService == null)
         {
             throw new IllegalArgumentException("errorReportingService cannot be null!");
         }
@@ -304,9 +306,10 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.errorUriTf.setValue(Optional.ofNullable(this.getErrorUri(ikasanSolrDocument.getId())).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(ikasanSolrDocument.getTimestamp()));
 
-        this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(this.getErrorUri(ikasanSolrDocument.getId()));
+        this.errorOccurrence = this.solrGeneralService
+            .findByErrorUri("error", this.getErrorUri(ikasanSolrDocument.getId()));
         this.exclusionPayload = ikasanSolrDocument.getEvent();
-        this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
+        this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getErrorAction()).orElse(""));
 
         ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
         ComponentSecurityVisibility.applySecurity(ignoreButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
@@ -328,7 +331,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
         exclusionEventAction.setComment(comment);
         exclusionEventAction.setActionedBy(user);
-        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEventAsString()));
+        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEvent()));
         // the error uri is in fact the id of excluded events
         exclusionEventAction.setErrorUri(document.getId());
         exclusionEventAction.setModuleName(document.getModuleName());

@@ -87,6 +87,14 @@ public class SolrGeneralServiceImpl extends SolrServiceBase implements SolrGener
     }
 
     @Override
+    public IkasanSolrDocument findByErrorUri(String type, String uri) {
+        this.solrGeneralDao.setSolrUsername(this.solrUsername);
+        this.solrGeneralDao.setSolrPassword(this.solrPassword);
+
+        return this.solrGeneralDao.findByErrorUri(type, uri);
+    }
+
+    @Override
     public void saveOrUpdate(IkasanSolrDocument document)
     {
         this.solrGeneralDao.setSolrUsername(this.solrUsername);

@@ -77,8 +77,6 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
 
     private UI current;
 
-    private ErrorReportingService errorReportingService;
-
     private HospitalAuditService hospitalAuditService;
 
     private ResubmissionService resubmissionRestService;
@@ -98,7 +96,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         , ModuleMetaDataService moduleMetaDataService
         , ConfigurationMetaDataService configurationMetadataService
         , SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
-        , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , HospitalAuditService hospitalAuditService
         , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
         , MetaDataService metaDataApplicationRestService, BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert) {
@@ -125,10 +123,6 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         this.solrSearchService = solrSearchService;
         if (this.solrSearchService == null) {
             throw new IllegalArgumentException("solrSearchService cannot be null!");
-        }
-        this.errorReportingService = errorReportingService;
-        if (this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
         }
         this.hospitalAuditService = hospitalAuditService;
         if (this.hospitalAuditService == null) {
@@ -244,7 +238,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                         = new FlowVisualisationDialog(this.moduleControlRestService, this.configurationRestService,
                         this.triggerRestService, this.configurationMetadataService, moduleMetaData
                         , this.flowMap.get(nodeId), this.solrSearchService
-                        , this.stringSearchFoundStatusMap.get(nodeId), this.errorReportingService, this.hospitalAuditService
+                        , this.stringSearchFoundStatusMap.get(nodeId), this.hospitalAuditService
                         , this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService
                         , this.metaDataApplicationRestService, this.moduleMetaDataBatchInsert);
 
@@ -257,7 +251,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     SearchFoundStatus searchFoundStatus = this.stringSearchFoundStatusMap.get(flow.getId());
                     if (flow.wiretapClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.debug("wiretap clicked: " + flow.getModuleName() + " " + flow.getFlowName());
-                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.hospitalAuditService,
                             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
                         searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "wiretap", false
                             , flow.getModuleName(), flow.getFlowName());
@@ -265,7 +259,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     }
                     if (flow.errorClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.debug("error clicked: " + flow.getModuleName() + " " + flow.getFlowName());
-                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.hospitalAuditService,
                             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
                         searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "error", false
                             , flow.getModuleName(), flow.getFlowName());
@@ -273,7 +267,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     }
                     if (flow.exclusionClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.debug("exclusion clicked: " + flow.getModuleName() + " " + flow.getFlowName());
-                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.hospitalAuditService,
                             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
                         searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "exclusion", false
                             , flow.getModuleName(), flow.getFlowName());
@@ -281,7 +275,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
                     }
                     if (flow.replayClickedOn(coordinates.getNumber("x"), coordinates.getNumber("y"))) {
                         logger.debug("replay clicked: " + flow.getModuleName() + " " + flow.getFlowName());
-                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+                        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.hospitalAuditService,
                             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
                         searchResultsDialog.search(searchFoundStatus.getStartTime(), searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm(), "replay", false
                             , flow.getModuleName(), flow.getFlowName());
