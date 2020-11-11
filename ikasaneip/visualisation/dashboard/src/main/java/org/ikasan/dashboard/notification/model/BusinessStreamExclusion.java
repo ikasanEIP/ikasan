@@ -6,9 +6,9 @@ import org.ikasan.spec.exclusion.ExclusionEvent;
 
 public class BusinessStreamExclusion {
     private IkasanSolrDocument exclusionEvent;
-    private ErrorOccurrence errorOccurrence;
+    private IkasanSolrDocument errorOccurrence;
 
-    public BusinessStreamExclusion(IkasanSolrDocument exclusionEvent, ErrorOccurrence errorOccurrence) {
+    public BusinessStreamExclusion(IkasanSolrDocument exclusionEvent, IkasanSolrDocument errorOccurrence) {
         this.exclusionEvent = exclusionEvent;
         this.errorOccurrence = errorOccurrence;
     }
@@ -17,7 +17,7 @@ public class BusinessStreamExclusion {
         return exclusionEvent;
     }
 
-    public ErrorOccurrence getErrorOccurrence() {
+    public IkasanSolrDocument getErrorOccurrence() {
         return errorOccurrence;
     }
 }

@@ -17,11 +17,10 @@ public class SearchResultsDialog extends AbstractCloseableResizableDialog {
 
     private SearchResults searchResults;
 
-    public SearchResultsDialog(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
-                               ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
-                               ResubmissionService resubmissionRestService, ReplayService replayRestService,
-                               ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
-        searchResults = new SearchResults(solrGeneralService, errorReportingService, hospitalAuditService,
+    public SearchResultsDialog(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService
+        , HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService
+        , ReplayService replayRestService, ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
+        searchResults = new SearchResults(solrGeneralService, hospitalAuditService,
             resubmissionRestService, replayRestService, moduleMetadataService, replayAuditService);
         searchResults.tooltipBottom();
 

@@ -16,11 +16,13 @@ import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.module.client.ResubmissionService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,10 +40,12 @@ public class IgnoreHospitalEventSubmissionListener extends HospitalEventActionLi
     private HospitalAuditService hospitalAuditService;
     private ResubmissionService resubmissionRestService;
 
-    public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService,
-                                                 ModuleMetaDataService moduleMetadataService, ErrorReportingService errorReportingService, String actionMessage, SolrSearchFilteringGrid searchResultsGrid
-        , HashMap<String, Checkbox> selectionBoxes, HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
-        super(actionMessage, errorReportingService, moduleMetadataService, resubmissionRestService, searchResultsGrid, selectionBoxes, selectionItems, ikasanAuthentication);
+    public IgnoreHospitalEventSubmissionListener(HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService
+        , ModuleMetaDataService moduleMetadataService, SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService
+        , String actionMessage, SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes
+        , HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
+        super(actionMessage, solrGeneralService, moduleMetadataService, resubmissionRestService, searchResultsGrid
+            , selectionBoxes, selectionItems, ikasanAuthentication);
 
         this.hospitalAuditService = hospitalAuditService;
         if (this.hospitalAuditService == null) {

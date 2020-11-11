@@ -13,12 +13,14 @@ import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.module.client.ResubmissionService;
+import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +33,11 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
     private Logger logger = LoggerFactory.getLogger(HospitalEventActionListener.class);
 
     private String translatedEventActionMessage;
-    private ErrorReportingService errorReportingService;
+    private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
     private ResubmissionService resubmissionRestService;
     private IkasanAuthentication ikasanAuthentication;
 
-    public HospitalEventActionListener(String translatedEventActionMessage, ErrorReportingService errorReportingService,
+    public HospitalEventActionListener(String translatedEventActionMessage, SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
                                        ModuleMetaDataService moduleMetadataService, ResubmissionService resubmissionRestService,
                                        SolrSearchFilteringGrid searchResultsGrid, HashMap<String, Checkbox> selectionBoxes,
                                        HashMap<String, IkasanSolrDocument> selectionItems, IkasanAuthentication ikasanAuthentication) {
@@ -44,9 +46,9 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
         if (this.translatedEventActionMessage == null) {
             throw new IllegalArgumentException("translatedEventActionMessage cannot be null!");
         }
-        this.errorReportingService = errorReportingService;
-        if (this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
+        this.solrGeneralService = solrGeneralService;
+        if (this.solrGeneralService == null) {
+            throw new IllegalArgumentException("solrGeneralService cannot be null!");
         }
         this.resubmissionRestService = resubmissionRestService;
         if (this.resubmissionRestService == null) {
@@ -115,11 +117,11 @@ public abstract class HospitalEventActionListener extends IkasanEventActionListe
      * @return
      */
     protected ExclusionEventAction getExclusionEventAction(String comment, String action, IkasanSolrDocument document, String user) {
-        ErrorOccurrence errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService.find(this.getErrorUri(document.getId()));
+        IkasanSolrDocument errorOccurrence = this.solrGeneralService.findByErrorUri("error", this.getErrorUri(document.getId()));
         ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
         exclusionEventAction.setComment(comment);
         exclusionEventAction.setActionedBy(user);
-        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEventAsString()));
+        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEvent()));
         // the error uri is in fact the id of excluded events
         exclusionEventAction.setErrorUri(document.getId());
         exclusionEventAction.setModuleName(document.getModuleName());

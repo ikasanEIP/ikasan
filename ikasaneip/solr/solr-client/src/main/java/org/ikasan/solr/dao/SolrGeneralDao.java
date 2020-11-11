@@ -127,13 +127,23 @@ public interface SolrGeneralDao<RESULTS, DOCUMENT>
      * Method to find a document in the solr index by type and id.
      *
      * @param type
+     * @param id
      */
     public DOCUMENT findById(String type, String id);
+
+    /**
+     * Method to find a document in the solr index by type and id.
+     *
+     * @param type
+     * @param uri
+     */
+    public DOCUMENT findByErrorUri(String type, String uri);
 
     /**
      * Method to remove records from the solr index by type and id.
      *
      * @param type
+     * @param id
      */
     public void removeById(String type, String id);
 

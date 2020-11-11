@@ -80,9 +80,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService;
 
     @Resource
-    private ErrorReportingService solrErrorReportingService;
-
-    @Resource
     private ModuleControlService moduleControlRestService;
 
     @Autowired
@@ -102,9 +99,6 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
     @Resource
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
-
-    @Resource
-    private ErrorReportingService errorReportingService;
 
     @Resource
     private HospitalAuditService hospitalAuditService;
@@ -157,7 +151,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
     private void init()
     {
-        this.searchResults = new SearchResults(this.solrGeneralService, this.solrErrorReportingService,
+        this.searchResults = new SearchResults(this.solrGeneralService,
             this.hospitalAuditService, this.resubmissionRestService, this.replayRestService,
             this.moduleMetadataService, this.replayAuditService);
         this.searchResults.setHeight("50vh");
@@ -422,7 +416,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
         businessStreamVisualisation = new GraphViewBusinessStreamVisualisation(this.solrSearchService,
             this.moduleControlRestService, this.moduleMetadataService, this.configurationRestService
-            , this.triggerRestService, this.configurationMetadataService, this.errorReportingService, this.hospitalAuditService,
+            , this.triggerRestService, this.configurationMetadataService, this.hospitalAuditService,
             this.resubmissionRestService, this.replayRestService, this.replayAuditService, this.metaDataApplicationRestService,
             this.moduleMetadataBatchInsert);
 

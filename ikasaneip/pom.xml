@@ -1484,6 +1484,12 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>7.1</version>
+            </dependency>
+
             <!-- used in component filter to support XML -->
             <!-- TODO Review whether we want this dependency on an XML implementation -->
             <dependency>
