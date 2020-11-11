@@ -337,19 +337,43 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
         StringBuffer bufferFinalQuery = new StringBuffer(idBuffer);
 
-        boolean hasPrevious = true;
+        if(typeBuffer.length() > 0)
+        {
+            bufferFinalQuery.append(AND).append(typeBuffer);
+        }
+
+        return bufferFinalQuery.toString();
+    }
+
+    /**
+     * Query solr index by id for a given type
+     *
+     * @param uri
+     * @param type
+     * @return String
+     */
+    protected String buildErrorUriQuery(String uri, String type)
+    {
+        StringBuffer uriBuffer = new StringBuffer();
+        StringBuffer typeBuffer = new StringBuffer();
+
+
+        uriBuffer.append(ERROR_URI).append(COLON).append("\"").append(uri).append("\"");
+
+        if(type != null && !type.trim().isEmpty())
+        {
+            typeBuffer.append(TYPE + COLON);
+
+            typeBuffer.append("\"").append(type).append("\" ");
+        }
+
+
+        StringBuffer bufferFinalQuery = new StringBuffer(uriBuffer);
 
         if(typeBuffer.length() > 0)
         {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(AND);
-            }
-
-            bufferFinalQuery.append(typeBuffer);
-            hasPrevious = true;
+            bufferFinalQuery.append(AND).append(typeBuffer);
         }
-
 
         return bufferFinalQuery.toString();
     }

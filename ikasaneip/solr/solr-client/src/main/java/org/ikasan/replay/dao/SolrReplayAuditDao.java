@@ -57,14 +57,32 @@ public class SolrReplayAuditDao extends SolrDaoBase<SolrReplayAuditEvent> implem
         }
         catch (Exception e)
         {
-            throw new RuntimeException("An exception has occurred attempting to write an exclusion to Solr", e);
+            throw new RuntimeException("An exception has occurred attempting to write replay audit event to Solr", e);
         }
     }
 
     @Override
     protected SolrInputDocument getSolrInputFields(Long expiry, SolrReplayAuditEvent event)
     {
+        SolrInputDocument document = new SolrInputDocument();
 
-        throw new UnsupportedOperationException();
+        try
+        {
+            String json = mapper.writeValueAsString(event);
+
+            logger.debug("Result json: " + json);
+
+            document.addField(ID, "replay-audit-" + System.currentTimeMillis());
+            document.addField(TYPE, REPLAY_AUDIT);
+            document.addField(PAYLOAD_CONTENT, json);
+            document.addField(CREATED_DATE_TIME, System.currentTimeMillis());
+            document.setField(EXPIRY, expiry);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred convert a replay audit event to a solr document", e);
+        }
+
+        return document;
     }
 }

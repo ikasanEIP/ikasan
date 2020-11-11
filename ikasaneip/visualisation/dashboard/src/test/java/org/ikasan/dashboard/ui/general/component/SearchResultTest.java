@@ -109,8 +109,8 @@ public class SearchResultTest {
 
     @Test
     public void test_no_results_found() {
-        SearchResults searchResults = new SearchResults(this.solrSearchService, this.solrErrorReportingService,
-            this.hospitalAuditService, resubmissionRestService, replayRestService, moduleMetaDataService, replayAuditService);
+        SearchResults searchResults = new SearchResults(this.solrSearchService, this.hospitalAuditService
+            , resubmissionRestService, replayRestService, moduleMetaDataService, replayAuditService);
 
         Assertions.assertNotNull(searchResults);
 

@@ -113,8 +113,8 @@ public class HospitalViewTest {
             , 1L, "event".getBytes(), "eventAsString");
         errorOccurrence.setAction("exclusion");
 
-        Mockito.when(this.solrErrorReportingService.find("id"))
-            .thenReturn(errorOccurrence);
+        Mockito.when(this.solrSearchService.findByErrorUri("error", "id"))
+            .thenReturn(document);
 
         UI.getCurrent().navigate("exclusion/12345");
 

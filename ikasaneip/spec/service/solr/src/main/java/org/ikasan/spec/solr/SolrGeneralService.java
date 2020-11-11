@@ -118,8 +118,17 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * Method to find a document in the solr index by type and id.
      *
      * @param type
+     * @param id
      */
     public ENTITY findById(String type, String id);
+
+    /**
+     * Method to find a document in the solr index by type and error uri.
+     *
+     * @param type
+     * @param uri
+     */
+    public ENTITY findByErrorUri(String type, String uri);
 
     /**
      * Save or update an ENTITY

@@ -25,14 +25,10 @@ public class SolrSystemEventServiceImpl extends SolrServiceBase implements SolrS
         }
     }
 
-
-
     @Override
     public void insert(List<SystemEvent> systemEvents)
     {
-        this.systemEventDao.setSolrUsername(this.solrUsername);
-        this.systemEventDao.setSolrPassword(this.solrPassword);
-        systemEventDao.save(systemEvents);
+        this.save(systemEvents);
     }
 
     @Override

@@ -55,8 +55,6 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private Registration broadcasterRegistration;
 
-    private ErrorReportingService errorReportingService;
-
     private HospitalAuditService hospitalAuditService;
 
     private ResubmissionService resubmissionRestService;
@@ -74,7 +72,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
      */
     public GraphViewBusinessStreamVisualisation(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrSearchService
         , ModuleControlService moduleControlRestService, ModuleMetaDataService moduleMetadataService, ConfigurationService configurationRestService
-        , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService, ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService, HospitalAuditService hospitalAuditService
         , ResubmissionService resubmissionRestService, ReplayService replayRestService, BatchInsert replayAuditService, MetaDataService metaDataApplicationRestService
         , BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert)
     {
@@ -104,10 +102,6 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         this.configurationMetadataService = configurationMetadataService;
         if(this.configurationMetadataService == null){
             throw new IllegalArgumentException("configurationMetadataService cannot be null!");
-        }
-        this.errorReportingService = errorReportingService;
-        if (this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
         }
         this.hospitalAuditService = hospitalAuditService;
         if (this.hospitalAuditService == null) {
@@ -168,7 +162,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
         businessStreamVisualisation = new BusinessStreamVisualisation(this.moduleControlRestService,
             this.configurationRestService, this.triggerRestService, this.moduleMetadataService
-            , this.configurationMetadataService, this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+            , this.configurationMetadataService, this.solrSearchService, this.hospitalAuditService,
             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService,
             this.metaDataApplicationRestService, this.moduleMetaDataBatchInsert);
 

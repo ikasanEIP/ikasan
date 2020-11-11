@@ -66,8 +66,6 @@ public class SearchResults extends Div {
     private Tooltip resubmitButtonTooltip;
     private Tooltip ignoreButtonTooltip;
 
-    private ErrorReportingService errorReportingService;
-
     private HospitalAuditService hospitalAuditService;
 
     private ResubmissionService resubmissionRestService;
@@ -89,16 +87,11 @@ public class SearchResults extends Div {
     private SearchFilter searchFilter = new SearchFilter();
 
     public SearchResults(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService,
-                         ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
-                         ResubmissionService resubmissionRestService, ReplayService replayRestService,
-                         ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
+                         HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService,
+                         ReplayService replayRestService, ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService){
         this.solrGeneralService = solrGeneralService;
         if(this.solrGeneralService == null) {
             throw new IllegalArgumentException("solrGeneralService cannot be null!!");
-        }
-        this.errorReportingService = errorReportingService;
-        if(this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!!");
         }
         this.hospitalAuditService = hospitalAuditService;
         if(this.hospitalAuditService == null) {
@@ -405,7 +398,7 @@ public class SearchResults extends Div {
                 }
                 else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.EXCLUSION))
                 {
-                    HospitalDialog hospitalDialog = new HospitalDialog(this.errorReportingService, this.hospitalAuditService, this.resubmissionRestService, this.moduleMetadataService);
+                    HospitalDialog hospitalDialog = new HospitalDialog(this.solrGeneralService, this.hospitalAuditService, this.resubmissionRestService, this.moduleMetadataService);
                     hospitalDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
                 }
             });
@@ -489,7 +482,7 @@ public class SearchResults extends Div {
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
         this.resubmitHospitalEventSubmissionListener = new  ResubmitHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
-            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems, authentication);
+            , this.moduleMetadataService, this.solrGeneralService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems, authentication);
         this.resubmitHospitalEventRegistration = this.resubmitButton.addClickListener(this.resubmitHospitalEventSubmissionListener);
     }
 
@@ -506,7 +499,7 @@ public class SearchResults extends Div {
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
         this.ignoreHospitalEventSubmissionListener = new IgnoreHospitalEventSubmissionListener(this.hospitalAuditService, this.resubmissionRestService
-            , this.moduleMetadataService, this.errorReportingService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems, authentication);
+            , this.moduleMetadataService, this.solrGeneralService, translatedEventActionMessage, this.searchResultsGrid, this.selectionBoxes, this.selectionItems, authentication);
         this.ignoreHospitalEventRegistration = this.ignoreButton.addClickListener(ignoreHospitalEventSubmissionListener);
     }
 

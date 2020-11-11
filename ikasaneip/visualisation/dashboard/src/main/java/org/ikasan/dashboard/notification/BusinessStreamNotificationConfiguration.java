@@ -73,8 +73,8 @@ public class BusinessStreamNotificationConfiguration {
 
     @Bean
     public BusinessStreamNotificationService businessStreamNotificationService(BusinessStreamMetaDataService businessStreamMetaDataService
-        , ErrorReportingService errorReportingService, SolrGeneralService solrGeneralService) {
-            return new BusinessStreamNotificationService(businessStreamMetaDataService, errorReportingService,
+        , SolrGeneralService solrGeneralService) {
+            return new BusinessStreamNotificationService(businessStreamMetaDataService,
             solrGeneralService);
     }
 

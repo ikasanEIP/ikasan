@@ -68,8 +68,6 @@ public class FlowVisualisationDialog extends Dialog {
 
     private Flow flow;
 
-    private ErrorReportingService errorReportingService;
-
     private HospitalAuditService hospitalAuditService;
 
     private ResubmissionService resubmissionRestService;
@@ -89,7 +87,7 @@ public class FlowVisualisationDialog extends Dialog {
         , TriggerService triggerRestService, ConfigurationMetaDataService configurationMetadataService
         , ModuleMetaData moduleMetaData, Flow flow, SolrGeneralService<IkasanSolrDocument
         , IkasanSolrDocumentSearchResults> solrSearchService, SearchFoundStatus searchFoundStatus
-        , ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService
+        , HospitalAuditService hospitalAuditService
         , ResubmissionService resubmissionRestService, ReplayService replayRestService
         , ModuleMetaDataService moduleMetadataService, BatchInsert replayAuditService
         , MetaDataService metaDataApplicationRestService, BatchInsert<ModuleMetaData> moduleMetaDataService)
@@ -124,10 +122,6 @@ public class FlowVisualisationDialog extends Dialog {
         }
         if(moduleMetaData == null){
             throw new IllegalArgumentException("moduleMetaData cannot be null!");
-        }
-        this.errorReportingService = errorReportingService;
-        if (this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
         }
         this.hospitalAuditService = hospitalAuditService;
         if (this.hospitalAuditService == null) {
@@ -292,7 +286,7 @@ public class FlowVisualisationDialog extends Dialog {
      */
     protected void search(String type)
     {
-        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.errorReportingService, this.hospitalAuditService,
+        SearchResultsDialog searchResultsDialog = new SearchResultsDialog(this.solrSearchService, this.hospitalAuditService,
             this.resubmissionRestService, this.replayRestService, this.moduleMetadataService, this.replayAuditService);
         searchResultsDialog.search(this.searchFoundStatus.getStartTime(), this.searchFoundStatus.getEndTime(), searchFoundStatus.getSearchTerm()
             , type, false, flow.getModuleName(), flow.getFlowName());
