@@ -40,18 +40,9 @@
  */
 package org.ikasan.serialiser.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.TextMessage;
-
+import com.esotericsoftware.kryo.kryo5.Serializer;
 import org.ikasan.serialiser.converter.JmsMapMessageConverter;
 import org.ikasan.serialiser.converter.JmsTextMessageConverter;
-import org.ikasan.serialiser.converter.JobExecutionContextConverter;
 import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
 import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
@@ -60,9 +51,14 @@ import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.quartz.impl.JobExecutionContextImpl;
 
-import com.esotericsoftware.kryo.Serializer;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.TextMessage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Test class for SerialiserFactoryKryoImpl.

@@ -2,6 +2,7 @@ package org.ikasan.builder;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ImportResource(locations = {
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.ImportResource;
     "/filter-service-conf.xml",
     "/h2-datasource-conf.xml"
 })
-
 public class TestConfiguration
 {
 }

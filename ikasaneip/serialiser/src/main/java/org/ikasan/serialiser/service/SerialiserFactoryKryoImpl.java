@@ -40,11 +40,10 @@
  */
 package org.ikasan.serialiser.service;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.pool.KryoFactory;
-import com.esotericsoftware.kryo.pool.KryoPool;
+import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.kryo5.Serializer;
 
+import com.esotericsoftware.kryo.kryo5.util.Pool;
 import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -64,6 +63,8 @@ public class SerialiserFactoryKryoImpl implements SerialiserFactory
     /** additional registered serializers */
     private Map<Class,Serializer> serializers;
     private Map<Class, Converter> converters;
+
+    private Integer kryoPoolSize = 10;
 
     /**
      * Default constructor
@@ -104,23 +105,28 @@ public class SerialiserFactoryKryoImpl implements SerialiserFactory
         return getDefaultSerialiser();
     }
 
+    public void setKryoPoolSize(Integer kryoPoolSize) {
+        this.kryoPoolSize = kryoPoolSize;
+    }
+
     /**
      * Get a new pool for kryo instances
      * @return
      */
-    protected KryoPool getPool()
+    protected Pool getPool()
     {
-        KryoFactory factory = new KryoFactory()
-        {
-            public Kryo create ()
-            {
+        // Pool constructor arguments: thread safe, soft references, maximum capacity
+        Pool<Kryo> kryoPool = new Pool<>(true, true, kryoPoolSize) {
+            protected Kryo create () {
                 Kryo kryo = new Kryo();
+                kryo.setRegistrationRequired(false);
+                kryo.setWarnUnregisteredClasses(false);
                 configure(kryo);
                 return kryo;
             }
         };
 
-        return new KryoPool.Builder(factory).softReferences().build();
+        return kryoPool;
     }
 
     /**

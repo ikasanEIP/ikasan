@@ -374,7 +374,8 @@
     </pluginRepositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.kryo>4.0.2</version.kryo>
+        <version.kryo>5.0.0</version.kryo>
+        <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>5.4.21.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.18.Final</version.org.hibernate-validator>
         <version.org.springframework>5.2.9.RELEASE</version.org.springframework>
@@ -1473,8 +1474,8 @@
             </dependency>
 
             <dependency>
-                <groupId>com.esotericsoftware</groupId>
-                <artifactId>kryo</artifactId>
+                <groupId>com.esotericsoftware.kryo</groupId>
+                <artifactId>kryo5</artifactId>
                 <version>${version.kryo}</version>
                 <exclusions>
                     <exclusion>
@@ -1482,6 +1483,12 @@
                         <artifactId>asm</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${version.ow2.asm}</version>
             </dependency>
 
             <!-- used in component filter to support XML -->
@@ -1632,12 +1639,6 @@
                 <artifactId>spring-boot-starter-activemq</artifactId>
                 <version>${version.org.springboot}</version>
             </dependency>
-
-            <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-jta-narayana</artifactId>-->
-            <!--<version>${version.org.springboot}</version>-->
-            <!--</dependency>-->
 
             <dependency>
                 <groupId>me.snowdrop</groupId>
@@ -2342,31 +2343,37 @@
                 <artifactId>tomcat-annotations-api</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jsp-api</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-el</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-jasper</artifactId>
                 <version>${version.tomcat}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
@@ -2730,7 +2737,6 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
-
                     <exclusion>
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>

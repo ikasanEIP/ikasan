@@ -44,13 +44,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
+import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.kryo5.util.Pool;
 import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.pool.KryoPool;
+
+import com.esotericsoftware.kryo.kryo5.io.Input;
+import com.esotericsoftware.kryo.kryo5.io.Output;
+//import com.esotericsoftware.kryo.pool.KryoPool;
 
 
 /**
@@ -62,14 +64,14 @@ import com.esotericsoftware.kryo.pool.KryoPool;
 public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
 {
     /** pool of kryo instanances */
-    private KryoPool pool;
+    private Pool<Kryo> pool;
     private Map<Class, Converter> converters;
 
     /**
      * Constructor
      * @param pool
      */
-    public GenericKryoToBytesSerialiser(KryoPool pool,  Map<Class, Converter> converters)
+    public GenericKryoToBytesSerialiser(Pool<Kryo> pool,  Map<Class, Converter> converters)
     {
         this.pool = pool;
         if(pool == null)
@@ -89,7 +91,7 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
     {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Output output = new Output(byteArrayOutputStream);
-        Kryo kryo = pool.borrow();
+        Kryo kryo = pool.obtain();
 
         try
         {
@@ -110,7 +112,7 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
         }
         finally
         {
-            pool.release(kryo);
+            pool.free(kryo);
         }
     }
 
@@ -124,7 +126,7 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
     {
     	byte[] cloneSource = source.clone();
         Input input = new Input(new ByteArrayInputStream(cloneSource));
-        Kryo kryo=pool.borrow();
+        Kryo kryo = pool.obtain();
 
         try
         {
@@ -132,7 +134,7 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
         }
         finally
         {
-            pool.release(kryo);
+            pool.free(kryo);
         }
     }
     
