@@ -10,9 +10,11 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
+import org.ikasan.solr.model.IkasanSolrDocument;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -151,6 +153,83 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void test_find_by_id() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            assertEquals(3, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(3  , server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            IkasanSolrDocument document = dao.findById("type", "1");
+
+            Assert.assertNotNull(document);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find_by_error_uri() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            doc.addField("errorUri", "1");
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("expiry", 0l);
+            doc.addField("errorUri", "2");
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            doc.addField("errorUri", "3");
+            server.add("ikasan", doc);
+            server.commit();
+
+            assertEquals(3, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(3  , server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            dao = new SolrGeneralDaoImpl();
+            dao.setSolrClient(server);
+
+            IkasanSolrDocument document = dao.findByErrorUri("type", "1");
+
+            Assert.assertNotNull(document);
+        }
+    }
+
 
     @Test(expected = RuntimeException.class)
     @DirtiesContext
@@ -208,6 +287,92 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
             assertEquals(3, dao.search(null, null, "test", 0, System.currentTimeMillis() + 100000000l, 100, false, null ,null ).getResultList().size());
 
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_search_success_sort_asc() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "a test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "b test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "c test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            List<IkasanSolrDocument> results = dao.search(null, null, "test", 0
+                , System.currentTimeMillis() + 100000000l, 100, false, "payload"
+                ,SolrGeneralDaoImpl.ASCENDING ).getResultList();
+
+            assertEquals(3, results.size());
+
+            Assert.assertEquals("1", results.get(0).getId());
+            Assert.assertEquals("2", results.get(1).getId());
+            Assert.assertEquals("3", results.get(2).getId());
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_search_success_sort_desc() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrInputDocument doc = new SolrInputDocument();
+            doc.addField("id", "1");
+            doc.addField("type", "type");
+            doc.addField("payload", "a test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "2");
+            doc.addField("type", "type");
+            doc.addField("payload", "b test");
+            doc.addField("expiry", 100l);
+            doc.addField("timestamp", 100l);
+            server.add("ikasan", doc);
+            doc = new SolrInputDocument();
+            doc.addField("id", "3");
+            doc.addField("type", "type");
+            doc.addField("payload", "c test");
+            doc.addField("timestamp", 100l);
+            doc.addField("expiry", System.currentTimeMillis() + 10000000l);
+            server.add("ikasan", doc);
+            server.commit();
+
+            List<IkasanSolrDocument> results = dao.search(null, null, "test", 0
+                , System.currentTimeMillis() + 100000000l, 100, false, "payload"
+                ,SolrGeneralDaoImpl.DESCENDING ).getResultList();
+
+            assertEquals(3, results.size());
+
+            Assert.assertEquals("3", results.get(0).getId());
+            Assert.assertEquals("2", results.get(1).getId());
+            Assert.assertEquals("1", results.get(2).getId());
         }
     }
 

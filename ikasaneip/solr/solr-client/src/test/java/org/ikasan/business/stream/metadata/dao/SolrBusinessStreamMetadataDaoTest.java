@@ -1,5 +1,6 @@
 package org.ikasan.business.stream.metadata.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.io.IOUtils;
@@ -8,14 +9,19 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.business.stream.metadata.model.SolrBusinessStream;
+import org.ikasan.configuration.metadata.dao.SolrComponentConfigurationMetadataDao;
+import org.ikasan.configuration.metadata.model.SolrConfigurationMetaData;
+import org.ikasan.configuration.metadata.model.SolrConfigurationParameterMetaData;
 import org.ikasan.module.metadata.model.SolrFlowElementMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrFlowMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrModuleMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrTransitionImpl;
 import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.solr.SolrDaoBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,6 +99,41 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
 
     @Test
     @DirtiesContext
+    public void test_save_and_delete() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            String businessStream = loadDataFile(BUSINESS_STREAM_JSON);
+
+            SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream");
+            solrBusinessStream.setName("businessStream");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            dao.save(solrBusinessStream);
+
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+
+            dao.delete(solrBusinessStream.getId());
+
+            assertEquals(null, dao.findById(solrBusinessStream.getId()));
+        }
+    }
+
+    @Test
+    @DirtiesContext
     public void test_find_by_id() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
@@ -121,8 +162,38 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
 
             Assert.assertEquals("name equals","businessStream", businessStreamMetaData.getName());
             Assert.assertEquals("meta data equals", businessStream, businessStreamMetaData.getJson());
+        }
+    }
 
-            server.close();
+    @Test
+    @DirtiesContext
+    public void test_find_by_id_no_result() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            String businessStream = loadDataFile(BUSINESS_STREAM_JSON);
+
+            SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
+            solrBusinessStream.setId("businessStream");
+            solrBusinessStream.setName("businessStream");
+            solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+            dao.save(solrBusinessStream);
+
+            BusinessStreamMetaData businessStreamMetaData = dao.findById("bad id");
+
+            Assert.assertEquals(null, businessStreamMetaData);
         }
     }
 
@@ -158,8 +229,6 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
             Assert.assertEquals("Number of results 1",1, BusinessStreamMetaData.size());
             Assert.assertEquals("name equals","businessStream", BusinessStreamMetaData.get(0).getName());
             Assert.assertEquals("meta data equals", businessStream, BusinessStreamMetaData.get(0).getJson());
-
-            server.close();
         }
     }
 
@@ -306,9 +375,33 @@ public class SolrBusinessStreamMetadataDaoTest extends SolrTestCaseJ4
             Assert.assertEquals("Number of results 5",5, businessStreamMetaData.size());
             Assert.assertEquals("name equals","businessStream1", businessStreamMetaData.get(0).getName());
             Assert.assertEquals("meta data equals", businessStream, businessStreamMetaData.get(0).getJson());
-
-            server.close();
         }
+    }
+
+    @Test
+    public void test_convert_entity_to_solr_input_document() throws IOException {
+
+        SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
+            = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
+        List<SolrConfigurationParameterMetaData> solrConfigurationParameterMetaDataList = new ArrayList<>();
+        solrConfigurationParameterMetaDataList.add(solrConfigurationParameterMetaData);
+
+        String businessStream = loadDataFile(BUSINESS_STREAM_JSON);
+
+        SolrBusinessStream solrBusinessStream = new SolrBusinessStream();
+        solrBusinessStream.setId("businessStream1");
+        solrBusinessStream.setName("businessStream1");
+        solrBusinessStream.setDescription("businessStream1Description");
+        solrBusinessStream.setRawBusinessStreamMetadata(businessStream);
+
+        SolrBusinessStreamMetadataDao dao = new SolrBusinessStreamMetadataDao();
+        SolrInputDocument solrInputDocument = dao.convertEntityToSolrInputDocument(1L, solrBusinessStream);
+
+        Assert.assertEquals("businessStream-businessStream1", solrInputDocument.getFieldValue(SolrDaoBase.ID));
+        Assert.assertEquals("businessStreamMetaData", solrInputDocument.getFieldValue(SolrDaoBase.TYPE));
+        Assert.assertEquals("businessStream1", solrInputDocument.getFieldValue(SolrDaoBase.MODULE_NAME));
+        Assert.assertEquals("businessStream1Description", solrInputDocument.getFieldValue(SolrDaoBase.FLOW_NAME));
+        Assert.assertEquals(businessStream, solrInputDocument.getFieldValue(SolrDaoBase.PAYLOAD_CONTENT));
     }
 
     public static String TEST_HOME() {

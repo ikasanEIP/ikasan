@@ -19,7 +19,7 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent>
      */
     public static final String SYSTEM_EVENT = "systemEvent";
 
-    protected SolrInputDocument getSolrInputFields(Long expiry, SystemEvent systemEvent)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, SystemEvent systemEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(TYPE, SYSTEM_EVENT);

@@ -21,7 +21,7 @@ public class SolrWiretapDao extends SolrDaoBase<WiretapEvent>
 
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, WiretapEvent wiretapEvent)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, WiretapEvent wiretapEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, wiretapEvent.getModuleName() + "-wiretap-"

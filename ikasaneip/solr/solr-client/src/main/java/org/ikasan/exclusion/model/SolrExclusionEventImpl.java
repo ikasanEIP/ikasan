@@ -50,7 +50,7 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
-public class SolrExclusionEventImpl implements ExclusionEvent
+public class SolrExclusionEventImpl implements ExclusionEvent<String>
 {
     /** surrogate id assigned from ORM */
     @Field("id")
@@ -80,56 +80,38 @@ public class SolrExclusionEventImpl implements ExclusionEvent
     @Field("id")
     String errorUri;
 
-    /** flag to indicate if the record has been harvested */
-    boolean harvested;
+
+    /**
+     * Constructor. Used by Solr.
+     */
+    public SolrExclusionEventImpl(){}
 
     /**
      * Constructor
+     *
+     * @param id
      * @param moduleName
      * @param flowName
      * @param identifier
      * @param event
+     * @param timestamp
      * @param errorUri
      */
-    public SolrExclusionEventImpl(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
-    {
+    public SolrExclusionEventImpl(String id, String moduleName, String flowName, String identifier, String event, long timestamp, String errorUri) {
         this.moduleName = moduleName;
-        if(moduleName == null)
-        {
-            throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
-
         this.flowName = flowName;
-        if(flowName == null)
-        {
-            throw new IllegalArgumentException("flowName cannot be 'null'");
-        }
         this.identifier = identifier;
-        if(identifier == null)
-        {
-            throw new IllegalArgumentException("identifier cannot be 'null'");
-        }
-        this.event = new String(event);
-        if(event == null)
-        {
-            throw new IllegalArgumentException("event cannot be 'null'");
-        }
+        this.event = event;
+        this.timestamp = timestamp;
         this.errorUri = errorUri;
-        long now = System.currentTimeMillis();
-        this.timestamp = now;
     }
 
-    /**
-     * Constructor
-     */
-    public SolrExclusionEventImpl(){}
-
-    public long getId() {
-        return new Long(id);
+    public String getId() {
+        return id;
     }
 
-    public void setId(long id) {
-        this.id = new Long(id).toString();
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getModuleName() {
@@ -185,14 +167,15 @@ public class SolrExclusionEventImpl implements ExclusionEvent
         this.errorUri = errorUri;
     }
 
-    public boolean isHarvested()
-    {
-        return harvested;
+    @Override
+    public boolean isHarvested() {
+        // Not relevant for solr implementation.
+        return true;
     }
 
-    public void setHarvested(boolean harvested)
-    {
-        this.harvested = harvested;
+    @Override
+    public void setHarvested(boolean harvested) {
+        // Not relevant for solr implementation.
     }
 
     @Override

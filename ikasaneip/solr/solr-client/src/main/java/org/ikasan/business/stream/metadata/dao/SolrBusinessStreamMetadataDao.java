@@ -51,7 +51,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
     }
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, SolrBusinessStream businessStreamMetaData)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, SolrBusinessStream businessStreamMetaData)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "businessStream-"+businessStreamMetaData.getId());
@@ -145,7 +145,7 @@ public class SolrBusinessStreamMetadataDao extends SolrDaoBase<SolrBusinessStrea
     public void delete(String id)
     {
         this.removeById(BUSINESS_STREAM_METADATA, id);
-    }
+        }
 
     /**
      * Helper method to find by query.

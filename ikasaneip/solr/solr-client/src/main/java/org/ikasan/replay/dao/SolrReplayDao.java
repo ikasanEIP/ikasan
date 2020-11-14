@@ -20,7 +20,7 @@ public class SolrReplayDao extends SolrDaoBase<ReplayEvent>
 
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, ReplayEvent replayEvent)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, ReplayEvent replayEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, replayEvent.getModuleName() + "-replay-" + replayEvent.getId());
