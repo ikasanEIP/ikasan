@@ -22,6 +22,11 @@ public class TooltipHelper
     {
         Tooltip tooltip = new Tooltip();
 
+        tooltip.getElement().getStyle().set("background-color", "#232F34");
+        tooltip.getElement().getStyle().set("color", "#FFFFFF");
+        tooltip.getElement().getStyle().set("border-radius", "10px");
+        tooltip.getElement().getStyle().set("padding", "10px");
+
         tooltip.attachToComponent(component);
 
         tooltip.setPosition(position);

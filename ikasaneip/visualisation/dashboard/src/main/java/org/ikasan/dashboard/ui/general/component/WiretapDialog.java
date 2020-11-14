@@ -6,13 +6,16 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.solr.model.IkasanSolrDocument;
@@ -97,7 +100,15 @@ public class WiretapDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         this.moduleNameTf.setValue(wiretapEvent.getModuleName());
         this.flowNameTf.setValue(wiretapEvent.getFlowName());
         this.componentNameTf.setValue(wiretapEvent.getComponentName());
-        this.eventIdTf.setValue(wiretapEvent.getEventId());
+
+        String route = RouteConfiguration.forSessionScope()
+            .getUrl(EventLifeIdDeepLinkView.class, wiretapEvent.getEventId());
+        Anchor link = new Anchor(route, wiretapEvent.getEventId());
+        link.setTarget("_blank");
+        add(link);
+        link.getStyle().set("color", "blue");
+        this.eventIdTf.setValue(" ");
+        eventIdTf.setPrefixComponent(link);
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(wiretapEvent.getTimestamp()));
 
         super.open(wiretapEvent.getEvent());

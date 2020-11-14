@@ -79,7 +79,7 @@ import java.util.List;
 public class LdapServiceImpl implements LdapService
 {
 	private static Logger logger = LoggerFactory.getLogger(LdapServiceImpl.class);
-    private static final CharsetEncoder VALID_CHARSET_ENCODER = Charset.forName(CharEncoding.ISO_8859_1).newEncoder();
+    private static final CharsetEncoder VALID_CHARSET_ENCODER = Charset.forName(CharEncoding.UTF_8).newEncoder();
 
 	private SecurityDao securityDao;
 	private UserDao userDao;

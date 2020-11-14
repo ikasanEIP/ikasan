@@ -69,7 +69,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
     public IkasanAppLayout()
     {
         Image ikasan = new Image("frontend/images/ikasan-titling-transparent.png", "");
-        ikasan.setHeight("50px");
+        ikasan.setHeight("30px");
 
         IconButton logout = new IconButton(VaadinIcon.SIGN_OUT.create());
         logout.getElement().setProperty("title", "Log Out");

@@ -101,6 +101,8 @@ public class ModuleBuilderTest
             {
                 // set event factory per consumer
                 exactly(2).of(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(2).of(consumer).isRunning();
+                will(returnValue(true));
 
                 // get exclusionService instance per flow
                 exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName1");

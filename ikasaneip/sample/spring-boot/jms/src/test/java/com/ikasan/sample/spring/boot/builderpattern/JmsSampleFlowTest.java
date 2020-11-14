@@ -80,6 +80,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -88,6 +89,7 @@ import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
@@ -98,8 +100,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -120,6 +124,8 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsSampleFlowTest
 {
+    protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
+    protected final static String MODULE_REST_PASSWORD_PROPERTY = "rest.module.password";
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
@@ -148,6 +154,9 @@ public class JmsSampleFlowTest
 
     private MessageListenerVerifier messageListenerVerifier;
 
+    @LocalServerPort
+    private int randomServerPort;
+
     @Before
     public void setup(){
 
@@ -158,7 +167,6 @@ public class JmsSampleFlowTest
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
         messageListenerVerifier.start();
-
     }
 
     @After
@@ -250,8 +258,130 @@ public class JmsSampleFlowTest
         assertEquals(1, exclusions.size());
         ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
         assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+    }
 
+    @DirtiesContext
+    @Test
+    public void test_exclusion_followed_by_resubmission()
+    {
 
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        // update broker config to force exception throwing
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+
+        MockEnvironment mockEnvironment = new MockEnvironment();
+        mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
+        mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
+        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment);
+
+        // Prevent the exclusion from being thrown when resubmitting and restart the flow.
+        exceptionGenerationgBroker.setShouldThrowExclusionException(false);
+        this.flowTestRule.stopFlow();
+        this.flowTestRule.startFlow();
+
+        boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
+            "Jms Sample Flow", "resubmit",  exclusionEvent.getErrorUri());
+
+        assertEquals(true, result);
+
+        exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+    }
+
+    @DirtiesContext
+    @Test
+    public void test_exclusion_followed_by_ignore()
+    {
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        // update broker config to force exception throwing
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+
+        MockEnvironment mockEnvironment = new MockEnvironment();
+        mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
+        mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
+        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment);
+
+        // Prevent the exclusion from being thrown when resubmitting and restart the flow.
+        exceptionGenerationgBroker.setShouldThrowExclusionException(false);
+        this.flowTestRule.stopFlow();
+        this.flowTestRule.startFlow();
+
+        boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
+            "Jms Sample Flow", "ignore",  exclusionEvent.getErrorUri());
+
+        assertEquals(true, result);
+
+        exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
     }
 
     @DirtiesContext
@@ -291,7 +421,7 @@ public class JmsSampleFlowTest
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(EndpointException.class.getName(), error.getExceptionClass());
-        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
+        assertEquals("Retry (delay=10000, maxRetries=10)", error.getAction());
 
         // Verify the exclusion was not stored to DB
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
@@ -385,7 +515,7 @@ public class JmsSampleFlowTest
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(EndpointException.class.getName(), error.getExceptionClass());
-        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
+        assertEquals("Retry (delay=10000, maxRetries=10)", error.getAction());
 
 
     }

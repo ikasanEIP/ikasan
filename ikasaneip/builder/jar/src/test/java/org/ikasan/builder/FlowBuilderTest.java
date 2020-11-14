@@ -194,6 +194,9 @@ public class FlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(1).of(consumer).isRunning();
+                will(returnValue(true));
+
                 oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
                 will(returnValue(exclusionService));
             }
@@ -984,6 +987,8 @@ public class FlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(1).of(consumer).isRunning();
+                will(returnValue(true));
                 oneOf((ResubmissionService)consumer).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
 
             }
@@ -1048,6 +1053,8 @@ public class FlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(1).of(consumer).isRunning();
+                will(returnValue(true));
                 oneOf((ResubmissionService)consumer).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
 
             }
@@ -1078,6 +1085,8 @@ public class FlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
+                atLeast(1).of(consumer).isRunning();
+                will(returnValue(true));
                 oneOf(resubmissionService).setResubmissionEventFactory(with(any(ResubmissionEventFactory.class)));
 
             }

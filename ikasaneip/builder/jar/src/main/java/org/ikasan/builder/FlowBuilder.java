@@ -52,7 +52,6 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.DefaultReplicationFactory;
-import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -919,6 +918,11 @@ public class FlowBuilder implements ApplicationContextAware
         if(flow instanceof IsErrorReportingServiceAware)
         {
             ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
+        }
+
+        if(monitor == null)
+        {
+            monitor = context.getBean(Monitor.class);
         }
 
         if(monitor != null && flow instanceof MonitorSubject)

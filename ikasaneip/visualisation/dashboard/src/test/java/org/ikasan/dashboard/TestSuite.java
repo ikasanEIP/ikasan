@@ -13,6 +13,7 @@ import org.ikasan.dashboard.ui.org.ikasan.dashboard.broadcast.FlowStateBroadcast
 import org.ikasan.dashboard.ui.search.view.SearchViewTest;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapterTest;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapterTest;
+import org.ikasan.dashboard.ui.visualisation.component.ComponentConfigurationDialogTest;
 import org.ikasan.dashboard.ui.visualisation.dao.ModuleMetaDataDaoImplTest;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanFlowLayoutManagerTest;
 import org.ikasan.dashboard.ui.visualisation.layout.IkasanModuleLayoutManagerTest;
@@ -49,6 +50,7 @@ import org.junit.runners.Suite;
     HospitalViewTest.class,
     SearchResultTest.class,
     EventLifeIdDeepLinkViewTest.class,
+    ComponentConfigurationDialogTest.class,
     UITest.class
 })
 public class TestSuite {
