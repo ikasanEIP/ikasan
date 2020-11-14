@@ -10,6 +10,14 @@ public class SolrReplayAudit implements ReplayAudit
     private String targetServer;
     private long timestamp;
 
+    public SolrReplayAudit(long id, String user, String replayReason, String targetServer, long timestamp) {
+        this.id = id;
+        this.user = user;
+        this.replayReason = replayReason;
+        this.targetServer = targetServer;
+        this.timestamp = timestamp;
+    }
+
     @Override
     public Long getId()
     {

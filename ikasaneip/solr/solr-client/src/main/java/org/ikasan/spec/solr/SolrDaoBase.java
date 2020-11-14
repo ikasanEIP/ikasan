@@ -1,11 +1,16 @@
 package org.ikasan.spec.solr;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.ikasan.configuration.metadata.model.SolrComponentConfiguration;
+import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.util.SolrTokenizerQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -313,13 +318,13 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
     }
 
     /**
-     * Query solr index by id for a given type
+     * Build SolrQuery by id for a given type
      *
      * @param id
      * @param type
      * @return String
      */
-    protected String buildIdQuery(String id, String type)
+    protected SolrQuery buildIdQuery(String id, String type)
     {
         StringBuffer idBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();
@@ -342,26 +347,27 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
             bufferFinalQuery.append(AND).append(typeBuffer);
         }
 
-        return bufferFinalQuery.toString();
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(bufferFinalQuery.toString());
+
+        return solrQuery;
     }
 
     /**
-     * Query solr index by id for a given type
+     * Build SolrQuery by errorUri for a given type
      *
      * @param uri
      * @param type
      * @return String
      */
-    protected String buildErrorUriQuery(String uri, String type)
-    {
+    protected SolrQuery buildErrorUriQuery(String uri, String type) {
         StringBuffer uriBuffer = new StringBuffer();
         StringBuffer typeBuffer = new StringBuffer();
 
 
         uriBuffer.append(ERROR_URI).append(COLON).append("\"").append(uri).append("\"");
 
-        if(type != null && !type.trim().isEmpty())
-        {
+        if (type != null && !type.trim().isEmpty()) {
             typeBuffer.append(TYPE + COLON);
 
             typeBuffer.append("\"").append(type).append("\" ");
@@ -370,12 +376,14 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
         StringBuffer bufferFinalQuery = new StringBuffer(uriBuffer);
 
-        if(typeBuffer.length() > 0)
-        {
+        if (typeBuffer.length() > 0) {
             bufferFinalQuery.append(AND).append(typeBuffer);
         }
 
-        return bufferFinalQuery.toString();
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(bufferFinalQuery.toString());
+
+        return solrQuery;
     }
 
     /**
@@ -465,7 +473,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
             UpdateRequest req = new UpdateRequest();
             req.setBasicAuthCredentials(this.solrUsername, this.solrPassword);
 
-            req.deleteByQuery(query.toString());
+            req.deleteByQuery(query);
 
             if(this.solrClient == null)
             {
@@ -481,12 +489,17 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         }
     }
 
+    /**
+     * Save an individual T entity
+     *
+     * @param event
+     */
     public void save(T event)
     {
         long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
         long expiry = millisecondsInDay + System.currentTimeMillis();
 
-        SolrInputDocument document = getSolrInputFields(expiry, event);
+        SolrInputDocument document = convertEntityToSolrInputDocument(expiry, event);
 
         try
         {
@@ -505,6 +518,10 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
     }
 
+    /**
+     * Save a list of T entities.
+     * @param events
+     */
     public void save(List<T> events)
     {
         long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
@@ -517,7 +534,7 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
 
             for (T event : events)
             {
-                SolrInputDocument document = getSolrInputFields(expiry, event);
+                SolrInputDocument document = convertEntityToSolrInputDocument(expiry, event);
 
                 req.add(document);
 
@@ -532,6 +549,13 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         }
     }
 
+    /**
+     * Helper method to wrap up a solr UpdateRequest commit to the Solr index.
+     *
+     * @param req
+     * @throws org.apache.solr.client.solrj.SolrServerException
+     * @throws java.io.IOException
+     */
     protected void commitSolrRequest(UpdateRequest req)
         throws org.apache.solr.client.solrj.SolrServerException, java.io.IOException
     {
@@ -542,5 +566,12 @@ public abstract class SolrDaoBase<T> implements SolrInitialisationService
         logger.debug("Solr Commit Response: " + rsp.toString());
     }
 
-    protected abstract SolrInputDocument getSolrInputFields(Long expiry, T event);
+    /**
+     * Abstract method to convert the T entity to a SolrInputDocument
+     *
+     * @param expiry
+     * @param event
+     * @return
+     */
+    protected abstract SolrInputDocument convertEntityToSolrInputDocument(Long expiry, T event);
 }

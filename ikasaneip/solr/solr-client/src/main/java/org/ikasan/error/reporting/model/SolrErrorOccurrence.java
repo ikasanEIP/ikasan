@@ -130,68 +130,27 @@ public class SolrErrorOccurrence implements ErrorOccurrence<byte[]>, HarvestEven
      */
     public SolrErrorOccurrence()
     {
-        // required by the ORM
+        // required by Solr
     }
 
-    /**
-     * Constructor
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @param errorDetail
-     * @param event
-     */
-    public SolrErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, byte[] event, String eventAsString)
-    {
+    public SolrErrorOccurrence(String uri, String moduleName, String flowName, String flowElementName
+        , String errorAction, String errorDetail, String errorMessage, String exceptionClass, String eventLifeIdentifier
+        , String eventRelatedIdentifier, String eventAsString, long timestamp) {
+        this.uri = uri;
         this.moduleName = moduleName;
-        if(moduleName == null)
-        {
-            throw new IllegalArgumentException("moduleName cannot be 'null");
-        }
-
         this.flowName = flowName;
-        if(flowName == null)
-        {
-            throw new IllegalArgumentException("flowName cannot be 'null");
-        }
-
         this.flowElementName = flowElementName;
-        if(flowElementName == null)
-        {
-            throw new IllegalArgumentException("flowElementName cannot be 'null");
-        }
-
+        this.errorAction = errorAction;
         this.errorDetail = errorDetail;
-        if(errorDetail == null)
-        {
-            throw new IllegalArgumentException("errorDetail cannot be 'null");
-        }
-
-        this.exceptionClass = exceptionClass;
-        if(exceptionClass == null)
-        {
-            throw new IllegalArgumentException("exceptionClass cannot be 'null");
-        }
-
         this.errorMessage = errorMessage;
+        this.exceptionClass = exceptionClass;
+        this.eventLifeIdentifier = eventLifeIdentifier;
+        this.eventRelatedIdentifier = eventRelatedIdentifier;
         this.eventAsString = eventAsString;
-        this.timestamp = System.currentTimeMillis();
-        this.uri = String.valueOf(this.hashCode());
+        this.timestamp = timestamp;
     }
 
-    /**
-     * Constructor
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @param errorDetail
-     */
-    public SolrErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
-    {
-        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null, null);
-    }
-
-    public String getModuleName() 
+    public String getModuleName()
     {
         return moduleName;
     }

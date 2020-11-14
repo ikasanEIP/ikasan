@@ -2,7 +2,7 @@ package org.ikasan.rest.dashboard.model.exclusion;
 
 import org.ikasan.spec.exclusion.ExclusionEvent;
 
-public class ExclusionEventImpl implements ExclusionEvent
+public class ExclusionEventImpl implements ExclusionEvent<String>
 {
     /** surrogate id assigned from ORM */
     private String id;
@@ -33,12 +33,12 @@ public class ExclusionEventImpl implements ExclusionEvent
      */
     public ExclusionEventImpl(){}
 
-    public long getId() {
-        return new Long(id);
+    public String getId() {
+        return id;
     }
 
-    public void setId(long id) {
-        this.id = new Long(id).toString();
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getModuleName() {

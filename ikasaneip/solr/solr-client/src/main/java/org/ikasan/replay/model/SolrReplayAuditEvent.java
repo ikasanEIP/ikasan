@@ -11,6 +11,14 @@ public class SolrReplayAuditEvent implements ReplayAuditEvent<String>
     private String resultMessage;
     private long timestamp;
 
+    public SolrReplayAuditEvent(String id, ReplayAudit replayAudit, boolean success, String resultMessage, long timestamp) {
+        this.id = id;
+        this.replayAudit = replayAudit;
+        this.success = success;
+        this.resultMessage = resultMessage;
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String getId()
     {

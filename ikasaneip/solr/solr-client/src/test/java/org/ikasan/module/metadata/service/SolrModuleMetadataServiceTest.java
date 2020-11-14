@@ -20,6 +20,7 @@ import org.ikasan.module.metadata.model.SolrModuleMetaDataImpl;
 import org.ikasan.module.metadata.model.SolrTransitionImpl;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.persistence.BatchInsert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -81,10 +82,99 @@ public class SolrModuleMetadataServiceTest extends SolrTestCaseJ4
 
             batchInsert.insert(moduleMetaDataList);
 
-            batchInsert.deleteById("module name");
+            assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
+            assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+        }
+    }
 
-            assertEquals(0, server.query(new SolrQuery("*:*")).getResults().getNumFound());
-            assertEquals(0, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
+    @Test
+    @DirtiesContext
+    public void test_find_all() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            ModuleMetaData solrConfigurationMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+
+            List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
+            moduleMetaDataList.add(solrConfigurationMetaData);
+
+            SolrModuleMetadataServiceImpl solrModuleMetadataService = new SolrModuleMetadataServiceImpl(dao);
+            solrModuleMetadataService.insert(moduleMetaDataList);
+
+            Assert.assertEquals(1, solrModuleMetadataService.findAll().size());
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_find_by_id() throws Exception {
+        Path path = createTempDir();
+
+        SolrResourceLoader loader = new SolrResourceLoader(path);
+        NodeConfig config = new NodeConfig.NodeConfigBuilder("testnode", loader)
+            .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString())
+            .build();
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            CoreAdminRequest.Create createRequest = new CoreAdminRequest.Create();
+            createRequest.setCoreName("ikasan");
+            createRequest.setConfigSet("minimal");
+            server.request(createRequest);
+
+            SolrModuleMetadataDao dao = new SolrModuleMetadataDao();
+            dao.setSolrClient(server);
+            dao.setDaysToKeep(0);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            SimpleModule m = new SimpleModule();
+            m.addAbstractTypeMapping(ModuleMetaData.class, SolrModuleMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowMetaData.class, SolrFlowMetaDataImpl.class);
+            m.addAbstractTypeMapping(FlowElementMetaData.class, SolrFlowElementMetaDataImpl.class);
+            m.addAbstractTypeMapping(Transition.class, SolrTransitionImpl.class);
+
+            objectMapper.registerModule(m);
+
+            ModuleMetaData solrConfigurationMetaData = objectMapper.readValue(loadDataFile(MODULE_RESULT_JSON), SolrModuleMetaDataImpl.class);
+
+            List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
+            moduleMetaDataList.add(solrConfigurationMetaData);
+
+            SolrModuleMetadataServiceImpl solrModuleMetadataService = new SolrModuleMetadataServiceImpl(dao);
+            solrModuleMetadataService.insert(moduleMetaDataList);
+
+            ModuleMetaData found = solrModuleMetadataService.findById("module name");
+
+            Assert.assertEquals("module name", found.getName());
+            Assert.assertEquals("module version", found.getVersion());
+            Assert.assertEquals("module description", found.getDescription());
+            Assert.assertEquals(6, found.getFlows().size());
         }
     }
 
@@ -124,13 +214,16 @@ public class SolrModuleMetadataServiceTest extends SolrTestCaseJ4
             List<ModuleMetaData> moduleMetaDataList = new ArrayList<>();
             moduleMetaDataList.add(solrConfigurationMetaData);
 
-            BatchInsert<ModuleMetaData> batchInsert = new SolrModuleMetadataServiceImpl(dao);
+            SolrModuleMetadataServiceImpl solrModuleMetadataService = new SolrModuleMetadataServiceImpl(dao);
 
-            batchInsert.insert(moduleMetaDataList);
+            solrModuleMetadataService.insert(moduleMetaDataList);
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("ikasan", new SolrQuery("*:*")).getResults().getNumFound());
 
+            solrModuleMetadataService.deleteById("module name");
+
+            Assert.assertEquals(0, solrModuleMetadataService.findAll().size());
         }
     }
 

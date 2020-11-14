@@ -1,4 +1,4 @@
-package org.ikasan.error.service;
+package org.ikasan.error.reporting.service;
 
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -8,7 +8,6 @@ import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
-import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.junit.Test;
@@ -22,7 +21,7 @@ import java.util.List;
 /**
  * Created by Ikasan Development Team on 04/08/2017.
  */
-public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
+public class SolrErrorReportingServiceTest extends SolrTestCaseJ4
 {
 
 
@@ -30,7 +29,7 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
     @DirtiesContext
     public void test_constructor_dao_null_exception()
     {
-        new SolrErrorReportingManagementServiceImpl(null);
+        new SolrErrorReportingServiceImpl(null);
     }
 
     @Test
@@ -54,11 +53,13 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
 
-            SolrErrorReportingManagementServiceImpl solrErrorReportingManagementService
-                    = new SolrErrorReportingManagementServiceImpl(dao);
+            SolrErrorReportingServiceImpl solrErrorReportingManagementService
+                    = new SolrErrorReportingServiceImpl(dao);
 
-            SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
-                "eventId", "relatedEventId", "event", 12345l);
+            SolrErrorOccurrence event = new SolrErrorOccurrence("uri", "moduleName", "flowName"
+                , "componentName", "action", "detail", "message", "exceptionClass"
+                , "eventId", "relatedEventId", "eventAsString", 12345L);
+
 
 
             solrErrorReportingManagementService.save(event);
@@ -90,11 +91,13 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
             dao.setSolrClient(server);
             dao.setDaysToKeep(0);
 
-            SolrErrorReportingManagementServiceImpl solrErrorReportingManagementService
-                = new SolrErrorReportingManagementServiceImpl(dao);
+            SolrErrorReportingServiceImpl solrErrorReportingManagementService
+                = new SolrErrorReportingServiceImpl(dao);
 
-            SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
-                "eventId", "relatedEventId", "event", 12345l);
+            SolrErrorOccurrence event = new SolrErrorOccurrence("uri", "moduleName", "flowName"
+                , "componentName", "action", "detail", "message", "exceptionClass"
+                , "eventId", "relatedEventId", "eventAsString", 12345L);
+
 
             List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
             errorOccurrences.add(event);
@@ -130,10 +133,12 @@ public class SolrErrorReportingManagementServiceTest extends SolrTestCaseJ4
             dao.setDaysToKeep(0);
 
             BatchInsert<ErrorOccurrence> batchInsert
-                = new SolrErrorReportingManagementServiceImpl(dao);
+                = new SolrErrorReportingServiceImpl(dao);
 
-            SolrErrorOccurrence event = new SolrErrorOccurrence("moduleName", "flowName", "componentName",
-                "eventId", "relatedEventId", "event", 12345l);
+            SolrErrorOccurrence event = new SolrErrorOccurrence("uri", "moduleName", "flowName"
+                , "componentName", "action", "detail", "message", "exceptionClass"
+                , "eventId", "relatedEventId", "eventAsString", 12345L);
+
 
             List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
             errorOccurrences.add(event);

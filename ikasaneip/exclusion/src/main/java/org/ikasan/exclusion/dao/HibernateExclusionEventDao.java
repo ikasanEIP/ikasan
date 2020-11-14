@@ -457,7 +457,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     {
         getHibernateTemplate().execute((session) -> {
             List<Long> exclusionEventIds = events.stream()
-                .map(e -> e.getId())
+                .map(e -> (Long)e.getId())
                 .collect(Collectors.toList());
 
             List<List<Long>> partitionedIds = Lists.partition(exclusionEventIds, 300);

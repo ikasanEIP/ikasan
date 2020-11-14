@@ -2,12 +2,9 @@ package org.ikasan.replay.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.replay.model.SolrReplayAuditEvent;
 import org.ikasan.spec.persistence.BatchInsert;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +59,7 @@ public class SolrReplayAuditDao extends SolrDaoBase<SolrReplayAuditEvent> implem
     }
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, SolrReplayAuditEvent event)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, SolrReplayAuditEvent event)
     {
         SolrInputDocument document = new SolrInputDocument();
 

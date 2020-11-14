@@ -49,20 +49,20 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
-public interface ExclusionEvent
+public interface ExclusionEvent<T>
 {
 
     /**
      *
      * @return
      */
-    public long getId();
+    public T getId();
 
     /**
      *
      * @param id
      */
-    public void setId(long id);
+    public void setId(T id);
 
     /**
      *

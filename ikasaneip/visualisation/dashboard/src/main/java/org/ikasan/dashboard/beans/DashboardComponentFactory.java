@@ -7,7 +7,7 @@ import org.ikasan.configuration.metadata.service.SolrComponentConfigurationMetad
 import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.util.DashboardCacheAdapter;
 import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
-import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
+import org.ikasan.error.reporting.service.SolrErrorReportingServiceImpl;
 import org.ikasan.exclusion.dao.SolrExclusionEventDao;
 import org.ikasan.exclusion.service.SolrExclusionServiceImpl;
 import org.ikasan.hospital.dao.SolrHospitalDao;
@@ -23,15 +23,12 @@ import org.ikasan.solr.dao.SolrGeneralDaoImpl;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.cache.FlowStateCacheAdapter;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.BusinessStreamMetaDataService;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.dao.SolrSystemEventDao;
 import org.ikasan.systemevent.service.SolrSystemEventServiceImpl;
 import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
@@ -85,11 +82,11 @@ public class DashboardComponentFactory
     }
 
     @Bean("errorOccurrenceBatchInsert")
-    public SolrErrorReportingManagementServiceImpl solrErrorReportingService()
+    public SolrErrorReportingServiceImpl solrErrorReportingService()
     {
         SolrErrorReportingServiceDao dao = new SolrErrorReportingServiceDao();
         dao.initStandalone(solrUrl, 30);
-        SolrErrorReportingManagementServiceImpl service = new SolrErrorReportingManagementServiceImpl(dao);
+        SolrErrorReportingServiceImpl service = new SolrErrorReportingServiceImpl(dao);
         service.setSolrUsername(solrUsername);
         service.setSolrPassword(solrPassword);
 

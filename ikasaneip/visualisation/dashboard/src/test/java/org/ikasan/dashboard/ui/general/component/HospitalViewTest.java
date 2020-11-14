@@ -14,7 +14,7 @@ import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.SpringVaadinServletService;
 import org.ikasan.dashboard.Application;
 import org.ikasan.error.reporting.model.SolrErrorOccurrence;
-import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
+import org.ikasan.error.reporting.service.SolrErrorReportingServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.junit.After;
@@ -46,7 +46,7 @@ public class HospitalViewTest {
     private SolrGeneralServiceImpl solrSearchService;
 
     @MockBean
-    private SolrErrorReportingManagementServiceImpl solrErrorReportingService;
+    private SolrErrorReportingServiceImpl solrErrorReportingService;
 
     @Autowired
     private ApplicationContext ctx;

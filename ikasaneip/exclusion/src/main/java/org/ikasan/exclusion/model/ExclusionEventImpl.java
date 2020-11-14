@@ -50,10 +50,10 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
-public class ExclusionEventImpl implements ExclusionEvent, HarvestEvent
+public class ExclusionEventImpl implements ExclusionEvent<Long>, HarvestEvent
 {
     /** surrogate id assigned from ORM */
-    long id;
+    Long id;
 
     /** module name */
     String moduleName;
@@ -120,11 +120,11 @@ public class ExclusionEventImpl implements ExclusionEvent, HarvestEvent
      */
     protected ExclusionEventImpl(){}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
