@@ -58,7 +58,7 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
             {
                 super.removeById(MODULE_METADATA, moduleMetaData.getName());
 
-                SolrInputDocument document = getSolrInputFields(null,moduleMetaData);
+                SolrInputDocument document = convertEntityToSolrInputDocument(null,moduleMetaData);
                 req.add(document);
 
                 logger.debug("Adding document: " + document);
@@ -73,7 +73,7 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
     }
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, ModuleMetaData moduleMetaData)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, ModuleMetaData moduleMetaData)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, moduleMetaData.getName());
@@ -94,12 +94,9 @@ public class SolrModuleMetadataDao extends SolrDaoBase<ModuleMetaData>
 
     public ModuleMetaData findById(String id)
     {
-        String queryString = "id:\"" + id + "\" AND type:\"" + MODULE_METADATA + "\"";
+        SolrQuery query = super.buildIdQuery(id, MODULE_METADATA);
 
-        logger.debug("queryString: " + queryString);
-
-        SolrQuery query = new SolrQuery();
-        query.setQuery(queryString);
+        logger.debug("query: " + query);
 
         List<SolrModule> beans = this.findByQuery(query);
 

@@ -12,7 +12,7 @@ import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.SpringVaadinServletService;
 import org.ikasan.dashboard.Application;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
-import org.ikasan.error.reporting.service.SolrErrorReportingManagementServiceImpl;
+import org.ikasan.error.reporting.service.SolrErrorReportingServiceImpl;
 import org.ikasan.replay.service.SolrReplayAuditServiceImpl;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
@@ -49,7 +49,7 @@ public class SearchResultTest {
     private SolrGeneralServiceImpl solrSearchService;
 
     @MockBean
-    private SolrErrorReportingManagementServiceImpl solrErrorReportingService;
+    private SolrErrorReportingServiceImpl solrErrorReportingService;
 
     @MockBean
     private HospitalAuditService hospitalAuditService;

@@ -1,16 +1,22 @@
 package org.ikasan.configuration.metadata.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.configuration.metadata.model.SolrConfigurationMetaData;
 import org.ikasan.configuration.metadata.model.SolrConfigurationParameterMetaData;
+import org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao;
+import org.ikasan.error.reporting.model.SolrErrorOccurrence;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.ikasan.spec.solr.SolrDaoBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,6 +121,33 @@ public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
 
     @Test
     @DirtiesContext
+    public void test_find_by_id_not_found() throws Exception {
+
+        try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
+        {
+            init(server);
+
+            SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
+                = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
+            List<SolrConfigurationParameterMetaData> solrConfigurationParameterMetaDataList = new ArrayList<>();
+            solrConfigurationParameterMetaDataList.add(solrConfigurationParameterMetaData);
+
+            SolrConfigurationMetaData event = new SolrConfigurationMetaData("configurationId", solrConfigurationParameterMetaDataList,
+                "description", "implementingClass");
+
+            List<ConfigurationMetaData> solrConfigurationMetaData = new ArrayList<>();
+            solrConfigurationMetaData.add(event);
+
+            dao.save(solrConfigurationMetaData);
+
+            SolrConfigurationMetaData configurationMetaData = (SolrConfigurationMetaData)dao.findById("bad id");
+
+            Assert.assertEquals(null, configurationMetaData);
+        }
+    }
+
+    @Test
+    @DirtiesContext
     public void test_find_all() throws Exception {
 
         try (EmbeddedSolrServer server = new EmbeddedSolrServer(config, "ikasan"))
@@ -175,9 +208,35 @@ public class SolrComponentConfigurationMetadataDaoTest extends SolrTestCaseJ4
             Assert.assertEquals("description equals","description", configurationMetaData.get(0).getDescription());
             Assert.assertEquals("implementingClass equals","implementingClass", configurationMetaData.get(0).getImplementingClass());
             Assert.assertEquals("1 configuration parameter", 1, ((List<ConfigurationParameterMetaData>)configurationMetaData.get(0).getParameters()).size());
-
-            server.close();
         }
+    }
+
+    @Test
+    public void test_convert_entity_to_solr_input_document() {
+
+        SolrConfigurationParameterMetaData solrConfigurationParameterMetaData
+            = new SolrConfigurationParameterMetaData(12345L, "name", "value", "description", "implementingClass");
+        List<SolrConfigurationParameterMetaData> solrConfigurationParameterMetaDataList = new ArrayList<>();
+        solrConfigurationParameterMetaDataList.add(solrConfigurationParameterMetaData);
+
+        SolrConfigurationMetaData event = new SolrConfigurationMetaData("configurationId", solrConfigurationParameterMetaDataList,
+            "description", "implementingClass");
+
+        SolrComponentConfigurationMetadataDao dao = new SolrComponentConfigurationMetadataDao();
+        SolrInputDocument solrInputDocument = dao.convertEntityToSolrInputDocument(1L, event);
+
+        String metadata;
+        try
+        {
+            metadata = new ObjectMapper().writeValueAsString(event);
+        }
+        catch (JsonProcessingException e)
+        {
+            throw new RuntimeException("Unable to convert ["+event+"] to json format.");
+        }
+        Assert.assertEquals("configurationId", solrInputDocument.getFieldValue(SolrDaoBase.ID));
+        Assert.assertEquals("componentConfiguration", solrInputDocument.getFieldValue(SolrDaoBase.TYPE));
+        Assert.assertEquals(metadata, solrInputDocument.getFieldValue(SolrDaoBase.PAYLOAD_CONTENT));
     }
 
     public static String TEST_HOME() {

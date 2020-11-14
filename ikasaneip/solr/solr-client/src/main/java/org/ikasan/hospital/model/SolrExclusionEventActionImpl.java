@@ -16,6 +16,30 @@ public class SolrExclusionEventActionImpl implements ExclusionEventAction<String
     private long timestamp;
     private String comment;
 
+    /**
+     * Constructor
+     *
+     * @param moduleName
+     * @param flowName
+     * @param errorUri
+     * @param actionedBy
+     * @param action
+     * @param event
+     * @param timestamp
+     * @param comment
+     */
+    public SolrExclusionEventActionImpl(String moduleName, String flowName, String errorUri, String actionedBy, String action
+        , String event, long timestamp, String comment) {
+        this.moduleName = moduleName;
+        this.flowName = flowName;
+        this.errorUri = errorUri;
+        this.actionedBy = actionedBy;
+        this.action = action;
+        this.event = event;
+        this.timestamp = timestamp;
+        this.comment = comment;
+    }
+
     @Override
     public String getModuleName()
     {

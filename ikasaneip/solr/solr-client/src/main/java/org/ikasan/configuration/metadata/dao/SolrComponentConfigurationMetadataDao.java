@@ -6,21 +6,16 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.configuration.metadata.model.SolrComponentConfiguration;
 import org.ikasan.configuration.metadata.model.SolrConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.solr.SolrConstants;
 import org.ikasan.spec.solr.SolrDaoBase;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +49,7 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase<Configura
             {
                 super.removeById(COMPONENT_CONFIGURATION, configurationMetaData.getConfigurationId());
 
-                SolrInputDocument document = getSolrInputFields(null,configurationMetaData);
+                SolrInputDocument document = convertEntityToSolrInputDocument(null,configurationMetaData);
                 req.add(document);
 
                 logger.debug("Adding document: " + document);
@@ -70,7 +65,7 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase<Configura
     }
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, ConfigurationMetaData configurationMetaData)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, ConfigurationMetaData configurationMetaData)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, configurationMetaData.getConfigurationId());
@@ -165,8 +160,6 @@ public class SolrComponentConfigurationMetadataDao extends SolrDaoBase<Configura
         query.setStart(0);
         query.setRows(1000);
         query.setQuery(queryString);
-
-        List<SolrComponentConfiguration> beans = null;
 
         try
         {

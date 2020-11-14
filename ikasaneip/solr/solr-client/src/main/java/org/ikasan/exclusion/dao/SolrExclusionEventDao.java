@@ -20,7 +20,7 @@ public class SolrExclusionEventDao extends SolrDaoBase<ExclusionEvent>
     public static final String EXCLUSION = "exclusion";
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, ExclusionEvent exclusionEvent)
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, ExclusionEvent exclusionEvent)
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, exclusionEvent.getModuleName() + ":" + "exclusion" + ":" + exclusionEvent.getErrorUri());

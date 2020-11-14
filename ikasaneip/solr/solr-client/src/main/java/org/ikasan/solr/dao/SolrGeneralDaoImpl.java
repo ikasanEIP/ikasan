@@ -24,6 +24,10 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralDaoImpl.class);
 
+    public static final String ASCENDING = "ASCENDING";
+    public static final String DESCENDING = "DESCENDING";
+
+
     @Override
     public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize
         , List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder) {
@@ -87,7 +91,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
 
         if(sortField != null && !sortField.isEmpty() && sortOrder != null && !sortOrder.isEmpty())
         {
-            if(sortOrder.equals("DESCENDING"))
+            if(sortOrder.equals(DESCENDING))
             {
                 query.setSort(sortField, SolrQuery.ORDER.desc);
             }
@@ -136,18 +140,14 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
     @Override
     public IkasanSolrDocument findById(String type, String id) {
 
-        SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(super.buildIdQuery(id, type));
-
+        SolrQuery solrQuery = super.buildIdQuery(id, type);
         return this.getUniqueResult(solrQuery);
     }
 
     @Override
     public IkasanSolrDocument findByErrorUri(String type, String uri) {
 
-        SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(super.buildErrorUriQuery(uri, type));
-
+        SolrQuery solrQuery = super.buildErrorUriQuery(uri, type);
         return this.getUniqueResult(solrQuery);
     }
 
@@ -166,7 +166,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
             return beans.stream().findFirst().orElse(null);
         }
         catch (Exception e) {
-            throw new RuntimeException(String.format("Caught exception perform ikasan solr search using querr %s!", solrQuery), e);
+            throw new RuntimeException(String.format("Caught exception perform ikasan solr search using query %s!", solrQuery), e);
         }
     }
 
@@ -183,7 +183,7 @@ public class SolrGeneralDaoImpl extends SolrDaoBase<IkasanSolrDocument> implemen
     }
 
     @Override
-    protected SolrInputDocument getSolrInputFields(Long expiry, IkasanSolrDocument ikasanSolrDocument) {
+    protected SolrInputDocument convertEntityToSolrInputDocument(Long expiry, IkasanSolrDocument ikasanSolrDocument) {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, ikasanSolrDocument.getId());
         document.addField(TYPE, ikasanSolrDocument.getType());
