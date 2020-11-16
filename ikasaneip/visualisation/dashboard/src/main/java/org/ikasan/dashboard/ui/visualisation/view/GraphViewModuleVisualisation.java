@@ -187,14 +187,14 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         this.flowComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<Flow>, Flow>>) comboBoxFlowComponentValueChangeEvent ->
         {
             if (comboBoxFlowComponentValueChangeEvent.getValue() != null) {
-                logger.info("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+                logger.debug("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
                 this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
                 this.moduleVisualisation.redraw();
 
                 this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
 
                 this.fireModuleFlowChangeEvent();
-                logger.info("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
+                logger.debug("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
             }
         });
     }
@@ -256,7 +256,7 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.info("Received flow state: " + flowState);
+                logger.debug("Received flow state: " + flowState);
             });
         });
 

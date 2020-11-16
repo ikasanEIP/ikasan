@@ -107,11 +107,9 @@ public class HospitalViewTest {
         Mockito.when(this.solrSearchService.findById("exclusion", "12345"))
             .thenReturn(document);
 
-        SolrErrorOccurrence errorOccurrence = new SolrErrorOccurrence("moduleName", "flowName"
-            , "flowElementName", "errorDetail"
-            , "errorMessage", "exceptionClass"
-            , 1L, "event".getBytes(), "eventAsString");
-        errorOccurrence.setAction("exclusion");
+        SolrErrorOccurrence event = new SolrErrorOccurrence("uri", "moduleName", "flowName"
+            , "componentName", "action", "detail", "message", "exceptionClass"
+            , "eventId", "relatedEventId", "eventAsString", 12345L);
 
         Mockito.when(this.solrSearchService.findByErrorUri("error", "id"))
             .thenReturn(document);

@@ -16,6 +16,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
+import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGrid;
 import org.ikasan.dashboard.ui.search.model.hospital.ExclusionEventActionImpl;
 import org.ikasan.dashboard.ui.util.DateFormatter;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
@@ -70,8 +71,10 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
     private String translatedEventActionMessage;
 
+    private SolrSearchFilteringGrid searchResultsGrid;
+
     public HospitalDialog(SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService, HospitalAuditService hospitalAuditService,
-                          ResubmissionService resubmissionRestService, ModuleMetaDataService moduleMetadataService)
+                          ResubmissionService resubmissionRestService, ModuleMetaDataService moduleMetadataService, SolrSearchFilteringGrid searchResultsGrid)
     {
         this.solrGeneralService = solrGeneralService;
         if(this.solrGeneralService == null)
@@ -92,6 +95,11 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
         if(this.moduleMetadataService == null)
         {
             throw new IllegalArgumentException("moduleMetadataService cannot be null!");
+        }
+        this.searchResultsGrid = searchResultsGrid;
+        if(this.searchResultsGrid == null)
+        {
+            throw new IllegalArgumentException("searchResultsGrid cannot be null!");
         }
 
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
@@ -196,6 +204,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             resubmitButton.setVisible(false);
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
+                            this.searchResultsGrid.getDataProvider().refreshAll();
                             NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-resubmit-success", UI.getCurrent().getLocale()));
                             this.close();
                         });
@@ -250,6 +259,7 @@ public class HospitalDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
                             resubmitButton.setVisible(false);
                             ignoreButton.setVisible(false);
                             progressIndicatorDialog.close();
+                            this.searchResultsGrid.getDataProvider().refreshAll();
                             NotificationHelper.showUserNotification(getTranslation("notification.hospital-event-ignore-success", UI.getCurrent().getLocale()));
                             this.close();
                         });
