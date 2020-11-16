@@ -43,7 +43,7 @@ public class NetworkDiagram extends Component implements HasSize {
     private final Options options;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    // Holds all eventtypes already registered client side.
+    // Holds all event types already registered client side.
     private final Set<Class<? extends Event>> enabledEvents = new LinkedHashSet<>();
 
     private DataProvider<Edge, ?> edgesDataProvider = DataProvider.ofItems();
@@ -65,7 +65,6 @@ public class NetworkDiagram extends Component implements HasSize {
             .withIsGetterVisibility(Visibility.NONE).withFieldVisibility(Visibility.ANY));
         // remains utf8 escaped chars
         mapper.configure(Feature.ESCAPE_NON_ASCII, true);
-        // mapper.getFactory().configure(JsonGenerator, true);
         this.options = Objects.requireNonNull(options);
         if (options.getManipulation() == null) {
             options.setManipulation(new Manipulation());
