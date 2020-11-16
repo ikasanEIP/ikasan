@@ -24,6 +24,7 @@ import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
 import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.spec.module.client.MetaDataService;
@@ -188,10 +189,23 @@ public class GraphViewModuleVisualisation extends VerticalLayout {
         {
             if (comboBoxFlowComponentValueChangeEvent.getValue() != null) {
                 logger.debug("Switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
-                this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
-                this.moduleVisualisation.redraw();
-
                 this.currentFlow = comboBoxFlowComponentValueChangeEvent.getValue();
+
+                this.moduleVisualisation.setCurrentFlow(comboBoxFlowComponentValueChangeEvent.getValue());
+
+                ConfigurationMetaData<List<ConfigurationParameterMetaData>> flowConfiguration = this.configurationRestService
+                    .getFlowConfiguration(this.currentModule.getUrl(), this.currentModule.getName(), this.currentFlow.getName());
+
+                if(flowConfiguration != null) {
+                    flowConfiguration.getParameters().stream()
+                        .filter(configurationParameterMetaData -> configurationParameterMetaData.getName().equals("isRecording"))
+                        .findFirst()
+                        .ifPresent(configurationParameterMetaData ->
+                            comboBoxFlowComponentValueChangeEvent.getValue()
+                                .setRecording((Boolean) configurationParameterMetaData.getValue()));
+                }
+
+                this.moduleVisualisation.redraw();
 
                 this.fireModuleFlowChangeEvent();
                 logger.debug("Finished switching to flow {}", comboBoxFlowComponentValueChangeEvent.getValue().getName());
