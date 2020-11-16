@@ -218,10 +218,24 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         }
 
         this.recoveringButton.setText(Integer.toString(recovering));
+        this.manageStatusButtonWidth(this.recoveringButton, recovering);
         this.stoppedButton.setText(Integer.toString(stopped));
+        this.manageStatusButtonWidth(this.stoppedButton, stopped);
         this.runningButton.setText(Integer.toString(running));
+        this.manageStatusButtonWidth(this.runningButton, running);
         this.pauseButton.setText(Integer.toString(paused));
+        this.manageStatusButtonWidth(this.pauseButton, paused);
         this.stoppedInErrorButton.setText(Integer.toString(inError));
+        this.manageStatusButtonWidth(this.stoppedInErrorButton, inError);
+    }
+
+    private void manageStatusButtonWidth(Button button, Integer count) {
+        if(count > 9) {
+            button.setWidth("55px");
+        }
+        else {
+            button.setWidth("35px");
+        }
     }
 
     @Override
