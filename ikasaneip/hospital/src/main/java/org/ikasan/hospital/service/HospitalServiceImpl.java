@@ -153,6 +153,11 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         ResubmissionService resubmissionService = getResubmissionService(flow);
         Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
         ExclusionEvent exclusionEvent = exclusionManagementService.find(errorUri);
+        if(exclusionEvent == null) {
+            throw new RuntimeException(String.format("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]"
+                ,moduleName, flowName, errorUri));
+        }
+
         Object deserialisedEvent = serialiser.deserialise(exclusionEvent.getEvent());
         logger.debug("deserialisedEvent " + deserialisedEvent);
         resubmissionService.onResubmission(deserialisedEvent);
@@ -208,6 +213,12 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     public void ignore(String moduleName, String flowName, String errorUri, String userName)
     {
         ExclusionEvent exclusionEvent = exclusionManagementService.find(errorUri);
+
+        if(exclusionEvent == null) {
+            throw new RuntimeException(String.format("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]"
+                ,moduleName, flowName, errorUri));
+        }
+
         ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, userName, ExclusionEventActionImpl.IGNORED,
                                                                exclusionEvent.getEvent(), moduleName, flowName);
         exclusionManagementService.delete(errorUri);

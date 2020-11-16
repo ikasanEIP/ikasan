@@ -542,7 +542,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.info("Received flow state: " + flowState);
+                logger.debug("Received flow state: " + flowState);
             });
         });
 

@@ -34,7 +34,7 @@ public class FlowComboBox extends ComboBox<Flow>
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.info("Received flow state: " + flowState);
+                logger.debug("Received flow state: " + flowState);
 
                 if(this.currentModule != null)
                 {
@@ -51,7 +51,7 @@ public class FlowComboBox extends ComboBox<Flow>
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.info("Received flow state: " + flowState);
+                logger.debug("Received flow state: " + flowState);
 
                 if(this.currentModule != null)
                 {
