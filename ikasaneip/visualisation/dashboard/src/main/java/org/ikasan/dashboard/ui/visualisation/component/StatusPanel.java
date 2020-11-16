@@ -162,7 +162,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.info("Received flow state: " + flowState);
+                logger.debug("Received flow state: " + flowState);
 
                 calculateStatus();
             });

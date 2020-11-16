@@ -398,7 +398,8 @@ public class SearchResults extends Div {
                 }
                 else if(ikasanSolrDocumentItemDoubleClickEvent.getItem().getType().equalsIgnoreCase(SearchConstants.EXCLUSION))
                 {
-                    HospitalDialog hospitalDialog = new HospitalDialog(this.solrGeneralService, this.hospitalAuditService, this.resubmissionRestService, this.moduleMetadataService);
+                    HospitalDialog hospitalDialog = new HospitalDialog(this.solrGeneralService, this.hospitalAuditService
+                        , this.resubmissionRestService, this.moduleMetadataService, this.searchResultsGrid);
                     hospitalDialog.populate(ikasanSolrDocumentItemDoubleClickEvent.getItem());
                 }
             });

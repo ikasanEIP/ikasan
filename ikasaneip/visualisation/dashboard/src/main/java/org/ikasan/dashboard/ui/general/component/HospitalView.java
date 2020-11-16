@@ -69,9 +69,8 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
 
     private StreamResource streamResource;
     private FileDownloadWrapper buttonWrapper;
-    private ErrorReportingService errorReportingService;
 
-    private ErrorOccurrence<String> errorOccurrence;
+    private IkasanSolrDocument errorOccurrence;
     private String exclusionPayload;
 
     private Button resubmitButton;
@@ -90,15 +89,10 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
 
     private String translatedEventActionMessage;
 
-    public HospitalView(ErrorReportingService errorReportingService, HospitalAuditService hospitalAuditService,
+    public HospitalView(HospitalAuditService hospitalAuditService,
                         ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService,
                         SolrGeneralService solrGeneralService)
     {
-        this.errorReportingService = errorReportingService;
-        if(this.errorReportingService == null)
-        {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
-        }
         this.hospitalAuditService = hospitalAuditService;
         if(this.hospitalAuditService == null)
         {
@@ -319,12 +313,12 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         this.errorUriTf.setValue(Optional.ofNullable(this.getErrorUri(ikasanSolrDocument.getId())).orElse(""));
         this.dateTimeTf.setValue(DateFormatter.getFormattedDate(ikasanSolrDocument.getTimestamp()));
 
-        this.errorOccurrence = (ErrorOccurrence<String>) this.errorReportingService
-            .find(this.getErrorUri(ikasanSolrDocument.getId()));
+        this.errorOccurrence = this.solrGeneralService
+            .findByErrorUri("error", this.getErrorUri(ikasanSolrDocument.getId()));
         this.exclusionPayload = ikasanSolrDocument.getEvent();
 
         if(errorOccurrence != null) {
-            this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getAction()).orElse(""));
+            this.errorActionTf.setValue(Optional.ofNullable(this.errorOccurrence.getErrorAction()).orElse(""));
         }
 
         ComponentSecurityVisibility.applySecurity(resubmitButton, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ALL_AUTHORITY);
@@ -347,7 +341,7 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         ExclusionEventAction exclusionEventAction = new ExclusionEventActionImpl();
         exclusionEventAction.setComment(comment);
         exclusionEventAction.setActionedBy(user);
-        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEventAsString()));
+        exclusionEventAction.setAction(String.format(translatedEventActionMessage, comment, action, user, errorOccurrence.getEvent()));
         // the error uri is in fact the id of excluded events
         exclusionEventAction.setErrorUri(document.getId());
         exclusionEventAction.setModuleName(document.getModuleName());
