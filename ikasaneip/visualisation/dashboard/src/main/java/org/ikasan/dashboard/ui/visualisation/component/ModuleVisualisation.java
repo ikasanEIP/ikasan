@@ -165,7 +165,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
         networkDiagram.addDoubleClickListener((DoubleClickListener) doubleClickEvent ->
         {
-            logger.info(doubleClickEvent.getParams().toString());
+            logger.debug(doubleClickEvent.getParams().toString());
 
             JsonObject coordinates = doubleClickEvent.getParams().getObject("pointer").getObject("canvas");
 
@@ -232,7 +232,7 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
                 }
                 else if(this.currentFlow.flowClickedOn(x, y))
                 {
-                    FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService);
+                    FlowOptionsDialog flowOptionsDialog = new FlowOptionsDialog(module, currentFlow, configurationRestService, this);
                     flowOptionsDialog.open();
                 }
             }
@@ -359,6 +359,9 @@ public class ModuleVisualisation extends VerticalLayout implements BeforeEnterOb
 
             this.networkDiagram.drawFlowControl(currentFlow.getControlX(), currentFlow.getControlY(), currentFlow.getControlImageW(), currentFlow.getControlImageH()
                 , this.currentFlow.getStartupType() != null ? this.currentFlow.getStartupType().name().toLowerCase() : null);
+
+            this.networkDiagram.drawIsRecording(10.0 + this.currentFlow.getX(), 10.0 + this.currentFlow.getY(), 40
+                , 40, this.currentFlow.isRecording());
 
             FlowState flowState = FlowStateCache.instance().get(this.module, this.currentFlow);
 

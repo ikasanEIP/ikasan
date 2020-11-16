@@ -60,6 +60,9 @@ window.Vaadin.Flow.networkDiagramConnector = {
         let flowDisabledImage = new Image();
         flowDisabledImage.src = "frontend/images/flow-disabled.png";
 
+        let recordingImage = new Image();
+        recordingImage.src = "frontend/images/replay-service.png";
+
         graph.options = JSON.parse(options);
         graph.options.manipulation.addNode = function (nodeData, callback) {
             if (customNodeifAdded == true) {
@@ -234,6 +237,12 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 else if ("disabled" === startupType) {
                     ctx.drawImage(flowDisabledImage, x, y, w, h);
                 }
+            });
+        }
+
+        graph.$connector.drawIsRecording = function (x, y, h, w) {
+            graph.$connector.diagram.on("afterDrawing", function (ctx) {
+                    ctx.drawImage(recordingImage, x, y, w, h);
             });
         }
 

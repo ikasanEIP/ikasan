@@ -22,12 +22,15 @@ public class FlowOptionsDialog extends Dialog
     protected ConfigurationService configurationRestService;
     protected Module module;
     protected Flow flow;
+    private ModuleVisualisation moduleVisualisation;
 
-    protected FlowOptionsDialog(Module module, Flow flow, ConfigurationService configurationRestService)
+    protected FlowOptionsDialog(Module module, Flow flow, ConfigurationService configurationRestService
+        , ModuleVisualisation moduleVisualisation)
     {
         this.module = module;
         this.flow = flow;
         this.configurationRestService = configurationRestService;
+        this.moduleVisualisation = moduleVisualisation;
 
         init();
     }
@@ -65,7 +68,8 @@ public class FlowOptionsDialog extends Dialog
 
     private void openFlowConfigurationDialog()
     {
-        FlowConfigurationDialog flowConfigurationDialog = new FlowConfigurationDialog(module, flow.getName(), configurationRestService);
+        FlowConfigurationDialog flowConfigurationDialog = new FlowConfigurationDialog(this.module, this.flow, this.configurationRestService
+            , this.moduleVisualisation);
         flowConfigurationDialog.open();
         this.close();
     }

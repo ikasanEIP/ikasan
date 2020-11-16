@@ -382,6 +382,18 @@ public class NetworkDiagram extends Component implements HasSize {
             ui -> getElement().callJsFunction("$connector.drawFlowControl", x, y, w, h, startupType));
     }
 
+    public void drawIsRecording(Double x, Double y, Integer w, Integer h, boolean isRecording) {
+        if(isRecording) {
+            runBeforeClientResponse(
+                ui -> getElement().callJsFunction("$connector.drawIsRecording", x, y, w, h));
+        }
+        else {
+            this.removeImage(x, y, w, h);
+        }
+    }
+
+
+
     // ==== Events ====
     private void enableEventDispatching(Class<? extends Event> clazz) {
         runBeforeClientResponse(ui -> {
