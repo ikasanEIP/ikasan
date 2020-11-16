@@ -78,5 +78,6 @@ public class FlowComboBox extends ComboBox<Flow>
         this.currentModule = currentModule;
         this.setItems(this.currentModule.getFlows());
         this.setValue(this.currentModule.getFlows().get(0));
+        this.setLabel(this.currentModule.getName());
     }
 }
