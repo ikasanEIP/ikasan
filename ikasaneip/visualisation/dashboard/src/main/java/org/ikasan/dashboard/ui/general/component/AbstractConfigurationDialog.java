@@ -34,7 +34,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
     private static Logger logger = LoggerFactory.getLogger(AbstractConfigurationDialog.class);
 
     protected ConfigurationService configurationRestService;
-    protected ConfigurationMetaData configurationMetaData;
+    protected ConfigurationMetaData<List<ConfigurationParameterMetaData >> configurationMetaData;
     protected Module module;
     protected String flowName;
     protected String componentName;
@@ -45,6 +45,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
     protected Tooltip addListItemButtonTooltip;
     protected List<Tooltip> removeListItemButtonTooltips;
     protected Map<ConfigurationParameterMetaData, Object> parameterMetaDataComponentMap;
+    protected boolean loadedConfiguration = true;
 
     protected AbstractConfigurationDialog(Module module, String flowName, String componentName
         , ConfigurationService configurationRestService)
@@ -59,6 +60,13 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         init();
     }
 
+    @Override
+    public void open() {
+        if(this.loadedConfiguration) {
+            super.open();
+        }
+    }
+
     private void init()
     {
         VerticalLayout layout = new VerticalLayout();
@@ -70,6 +78,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         if(!this.loadConfigurationMetaData())
         {
             NotificationHelper.showErrorNotification(getTranslation("error.could-not-open-configuration", UI.getCurrent().getLocale()));
+            this.loadedConfiguration = false;
             return;
         }
 
@@ -106,7 +115,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         layout.add(headerLayout);
         layout.add(new Divider());
 
-        for(ConfigurationParameterMetaData configurationParameterMetaData: ((List<ConfigurationParameterMetaData >)configurationMetaData.getParameters()))
+        for(ConfigurationParameterMetaData configurationParameterMetaData: configurationMetaData.getParameters())
         {
             if(configurationParameterMetaData.getImplementingClass().equals("org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"))
             {
@@ -179,7 +188,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         super.content.add(layout);
     }
 
-    private void save()
+    protected void save()
     {
         boolean formIsValid = true;
         for(ConfigurationParameterMetaData metaData: this.parameterMetaDataComponentMap.keySet())

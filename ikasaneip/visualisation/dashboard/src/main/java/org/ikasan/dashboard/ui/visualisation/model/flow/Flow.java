@@ -15,6 +15,7 @@ public class Flow
 	private State status = State.RUNNING_STATE;
 	private StartupType startupType;
     private String startupComment;
+    private boolean isRecording;
 
 	// flow border values
 	private int x = 0,y = 0,w = 0,h = 0;
@@ -156,6 +157,14 @@ public class Flow
 
     public boolean controlIconClickedOn(Double x, Double y){
         return ((x > this.getControlX() && x < (this.getControlX() + this.getControlImageW())) && (y > this.getControlY() && y < (this.getControlY() + this.getControlImageH())));
+    }
+
+    public boolean isRecording() {
+        return isRecording;
+    }
+
+    public void setRecording(boolean recording) {
+        isRecording = recording;
     }
 
     @Override
