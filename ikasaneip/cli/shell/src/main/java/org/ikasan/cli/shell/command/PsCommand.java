@@ -40,44 +40,47 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.Operation;
 import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+/**
+ * Check running processes command.
+ *
+ * @author Ikasan Development Team
+ */
 @ShellComponent
-public class PsCommand
+public class PsCommand extends AbstractCommand
 {
-//    @Value("${ikasan.version}")
-//    String ikasanVersion;
-    String processName = "replaceModuleName";
-    Operation operation = Operation.getInstance();
+    @Value("${module.name:null}")
+    String moduleName;
 
-    @ShellMethod(value = "Check process.", group = "Ikasan Commands", key = "ps")
-    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalProcessName)
+    @ShellMethod(value = "Check running process. Syntax: ps <process name> | -name <process name>", group = "Ikasan Commands", key = "ps")
+    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalModuleName)
     {
         StringBuilder sb = new StringBuilder();
-        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        if(optionalModuleName != null && !optionalModuleName.isEmpty())
         {
-            this.processName = optionalProcessName;
+            this.moduleName = optionalModuleName;
         }
 
-        if (operation.isRunning(ProcessType.H2, processName))
+        if (operation.isRunning(ProcessType.H2, moduleName))
         {
-            sb.append(ProcessType.H2.name() + " [" + processName + "] running\n");
+            sb.append(ProcessType.H2.name() + " [" + moduleName + "] running\n");
         } else
         {
-            sb.append(ProcessType.H2.name() + " [" + processName + "] not running\n");
+            sb.append(ProcessType.H2.name() + " [" + moduleName + "] not running\n");
         }
 
-        if(operation.isRunning(ProcessType.MODULE, processName))
+        if(operation.isRunning(ProcessType.MODULE, moduleName))
         {
-            sb.append( ProcessType.MODULE.name() + " [" + processName + "] running\n" );
+            sb.append( ProcessType.MODULE.name() + " [" + moduleName + "] running\n" );
         }
         else
         {
-            sb.append( ProcessType.MODULE.name() + " [" + processName + "] not running\n" );
+            sb.append( ProcessType.MODULE.name() + " [" + moduleName + "] not running\n" );
         }
 
         return sb.toString();

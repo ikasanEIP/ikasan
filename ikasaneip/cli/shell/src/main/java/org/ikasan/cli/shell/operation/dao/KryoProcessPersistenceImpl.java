@@ -53,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
+ * Serialiser for process handle.
  *
  * @author Ikasan Development Team
  */

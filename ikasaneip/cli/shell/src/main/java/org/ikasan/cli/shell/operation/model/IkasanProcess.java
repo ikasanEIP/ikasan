@@ -41,6 +41,7 @@
 package org.ikasan.cli.shell.operation.model;
 
 /**
+ * Model the process.
  *
  * @author Ikasan Development Team
  */
@@ -54,7 +55,7 @@ public class IkasanProcess
     /**
      * Default constructor required by Kyro.
      */
-    private IkasanProcess()
+    public IkasanProcess()
     {
         // required by Kryo for instantiation
     }

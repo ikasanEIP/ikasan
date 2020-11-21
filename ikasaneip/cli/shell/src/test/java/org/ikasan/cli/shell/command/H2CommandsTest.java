@@ -40,9 +40,7 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.IkasanShell;
-import org.ikasan.cli.shell.operation.Operation;
-import org.ikasan.cli.shell.operation.model.ProcessType;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -59,13 +57,16 @@ import java.io.IOException;
 class H2CommandsTest
 {
     @Test
-    void successful_h2_command_start() throws IOException
+    void successful_h2_command_start_query_stop() throws IOException
     {
         H2Commands h2Commands = new H2Commands();
-        h2Commands.starth2(null);
+        String command = "java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888 ";
+        String result = h2Commands.starth2(null, null);
+        Assert.assertTrue("result should be ''", result.equals(""));
 
         PsCommand psCommand = new PsCommand();
-        psCommand.ps(null);
+        result = psCommand.ps("filesystem-im");
+        Assert.assertTrue("result should be ''", result.equals(""));
     }
 
 }

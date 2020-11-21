@@ -40,17 +40,14 @@
  */
 package org.ikasan.cli.shell.operation;
 
-import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.PersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -60,8 +57,8 @@ import java.util.stream.Stream;
  */
 public class DefaultOperationImpl implements Operation
 {
-//    @Value("${ikasan.version}")
-//    String ikasanVersion;
+    /** logger instance */
+    private static Logger logger = LoggerFactory.getLogger(DefaultOperationImpl.class);
 
     PersistenceService persistenceService;
 
@@ -78,52 +75,25 @@ public class DefaultOperationImpl implements Operation
         }
     }
 
-    public Process start(ProcessType processType, String name) throws IOException
+    public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
-        List<String> commands = new ArrayList<>();
-        commands.add("java");
-        commands.add("-Dmodule.name=" + name);
-        commands.add("-classpath");
-        commands.add("/Users/jeff/dev/runtime/h2/h2-1.4.199.jar");
-        commands.add("org.h2.tools.Server");
-        commands.add("-ifNotExists");
-        commands.add("-tcp");
-        commands.add("-tcpAllowOthers");
-        commands.add("-tcpPort");
-        commands.add("8888");
-
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         processBuilder.redirectErrorStream(true);
-        File log = new File("java-version.log");
-        processBuilder.redirectOutput(log);
         Process process = processBuilder.start();
-        if(process.isAlive())
-        {
-            System.out.println("Started");
-        }
-        else
-        {
-            System.out.println("Not Started");
-        }
 
         // persist the process
         try
         {
-            persistenceService.persist(processType.name(), name, process);
+            if(processType.isPersist())
+            {
+                persistenceService.persist(processType.toString(), name, process);
+            }
         }
         catch(Exception e)
         {
-            // TODO log a warning about failed persistence
-            System.out.println( e.getCause() );
+            logger.error(e.getMessage(), e);
         }
 
-        Optional<String> commandLine = process.info().commandLine();
-        if(!commandLine.isEmpty())
-        {
-            commandLine.get();
-        }
-        List<String> lines = Files.lines(log.toPath()).collect(Collectors.toList());
-        System.out.println( lines.toString() );
         return process;
     }
 
@@ -156,13 +126,18 @@ public class DefaultOperationImpl implements Operation
 
     public boolean isRunning(ProcessType processType, String name)
     {
-        ProcessHandle processHandle = getProcess(processType.name(), name);
+        ProcessHandle processHandle = getProcessHandle(processType, name);
         if(processHandle != null && processHandle.isAlive())
         {
             return true;
         }
 
         return false;
+    }
+
+    public ProcessHandle getProcessHandle(ProcessType processType, String name)
+    {
+        return getProcess(processType.name(), name);
     }
 
     @Override

@@ -45,6 +45,7 @@ import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Contract for the Operation
@@ -68,7 +69,7 @@ public interface Operation
      * @param name
      * @throws IOException
      */
-    Process start(ProcessType processType, String name) throws IOException;
+    Process start(ProcessType processType, List<String> commands, String name) throws IOException;
 
     /**
      *
@@ -77,6 +78,14 @@ public interface Operation
      * @return
      */
     boolean isRunning(ProcessType processType, String name);
+
+    /**
+     *
+     * @param processType
+     * @param name
+     * @return
+     */
+    ProcessHandle getProcessHandle(ProcessType processType, String name);
 
     /**
      *

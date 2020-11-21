@@ -43,6 +43,7 @@ package org.ikasan.cli.shell.operation.dao;
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
 
 /**
+ * Process persistence contract.
  *
  * @author Ikasan Development Team
  */

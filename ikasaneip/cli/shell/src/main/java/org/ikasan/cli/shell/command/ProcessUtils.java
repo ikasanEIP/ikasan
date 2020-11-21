@@ -40,65 +40,86 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * Process commands for start, query, stop of the H2 process.
+ * Process utility class.
  *
- * @author Ikasan Developmnent Team
+ * @author Ikasan Development Team
  */
-@ShellComponent
-public class H2Commands extends ActionCommands
+public class ProcessUtils
 {
-    @Value("${module.name:null}")
-    String moduleName;
+    public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String MINUS_D_MODULE_NAME = "-Dmodule.name=";
 
-    @Value("${h2.java.command:null}")
-    String h2JavaCommand;
-
-    /**
-     * Start H2 process.
-     * @param altModuleName
-     * @param altCommand
-     * @return
-     */
-    @ShellMethod(value = "Start H2 persistence JVM", group = "Ikasan Commands", key = "start-h2")
-    public String starth2(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
-                          @ShellOption(value = "-command", defaultValue = "")  String altCommand)
+    public static String getProcessInfo(Process process, String name)
     {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-           name = altModuleName;
-        }
-
-        String command = h2JavaCommand;
-        if(altCommand != null && !altCommand.isEmpty())
-        {
-            command = altCommand;
-        }
-
-        return this.start(ProcessType.H2, name, command);
+        return getProcessInfo(null, process, name);
     }
 
-    /**
-     * Stop H2 process.
-     * @param altModuleName
-     * @return
-     */
-    @ShellMethod(value = "Stop H2 persistence JVM", group = "Ikasan Commands", key = "stop-h2")
-    public String stoph2(@ShellOption(value = "-name", defaultValue="") String altModuleName)
+    public static String getProcessInfo(String type, Process process, String name)
     {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
+        if(process == null)
         {
-            name = altModuleName;
+            return null;
         }
 
-        return this.stop(ProcessType.H2, name);
+        ProcessHandle.Info processHandleInfo = process.info();
+        if(processHandleInfo != null)
+        {
+            StringBuilder sb = new StringBuilder();
+            if(type != null)
+            {
+                sb.append(type + " " + name + " process started");
+            }
+
+            if(!processHandleInfo.command().isEmpty())
+            {
+                sb.append(" [" + processHandleInfo.command().get() + "]");
+            }
+
+            if(!processHandleInfo.user().isEmpty())
+            {
+                sb.append(" as user[" + processHandleInfo.user().get() + "]");
+            }
+
+            Optional<String> commandLine = processHandleInfo.commandLine();
+            if(!commandLine.isEmpty())
+            {
+                sb.append(" Command Line[" + commandLine.get() + "]");
+            }
+
+            return sb.toString();
+        }
+
+        return null;
     }
-}
+
+    public static List<String> getCommands(String commandStr, String moduleName)
+    {
+        if(commandStr == null)
+        {
+            return new ArrayList<String>();
+        }
+
+        List<String> commands = getCommands(commandStr);
+        if(!commandStr.contains(MINUS_D_MODULE_NAME))
+        {
+            commands.add(1, "MINUS_D_MODULE_NAME"+moduleName);
+        }
+
+        return commands;
+    }
+
+    public static List<String> getCommands(String commandStr)
+    {
+        if(commandStr == null)
+        {
+            return new ArrayList<String>();
+        }
+
+        return Arrays.asList(commandStr.split("\\s+"));
+    }}

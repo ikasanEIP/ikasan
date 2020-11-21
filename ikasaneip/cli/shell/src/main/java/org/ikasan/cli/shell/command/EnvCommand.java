@@ -38,24 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.configuration;
+package org.ikasan.cli.shell.command;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
-import org.springframework.shell.jline.PromptProvider;
-import org.springframework.stereotype.Component;
+import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
 
 /**
- * Standard Ikasan Command Line prompt.
+ * Environment command.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Developmnent Team
  */
-@Component
-public class IkasanPrompt implements PromptProvider
+@ShellComponent
+public class EnvCommand extends AbstractCommand
 {
-    @Override
-    public AttributedString getPrompt()
+    @Value("${module.name:null}")
+    String moduleName;
+
+    @Value("${h2.java.command:null}")
+    String h2JavaCommand;
+
+    @Value("${module.java.command:null}")
+    String moduleJavaCommand;
+
+    @ShellMethod(value = "Show environment details. Syntax: env", group = "Ikasan Commands", key = "env")
+    public String env()
     {
-        return new AttributedString("Ikasan Shell:> ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Module Name [" + moduleName + "]\n");
+        sb.append(ProcessType.H2.toString() + " Command String     [" + h2JavaCommand + "]\n");
+        sb.append(ProcessType.H2.toString() + " Command List       " + ProcessUtils.getCommands(h2JavaCommand) + "\n");
+        sb.append(ProcessType.MODULE.toString() + " Command String [" + moduleJavaCommand + "]\n");
+        sb.append(ProcessType.MODULE.toString() + " Command List   " + ProcessUtils.getCommands(moduleJavaCommand) + "\n");
+        return sb.toString();
     }
 }

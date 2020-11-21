@@ -38,24 +38,72 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.configuration;
+package org.ikasan.cli.shell.command;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
-import org.springframework.shell.jline.PromptProvider;
-import org.springframework.stereotype.Component;
+import org.ikasan.cli.shell.operation.model.ProcessType;
+import java.io.IOException;
 
 /**
- * Standard Ikasan Command Line prompt.
+ * Abstract action command supporting standard start|stop process.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Developmnent Team
  */
-@Component
-public class IkasanPrompt implements PromptProvider
+public abstract class ActionCommands extends AbstractCommand
 {
-    @Override
-    public AttributedString getPrompt()
+    /**
+     * Start process.
+     *
+     * @param processType
+     * @param name
+     * @param command
+     * @return
+     */
+    String start(ProcessType processType, String name, String command)
     {
-        return new AttributedString("Ikasan Shell:> ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        StringBuilder sb = new StringBuilder();
+
+        try
+        {
+            if (operation.isRunning(processType, name))
+            {
+                sb.append(processType.toString() + " " + name + " already running\n");
+            }
+            else
+            {
+                Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
+                sb.append( ProcessUtils.getProcessInfo(processType.toString(), process, name) );
+            }
+        }
+        catch (IOException e)
+        {
+            sb.append(processType + " process failed to start for [" + name + "] " + e.getMessage());
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Stop process.
+     *
+     * @param processType
+     * @param name
+     * @return
+     */
+    String stop(ProcessType processType, String name)
+    {
+        try
+        {
+            if (!operation.isRunning(processType, name))
+            {
+                return processType.toString() + " process for [" + name + "] is already stopped!";
+            }
+
+            operation.stop(processType, name);
+            return processType.toString() + " process stopped";
+        }
+        catch (IOException e)
+        {
+            return "Problem checking process [" + name + "] " + e.getMessage();
+        }
     }
 }

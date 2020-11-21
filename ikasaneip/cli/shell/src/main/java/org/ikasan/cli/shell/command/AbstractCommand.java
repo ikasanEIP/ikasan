@@ -38,24 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.configuration;
+package org.ikasan.cli.shell.command;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
-import org.springframework.shell.jline.PromptProvider;
-import org.springframework.stereotype.Component;
+import org.ikasan.cli.shell.operation.Operation;
 
 /**
- * Standard Ikasan Command Line prompt.
+ * Abstract command base class.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Developmnent Team
  */
-@Component
-public class IkasanPrompt implements PromptProvider
+public abstract class AbstractCommand
 {
-    @Override
-    public AttributedString getPrompt()
-    {
-        return new AttributedString("Ikasan Shell:> ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
-    }
+    Operation operation = Operation.getInstance();
 }

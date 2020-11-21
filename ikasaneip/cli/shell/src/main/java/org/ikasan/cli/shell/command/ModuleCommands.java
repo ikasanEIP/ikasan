@@ -40,73 +40,65 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.Operation;
 import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import java.io.IOException;
-
+/**
+ * Commands to start and stop the integration module.
+ *
+ * @author Ikasan Development Team
+ */
 @ShellComponent
-public class ModuleCommands
+public class ModuleCommands extends ActionCommands
 {
-//    @Value("${ikasan.version}")
-//    String ikasanVersion;
-String processName = "replaceModuleName";
+    @Value("${module.name:null}")
+    String moduleName;
 
-    Operation operation = Operation.getInstance();
+    @Value("${module.java.command:null}")
+    String moduleJavaCommand;
 
-    @ShellMethod(value = "start module", group = "Ikasan Commands", key = "start-module")
-    public String startModule(@ShellOption(value = "-name", defaultValue = "")  String optionalProcessName)
+    /**
+     * Start Integration Module.
+     * @param altModuleName
+     * @param altCommand
+     * @return
+     */
+    @ShellMethod(value = "Start Integration Module JVM", group = "Ikasan Commands", key = "start-module")
+    public String startmodule(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
+                              @ShellOption(value = "-command", defaultValue = "")  String altCommand)
     {
-        StringBuilder sb = new StringBuilder();
-        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        String name = moduleName;
+        if(altModuleName != null && !altModuleName.isEmpty())
         {
-            this.processName = optionalProcessName;
+            name = altModuleName;
         }
 
-        try
+        String command = moduleJavaCommand;
+        if(altCommand != null && !altCommand.isEmpty())
         {
-            if (operation.isRunning(ProcessType.MODULE, processName))
-            {
-                sb.append(ProcessType.MODULE.name() + " already running for [" + processName + "]\n");
-            }
-            else
-            {
-                Process proc = operation.start(ProcessType.MODULE, processName);
-                sb.append(ProcessType.MODULE.name() + " process started [" + proc.info().command().get() + "]\n");
-            }
+            command = altCommand;
         }
-        catch (IOException e)
-        {
-            sb.append(ProcessType.MODULE.name() + " process failed to start for [" + processName + "]\n");
-            return sb.toString();
-        }
-        return sb.toString();
+
+        return this.start(ProcessType.MODULE, name, command);
     }
 
-    @ShellMethod(value = "Stop module", group = "Ikasan Commands", key = "stop-module")
-    public String stopModule(@ShellOption(arity=1, defaultValue="") String optionalProcessName)
+    /**
+     * Stop Integration Module.
+     * @param altModuleName
+     * @return
+     */
+    @ShellMethod(value = "Stop Integration Module JVM", group = "Ikasan Commands", key = "stop-module")
+    public String stopmodule(@ShellOption(value = "-name", defaultValue="") String altModuleName)
     {
-        if(optionalProcessName != null && !optionalProcessName.isEmpty())
+        String name = moduleName;
+        if(altModuleName != null && !altModuleName.isEmpty())
         {
-            this.processName = optionalProcessName;
+            name = altModuleName;
         }
 
-        try
-        {
-            if (!operation.isRunning(ProcessType.MODULE, optionalProcessName))
-            {
-                return "Module process [" + optionalProcessName + "] not running";
-            }
-
-            operation.stop(ProcessType.MODULE, optionalProcessName);
-            return "Module process stopped";
-        }
-        catch (IOException e)
-        {
-            return "Problem checking if Module process is not running";
-        }
+        return this.stop(ProcessType.MODULE, name);
     }
 }

@@ -47,7 +47,26 @@ package org.ikasan.cli.shell.operation.model;
  */
 public enum ProcessType
 {
-    H2,
-    MODULE,
-    ANY
+    H2("H2", true),
+    MODULE("Module", true),
+    OTHER("", false);
+
+    private String name;
+    private boolean persist;
+
+    ProcessType(String name, boolean persist)
+    {
+        this.name = name;
+        this.persist = persist;
+    }
+
+    public String toString()
+    {
+        return name;
+    }
+
+    public boolean isPersist()
+    {
+        return this.persist;
+    }
 }
