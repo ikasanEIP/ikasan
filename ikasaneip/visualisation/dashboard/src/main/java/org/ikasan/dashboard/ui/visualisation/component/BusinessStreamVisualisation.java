@@ -183,6 +183,13 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
         this.populateFlowMap(businessStream.getFlows());
 
         updateNetworkDiagram(nodes, businessStream.getEdges());
+
+        businessStream.getBoundaries()
+            .forEach(boundary -> this.networkDiagram.drawBoundary(boundary.getX(),
+                boundary.getY(), boundary.getW(), boundary.getH(), boundary.getLabel(), boundary.getColour()));
+
+        this.networkDiagram.scale(0.8);
+
         this.add(networkDiagram);
     }
 
@@ -285,7 +292,7 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             }
         });
 
-        this.networkDiagram.diagramFit();
+//        this.networkDiagram.diagramFit();
 
     }
 
@@ -410,6 +417,12 @@ public class BusinessStreamVisualisation extends VerticalLayout implements Befor
             this.populateFlowMap(businessStream.getFlows());
 
             updateNetworkDiagram(nodes, businessStream.getEdges());
+
+            businessStream.getBoundaries()
+                .forEach(boundary -> this.networkDiagram.drawBoundary(boundary.getX(),
+                    boundary.getY(), boundary.getW(), boundary.getH(), boundary.getLabel(), boundary.getColour()));
+
+            this.networkDiagram.scale(0.7);
 
             for (String key : this.flowMap.keySet()) {
                 if (key.contains(".")) {

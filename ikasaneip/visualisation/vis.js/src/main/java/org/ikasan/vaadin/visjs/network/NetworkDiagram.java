@@ -315,6 +315,10 @@ public class NetworkDiagram extends Component implements HasSize {
         runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.diagram.fit"));
     }
 
+    public void scale(double scale) {
+        runBeforeClientResponse(ui -> getElement().callJsFunction("$connector.scale", scale));
+    }
+
     @Override
     public void setSizeFull() {
         HasSize.super.setSizeFull();
@@ -329,6 +333,11 @@ public class NetworkDiagram extends Component implements HasSize {
     public void drawModule(Integer x, Integer y, Integer w, Integer h, String text) {
         runBeforeClientResponse(
             ui -> getElement().callJsFunction("$connector.drawModuleSquare", x, y, w, h, text));
+    }
+
+    public void drawBoundary(Integer x, Integer y, Integer w, Integer h, String text, String colour) {
+        runBeforeClientResponse(
+            ui -> getElement().callJsFunction("$connector.drawBoundary", x, y, w, h, text, colour));
     }
 
     public void drawFlow(Integer x, Integer y, Integer w, Integer h, String text) {

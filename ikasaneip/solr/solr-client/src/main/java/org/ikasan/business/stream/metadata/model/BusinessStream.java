@@ -9,6 +9,7 @@ public class BusinessStream
     private List<Destination> destinations = new ArrayList<>();
     private List<IntegratedSystem> integratedSystems = new ArrayList<>();
     private List<Edge> edges = new ArrayList<>();
+    private List<Boundary> boundaries = new ArrayList<>();
 
     public List<Flow> getFlows()
     {
@@ -48,5 +49,13 @@ public class BusinessStream
     public void setEdges(List<Edge> edges)
     {
         this.edges = edges;
+    }
+
+    public List<Boundary> getBoundaries() {
+        return boundaries;
+    }
+
+    public void setBoundaries(List<Boundary> boundaries) {
+        this.boundaries = boundaries;
     }
 }

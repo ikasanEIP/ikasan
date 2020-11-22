@@ -53,6 +53,7 @@ public class FlowStateCache implements Consumer<FlowState>
         CacheStateBroadcaster.broadcast(flowState);
     }
 
+
     public FlowState get(Module module, Flow flow)
     {
         if(!this.contains(module, flow))
@@ -65,6 +66,10 @@ public class FlowStateCache implements Consumer<FlowState>
 
     public FlowState get(ModuleMetaData module, String flowName)
     {
+        if(module == null) {
+            return null;
+        }
+
         if(!this.contains(module, flowName))
         {
             refreshFromSource(module.getName(), flowName, module.getUrl());
@@ -82,7 +87,16 @@ public class FlowStateCache implements Consumer<FlowState>
     public boolean contains(ModuleMetaData module, String flowName)
     {
         logger.debug("Check contains: " + module + flowName);
+        if(module == null) {
+            return false;
+        }
         return this.cache.containsKey(module.getName()+flowName);
+    }
+
+    public boolean contains(String moduleName, String flowName)
+    {
+        logger.debug("Check contains: " + moduleName + flowName);
+        return this.cache.containsKey(moduleName+flowName);
     }
 
     @Override

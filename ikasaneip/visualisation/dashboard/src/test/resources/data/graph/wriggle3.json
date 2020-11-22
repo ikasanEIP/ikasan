@@ -1,142 +1,200 @@
 {
   "flows": [
     {
-      "id": "wriggle-im.Wriggle Request Inbound Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Request Inbound Flow",
-      "x": 0,
-      "y": -400
+      "id": "murex-trade.Trade Consumer Flow",
+      "moduleName": "murex-trade",
+      "flowName": "Trade Consumer Flow",
+      "x": -300,
+      "y": -450
     },
     {
-      "id": "wriggle-im.Wriggle Request Router Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Request Router Flow",
-      "x": 0,
-      "y": -200
+      "id": "murex-trade.Trade Producer Flow",
+      "moduleName": "murex-trade",
+      "flowName": "Trade Producer Flow",
+      "x": -300,
+      "y": -325
     },
     {
-      "id": "wriggle-im.Wriggle Customer HTTP Request Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Customer HTTP Request Flow",
-      "x": 0,
-      "y": 400
+      "id": "trebdi-trade.Trade Producer Flow",
+      "moduleName": "trebdi-trade",
+      "flowName": "Trade Producer Flow",
+      "x": 150,
+      "y": -450
     },
     {
-      "id": "wriggle-im.Wriggle Ledger HTTP Request Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Ledger HTTP Request Flow",
-      "x": 0,
-      "y": 200
+      "id": "trebdi-trade.Trade Consumer Flow",
+      "moduleName": "trebdi-trade",
+      "flowName": "Trade Consumer Flow",
+      "x": 150,
+      "y": -325
     },
     {
-      "id": "wriggle-im.Wriggle Company HTTP Request Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Company HTTP Request Flow",
-      "x": 0,
-      "y": 0
+      "id": "pme-position.FX Position Consumer Flow",
+      "moduleName": "pme-position",
+      "flowName": "FX Position Consumer Flow",
+      "x": 150,
+      "y": -100
     },
     {
-      "id": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Account HTTP Request Flow",
-      "x": 300,
-      "y": 0
-    },
-    {
-      "id": "wriggle-im.Wriggle Invoice HTTP Request Flow",
-      "moduleName": "wriggle-im",
-      "flowName": "Wriggle Invoice HTTP Request Flow",
-      "x": 600,
-      "y": 0
-    },
-    {
-      "id": "wriggle-im.Scheduled FLow",
-      "moduleName": "wriggle-im",
-      "flowName": "Scheduled Flow",
-      "x": 900,
-      "y": 0
+      "id": "murex-position.FX Position Producer Flow",
+      "moduleName": "murex-position",
+      "flowName": "FX Position Producer Flow",
+      "x": -300,
+      "y": -100
     }
   ],
   "integratedSystems": [
     {
-      "id": "Brokertec",
-      "name": "Brokertec",
-      "x": -300,
-      "y": -400
+      "id": "caixa-pme",
+      "name": "",
+      "image": "frontend/images/caixa-pme.png",
+      "size":70,
+      "x": 450,
+      "y": -100
     },
     {
-      "id": "Espeed",
-      "name": "Espeed",
-      "x": -300,
-      "y": -200
-    },
-    {
-      "id": "Tradeweb",
-      "name": "TradeWeb",
-      "x": -300,
-      "y": 0
-    },
-    {
-      "id": "ION",
-      "name": "ION",
-      "x": -300,
-      "y": 200
+      "id": "caixa-trebdi",
+      "name": "",
+      "image": "frontend/images/caixa-trebdi.png",
+      "size":70,
+      "x": 450,
+      "y": -350
     },
     {
       "id": "Bloomberg",
-      "name": "Bloomberg TOMS",
-      "x": -300,
-      "y": 400
+      "name": "",
+      "image": "frontend/images/bloomberg.png",
+      "size":70,
+      "x": -1000,
+      "y": -100
+    },
+    {
+      "id": "markit",
+      "name": "",
+      "image": "frontend/images/markit.png",
+      "size": 70,
+      "x": -1000,
+      "y": -300
+    },
+    {
+      "id": "murex",
+      "name": "",
+      "image": "frontend/images/murex.png",
+      "size":100,
+      "x": -600,
+      "y": -200
+    }
+  ],
+  "destinations": [
+    {
+      "id": "bdm",
+      "name": "com.caxia.bank.fx.position.bdm",
+      "x": -75,
+      "y": -100
+    },
+    {
+      "id": "com.caxia.bank.trade.out.bdm",
+      "name": "com.caxia.bank.trade.out.bdm",
+      "x": -75,
+      "y": -450
+    },
+    {
+      "id": "com.caxia.bank.trade.in.bdm",
+      "name": "com.caxia.bank.trade.in.bdm",
+      "x": -75,
+      "y": -325
     }
   ],
   "edges": [
     {
-      "from": "Brokertec",
-      "to": "wriggle-im.Wriggle Request Inbound Flow"
+      "from": "murex-position.FX Position Producer Flow",
+      "to": "murex"
     },
     {
-      "from": "Espeed",
-      "to": "wriggle-im.Wriggle Request Router Flow"
+      "from": "com.caxia.bank.trade.out.bdm",
+      "to": "trebdi-trade.Trade Producer Flow"
+    },
+    {
+      "from": "trebdi-trade.Trade Consumer Flow",
+      "to": "com.caxia.bank.trade.in.bdm"
+    },
+    {
+      "from": "caixa-pme",
+      "to": "pme-position.FX Position Consumer Flow"
+    },
+    {
+      "from": "pme-position.FX Position Consumer Flow",
+      "to": "bdm"
+    },
+    {
+      "from": "caixa-trebdi",
+      "to": "trebdi-trade.Trade Consumer Flow"
+    },
+    {
+      "from": "trebdi-trade.Trade Producer Flow",
+      "to": "caixa-trebdi"
+    },
+    {
+      "from": "bdm",
+      "to": "murex-position.FX Position Producer Flow"
+    },
+    {
+      "from": "markit",
+      "to": "murex"
     },
     {
       "from": "Bloomberg",
-      "to": "wriggle-im.Wriggle Customer HTTP Request Flow"
+      "to": "murex"
     },
     {
-      "from": "ION",
-      "to": "wriggle-im.Wriggle Ledger HTTP Request Flow"
+      "from": "murex",
+      "to": "murex-trade.Trade Consumer Flow"
     },
     {
-      "from": "Tradeweb",
-      "to": "wriggle-im.Wriggle Company HTTP Request Flow"
+      "from": "murex-trade.Trade Consumer Flow",
+      "to": "com.caxia.bank.trade.out.bdm"
     },
     {
-      "to": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "from": "wriggle-im.Wriggle Request Inbound Flow"
+      "to": "murex",
+      "from": "murex-trade.Trade Producer Flow"
     },
     {
-      "to": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "from": "wriggle-im.Wriggle Request Router Flow"
+      "to": "murex-trade.Trade Producer Flow",
+      "from": "com.caxia.bank.trade.in.bdm"
+    }
+  ],
+  "boundaries": [
+    {
+      "x": -750,
+      "y": -600,
+      "w": 1300,
+      "h": 700,
+      "colour": "rgba(58, 188, 248, 0.2)",
+      "label": "CaixaBank"
     },
     {
-      "to": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "from": "wriggle-im.Wriggle Customer HTTP Request Flow"
+      "x": -400,
+      "y": -550,
+      "w": 650,
+      "h": 600,
+      "colour": "rgba(241, 90, 35, 0.2)",
+      "label": "Ikasan"
     },
     {
-      "to": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "from": "wriggle-im.Wriggle Ledger HTTP Request Flow"
+      "x": -200,
+      "y": -500,
+      "w": 250,
+      "h": 500,
+      "colour": "rgba(241, 90, 35, 0.5)",
+      "label": "Business Domain Model"
     },
     {
-      "to": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "from": "wriggle-im.Wriggle Company HTTP Request Flow"
-    },
-    {
-      "from": "wriggle-im.Wriggle Account HTTP Request Flow",
-      "to": "wriggle-im.Wriggle Invoice HTTP Request Flow"
-    },
-    {
-      "to": "wriggle-im.Scheduled FLow",
-      "from": "wriggle-im.Wriggle Invoice HTTP Request Flow"
+      "x": -1100,
+      "y": -600,
+      "w": 200,
+      "h": 700,
+      "colour": "white",
+      "label": "External Systems"
     }
   ]
 }

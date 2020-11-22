@@ -184,7 +184,7 @@ public class FlowVisualisationDialog extends Dialog {
             Image flowImage = new Image("/frontend/images/flow.png", "");
             flowImage.setHeight("70px");
 
-            H3 flowLabel = new H3(flow.get().getName());
+            H3 flowLabel = new H3(module.getName() + " -> " + flow.get().getName());
             flowLabel.setWidthFull();
 
             this.flowControlPanel = new ControlPanel(this.moduleControlRestService);

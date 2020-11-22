@@ -9,11 +9,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
+import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamStatusPanel;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamVisualisation;
+import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
+import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream;
-import org.ikasan.rest.client.ConfigurationRestServiceImpl;
-import org.ikasan.rest.client.TriggerRestServiceImpl;
-import org.ikasan.rest.client.*;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphViewBusinessStreamVisualisation extends VerticalLayout implements SearchListener
@@ -51,7 +52,7 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
     private HorizontalLayout headerLayout = new HorizontalLayout();
 
-    private H2 moduleLabel = new H2();
+    private H2 businessStreamLabel = new H2();
 
     private Registration broadcasterRegistration;
 
@@ -66,6 +67,10 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
     private MetaDataService metaDataApplicationRestService;
 
     private BatchInsert<ModuleMetaData> moduleMetaDataBatchInsert;
+
+    private BusinessStreamStatusPanel businessStreamStatusPanel;
+
+    private List<GraphViewChangeListener> graphViewChangeListeners;
 
     /**
      * Constructor
@@ -128,6 +133,8 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
             throw new IllegalArgumentException("moduleMetaDataBatchInsert cannot be null!");
         }
 
+        this.graphViewChangeListeners = new ArrayList<>();
+
         init();
     }
 
@@ -135,10 +142,16 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
         this.headerLayout = new HorizontalLayout();
         this.headerLayout.setWidth("100%");
         this.headerLayout.setHeight("50px");
-        this.headerLayout.add(this.moduleLabel);
-        this.headerLayout.setVerticalComponentAlignment(Alignment.CENTER, this.moduleLabel);
+        this.headerLayout.add(this.businessStreamLabel);
+        this.headerLayout.setVerticalComponentAlignment(Alignment.CENTER, this.businessStreamLabel);
         this.headerLayout.setSpacing(false);
         this.headerLayout.setMargin(false);
+
+        this.businessStreamStatusPanel = new BusinessStreamStatusPanel(moduleControlRestService, moduleMetadataService);
+        this.graphViewChangeListeners.add(businessStreamStatusPanel);
+
+        this.headerLayout.add(businessStreamStatusPanel);
+
         this.add(this.headerLayout);
     }
 
@@ -168,9 +181,14 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
 
         businessStreamVisualisation.createBusinessStreamGraphGraph(businessStreamMetaData);
 
-        this.moduleLabel.setText(name);
+        this.businessStreamLabel.setText(name);
+        this.businessStreamStatusPanel.setBusinessStream((org.ikasan.business.stream.metadata.model.BusinessStream)
+            businessStreamMetaData.getBusinessStream());
+        this.businessStreamStatusPanel.setBusinessStreamVisualisation(businessStreamVisualisation);
 
         this.add(businessStreamVisualisation);
+
+        this.fireModuleFlowChangeEvent();
     }
 
     @Override
@@ -194,6 +212,14 @@ public class GraphViewBusinessStreamVisualisation extends VerticalLayout impleme
     {
         broadcasterRegistration.remove();
         broadcasterRegistration = null;
+    }
+
+    protected void fireModuleFlowChangeEvent() {
+        GraphViewChangeEvent graphViewChangeEvent = new GraphViewChangeEvent();
+
+        for (GraphViewChangeListener graphViewChangeListener : this.graphViewChangeListeners) {
+            graphViewChangeListener.onChange(graphViewChangeEvent);
+        }
     }
 
     public BusinessStream getBusinessStream() {

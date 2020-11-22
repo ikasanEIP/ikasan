@@ -310,6 +310,56 @@ window.Vaadin.Flow.networkDiagramConnector = {
             });
         }
 
+        graph.$connector.drawBoundary = function (x, y, width, height, text, colour) {
+            graph.$connector.diagram.on("beforeDrawing", function (ctx) {
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center';
+
+                ctx.fillStyle = '#000';
+
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = 'black';
+
+                let stroke = true;
+                let radius = 20;
+                let fill = true;
+
+                if (typeof radius === 'number') {
+                    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+                } else {
+                    let defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                    for (let side in defaultRadius) {
+                        radius[side] = radius[side] || defaultRadius[side];
+                    }
+                }
+                ctx.beginPath();
+                ctx.moveTo(x + radius.tl, y);
+                ctx.lineTo(x + width - radius.tr, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                ctx.lineTo(x + width, y + height - radius.br);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                ctx.lineTo(x + radius.bl, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                ctx.lineTo(x, y + radius.tl);
+                ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                ctx.closePath();
+                if (fill) {
+                    ctx.fillStyle = 'white';
+                    ctx.fill();
+                    ctx.fillStyle = colour;
+                    ctx.fill();
+                }
+                if (stroke) {
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = 'black';
+                ctx.fillText(text, x + (width / 2) , y + 25);
+                ctx.setLineDash([0, 0]);
+            });
+        }
+
         graph.$connector.drawFlowBorder = function (x, y, width, height, text) {
             graph.$connector.diagram.on("beforeDrawing", function (ctx) {
 
@@ -403,6 +453,14 @@ window.Vaadin.Flow.networkDiagramConnector = {
                 ctx.lineWidth=2.0
                 ctx.setLineDash([0, 0]);
             });
+        }
+
+        graph.$connector.scale = function (scale) {
+            let scaleOption = {
+                scale: scale,
+                animation: false
+            };
+            graph.$connector.diagram.moveTo(scaleOption);
         }
 
 		// not used yet

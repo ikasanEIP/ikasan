@@ -4,10 +4,11 @@ import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
+import org.ikasan.business.stream.metadata.model.BusinessStream;
+import org.ikasan.business.stream.metadata.model.Flow;
 import org.ikasan.dashboard.broadcast.FlowState;
 import org.ikasan.dashboard.broadcast.State;
 import org.ikasan.dashboard.cache.CacheStateBroadcaster;
@@ -15,16 +16,19 @@ import org.ikasan.dashboard.cache.FlowStateCache;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeEvent;
 import org.ikasan.dashboard.ui.visualisation.event.GraphViewChangeListener;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Flow;
-import org.ikasan.dashboard.ui.visualisation.model.flow.Module;
-import org.ikasan.rest.client.ModuleControlRestServiceImpl;
+import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetaDataService;
 import org.ikasan.spec.module.client.ModuleControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StatusPanel extends HorizontalLayout implements GraphViewChangeListener
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class BusinessStreamStatusPanel extends HorizontalLayout implements GraphViewChangeListener
 {
-    private Logger logger = LoggerFactory.getLogger(StatusPanel.class);
+    private Logger logger = LoggerFactory.getLogger(BusinessStreamStatusPanel.class);
 
     private Button runningButton;
     private Button stoppedButton;
@@ -32,11 +36,12 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Button recoveringButton;
     private Button pauseButton;
 
-    private Module currentModule;
+    private BusinessStream currentBusinessStream;
+    private BusinessStreamVisualisation businessStreamVisualisation;
+    private ModuleMetaDataService moduleMetaDataService;
 
     private Registration broadcasterRegistration;
     private ModuleControlService moduleControlRestService;
-    private ModuleVisualisation moduleVisualisation;
 
     private Tooltip runningButtonTooltip;
     private Tooltip stoppedButtonTooltip;
@@ -44,10 +49,13 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     private Tooltip recoveringButtonTooltip;
     private Tooltip pauseButtonTooltip;
 
-    public StatusPanel(ModuleControlService moduleControlRestService, ModuleVisualisation moduleVisualisation)
+    private Map<String, ModuleMetaData> moduleMetaDataMap;
+
+    public BusinessStreamStatusPanel(ModuleControlService moduleControlRestService,
+                                     ModuleMetaDataService moduleMetaDataService)
     {
         this.moduleControlRestService = moduleControlRestService;
-        this.moduleVisualisation = moduleVisualisation;
+        this.moduleMetaDataService = moduleMetaDataService;
         init();
     }
 
@@ -99,11 +107,15 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         VerticalLayout pauseButtonLayout = this.createStatusButtonLayout(pauseButton, pausedLabel);
         pauseButtonLayout.add(pauseButtonTooltip);
 
+        this.moduleMetaDataMap = new HashMap<>();
+        this.moduleMetaDataService.findAll().forEach(moduleMetaData -> this.moduleMetaDataMap.put(moduleMetaData.getName(),
+            moduleMetaData));
+
         this.setSpacing(false);
         this.setMargin(false);
         this.expand(runningButtonLayout, stoppedButtonLayout, stoppedInErrorButtonLayout, recoveringButtonLayout, pauseButtonLayout);
         this.add(runningButtonLayout, stoppedButtonLayout, stoppedInErrorButtonLayout, recoveringButtonLayout, pauseButtonLayout);
-        this.setVerticalComponentAlignment(FlexComponent.Alignment.BASELINE, runningButtonLayout, stoppedButtonLayout, stoppedInErrorButtonLayout, recoveringButtonLayout, pauseButtonLayout);
+        this.setVerticalComponentAlignment(Alignment.BASELINE, runningButtonLayout, stoppedButtonLayout, stoppedInErrorButtonLayout, recoveringButtonLayout, pauseButtonLayout);
     }
 
     private Button createStatusButton()
@@ -120,9 +132,9 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
         statusButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
         {
-            ModuleStatusDialog moduleStatusDialog = new ModuleStatusDialog(currentModule
-                , this.moduleControlRestService, this.moduleVisualisation);
-            moduleStatusDialog.open();
+//            ModuleStatusDialog moduleStatusDialog = new ModuleStatusDialog(currentModule
+//                , this.moduleControlRestService, this.moduleVisualisation);
+//            moduleStatusDialog.open();
         });
 
         return statusButton;
@@ -161,7 +173,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
             ui.access(() ->
             {
                 // do something interesting here.
-                logger.debug("Received flow state: " + flowState);
+                logger.info("Received flow state: " + flowState);
 
                 calculateStatus();
             });
@@ -176,7 +188,7 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
 
     protected void calculateStatus()
     {
-        if(currentModule == null){
+        if(currentBusinessStream == null){
             return;
         }
 
@@ -186,9 +198,10 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         int recovering = 0;
         int paused = 0;
 
-        for(Flow flow: currentModule.getFlows())
+        for(Flow flow: currentBusinessStream.getFlows())
         {
-            FlowState flowState = FlowStateCache.instance().get(currentModule, flow);
+            FlowState flowState = FlowStateCache.instance().get(moduleMetaDataMap.get(flow.getModuleName())
+                , flow.getFlowName());
 
             if(flowState == null)
             {
@@ -217,24 +230,10 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
         }
 
         this.recoveringButton.setText(Integer.toString(recovering));
-        this.manageStatusButtonWidth(this.recoveringButton, recovering);
         this.stoppedButton.setText(Integer.toString(stopped));
-        this.manageStatusButtonWidth(this.stoppedButton, stopped);
         this.runningButton.setText(Integer.toString(running));
-        this.manageStatusButtonWidth(this.runningButton, running);
         this.pauseButton.setText(Integer.toString(paused));
-        this.manageStatusButtonWidth(this.pauseButton, paused);
         this.stoppedInErrorButton.setText(Integer.toString(inError));
-        this.manageStatusButtonWidth(this.stoppedInErrorButton, inError);
-    }
-
-    private void manageStatusButtonWidth(Button button, Integer count) {
-        if(count > 9) {
-            button.setWidth("55px");
-        }
-        else {
-            button.setWidth("35px");
-        }
     }
 
     @Override
@@ -247,12 +246,14 @@ public class StatusPanel extends HorizontalLayout implements GraphViewChangeList
     @Override
     public void onChange(GraphViewChangeEvent event)
     {
-        this.currentModule = event.getModule();
-
         calculateStatus();
     }
 
-    public void setModuleVisualisation(ModuleVisualisation moduleVisualisation) {
-        this.moduleVisualisation = moduleVisualisation;
+    public void setBusinessStreamVisualisation(BusinessStreamVisualisation businessStreamVisualisation) {
+        this.businessStreamVisualisation = businessStreamVisualisation;
+    }
+
+    public void setBusinessStream(BusinessStream businessStream) {
+        this.currentBusinessStream = businessStream;
     }
 }
