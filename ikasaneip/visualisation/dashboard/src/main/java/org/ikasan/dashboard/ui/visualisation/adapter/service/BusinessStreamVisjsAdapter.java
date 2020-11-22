@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.business.stream.metadata.model.BusinessStream;
 import org.ikasan.dashboard.ui.visualisation.correlate.XpathCorrelator;
+import org.ikasan.dashboard.ui.visualisation.model.business.stream.Boundary;
 import org.ikasan.dashboard.ui.visualisation.model.business.stream.Destination;
 import org.ikasan.spec.metadata.BusinessStreamMetaData;
 import org.ikasan.vaadin.visjs.network.Edge;
@@ -42,7 +43,8 @@ public class BusinessStreamVisjsAdapter
     {
         return new org.ikasan.dashboard.ui.visualisation.model.business.stream.BusinessStream(getFlows(businessStreamMetaData.getBusinessStream().getFlows()),
             getIntegratedSystem(businessStreamMetaData.getBusinessStream().getIntegratedSystems()),
-            getEdges(businessStreamMetaData.getBusinessStream().getEdges()), getDestinations(businessStreamMetaData.getBusinessStream().getDestinations()));
+            getEdges(businessStreamMetaData.getBusinessStream().getEdges()), getDestinations(businessStreamMetaData.getBusinessStream().getDestinations()),
+            getBoundaries(businessStreamMetaData.getBusinessStream().getBoundaries()));
     }
 
     /**
@@ -124,7 +126,8 @@ public class BusinessStreamVisjsAdapter
      */
     private IntegratedSystem getIntegratedSystem(org.ikasan.business.stream.metadata.model.IntegratedSystem integratedSystem)
     {
-        return new IntegratedSystem(integratedSystem.getId(), integratedSystem.getName(), integratedSystem.getX(), integratedSystem.getY());
+        return new IntegratedSystem(integratedSystem.getId(), integratedSystem.getName(), integratedSystem.getImage(),
+            integratedSystem.getSize(), integratedSystem.getX(), integratedSystem.getY());
     }
 
     /**
@@ -183,5 +186,32 @@ public class BusinessStreamVisjsAdapter
     private Destination getDestination(org.ikasan.business.stream.metadata.model.Destination destination)
     {
         return new Destination(destination.getId(), destination.getName(), destination.getX(), destination.getY());
+    }
+
+    /**
+     * Helper method to convert raw Boundaries to decorated Boundaries.
+     *
+     * @param boundaries
+     * @return
+     */
+    private List<Boundary> getBoundaries(List<org.ikasan.business.stream.metadata.model.Boundary> boundaries)
+    {
+        ArrayList<Boundary> boundaries1 = new ArrayList<>();
+
+        boundaries.forEach(boundary -> boundaries1.add(getBoundary(boundary)));
+
+        return boundaries1;
+    }
+
+    /**
+     * Helper method to convert a raw Boundary to a decorated Boundary.
+     *
+     * @param boundary
+     * @return
+     */
+    private Boundary getBoundary(org.ikasan.business.stream.metadata.model.Boundary boundary)
+    {
+        return new Boundary(boundary.getX(), boundary.getY(), boundary.getW(), boundary.getH()
+            , boundary.getColour(), boundary.getLabel());
     }
 }

@@ -10,6 +10,7 @@ public class BusinessStreamMetaDataImpl implements BusinessStreamMetaData<Busine
     private String name;
     private String description;
     private String json;
+    private BusinessStream businessStream;
 
     @Override
     public String getId()
@@ -59,13 +60,17 @@ public class BusinessStreamMetaDataImpl implements BusinessStreamMetaData<Busine
 
     @Override
     public BusinessStream getBusinessStream() {
-        ObjectMapper mapper = new ObjectMapper();
+        if(this.businessStream == null) {
+            ObjectMapper mapper = new ObjectMapper();
 
-        try {
-            return mapper.readValue(this.json, BusinessStream.class);
+            try {
+                this.businessStream = mapper.readValue(this.json, BusinessStream.class);
+            }
+            catch (JsonProcessingException e) {
+                throw new RuntimeException("Could not map business stream from JSON", e);
+            }
         }
-        catch (JsonProcessingException e) {
-            throw new RuntimeException("Could not map business stream from JSON", e);
-        }
+
+        return this.businessStream;
     }
 }

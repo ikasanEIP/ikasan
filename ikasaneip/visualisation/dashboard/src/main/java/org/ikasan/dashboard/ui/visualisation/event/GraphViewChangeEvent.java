@@ -8,6 +8,9 @@ public class GraphViewChangeEvent
     private Module module;
     private Flow flow;
 
+    public GraphViewChangeEvent() {
+    }
+
     public GraphViewChangeEvent(Module module, Flow flow)
     {
         this.module = module;

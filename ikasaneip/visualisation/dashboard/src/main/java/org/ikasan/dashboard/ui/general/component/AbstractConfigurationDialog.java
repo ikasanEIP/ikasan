@@ -385,7 +385,7 @@ public abstract class AbstractConfigurationDialog extends AbstractCloseableResiz
         {
             textField.setValue(((Long)configurationParameterMetaData.getValue()).toString());
         }
-        else
+        else if(configurationParameterMetaData.getValue() != null)
         {
             textField.setValue(((Integer)configurationParameterMetaData.getValue()).toString());
         }

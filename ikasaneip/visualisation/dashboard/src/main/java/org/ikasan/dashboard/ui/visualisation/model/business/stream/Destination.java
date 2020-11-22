@@ -10,7 +10,7 @@ public class Destination extends Node
 
     public Destination(String id, String name, int x, int y)
     {
-        super(id, name, Nodes.builder().withShape(Shape.image).withx(x).withy(y).withImage(IMAGE));
+        super(id, name, Nodes.builder().withShape(Shape.image).withx(x).withSize(15).withy(y).withImage(IMAGE));
         super.setEdgeColour("rgba(255, 255, 255, 1)");
         super.setFillColour("rgba(255, 255, 255, 1)");
     }
