@@ -5,28 +5,28 @@
       "moduleName": "murex-trade",
       "flowName": "Trade Consumer Flow",
       "x": -300,
-      "y": -450
+      "y": -400
     },
     {
       "id": "murex-trade.Trade Producer Flow",
       "moduleName": "murex-trade",
       "flowName": "Trade Producer Flow",
       "x": -300,
-      "y": -325
+      "y": -275
     },
     {
       "id": "trebdi-trade.Trade Producer Flow",
       "moduleName": "trebdi-trade",
       "flowName": "Trade Producer Flow",
       "x": 150,
-      "y": -450
+      "y": -400
     },
     {
       "id": "trebdi-trade.Trade Consumer Flow",
       "moduleName": "trebdi-trade",
       "flowName": "Trade Consumer Flow",
       "x": 150,
-      "y": -325
+      "y": -275
     },
     {
       "id": "pme-position.FX Position Consumer Flow",
@@ -96,13 +96,13 @@
       "id": "com.caxia.bank.trade.out.bdm",
       "name": "com.caxia.bank.trade.out.bdm",
       "x": -75,
-      "y": -450
+      "y": -400
     },
     {
       "id": "com.caxia.bank.trade.in.bdm",
       "name": "com.caxia.bank.trade.in.bdm",
       "x": -75,
-      "y": -325
+      "y": -275
     }
   ],
   "edges": [

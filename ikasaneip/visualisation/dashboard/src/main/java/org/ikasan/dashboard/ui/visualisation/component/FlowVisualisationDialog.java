@@ -227,6 +227,7 @@ public class FlowVisualisationDialog extends Dialog {
         Image wiretapImage = new Image("frontend/images/wiretap-service.png", "");
         wiretapImage.setHeight("40px");
         wiretapButton = new Button(wiretapImage);
+        this.wiretapButton.setVisible(true);
         wiretapButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(wiretapButton, getTranslation("tooltip.search-wiretap-events", UI.getCurrent().getLocale()));
         if(!this.searchFoundStatus.getWiretapFound()) {
             this.wiretapButton.setVisible(false);
@@ -266,6 +267,7 @@ public class FlowVisualisationDialog extends Dialog {
         replayButton = new Button(replayButtonImage);
         replayButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(replayButton, getTranslation("tooltip.search-replay-events"
             , UI.getCurrent().getLocale()));
+        this.replayButton.setVisible(true);
         if(!this.searchFoundStatus.getReplayFound()) {
             this.replayButton.setVisible(false);
         }
@@ -318,10 +320,10 @@ public class FlowVisualisationDialog extends Dialog {
         VerticalLayout buttonLayout = new VerticalLayout();
         buttonLayout.setSpacing(false);
         buttonLayout.setMargin(false);
-        buttonLayout.setHeight("40px");
-        buttonLayout.setWidth("40px");
-        button.setHeight("40px");
-        button.setWidth("40px");
+        buttonLayout.setHeight("86px");
+        buttonLayout.setWidth("44px");
+        button.setHeight("46px");
+        button.setWidth("44px");
 
         buttonLayout.add(button);
         buttonLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, button);
