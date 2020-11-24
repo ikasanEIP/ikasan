@@ -19,17 +19,27 @@ import org.apache.commons.io.IOUtils;
 import org.ikasan.dashboard.Application;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.search.view.SearchView;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
+import org.ikasan.rest.client.ConfigurationRestServiceImpl;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataService;
+import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ConfigurationService;
 import org.ikasan.topology.metadata.JsonFlowMetaDataProvider;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
 import org.ikasan.vaadin.visjs.network.NetworkDiagram;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,12 +62,19 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 public class BusinessStreamViewTest
 {
     public static final String MODULE_JSON = "/data/graph/module.json";
-    public static final String MODULE_FOUR_JSON = "/data/graph/module-four.json";
-    public static final String SIMPLE_BOND_FLOW_JSON = "/data/graph/bondFlowsGraph.json";
-    public static final String ELABORATE_BOND_FLOW_JSON = "/data/graph/bondFlowsGraphElaborate.json";
-    public static final String BAD_JSON = "/data/graph/bad.json";
-    public static final String BAD_XML = "/data/graph/bad.xml";
 
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+        setThreadingPolicy(new Synchroniser());
+    }};
+
+    /**
+     * mocked container, listener and dao
+     */
+    ConfigurationMetaData configurationMetaData = mockery.mock(ConfigurationMetaData.class);
+
+    ConfigurationParameterMetaData configurationParameterMetaData = mockery.mock(ConfigurationParameterMetaData.class);
 
     @Autowired
     private ApplicationContext ctx;
@@ -67,6 +84,9 @@ public class BusinessStreamViewTest
 
     @MockBean
     private ConfigurationMetaDataService configurationMetadataService;
+
+    @MockBean
+    private ConfigurationService configurationService;
 
     @Before
     public void setup() throws Exception
@@ -124,6 +144,23 @@ public class BusinessStreamViewTest
     @Test
     public void testCreateGraph() throws IOException
     {
+        Mockito.when(this.configurationService.getFlowConfiguration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(configurationMetaData);
+
+        mockery.checking(new Expectations() {
+             {
+                 // set event factory
+                 oneOf(configurationMetaData).getParameters();
+                 will(returnValue(List.of(configurationParameterMetaData)));
+
+                 oneOf(configurationParameterMetaData).getName();
+                 will(returnValue("isRecording"));
+
+                 oneOf(configurationParameterMetaData).getValue();
+                 will(returnValue(true));
+             }
+         });
+
         UI.getCurrent().navigate("visualisation");
 
         GraphView graphView = _get(GraphView.class);
@@ -141,67 +178,8 @@ public class BusinessStreamViewTest
             , "There should be 12 nodes in the network diagram!");
         Assertions.assertEquals(7, networkDiagram.getEdgesDataProvider().size(new Query<>())
             , "There should be 12 nodes in the network diagram!");
-
-//        graphView.createGraph(provider.deserialiseModule(loadDataFile(MODULE_FOUR_JSON)));
-//
-//        networkDiagram = _get(NetworkDiagram.class);
-//        Assertions.assertNotNull(networkDiagram, "Network diagram should not be null!");
-//
-//        Assertions.assertEquals(18, networkDiagram.getNodesDataProvider().size(new Query<>())
-//            , "There should be 28 nodes in the network diagram!");
-//        Assertions.assertEquals(17, networkDiagram.getEdgesDataProvider().size(new Query<>())
-//            , "There should be 27 nodes in the network diagram!");
     }
 
-
-    @Test
-    @Ignore
-    public void testBadFileUpload() throws IOException
-    {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/json", loadDataFileStream(BAD_JSON));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("An error has occurred attempting to load graph JSON: Unrecognized token 'bad': was expecting ('true', 'false' or 'null')\n" +
-//            " at [Source: (String)\"bad json\"; line: 1, column: 4]", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
-    }
-
-    @Test
-    @Ignore
-    public void testBadXmlFileUpload() throws IOException
-    {
-//        GraphView upload = _get(GraphView.class);
-//
-//        Assertions.assertNotNull(upload);
-//
-//        upload.createGraph("application/xml", loadDataFileStream(BAD_XML));
-//
-//        Notification notification = getNotifications().get(0);
-//
-//        System.out.println(notification.getChildren());
-//
-//        VerticalLayout verticalLayout = (VerticalLayout)notification.getChildren().collect(Collectors.toList()).get(0);
-//
-//        Div div = (Div)verticalLayout.getChildren().findFirst().get();
-//
-//        Assertions.assertEquals("File should be JSON!", div.getText(), "Error notification message must equal!");
-//
-//
-//        clearNotifications();
-    }
 
     protected String loadDataFile(String fileName) throws IOException
     {
