@@ -55,7 +55,7 @@ public interface EventFactory<EVENT>
      * @param payload - data content to be transported
      * @return EVENT
      */
-    public <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, PAYLOAD payload);
+    <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, PAYLOAD payload);
 
     /**
      * Create a new instance of an event with the provided identifier, related identifier, and payload.
@@ -64,5 +64,17 @@ public interface EventFactory<EVENT>
      * @param payload - data content to be transported
      * @return EVENT
      */
-    public <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, PAYLOAD payload);
+    <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, PAYLOAD payload);
+
+    /**
+     * Create a new instance of an event with the provided identifier, related identifier, timestamp, and payload.
+     * @param identifier
+     * @param relatedIdentifier
+     * @param timestamp
+     * @param payload
+     * @param <IDENTIFIER>
+     * @param <PAYLOAD>
+     * @return
+     */
+    <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, long timestamp, PAYLOAD payload);
 }

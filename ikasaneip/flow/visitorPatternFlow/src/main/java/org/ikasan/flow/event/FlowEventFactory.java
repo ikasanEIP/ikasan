@@ -69,7 +69,14 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
         return new GenericFlowEvent<>(identifier, relatedIdentifier, payload);
     }
 
-	/**
+    @Override
+    public <IDENTIFIER, PAYLOAD> FlowEvent<?, ?> newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, long timestamp, PAYLOAD payload)
+    {
+        return new GenericFlowEvent<>(identifier, relatedIdentifier, timestamp, payload);
+    }
+
+
+    /**
 	 * Implementation of a flowEvent based on payload being of any generic type.
 	 * 
 	 * @author Ikasan Development Team
@@ -125,7 +132,26 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
             this.timestamp = System.currentTimeMillis();
             this.payload = payload;
         }
-        
+
+        /**
+         * Constructor
+         * @param identifier
+         * @param relatedIdentifier
+         * @param timestamp
+         * @param payload
+         */
+        protected GenericFlowEvent(ID identifier, ID relatedIdentifier, long timestamp, PAYLOAD payload)
+        {
+            this.identifier = identifier;
+            if(identifier == null)
+            {
+                throw new IllegalArgumentException("identifier cannot be 'null'. Make sure the FlowEvent has an identifier!");
+            }
+            this.relatedIdentifier = relatedIdentifier;
+            this.timestamp = timestamp;
+            this.payload = payload;
+        }
+
 		/**
 		 * Get immutable flow event identifier.
 		 * @return String - event identifier
