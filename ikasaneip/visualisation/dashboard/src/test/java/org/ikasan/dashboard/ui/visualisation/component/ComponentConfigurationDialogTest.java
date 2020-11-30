@@ -1,27 +1,16 @@
 package org.ikasan.dashboard.ui.visualisation.component;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import com.github.mvysny.kaributesting.v10.MockVaadin;
-import com.github.mvysny.kaributesting.v10.MockedUI;
-import com.github.mvysny.kaributesting.v10.Routes;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.function.DeploymentConfiguration;
-import com.vaadin.flow.server.*;
-import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
-import com.vaadin.flow.spring.SpringServlet;
-import com.vaadin.flow.spring.SpringVaadinServletService;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
-import org.ikasan.dashboard.Application;
+import org.ikasan.dashboard.ui.UITest;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
@@ -37,18 +26,10 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -61,11 +42,7 @@ import static com.github.mvysny.kaributesting.v10.ButtonKt._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.mockito.ArgumentMatchers.anyString;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {Application.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ComponentConfigurationDialogTest {
+public class ComponentConfigurationDialogTest extends UITest {
 
     public static final String LARGE_COMPONENT_CONFIGURATION = "/data/graph/largeComponentConfiguration.json";
     public static final String MODULE_JSON = "/data/graph/module.json";
@@ -87,8 +64,6 @@ public class ComponentConfigurationDialogTest {
     @MockBean
     private SolrGeneralServiceImpl solrSearchService;
 
-    @MockBean
-    private IkasanAuthentication ikasanAuthentication;
 
     @MockBean
     private ConfigurationService configurationRestService;
@@ -99,42 +74,9 @@ public class ComponentConfigurationDialogTest {
     @MockBean
     private ConfigurationMetaDataService configurationMetadataService;
 
-    @Autowired
-    private ApplicationContext ctx;
+    @Override
+    public void setup_expectations() {
 
-    @Before
-    public void setup()
-    {
-        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        rootLogger.setLevel(Level.WARN);
-
-        final SpringServlet servlet = new SpringServlet(ctx, true) {
-            @Override
-            protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration) throws ServiceException
-            {
-                final VaadinServletService service = new SpringVaadinServletService(this, deploymentConfiguration, ctx) {
-                    @Override
-                    protected boolean isAtmosphereAvailable() {
-                        return false;
-                    }
-
-                    @Override
-                    protected RouteRegistry getRouteRegistry() {
-                        new Routes().autoDiscoverViews("org.ikasan.dashboard.ui").register(this.getServlet().getServletContext());
-                        RouteRegistry registry =  ApplicationRouteRegistry.getInstance(this.getServlet().getServletContext());
-                        return registry;
-                    }
-
-                    @Override
-                    public String getMainDivId(VaadinSession session, VaadinRequest request) {
-                        return "ROOT-1";
-                    }
-                };
-                service.init();
-                return service;
-            }
-        };
-        MockVaadin.setup(MockedUI::new, servlet);
     }
 
     @Test

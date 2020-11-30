@@ -52,8 +52,7 @@ import org.junit.runners.Suite;
     HospitalViewTest.class,
     SearchResultTest.class,
     EventLifeIdDeepLinkViewTest.class,
-    ComponentConfigurationDialogTest.class,
-    UITest.class
+    ComponentConfigurationDialogTest.class
 })
 public class TestSuite {
 }
