@@ -10,6 +10,7 @@ import org.ikasan.dashboard.ui.general.component.FilteringGridTest;
 import org.ikasan.dashboard.ui.general.component.HospitalViewTest;
 import org.ikasan.dashboard.ui.general.component.SearchResultTest;
 import org.ikasan.dashboard.ui.org.ikasan.dashboard.broadcast.FlowStateBroadcasterTest;
+import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGridTest;
 import org.ikasan.dashboard.ui.search.view.SearchViewTest;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.BusinessStreamVisjsAdapterTest;
 import org.ikasan.dashboard.ui.visualisation.adapter.service.ModuleVisjsAdapterTest;
@@ -41,6 +42,7 @@ import org.junit.runners.Suite;
     UserManagementViewTest.class,
     FlowStateBroadcasterTest.class,
     SearchViewTest.class,
+    SolrSearchFilteringGridTest.class,
     BusinessStreamVisjsAdapterTest.class,
     ModuleVisjsAdapterTest.class,
     ModuleMetaDataDaoImplTest.class,
