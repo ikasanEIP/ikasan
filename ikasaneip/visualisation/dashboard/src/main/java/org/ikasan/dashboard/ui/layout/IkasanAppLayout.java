@@ -60,6 +60,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
     private Component leftSubmenu;
     private LeftNavigationItem searchItem;
     private LeftNavigationItem visualisationItem;
+    private LeftNavigationItem systemEventItem;
     private LeftNavigationItem userManagementItem;
     private LeftNavigationItem groupManagementItem;
     private LeftNavigationItem roleManagementItem;
@@ -127,8 +128,12 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
         this.visualisationItem = new LeftNavigationItem(getTranslation("menu-item.visualisation", UI.getCurrent().getLocale(), null), VaadinIcon.CLUSTER.create(), GraphView.class);
         leftAppMenuBuilder = leftAppMenuBuilder.add(this.visualisationItem);
 
+
         LeftSubMenuBuilder leftSubMenuBuilder = LeftSubMenuBuilder
             .get(getTranslation("menu-item.administration", UI.getCurrent().getLocale(), null), VaadinIcon.TOOLS.create());
+
+        this.systemEventItem = new LeftNavigationItem(getTranslation("menu-item.visualisation", UI.getCurrent().getLocale(), null), VaadinIcon.CROSSHAIRS.create(), AdministrationSearchView.class);
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.systemEventItem);
 
         this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
             UI.getCurrent().getLocale(), null), VaadinIcon.USERS.create(), UserManagementView.class);
