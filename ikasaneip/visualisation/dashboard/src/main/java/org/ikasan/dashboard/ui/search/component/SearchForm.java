@@ -119,6 +119,7 @@ public class SearchForm extends VerticalLayout {
         this.searchButton = new Button(searchButtonImage);
         this.searchButton.setHeight("54px");
         this.searchButton.setWidth("54px");
+        this.searchButton.setId("searchFormSearchButton");
 
         addButtonSearchListener(this.searchButton);
 

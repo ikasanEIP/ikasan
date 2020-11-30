@@ -13,8 +13,6 @@ import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.SpringVaadinServletService;
 import org.ikasan.dashboard.Application;
-import org.ikasan.error.reporting.model.SolrErrorOccurrence;
-import org.ikasan.error.reporting.service.SolrErrorReportingServiceImpl;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.junit.After;
@@ -44,9 +42,6 @@ public class HospitalViewTest {
 
     @MockBean
     private SolrGeneralServiceImpl solrSearchService;
-
-    @MockBean
-    private SolrErrorReportingServiceImpl solrErrorReportingService;
 
     @Autowired
     private ApplicationContext ctx;
@@ -107,11 +102,7 @@ public class HospitalViewTest {
         Mockito.when(this.solrSearchService.findById("exclusion", "12345"))
             .thenReturn(document);
 
-        SolrErrorOccurrence event = new SolrErrorOccurrence("uri", "moduleName", "flowName"
-            , "componentName", "action", "detail", "message", "exceptionClass"
-            , "eventId", "relatedEventId", "eventAsString", 12345L);
-
-        Mockito.when(this.solrSearchService.findByErrorUri("error", "id"))
+         Mockito.when(this.solrSearchService.findByErrorUri("error", "id"))
             .thenReturn(document);
 
         UI.getCurrent().navigate("exclusion/12345");
