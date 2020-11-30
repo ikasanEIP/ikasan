@@ -145,6 +145,7 @@ public class WiretapApplication
         {
             this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
             systemEventService.logSystemEvent(
+                trigger.getModuleName(),
                 String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
                 "Create Wiretap",
                 userName);
@@ -195,6 +196,7 @@ public class WiretapApplication
             this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
             if(trigger!=null){
                 systemEventService.logSystemEvent(
+                    trigger.getModuleName(),
                     String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
                     "Delete Wiretap",
                     UserUtil.getUser());

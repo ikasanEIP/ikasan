@@ -196,6 +196,7 @@ public class ReplayApplication
             resubmissionService.onResubmission(deserialisedEvent);
 
             systemEventService.logSystemEvent(
+                requestDto.getModuleName(),
                 String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),deserialisedEvent.toString()),
                 "Replaying Event",
                 userName);

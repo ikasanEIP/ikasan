@@ -126,6 +126,19 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
         systemEventDao.save(new SystemEventImpl(subject, action, now, actor, expiry));
     }
 
+    @Override
+    public void logSystemEvent(String moduleName, String subject, String action, String actor) {
+        Date now = new Date();
+        Date expiry = null;
+        if (eventExpiryMinutes != null)
+        {
+            expiry = new Date(now.getTime() + (60000 * eventExpiryMinutes));
+        }
+        SystemEventImpl systemEvent = new SystemEventImpl(subject, action, now, actor, expiry);
+        systemEvent.setModuleName(moduleName);
+        systemEventDao.save(systemEvent);
+    }
+
     /*
      * (non-Javadoc)
      * 

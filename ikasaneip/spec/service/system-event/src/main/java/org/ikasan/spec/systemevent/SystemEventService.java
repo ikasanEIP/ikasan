@@ -56,13 +56,22 @@ public interface SystemEventService<EVENT>
 {
 	/**
 	 * Logs some system level happening
-	 * 
+	 *
+     * @param subject - the module name where the event is taking place
 	 * @param subject - system level entity that has been affected
 	 * @param action - what has happened
 	 * @param actor - who/what was driving the happening
 	 */
-	void logSystemEvent(String subject, String action, String actor);
+	void logSystemEvent(String moduleName, String subject, String action, String actor);
 
+    /**
+     * Logs some system level happening
+     *
+     * @param subject - system level entity that has been affected
+     * @param action - what has happened
+     * @param actor - who/what was driving the happening
+     */
+    void logSystemEvent(String subject, String action, String actor);
 
 	/**
 	 * Performs a paged search for <code>SystemFlowEvent</code>s restricting by criteria fields as supplied
