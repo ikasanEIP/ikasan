@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=master)](https://travis-ci.org/ikasanEIP/ikasan)
+[![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=3.1.x)](https://travis-ci.org/ikasanEIP/ikasan)
 
 ![Problem Domain](ikasaneip/developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
