@@ -157,6 +157,7 @@ public class ResubmissionApplication
                     requestDto.getErrorUri(),
                     UserUtil.getUser());
                 systemEventService.logSystemEvent(
+                    requestDto.getModuleName(),
                     String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),requestDto.getErrorUri()),
                     "Ignoring Exclusion",
                     userName);
@@ -166,6 +167,7 @@ public class ResubmissionApplication
                     requestDto.getErrorUri(),
                     UserUtil.getUser());
                 systemEventService.logSystemEvent(
+                    requestDto.getModuleName(),
                     String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),requestDto.getErrorUri()),
                     "Resubmitting Exclusion",
                     userName);
