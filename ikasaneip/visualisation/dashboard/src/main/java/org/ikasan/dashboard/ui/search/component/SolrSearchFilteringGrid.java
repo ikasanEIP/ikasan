@@ -75,13 +75,16 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     public void addGridFiltering(HeaderRow hr, Consumer<String> setFilter, String columnKey)
     {
         TextField textField = new TextField();
+        textField.setId(columnKey);
         textField.setWidthFull();
 
         textField.addValueChangeListener(ev->{
 
             setFilter.accept(ev.getValue());
 
-            filteredDataProvider.refreshAll();
+            if(filteredDataProvider != null) {
+                filteredDataProvider.refreshAll();
+            }
         });
 
         hr.getCell(getColumnByKey(columnKey)).setComponent(textField);
