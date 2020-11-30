@@ -24,13 +24,13 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent>
         SolrInputDocument document = new SolrInputDocument();
         document.addField(TYPE, SYSTEM_EVENT);
         document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
-        if(systemEvent instanceof SolrSystemEvent){
-            document.addField(ID, ((SolrSystemEvent) systemEvent).getModuleName()
+        if(systemEvent.getModuleName() != null){
+            document.addField(ID, systemEvent.getModuleName()
                 + "-" + SYSTEM_EVENT + "-" + systemEvent.getId());
-            document.addField(MODULE_NAME, ((SolrSystemEvent) systemEvent).getModuleName());
+            document.addField(MODULE_NAME, systemEvent.getModuleName());
         }
         else {
-            document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getId());
+            document.addField(ID, SYSTEM_EVENT + "-" + systemEvent.getSubject() + "-" + systemEvent.getId());
         }
         document.addField(CREATED_DATE_TIME, systemEvent.getTimestamp().getTime());
         document.setField(EXPIRY, expiry);

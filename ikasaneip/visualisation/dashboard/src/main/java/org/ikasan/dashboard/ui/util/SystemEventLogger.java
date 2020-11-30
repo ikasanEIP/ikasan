@@ -1,6 +1,5 @@
 package org.ikasan.dashboard.ui.util;
 
-import org.ikasan.dashboard.ui.administration.view.UserManagementView;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
