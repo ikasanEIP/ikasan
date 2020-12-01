@@ -1,5 +1,7 @@
 package org.ikasan.systemevent.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.ikasan.spec.systemevent.SystemEvent;
@@ -14,6 +16,8 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent>
      */
     private static Logger logger = LoggerFactory.getLogger(SolrSystemEventDao.class);
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * We need to give this dao it's context.
      */
@@ -23,7 +27,13 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent>
     {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(TYPE, SYSTEM_EVENT);
-        document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
+        try {
+            document.addField(PAYLOAD_CONTENT, getSystemEventContent(systemEvent));
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(String.format("Cannot convert system event to string! [%s]", systemEvent));
+        }
+
         if(systemEvent.getModuleName() != null){
             document.addField(ID, systemEvent.getModuleName()
                 + "-" + SYSTEM_EVENT + "-" + systemEvent.getId());
@@ -37,30 +47,7 @@ public class SolrSystemEventDao extends SolrDaoBase<SystemEvent>
         return document;
     }
 
-    private String getSystemEventContent(SystemEvent systemEvent)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        if ( systemEvent.getActor() != null )
-        {
-
-            sb.append("actor:");
-            sb.append(systemEvent.getActor());
-            sb.append(",");
-        }
-        if ( systemEvent.getSubject() != null )
-        {
-            sb.append("subject:");
-            sb.append(systemEvent.getSubject());
-            sb.append(",");
-        }
-
-        if ( systemEvent.getAction() != null )
-        {
-            sb.append("action:");
-            sb.append(systemEvent.getAction());
-        }
-        sb.append("}");
-        return sb.toString();
+    private String getSystemEventContent(SystemEvent systemEvent) throws JsonProcessingException {
+        return this.objectMapper.writeValueAsString(systemEvent);
     }
 }
