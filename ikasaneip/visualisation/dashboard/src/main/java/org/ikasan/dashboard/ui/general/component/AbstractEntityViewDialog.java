@@ -35,7 +35,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseable
     protected AceEditor aceEditor;
     protected boolean initialised = false;
 
-    private VerticalLayout content;
+    protected VerticalLayout content;
 
     public abstract Component getEntityDetailsLayout();
 
@@ -65,7 +65,7 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseable
         initialiseEditor();
     }
 
-    private void init()
+    protected void init()
     {
         content = new VerticalLayout(this.getEntityDetailsLayout(), this.aceEditor);
         content.setMargin(false);
