@@ -22,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -115,13 +112,19 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
 
             ModuleMetadataSearchResults results;
 
+            // The index of the first item to load
+            int offset = query.getOffset();
+
+            // The number of items to load
+            int limit = query.getLimit();
+
             if(filter.isPresent())
             {
-                results = this.getResults(filter.get(), 0, 0);
+                results = this.getResults(filter.get(), offset, limit);
             }
             else
             {
-                results = this.getResults(null, 0, 0);
+                results = this.getResults(null, offset, limit);
             }
 
             this.resultSize = results.getTotalNumberOfResults();
@@ -139,13 +142,32 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
 
     private ModuleMetadataSearchResults getResults(ModuleSearchFilter filter, int offset, int limit)
     {
-        List<String> moduleNames = null;
+        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 
-        if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty())
-        {
-            moduleNames = new ArrayList<>();
+        final List<String> moduleNames = new ArrayList<>();
+        Set<String> accessibleModules = new HashSet<>();
 
-            moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+            accessibleModules = SecurityUtils.getAccessibleModules(authentication);
+            moduleNames.addAll(accessibleModules);
+        }
+
+        if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty()) {
+            moduleNames.clear();
+            if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+                accessibleModules.stream().forEach(accessibleModule -> {
+                    if(accessibleModule.toLowerCase().contains(filter.getModuleNameFilter().toLowerCase())) {
+                        moduleNames.add(accessibleModule);
+                    }
+                });
+            }
+            else {
+                moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+            }
+        }
+
+        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) && moduleNames.isEmpty()){
+            moduleNames.add("%££$%");
         }
 
         ModuleMetadataSearchResults results;
@@ -162,18 +184,16 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
             results = new ModuleMetadataSearchResults(new ArrayList<>(), 0, 0);
         }
 
-        IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
-            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
-
-             List<ModuleMetaData> resultsList = results.getResultList()
-                .stream()
-                .filter(metadata -> accessibleModules.contains(metadata.getName()))
-                .collect(Collectors.toList());
-
-             results = new ModuleMetadataSearchResults(resultsList, results.getTotalNumberOfResults(), results.getQueryResponseTime());
-        }
+//        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+//            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
+//
+//             List<ModuleMetaData> resultsList = results.getResultList()
+//                .stream()
+//                .filter(metadata -> accessibleModules.contains(metadata.getName()))
+//                .collect(Collectors.toList());
+//
+//             results = new ModuleMetadataSearchResults(resultsList, resultsList.size(), results.getQueryResponseTime());
+//        }
 
         return results;
     }
