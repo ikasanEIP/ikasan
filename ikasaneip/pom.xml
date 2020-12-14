@@ -445,7 +445,7 @@
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
         <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
 
-        <version.vaadin>14.3.3</version.vaadin>
+        <version.vaadin>14.4.4</version.vaadin>
         <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
         <version.com.vaadin.componentfactory>1.2.2</version.com.vaadin.componentfactory>
         <version.org.vaadin.olli>3.0.1</version.org.vaadin.olli>
