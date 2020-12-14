@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.administration.util.ConfigurationChangedSystemEventFormatter;
+import org.ikasan.dashboard.ui.administration.util.SystemEventFormatter;
 import org.ikasan.dashboard.ui.general.component.AbstractEntityViewDialog;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
@@ -27,7 +28,7 @@ import java.io.ByteArrayInputStream;
 
 public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 {
-    private TextField actionTf;
+    private TextField actionedByTf;
     private TextField contextTf;
     private TextField dateTimeTf;
 
@@ -41,7 +42,7 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
 
     public SystemEventDialog()
     {
-        actionTf = new TextField(getTranslation("text-field.action-performed-by", UI.getCurrent().getLocale(), null));
+        actionedByTf = new TextField(getTranslation("text-field.action-performed-by", UI.getCurrent().getLocale(), null));
         contextTf = new TextField(getTranslation("text-field.system-event-context", UI.getCurrent().getLocale(), null));
         dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
     }
@@ -53,8 +54,8 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
 
         FormLayout formLayout = new FormLayout();
 
-        actionTf.setReadOnly(true);
-        formLayout.add(actionTf);
+        actionedByTf.setReadOnly(true);
+        formLayout.add(actionedByTf);
 
         contextTf.setReadOnly(true);
         formLayout.add(contextTf);
@@ -87,9 +88,9 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
         SystemEventImpl systemEventImpl = null;
         try {
             systemEventImpl = objectMapper.readValue(systemEvent.getEvent(), SystemEventImpl.class);
-            super.title.setText("System Event " + systemEvent.getId());
-            this.actionTf.setValue(systemEventImpl.getActor());
-            this.contextTf.setValue(systemEventImpl.getSubject());
+            super.title.setText("System Event");
+            this.actionedByTf.setValue(systemEventImpl.getActor());
+            this.contextTf.setValue(SystemEventFormatter.getContext(systemEventImpl));
 
             this.dateTimeTf.setValue(DateFormatter.getFormattedDate(systemEvent.getTimestamp()));
 
@@ -110,7 +111,7 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
 
         open();
 
-        if(event.startsWith("Configuration Updated")) {
+        if(event.startsWith("Configuration Updated") || event.startsWith("Configuration Deleted")) {
             try {
                 event = ConfigurationChangedSystemEventFormatter.format(event);
             }
@@ -119,13 +120,8 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
             }
             aceEditor.setValue(event);
         }
-        else if (event.equals("Create Wiretap") || event.equals("Delete Wiretap")) {
-            this.contextTf.setValue(systemEventImpl.getSubject().substring(0, systemEventImpl.getSubject().indexOf(":")));
-            aceEditor.setValue(event + systemEventImpl.getSubject().substring(systemEventImpl.getSubject().indexOf(":")
-                + 1, systemEventImpl.getSubject().length()));
-        }
         else {
-            aceEditor.setValue(event);
+            aceEditor.setValue(SystemEventFormatter.getEvent(systemEventImpl));
         }
     }
 
