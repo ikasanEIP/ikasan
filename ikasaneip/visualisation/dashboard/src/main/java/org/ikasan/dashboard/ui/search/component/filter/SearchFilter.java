@@ -14,6 +14,7 @@ public class SearchFilter
     private String flowNamesFilter = null;
     private String componentNameFilter = null;
     private String eventIdFilter = null;
+    private Map<String, String> systemEventFilter = new HashMap<>();
 
     public List<String> getModuleNamesFilterList()
     {
@@ -111,6 +112,30 @@ public class SearchFilter
     public void setEventIdFilter(String eventIdFilter)
     {
         this.eventIdFilter = eventIdFilter;
+    }
+
+    public String getModuleNamesFilter() {
+        return moduleNamesFilter;
+    }
+
+    public void setModuleNamesFilter(String moduleNamesFilter) {
+        this.moduleNamesFilter = moduleNamesFilter;
+    }
+
+    public String getFlowNamesFilter() {
+        return flowNamesFilter;
+    }
+
+    public void setFlowNamesFilter(String flowNamesFilter) {
+        this.flowNamesFilter = flowNamesFilter;
+    }
+
+    public Map<String, String> getSystemEventFilter() {
+        return systemEventFilter;
+    }
+
+    public void setSystemEventFilter(String key, String systemEventFilter) {
+        this.systemEventFilter.put(key, systemEventFilter);
     }
 
     public Comparator getSortComparator(List<QuerySortOrder> querySortOrders)
