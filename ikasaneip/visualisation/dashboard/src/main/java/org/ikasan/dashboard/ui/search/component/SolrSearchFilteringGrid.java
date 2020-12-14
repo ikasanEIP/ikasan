@@ -91,6 +91,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         hr.getCell(getColumnByKey(columnKey)).setComponent(textField);
     }
 
+
     public void init(long startTime, long endTime, String searchTerm, List<String> types, boolean negateQuery) {
         this.init(startTime, endTime, searchTerm, types, negateQuery, null);
     }
@@ -157,6 +158,19 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         Set<String> allowedModuleNames = SecurityUtils.getAccessibleModules(authentication);
 
         Set<String> moduleNames = null;
+
+        if(filter.getSystemEventFilter() != null && !filter.getSystemEventFilter().isEmpty()) {
+            String systemEventFilters = filter.getSystemEventFilter().values().stream()
+                .filter(value -> value.length() > 0)
+                .collect(Collectors.joining(" AND "));
+
+            if(searchTerm != null && searchTerm.length() > 0 && systemEventFilters.length() > 0) {
+                searchTerm += " AND " + systemEventFilters;
+            }
+            else if((searchTerm == null || searchTerm.length() == 0) && systemEventFilters.length() > 0) {
+                searchTerm = systemEventFilters;
+            }
+        }
 
         if(filter.isValidModuleNameFilter()) {
             moduleNames = new HashSet<>();
