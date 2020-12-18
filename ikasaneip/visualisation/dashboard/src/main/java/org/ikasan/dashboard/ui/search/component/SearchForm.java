@@ -142,6 +142,7 @@ public class SearchForm extends VerticalLayout {
         this.wiretapCheckButton = new Button(this.wiretapImage);
         this.wiretapCheckButton.setHeight("46px");
         this.wiretapCheckButton.setWidth("44px");
+        this.wiretapCheckButton.setId("wiretapCheckButton");
 
         this.wiretapCheckButton.addClickListener(buttonClickEvent -> {
             this.wiretapChecked = !this.wiretapChecked;
@@ -165,6 +166,7 @@ public class SearchForm extends VerticalLayout {
         this.errorCheckButton = new Button(errorImage);
         this.errorCheckButton.setHeight("46px");
         this.errorCheckButton.setWidth("44px");
+        this.errorCheckButton.setId("errorCheckButton");
 
         this.errorCheckButton.addClickListener(buttonClickEvent -> {
             this.errorChecked = !this.errorChecked;
@@ -188,6 +190,7 @@ public class SearchForm extends VerticalLayout {
         this.hospitalCheckButton = new Button(hospitalImage);
         this.hospitalCheckButton.setHeight("46px");
         this.hospitalCheckButton.setWidth("44px");
+        this.hospitalCheckButton.setId("hospitalCheckButton");
 
         this.hospitalCheckButton.addClickListener(buttonClickEvent -> {
             this.hospitalChecked = !this.hospitalChecked;
@@ -211,6 +214,7 @@ public class SearchForm extends VerticalLayout {
         this.replayCheckButton = new Button(replayImage);
         this.replayCheckButton.setHeight("46px");
         this.replayCheckButton.setWidth("44px");
+        this.replayCheckButton.setId("replayCheckButton");
 
         this.replayCheckButton.addClickListener(buttonClickEvent -> {
             this.replayChecked = !this.replayChecked;
@@ -244,10 +248,22 @@ public class SearchForm extends VerticalLayout {
             , this.errorCheckButton, this.errorButtonTooltip, checkboxLayout);
         searchIconLayout.setVerticalComponentAlignment(Alignment.CENTER, checkboxLayout);
 
-        ComponentSecurityVisibility.applySecurity(this.wiretapCheckButton, SecurityConstants.SEARCH_REPLAY_WRITE, SecurityConstants.ALL_AUTHORITY);
+        ComponentSecurityVisibility.applySecurity(this.wiretapCheckButton, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.WIRETAP_READ, SecurityConstants.WIRETAP_WRITE, SecurityConstants.ALL_AUTHORITY);
+        if(!this.wiretapCheckButton.isVisible()) {
+            this.wiretapChecked = false;
+        }
         ComponentSecurityVisibility.applySecurity(this.errorCheckButton, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE, SecurityConstants.ERROR_ADMIN,SecurityConstants.ALL_AUTHORITY);
+        if(!this.errorCheckButton.isVisible()) {
+            this.errorChecked = false;
+        }
         ComponentSecurityVisibility.applySecurity(this.hospitalCheckButton, SecurityConstants.EXCLUSION_READ, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_ADMIN,SecurityConstants.ALL_AUTHORITY);
+        if(!this.hospitalCheckButton.isVisible()) {
+            this.hospitalChecked = false;
+        }
         ComponentSecurityVisibility.applySecurity(this.replayCheckButton, SecurityConstants.REPLAY_READ, SecurityConstants.REPLAY_WRITE, SecurityConstants.REPLAY_ADMIN, SecurityConstants.ALL_AUTHORITY);
+        if(!this.replayCheckButton.isVisible()) {
+            this.replayChecked = false;
+        }
 
         this.add(searchLayout, searchIconLayout);
         this.setHorizontalComponentAlignment(Alignment.CENTER, searchLayout);

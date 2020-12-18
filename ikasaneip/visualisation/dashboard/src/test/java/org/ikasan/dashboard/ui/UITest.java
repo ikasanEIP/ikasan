@@ -1,22 +1,23 @@
 package org.ikasan.dashboard.ui;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
-import com.github.mvysny.kaributesting.v10.MockedUI;
 import com.github.mvysny.kaributesting.v10.Routes;
-import com.vaadin.flow.function.DeploymentConfiguration;
-import com.vaadin.flow.server.*;
-import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
+import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.spring.SpringServlet;
-import com.vaadin.flow.spring.SpringVaadinServletService;
+import kotlin.jvm.functions.Function0;
 import org.ikasan.dashboard.Application;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.solr.model.IkasanSolrDocument;
+import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
@@ -65,54 +71,107 @@ public abstract class UITest
             .thenReturn(false);
     }
 
+//    @Before
+//    public void setup() throws Exception
+//    {
+//        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//        rootLogger.setLevel(Level.WARN);
+//
+//        this.setup_general_expectations();
+//        this.setup_expectations();
+//
+//        routesRegistered = false;
+//
+//        final SpringServlet servlet = new SpringServlet(ctx, true) {
+//            @Override
+//            protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration) throws ServiceException
+//            {
+//                final VaadinServletService service = new SpringVaadinServletService(this, deploymentConfiguration, ctx) {
+//                    @Override
+//                    protected boolean isAtmosphereAvailable() {
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    protected RouteRegistry getRouteRegistry() {
+//                        if(!routesRegistered) {
+//                            new Routes().autoDiscoverViews("org.ikasan.dashboard.ui").register(this.getServlet().getServletContext());
+//                            routesRegistered = true;
+//                        }
+//
+//                        RouteRegistry registry =  ApplicationRouteRegistry.getInstance(this.getServlet().getServletContext());
+//                        return registry;
+//                    }
+//
+//                    @Override
+//                    public String getMainDivId(VaadinSession session, VaadinRequest request) {
+//                        return "ROOT-1";
+//                    }
+//                };
+//                service.init();
+//                return service;
+//            }
+//        };
+//
+//        MockVaadin.setup(MockedUI::new, servlet);
+//    }
+//
+//    @After
+//    public void tearDown() {
+//        MockVaadin.tearDown();
+//    }
+
+    private static Routes routes;
+
+    @BeforeAll
+    public static void discoverRoutes() {
+    }
+
+
     @Before
-    public void setup() throws Exception
-    {
+    public void setup() {
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.WARN);
 
         this.setup_general_expectations();
         this.setup_expectations();
 
-        routesRegistered = false;
-
-        final SpringServlet servlet = new SpringServlet(ctx, true) {
-            @Override
-            protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration) throws ServiceException
-            {
-                final VaadinServletService service = new SpringVaadinServletService(this, deploymentConfiguration, ctx) {
-                    @Override
-                    protected boolean isAtmosphereAvailable() {
-                        return false;
-                    }
-
-                    @Override
-                    protected RouteRegistry getRouteRegistry() {
-                        if(!routesRegistered) {
-                            new Routes().autoDiscoverViews("org.ikasan.dashboard.ui").register(this.getServlet().getServletContext());
-                            routesRegistered = true;
-                        }
-
-                        RouteRegistry registry =  ApplicationRouteRegistry.getInstance(this.getServlet().getServletContext());
-                        return registry;
-                    }
-
-                    @Override
-                    public String getMainDivId(VaadinSession session, VaadinRequest request) {
-                        return "ROOT-1";
-                    }
-                };
-                service.init();
-                return service;
-            }
-        };
-
-        MockVaadin.setup(MockedUI::new, servlet);
+        routes = new Routes().autoDiscoverViews("org.ikasan.dashboard.ui");
+        final Function0<UI> uiFactory = UI::new;
+        final SpringServlet servlet = new MockSpringServlet(routes, ctx, uiFactory);
+        MockVaadin.setup(uiFactory, servlet);
     }
 
     @After
     public void tearDown() {
         MockVaadin.tearDown();
+    }
+
+    protected IkasanSolrDocumentSearchResults getSolrResults(int size) {
+
+        ArrayList<IkasanSolrDocument> ikasanSolrDocuments = new ArrayList<>();
+
+        IntStream.range(0, size).forEach(i -> {
+            IkasanSolrDocument document = new IkasanSolrDocument();
+            document.setId("id" +i);
+            document.setComponentName("component"+i);
+            document.setErrorAction("exclusion"+i);
+            document.setType("exclusion"+i);
+            document.setErrorDetail("error"+i);
+            document.setErrorUri("uri"+i);
+            document.setErrorMessage("message"+i);
+            document.setFlowName("flow"+i);
+            document.setModuleName("module"+i);
+            document.setPayloadRaw("payload".getBytes());
+            document.setExceptionClass("exception.class");
+            document.setEvent("event"+i);
+            document.setEventId("eventId"+i);
+
+            ikasanSolrDocuments.add(document);
+        });
+
+        return new IkasanSolrDocumentSearchResults(ikasanSolrDocuments
+            , ikasanSolrDocuments.size(), 1);
     }
 
 }

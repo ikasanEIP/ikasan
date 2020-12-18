@@ -3,6 +3,7 @@ package org.ikasan.dashboard.security;
 
 import com.vaadin.flow.server.ServletHelper.RequestType;
 import com.vaadin.flow.shared.ApplicationConstants;
+import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -63,9 +64,13 @@ public final class SecurityUtils {
 
         Set<String> results = new HashSet<>();
 
-        user.getPrincipals().stream()
-            .forEach(principal -> principal.getRoles().stream()
-                .forEach(role -> role.getRoleModules().stream()
+        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)){
+            return results;
+        }
+
+        user.getPrincipals()
+            .forEach(principal -> principal.getRoles()
+                .forEach(role -> role.getRoleModules()
                     .forEach(roleModule -> results.add(roleModule.getModuleName()))));
 
         return results;

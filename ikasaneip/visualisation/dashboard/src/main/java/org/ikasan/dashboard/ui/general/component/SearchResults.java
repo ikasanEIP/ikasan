@@ -138,6 +138,8 @@ public class SearchResults extends Div {
         selectAllButton = new Button(selectAllImage);
         selectAllButton.setHeight("35px");
         selectAllButton.setWidth("35px");
+        selectAllButton.setId("selectAllButton");
+
         Image replayImage = new Image("/frontend/images/replay-service.png", "");
         replayImage.setHeight("30px");
         replayButton = new Button(replayImage);
@@ -210,27 +212,31 @@ public class SearchResults extends Div {
                 Image wiretapImage = new Image("frontend/images/wiretap-service.png", "");
                 wiretapImage.setHeight("30px");
                 horizontalLayout.add(wiretapImage);
+                horizontalLayout.setId("frontend/images/wiretap-service.png");
             }
             else if(ikasanSolrDocument.getType().equalsIgnoreCase(SearchConstants.ERROR))
             {
                 Image errorImage = new Image("frontend/images/error-service.png", "");
                 errorImage.setHeight("30px");
                 horizontalLayout.add(errorImage);
+                horizontalLayout.setId("frontend/images/error-service.png");
             }
             else if(ikasanSolrDocument.getType().equalsIgnoreCase(SearchConstants.EXCLUSION))
             {
                 Image hospitalImage = new Image("frontend/images/hospital-service.png", "");
                 hospitalImage.setHeight("30px");
                 horizontalLayout.add(hospitalImage);
+                horizontalLayout.setId("frontend/images/hospital-service.png");
             }
             else if(ikasanSolrDocument.getType().equalsIgnoreCase(SearchConstants.REPLAY)) {
                 Image replayImage = new Image("frontend/images/replay-service.png", "");
                 replayImage.setHeight("30px");
                 horizontalLayout.add(replayImage);
+                horizontalLayout.setId("frontend/images/replay-service.png");
             }
 
             return horizontalLayout;
-        })).setWidth("40px");
+        })).setWidth("40px").setKey("entityImage");
 
         // Add the module name column to the grid
         this.searchResultsGrid.addColumn(IkasanSolrDocument::getModuleName)

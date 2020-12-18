@@ -11,6 +11,7 @@ import com.vaadin.flow.server.VaadinService;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
+import org.ikasan.dashboard.ui.util.SearchConstants;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.visualisation.component.filter.ModuleSearchFilter;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -96,14 +97,7 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
 
             ModuleMetadataSearchResults results;
 
-            if(filter.isPresent())
-            {
-                results = this.getResults(filter.get(), offset, limit);
-            }
-            else
-            {
-                results = this.getResults(null, offset, limit);
-            }
+            results = this.getResults(filter.get(), offset, limit);
 
             return results.getResultList().stream();
         }, query ->
@@ -118,20 +112,12 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
             // The number of items to load
             int limit = query.getLimit();
 
-            if(filter.isPresent())
-            {
-                results = this.getResults(filter.get(), offset, limit);
-            }
-            else
-            {
-                results = this.getResults(null, offset, limit);
-            }
+            results = this.getResults(filter.get(), offset, limit);
 
             this.resultSize = results.getTotalNumberOfResults();
             this.queryTime = results.getQueryResponseTime();
 
-
-            return (int) results.getTotalNumberOfResults();
+            return (int) this.resultSize;
         });
 
         filteredDataProvider = dataProvider.withConfigurableFilter();
@@ -167,7 +153,7 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
         }
 
         if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) && moduleNames.isEmpty()){
-            moduleNames.add("%££$%");
+            moduleNames.add(SearchConstants.NONSENSE_STRING);
         }
 
         ModuleMetadataSearchResults results;
@@ -183,17 +169,6 @@ public class ModuleFilteringGrid extends Grid<ModuleMetaData>
 
             results = new ModuleMetadataSearchResults(new ArrayList<>(), 0, 0);
         }
-
-//        if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
-//            Set<String> accessibleModules = SecurityUtils.getAccessibleModules(authentication);
-//
-//             List<ModuleMetaData> resultsList = results.getResultList()
-//                .stream()
-//                .filter(metadata -> accessibleModules.contains(metadata.getName()))
-//                .collect(Collectors.toList());
-//
-//             results = new ModuleMetadataSearchResults(resultsList, resultsList.size(), results.getQueryResponseTime());
-//        }
 
         return results;
     }

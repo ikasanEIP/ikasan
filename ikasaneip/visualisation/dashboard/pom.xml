@@ -18,12 +18,19 @@
         <vaadin.productionMode>true</vaadin.productionMode>
     </properties>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${version.vaadin}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-core</artifactId>
-        </dependency>
+    <dependencies>
 
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -33,16 +40,31 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
                 </exclusion>
-            </exclusions>
-        </dependency>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-data</artifactId>
-            <exclusions>
+                <!-- Webjars are only needed when running in Vaadin 13 compatibility mode -->
                 <exclusion>
-                    <groupId>javax.validation</groupId>
-                    <artifactId>validation-api</artifactId>
+                    <groupId>com.vaadin.webjar</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.insites</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.polymer</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.polymerelements</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.vaadin</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.webcomponents</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -214,6 +236,12 @@
         <dependency>
             <groupId>com.vaadin.componentfactory</groupId>
             <artifactId>tooltip</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.polymer</groupId>
+                    <artifactId>polymer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -229,11 +257,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
         <dependency>
@@ -254,7 +277,7 @@
 
         <dependency>
             <groupId>com.github.mvysny.kaributesting</groupId>
-            <artifactId>karibu-testing-v10</artifactId>
+            <artifactId>karibu-testing-v10-spring</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -332,6 +355,7 @@
                             <goal>prepare-frontend</goal>
                             <goal>build-frontend</goal>
                         </goals>
+                        <phase>compile</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -340,7 +364,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dvaadin.original.frontend.resources=true -Dvaadin.compatibilityMode=true</argLine>
+                    <argLine>-Dvaadin.original.frontend.resources=true -Dvaadin.compatibilityMode=false</argLine>
                     <includes>
                         <include>**/TestSuite.class</include>
                     </includes>
