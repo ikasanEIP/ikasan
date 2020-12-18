@@ -33,7 +33,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseable
     protected DocumentBuilder documentBuilder;
     protected Transformer transformer;
     protected AceEditor aceEditor;
-    protected TextArea textArea;
     protected boolean initialised = false;
 
     private VerticalLayout content;
@@ -89,7 +88,6 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseable
 
         String xmlString = formatXml(event);
         aceEditor.setValue(xmlString);
-        this.textArea.setValue(xmlString);
     }
 
     protected String formatXml(String event)
@@ -126,14 +124,5 @@ public abstract class AbstractEntityViewDialog<ENTITY> extends AbstractCloseable
         aceEditor.setHeight("50vh");
         aceEditor.setReadOnly(true);
         aceEditor.setWrap(false);
-
-        this.textArea = new TextArea();
-//        this.textArea.setSizeFull();
-        textArea.setWidth("auto");
-        textArea.setHeight("50vh");
-        this.textArea.setReadOnly(true);
-//        this.textArea.getElement().getStyle().set("white-space", "nowrap");
-//        this.textArea.getElement().getStyle().set("overflow-x", "auto");
-        this.textArea.setThemeName(Material.DARK);
     }
 }

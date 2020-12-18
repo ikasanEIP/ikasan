@@ -23,6 +23,9 @@ public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
     private ExclusionEventAction exclusionEventAction;
     private boolean isSaved;
     private String action;
+    private TextArea commentTf;
+    private Button actionButton;
+    private Button cancel;
 
     public HospitalCommentsDialog(ExclusionEventAction exclusionEventAction, String action)
     {
@@ -71,7 +74,8 @@ public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
 
         Binder<ExclusionEventAction> binder = new Binder<>(ExclusionEventAction.class);
 
-        TextArea commentTf = new TextArea(getTranslation("text-field.comment", UI.getCurrent().getLocale(), null));
+        commentTf = new TextArea(getTranslation("text-field.comment", UI.getCurrent().getLocale(), null));
+        commentTf.setId("hospitalCommentsDialogCommentTf");
         binder.forField(commentTf)
             .withValidator(description -> description != null && description.length() > 0, getTranslation("message.comment-missing", UI.getCurrent().getLocale(), null))
             .bind(ExclusionEventAction::getComment, ExclusionEventAction::setComment);
@@ -92,8 +96,9 @@ public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
 
         if(action.equalsIgnoreCase(ExclusionEventAction.RESUBMIT))
         {
-            Button resubmit = new Button(getTranslation("button.resubmit", UI.getCurrent().getLocale(), null));
-            resubmit.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            actionButton = new Button(getTranslation("button.resubmit", UI.getCurrent().getLocale(), null));
+            actionButton.setId("hospitalCommentsDialogActionButton");
+            actionButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
                 try
                 {
@@ -106,12 +111,13 @@ public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
                 }
             });
 
-            buttonLayout.add(resubmit);
+            buttonLayout.add(actionButton);
         }
         else
         {
-            Button ignore = new Button(getTranslation("button.ignore", UI.getCurrent().getLocale(), null));
-            ignore.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
+            actionButton = new Button(getTranslation("button.ignore", UI.getCurrent().getLocale(), null));
+            actionButton.setId("hospitalCommentsDialogActionButton");
+            actionButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent ->
             {
                 try
                 {
@@ -124,13 +130,14 @@ public class HospitalCommentsDialog extends AbstractCloseableResizableDialog
                 }
             });
 
-            buttonLayout.add(ignore);
+            buttonLayout.add(actionButton);
         }
 
-        Button cancel = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale(), null));
+        cancel = new Button(getTranslation("button.cancel", UI.getCurrent().getLocale(), null));
         cancel.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
             this.close();
         });
+        cancel.setId("hospitalCommentsDialogCancelButton");
 
         buttonLayout.add(cancel);
 

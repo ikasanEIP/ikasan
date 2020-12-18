@@ -47,8 +47,6 @@ public class LoginView extends VerticalLayout implements PageConfigurator, HasUr
 
 
     private LoginForm login = new LoginForm();
-//    private CustomRequestCache customRequestCache;
-//    private String route;
 
     public LoginView()
     {
