@@ -1,5 +1,7 @@
 package org.ikasan.dashboard.ui;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
@@ -15,9 +17,7 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -30,8 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
@@ -70,56 +68,6 @@ public abstract class UITest
         Mockito.when(user.isRequiresPasswordChange())
             .thenReturn(false);
     }
-
-//    @Before
-//    public void setup() throws Exception
-//    {
-//        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-//        rootLogger.setLevel(Level.WARN);
-//
-//        this.setup_general_expectations();
-//        this.setup_expectations();
-//
-//        routesRegistered = false;
-//
-//        final SpringServlet servlet = new SpringServlet(ctx, true) {
-//            @Override
-//            protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration) throws ServiceException
-//            {
-//                final VaadinServletService service = new SpringVaadinServletService(this, deploymentConfiguration, ctx) {
-//                    @Override
-//                    protected boolean isAtmosphereAvailable() {
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    protected RouteRegistry getRouteRegistry() {
-//                        if(!routesRegistered) {
-//                            new Routes().autoDiscoverViews("org.ikasan.dashboard.ui").register(this.getServlet().getServletContext());
-//                            routesRegistered = true;
-//                        }
-//
-//                        RouteRegistry registry =  ApplicationRouteRegistry.getInstance(this.getServlet().getServletContext());
-//                        return registry;
-//                    }
-//
-//                    @Override
-//                    public String getMainDivId(VaadinSession session, VaadinRequest request) {
-//                        return "ROOT-1";
-//                    }
-//                };
-//                service.init();
-//                return service;
-//            }
-//        };
-//
-//        MockVaadin.setup(MockedUI::new, servlet);
-//    }
-//
-//    @After
-//    public void tearDown() {
-//        MockVaadin.tearDown();
-//    }
 
     private static Routes routes;
 
