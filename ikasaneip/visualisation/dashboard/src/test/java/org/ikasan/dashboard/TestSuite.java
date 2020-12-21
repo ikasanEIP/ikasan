@@ -9,6 +9,7 @@ import org.ikasan.dashboard.ui.general.component.EventLifeIdDeepLinkViewTest;
 import org.ikasan.dashboard.ui.general.component.FilteringGridTest;
 import org.ikasan.dashboard.ui.general.component.HospitalViewTest;
 import org.ikasan.dashboard.ui.general.component.SearchResultTest;
+import org.ikasan.dashboard.ui.layout.IkasanAppLayoutTest;
 import org.ikasan.dashboard.ui.org.ikasan.dashboard.broadcast.FlowStateBroadcasterTest;
 import org.ikasan.dashboard.ui.search.component.SearchFormTest;
 import org.ikasan.dashboard.ui.search.component.SolrSearchFilteringGridTest;
@@ -59,7 +60,10 @@ import org.junit.runners.Suite;
     ComponentConfigurationDialogTest.class,
     ModuleFilteringGridTest.class,
     LdapDirectorySynchronisationJobTest.class,
-    ModuleVisualisationViewTest.class
+    ModuleVisualisationViewTest.class,
+    SystemEventSearchViewTest.class,
+    AdministrationSearchViewTest.class,
+    IkasanAppLayoutTest.class
 })
 public class TestSuite {
 }
