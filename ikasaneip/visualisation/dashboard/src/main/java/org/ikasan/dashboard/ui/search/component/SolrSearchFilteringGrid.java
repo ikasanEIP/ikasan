@@ -13,6 +13,7 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.ikasan.dashboard.security.SecurityUtils;
 import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.search.component.filter.SearchFilter;
+import org.ikasan.dashboard.ui.util.SearchConstants;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.model.IkasanSolrDocument;
@@ -114,52 +115,16 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 
             IkasanSolrDocumentSearchResults results;
 
-            if(filter.isPresent())
+            if(query.getSortOrders().size() > 0)
             {
-                if(query.getSortOrders().size() > 0)
-                {
-                    results = this.getResults(authentication, filter.get(), startTime, endTime
-                        , searchTerm, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
-                        , query.getSortOrders().get(0).getDirection().name());
-                }
-                else
-                {
-                    results = this.getResults(authentication, filter.get(), startTime, endTime
-                        , searchTerm, offset, limit, types, negateQuery, null, null);
-                }
+                results = this.getResults(authentication, filter.get(), startTime, endTime
+                    , searchTerm, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
+                    , query.getSortOrders().get(0).getDirection().name());
             }
             else
             {
-                if(authentication.hasGrantedAuthority("ALL"))
-                {
-                    if(query.getSortOrders().size() > 0)
-                    {
-                        results = this.solrSearchService.search(searchTerm,
-                            startTime, endTime, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
-                            , query.getSortOrders().get(0).getDirection().name());
-                    }
-                    else
-                    {
-                        results = this.solrSearchService.search(searchTerm,
-                            startTime, endTime, offset, limit, types, negateQuery, null, null);
-                    }
-                }
-                else {
-                    Set<String> moduleNames = SecurityUtils.getAccessibleModules(authentication);
-                    if (moduleNames.isEmpty()) {
-                        moduleNames.add("--");
-                    }
-                    if (query.getSortOrders().size() > 0) {
-                        results = this.solrSearchService.search(moduleNames, searchTerm,
-                            startTime, endTime, offset, limit, types, negateQuery, query.getSortOrders().get(0).getSorted()
-                            , query.getSortOrders().get(0).getDirection().name());
-                    }
-                    else
-                    {
-                        results = this.solrSearchService.search(moduleNames, searchTerm,
-                            startTime, endTime, offset, limit, types, negateQuery,null, null);
-                    }
-                }
+                results = this.getResults(authentication, filter.get(), startTime, endTime
+                    , searchTerm, offset, limit, types, negateQuery, null, null);
             }
 
             return results.getResultList().stream();
@@ -167,31 +132,8 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         {
             Optional<SearchFilter> filter = query.getFilter();
 
-            IkasanSolrDocumentSearchResults results;
-
-            if(filter.isPresent())
-            {
-                results = this.getResults(authentication, filter.get(), startTime, endTime
-                    , searchTerm, 0, 0, types, negateQuery, null, null);
-            }
-            else
-            {
-                if(authentication.hasGrantedAuthority("ALL"))
-                {
-                    results = this.solrSearchService.search(searchTerm,
-                        startTime, endTime, 0, 0, types, negateQuery, null, null);
-                }
-                else
-                {
-                    Set<String> moduleNames = SecurityUtils.getAccessibleModules(authentication);
-                    if(moduleNames.isEmpty()){
-                        moduleNames.add("--");
-                    }
-
-                    results = this.solrSearchService.search(moduleNames, searchTerm,
-                        startTime, endTime, 0, 0, types, negateQuery, null, null);
-                }
-            }
+            IkasanSolrDocumentSearchResults results = this.getResults(authentication, filter.get(), startTime, endTime
+            , searchTerm, 0, 0, types, negateQuery, null, null);
 
             this.resultSize = results.getTotalNumberOfResults();
             this.queryTime = results.getQueryResponseTime();
@@ -212,15 +154,31 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
     private IkasanSolrDocumentSearchResults getResults(IkasanAuthentication authentication, SearchFilter filter, long startTime
         , long endTime, String searchTerm, int offset, int limit, List<String> types, boolean negateQuery, String sortField, String sortOrder)
     {
+        Set<String> allowedModuleNames = SecurityUtils.getAccessibleModules(authentication);
+
         Set<String> moduleNames = null;
 
         if(filter.isValidModuleNameFilter()) {
             moduleNames = new HashSet<>();
-            moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+
+            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)) {
+                moduleNames.add("*" + ClientUtils.escapeQueryChars(filter.getModuleNameFilter()) + "*");
+            }
+            else {
+                for(String allowedModuleName: allowedModuleNames){
+                    if(allowedModuleName.toLowerCase().startsWith(filter.getModuleNameFilter().toLowerCase())) {
+                        moduleNames.add(allowedModuleName);
+                    }
+                }
+            }
+
+            if(moduleNames.isEmpty()) {
+                moduleNames.add(SearchConstants.NONSENSE_STRING);
+            }
         }
         else if(filter.getModuleNameFilter() != null && !filter.getModuleNameFilter().isEmpty()) {
             moduleNames = new HashSet<>();
-            moduleNames.add("----");
+            moduleNames.add(SearchConstants.NONSENSE_STRING);
         }
         else if(filter.getModuleNamesFilterList() != null && !filter.getModuleNamesFilterList().isEmpty())
         {
@@ -228,8 +186,6 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 
             if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
             {
-                Set<String> allowedModuleNames = SecurityUtils.getAccessibleModules(authentication);
-
                 moduleNames.addAll(allowedModuleNames.stream()
                     .filter(name -> filter.getModuleNamesFilterList()
                         .stream()
@@ -237,7 +193,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
                     .collect(Collectors.toList()));
 
                 if(moduleNames.isEmpty()){
-                    moduleNames.add("----");
+                    moduleNames.add(SearchConstants.NONSENSE_STRING);
                 }
             }
             else
@@ -257,7 +213,7 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
         }
         else if(filter.getFlowNameFilter() != null && !filter.getFlowNameFilter().isEmpty()) {
             flowNames = new HashSet<>();
-            flowNames.add("----");
+            flowNames.add(SearchConstants.NONSENSE_STRING);
         }
         else if(filter.getFlowNamesFilterList() != null && !filter.getFlowNamesFilterList().isEmpty())
         {
@@ -284,11 +240,15 @@ public class SolrSearchFilteringGrid extends Grid<IkasanSolrDocument>
 
         if(!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) && moduleNames == null)
         {
-            moduleNames = SecurityUtils.getAccessibleModules(authentication);
+            moduleNames = allowedModuleNames;
 
             if(moduleNames.isEmpty()){
-                moduleNames.add("--");
+                moduleNames.add(SearchConstants.NONSENSE_STRING);
             }
+        }
+
+        if(types.isEmpty()) {
+            types.add(SearchConstants.NONSENSE_STRING);
         }
 
         try {

@@ -39,6 +39,7 @@ import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaData;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,15 +84,14 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
     private Button downloadButton;
     private Tooltip downloadButtonTooltip;
 
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
     private ModuleMetaDataService moduleMetadataService;
     private SolrGeneralService<IkasanSolrDocument, IkasanSolrDocumentSearchResults> solrGeneralService;
 
     private String translatedEventActionMessage;
 
-    public HospitalView(HospitalAuditService hospitalAuditService,
-                        ResubmissionRestServiceImpl resubmissionRestService, ModuleMetaDataService moduleMetadataService,
-                        SolrGeneralService solrGeneralService)
+    public HospitalView(HospitalAuditService hospitalAuditService, ResubmissionService resubmissionRestService
+        , ModuleMetaDataService moduleMetadataService, SolrGeneralService solrGeneralService)
     {
         this.hospitalAuditService = hospitalAuditService;
         if(this.hospitalAuditService == null)
@@ -169,7 +169,9 @@ public class HospitalView extends AbstractEntityView<IkasanSolrDocument> impleme
         buttonWrapper.wrapComponent(downloadButton);
 
         resubmitButton = new Button(getTranslation("button.resubmit", UI.getCurrent().getLocale()));
+        resubmitButton.setId("hospitalViewResubmitButton");
         ignoreButton = new Button(getTranslation("button.ignore", UI.getCurrent().getLocale()));
+        ignoreButton.setId("hospitalViewIgnoreButton");
 
         IkasanAuthentication authentication = (IkasanAuthentication) SecurityContextHolder.getContext().getAuthentication();
 

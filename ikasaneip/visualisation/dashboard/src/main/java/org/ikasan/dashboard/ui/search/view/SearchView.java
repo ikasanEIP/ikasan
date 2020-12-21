@@ -22,6 +22,8 @@ import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.hospital.service.HospitalAuditService;
 import org.ikasan.spec.metadata.ModuleMetaDataService;
+import org.ikasan.spec.module.client.ReplayService;
+import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.ikasan.spec.solr.SolrGeneralService;
 import org.slf4j.Logger;
@@ -47,10 +49,10 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver, S
     private HospitalAuditService hospitalAuditService;
 
     @Resource
-    private ResubmissionRestServiceImpl resubmissionRestService;
+    private ResubmissionService resubmissionRestService;
 
     @Resource
-    private ReplayRestServiceImpl replayRestService;
+    private ReplayService replayRestService;
 
     @Resource
     private ModuleMetaDataService moduleMetadataService;

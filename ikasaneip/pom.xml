@@ -467,7 +467,7 @@
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.app.layout.addon>4.0.0</version.app.layout.addon>
         <version.vaadin.css.grid>2.0.0.beta3</version.vaadin.css.grid>
-        <version.karibu.testing.v10>1.1.12</version.karibu.testing.v10>
+        <version.karibu.testing.v10>1.2.6</version.karibu.testing.v10>
     </properties>
 
     <!-- Distribution for releases -->
@@ -2037,7 +2037,7 @@
 
             <dependency>
                 <groupId>com.github.mvysny.kaributesting</groupId>
-                <artifactId>karibu-testing-v10</artifactId>
+                <artifactId>karibu-testing-v10-spring</artifactId>
                 <version>${version.karibu.testing.v10}</version>
             </dependency>
 

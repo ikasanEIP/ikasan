@@ -42,7 +42,6 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
     private IkasanSolrDocument replayEvent;
 
     private TextField moduleNameTf;
-    private TextField componentNameTf;
     private TextField flowNameTf;
     private TextField eventIdTf;
     private TextField dateTimeTf;
@@ -71,7 +70,6 @@ public class ReplayDialog extends AbstractEntityViewDialog<IkasanSolrDocument>
 
         moduleNameTf = new TextField(getTranslation("text-field.module-name", UI.getCurrent().getLocale(), null));
         flowNameTf = new TextField(getTranslation("text-field.flow-name", UI.getCurrent().getLocale(), null));
-        componentNameTf = new TextField(getTranslation("text-field.component-name", UI.getCurrent().getLocale(), null));
         eventIdTf = new TextField(getTranslation("text-field.event-id", UI.getCurrent().getLocale(), null));
         dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
     }
