@@ -12,8 +12,6 @@ import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.RoleModule;
-import org.ikasan.solr.model.IkasanSolrDocument;
-import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.solr.service.SolrGeneralServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,9 +21,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import static com.github.mvysny.kaributesting.v10.ButtonKt._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;

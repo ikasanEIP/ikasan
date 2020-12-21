@@ -58,14 +58,14 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
     private Component leftAppMenu;
     private Component leftSubmenu;
-    private LeftNavigationItem searchItem;
-    private LeftNavigationItem visualisationItem;
-    private LeftNavigationItem systemEventItem;
-    private LeftNavigationItem userManagementItem;
-    private LeftNavigationItem groupManagementItem;
-    private LeftNavigationItem roleManagementItem;
-    private LeftNavigationItem policyManagementItem;
-    private LeftNavigationItem userDirectoryManagementItem;
+    private LeftNavigationItem searchMenuItem;
+    private LeftNavigationItem visualisationMenuItem;
+    private LeftNavigationItem systemEventMenuItem;
+    private LeftNavigationItem userManagementMenuItem;
+    private LeftNavigationItem groupManagementMenuItem;
+    private LeftNavigationItem roleManagementMenuItem;
+    private LeftNavigationItem policyManagementMenuItem;
+    private LeftNavigationItem userDirectoryManagementMenuItem;
 
     public IkasanAppLayout()
     {
@@ -74,6 +74,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         IconButton logout = new IconButton(VaadinIcon.SIGN_OUT.create());
         logout.getElement().setProperty("title", "Log Out");
+        logout.setId("logoutButton");
 
         logout.addClickListener((ComponentEventListener<ClickEvent<Button>>) divClickEvent ->
         {
@@ -89,6 +90,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
 
         Button aboutButton = new Button(new Icon(VaadinIcon.QUESTION));
+        aboutButton.setId("aboutButton");
         aboutButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
             AboutIkasanDialog aboutIkasanDialog = new AboutIkasanDialog();
             aboutIkasanDialog.open();
@@ -121,39 +123,47 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         LeftAppMenuBuilder leftAppMenuBuilder = LeftAppMenuBuilder.get();
 
-        this.searchItem = new LeftNavigationItem(getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
-        leftAppMenuBuilder = leftAppMenuBuilder.add(searchItem);
+        this.searchMenuItem = new LeftNavigationItem(getTranslation("menu-item.search", UI.getCurrent().getLocale(), null), VaadinIcon.SEARCH.create(), SearchView.class);
+        this.searchMenuItem.setId("searchMenuItem");
+        leftAppMenuBuilder = leftAppMenuBuilder.add(searchMenuItem);
 
 
-        this.visualisationItem = new LeftNavigationItem(getTranslation("menu-item.visualisation", UI.getCurrent().getLocale(), null), VaadinIcon.CLUSTER.create(), GraphView.class);
-        leftAppMenuBuilder = leftAppMenuBuilder.add(this.visualisationItem);
+        this.visualisationMenuItem = new LeftNavigationItem(getTranslation("menu-item.visualisation", UI.getCurrent().getLocale(), null), VaadinIcon.CLUSTER.create(), GraphView.class);
+        this.visualisationMenuItem.setId("visualisationMenuItem");
 
+        leftAppMenuBuilder = leftAppMenuBuilder.add(this.visualisationMenuItem);
 
         LeftSubMenuBuilder leftSubMenuBuilder = LeftSubMenuBuilder
             .get(getTranslation("menu-item.administration", UI.getCurrent().getLocale(), null), VaadinIcon.TOOLS.create());
 
-        this.systemEventItem = new LeftNavigationItem(getTranslation("menu-item.visualisation", UI.getCurrent().getLocale(), null), VaadinIcon.CROSSHAIRS.create(), AdministrationSearchView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.systemEventItem);
+        this.systemEventMenuItem = new LeftNavigationItem(getTranslation("menu-item.administration-events", UI.getCurrent().getLocale(), null), VaadinIcon.CROSSHAIRS.create(), AdministrationSearchView.class);
+        this.systemEventMenuItem.setId("systemEventMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.systemEventMenuItem);
 
-        this.userManagementItem = new LeftNavigationItem(getTranslation("menu-item.users",
+        this.userManagementMenuItem = new LeftNavigationItem(getTranslation("menu-item.users",
             UI.getCurrent().getLocale(), null), VaadinIcon.USERS.create(), UserManagementView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementItem);
+        this.userManagementMenuItem.setId("userManagementMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userManagementMenuItem);
 
-        this.groupManagementItem = new LeftNavigationItem(getTranslation("menu-item.groups",
+        this.groupManagementMenuItem = new LeftNavigationItem(getTranslation("menu-item.groups",
             UI.getCurrent().getLocale(), null), VaadinIcon.GROUP.create(), GroupManagementView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.groupManagementItem);
+        this.groupManagementMenuItem.setId("groupManagementMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.groupManagementMenuItem);
 
-        this.roleManagementItem = new LeftNavigationItem(getTranslation("menu-item.roles",
+        this.roleManagementMenuItem = new LeftNavigationItem(getTranslation("menu-item.roles",
             UI.getCurrent().getLocale(), null), VaadinIcon.DOCTOR.create(), RoleManagementView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.roleManagementItem);
+        this.roleManagementMenuItem.setId("roleManagementMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.roleManagementMenuItem);
 
-        this.policyManagementItem = new LeftNavigationItem(getTranslation("menu-item.policies",
+        this.policyManagementMenuItem = new LeftNavigationItem(getTranslation("menu-item.policies",
             UI.getCurrent().getLocale(), null), VaadinIcon.SAFE.create(), PolicyManagementView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.policyManagementItem);
+        this.policyManagementMenuItem.setId("policyManagementMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.policyManagementMenuItem);
 
-        this.userDirectoryManagementItem = new LeftNavigationItem(getTranslation("menu-item.user-directories",
+        this.userDirectoryManagementMenuItem = new LeftNavigationItem(getTranslation("menu-item.user-directories",
             UI.getCurrent().getLocale(), null), VaadinIcon.COG.create(), UserDirectoriesView.class);
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userDirectoryManagementItem);
+        this.userDirectoryManagementMenuItem.setId("userDirectoryManagementMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.userDirectoryManagementMenuItem);
 
         if(leftSubMenuBuilder != null)
         {
@@ -170,12 +180,12 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
     public void onAttach(AttachEvent attachEvent)
     {
         super.onAttach(attachEvent);
-        this.searchItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.SEARCH_WRITE,
+        this.searchMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.SEARCH_ADMIN, SecurityConstants.SEARCH_READ, SecurityConstants.SEARCH_WRITE,
             SecurityConstants.ALL_AUTHORITY));
 
-        this.visualisationItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.WIRETAP_READ,
+        this.visualisationMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.WIRETAP_WRITE, SecurityConstants.WIRETAP_ADMIN, SecurityConstants.WIRETAP_READ,
             SecurityConstants.ERROR_ADMIN, SecurityConstants.ERROR_READ, SecurityConstants.ERROR_WRITE,
-            SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.ERROR_WRITE, SecurityConstants.EXCLUSION_READ,
+            SecurityConstants.EXCLUSION_ADMIN, SecurityConstants.EXCLUSION_WRITE, SecurityConstants.EXCLUSION_READ,
             SecurityConstants.REPLAY_ADMIN, SecurityConstants.REPLAY_READ, SecurityConstants.REPLAY_WRITE,
             SecurityConstants.ALL_AUTHORITY));
 
@@ -183,21 +193,25 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
             SecurityConstants.USER_ADMINISTRATION_READ, SecurityConstants.USER_DIRECTORY_ADMIN, SecurityConstants.USER_DIRECTORY_WRITE, SecurityConstants.USER_DIRECTORY_READ,
             SecurityConstants.GROUP_ADMINISTRATION_ADMIN, SecurityConstants.GROUP_ADMINISTRATION_WRITE, SecurityConstants.GROUP_ADMINISTRATION_READ,
             SecurityConstants.POLICY_ADMINISTRATION_ADMIN, SecurityConstants.POLICY_ADMINISTRATION_READ, SecurityConstants.POLICY_ADMINISTRATION_WRITE,
-            SecurityConstants.ROLE_ADMINISTRATION_ADMIN, SecurityConstants.ROLE_ADMINISTRATION_READ, SecurityConstants.ROLE_ADMINISTRATION_WRITE));
+            SecurityConstants.ROLE_ADMINISTRATION_ADMIN, SecurityConstants.ROLE_ADMINISTRATION_READ, SecurityConstants.ROLE_ADMINISTRATION_WRITE,SecurityConstants.ALL_AUTHORITY,
+            SecurityConstants.SYSTEM_EVENT_ADMIN, SecurityConstants.SYSTEM_EVENT_READ, SecurityConstants.SYSTEM_EVENT_READ));
 
-        this.userManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.USER_ADMINISTRATION_ADMIN, SecurityConstants.USER_ADMINISTRATION_WRITE,
+        this.systemEventMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.SYSTEM_EVENT_ADMIN, SecurityConstants.SYSTEM_EVENT_READ,
+            SecurityConstants.SYSTEM_EVENT_WRITE));
+
+        this.userManagementMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.USER_ADMINISTRATION_ADMIN, SecurityConstants.USER_ADMINISTRATION_WRITE,
             SecurityConstants.USER_ADMINISTRATION_READ));
 
-        this.groupManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.GROUP_ADMINISTRATION_ADMIN, SecurityConstants.GROUP_ADMINISTRATION_WRITE,
+        this.groupManagementMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.GROUP_ADMINISTRATION_ADMIN, SecurityConstants.GROUP_ADMINISTRATION_WRITE,
             SecurityConstants.GROUP_ADMINISTRATION_READ));
 
-        this.roleManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.ROLE_ADMINISTRATION_ADMIN, SecurityConstants.ROLE_ADMINISTRATION_READ,
+        this.roleManagementMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.ROLE_ADMINISTRATION_ADMIN, SecurityConstants.ROLE_ADMINISTRATION_READ,
             SecurityConstants.ROLE_ADMINISTRATION_WRITE));
 
-        this.policyManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.POLICY_ADMINISTRATION_ADMIN, SecurityConstants.POLICY_ADMINISTRATION_READ,
+        this.policyManagementMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.POLICY_ADMINISTRATION_ADMIN, SecurityConstants.POLICY_ADMINISTRATION_READ,
             SecurityConstants.POLICY_ADMINISTRATION_WRITE));
 
-        this.userDirectoryManagementItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.USER_DIRECTORY_ADMIN, SecurityConstants.USER_DIRECTORY_WRITE,
+        this.userDirectoryManagementMenuItem.setVisible(ComponentSecurityVisibility.hasAuthorisation(SecurityConstants.ALL_AUTHORITY, SecurityConstants.USER_DIRECTORY_ADMIN, SecurityConstants.USER_DIRECTORY_WRITE,
             SecurityConstants.USER_DIRECTORY_READ));
     }
 
