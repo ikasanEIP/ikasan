@@ -17,6 +17,7 @@ import com.vaadin.flow.server.StreamResource;
 import org.ikasan.dashboard.ui.administration.util.ConfigurationChangedSystemEventFormatter;
 import org.ikasan.dashboard.ui.administration.util.SystemEventFormatter;
 import org.ikasan.dashboard.ui.general.component.AbstractEntityViewDialog;
+import org.ikasan.dashboard.ui.general.component.NotificationHelper;
 import org.ikasan.dashboard.ui.general.component.TableButton;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.util.DateFormatter;
@@ -40,17 +41,15 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public SystemEventDialog()
-    {
-        actionedByTf = new TextField(getTranslation("text-field.action-performed-by", UI.getCurrent().getLocale(), null));
-        contextTf = new TextField(getTranslation("text-field.system-event-context", UI.getCurrent().getLocale(), null));
-        dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale(), null));
+    public SystemEventDialog() {
+        actionedByTf = new TextField(getTranslation("text-field.action-performed-by", UI.getCurrent().getLocale()));
+        contextTf = new TextField(getTranslation("text-field.system-event-context", UI.getCurrent().getLocale()));
+        dateTimeTf = new TextField(getTranslation("text-field.date-time", UI.getCurrent().getLocale()));
     }
 
     @Override
-    public Component getEntityDetailsLayout()
-    {
-        H3 wiretapLabel = new H3(getTranslation("label.system-event-details", UI.getCurrent().getLocale(), null));
+    public Component getEntityDetailsLayout() {
+        H3 wiretapLabel = new H3(getTranslation("label.system-event-details", UI.getCurrent().getLocale()));
 
         FormLayout formLayout = new FormLayout();
 
@@ -67,7 +66,8 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
         formLayout.setHeight("200px");
 
         downloadButton = new TableButton(VaadinIcon.DOWNLOAD.create());
-        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton, getTranslation("tooltip.download-system-event", UI.getCurrent().getLocale()));
+        downloadButtonTooltip = TooltipHelper.getTooltipForComponentTopLeft(downloadButton
+            , getTranslation("tooltip.download-system-event", UI.getCurrent().getLocale()));
 
         this.streamResource = new StreamResource("system-event.txt"
             , () -> new ByteArrayInputStream(super.aceEditor.getValue().getBytes() ));
@@ -83,12 +83,11 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
     }
 
     @Override
-    public void populate(IkasanSolrDocument systemEvent)
-    {
+    public void populate(IkasanSolrDocument systemEvent) {
         SystemEventImpl systemEventImpl = null;
         try {
             systemEventImpl = objectMapper.readValue(systemEvent.getEvent(), SystemEventImpl.class);
-            super.title.setText("System Event");
+            super.title.setText(getTranslation("header.system-event", UI.getCurrent().getLocale()));
             this.actionedByTf.setValue(systemEventImpl.getActor());
             this.contextTf.setValue(SystemEventFormatter.getContext(systemEventImpl));
 
@@ -97,12 +96,11 @@ public class SystemEventDialog extends AbstractEntityViewDialog<IkasanSolrDocume
             open(systemEventImpl.getAction(), systemEventImpl);
         }
         catch (JsonProcessingException e) {
-            e.printStackTrace();
+            NotificationHelper.showErrorNotification(getTranslation("notification.error-opening-system-event", UI.getCurrent().getLocale()));
         }
     }
 
-    public void open(String event, SystemEventImpl systemEventImpl)
-    {
+    public void open(String event, SystemEventImpl systemEventImpl) {
         if(!initialised)
         {
             init();

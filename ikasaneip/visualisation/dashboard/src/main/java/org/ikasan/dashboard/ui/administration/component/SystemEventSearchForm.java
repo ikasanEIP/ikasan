@@ -101,7 +101,7 @@ public class SystemEventSearchForm extends VerticalLayout {
         this.searchButton = new Button(searchButtonImage);
         this.searchButton.setHeight("54px");
         this.searchButton.setWidth("54px");
-        this.searchButton.setId("searchFormSearchButton");
+        this.searchButton.setId("systemEventSearchFormSearchButton");
 
         addButtonSearchListener(this.searchButton);
 
