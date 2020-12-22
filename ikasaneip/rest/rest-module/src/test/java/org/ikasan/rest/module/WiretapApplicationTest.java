@@ -106,6 +106,7 @@ public class WiretapApplicationTest
         Mockito.verify(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(TriggerImpl.class));
 
         Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
             Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule,flowName=testFlow,flowElementName=component,params={timeToLive=100},jobName=wiretap,relationship=AFTER]"),
             Mockito.eq("Create Wiretap"),
             Mockito.anyString());
@@ -156,6 +157,7 @@ public class WiretapApplicationTest
         Mockito.verify(jobAwareFlowEventListener).deleteDynamicTrigger(1202l);
 
         Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
             Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule,flowName=testFlow,flowElementName=null,params={},jobName=test,relationship=AFTER]"),
             Mockito.eq("Delete Wiretap"),
             Mockito.anyString());
