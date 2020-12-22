@@ -124,6 +124,7 @@ public class ReplayApplicationTest
         Mockito.verify(resubmissionService).onResubmission(deserialisedObject);
 
         Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
             Mockito.startsWith("testModule-testFlow:"),
             Mockito.eq("Replaying Event"),
             Mockito.anyString()
