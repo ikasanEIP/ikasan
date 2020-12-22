@@ -100,6 +100,7 @@ public class ResubmissionApplicationTest
         Mockito
             .verify(hospitalService).ignore(Mockito.eq("testModule"), Mockito.eq("testFlow"),Mockito.eq("TEST"),Mockito.any(String.class));
         Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
             Mockito.eq("testModule-testFlow:TEST"),
             Mockito.eq("Ignoring Exclusion"),
             Mockito.anyString()
@@ -125,6 +126,7 @@ public class ResubmissionApplicationTest
         Mockito
             .verify(hospitalService).resubmit(Mockito.eq("testModule"), Mockito.eq("testFlow"),Mockito.eq("TEST"),Mockito.any(String.class));
         Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
             Mockito.eq("testModule-testFlow:TEST"),
             Mockito.eq("Resubmitting Exclusion"),
             Mockito.anyString()
