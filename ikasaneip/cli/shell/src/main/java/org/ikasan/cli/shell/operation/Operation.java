@@ -60,7 +60,7 @@ public interface Operation
      */
     static Operation getInstance()
     {
-        return new DefaultOperationImpl( new DefaultPersistenceServiceImpl( new KryoProcessPersistenceImpl() ) );
+        return new DefaultOperationImpl( new DefaultPersistenceServiceImpl( new KryoProcessPersistenceImpl("./persistence") ) );
     }
 
     /**
@@ -71,36 +71,50 @@ public interface Operation
      */
     Process start(ProcessType processType, List<String> commands, String name) throws IOException;
 
+//    /**
+//     *
+//     * @param processType
+//     * @param name
+//     * @return
+//     */
+//    boolean isRunning(ProcessType processType, String name);
+//
+//    /**
+//     *
+//     * @param processType
+//     * @param name
+//     * @param username
+//     * @return
+//     */
+//    boolean isRunning(ProcessType processType, String name, String username);
+//
     /**
      *
      * @param processType
      * @param name
+     * @param username
+     * @param anyMatch
      * @return
      */
-    boolean isRunning(ProcessType processType, String name);
+    List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username);
 
     /**
      *
      * @param processType
      * @param name
-     * @return
-     */
-    ProcessHandle getProcessHandle(ProcessType processType, String name);
-
-    /**
-     *
-     * @param processType
-     * @param name
+     * @param username
+     * @param username
      * @throws IOException
      */
-    void stop(ProcessType processType, String name) throws IOException;
+    void stop(ProcessType processType, String name, String username, boolean anyMatch) throws IOException;
 
     /**
      *
      * @param processType
      * @param name
+     * @param username
      * @throws IOException
      */
-    void kill(ProcessType processType, String name) throws IOException;
+    void kill(ProcessType processType, String name, String username, boolean anyMatch) throws IOException;
 
 }

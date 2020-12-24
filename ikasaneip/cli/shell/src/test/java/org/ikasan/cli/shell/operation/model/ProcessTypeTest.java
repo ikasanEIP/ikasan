@@ -38,35 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.command;
+package org.ikasan.cli.shell.operation.model;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.io.IOException;
 
 /**
- * This test class supports the <code>IkasanShell</code> class.
+ * This test class supports the <code>ProcessType</code> class.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-class H2CommandsTest
+class ProcessTypeTest
 {
     @Test
-    void successful_h2_command_start_query_stop() throws IOException
+    void successful_h2_instance()
     {
-        H2Commands h2Commands = new H2Commands();
-        String command = "java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888 ";
-        String result = h2Commands.starth2("filesystem-im", command);
-        Assert.assertTrue("result should be 'filesystem-im process started'",
-            result.equals("{\"running\":true,\"name\":\"filesystem-im\",\"type\":\"H2\",\"commandLine\":\"\\/Library\\/Java\\/JavaVirtualMachines\\/adoptopenjdk-11.jdk\\/Contents\\/Home\\/bin\\/java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888\",\"operation\":\"start\",\"user\":\"jeff\"}"));
+        ProcessType h2Instance = ProcessType.getH2Instance();
+        Assert.assertTrue(h2Instance.getName().equals("H2"));
+        Assert.assertTrue(h2Instance.isPersist());
+        Assert.assertTrue(h2Instance.getOutputLog().equals("logs/h2.log"));
+        Assert.assertTrue(h2Instance.getErrorLog().equals("logs/h2.log"));
+    }
 
-        PsCommand psCommand = new PsCommand();
-        result = psCommand.ps("java", "username");
-        Assert.assertTrue("result should be ''", result.equals(""));
+    @Test
+    void successful_module_instance()
+    {
+        ProcessType moduleInstance = ProcessType.getModuleInstance();
+        Assert.assertTrue(moduleInstance.getName().equals("Module"));
+        Assert.assertTrue(moduleInstance.isPersist());
+        Assert.assertTrue(moduleInstance.getOutputLog().equals("logs/application.log"));
+        Assert.assertTrue(moduleInstance.getErrorLog().equals("logs/application.log"));
+    }
+
+    @Test
+    void successful_generic_instance()
+    {
+        ProcessType genericInstance = ProcessType.getGenericInstance();
+        Assert.assertTrue(genericInstance.getName().equals(""));
+        Assert.assertTrue(!genericInstance.isPersist());
+        Assert.assertNull(genericInstance.getOutputLog());
+        Assert.assertNull(genericInstance.getErrorLog());
     }
 }
 

@@ -41,10 +41,15 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.ikasan.cli.shell.reporting.ProcessInfo;
+import org.ikasan.cli.shell.reporting.ProcessInfos;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+
+import java.util.List;
 
 /**
  * Check running processes command.
@@ -57,33 +62,57 @@ public class PsCommand extends AbstractCommand
     @Value("${module.name:null}")
     String moduleName;
 
-    @ShellMethod(value = "Check running process. Syntax: ps <process name> | -name <process name>", group = "Ikasan Commands", key = "ps")
-    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalModuleName)
+    @ShellMethod(value = "Check running process. Syntax: ps <process name> | -name <process name>, ps <process name> | -name <process name>", group = "Ikasan Commands", key = "ps")
+    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalModuleName,
+                     @ShellOption(value = "-user", defaultValue = "")  String optionalUsername)
     {
-        StringBuilder sb = new StringBuilder();
-        if(optionalModuleName != null && !optionalModuleName.isEmpty())
-        {
-            this.moduleName = optionalModuleName;
-        }
-
-        if (operation.isRunning(ProcessType.H2, moduleName))
-        {
-            sb.append(ProcessType.H2.name() + " [" + moduleName + "] running\n");
-        } else
-        {
-            sb.append(ProcessType.H2.name() + " [" + moduleName + "] not running\n");
-        }
-
-        if(operation.isRunning(ProcessType.MODULE, moduleName))
-        {
-            sb.append( ProcessType.MODULE.name() + " [" + moduleName + "] running\n" );
-        }
-        else
-        {
-            sb.append( ProcessType.MODULE.name() + " [" + moduleName + "] not running\n" );
-        }
-
-        return sb.toString();
+       return _ps(optionalModuleName, optionalModuleName).toString();
     }
 
+    protected JSONObject _ps(String optionalModuleName, String optionalUsername)
+    {
+        String _moduleName = moduleName;
+        String _username = username;
+
+        // allow override of default module but with exact match
+        if(optionalModuleName != null && !optionalModuleName.isEmpty())
+        {
+            _moduleName = optionalModuleName;
+        }
+
+        if(optionalUsername != null && !optionalUsername.isEmpty())
+        {
+            _username = optionalUsername;
+        }
+
+        ProcessInfos processInfos = getProcessInfos( operation.getProcessHandles(ProcessType.H2, _moduleName, _username), ProcessType.H2 );
+        processInfos.add( getProcessInfos( operation.getProcessHandles(ProcessType.MODULE, _moduleName, _username), ProcessType.MODULE ) );
+        return processInfos.toJSON();
+    }
+
+    /**
+     * Create responses based on running processes
+     * @param processHandles
+     * @param processType
+     * @return
+     */
+    protected ProcessInfos getProcessInfos(List<ProcessHandle> processHandles, ProcessType processType)
+    {
+        ProcessInfos processInfos = new ProcessInfos();
+
+        for(ProcessHandle processHandle:processHandles)
+        {
+            ProcessInfo processInfo = ProcessUtils.createProcessInfo()
+                .setPsOperation()
+                .setUsername(this.username)
+                .setName(this.moduleName)
+                .setPid(processHandle.pid())
+                .setProcessType(processType)
+                .setRunning( processHandle.isAlive() );
+
+            processInfos.add(processInfo);
+        }
+
+        return processInfos;
+    }
 }

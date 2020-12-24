@@ -40,6 +40,9 @@
  */
 package org.ikasan.cli.shell.command;
 
+import org.ikasan.cli.shell.reporting.ProcessInfo;
+import org.ikasan.cli.shell.reporting.ProcessInfos;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +61,16 @@ public class ProcessUtils
     public static String getProcessInfo(Process process, String name)
     {
         return getProcessInfo(null, process, name);
+    }
+
+    public static ProcessInfo createProcessInfo()
+    {
+        return new ProcessInfo();
+    }
+
+    public static ProcessInfos createProcessInfos()
+    {
+        return new ProcessInfos();
     }
 
     public static String getProcessInfo(String type, Process process, String name)

@@ -50,20 +50,22 @@ import org.ikasan.cli.shell.operation.model.IkasanProcess;
 public interface ProcessPersistenceDao
 {
     /**
-     *
+     * Save IkasanProcess.
      * @param ikasanProcess
      */
     void save(IkasanProcess ikasanProcess);
 
     /**
-     *
+     * Find process of type and name.
      * @param name
      * @return
      */
     IkasanProcess find(String type, String name);
 
     /**
-     *
+     * Delete persistence of type and name
+     * @param type
+     * @param name
      */
     void delete(String type, String name);
 }

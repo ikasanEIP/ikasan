@@ -48,7 +48,7 @@ package org.ikasan.cli.shell.operation.service;
 public interface PersistenceService
 {
     /**
-     *
+     * Find instance of a process handle based on ProcessType and process name.
      * @param type
      * @param name
      * @return
@@ -56,7 +56,7 @@ public interface PersistenceService
     ProcessHandle find(String type, String name);
 
     /**
-     *
+     * Persist the process based on processType and name.
      * @param type
      * @param name
      * @param process
@@ -64,7 +64,7 @@ public interface PersistenceService
     void persist(String type, String name, Process process);
 
     /**
-     *
+     * Remove references to the processType and name.
      * @param type
      * @param name
      */

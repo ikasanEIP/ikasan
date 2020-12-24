@@ -41,7 +41,10 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.ikasan.cli.shell.reporting.ProcessInfo;
+
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Abstract action command supporting standard start|stop process.
@@ -50,6 +53,8 @@ import java.io.IOException;
  */
 public abstract class ActionCommands extends AbstractCommand
 {
+    ProcessType processType = getProcessType();
+
     /**
      * Start process.
      *
@@ -60,26 +65,31 @@ public abstract class ActionCommands extends AbstractCommand
      */
     String start(ProcessType processType, String name, String command)
     {
-        StringBuilder sb = new StringBuilder();
+        ProcessInfo processInfo = ProcessUtils.createProcessInfo()
+            .setStartOperation()
+            .setProcessType(processType)
+            .setName(name)
+            .setCommandLine(command);
 
         try
         {
-            if (operation.isRunning(processType, name))
+            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
+            if(processHandles != null || processHandles.size() > 0)
             {
-                sb.append(processType.toString() + " " + name + " already running\n");
+                processInfo.setRunning(true);
             }
             else
             {
                 Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
-                sb.append( ProcessUtils.getProcessInfo(processType.toString(), process, name) );
+                processInfo.setProcess(process);
             }
         }
         catch (IOException e)
         {
-            sb.append(processType + " process failed to start for [" + name + "] " + e.getMessage());
+            processInfo.setException(e);
         }
 
-        return sb.toString();
+        return processInfo.toJSON().toString();
     }
 
     /**
@@ -87,23 +97,29 @@ public abstract class ActionCommands extends AbstractCommand
      *
      * @param processType
      * @param name
+     * @param username
+     * @param anyMatch
      * @return
      */
-    String stop(ProcessType processType, String name)
+    String stop(ProcessType processType, String name, String username, boolean anyMatch)
     {
         try
         {
-            if (!operation.isRunning(processType, name))
+            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
+            if(processHandles == null || processHandles.size() == 0)
             {
-                return processType.toString() + " process for [" + name + "] is already stopped!";
+                return processType.getName() + " process for [" + name + "] is already stopped!";
             }
 
-            operation.stop(processType, name);
-            return processType.toString() + " process stopped";
+            operation.stop(processType, name, username, anyMatch);
+            return processType.getName() + " process stopped";
         }
         catch (IOException e)
         {
             return "Problem checking process [" + name + "] " + e.getMessage();
         }
     }
+
+    public abstract ProcessType getProcessType();
+
 }

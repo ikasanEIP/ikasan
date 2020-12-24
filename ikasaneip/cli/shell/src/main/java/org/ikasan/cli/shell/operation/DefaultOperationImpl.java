@@ -46,8 +46,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -60,6 +62,10 @@ public class DefaultOperationImpl implements Operation
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(DefaultOperationImpl.class);
 
+    private static String MINUS_D_MODULE_NAME = "-Dmodule.name=";
+    private static String EQUALS = "=";
+
+    /** handle to persistence service */
     PersistenceService persistenceService;
 
     /**
@@ -75,10 +81,45 @@ public class DefaultOperationImpl implements Operation
         }
     }
 
+    /**
+     * Factory method to aid testing
+     * @param commands
+     * @return
+     */
+    protected ProcessBuilder getProcessBuilder(List<String> commands)
+    {
+        return new ProcessBuilder(commands);
+    }
+
     public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
-        ProcessBuilder processBuilder = new ProcessBuilder(commands);
-        processBuilder.redirectErrorStream(true);
+        ProcessBuilder processBuilder = getProcessBuilder(commands);
+//        if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
+//        {
+//            File outputLog = new File(processType.getOutputLog());
+//            FileUtil.createMissingParentDirectories(outputLog);
+//            processBuilder.redirectOutput(outputLog);
+//        }
+//        if(processType.getErrorLog() == null || processType.getErrorLog().isEmpty())
+//        {
+//            // redirect stdErr to stdOut
+//            processBuilder.redirectError();
+//        }
+//        else
+//        {
+//            // stdErr still going to same place as stdOut
+//            if(processType.getOutputLog().equals(processType.getErrorLog()))
+//            {
+//                processBuilder.redirectError();
+//            }
+//            else
+//            {
+//                File errorLog = new File(processType.getErrorLog());
+//                FileUtil.createMissingParentDirectories(errorLog);
+//                processBuilder.redirectError(errorLog);
+//            }
+//        }
+
         Process process = processBuilder.start();
 
         // persist the process
@@ -86,7 +127,7 @@ public class DefaultOperationImpl implements Operation
         {
             if(processType.isPersist())
             {
-                persistenceService.persist(processType.toString(), name, process);
+                persistenceService.persist(processType.getName(), name, process);
             }
         }
         catch(Exception e)
@@ -97,86 +138,116 @@ public class DefaultOperationImpl implements Operation
         return process;
     }
 
-    protected ProcessHandle getProcess(String type, String name)
+    boolean isSameModuleName(Optional<String> commandLine, String name)
     {
-        // first check if we have the process persisted
-        ProcessHandle processHandle = persistenceService.find(type, name);
-        if (processHandle != null)
+        if(commandLine.isEmpty())
         {
-            return processHandle;
+            return false;
         }
 
-        // not persisted, try checking if we can see a process running for that module of that type for that user
-        Stream<ProcessHandle> processStream = ProcessHandle.allProcesses();
-        long val = processStream.count();
-//        for(ProcessHandle ph: processStream.sequential())
-//        {
-//
-//        }
-//
-//        List myList = new ArrayList();
-//        String s;
-//        processStream.forEach(processInstance -> ( (s = printInfo(processInstance)) != null) ? myList.add(s) );
-
-        // not running as that user, try checking if we can see a process running for that module
-
-        // does look like its running
-        return null;
-    }
-
-    public boolean isRunning(ProcessType processType, String name)
-    {
-        ProcessHandle processHandle = getProcessHandle(processType, name);
-        if(processHandle != null && processHandle.isAlive())
+        String[] params = commandLine.get().split(" ");
+        for(String param:params)
         {
-            return true;
+            if(param.startsWith(MINUS_D_MODULE_NAME))
+            {
+                String[] moduleNameParts = param.split("=");
+                if(moduleNameParts.length == 2)
+                {
+                    return moduleNameParts[1].trim().toLowerCase().equals(name.toLowerCase());
+                }
+            }
         }
 
         return false;
     }
 
-    public ProcessHandle getProcessHandle(ProcessType processType, String name)
+    @Override
+    public List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username)
     {
-        return getProcess(processType.name(), name);
+        // can we find by the persisted process
+        ProcessHandle processHandle = persistenceService.find(processType.getName(), name);  // TODO should we check username
+        if (processHandle != null)
+        {
+            List<ProcessHandle> processHandles = new ArrayList<ProcessHandle>();
+            processHandles.add(processHandle);
+            return processHandles;
+        }
+
+        // not persisted, try checking if we can see a process running for that module of that type for that user
+        Stream<ProcessHandle> liveProcesses = ProcessHandle.allProcesses();
+
+        // filter processes by name
+        liveProcesses = liveProcesses.filter(ProcessHandle::isAlive)
+            .filter(ph -> isSameModuleName(ph.info().commandLine(), name) );
+
+        // filter processes by username
+        if(username != null)
+        {
+            liveProcesses = liveProcesses
+                .filter(ph -> !ph.info().user().isEmpty()
+                    && ph.info().user().get().toLowerCase().equals(username.toLowerCase()));
+        }
+
+        // filter by type
+        if(processType.getCommandSignature() != null && processType.getCommandSignature().length() > 0)
+        {
+            liveProcesses = liveProcesses
+                .filter(ph -> !ph.info().commandLine().isEmpty()
+                    && ph.info().commandLine().get().toLowerCase().contains(processType.getCommandSignature().toLowerCase()));
+        }
+
+        // return whats left
+        return liveProcesses.collect(Collectors.toList());
     }
 
     @Override
-    public void stop(ProcessType processType, String name) throws IOException
+    public void stop(ProcessType processType, String name, String username, boolean anyMatch) throws IOException
     {
-        ProcessHandle processHandle = getProcess(processType.name(), name);
-        if(processHandle != null && processHandle.isAlive())
+        List<ProcessHandle> processHandles = getProcessHandles(processType, name, username);
+        if(processHandles == null || processHandles.size() == 0)
         {
-            processHandle.destroy();
+            throw new IOException("No matching processes");
+        }
+
+        if(anyMatch)
+        {
+            for(ProcessHandle processHandle:processHandles)
+            {
+                processHandle.destroy();
+            }
+        }
+        else
+        {
+            processHandles.get(0).destroy();
         }
 
         // remove persistence
-        persistenceService.remove(processType.name(), name);
+        persistenceService.remove(processType.getName(), name);
     }
 
     @Override
-    public void kill(ProcessType processType, String name) throws IOException
+    public void kill(ProcessType processType, String name, String username, boolean anyMatch) throws IOException
     {
-        ProcessHandle processHandle = getProcess(processType.name(), name);
-        if(processHandle.isAlive())
+        List<ProcessHandle> processHandles = getProcessHandles(processType, name, username);
+        if(processHandles == null || processHandles.size() == 0)
         {
-            processHandle.destroyForcibly();
-        }
-    }
-
-    public String printInfo(ProcessHandle processHandle)
-    {
-        Optional<String> user = processHandle.info().user();
-        if(!user.isEmpty())
-        {
-            user.get();
-        }
-        Optional<String[]> args = processHandle.info().arguments();
-        if(!args.isEmpty())
-        {
-            args.get();
+            throw new IOException("No matching processes");
         }
 
-        return "User " + user + " Args " + args;
+        if(anyMatch)
+        {
+            for(ProcessHandle processHandle:processHandles)
+            {
+                processHandle.destroyForcibly();
+            }
+        }
+        else
+        {
+            processHandles.get(0).destroyForcibly();
+        }
+
+        // remove persistence
+        persistenceService.remove(processType.getName(), name);
     }
 
 }

@@ -50,4 +50,7 @@ import org.ikasan.cli.shell.operation.Operation;
 public abstract class AbstractCommand
 {
     Operation operation = Operation.getInstance();
+
+    String username = System.getProperty("user.name");
+
 }

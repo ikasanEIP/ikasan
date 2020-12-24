@@ -52,6 +52,7 @@ import java.util.Optional;
  */
 public class DefaultPersistenceServiceImpl implements PersistenceService
 {
+    /** DAO handle */
     ProcessPersistenceDao processPersistenceDao;
 
     /**
@@ -88,8 +89,9 @@ public class DefaultPersistenceServiceImpl implements PersistenceService
     @Override
     public void persist(String type, String name, Process process)
     {
+        Optional<String> user = process.info().user();
         processPersistenceDao.save(new IkasanProcess(type, name, process.pid(),
-            (process.info().user().isEmpty() ? null : process.info().user().get())));
+            (user.isEmpty() ? null : user.get())));
     }
 
     @Override

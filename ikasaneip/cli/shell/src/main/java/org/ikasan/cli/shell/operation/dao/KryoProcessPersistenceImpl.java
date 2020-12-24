@@ -44,6 +44,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -53,12 +55,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Serialiser for process handle.
+ * Serialiser for IkasanProcess.
  *
  * @author Ikasan Development Team
  */
 public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
 {
+    /** logger instance */
+    private static Logger logger = LoggerFactory.getLogger(KryoProcessPersistenceImpl.class);
+
+    /** persistence directory */
+    String persistenceDir;
+
+    /**
+     * Thread local instance of Kyro instance.
+     */
     private static final ThreadLocal<Kryo> kryoThreadLocal = new ThreadLocal<Kryo>()
     {
         @Override
@@ -71,17 +82,28 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         }
     };
 
+    /**
+     * Constructor
+     * @param persistenceDir
+     */
+    public KryoProcessPersistenceImpl(String persistenceDir)
+    {
+        this.persistenceDir = persistenceDir;
+        if(persistenceDir == null)
+        {
+            throw new IllegalArgumentException("persistence directory cannot be 'null");
+        }
+    }
+
     @Override
     public void save(IkasanProcess ikasanProcess)
     {
         Kryo kryo = kryoThreadLocal.get();
-//        Kryo kryo = new Kryo();
-//        kryo.register(org.ikasan.cli.shell.operation.model.IkasanProcess.class);
-//        kryo.register(org.ikasan.cli.shell.operation.model.ProcessType.class);
+        String path = persistenceDir + "/" + ikasanProcess.getType() + "_" + ikasanProcess.getName();
 
         try
         {
-            Output output = new Output(new FileOutputStream( ikasanProcess.getType() + "_" + ikasanProcess.getName() ) );
+            Output output = new Output(new FileOutputStream(path) );
             kryo.writeClassAndObject(output, ikasanProcess);
             output.close(); // flush should be called within the close() method
         }
@@ -95,14 +117,16 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     public IkasanProcess find(String type, String name)
     {
         Kryo kryo = kryoThreadLocal.get();
+        String path = persistenceDir + "/" + type + "_" + name;
 
         try
         {
-            Input input = new Input(new FileInputStream(type + "_" + name));
+            Input input = new Input(new FileInputStream(path));
             return (IkasanProcess)kryo.readClassAndObject(input);
         }
         catch(FileNotFoundException e)
         {
+            logger.debug("File [" + path + "] not found");
             return null;
         }
     }
@@ -110,13 +134,14 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     @Override
     public void delete(String type, String name)
     {
+        String path = persistenceDir + "/" + type + "_" + name;
         try
         {
-            Files.delete(Path.of(type + "_" + name));
+            Files.delete(Path.of(path));
         }
         catch(IOException e)
         {
-            // TODO
+            logger.warn("Failed to delete [" + path + "] " + e.getMessage(), e);
         }
     }
 

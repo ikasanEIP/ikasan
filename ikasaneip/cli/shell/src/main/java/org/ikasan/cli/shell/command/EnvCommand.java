@@ -66,11 +66,11 @@ public class EnvCommand extends AbstractCommand
     public String env()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Module Name [" + moduleName + "]\n");
-        sb.append(ProcessType.H2.toString() + " Command String     [" + h2JavaCommand + "]\n");
-        sb.append(ProcessType.H2.toString() + " Command List       " + ProcessUtils.getCommands(h2JavaCommand) + "\n");
-        sb.append(ProcessType.MODULE.toString() + " Command String [" + moduleJavaCommand + "]\n");
-        sb.append(ProcessType.MODULE.toString() + " Command List   " + ProcessUtils.getCommands(moduleJavaCommand) + "\n");
+        sb.append("Module Name [" + moduleName + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append(ProcessType.H2.getName() + " Command String     [" + h2JavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append(ProcessType.H2.getName() + " Command List       " + ProcessUtils.getCommands(h2JavaCommand) + ProcessUtils.LINE_SEPARATOR);
+        sb.append(ProcessType.MODULE.getName() + " Command String [" + moduleJavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append(ProcessType.MODULE.getName() + " Command List   " + ProcessUtils.getCommands(moduleJavaCommand) + ProcessUtils.LINE_SEPARATOR);
         return sb.toString();
     }
 }

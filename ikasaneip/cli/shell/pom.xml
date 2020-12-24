@@ -46,6 +46,7 @@
         <artifactId>ikasan-cli</artifactId>
         <version>3.1.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>ikasan-shell</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Shell</name>
@@ -75,6 +76,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.shell</groupId>
             <artifactId>spring-shell-starter</artifactId>
             <version>2.0.1.RELEASE</version>
@@ -83,6 +89,18 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
 

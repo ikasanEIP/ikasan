@@ -38,81 +38,66 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.command;
+package org.ikasan.cli.shell.configuration;
 
-import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.springframework.beans.factory.annotation.Value;
+import org.jline.reader.History;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
+import org.springframework.shell.jline.PromptProvider;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Process commands for start, query, stop of the H2 process.
+ * Standard Ikasan Command Line prompt.
  *
- * @author Ikasan Developmnent Team
+ * @author Ikasan Development Team
  */
 @ShellComponent
-public class H2Commands extends ActionCommands
-{
-    @Value("${module.name:null}")
-    String moduleName;
+public class IkasanShellHistory {
 
-    @Value("${h2.java.command:null}")
-    String h2JavaCommand;
+    private final org.jline.reader.History jLineHistory;
 
-    @Value("${h2.logging.file:logs/h2.log}")
-    String h2Log;
-
-    /**
-     * Start H2 process.
-     * @param altModuleName
-     * @param altCommand
-     * @return
-     */
-    @ShellMethod(value = "Start H2 persistence JVM", group = "Ikasan Commands", key = "start-h2")
-    public String starth2(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
-                          @ShellOption(value = "-command", defaultValue = "")  String altCommand)
-    {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-           name = altModuleName;
-        }
-
-        String command = h2JavaCommand;
-        if(altCommand != null && !altCommand.isEmpty())
-        {
-            command = altCommand;
-        }
-
-        if(this.h2Log != null)
-        {
-            this.processType.setOutputLog(this.h2Log);
-            this.processType.setErrorLog(this.h2Log);
-        }
-
-        return this.start(processType, name, command);
-    }
-
-    public ProcessType getProcessType()
-    {
-        return ProcessType.getH2Instance();
+    public IkasanShellHistory(org.jline.reader.History jLineHistory) {
+        this.jLineHistory = jLineHistory;
     }
 
     /**
-     * Stop H2 process.
-     * @param altModuleName
-     * @return
+     * Marker interface for beans providing {@literal history} functionality to the shell.
+     * <p>
+     * <p>To override the history command, simply register your own bean implementing that interface
+     * and the standard implementation will back off.</p>
+     * <p>
+     * <p>To disable the {@literal history} command entirely, set the {@literal spring.shell.command.history.enabled=false}
+     * property in the environment.</p>
+     *
+     * @author Eric Bottard
      */
-    @ShellMethod(value = "Stop H2 persistence JVM", group = "Ikasan Commands", key = "stop-h2")
-    public String stoph2(@ShellOption(value = "-name", defaultValue="") String altModuleName)
-    {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-            name = altModuleName;
-        }
+    public interface Command {
+    }
 
-        return this.stop(this.processType, name, "username", false);
+    @ShellMethod(value = "Display or save the history of previously run commands")
+    public List<String> history(@ShellOption(help = "A file to save history to.", defaultValue = ShellOption.NULL) File file) throws IOException
+    {
+        if (file == null) {
+            List<String> result = new ArrayList<>(jLineHistory.size());
+            jLineHistory.forEach(e -> result.add(e.line()));
+            return result;
+        } else {
+            try (FileWriter w = new FileWriter(file)) {
+                for (org.jline.reader.History.Entry entry : jLineHistory) {
+                    w.append(entry.line()).append(System.lineSeparator());
+                }
+            }
+            return Collections.singletonList(String.format("Wrote %d entries to %s", jLineHistory.size(), file));
+        }
     }
 }

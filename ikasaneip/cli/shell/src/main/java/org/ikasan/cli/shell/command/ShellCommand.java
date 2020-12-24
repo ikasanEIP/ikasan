@@ -75,7 +75,7 @@ public class ShellCommand extends AbstractCommand
 
         try
         {
-            Process process = operation.start(ProcessType.OTHER, commands, processName);
+            Process process = operation.start(ProcessType.GENERIC, commands, processName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = null;
             while ( (line = reader.readLine()) != null)

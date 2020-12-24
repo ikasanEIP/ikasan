@@ -41,32 +41,133 @@
 package org.ikasan.cli.shell.operation.model;
 
 /**
- * ProcessType enum literals.
+ * ProcessType model.
  *
  * @author Ikasan Development Team
  */
-public enum ProcessType
+public class ProcessType
 {
-    H2("H2", true),
-    MODULE("Module", true),
-    OTHER("", false);
+    public static ProcessType H2 = getH2Instance();
+    public static ProcessType MODULE = getModuleInstance();
+    public static ProcessType GENERIC = getGenericInstance();
 
     private String name;
     private boolean persist;
+    private String outputLog;
+    private String errorLog;
+
+    /** unique way to identify a specific process */
+    private String commandSignature;
+
+    public static ProcessType getH2Instance()
+    {
+        return new ProcessType("H2", true, "logs/h2.log", "logs/h2.log", "org.h2.tools.Server");
+    }
+
+    public static ProcessType getModuleInstance()
+    {
+        return new ProcessType("Module", true, "logs/application.log", "logs/application.log", "com.arjuna.ats.arjuna.objectstore.objectStoreDir");
+    }
+
+    public static ProcessType getGenericInstance()
+    {
+        return new ProcessType("", false);
+    }
 
     ProcessType(String name, boolean persist)
     {
-        this.name = name;
-        this.persist = persist;
+        this(name, persist, null, null, null);
     }
 
-    public String toString()
+    ProcessType(String name, boolean persist, String outputLog, String errorLog, String commandSignature)
+    {
+        this.name = name;
+        this.persist = persist;
+        this.outputLog = outputLog;
+        this.errorLog = errorLog;
+        this.commandSignature = commandSignature;
+    }
+
+    public String getName()
     {
         return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public boolean isPersist()
     {
         return this.persist;
+    }
+
+    public void setOutputLog(String outputLog)
+    {
+        this.outputLog = outputLog;
+    }
+
+    public void setErrorLog(String errorLog)
+    {
+        this.errorLog = errorLog;
+    }
+
+    public String getOutputLog()
+    {
+        return this.outputLog;
+    }
+
+    public String getErrorLog()
+    {
+        return this.errorLog;
+    }
+
+    public String getCommandSignature()
+    {
+        return commandSignature;
+    }
+
+    public void setCommandSignature(String commandSignature)
+    {
+        this.commandSignature = commandSignature;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProcessType that = (ProcessType) o;
+
+        if (persist != that.persist) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (outputLog != null ? !outputLog.equals(that.outputLog) : that.outputLog != null) return false;
+        if (errorLog != null ? !errorLog.equals(that.errorLog) : that.errorLog != null) return false;
+        return commandSignature != null ? commandSignature.equals(that.commandSignature) : that.commandSignature == null;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (persist ? 1 : 0);
+        result = 31 * result + (outputLog != null ? outputLog.hashCode() : 0);
+        result = 31 * result + (errorLog != null ? errorLog.hashCode() : 0);
+        result = 31 * result + (commandSignature != null ? commandSignature.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ProcessType{" +
+            "name='" + name + '\'' +
+            ", persist=" + persist +
+            ", outputLog='" + outputLog + '\'' +
+            ", errorLog='" + errorLog + '\'' +
+            ", commandSignature='" + commandSignature + '\'' +
+            '}';
     }
 }

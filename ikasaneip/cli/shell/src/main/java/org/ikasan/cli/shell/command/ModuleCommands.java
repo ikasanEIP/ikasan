@@ -60,6 +60,9 @@ public class ModuleCommands extends ActionCommands
     @Value("${module.java.command:null}")
     String moduleJavaCommand;
 
+    @Value("${module.logging.file:logs/application.log}")
+    String moduleLog;
+
     /**
      * Start Integration Module.
      * @param altModuleName
@@ -82,7 +85,15 @@ public class ModuleCommands extends ActionCommands
             command = altCommand;
         }
 
-        return this.start(ProcessType.MODULE, name, command);
+        this.processType.setOutputLog(this.moduleLog);
+        this.processType.setErrorLog(this.moduleLog);
+
+        return this.start(this.processType, name, command);
+    }
+
+    public ProcessType getProcessType()
+    {
+        return ProcessType.getModuleInstance();
     }
 
     /**
@@ -99,6 +110,6 @@ public class ModuleCommands extends ActionCommands
             name = altModuleName;
         }
 
-        return this.stop(ProcessType.MODULE, name);
+        return this.stop(this.processType, name, "username", false);
     }
 }

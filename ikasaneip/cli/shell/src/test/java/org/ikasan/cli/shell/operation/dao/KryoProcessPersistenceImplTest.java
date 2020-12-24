@@ -38,35 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.command;
+package org.ikasan.cli.shell.operation.dao;
 
+import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 
 /**
- * This test class supports the <code>IkasanShell</code> class.
+ * This test class supports the <code>KryoProcessPersistenceImpl</code> class.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-class H2CommandsTest
+class KryoProcessPersistenceImplTest
 {
-    @Test
-    void successful_h2_command_start_query_stop() throws IOException
-    {
-        H2Commands h2Commands = new H2Commands();
-        String command = "java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888 ";
-        String result = h2Commands.starth2("filesystem-im", command);
-        Assert.assertTrue("result should be 'filesystem-im process started'",
-            result.equals("{\"running\":true,\"name\":\"filesystem-im\",\"type\":\"H2\",\"commandLine\":\"\\/Library\\/Java\\/JavaVirtualMachines\\/adoptopenjdk-11.jdk\\/Contents\\/Home\\/bin\\/java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888\",\"operation\":\"start\",\"user\":\"jeff\"}"));
+    ProcessPersistenceDao processPersistenceDao = new KryoProcessPersistenceImpl("./persistence");
 
-        PsCommand psCommand = new PsCommand();
-        result = psCommand.ps("java", "username");
-        Assert.assertTrue("result should be ''", result.equals(""));
+    @Test
+    void successful_save_find_delete() throws IOException
+    {
+        IkasanProcess ikasanProcessSaved = new IkasanProcess("type", "name", 12345, "user");
+        processPersistenceDao.save(ikasanProcessSaved);
+
+        IkasanProcess ikasanProcessFound = processPersistenceDao.find("type", "name");
+        Assert.assertTrue(ikasanProcessFound.getName().equals(ikasanProcessSaved.getName()));
+        Assert.assertTrue(ikasanProcessFound.getPid() == ikasanProcessSaved.getPid());
+        Assert.assertTrue(ikasanProcessFound.getType().equals(ikasanProcessSaved.getType()));
+        Assert.assertTrue(ikasanProcessFound.getUser().equals(ikasanProcessSaved.getUser()));
+
+        processPersistenceDao.delete("type", "name");
+        ikasanProcessFound = processPersistenceDao.find("type", "name");
+        Assert.assertNull(ikasanProcessFound);
     }
 }
 

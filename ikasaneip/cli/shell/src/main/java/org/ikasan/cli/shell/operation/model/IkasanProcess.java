@@ -55,7 +55,7 @@ public class IkasanProcess
     /**
      * Default constructor required by Kyro.
      */
-    public IkasanProcess()
+    private IkasanProcess()
     {
         // required by Kryo for instantiation
     }
