@@ -41,71 +41,43 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 /**
- * Process commands for start, query, stop of the H2 process.
+ * Commands to start and stop the integration module.
  *
- * @author Ikasan Developmnent Team
+ * @author Ikasan Development Team
  */
 @ShellComponent
-public class H2Commands extends ActionCommands
+public class ModuleCommand extends ActionCommand
 {
     @Value("${module.name:null}")
     String moduleName;
 
-    @Value("${h2.java.command:null}")
-    String h2JavaCommand;
+    @Value("${module.java.command:null}")
+    String moduleJavaCommand;
 
-    @Value("${h2.logging.file:logs/h2.log}")
-    String h2Log;
+//    @Value("${module.logging.file:logs/application.log}")
+//    String moduleLog;
 
     /**
-     * Start H2 process.
+     * Start Integration Module.
      * @param altModuleName
      * @param altCommand
      * @return
      */
-    @ShellMethod(value = "Start H2 persistence JVM", group = "Ikasan Commands", key = "start-h2")
-    public String starth2(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
-                          @ShellOption(value = "-command", defaultValue = "")  String altCommand)
+    @ShellMethod(value = "Start Integration Module JVM", group = "Ikasan Commands", key = "start-module")
+    public String startmodule(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
+                              @ShellOption(value = "-command", defaultValue = "")  String altCommand)
     {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-           name = altModuleName;
-        }
-
-        String command = h2JavaCommand;
-        if(altCommand != null && !altCommand.isEmpty())
-        {
-            command = altCommand;
-        }
-
-        if(this.h2Log != null)
-        {
-            this.processType.setOutputLog(this.h2Log);
-            this.processType.setErrorLog(this.h2Log);
-        }
-
-        return this.start(processType, name, command);
+        return _startmodule(altModuleName, altCommand).toString();
     }
 
-    public ProcessType getProcessType()
-    {
-        return ProcessType.getH2Instance();
-    }
-
-    /**
-     * Stop H2 process.
-     * @param altModuleName
-     * @return
-     */
-    @ShellMethod(value = "Stop H2 persistence JVM", group = "Ikasan Commands", key = "stop-h2")
-    public String stoph2(@ShellOption(value = "-name", defaultValue="") String altModuleName)
+    JSONObject _startmodule(String altModuleName, String altCommand)
     {
         String name = moduleName;
         if(altModuleName != null && !altModuleName.isEmpty())
@@ -113,6 +85,42 @@ public class H2Commands extends ActionCommands
             name = altModuleName;
         }
 
-        return this.stop(this.processType, name, "username", false);
+        String command = moduleJavaCommand;
+        if(altCommand != null && !altCommand.isEmpty())
+        {
+            command = altCommand;
+        }
+
+//        this.processType.setOutputLog(this.moduleLog);
+//        this.processType.setErrorLog(this.moduleLog);
+
+        return this.start(this.processType, name, command);
+    }
+
+    public ProcessType getProcessType()
+    {
+        return ProcessType.getModuleInstance();
+    }
+
+    /**
+     * Stop Integration Module.
+     * @param altModuleName
+     * @return
+     */
+    @ShellMethod(value = "Stop Integration Module JVM", group = "Ikasan Commands", key = "stop-module")
+    public String stopmodule(@ShellOption(value = "-name", defaultValue="") String altModuleName)
+    {
+        return _stopmodule(altModuleName).toString();
+    }
+
+    JSONObject _stopmodule(String altModuleName)
+    {
+        String name = moduleName;
+        if(altModuleName != null && !altModuleName.isEmpty())
+        {
+            name = altModuleName;
+        }
+
+        return this.stop(this.processType, name, username);
     }
 }

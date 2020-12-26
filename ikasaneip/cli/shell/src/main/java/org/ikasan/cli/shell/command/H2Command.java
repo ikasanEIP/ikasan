@@ -41,85 +41,89 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.ikasan.cli.shell.reporting.ProcessInfo;
-
-import java.io.IOException;
-import java.util.List;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 /**
- * Abstract action command supporting standard start|stop process.
+ * Process commands for start, query, stop of the H2 process.
  *
  * @author Ikasan Developmnent Team
  */
-public abstract class ActionCommands extends AbstractCommand
+@ShellComponent
+public class H2Command extends ActionCommand
 {
-    ProcessType processType = getProcessType();
+    @Value("${module.name:null}")
+    String moduleName;
+
+    @Value("${h2.java.command:null}")
+    String h2JavaCommand;
+
+    @Value("${h2.logging.file:logs/h2.log}")
+    String h2Log;
 
     /**
-     * Start process.
-     *
-     * @param processType
-     * @param name
-     * @param command
+     * Start H2 process.
+     * @param altModuleName
+     * @param altCommand
      * @return
      */
-    String start(ProcessType processType, String name, String command)
+    @ShellMethod(value = "Start H2 persistence JVM", group = "Ikasan Commands", key = "start-h2")
+    public String starth2(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
+                          @ShellOption(value = "-command", defaultValue = "")  String altCommand)
     {
-        ProcessInfo processInfo = ProcessUtils.createProcessInfo()
-            .setStartOperation()
-            .setProcessType(processType)
-            .setName(name)
-            .setCommandLine(command);
+        return this._starth2(altModuleName, altCommand).toString();
+    }
 
-        try
+    JSONObject _starth2(String altModuleName, String altCommand)
+    {
+        String name = moduleName;
+        if(altModuleName != null && !altModuleName.isEmpty())
         {
-            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
-            if(processHandles != null || processHandles.size() > 0)
-            {
-                processInfo.setRunning(true);
-            }
-            else
-            {
-                Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
-                processInfo.setProcess(process);
-            }
-        }
-        catch (IOException e)
-        {
-            processInfo.setException(e);
+            name = altModuleName;
         }
 
-        return processInfo.toJSON().toString();
+        String command = h2JavaCommand;
+        if(altCommand != null && !altCommand.isEmpty())
+        {
+            command = altCommand;
+        }
+
+        if(this.h2Log != null)
+        {
+            this.processType.setOutputLog(this.h2Log);
+            this.processType.setErrorLog(this.h2Log);
+        }
+
+        return this.start(processType, name, command);
+    }
+
+    public ProcessType getProcessType()
+    {
+        return ProcessType.getH2Instance();
     }
 
     /**
-     * Stop process.
-     *
-     * @param processType
-     * @param name
-     * @param username
-     * @param anyMatch
+     * Stop H2 process.
+     * @param altModuleName
      * @return
      */
-    String stop(ProcessType processType, String name, String username, boolean anyMatch)
+    @ShellMethod(value = "Stop H2 persistence JVM", group = "Ikasan Commands", key = "stop-h2")
+    public String stoph2(@ShellOption(value = "-name", defaultValue="") String altModuleName)
     {
-        try
-        {
-            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
-            if(processHandles == null || processHandles.size() == 0)
-            {
-                return processType.getName() + " process for [" + name + "] is already stopped!";
-            }
-
-            operation.stop(processType, name, username, anyMatch);
-            return processType.getName() + " process stopped";
-        }
-        catch (IOException e)
-        {
-            return "Problem checking process [" + name + "] " + e.getMessage();
-        }
+        return _stoph2(altModuleName).toString();
     }
 
-    public abstract ProcessType getProcessType();
+    JSONObject _stoph2(String altModuleName)
+    {
+        String name = moduleName;
+        if(altModuleName != null && !altModuleName.isEmpty())
+        {
+            name = altModuleName;
+        }
 
+        return this.stop(this.processType, name, username);
+    }
 }

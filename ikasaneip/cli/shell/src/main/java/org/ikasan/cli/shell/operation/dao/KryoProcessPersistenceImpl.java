@@ -40,6 +40,7 @@
  */
 package org.ikasan.cli.shell.operation.dao;
 
+import ch.qos.logback.core.util.FileUtil;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -47,10 +48,8 @@ import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -99,7 +98,8 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     public void save(IkasanProcess ikasanProcess)
     {
         Kryo kryo = kryoThreadLocal.get();
-        String path = persistenceDir + "/" + ikasanProcess.getType() + "_" + ikasanProcess.getName();
+        String path = getPidFQN(ikasanProcess.getType(), ikasanProcess.getName());
+        FileUtil.createMissingParentDirectories(new File(path) );
 
         try
         {
@@ -117,7 +117,7 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     public IkasanProcess find(String type, String name)
     {
         Kryo kryo = kryoThreadLocal.get();
-        String path = persistenceDir + "/" + type + "_" + name;
+        String path = getPidFQN(type, name);
 
         try
         {
@@ -126,7 +126,7 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         }
         catch(FileNotFoundException e)
         {
-            logger.debug("File [" + path + "] not found");
+            logger.debug("File [" + path + "] not found", e);
             return null;
         }
     }
@@ -134,7 +134,8 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     @Override
     public void delete(String type, String name)
     {
-        String path = persistenceDir + "/" + type + "_" + name;
+        String path = getPidFQN(type, name);
+
         try
         {
             Files.delete(Path.of(path));
@@ -145,5 +146,9 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         }
     }
 
+    protected String getPidFQN(String type, String name)
+    {
+        return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_" + name;
+    }
 
 }

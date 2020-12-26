@@ -40,11 +40,13 @@
  */
 package org.ikasan.cli.shell.operation;
 
+import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,31 +96,31 @@ public class DefaultOperationImpl implements Operation
     public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
         ProcessBuilder processBuilder = getProcessBuilder(commands);
-//        if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
-//        {
-//            File outputLog = new File(processType.getOutputLog());
-//            FileUtil.createMissingParentDirectories(outputLog);
-//            processBuilder.redirectOutput(outputLog);
-//        }
-//        if(processType.getErrorLog() == null || processType.getErrorLog().isEmpty())
-//        {
-//            // redirect stdErr to stdOut
-//            processBuilder.redirectError();
-//        }
-//        else
-//        {
-//            // stdErr still going to same place as stdOut
-//            if(processType.getOutputLog().equals(processType.getErrorLog()))
-//            {
-//                processBuilder.redirectError();
-//            }
-//            else
-//            {
-//                File errorLog = new File(processType.getErrorLog());
-//                FileUtil.createMissingParentDirectories(errorLog);
-//                processBuilder.redirectError(errorLog);
-//            }
-//        }
+        if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
+        {
+            File outputLog = new File(processType.getOutputLog());
+            FileUtil.createMissingParentDirectories(outputLog);
+            processBuilder.redirectOutput(outputLog);
+        }
+        if(processType.getErrorLog() == null || processType.getErrorLog().isEmpty())
+        {
+            // redirect stdErr to stdOut
+            processBuilder.redirectError();
+        }
+        else
+        {
+            // stdErr still going to same place as stdOut
+            if(processType.getOutputLog().equals(processType.getErrorLog()))
+            {
+                processBuilder.redirectError();
+            }
+            else
+            {
+                File errorLog = new File(processType.getErrorLog());
+                FileUtil.createMissingParentDirectories(errorLog);
+                processBuilder.redirectError(errorLog);
+            }
+        }
 
         Process process = processBuilder.start();
 
@@ -201,7 +203,7 @@ public class DefaultOperationImpl implements Operation
     }
 
     @Override
-    public void stop(ProcessType processType, String name, String username, boolean anyMatch) throws IOException
+    public void stop(ProcessType processType, String name, String username) throws IOException
     {
         List<ProcessHandle> processHandles = getProcessHandles(processType, name, username);
         if(processHandles == null || processHandles.size() == 0)
@@ -209,16 +211,10 @@ public class DefaultOperationImpl implements Operation
             throw new IOException("No matching processes");
         }
 
-        if(anyMatch)
+        // TODO - check how many instances found
+        for(ProcessHandle processHandle:processHandles)
         {
-            for(ProcessHandle processHandle:processHandles)
-            {
-                processHandle.destroy();
-            }
-        }
-        else
-        {
-            processHandles.get(0).destroy();
+            processHandle.destroy();
         }
 
         // remove persistence
@@ -226,7 +222,7 @@ public class DefaultOperationImpl implements Operation
     }
 
     @Override
-    public void kill(ProcessType processType, String name, String username, boolean anyMatch) throws IOException
+    public void kill(ProcessType processType, String name, String username) throws IOException
     {
         List<ProcessHandle> processHandles = getProcessHandles(processType, name, username);
         if(processHandles == null || processHandles.size() == 0)
@@ -234,16 +230,10 @@ public class DefaultOperationImpl implements Operation
             throw new IOException("No matching processes");
         }
 
-        if(anyMatch)
+        // TODO - identify if more than one instance
+        for(ProcessHandle processHandle:processHandles)
         {
-            for(ProcessHandle processHandle:processHandles)
-            {
-                processHandle.destroyForcibly();
-            }
-        }
-        else
-        {
-            processHandles.get(0).destroyForcibly();
+            processHandle.destroyForcibly();
         }
 
         // remove persistence

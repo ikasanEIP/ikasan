@@ -44,7 +44,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +66,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("cli/shell/target/test-classes");
+        firstProcess.add("target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
         firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
@@ -79,7 +78,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("cli/shell/target/test-classes");
+        secondProcess.add("target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
         secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
@@ -97,16 +96,16 @@ class PsCommandTest
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
         Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("H2"));
+        Assert.assertTrue("type should be H2, but returned " + resultProcess.get("type"), resultProcess.get("type").equals("H2"));
         Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("user should be not null", resultProcess.get("user"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
         Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
 
         resultProcess = (JSONObject)processes.get(1);
         Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
         Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
         Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("user should be not null", resultProcess.get("user"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
         Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
     }
 
@@ -116,7 +115,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("cli/shell/target/test-classes");
+        firstProcess.add("target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
         firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
@@ -128,7 +127,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("cli/shell/target/test-classes");
+        secondProcess.add("target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
 
@@ -147,7 +146,7 @@ class PsCommandTest
         Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
         Assert.assertTrue("type should be H2", resultProcess.get("type").equals("H2"));
         Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("user should be not null", resultProcess.get("user"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
         Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
     }
 
@@ -157,7 +156,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("cli/shell/target/test-classes");
+        firstProcess.add("target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
 
@@ -168,7 +167,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("cli/shell/target/test-classes");
+        secondProcess.add("target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
         secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
@@ -179,16 +178,20 @@ class PsCommandTest
 
         PsCommand command = new PsCommand();
 
+//        Path currentRelativePath = Paths.get("");
+//        String s = currentRelativePath.toAbsolutePath().toString();
+//        System.out.println("Current relative path is: " + s);
+
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
         JSONArray processes = (JSONArray)result.get("Processes");
-        Assert.assertTrue(processes.length() == 1);
+        Assert.assertTrue("Returned length of " + processes.length(), processes.length() == 1);
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
         Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
         Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
         Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("user should be not null", resultProcess.get("user"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
         Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
     }
 
@@ -198,7 +201,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("cli/shell/target/test-classes");
+        firstProcess.add("target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
 
@@ -209,7 +212,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("cli/shell/target/test-classes");
+        secondProcess.add("target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
 

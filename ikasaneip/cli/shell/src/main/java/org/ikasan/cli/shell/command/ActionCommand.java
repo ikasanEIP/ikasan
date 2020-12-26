@@ -38,67 +38,97 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.operation;
+package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
 import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
+import org.ikasan.cli.shell.reporting.ProcessInfo;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.util.List;
 
 /**
- * Contract for the Operation
+ * Abstract action command supporting standard start|stop process.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Developmnent Team
  */
-public interface Operation
+public abstract class ActionCommand extends AbstractCommand
 {
-    String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
+    ProcessType processType = getProcessType();
 
     /**
-     * Get default instance of an Operation.
-     * @return Operation
-     */
-    static Operation getInstance()
-    {
-        return new DefaultOperationImpl( new DefaultPersistenceServiceImpl( new KryoProcessPersistenceImpl(defaultPidDirectory) ) );
-    }
-
-    /**
+     * Start process.
      *
      * @param processType
      * @param name
-     * @throws IOException
+     * @param command
+     * @return
      */
-    Process start(ProcessType processType, List<String> commands, String name) throws IOException;
+    JSONObject start(ProcessType processType, String name, String command)
+    {
+        ProcessInfo processInfo = ProcessUtils.createProcessInfo()
+            .setStartOperation()
+            .setProcessType(processType)
+            .setName(name)
+            .setCommandLine(command)
+            .setUsername(username);
+
+        try
+        {
+            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
+            if(processHandles != null && processHandles.size() > 0)
+            {
+                processInfo.setRunning(true);
+            }
+            else
+            {
+                Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
+                processInfo.setProcess(process);
+            }
+        }
+        catch (IOException e)
+        {
+            processInfo.setException(e);
+        }
+
+        return processInfo.toJSON();
+    }
 
     /**
+     * Stop process.
      *
      * @param processType
      * @param name
      * @param username
      * @return
      */
-    List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username);
+    JSONObject stop(ProcessType processType, String name, String username)
+    {
+        ProcessInfo processInfo = ProcessUtils.createProcessInfo()
+            .setStopOperation()
+            .setProcessType(processType)
+            .setName(name)
+            .setUsername(username);
 
-    /**
-     *
-     * @param processType
-     * @param name
-     * @param username
-     * @throws IOException
-     */
-    void stop(ProcessType processType, String name, String username) throws IOException;
+        try
+        {
+            List<ProcessHandle> processHandles = operation.getProcessHandles(processType, name, username);
+            if(processHandles == null || processHandles.size() == 0)
+            {
+                processInfo.setRunning(false);
+            }
 
-    /**
-     *
-     * @param processType
-     * @param name
-     * @param username
-     * @throws IOException
-     */
-    void kill(ProcessType processType, String name, String username) throws IOException;
+            operation.stop(processType, name, username);
+            processInfo.setRunning(false);
+        }
+        catch (IOException e)
+        {
+            processInfo.setException(e);
+        }
+
+        return processInfo.toJSON();
+    }
+
+    public abstract ProcessType getProcessType();
 
 }

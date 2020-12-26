@@ -105,15 +105,17 @@ public class IkasanProcess
 
         if (pid != that.pid) return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        return user.equals(that.user);
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return user != null ? user.equals(that.user) : that.user == null;
     }
 
     @Override
     public int hashCode()
     {
         int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (int) (pid ^ (pid >>> 32));
-        result = 31 * result + user.hashCode();
+        result = 31 * result + (user != null ? user.hashCode() : 0);
         return result;
     }
 
@@ -122,6 +124,7 @@ public class IkasanProcess
     {
         return "IkasanProcess{" +
             "type='" + type + '\'' +
+            ", name='" + name + '\'' +
             ", pid=" + pid +
             ", user='" + user + '\'' +
             '}';

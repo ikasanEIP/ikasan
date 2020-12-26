@@ -79,6 +79,7 @@ class DefaultPersistenceServiceImplTest
     /** Mock IkasanProcess */
     final IkasanProcess ikasanProcess = mockery.mock(IkasanProcess.class, "mockIkasanProcess");
 
+    /** persistenceService instance */
     PersistenceService persistenceService = new DefaultPersistenceServiceImpl(processPersistenceDao);
 
     @Test

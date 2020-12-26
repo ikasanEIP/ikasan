@@ -98,6 +98,12 @@ class DefaultOperationImplTest
                 exactly(1).of(processType).getName();
                 will(returnValue("processTypeName"));
 
+                exactly(1).of(processType).getOutputLog();
+                will(returnValue(null));
+
+                exactly(1).of(processType).getErrorLog();
+                will(returnValue(null));
+
                 exactly(1).of(persistenceService).persist(with(any(String.class)), with(any(String.class)), with(any(Process.class)));
             }
         });
@@ -124,6 +130,12 @@ class DefaultOperationImplTest
             {
                 exactly(1).of(processType).isPersist();
                 will(returnValue(false));
+
+                exactly(1).of(processType).getOutputLog();
+                will(returnValue(null));
+
+                exactly(1).of(processType).getErrorLog();
+                will(returnValue(null));
             }
         });
 
@@ -152,6 +164,12 @@ class DefaultOperationImplTest
 
                 exactly(1).of(processType).getName();
                 will(returnValue("processTypeName"));
+
+                exactly(1).of(processType).getOutputLog();
+                will(returnValue(null));
+
+                exactly(1).of(processType).getErrorLog();
+                will(returnValue(null));
 
                 exactly(1).of(persistenceService).persist(with(any(String.class)), with(any(String.class)), with(any(Process.class)));
                 will(throwException(new Exception("failed to persist")));
@@ -275,13 +293,13 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         Assertions.assertThrows(IOException.class,
-            () -> operation.stop(processType, "name", "username", false));
+            () -> operation.stop(processType, "name", "username"));
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    void successful_stop_exactmatch_process_found() throws IOException
+    void successful_stop_process_found() throws IOException
     {
         List<String> commands = new ArrayList<String>();
         commands.add("java");
@@ -312,42 +330,7 @@ class DefaultOperationImplTest
         });
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        operation.stop(processType, "sampleProcess", null, false);
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    void successful_stop_anymatch_process_found() throws IOException
-    {
-        List<String> commands = new ArrayList<String>();
-        commands.add("java");
-        commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
-        commands.add("org.ikasan.cli.sample.process.SampleProcess");
-        commands.add("-Dmodule.name=sampleProcess");
-
-        ProcessBuilder processBuilder = new ProcessBuilder(commands);
-        Process process = processBuilder.start();
-        processes.add(process);
-
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
-                will(returnValue(null));
-
-                exactly(2).of(processType).getName();
-                will(returnValue("processTypeName"));
-
-                exactly(1).of(processType).getCommandSignature();
-                will(returnValue(null));
-
-                exactly(1).of(persistenceService).remove("processTypeName", "sampleProcess");
-            }
-        });
-
-        Operation operation = new DefaultOperationImpl(persistenceService);
-        operation.stop(processType, "sampleProcess", null, true);
+        operation.stop(processType, "sampleProcess", null);
         mockery.assertIsSatisfied();
     }
 
@@ -371,13 +354,13 @@ class DefaultOperationImplTest
         Operation operation = new DefaultOperationImpl(persistenceService);
 
         Assertions.assertThrows(IOException.class,
-            () -> operation.kill(processType, "name", "username", false));
+            () -> operation.kill(processType, "name", "username"));
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    void successful_kill_exactmatch_process_found() throws IOException
+    void successful_kill_process_found() throws IOException
     {
         List<String> commands = new ArrayList<String>();
         commands.add("java");
@@ -407,41 +390,9 @@ class DefaultOperationImplTest
         });
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        operation.kill(processType, "sampleProcess", null, false);
+        operation.kill(processType, "sampleProcess", null);
         mockery.assertIsSatisfied();
     }
-
-//    @Test
-//    void successful_kill_anymatch_process_found() throws IOException
-//    {
-//        List<String> commands = new ArrayList<String>();
-//        commands.add("java");
-//        commands.add("-classpath");
-//        commands.add("cli/shell/target/test-classes");
-//        commands.add("org.ikasan.cli.sample.process.SampleProcess");
-//        commands.add("-Dmodulename=sampleProcess5");
-//
-//        ProcessBuilder processBuilder = new ProcessBuilder(commands);
-//        Process process = processBuilder.start();
-//        processes.add(process);
-//
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                exactly(1).of(processType).getName();
-//                will(returnValue("module"));
-//
-//                exactly(1).of(processType).getName();
-//                will(returnValue("module"));
-//
-//                exactly(1).of(persistenceService).remove("module", "sampleProcess");
-//            }
-//        });
-//
-//        Operation operation = new DefaultOperationImpl(persistenceService);
-//        operation.kill(processType, "sampleProcess", null, true);
-//        mockery.assertIsSatisfied();
-//    }
 
     @AfterEach
     void teardown()

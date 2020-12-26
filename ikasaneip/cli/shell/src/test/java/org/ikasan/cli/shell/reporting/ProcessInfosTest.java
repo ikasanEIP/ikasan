@@ -38,35 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.command;
+package org.ikasan.cli.shell.reporting;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.io.IOException;
 
 /**
- * This test class supports the <code>IkasanShell</code> class.
+ * This test class supports the <code>ProcessInfos</code> class.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-class H2CommandsTest
+class ProcessInfosTest
 {
     @Test
-    void successful_h2_command_start_query_stop() throws IOException
+    void successful_add()
     {
-        H2Commands h2Commands = new H2Commands();
-        String command = "java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888 ";
-        String result = h2Commands.starth2("filesystem-im", command);
-        Assert.assertTrue("result should be 'filesystem-im process started'",
-            result.equals("{\"running\":true,\"name\":\"filesystem-im\",\"type\":\"H2\",\"commandLine\":\"\\/Library\\/Java\\/JavaVirtualMachines\\/adoptopenjdk-11.jdk\\/Contents\\/Home\\/bin\\/java -Dmodule.name=filesystem-im -classpath h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8888\",\"operation\":\"start\",\"user\":\"jeff\"}"));
+        ProcessInfo processInfo1 = new ProcessInfo();
+        processInfo1.setPid(12345L);
 
-        PsCommand psCommand = new PsCommand();
-        result = psCommand.ps("java", "username");
-        Assert.assertTrue("result should be ''", result.equals(""));
+        ProcessInfo processInfo2 = new ProcessInfo();
+        processInfo2.setPid(12346L);
+
+        ProcessInfos processInfos = new ProcessInfos();
+        processInfos.add(processInfo1);
+        processInfos.add(processInfo2);
+
+        Assert.assertTrue(processInfos.getProcessInfos().size() == 2);
+
+        ProcessInfo processInfo3 = new ProcessInfo();
+        processInfo2.setPid(12347L);
+
+        ProcessInfos processInfos2 = new ProcessInfos();
+        processInfos2.add(processInfo3);
+        processInfos.add(processInfos2);
+
+        Assert.assertTrue(processInfos.getProcessInfos().size() == 3);
     }
+
 }
 

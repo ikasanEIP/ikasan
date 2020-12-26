@@ -38,49 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.cli.shell.operation.model;
+package org.ikasan.cli.shell.command;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This test class supports the <code>ProcessType</code> class.
+ * This test class supports the <code>IkasanShell</code> class.
  * 
  * @author Ikasan Development Team
  */
-class ProcessTypeTest
+@RunWith(SpringJUnit4ClassRunner.class)
+class H2CommandTest
 {
     @Test
-    void successful_h2_instance()
+    void successful_h2_command_start_and_stop() throws IOException, JSONException
     {
-        ProcessType h2Instance = ProcessType.getH2Instance();
-        Assert.assertTrue(h2Instance.getName().equals("H2"));
-        Assert.assertTrue(h2Instance.isPersist());
-        Assert.assertTrue(h2Instance.getOutputLog().equals("logs/h2.log"));
-        Assert.assertTrue(h2Instance.getErrorLog().equals("logs/h2.log"));
-        Assert.assertTrue(h2Instance.getCommandSignature().equals("org.h2.tools.Server"));
-    }
+        String h2SampleProcess = "java -classpath cli/shell/target/test-classes org.ikasan.cli.sample.process.SampleProcess -Dmodule.name=sampleProcess -DfakeH2Signature=org.h2.tools.Server";
 
-    @Test
-    void successful_module_instance()
-    {
-        ProcessType moduleInstance = ProcessType.getModuleInstance();
-        Assert.assertTrue(moduleInstance.getName().equals("Module"));
-        Assert.assertTrue(moduleInstance.isPersist());
-        Assert.assertNull(moduleInstance.getOutputLog());
-        Assert.assertNull(moduleInstance.getErrorLog());
-        Assert.assertTrue(moduleInstance.getCommandSignature().equals("com.arjuna.ats.arjuna.objectstore.objectStoreDir"));
-    }
+        H2Command command = new H2Command();
 
-    @Test
-    void successful_generic_instance()
-    {
-        ProcessType genericInstance = ProcessType.getGenericInstance();
-        Assert.assertTrue(genericInstance.getName().equals(""));
-        Assert.assertTrue(!genericInstance.isPersist());
-        Assert.assertNull(genericInstance.getOutputLog());
-        Assert.assertNull(genericInstance.getErrorLog());
-        Assert.assertNull(genericInstance.getCommandSignature());
+        // test all match
+        JSONObject result = command._starth2("sampleProcess", h2SampleProcess);
+
+        Assert.assertTrue("running should be true", result.get("running").equals(true));
+        Assert.assertTrue("type should be H2", result.get("type").equals("H2"));
+        Assert.assertTrue("operation should be start", result.get("operation").equals("start"));
+        Assert.assertNotNull("username should be not null", result.get("username"));
+        Assert.assertNotNull("pid should be not null", result.get("pid"));
     }
 }
 

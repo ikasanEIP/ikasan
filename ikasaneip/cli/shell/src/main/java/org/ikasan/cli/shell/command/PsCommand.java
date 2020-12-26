@@ -69,7 +69,7 @@ public class PsCommand extends AbstractCommand
        return _ps(optionalModuleName, optionalModuleName).toString();
     }
 
-    protected JSONObject _ps(String optionalModuleName, String optionalUsername)
+    JSONObject _ps(String optionalModuleName, String optionalUsername)
     {
         String _moduleName = moduleName;
         String _username = username;
