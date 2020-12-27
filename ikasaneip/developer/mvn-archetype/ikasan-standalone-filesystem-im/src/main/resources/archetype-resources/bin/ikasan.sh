@@ -3,6 +3,8 @@
 
 SCRIPT_DIR=$(pwd)
 
+java -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar "$@"
+exit
 
 # Ikasan Module settings
 
