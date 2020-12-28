@@ -66,7 +66,7 @@ public class ProcessType
 
     public static ProcessType getModuleInstance()
     {
-        return new ProcessType("Module", true, null, null, "com.arjuna.ats.arjuna.objectstore.objectStoreDir");
+        return new ProcessType("Module", true, "logs/application.log", "logs/application.log", "com.arjuna.ats.arjuna.objectstore.objectStoreDir");
     }
 
     public static ProcessType getGenericInstance()

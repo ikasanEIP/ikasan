@@ -31,6 +31,12 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-shell</artifactId>
             <version>${version.ikasan}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
