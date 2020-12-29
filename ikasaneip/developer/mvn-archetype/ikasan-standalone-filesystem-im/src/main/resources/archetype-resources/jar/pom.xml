@@ -36,12 +36,6 @@
             <version>${version.ikasan}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.ikasan</groupId>-->
-<!--            <artifactId>ikasan-shell</artifactId>-->
-<!--            <version>${version.ikasan}</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
