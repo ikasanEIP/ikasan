@@ -39,7 +39,7 @@
     </bean>
 
     <bean id="baseFileTransferDao" class="org.ikasan.connector.basefiletransfer.outbound.persistence.HibernateBaseFileTransferDaoImpl">
-        <constructor-arg name="sessionFactory" ref="baseFileTransferSessionFactory"/>
+        <property name="sessionFactory" ref="baseFileTransferSessionFactory"/>
     </bean>
 
     <bean id="baseFileTransferSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">

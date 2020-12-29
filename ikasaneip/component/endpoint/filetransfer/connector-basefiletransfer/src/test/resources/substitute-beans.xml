@@ -24,7 +24,7 @@
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="false"/>
-        <entry key="hibernate.hbm2ddl.auto" value="create-drop"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
         <entry key="hibernate.transaction.coordinator_class" value="jta"/>
     </util:map>
 
@@ -37,7 +37,7 @@
     </bean>
 
     <bean id="uut" class="org.ikasan.connector.basefiletransfer.outbound.persistence.HibernateBaseFileTransferDaoImpl">
-        <constructor-arg name="sessionFactory" ref="sessionFactory"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
 
@@ -57,7 +57,11 @@
     <aop:config>
 
         <aop:pointcut id="fileTransferDaoHousekeepingMethods"
-                      expression="execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.housekeep(..))"/>
+                      expression="execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.housekeep(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.persistClientListEntry(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.save(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.delete(..))
+"/>
 
         <aop:advisor id="fileTransferDaoHousekeepingMethodsPointcutAdvice" advice-ref="fileTransfer-required-TransactionAdvice"
                      pointcut-ref="fileTransferDaoHousekeepingMethods"/>
