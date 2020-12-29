@@ -122,6 +122,12 @@
             <artifactId>ikasan-quartz-endpoint</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-connector-basefiletransfer</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!-- spring web -->
         <dependency>
