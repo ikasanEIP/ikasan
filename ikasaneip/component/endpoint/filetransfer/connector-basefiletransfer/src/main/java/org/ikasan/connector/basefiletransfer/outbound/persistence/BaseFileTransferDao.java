@@ -42,6 +42,8 @@ package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
 import org.hibernate.HibernateException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
+import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
+import org.ikasan.spec.search.PagedSearchResult;
 
 /**
  * Data Access Interface for File Transfer objects
@@ -62,7 +64,7 @@ public interface BaseFileTransferDao {
 	 * @throws NullPointerException
 	 * @throws HibernateException
 	 */
-	public abstract boolean isDuplicate(ClientListEntry entry, boolean filterOnFilename, boolean filterOnLastModifiedDate) throws HibernateException;
+	boolean isDuplicate(ClientListEntry entry, boolean filterOnFilename, boolean filterOnLastModifiedDate) throws HibernateException;
 
 	/**
 	 * Derives an <code>FileFilter</code> from the provided
@@ -72,7 +74,7 @@ public interface BaseFileTransferDao {
 	 * @param entry the <code>ClientListEntry</code> to save.
 	 * @throws HibernateException
 	 */
-	public abstract void persistClientListEntry(ClientListEntry entry) throws HibernateException;
+	void persistClientListEntry(ClientListEntry entry) throws HibernateException;
 
     /**
      * Housekeeps <code>FileFilter</code> entries.
@@ -83,6 +85,50 @@ public interface BaseFileTransferDao {
      * 
      * @throws HibernateException
      */
-    public abstract void housekeep(String clientId, int ageOfFiles, int maxRows) throws HibernateException;
-	
+    void housekeep(String clientId, int ageOfFiles, int maxRows) throws HibernateException;
+
+    /**
+     * Finds <code>FileFilter</code> by given id.
+     *
+     * @param id of a FileFilter entry
+     * @return FileFilter entry for given id
+     * @throws NullPointerException
+     * @throws HibernateException
+     */
+    FileFilter findById(int id) throws HibernateException;
+
+
+    /**
+     * Deletes given <code>FileFilter</code>.
+     *
+     * @param  fileFilter to be deleted
+     * @throws NullPointerException
+     * @throws HibernateException
+     */
+    void delete(FileFilter fileFilter) throws HibernateException;
+
+    /**
+     * Saves given <code>FileFilter</code>.
+     *
+     * @param  fileFilter to be deleted
+     * @throws NullPointerException
+     * @throws HibernateException
+     */
+    FileFilter save(FileFilter fileFilter) throws HibernateException;
+
+    /**
+     * Find a Paged List of{@link FileFilter} by its id: clientId or and clientId
+     *
+     * @param pageNo page number
+     * @param pageSize page Size to be returned
+     * @param criteria of {@link FileFilter}s to be found
+     * @param clientId of {@link FileFilter}s to be found
+     *
+     * @return The found Paged Search result of {@link FileFilter} or empty if nothing
+     *         found in persistence.
+     */
+    PagedSearchResult<FileFilter> find(int pageNo, int pageSize,
+                                                      String criteria, String clientId);
+
+
 }

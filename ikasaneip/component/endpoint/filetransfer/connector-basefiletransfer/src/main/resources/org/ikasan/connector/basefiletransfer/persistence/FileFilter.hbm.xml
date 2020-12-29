@@ -48,11 +48,11 @@
   <class name="org.ikasan.connector.basefiletransfer.persistence.FileFilter"
     table="FTFileFilter">
 
-    <id name="id" type="int" column="Id">
+    <id name="id" type="java.lang.Integer" column="Id">
       <generator class="identity" />
     </id>
 
-    <properties name="fileFilterId" unique="true">
+      <properties name="fileFilterId" unique="true">
       <property name="clientId" type="java.lang.String" column="ClientId" not-null="true" />
       <property name="criteria" type="java.lang.String" column="Criteria" not-null="true" />
       <property name="lastModified" type="java.util.Date" column="LastModified" not-null="true" />

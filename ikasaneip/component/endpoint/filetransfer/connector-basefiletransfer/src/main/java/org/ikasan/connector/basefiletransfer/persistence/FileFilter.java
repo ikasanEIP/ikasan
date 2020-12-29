@@ -41,9 +41,7 @@
 package org.ikasan.connector.basefiletransfer.persistence;
 
 import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 /**
  * Object to be used for persistence/filtering. It reflects the basic fields
@@ -59,11 +57,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FileFilter
 {
-    /** Logger */
-    private static Logger logger = LoggerFactory.getLogger(FileFilter.class);
 
     /** id */
-    private int id;
+    private Integer id;
 
     /** clientId */
     private String clientId;
@@ -115,7 +111,6 @@ public class FileFilter
      */
     public long getCreatedDateTime()
     {
-        logger.debug("Getting createdDateTime = [" + this.createdDateTime + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return createdDateTime;
     }
 
@@ -125,18 +120,16 @@ public class FileFilter
      * @param createdDateTime the createdDateTime to set
      */
     @SuppressWarnings("unused")
-    private void setCreatedDateTime(long createdDateTime)
+    public void setCreatedDateTime(long createdDateTime)
     {
-        logger.debug("Setting this.createdDateTime = [" + createdDateTime + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.createdDateTime = createdDateTime;
     }
 
     /**
      * @return the id
      */
-    public int getId()
+    public Integer getId()
     {
-        logger.debug("Getting id = [" + this.id + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return id;
     }
 
@@ -146,9 +139,8 @@ public class FileFilter
      * @param id the id to set
      */
     @SuppressWarnings("unused")
-    private void setId(int id)
+    public void setId(Integer id)
     {
-        logger.debug("Setting this.id = [" + id + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.id = id;
     }
 
@@ -157,7 +149,6 @@ public class FileFilter
      */
     public Date getLastAccessed()
     {
-        logger.debug("Getting lastAccessed = [" + this.lastAccessed + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return lastAccessed;
     }
 
@@ -169,7 +160,6 @@ public class FileFilter
     @SuppressWarnings("unused")
     private void setLastAccessed(Date lastAccessed)
     {
-        logger.debug("Setting this.lastAccessed = [" + lastAccessed + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.lastAccessed = lastAccessed;
     }
 
@@ -178,7 +168,6 @@ public class FileFilter
      */
     public Date getLastModified()
     {
-        logger.debug("Getting lastModified = [" + this.lastModified + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return lastModified;
     }
 
@@ -190,7 +179,6 @@ public class FileFilter
     @SuppressWarnings("unused")
     private void setLastModified(Date lastModified)
     {
-        logger.debug("Setting this.lastModified = [" + lastModified + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.lastModified = lastModified;
     }
 
@@ -199,7 +187,6 @@ public class FileFilter
      */
     public int getSize()
     {
-        logger.debug("Getting size = [" + this.size + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return size;
     }
 
@@ -211,7 +198,6 @@ public class FileFilter
     @SuppressWarnings("unused")
     private void setSize(int size)
     {
-        logger.debug("Setting this.size = [" + size + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.size = size;
     }
 
@@ -220,7 +206,6 @@ public class FileFilter
      */
     public String getUri()
     {
-        logger.debug("Getting uri = [" + this.uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return uri;
     }
 
@@ -232,7 +217,6 @@ public class FileFilter
     @SuppressWarnings("unused")
     private void setUri(String uri)
     {
-        logger.debug("Setting this.uri = [" + uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.uri = uri;
     }
 
@@ -241,7 +225,6 @@ public class FileFilter
      */
     public String getClientId()
     {
-        logger.debug("Getting clientId = [" + this.clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return clientId;
     }
 
@@ -253,7 +236,6 @@ public class FileFilter
     @SuppressWarnings("unused")
     private void setClientId(String clientId)
     {
-        logger.debug("Setting this.clientId = [" + clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.clientId = clientId;
     }
 
@@ -273,5 +255,25 @@ public class FileFilter
     public String getCriteria()
     {
         return this.criteria;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if ( this == o )
+        { return true; }
+        if ( o == null || getClass() != o.getClass() )
+        { return false; }
+        FileFilter that = (FileFilter) o;
+        return size == that.size && createdDateTime == that.createdDateTime && Objects.equals(id, that.id) && Objects
+            .equals(clientId, that.clientId) && Objects.equals(uri, that.uri) && Objects
+            .equals(lastModified, that.lastModified) && Objects.equals(lastAccessed, that.lastAccessed) && Objects
+            .equals(criteria, that.criteria);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, clientId, uri, lastModified, lastAccessed, size, createdDateTime, criteria);
     }
 }
