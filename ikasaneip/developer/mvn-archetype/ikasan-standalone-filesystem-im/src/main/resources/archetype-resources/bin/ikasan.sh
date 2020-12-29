@@ -53,8 +53,4 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-if [ $# -eq 0 ]; then
-    java -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar
-else
-    java -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar @"$@"
-fi
+java -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar "$@"

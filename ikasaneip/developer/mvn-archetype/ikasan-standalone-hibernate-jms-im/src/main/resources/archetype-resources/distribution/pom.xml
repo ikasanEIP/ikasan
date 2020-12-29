@@ -27,8 +27,18 @@
             <artifactId>h2</artifactId>
             <version>${version.com.h2database}</version>
         </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-shell</artifactId>
+            <version>${version.ikasan}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
-
 
     <build>
         <plugins>

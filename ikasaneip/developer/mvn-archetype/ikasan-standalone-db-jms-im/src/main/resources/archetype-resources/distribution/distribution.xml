@@ -1,38 +1,40 @@
 <assembly>
-<id>dist</id>
-<formats>
-    <format>zip</format>
-</formats>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
 
-<fileSets>
-    <fileSet>
-        <directory>../bin</directory>
-        <filtered>true</filtered>
-        <fileMode>755</fileMode>
-        <outputDirectory>\${artifactId}-\${version}</outputDirectory>
-    </fileSet>
-    <fileSet>
-        <directory>../jar/src/main/resources</directory>
-        <filtered>true</filtered>
-        <includes>
-            <include>application.properties</include>
-        </includes>
-        <outputDirectory>\${artifactId}-\${version}/config</outputDirectory>
-    </fileSet>
-</fileSets>
+    <fileSets>
+        <fileSet>
+            <directory>../bin</directory>
+            <filtered>true</filtered>
+            <fileMode>755</fileMode>
+            <outputDirectory>\${artifactId}-\${version}</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../jar/src/main/resources</directory>
+            <filtered>true</filtered>
+            <includes>
+                <include>application.properties</include>
+                <include>logback-spring.xml</include>
+            </includes>
+            <outputDirectory>\${artifactId}-\${version}/config</outputDirectory>
+        </fileSet>
+    </fileSets>
 
-<includeBaseDirectory>false</includeBaseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
 
-<dependencySets>
-    <dependencySet>
-        <!-- Enable access to all projects in the current multimodule build! -->
-        <useProjectArtifact>false</useProjectArtifact>
-        <!-- Now, select which projects to include in this module-set. -->
-        <includes>
-            <include>\${groupId}:\${artifactId}</include>
-            <include>com.h2database:h2:jar:${version.com.h2database}</include>
-        </includes>
-        <outputDirectory>\${artifactId}-\${version}/lib</outputDirectory>
-    </dependencySet>
-</dependencySets>
+    <dependencySets>
+        <dependencySet>
+            <!-- Enable access to all projects in the current multimodule build! -->
+            <useProjectArtifact>false</useProjectArtifact>
+            <!-- Now, select which projects to include in this module-set. -->
+            <includes>
+                <include>\${groupId}:\${artifactId}</include>
+                <include>org.ikasan:ikasan-shell:jar:${version.ikasan}</include>
+                <include>com.h2database:h2:jar:${version.com.h2database}</include>
+            </includes>
+            <outputDirectory>\${artifactId}-\${version}/lib</outputDirectory>
+        </dependencySet>
+    </dependencySets>
 </assembly>
