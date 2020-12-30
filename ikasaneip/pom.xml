@@ -367,6 +367,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
+        <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>5.4.21.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.18.Final</version.org.hibernate-validator>
@@ -376,6 +377,7 @@
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.spring.cloud.config.client>2.2.1.RELEASE</version.spring.cloud.config.client>
         <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
+        <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
@@ -1559,6 +1561,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${version.org.springframework}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.shell</groupId>
+                <artifactId>spring-shell-starter</artifactId>
+                <version>${version.org.springframework.shell}</version>
             </dependency>
 
             <dependency>
