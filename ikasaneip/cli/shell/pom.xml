@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
-            <version>5.0.0-RC1</version><!-- TODO -->
+            <version>${version.kryo.cli}</version>
         </dependency>
 
         <dependency>
@@ -83,7 +83,6 @@
         <dependency>
             <groupId>org.springframework.shell</groupId>
             <artifactId>spring-shell-starter</artifactId>
-            <version>2.0.1.RELEASE</version><!-- TODO -->
         </dependency>
 
         <dependency>
