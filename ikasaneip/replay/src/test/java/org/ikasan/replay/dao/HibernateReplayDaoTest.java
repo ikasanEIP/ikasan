@@ -118,6 +118,59 @@ public class HibernateReplayDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
+        this.replayDao.setOrderHarvestQuery(true);
+
+        List<ReplayEvent> replayEventList = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+
+            this.replayDao.saveOrUpdate(replayEvent);
+
+            replayEventList.add(replayEvent);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.replayDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.replayDao.updateAsHarvested(replayEventList);
+
+        Assert.assertEquals("Harvestable records == 0", this.replayDao.getHarvestableRecords(5000).size(), 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success_with_gap()
+    {
+        this.replayDao.setOrderHarvestQuery(true);
+
+        List<ReplayEvent> replayEventList = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+
+            this.replayDao.saveOrUpdate(replayEvent);
+
+            replayEventList.add(replayEvent);
+        }
+
+        List<ReplayEvent> events = this.replayDao.getHarvestableRecords(3);
+
+        this.replayDao.updateAsHarvested(List.of(events.get(1)));
+
+        events = this.replayDao.getHarvestableRecords(3);
+
+        Assert.assertEquals("Id equals!",Long.valueOf(1L), events.get(0).getId());
+        Assert.assertEquals("Id equals!",Long.valueOf(3L), events.get(1).getId());
+        Assert.assertEquals("Id equals!",Long.valueOf(4L), events.get(2).getId());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success_with_order_by()
+    {
+        this.replayDao.setOrderHarvestQuery(true);
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
         for(int i=0; i<1000; i++)

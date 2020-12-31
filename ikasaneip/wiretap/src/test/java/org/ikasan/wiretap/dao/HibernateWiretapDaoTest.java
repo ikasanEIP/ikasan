@@ -80,27 +80,35 @@ public class HibernateWiretapDaoTest
 	 * being tested
 	 */
 	@Before
-	public void setup()
-	{
+	public void setup() {
+
+	    long timestamp = System.currentTimeMillis();
 
 		for(int i=0; i<5000; i++)
 		{
 			WiretapFlowEvent event = new WiretapFlowEvent("moduleName" + i, "flowName" + i, "componentName" + i,
-					"eventId" + i, "relatedEventId" + i, System.currentTimeMillis() ,"event" + i, System.currentTimeMillis() - 1000000000);
+					"eventId" + i, "relatedEventId" + i, timestamp ,"event" + i, timestamp - 1000000000);
+
+            timestamp++;
 
 			this.wiretapDao.save(event);
 		}
 
 		List<WiretapEvent> events = new ArrayList<>();
 
+        timestamp = System.currentTimeMillis() + 100000;
+
         for(int i=5000; i<10000; i++)
         {
             WiretapFlowEvent event = new WiretapFlowEvent("moduleName" + i, "flowName" + i, "componentName" + i,
-                "eventId" + i, "relatedEventId" + i, System.currentTimeMillis() ,"event" + i, System.currentTimeMillis() - 1000000000);
+                "eventId" + i, "relatedEventId" + i, timestamp ,"event" + i, timestamp - 1000000000);
+
+            timestamp++;
 
             events.add(event);
         }
 
+        this.wiretapDao.setOrderHarvestQuery(false);
         this.wiretapDao.save(events);
 
 	}
@@ -125,6 +133,62 @@ public class HibernateWiretapDaoTest
 
 		Assert.assertEquals("Wiretap events should equal!", events.size(), 7950);
 	}
+
+    @Test
+    public void test_get_harvestable_records_and_update_with_order_by()
+    {
+        List<WiretapEvent> events = wiretapDao.getHarvestableRecords(50);
+
+        Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
+
+        wiretapDao.updateAsHarvested(events);
+
+        events = wiretapDao.getHarvestableRecords(1000);
+        wiretapDao.updateAsHarvested(events);
+
+        events = wiretapDao.getHarvestableRecords(1000);
+        wiretapDao.updateAsHarvested(events);
+
+
+        events = wiretapDao.getHarvestableRecords(10000);
+
+        Assert.assertEquals("Wiretap events should equal!", events.size(), 7950);
+    }
+
+    @Test
+    public void test_get_harvestable_records_maintains_order_with_gap()
+    {
+        List<WiretapEvent> events = wiretapDao.getHarvestableRecords(3);
+
+        Assert.assertEquals("Wiretap events should equal!", events.size(), 3);
+
+        wiretapDao.updateAsHarvested(List.of(events.get(1)));
+
+        events = wiretapDao.getHarvestableRecords(3);
+        wiretapDao.updateAsHarvested(events);
+
+        Assert.assertEquals("Identifier should equal!", events.get(0).getIdentifier(), 1);
+        Assert.assertEquals("Identifier should equal!", events.get(1).getIdentifier(), 3);
+        Assert.assertEquals("Identifier should equal!", events.get(2).getIdentifier(), 4);
+    }
+
+    @Test
+    public void test_get_harvestable_records_maintains_order_with_gap_with_order_by()
+    {
+        this.wiretapDao.setOrderHarvestQuery(true);
+        List<WiretapEvent> events = wiretapDao.getHarvestableRecords(3);
+
+        Assert.assertEquals("Wiretap events should equal!", events.size(), 3);
+
+        wiretapDao.updateAsHarvested(List.of(events.get(1)));
+
+        events = wiretapDao.getHarvestableRecords(3);
+        wiretapDao.updateAsHarvested(events);
+
+        Assert.assertEquals("Identifier should equal!", events.get(0).getIdentifier(), 1);
+        Assert.assertEquals("Identifier should equal!", events.get(1).getIdentifier(), 3);
+        Assert.assertEquals("Identifier should equal!", events.get(2).getIdentifier(), 4);
+    }
 
     @Test
     public void test_housekeepables_exits()

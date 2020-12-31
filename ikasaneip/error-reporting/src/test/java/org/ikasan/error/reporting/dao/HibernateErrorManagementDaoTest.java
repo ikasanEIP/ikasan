@@ -193,6 +193,7 @@ public class HibernateErrorManagementDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
+        this.errorManagementDao.setOrderHarvestQuery(true);
         List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
@@ -210,5 +211,27 @@ public class HibernateErrorManagementDaoTest
 
         Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
     }
-    
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success_no_order_by()
+    {
+        this.errorManagementDao.setOrderHarvestQuery(false);
+        List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+
+            this.errorReportingServiceDao.save(eo);
+
+            errorOccurrences.add(eo);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.errorManagementDao.updateAsHarvested(errorOccurrences);
+
+        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
+    }
 }

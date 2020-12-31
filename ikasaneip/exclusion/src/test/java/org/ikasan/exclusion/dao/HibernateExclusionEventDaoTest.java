@@ -156,6 +156,7 @@ public class HibernateExclusionEventDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
+        this.exclusionEventDao.setOrderHarvestQuery(true);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
@@ -171,6 +172,53 @@ public class HibernateExclusionEventDaoTest
         this.exclusionEventDao.updateAsHarvested(exclusionEvents);
 
         Assert.assertEquals("Harvestable records == 0", this.exclusionEventDao.getHarvestableRecords(5000).size(), 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success_no_order_by()
+    {
+        this.exclusionEventDao.setOrderHarvestQuery(false);
+        List<ExclusionEvent> exclusionEvents = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+            exclusionEventDao.save(exclusionEvent);
+
+            exclusionEvents.add(exclusionEvent);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.exclusionEventDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.exclusionEventDao.updateAsHarvested(exclusionEvents);
+
+        Assert.assertEquals("Harvestable records == 0", this.exclusionEventDao.getHarvestableRecords(5000).size(), 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_success_no_order_by_with_gap()
+    {
+        this.exclusionEventDao.setOrderHarvestQuery(false);
+        List<ExclusionEvent> exclusionEvents = new ArrayList<>();
+
+        for(int i=0; i<1000; i++)
+        {
+            ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+            exclusionEventDao.save(exclusionEvent);
+
+            exclusionEvents.add(exclusionEvent);
+        }
+
+        List<ExclusionEvent> events = this.exclusionEventDao.getHarvestableRecords(3);
+
+        this.exclusionEventDao.updateAsHarvested(List.of(events.get(1)));
+
+        events = this.exclusionEventDao.getHarvestableRecords(3);
+        Assert.assertEquals("ID equals", Long.valueOf(1L), events.get(0).getId());
+        Assert.assertEquals("ID equals", Long.valueOf(3L), events.get(1).getId());
+        Assert.assertEquals("ID equals", Long.valueOf(4L), events.get(2).getId());
     }
 
 }

@@ -76,7 +76,7 @@ public class HibernateSystemEventDaoTest
 
     @Test
     @DirtiesContext
-    public void test_deleteExpieredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
+    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
     {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(100);
@@ -103,7 +103,7 @@ public class HibernateSystemEventDaoTest
 
     @Test
     @DirtiesContext
-    public void test_deleteExpieredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
+    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
     {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(1000);
@@ -127,7 +127,7 @@ public class HibernateSystemEventDaoTest
     @DirtiesContext
     public void test_harvesting()
     {
-
+        this.systemEventDao.setOrderHarvestQuery(true);
         for(int i=0; i< 20; i++)
         {
             systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
@@ -145,5 +145,47 @@ public class HibernateSystemEventDaoTest
 
     }
 
+    @Test
+    @DirtiesContext
+    public void test_harvesting_no_order_by()
+    {
+        this.systemEventDao.setOrderHarvestQuery(false);
+        for(int i=0; i< 20; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
 
+        List<SystemEvent> events = this.systemEventDao.getHarvestableRecords(15);
+
+        this.systemEventDao.updateAsHarvested(events);
+
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(15, result.stream()
+            .filter(systemEvent -> ((SystemEventImpl)systemEvent).isHarvested()).count());
+
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvesting_no_order_by_with_gap()
+    {
+        this.systemEventDao.setOrderHarvestQuery(false);
+        for(int i=0; i< 20; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+
+        List<SystemEvent> events = this.systemEventDao.getHarvestableRecords(3);
+
+        this.systemEventDao.updateAsHarvested(List.of(events.get(1)));
+
+
+        events = this.systemEventDao.getHarvestableRecords(3);
+
+        assertEquals(Long.valueOf(1L), events.get(0).getId());
+        assertEquals(Long.valueOf(3L), events.get(1).getId());
+        assertEquals(Long.valueOf(4L), events.get(2).getId());
+    }
 }
