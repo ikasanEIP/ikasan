@@ -98,6 +98,8 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         "update SystemEventImpl se set se.harvestedDateTime = :" + NOW + ", se.harvested = 1" + " where se.id in(:"
             + EVENT_IDS + ")";
 
+    private Boolean orderHarvestQuery = false;
+
     /**
      * Use batch housekeeping mode?
      */
@@ -458,8 +460,11 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             CriteriaQuery<SystemEvent> criteriaQuery = builder.createQuery(SystemEvent.class);
             Root<SystemEventImpl> root = criteriaQuery.from(SystemEventImpl.class);
 
-            criteriaQuery.select(root).where(builder.equal(root.get("harvestedDateTime"), 0))
-                         .orderBy(builder.asc(root.get("timestamp")));
+            criteriaQuery.select(root).where(builder.equal(root.get("harvestedDateTime"), 0));
+
+            if(this.orderHarvestQuery) {
+                criteriaQuery.orderBy(builder.asc(root.get("timestamp")));
+            }
 
             Query<SystemEvent> query = session.createQuery(criteriaQuery);
             query.setMaxResults(harvestingBatchSize);
@@ -484,5 +489,15 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             }
             return null;
         });
+    }
+
+    @Override
+    public Boolean getOrderHarvestQuery() {
+        return this.orderHarvestQuery;
+    }
+
+    @Override
+    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
+        this.orderHarvestQuery = orderHarvestQuery;
     }
 }

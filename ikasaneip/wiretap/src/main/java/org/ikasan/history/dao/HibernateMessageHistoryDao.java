@@ -86,6 +86,8 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     public static final String UPDATE_HARVESTED_QUERY = "update FlowInvocationMetricImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
+    private Boolean orderHarvestQuery = false;
+
 
     @Override
     public void save(ComponentInvocationMetric messageHistoryEvent)
@@ -443,14 +445,20 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 if(harvested)
                 {
                     criteriaQuery.select(root)
-                        .where(builder.greaterThan(root.get("harvestedDateTime"), 0))
-                        .orderBy(builder.asc(root.get("invocationStartTime")));
+                        .where(builder.greaterThan(root.get("harvestedDateTime"), 0));
+
+                    if(orderHarvestQuery) {
+                        criteriaQuery.orderBy(builder.asc(root.get("invocationStartTime")));
+                    }
                 }
                 else
                 {
                     criteriaQuery.select(root)
-                        .where(builder.equal(root.get("harvestedDateTime"), 0))
-                        .orderBy(builder.asc(root.get("invocationStartTime")));
+                        .where(builder.equal(root.get("harvestedDateTime"), 0));
+
+                    if(orderHarvestQuery) {
+                        criteriaQuery.orderBy(builder.asc(root.get("invocationStartTime")));
+                    }
                 }
 
                 Query<FlowInvocationMetric> query = session.createQuery(criteriaQuery);
@@ -640,6 +648,15 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 	public void setTransactionBatchSize(Integer transactionBatchSize)
 	{
 		this.transactionBatchSize = transactionBatchSize;
-	}	
+	}
 
+    @Override
+    public Boolean getOrderHarvestQuery() {
+        return this.orderHarvestQuery;
+    }
+
+    @Override
+    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
+        this.orderHarvestQuery = orderHarvestQuery;
+    }
 }

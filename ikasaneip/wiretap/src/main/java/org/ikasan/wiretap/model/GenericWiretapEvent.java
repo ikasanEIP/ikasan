@@ -56,7 +56,7 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
     private long identifier;
 
     /** immutable event creation timestamp */
-    private long timestamp;
+    protected long timestamp;
 
     /** module name */
     private String moduleName;

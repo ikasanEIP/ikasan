@@ -107,6 +107,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
     private String housekeepQuery;
 
+    private Boolean orderHarvestQuery = false;
+
 
     /**
      * Constructor
@@ -465,9 +467,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
 
             criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvestedDateTime"),0))
-                .orderBy(
-                    builder.asc(root.get("timestamp")));
+                .where(builder.equal(root.get("harvestedDateTime"),0));
+
+           if(this.orderHarvestQuery) {
+               criteriaQuery.orderBy(
+                   builder.asc(root.get("timestamp")));
+           }
 
             Query<WiretapEvent> query = session.createQuery(criteriaQuery);
             query.setFirstResult(0);
@@ -541,5 +546,15 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public void setHousekeepQuery(String housekeepQuery)
     {
         this.housekeepQuery = housekeepQuery;
+    }
+
+    @Override
+    public Boolean getOrderHarvestQuery() {
+        return orderHarvestQuery;
+    }
+
+    @Override
+    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
+        this.orderHarvestQuery = orderHarvestQuery;
     }
 }

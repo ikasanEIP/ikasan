@@ -57,9 +57,6 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     /** related event id */
     private String relatedEventId;
 
-    /** event created date/time */
-    private long eventTimestamp;
-
     /** has the record been harvested */
     private boolean harvested;
 
@@ -77,7 +74,7 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
         super(moduleName, flowName, componentName, event, expiry);
         super.eventId = eventId;
         this.relatedEventId = relatedEventId;
-        this.eventTimestamp = eventTimestamp;
+        super.timestamp = eventTimestamp;
     }
 
     public String getEventId()
@@ -98,16 +95,6 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     protected void setRelatedEventId(String relatedEventId)
     {
         this.relatedEventId = relatedEventId;
-    }
-
-    public long getEventTimestamp()
-    {
-        return eventTimestamp;
-    }
-
-    protected void setEventTimestamp(long eventTimestamp)
-    {
-        this.eventTimestamp = eventTimestamp;
     }
 
     public boolean isHarvested()
@@ -137,7 +124,7 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
         final StringBuffer sb = new StringBuffer("WiretapFlowEvent{");
         sb.append(super.toString());
         sb.append("relatedEventId='").append(relatedEventId).append('\'');
-        sb.append(", eventTimestamp=").append(eventTimestamp);
+        sb.append(", eventTimestamp=").append(super.timestamp);
         sb.append(", harvested=").append(harvested);
         sb.append(", harvestedDateTime=").append(harvestedDateTime);
         sb.append('}');

@@ -193,4 +193,18 @@ public interface WiretapDao<IDENTIFIER>
      * @param events
      */
     public void updateAsHarvested(List<WiretapEvent> events);
+
+    /**
+     * Is harvest query ordered?
+     *
+     * @return true if ordered otherwise false.
+     */
+    public Boolean getOrderHarvestQuery();
+
+    /**
+     * Set flag to determine if harvest query should be ordered.
+     *
+     * @param orderHarvestQuery
+     */
+    public void setOrderHarvestQuery(Boolean orderHarvestQuery);
 }
