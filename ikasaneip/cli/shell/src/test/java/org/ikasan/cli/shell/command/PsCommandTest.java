@@ -139,6 +139,9 @@ class PsCommandTest
         process = processBuilder.start();
         processes.add(process);
 
+        // give process time to start
+        pause(1000);
+
         PsCommand command = new PsCommand();
 
         // test all match
@@ -180,14 +183,9 @@ class PsCommandTest
         process = processBuilder.start();
         processes.add(process);
 
-//        try
-//        {
-//            Thread.sleep(100000);
-//        }
-//        catch(InterruptedException e)
-//        {
-//
-//        }
+        // give process time to start
+        pause(1000);
+
         PsCommand command = new PsCommand();
 
         // test all match
@@ -250,6 +248,18 @@ class PsCommandTest
         }
 
         FileUtils.deleteDirectory(new File("./pid"));
+    }
+
+    void pause(long millis)
+    {
+        try
+        {
+            Thread.sleep(millis);
+        }
+        catch(InterruptedException e)
+        {
+            Assert.fail("Sleep interrupted" + e.getMessage());
+        }
     }
 }
 
