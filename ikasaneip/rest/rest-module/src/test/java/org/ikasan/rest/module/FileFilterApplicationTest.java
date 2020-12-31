@@ -5,6 +5,7 @@ import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransf
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.rest.module.util.DateTimeConverter;
+import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,6 +53,9 @@ public class FileFilterApplicationTest
     @Mock
     protected BaseFileTransferDao baseFileTransferDao;
 
+    @MockBean
+    protected SystemEventService systemEventService;
+
     @Autowired
     protected FileFilterApplication uat;
 
@@ -83,15 +87,15 @@ public class FileFilterApplicationTest
         FileFilter filterEntry = new FileFilter("testClientId", "test.log", creationDate,creationDate,1000 );
 
         Mockito
-            .when(baseFileTransferDao.find(0, 20, "Test", null))
+            .when(baseFileTransferDao.find(0, 20, null, "testClientId"))
             .thenReturn(new ArrayListPagedSearchResult<>(Arrays.asList(filterEntry), 0, 1));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/filefilter/search?clientId=Test")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/filefilter/search?clientId=testClientId")
             .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         Mockito
-            .verify(baseFileTransferDao).find(0, 20, "Test", null);
+            .verify(baseFileTransferDao).find(0, 20, null, "testClientId");
         Mockito.verifyNoMoreInteractions(baseFileTransferDao);
 
         assertEquals(200, result.getResponse().getStatus());
@@ -186,6 +190,15 @@ public class FileFilterApplicationTest
             .verify(baseFileTransferDao).findById(0);
         Mockito
             .verify(baseFileTransferDao).delete(filterEntry);
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testClientId_test.log"),
+            Mockito.anyString(),
+            Mockito.anyString()
+                                                         );
+
+        Mockito
+            .verifyNoMoreInteractions(baseFileTransferDao,systemEventService);
+
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -206,6 +219,14 @@ public class FileFilterApplicationTest
 
         Mockito
             .verify(baseFileTransferDao).save(filterEntry);
+
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testClientId_test.log"),
+            Mockito.anyString(),
+            Mockito.anyString()
+                                                         );
+        Mockito
+            .verifyNoMoreInteractions(baseFileTransferDao,systemEventService);
 
         assertEquals(201, result.getResponse().getStatus());
 
