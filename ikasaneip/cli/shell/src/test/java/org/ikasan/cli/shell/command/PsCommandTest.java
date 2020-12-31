@@ -40,6 +40,7 @@
  */
 package org.ikasan.cli.shell.command;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +48,10 @@ import org.junit.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,7 +163,6 @@ class PsCommandTest
         firstProcess.add("cli/shell/target/test-classes:target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
-//        firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
 
         ProcessBuilder processBuilder = new ProcessBuilder(firstProcess);
         Process process = processBuilder.start();
@@ -186,10 +189,6 @@ class PsCommandTest
 //
 //        }
         PsCommand command = new PsCommand();
-
-//        Path currentRelativePath = Paths.get("");
-//        String s = currentRelativePath.toAbsolutePath().toString();
-//        System.out.println("Current relative path is: " + s);
 
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
@@ -240,7 +239,7 @@ class PsCommandTest
     }
 
     @AfterEach
-    void teardown()
+    void teardown() throws IOException
     {
         for(Process process:processes)
         {
@@ -249,6 +248,8 @@ class PsCommandTest
                 process.destroyForcibly();
             }
         }
+
+        FileUtils.deleteDirectory(new File("./pid"));
     }
 }
 

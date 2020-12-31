@@ -167,12 +167,19 @@ public class DefaultOperationImpl implements Operation
     public List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username)
     {
         // can we find by the persisted process
-        ProcessHandle processHandle = persistenceService.find(processType.getName(), name);  // TODO should we check username
+        ProcessHandle processHandle = persistenceService.find(processType.getName(), name);
         if (processHandle != null)
         {
-            List<ProcessHandle> processHandles = new ArrayList<ProcessHandle>();
-            processHandles.add(processHandle);
-            return processHandles;
+            // check we have a live process matching the persisted pid
+            if(processHandle.isAlive())
+            {
+                List<ProcessHandle> processHandles = new ArrayList<ProcessHandle>();
+                processHandles.add(processHandle);
+                return processHandles;
+            }
+
+            // if not clean up the persisted pid and continue checking
+            persistenceService.remove(processType.getName(), name);
         }
 
         // not persisted, try checking if we can see a process running for that module of that type for that user
