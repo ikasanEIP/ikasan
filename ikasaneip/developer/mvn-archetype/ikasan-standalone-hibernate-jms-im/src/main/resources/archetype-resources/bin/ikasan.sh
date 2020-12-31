@@ -53,4 +53,4 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-java -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar "$@"
+java --illegal-access=deny -jar $SCRIPT_DIR/lib/ikasan-shell-3.1.0-SNAPSHOT.jar "$@"

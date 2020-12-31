@@ -66,7 +66,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("target/test-classes");
+        firstProcess.add("cli/shell/target/test-classes:target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
         firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
@@ -78,7 +78,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("target/test-classes");
+        secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
         secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
@@ -115,7 +115,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("target/test-classes");
+        firstProcess.add("cli/shell/target/test-classes:target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
         firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
@@ -127,7 +127,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("target/test-classes");
+        secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
 
@@ -156,9 +156,10 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("target/test-classes");
+        firstProcess.add("cli/shell/target/test-classes:target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
+//        firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
 
         ProcessBuilder processBuilder = new ProcessBuilder(firstProcess);
         Process process = processBuilder.start();
@@ -167,7 +168,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("target/test-classes");
+        secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
         secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
@@ -176,6 +177,14 @@ class PsCommandTest
         process = processBuilder.start();
         processes.add(process);
 
+//        try
+//        {
+//            Thread.sleep(100000);
+//        }
+//        catch(InterruptedException e)
+//        {
+//
+//        }
         PsCommand command = new PsCommand();
 
 //        Path currentRelativePath = Paths.get("");
@@ -185,6 +194,8 @@ class PsCommandTest
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
         JSONArray processes = (JSONArray)result.get("Processes");
+        System.out.println( processes.toString() );
+
         Assert.assertTrue("Returned length of " + processes.length(), processes.length() == 1);
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
@@ -201,7 +212,7 @@ class PsCommandTest
         List<String> firstProcess = new ArrayList<String>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
-        firstProcess.add("target/test-classes");
+        firstProcess.add("cli/shell/target/test-classes:target/test-classes");
         firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         firstProcess.add("-Dmodule.name=sampleProcess");
 
@@ -212,7 +223,7 @@ class PsCommandTest
         List<String> secondProcess = new ArrayList<String>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
-        secondProcess.add("target/test-classes");
+        secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
 
