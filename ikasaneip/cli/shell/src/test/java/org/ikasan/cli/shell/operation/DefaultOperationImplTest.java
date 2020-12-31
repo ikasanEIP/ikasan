@@ -40,6 +40,7 @@
  */
 package org.ikasan.cli.shell.operation;
 
+import org.apache.commons.io.FileUtils;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.jmock.Expectations;
@@ -50,6 +51,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -395,7 +397,7 @@ class DefaultOperationImplTest
     }
 
     @AfterEach
-    void teardown()
+    void teardown() throws IOException
     {
         for(Process process:processes)
         {
@@ -404,6 +406,8 @@ class DefaultOperationImplTest
                 process.destroyForcibly();
             }
         }
+
+        FileUtils.deleteDirectory(new File("./logs"));
     }
 
 }

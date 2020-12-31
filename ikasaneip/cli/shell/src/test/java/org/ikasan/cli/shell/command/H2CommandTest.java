@@ -40,14 +40,17 @@
  */
 package org.ikasan.cli.shell.command;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +79,12 @@ class H2CommandTest
         Assert.assertNotNull("username should be not null", result.get("username"));
         Assert.assertNotNull("pid should be not null", result.get("pid"));
     }
+
+    @AfterEach
+    void teardown() throws IOException
+    {
+        FileUtils.deleteDirectory(new File("./logs"));
+    }
+
 }
 
