@@ -1,8 +1,16 @@
 package org.ikasan.rest.module;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
+import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.systemevent.SystemEventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,8 +25,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FileFilterApplication
 {
+    private static Logger logger = LoggerFactory.getLogger(FileFilterApplication.class);
+
     @Autowired
     private BaseFileTransferDao baseFileTransferDao;
+
+    @Autowired
+    private SystemEventService systemEventService;
+
+    private ObjectMapper mapper;
+
+    public FileFilterApplication() {
+        this.mapper = new ObjectMapper();
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        SimpleModule m = new SimpleModule();
+        this.mapper.registerModule(m);
+    }
 
     @RequestMapping(
         method = RequestMethod.GET,
@@ -33,7 +56,7 @@ public class FileFilterApplication
         @RequestParam(value = "clientId", required = false) String clientId
                              )
     {
-        PagedSearchResult<FileFilter>  pagedResult = baseFileTransferDao.find(pageNumber, pageSize, clientId, criteria);
+        PagedSearchResult<FileFilter>  pagedResult = baseFileTransferDao.find(pageNumber, pageSize, criteria,clientId);
         return new ResponseEntity(pagedResult, HttpStatus.OK);
 
     }
@@ -57,6 +80,18 @@ public class FileFilterApplication
         if ( fileFilter != null )
         {
             baseFileTransferDao.delete(fileFilter);
+            try
+            {
+                String fileFilterJson = mapper.writeValueAsString(fileFilter);
+
+                this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
+                    String.format("File Filter deleted [%s]", fileFilterJson), UserUtil.getUser()
+                                                      );
+            }
+            catch (JsonProcessingException e)
+            {
+                logger.warn("Issue converting file filter to json." + fileFilter, e);
+            }
             return new ResponseEntity(HttpStatus.OK);
         }
         else
@@ -73,6 +108,19 @@ public class FileFilterApplication
     public ResponseEntity create(@RequestBody FileFilter fileFilter)
     {
         baseFileTransferDao.save(fileFilter);
+        try
+        {
+            String fileFilterJson = mapper.writeValueAsString(fileFilter);
+
+            this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
+                String.format("File Filter created [%s]", fileFilterJson), UserUtil.getUser()
+                                                  );
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.warn("Issue converting file filter to json." + fileFilter, e);
+        }
+
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
