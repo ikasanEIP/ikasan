@@ -52,4 +52,4 @@ IF EXIST %localEnv% (
     CALL %localEnv%
 )
 
-java -jar %currentDir%\lib\ikasan-shell-3.1.0-SNAPSHOT.jar %*
+java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-3.1.0-SNAPSHOT.jar %*
