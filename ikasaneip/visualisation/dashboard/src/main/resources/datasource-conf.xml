@@ -24,6 +24,8 @@
         <property name="password" value="${datasource.password}" />
         <property name="initialSize" value="${datasource.min.pool.size}" />
         <property name="maxTotal" value="${datasource.max.pool.size}" />
+        <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="validationQueryTimeout" value="${datasource.validationQueryTimeout}" />
     </bean>
 
 </beans>
