@@ -39,7 +39,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-jms-im-maven-plugin 
-    \-DarchetypeVersion=3.0.0    
+    \-DarchetypeVersion=3.1.0    
     \-DgroupId=com.sample     
     \-DartifactId=jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -72,15 +72,25 @@ The unzipped distribution contains the following,
 ```unix
 config
 ikasan.sh
+ikasan.bat
+env.sh
+env.bat
 lib
 ```
 - ```config``` directory contains the runtime application.properties
 - ```ikasan.sh``` is the shell script for managing the stopping and starting of the Integration Module and h2 processes
+- ```env.sh``` user environment customisations to be picked up by the ikasan.sh script
+- ```ikasan.bat``` Windows equivalent script
+- ```env.bat``` Windows equivalent env script
 - ```lib``` directory contains all binaries required to run the Integration Module
 
 The following additional directories are created on first startup of the Integration Module.
 - ```logs``` directory contains the runtime output logs (std.out, std.err redirected) for the Integration Module and h2 database
 - ```persistence``` directory for the persistence of the transaction logs and h2 database of the Integration Module
+- ```pid``` directory for the persistence of the running processes for the h2 database and Integration Module
+
+The contents of the  ```pid``` directory are transient and really just for convenience of ikasan identifying running processes. These can be deleted without any consequence to the runtime platform.
+
 
 The contents of the  ```persistence``` directory are critical to the runtime operation and crash/recovery ability of the Integration Module. 
 It is advised that this be located on a separate mount in production runtime, either through a symlink or by changing the location in the application.properties.
@@ -107,32 +117,91 @@ The Integration Module runs as two JVM processes,
 - Integration Module process - the Integration Module itself
  
 The Integration Module requires h2 to be running before the module process can be started.
-The ```ikasan.sh``` script manages the starting and stopping of these processes.
+The ```ikasan.sh``` (UNIX) or ```ikasan.bat``` (Windows) script manages the starting and stopping of these processes.
 
 #### Starting All Processes
 The following will start h2 and the Integration Module in the correct order. If any are already running then no additional instances are started. 
+
+UNIX
 ```
 ./ikasan.sh start
+```
+Windows
+```
+./ikasan.bat start
 ```
 
 #### Stopping All Processes
 The following will stop the Integration Module and h2 in the correct order.
+
+UNIX
 ```
 ./ikasan.sh stop
+```
+Windows
+```
+./ikasan.bat stop
 ```
 
 #### Starting h2 Only
 The following will only start h2. If an instance is already running then no additional instances are started.
+
+UNIX
 ```
 ./ikasan.sh start-h2
+```
+Windows
+```
+./ikasan.bat start-h2
+```
+
+#### Starting Integration Module Only
+The following will only start the Integration Module. If an instance is already running then no additional instances are started.
+
+UNIX
+```
+./ikasan.sh start-module
+```
+Windows
+```
+./ikasan.bat start-module
+```
+
+#### Stopping Integration Module Only
+The following will stop the Integration Module process only.
+
+UNIX
+```
+./ikasan.sh stop-module
+```
+Windows
+```
+./ikasan.bat stop-module
+```
+
+#### Stopping H2 Only
+The following will stop the h2 process only.
+
+UNIX
+```
+./ikasan.sh stop-h2
+```
+Windows
+```
+./ikasan.bat stop-h2
 ```
 
 #### Checking Processes
 The following will check to see which processes are running.
+
+UNIX
 ```
 ./ikasan.sh ps
 ```
-
+Windows
+```
+./ikasan.bat ps
+```
 
 ### Common Problems When Generating From Archetypes
 
