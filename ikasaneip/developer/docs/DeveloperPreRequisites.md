@@ -60,7 +60,9 @@ For more details on Java see [http://www.oracle.com/technetwork/java](http://www
 
 ### Version
 
-IkasanEIP version 2.x.y+ requires Java 1.8.x.
+IkasanEIP version 3.0.x requires Java 8.x.
+IkasanEIP version 3.1.x requires Java 11.x.
+
 
 ### Installation
 
