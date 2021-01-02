@@ -121,16 +121,9 @@ public interface ReplayDao<IDENTIFIER>
     public void updateAsHarvested(List<ReplayEvent> events);
 
     /**
-     * Is harvest query ordered?
-     *
-     * @return true if ordered otherwise false.
-     */
-    public Boolean getOrderHarvestQuery();
-
-    /**
      * Set flag to determine if harvest query should be ordered.
      *
-     * @param orderHarvestQuery
+     * @param isHarvestQueryOrdered
      */
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery);
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered);
 }

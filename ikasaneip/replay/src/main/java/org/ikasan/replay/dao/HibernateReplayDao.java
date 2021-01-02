@@ -106,7 +106,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     public static final String UPDATE_HARVESTED_QUERY = "update HibernateReplayEvent w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
-    private Boolean orderHarvestQuery = false;
+    private boolean isHarvestQueryOrdered = false;
 
 
     public HibernateReplayDao()
@@ -475,7 +475,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0));
 
-            if(this.orderHarvestQuery) {
+            if(this.isHarvestQueryOrdered) {
                 criteriaQuery.orderBy(
                     builder.asc(root.get("timestamp")));
             }
@@ -516,12 +516,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
     }
 
     @Override
-    public Boolean getOrderHarvestQuery() {
-        return this.orderHarvestQuery;
-    }
-
-    @Override
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
-        this.orderHarvestQuery = orderHarvestQuery;
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
+        this.isHarvestQueryOrdered = isHarvestQueryOrdered;
     }
 }

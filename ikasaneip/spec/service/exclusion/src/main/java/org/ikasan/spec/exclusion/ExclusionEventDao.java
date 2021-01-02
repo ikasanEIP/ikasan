@@ -172,16 +172,9 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
     public void updateAsHarvested(List<EVENT> events);
 
     /**
-     * Is harvest query ordered?
-     *
-     * @return true if ordered otherwise false.
-     */
-    public Boolean getOrderHarvestQuery();
-
-    /**
      * Set flag to determine if harvest query should be ordered.
      *
-     * @param orderHarvestQuery
+     * @param isHarvestQueryOrdered
      */
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery);
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered);
 }

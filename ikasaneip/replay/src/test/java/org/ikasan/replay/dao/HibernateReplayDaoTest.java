@@ -118,7 +118,7 @@ public class HibernateReplayDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
-        this.replayDao.setOrderHarvestQuery(true);
+        this.replayDao.setHarvestQueryOrdered(true);
 
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
@@ -142,7 +142,7 @@ public class HibernateReplayDaoTest
     @DirtiesContext
     public void test_harvest_success_with_gap()
     {
-        this.replayDao.setOrderHarvestQuery(true);
+        this.replayDao.setHarvestQueryOrdered(true);
 
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
@@ -170,7 +170,7 @@ public class HibernateReplayDaoTest
     @DirtiesContext
     public void test_harvest_success_with_order_by()
     {
-        this.replayDao.setOrderHarvestQuery(true);
+        this.replayDao.setHarvestQueryOrdered(true);
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
