@@ -108,7 +108,7 @@ public class HibernateWiretapDaoTest
             events.add(event);
         }
 
-        this.wiretapDao.setOrderHarvestQuery(false);
+        this.wiretapDao.setHarvestQueryOrdered(false);
         this.wiretapDao.save(events);
 
 	}
@@ -175,7 +175,7 @@ public class HibernateWiretapDaoTest
     @Test
     public void test_get_harvestable_records_maintains_order_with_gap_with_order_by()
     {
-        this.wiretapDao.setOrderHarvestQuery(true);
+        this.wiretapDao.setHarvestQueryOrdered(true);
         List<WiretapEvent> events = wiretapDao.getHarvestableRecords(3);
 
         Assert.assertEquals("Wiretap events should equal!", events.size(), 3);

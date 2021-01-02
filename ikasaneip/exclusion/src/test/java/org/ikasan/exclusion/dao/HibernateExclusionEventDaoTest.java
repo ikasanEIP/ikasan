@@ -156,7 +156,7 @@ public class HibernateExclusionEventDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
-        this.exclusionEventDao.setOrderHarvestQuery(true);
+        this.exclusionEventDao.setHarvestQueryOrdered(true);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
@@ -178,7 +178,7 @@ public class HibernateExclusionEventDaoTest
     @DirtiesContext
     public void test_harvest_success_no_order_by()
     {
-        this.exclusionEventDao.setOrderHarvestQuery(false);
+        this.exclusionEventDao.setHarvestQueryOrdered(false);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
@@ -200,7 +200,7 @@ public class HibernateExclusionEventDaoTest
     @DirtiesContext
     public void test_harvest_success_no_order_by_with_gap()
     {
-        this.exclusionEventDao.setOrderHarvestQuery(false);
+        this.exclusionEventDao.setHarvestQueryOrdered(false);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
 
         for(int i=0; i<1000; i++)

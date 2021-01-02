@@ -79,7 +79,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     public static final String UPDATE_HARVESTED_QUERY = "update ExclusionEventImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
-    private Boolean orderHarvestQuery = false;
+    private boolean isHarvestQueryOrdered = false;
 
     public HibernateExclusionEventDao()
     {
@@ -440,7 +440,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0));
 
-            if(this.orderHarvestQuery) {
+            if(this.isHarvestQueryOrdered) {
                 criteriaQuery.orderBy(
                     builder.asc(root.get("timestamp")));
             }
@@ -478,12 +478,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
     @Override
-    public Boolean getOrderHarvestQuery() {
-        return this.orderHarvestQuery;
-    }
-
-    @Override
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
-        this.orderHarvestQuery = orderHarvestQuery;
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
+        this.isHarvestQueryOrdered = isHarvestQueryOrdered;
     }
 }

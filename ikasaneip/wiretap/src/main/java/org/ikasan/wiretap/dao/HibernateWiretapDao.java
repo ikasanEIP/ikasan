@@ -107,8 +107,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
     private String housekeepQuery;
 
-    private Boolean orderHarvestQuery = false;
-
+    private boolean isHarvestQueryOrdered = false;
 
     /**
      * Constructor
@@ -469,7 +468,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0));
 
-           if(this.orderHarvestQuery) {
+           if(this.isHarvestQueryOrdered) {
                criteriaQuery.orderBy(
                    builder.asc(root.get("timestamp")));
            }
@@ -549,12 +548,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     }
 
     @Override
-    public Boolean getOrderHarvestQuery() {
-        return orderHarvestQuery;
-    }
-
-    @Override
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
-        this.orderHarvestQuery = orderHarvestQuery;
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
+        this.isHarvestQueryOrdered = isHarvestQueryOrdered;
     }
 }

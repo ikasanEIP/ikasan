@@ -193,7 +193,7 @@ public class HibernateErrorManagementDaoTest
     @DirtiesContext
     public void test_harvest_success()
     {
-        this.errorManagementDao.setOrderHarvestQuery(true);
+        this.errorManagementDao.setHarvestQueryOrdered(true);
         List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
@@ -216,7 +216,7 @@ public class HibernateErrorManagementDaoTest
     @DirtiesContext
     public void test_harvest_success_no_order_by()
     {
-        this.errorManagementDao.setOrderHarvestQuery(false);
+        this.errorManagementDao.setHarvestQueryOrdered(false);
         List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
 
         for(int i=0; i<1000; i++)

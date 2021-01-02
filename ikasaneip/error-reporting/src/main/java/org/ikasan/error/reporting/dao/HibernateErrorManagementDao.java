@@ -87,7 +87,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     public static final String UPDATE_HARVESTED_QUERY = "update ErrorOccurrenceImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
-    private Boolean orderHarvestQuery = false;
+    private boolean isHarvestQueryOrdered = false;
 
     /* (non-Javadoc)
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
@@ -440,7 +440,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             criteriaQuery.select(root)
                 .where(builder.equal(root.get("harvestedDateTime"),0));
 
-            if(this.orderHarvestQuery) {
+            if(this.isHarvestQueryOrdered) {
                 criteriaQuery.orderBy(builder.asc(root.get("timestamp")));
             }
 
@@ -479,13 +479,9 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
         });
     }
 
-    @Override
-    public Boolean getOrderHarvestQuery() {
-        return this.orderHarvestQuery;
-    }
 
     @Override
-    public void setOrderHarvestQuery(Boolean orderHarvestQuery) {
-        this.orderHarvestQuery = orderHarvestQuery;
+    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
+        this.isHarvestQueryOrdered = isHarvestQueryOrdered;
     }
 }
