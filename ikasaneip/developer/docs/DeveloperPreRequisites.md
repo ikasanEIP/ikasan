@@ -61,6 +61,7 @@ For more details on Java see [http://www.oracle.com/technetwork/java](http://www
 ### Version
 
 IkasanEIP version 3.0.x requires Java 8.x.
+
 IkasanEIP version 3.1.x requires Java 11.x.
 
 
@@ -99,10 +100,17 @@ This should reflect the Java JDK version you have just installed.
 
 For instance – the line in bold depicts the important information.
 
+Expected JDK 11 version output
 ```
 java version "1.8.0_31"
 Java(TM) SE Runtime Environment (build 1.8.0_31-b13)
 Java HotSpot(TM) 64-Bit Server VM (build 25.31-b07, mixed mode)
+```
+Expected JDK 11 version output
+```
+openjdk version "11.0.8" 2020-07-14
+OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.8+10)
+OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.8+10, mixed mode)
 ```
 
 ## Maven
@@ -113,7 +121,7 @@ For more details on Maven see [http://maven.apache.org](http://maven.apache.org/
 
 ### Version
 
-IkasanEIP version 2.x.y+ requires at least Maven 3.3.x, but has been validated up to Maven 3.5.3.
+IkasanEIP version 3.x.y+ requires at least Maven 3.3.x, but has been validated up to Maven 3.5.3.
 
 ### Installation
 
