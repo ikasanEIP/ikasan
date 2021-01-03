@@ -82,6 +82,8 @@
         <version.activemq>${version.activemq}</version.activemq>
         <version.org.mockftpserver>${version.org.mockftpserver}</version.org.mockftpserver>
         <version.com.h2database>${version.com.h2database}</version.com.h2database>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencyManagement>

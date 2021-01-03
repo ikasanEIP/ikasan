@@ -80,6 +80,8 @@
         <version.ikasan>${project.version}</version.ikasan>
         <version.org.springboot>${version.org.springboot}</version.org.springboot>
         <version.com.h2database>${version.com.h2database}</version.com.h2database>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
