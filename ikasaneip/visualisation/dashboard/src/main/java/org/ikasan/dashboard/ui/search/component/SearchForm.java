@@ -9,12 +9,15 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import org.ikasan.dashboard.ui.general.component.AboutIkasanDialog;
 import org.ikasan.dashboard.ui.general.component.ComponentSecurityVisibility;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.search.listener.SearchListener;
@@ -71,7 +74,7 @@ public class SearchForm extends VerticalLayout {
     protected void createSearchForm()
     {
         HorizontalLayout searchLayout = new HorizontalLayout();
-        searchLayout.setWidth("1000px");
+        searchLayout.setWidth("1200px");
         searchLayout.setSpacing(false);
 
         LocalDate nowDate = LocalDate.now();
@@ -129,8 +132,19 @@ public class SearchForm extends VerticalLayout {
         searchTextLayout.add(this.searchButton, this.searchButtonTooltip);
         searchTextLayout.setVerticalComponentAlignment(Alignment.CENTER, searchButton);
 
+        Icon helpIcon = new Icon(VaadinIcon.QUESTION_CIRCLE);
+        helpIcon.setSize("18px");
+        Button helpButton = new Button("Help", helpIcon);
+        helpButton.setId("helpButton");
+        helpButton.setIconAfterText(false);
+        helpButton.setHeight("32px");
 
-        searchLayout.add(dateTimePickersLayout, searchTextLayout);
+        helpButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+            IkasanSearchHelpDialog ikasanSearchHelpDialog = new IkasanSearchHelpDialog();
+            ikasanSearchHelpDialog.open();
+        });
+
+        searchLayout.add(dateTimePickersLayout, searchTextLayout, helpButton);
 
         this.wiretapImage = new Image("frontend/images/wiretap-service.png", "");
         this.wiretapImage.setHeight("40px");
