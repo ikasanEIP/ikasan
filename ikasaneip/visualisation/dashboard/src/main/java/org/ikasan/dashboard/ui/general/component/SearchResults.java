@@ -550,7 +550,7 @@ public class SearchResults extends Div {
         searchFilter.setModuleNamesFilterList(moduleNames);
         searchFilter.setFlowNamesFilterList(flowNames);
 
-        if(searchTerm != null && !searchTerm.isEmpty()){
+        if(searchTerm != null && !searchTerm.isEmpty()  && !searchTerm.startsWith("\"") && !searchTerm.endsWith("\"")){
             searchTerm = "\""+searchTerm+"\"";
         }
 
