@@ -52,4 +52,7 @@ IF EXIST %localEnv% (
     CALL %localEnv%
 )
 
-java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-*.jar %*
+IF "%$CONFIG_SERVICE_URL%"==""
+  %JAVA_HOME%\bin\java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-*.jar %*
+ELSE
+  %JAVA_HOME%\bin\java --illegal-access=deny  -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar %currentDir%\lib\ikasan-shell-*.jar %*
