@@ -53,4 +53,10 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-java --illegal-access=deny -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
+if [ -z "$CONFIG_SERVICE_URL" ]
+then
+    $JAVA_HOME/bin/java --illegal-access=deny -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
+else
+    $JAVA_HOME/bin/java --illegal-access=deny  -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
+fi
+
