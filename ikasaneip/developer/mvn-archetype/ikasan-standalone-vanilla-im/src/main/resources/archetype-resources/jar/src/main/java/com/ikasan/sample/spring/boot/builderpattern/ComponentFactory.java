@@ -92,7 +92,6 @@ import org.springframework.context.annotation.ImportResource;
  */
 @Configuration
 @ImportResource( {
-    "classpath:ikasan-transaction-pointcut-resubmission.xml",
     "classpath:h2-datasource-conf.xml"
 } )
 public class ComponentFactory
