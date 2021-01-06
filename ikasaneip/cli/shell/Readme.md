@@ -98,3 +98,20 @@ Ikasan Commands
 Ikasan Shell:> 
 ```
 
+#### Command Options
+
+| Command | Description | Options |
+| :---    | :---    | :---   |
+| env     | Displays the environment variables currently picked up by the CLI shell. | N/A |
+| ps      | Displays the status of the H2 JVM and Integration Module JVM as running, true or false. Uses default Integration Module name and username running the CLI. | -name <Alternate Module Name> |
+|         |  | -user <Alternate Username> |
+| start-h2 | Starts the H2 JVM process for this Integration Module. Uses default Integration Module name and user. | -name <Alternate Module Name> |
+|         |  | -command <Alternate JVM Command> which overrides h2.java.command |
+| stop-h2 | Stops the H2 JVM process for this Integration Module. | -name <Alternate Module Name> |
+| start-module | Starts the Integration Module JVM process. Uses default Integration Module name and user. | -name <Alternate Module Name> |
+|         |  | -command <Alternate JVM Command> which overrides module.java.command |
+| stop-module | Stops the Integration Module JVM process. | -name <Alternate Module Name> |
+
+
+
+
