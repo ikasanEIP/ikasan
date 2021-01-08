@@ -100,7 +100,7 @@ This should reflect the Java JDK version you have just installed.
 
 For instance – the line in bold depicts the important information.
 
-Expected JDK 11 version output
+Expected JDK 8 version output
 ```
 java version "1.8.0_31"
 Java(TM) SE Runtime Environment (build 1.8.0_31-b13)
