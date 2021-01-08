@@ -24,7 +24,7 @@ mvn archetype:generate
 
 - **archetypeGroupId** – is always **org.ikasan** for Ikasan based archetypes
 - **archetypeArtifactId** – details the archetype type to invoke **ikasan-standalone-filesystem-im-maven-plugin**
-- **archetypeVersion** – details the version of the Ikasan archetype type to invoke  **2.1.0 and above**
+- **archetypeVersion** – details the version of the Ikasan archetype type to invoke
 
 ### Parameters Provided for the Integration Module POM Being Created
 
