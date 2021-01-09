@@ -300,7 +300,7 @@ logging.level.org.springframework=INFO
 server.error.whitelabel.enabled=false
 
 # Web Bindings
-server.port=8080
+server.port=8090
 server.address=localhost
 server.servlet.context-path=/example-im
 server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar
