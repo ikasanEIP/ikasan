@@ -1,0 +1,30 @@
+<assembly>
+<id>dist</id>
+<formats>
+    <format>zip</format>
+</formats>
+
+<fileSets>
+    <fileSet>
+        <directory>../bin</directory>
+        <filtered>true</filtered>
+        <fileMode>755</fileMode>
+        <outputDirectory>./</outputDirectory>
+    </fileSet>
+
+</fileSets>
+
+<includeBaseDirectory>false</includeBaseDirectory>
+
+<dependencySets>
+    <dependencySet>
+        <!-- Enable access to all projects in the current multimodule build! -->
+        <useProjectArtifact>false</useProjectArtifact>
+        <!-- Now, select which projects to include in this module-set. -->
+        <includes>
+            <include>org.ikasan:ikasan-shell</include>
+        </includes>
+        <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+</dependencySets>
+</assembly>

@@ -42,18 +42,8 @@ rem  * ====================================================================
 rem  */
 
 rem Do not change this script, change the env.sh script fpr you custom environment settings.
+rem this script assumes you are using the filesystem for application.properties
 
 echo off
 set currentDir=%CD%
-
-set localEnv=%currentDir%\env.bat
-
-IF EXIST %localEnv% (
-    CALL %localEnv%
-)
-
-IF "%$CONFIG_SERVICE_URL%"==""
-  %JAVA_HOME%\bin\java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-*.jar %*
-ELSE
-  %JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar %currentDir%\lib\ikasan-shell-*.jar %*
-
+%JAVA_HOME%\bin\java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-*.jar %*

@@ -43,7 +43,7 @@
 
 #!/bin/bash
 #set -u
-
+# This script assumes you are running with a spring config service to source application properties
 # Do not change this script, change the env.sh script fpr you custom environment settings.
 
 SCRIPT_DIR=$(pwd)
@@ -53,10 +53,9 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-if [ -z "$CONFIG_SERVICE_URL" ]
-then
-    $JAVA_HOME/bin/java --illegal-access=deny -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
-else
-    $JAVA_HOME/bin/java --illegal-access=deny  -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
-fi
+CONFIG_SERVICE_URL=${CONFIG_SERVICE_URL:-'http://localhost:8888'}
+CONFIG_SERVICE_BOOTSTRAP_LOCATION=${CONFIG_SERVICE_BOOTSTRAP_LOCATION:-'~/bootstrap.properties'}
+
+
+$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.bootstrap.location=file:$CONFIG_SERVICE_BOOTSTRAP_LOCATION -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar  $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
 
