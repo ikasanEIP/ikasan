@@ -47,7 +47,7 @@ rem This script assumes you are running with a spring config service to source a
 echo off
 set currentDir=%CD%
 
-set localEnv=%currentDir%\env.bat
+set localEnv=%currentDir%\config-service-env.bat
 
 IF EXIST %localEnv% (
     CALL %localEnv%
