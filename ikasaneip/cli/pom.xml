@@ -49,10 +49,11 @@
 
     <artifactId>ikasan-cli</artifactId>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Shell</name>
+    <name>Ikasan Enterprise Integration Cli</name>
 
     <modules>
         <module>shell</module>
+        <module>distribution</module>
     </modules>
 
 </project>

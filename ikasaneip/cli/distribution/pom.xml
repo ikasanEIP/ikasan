@@ -4,42 +4,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>\${groupId}</groupId>
-        <artifactId>\${artifactId}-parent</artifactId>
-        <version>\${version}</version>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-cli</artifactId>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>\${artifactId}-distribution</artifactId>
+    <artifactId>ikasan-cli-distribution</artifactId>
+    <name>Ikasan Enterprise Integration Cli Distribution</name>
     <packaging>pom</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>\${groupId}</groupId>
-            <artifactId>\${artifactId}</artifactId>
-            <version>\${version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${version.com.h2database}</version>
-        </dependency>
-        <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-cli-distribution</artifactId>
-            <version>${version.ikasan}</version>
-            <type>zip</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-validator</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>ikasan-shell</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -53,16 +35,15 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-
                             <filters>
                             </filters>
                             <descriptors>
                                 <descriptor>./distribution.xml</descriptor>
                             </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
-
             </plugin>
         </plugins>
     </build>
