@@ -53,7 +53,7 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-CONFIG_SERVICE_URL=${CONFIG_SERVICE_URL:-'http://localhost:8888'}
+CONFIG_SERVICE_URL=${CONFIG_SERVICE_URL:-'http://localhost:8880'}
 CONFIG_SERVICE_BOOTSTRAP_LOCATION=${CONFIG_SERVICE_BOOTSTRAP_LOCATION:-'~/bootstrap.properties'}
 
 
