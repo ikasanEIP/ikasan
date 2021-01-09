@@ -46,4 +46,4 @@ rem this script assumes you are using the filesystem for application.properties
 
 echo off
 set currentDir=%CD%
-%JAVA_HOME%\bin\java --illegal-access=deny -jar %currentDir%\lib\ikasan-shell-*.jar %*
+%JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-*.jar %*
