@@ -48,7 +48,7 @@
 
 SCRIPT_DIR=$(pwd)
 
-LOCAL_ENV=$(pwd)/env.sh
+LOCAL_ENV=$(pwd)/config-service-env.sh
 if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
