@@ -57,5 +57,5 @@ CONFIG_SERVICE_URL=${CONFIG_SERVICE_URL:-'http://localhost:8880'}
 CONFIG_SERVICE_BOOTSTRAP_LOCATION=${CONFIG_SERVICE_BOOTSTRAP_LOCATION:-'~/bootstrap.properties'}
 
 
-$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.bootstrap.location=file:$CONFIG_SERVICE_BOOTSTRAP_LOCATION -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar  $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
+$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.config.enabled=true -Dspring.cloud.bootstrap.location=file:$CONFIG_SERVICE_BOOTSTRAP_LOCATION -Dspring.cloud.config.uri=$CONFIG_SERVICE_URL -Dspring.application.name=$MODULE_NAME -jar  $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
 
