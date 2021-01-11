@@ -1,3 +1,3 @@
-echo off
+@echo off
 
 set MODULE_NAME=${artifactId}

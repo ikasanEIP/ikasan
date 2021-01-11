@@ -1,3 +1,4 @@
+@echo off
 rem /*
 rem  * $Id$
 rem  * $URL$
@@ -41,10 +42,9 @@ rem  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 rem  * ====================================================================
 rem  */
 
-rem Do not change this script, change the env.sh script fpr you custom environment settings.
+rem Do not change this script, change the config-service-env.sh script fpr you custom environment settings.
 rem This script assumes you are running with a spring config service to source application properties
 
-echo off
 set currentDir=%CD%
 
 set localEnv=%currentDir%\config-service-env.bat
@@ -56,5 +56,5 @@ IF EXIST %localEnv% (
 IF "%$CONFIG_SERVICE_URL%"=="" SET CONFIG_SERVICE_URL="http://localhost:8880"
 IF "%$CONFIG_SERVICE_BOOTSTRAP_LOCATION%"=="" SET CONFIG_SERVICE_BOOTSTRAP_LOCATION="%USERPROFILE%/bootstrap.properties"
 
-%JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=true -Dspring.cloud.bootstrap.location=file:%CONFIG_SERVICE_BOOTSTRAP_LOCATION% -Dspring.cloud.config.uri=%CONFIG_SERVICE_URL% -Dspring.application.name=%MODULE_NAME% -jar %currentDir%\lib\ikasan-shell-*.jar %*
+%JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=true -Dspring.cloud.bootstrap.location=file:%CONFIG_SERVICE_BOOTSTRAP_LOCATION% -Dspring.cloud.config.uri=%CONFIG_SERVICE_URL% -Dspring.application.name=%MODULE_NAME% -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
 

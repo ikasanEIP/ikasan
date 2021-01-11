@@ -49,5 +49,5 @@
 SCRIPT_DIR=$(pwd)
 
 
-$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar $SCRIPT_DIR/lib/ikasan-shell-*.jar "$@"
+$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar $SCRIPT_DIR/lib/ikasan-shell-${project.version}.jar "$@"
 

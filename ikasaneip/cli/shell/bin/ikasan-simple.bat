@@ -1,3 +1,4 @@
+@echo off
 rem /*
 rem  * $Id$
 rem  * $URL$
@@ -43,7 +44,5 @@ rem  */
 
 rem Do not change this script, change the env.sh script fpr you custom environment settings.
 rem this script assumes you are using the filesystem for application.properties
-
-echo off
 set currentDir=%CD%
-%JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-*.jar %*
+%JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
