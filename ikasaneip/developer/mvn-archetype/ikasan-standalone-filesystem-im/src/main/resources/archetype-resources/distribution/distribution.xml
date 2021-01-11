@@ -40,7 +40,7 @@
         <useProjectArtifact>false</useProjectArtifact>
         <!-- contains lib\shell,jar and ikasan.sh -->
         <includes>
-            <include>org.ikasan:ikasan-cli-distribution:zip:${version.ikasan}</include>
+            <include>org.ikasan:ikasan-shell-distribution:zip:${version.ikasan}</include>
         </includes>
         <unpack>true</unpack>
         <outputDirectory>\${artifactId}-\${version}/</outputDirectory>
