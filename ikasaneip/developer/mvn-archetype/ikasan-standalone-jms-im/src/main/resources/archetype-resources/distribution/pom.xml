@@ -29,8 +29,9 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-shell</artifactId>
+            <artifactId>ikasan-shell-distribution</artifactId>
             <version>${version.ikasan}</version>
+            <type>zip</type>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>

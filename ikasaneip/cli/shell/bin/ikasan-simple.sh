@@ -48,6 +48,10 @@
 # this script assumes you are using the filesystem for application.properties
 SCRIPT_DIR=$(pwd)
 
+LOCAL_ENV=$(pwd)/simple-env.sh
+if [[ -f "$LOCAL_ENV" ]]; then
+    . ${LOCAL_ENV}
+fi
 
 $JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar $SCRIPT_DIR/lib/ikasan-shell-${project.version}.jar "$@"
 
