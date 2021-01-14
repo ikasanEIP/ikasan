@@ -45,4 +45,10 @@ rem  */
 rem Do not change this script, change the env.sh script fpr you custom environment settings.
 rem this script assumes you are using the filesystem for application.properties
 set currentDir=%CD%
+
+set localEnv=%currentDir%\simple-env.bat
+
+IF EXIST %localEnv% (
+    CALL %localEnv%
+)
 %JAVA_HOME%\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
