@@ -25,7 +25,7 @@ logging.level.org.ikasan.cli.shell=ERROR
 
 # Ikasan Shell process commands
 h2.java.command=java -Dmodule.name=${module.name} -classpath ./lib/h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
-module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dcom.arjuna.ats.arjuna.objectstore.objectStoreDir=./persistence/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
+module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
 shell.history.file=logs/ikasan-shell.log
 ```
 
