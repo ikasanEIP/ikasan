@@ -69,7 +69,7 @@ class ProcessTypeTest
         Assert.assertTrue(moduleInstance.isPersist());
         Assert.assertTrue(moduleInstance.getOutputLog().equals("logs/application.log"));
         Assert.assertTrue(moduleInstance.getErrorLog().equals("logs/application.log"));
-        Assert.assertTrue(moduleInstance.getCommandSignature().equals("com.arjuna.ats.arjuna.objectstore.objectStoreDir"));
+        Assert.assertTrue(moduleInstance.getCommandSignature().equals("spring.jta.logDir"));
     }
 
     @Test
