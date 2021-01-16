@@ -85,7 +85,7 @@ class PsCommandTest
         secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
-        secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
+        secondProcess.add("-DfakeModuleSignature=spring.jta.logDir");
 
         processBuilder = new ProcessBuilder(secondProcess);
         process = processBuilder.start();
@@ -177,7 +177,7 @@ class PsCommandTest
         secondProcess.add("cli/shell/target/test-classes:target/test-classes");
         secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
         secondProcess.add("-Dmodule.name=sampleProcess");
-        secondProcess.add("-DfakeModuleSignature=com.arjuna.ats.arjuna.objectstore.objectStoreDir");
+        secondProcess.add("-DfakeModuleSignature=spring.jta.logDir");
 
         processBuilder = new ProcessBuilder(secondProcess);
         process = processBuilder.start();
