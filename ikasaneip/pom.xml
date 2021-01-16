@@ -338,16 +338,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-        <pluginRepository>
-            <id>Maven repository</id>
-            <url>http://central.maven.org/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
         <!-- We also rely on JBoss Maven repo for jdocbook -->
         <pluginRepository>
             <id>jboss-public-repository-group</id>
