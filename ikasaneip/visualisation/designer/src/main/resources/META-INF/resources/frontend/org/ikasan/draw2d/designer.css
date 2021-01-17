@@ -1,0 +1,39 @@
+div#canvas-wrapper {
+    border:1px solid #E0E0E0;
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    top: 120px;
+    right: 15px;
+    left: 265px;
+    bottom: 15px;
+    overflow: scroll;
+    background-color: #FFFFFF;
+}
+
+div#canvas-tools {
+    border:1px solid #E0E0E0;
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    top: 120px;
+    width: 250px;
+    left: 15px;
+    bottom: 15px;
+    overflow: scroll;
+    background-color: #FFFFFF;
+}
+
+div#canvas-actions {
+    border:1px solid #E0E0E0;
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    top: 80px;
+    height: 40px;
+    /*bottom: 15px;*/
+    left: 15px;
+    right: 15px;
+    overflow: scroll;
+    background-color: #FFFFFF;
+}

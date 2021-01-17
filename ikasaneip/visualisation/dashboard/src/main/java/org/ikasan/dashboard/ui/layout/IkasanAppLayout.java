@@ -32,6 +32,7 @@ import org.ikasan.dashboard.ui.search.view.SearchView;
 import org.ikasan.dashboard.ui.util.SecurityConstants;
 import org.ikasan.dashboard.ui.util.SystemEventConstants;
 import org.ikasan.dashboard.ui.util.SystemEventLogger;
+import org.ikasan.dashboard.ui.visualisation.view.BusinessStreamDesignerView;
 import org.ikasan.dashboard.ui.visualisation.view.GraphView;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,6 +67,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
     private LeftNavigationItem roleManagementMenuItem;
     private LeftNavigationItem policyManagementMenuItem;
     private LeftNavigationItem userDirectoryManagementMenuItem;
+    private LeftNavigationItem businessStreamDesignerMenuItem;
 
     public IkasanAppLayout()
     {
@@ -164,6 +166,10 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
             UI.getCurrent().getLocale(), null), VaadinIcon.COG.create(), UserDirectoriesView.class);
         this.userDirectoryManagementMenuItem.setId("userDirectoryManagementMenuItem");
         leftSubMenuBuilder = leftSubMenuBuilder.add(this.userDirectoryManagementMenuItem);
+
+        this.businessStreamDesignerMenuItem = new LeftNavigationItem("Designer", VaadinIcon.PALETE.create(), BusinessStreamDesignerView.class);
+        this.businessStreamDesignerMenuItem.setId("businessStreamDesignerMenuItem");
+        leftSubMenuBuilder = leftSubMenuBuilder.add(this.businessStreamDesignerMenuItem);
 
         if(leftSubMenuBuilder != null)
         {
