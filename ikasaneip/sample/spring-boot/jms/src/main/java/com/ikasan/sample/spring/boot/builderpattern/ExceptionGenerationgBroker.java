@@ -52,12 +52,18 @@ public class ExceptionGenerationgBroker implements Broker
 
     private boolean shouldThrowRecoveryException = false;
 
+    private boolean shouldThrowScheduledRecoveryException = false;
+
     private boolean shouldThrowStoppedInErrorException = false;
 
     @Override public Object invoke(Object o) throws EndpointException
     {
         if(shouldThrowExclusionException){
             throw  new SampleGeneratedException("This exception is thrown to test exclusion.");
+        }
+
+        if(shouldThrowScheduledRecoveryException){
+            throw  new SampleScheduledRecoveryGeneratedException("This exception is thrown to test recovery.");
         }
 
         if(shouldThrowRecoveryException){
@@ -80,6 +86,10 @@ public class ExceptionGenerationgBroker implements Broker
         this.shouldThrowRecoveryException = shouldThrowRecoveryException;
     }
 
+    public void setShouldThrowScheduledRecoveryException(boolean shouldThrowScheduledRecoveryException)
+    {
+        this.shouldThrowScheduledRecoveryException = shouldThrowScheduledRecoveryException;
+    }
     public void setShouldThrowStoppedInErrorException(boolean shouldThrowStoppedInErrorException)
     {
         this.shouldThrowStoppedInErrorException = shouldThrowStoppedInErrorException;

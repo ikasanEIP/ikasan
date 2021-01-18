@@ -120,7 +120,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsSampleFlowTest
 {
@@ -427,6 +427,58 @@ public class JmsSampleFlowTest
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
 
+
+    }
+
+    @DirtiesContext
+    @Test
+    public void test_flow_in_scheduled_recovery()
+    {
+
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
+        // setup custom broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(true);
+
+        //Setup component expectations
+
+        flowTestRule.consumer("JMS Consumer")
+                    .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(1000L);
+        assertEquals("recovering",flowTestRule.getFlowState());
+
+        flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, messageListenerVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleScheduledRecoveryGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ScheduledRetry (cronExpression=0/5 * * * * ?, maxRetries=10)", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+
+
+        exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(false);
+
+        // Decrease this time
+        flowTestRule.sleep(30000L);
+        assertEquals("running",flowTestRule.getFlowState());
 
     }
 
