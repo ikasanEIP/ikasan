@@ -2,7 +2,7 @@
 # Ikasan Command-Line Interface (CLI) Shell
 
 The Ikasan CLI Shell is a cross-platform client interface for IkasanESB.
-It can be used start, check, and stop Ikasan JVM processes for H2 and Integration Modules, either interactively or non-iteractively as part of an 
+It can be used to start, check, and stop Ikasan JVM processes for H2 and Integration Modules, either interactively or non-iteractively as part of an 
 automated script in a sophisticated ALM / build system.
 
 ## Deploying Ikasan CLI Shell
@@ -10,7 +10,20 @@ The Ikasan CLI Shell can be deployed by simply copying the following jar to your
 ```
 ikasan-shell-<version>.jar
 ```
-The Ikasan CLI Shell is shipped with all generated Integration Module Maven archetypes along with simple execution scripts - ```ikasan.sh``` for UNIX; and ```ikasan.bat``` for Windows.
+The Ikasan CLI Shell is shipped with all generated Integration Module Maven archetypes along with support for both UNIX and Windows.
+
+## Ikasan CLI Shells
+The following UNIX and Windows scripts are provided as simple property based scripts and Spring Config Service based scropts.
+
+### Ikasan Simple Scripts
+```ikasan-simple.sh``` - UNIX script driven by standard application.properties of the Integration Module
+
+```ikasan-simple.bat``` - Windows script driven by standard application.properties of the Integration Module
+
+### Ikasan Spring Config Service Scripts
+```ikasan-config-service.sh``` - UNIX script driven by Spring Config Service properties typically backed by the Git repository of the Integration Module
+
+```ikasan-config-service.bat``` - Windows script driven by Spring Config Service properties typically backed by the Git repository of the Integration Module
 
 ## Running the Ikasan CLI Shell
 ### Pre-Requisites
@@ -20,26 +33,28 @@ Ikasan CLI Shell requires Java 11+.
 The following properties are used by the Ikasan CLI Shell and should be set as properties within the Integration Module. 
 
 ```
-# Ikasan Shell logging
-logging.level.org.ikasan.cli.shell=ERROR
-
 # Ikasan Shell process commands
-h2.java.command=java -Dmodule.name=${module.name} -classpath ./lib/h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
-module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
-shell.history.file=logs/ikasan-shell.log
+h2.java.command=java -Dmodule.name=${module.name} -classpath ${lib.dir}/h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
+module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=${persistence.dir}/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
 ```
 
-- ```logging.level.org.ikasan.cli.shell``` - Java logging level for the Ikasan CLI Shell
--  ```h2.java.command``` - Java command line required to start the Integration Module;s H2 JVM process
+- ```h2.java.command``` - Java command line required to start the Integration Module;s H2 JVM process
 - ```module.java.command``` - Java command line required to start the Integration Module JVM process
-- ```shell.history.file``` - location of where the shell command line history log is persisted. This contains a list of all commands issued within the shell.
 
 ### Non-Interactive Shell
 The Ikasan CLI Shell can be run non-interactively as follows.
 
-For UNIX, ```./ikasan.sh <command ...>```
+For UNIX, 
 
-For Windows, ```.\ikasan.bat <command ...>```
+```./ikasan-simple.sh <command ...>```
+
+```./ikasan-config-service.sh <command ...>```
+
+For Windows, 
+
+```.\ikasan-simple.bat <command ...>```
+
+```.\ikasan-config-service.bat <command ...>```
 
 where non-interactive commands can be one or more of
 - ```start``` - start the Integration Module's h2 process and then the Integration Module
@@ -54,9 +69,17 @@ where non-interactive commands can be one or more of
 ### Interactive Shell
 The Ikasan CLI Shell can be run interactively from the command line as follows,
 
-For UNIX, ```./ikasan.sh```
-
-For Windows, ```.\ikasan.bat```
+For UNIX, 
+ 
+ ```./ikasan-simple.sh```
+ or
+ ```./ikasan-config-service.sh```
+ 
+ For Windows, 
+ 
+ ```.\ikasan-simple.bat```
+ or
+ ```.\ikasan-config-service.bat```
 
 The CLI Shell will start and display the following,
 ```
