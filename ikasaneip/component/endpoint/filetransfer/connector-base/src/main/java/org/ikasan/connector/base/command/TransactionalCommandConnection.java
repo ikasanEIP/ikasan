@@ -359,6 +359,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
             try
             {
                 transactionJournal.cleanup(xid);
+                methodCalls.clear();
             }
             catch (TransactionJournalingException e)
             {
@@ -368,6 +369,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 
         // reset the Xid
         setXid(null);
+
     }
 
     /**
