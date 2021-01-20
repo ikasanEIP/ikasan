@@ -120,7 +120,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsSampleFlowTest
 {
@@ -474,11 +474,13 @@ public class JmsSampleFlowTest
         assertEquals(0, exclusions.size());
 
 
+        flowTestRule.sleep(1000L);
         exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(false);
 
         // Decrease this time
-        flowTestRule.sleep(30000L);
+        flowTestRule.sleep(5000L);
         assertEquals("running",flowTestRule.getFlowState());
+        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
 
     }
 
