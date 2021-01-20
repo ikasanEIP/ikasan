@@ -283,6 +283,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             this.consumer.stop();
             stopManagedResources();
 
+            if (isConsumerMultiThreaded)
+            {
+                recoveringIdentifiers.add(id);
+            }
             try
             {
                 if(!isRecovering())
