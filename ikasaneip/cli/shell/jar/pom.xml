@@ -63,11 +63,6 @@
             <version>${version.kryo.cli}</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${version.commons-io}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
