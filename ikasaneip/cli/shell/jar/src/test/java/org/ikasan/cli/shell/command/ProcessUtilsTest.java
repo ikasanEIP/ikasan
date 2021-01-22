@@ -273,7 +273,7 @@ class ProcessUtilsTest
 
         String sampleProcess = "java -cp ./tempTestParentDir/somewhere/else/h2*.jar"
             + ProcessUtils.CLASSPATH_SEPARATOR
-            + "./tempTestParentDir/lib/module-name-*.jar org.ikasan.cli.sample.process.SampleProcess -Dmodule.name=sampleProcess -DfakeH2Signature=org.h2.tools.Server";
+            + "./tempTestParentDir/lib/module-name-*.jar org.ikasan.cli.sample.process.SampleProcess -Dmodule.name=sampleProcess -DfakeH2Signature=org.h2.tools.Server -jar ./tempTestParentDir/lib/module-name-*.jar";
 
         String expectedExpandedClasspath = "./tempTestParentDir/somewhere/else/h2-100.200.300-SNAPSHOT.jar"
             + ProcessUtils.CLASSPATH_SEPARATOR
@@ -288,5 +288,7 @@ class ProcessUtilsTest
         Assert.assertTrue("expected org.ikasan.cli.sample.process.SampleProcess", commands.get(3).equals("org.ikasan.cli.sample.process.SampleProcess"));
         Assert.assertTrue("expected -Dmodule.name=sampleProcess", commands.get(4).equals("-Dmodule.name=sampleProcess"));
         Assert.assertTrue("expected -DfakeH2Signature=org.h2.tools.Server", commands.get(5).equals("-DfakeH2Signature=org.h2.tools.Server"));
+        Assert.assertTrue("expected -jar", commands.get(6).equals("-jar"));
+        Assert.assertTrue("expected ./tempTestParentDir/lib/module-name-1.2.3-SNAPSHOT.jar", commands.get(7).equals("./tempTestParentDir/lib/module-name-1.2.3-SNAPSHOT.jar"));
     }
 }

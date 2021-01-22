@@ -62,6 +62,7 @@ public class ProcessUtils
     public static String MINUS_D_MODULE_NAME = "-Dmodule.name=";
     public static String CLASSPATH = "-classpath";
     public static String CP = "-cp";
+    public static String JAR = "-jar";
     public static String WILDCARD = "*";
 
     public static String getProcessInfo(Process process, String name)
@@ -145,40 +146,45 @@ public class ProcessUtils
         {
             if(CLASSPATH.equals(commands[i].toLowerCase()) || CP.equals(commands[i].toLowerCase()))
             {
-                commands[i+1] = expandWildcardClasspath( commands[i+1] );
+                commands[i+1] = expandWildcardNotation( commands[i+1].split(CLASSPATH_SEPARATOR) );
+            }
+            else if(JAR.equals(commands[i].toLowerCase()))
+            {
+                commands[i+1] = expandWildcardNotation( commands[i+1] );
             }
         }
         return Arrays.asList(commands);
     }
 
-    protected static String expandWildcardClasspath(String classpath)
+    protected static String expandWildcardNotation(String wildcardNotation)
     {
-        String[] classpathParts = classpath.split(CLASSPATH_SEPARATOR);
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(String classpathPart:classpathParts)
+        if(wildcardNotation.contains(WILDCARD))
         {
-            if(classpathPart.contains(WILDCARD))
-            {
-                Path file = Paths.get(classpathPart);
+            Path file = Paths.get(wildcardNotation);
 
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString()))
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString()))
+            {
+                for (Path path: stream)
                 {
-                    for (Path path: stream)
-                    {
-                        stringBuilder.append(path.toString());
-                    }
-                }
-                catch (IOException e)
-                {
-                    throw new RuntimeException("Unable to expand wildcard classpath", e);
+                    // return the first as there should only be one match
+                    return path.toString();
                 }
             }
-            else
+            catch (IOException e)
             {
-                stringBuilder.append(classpathPart);
+                throw new RuntimeException("Unable to expand wildcard notation for " + wildcardNotation, e);
             }
+        }
 
+        return wildcardNotation;
+    }
+
+    protected static String expandWildcardNotation(String[] wildcardNotationParts)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String wildcardNotationPart:wildcardNotationParts)
+        {
+            stringBuilder.append( expandWildcardNotation(wildcardNotationPart) );
             stringBuilder.append(CLASSPATH_SEPARATOR);
         }
 
