@@ -43,6 +43,8 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.ikasan.cli.shell.reporting.ProcessInfos;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +58,11 @@ import java.util.Optional;
 public class ProcessUtils
 {
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String CLASSPATH_SEPARATOR = System.getProperty("path.separator");
     public static String MINUS_D_MODULE_NAME = "-Dmodule.name=";
+    public static String CLASSPATH = "-classpath";
+    public static String CP = "-cp";
+    public static String WILDCARD = "*";
 
     public static String getProcessInfo(Process process, String name)
     {
@@ -134,5 +140,49 @@ public class ProcessUtils
             return new ArrayList<String>();
         }
 
-        return Arrays.asList(commandStr.split("\\s+"));
-    }}
+        String[] commands = commandStr.split("\\s+");
+        for(int i = 0; i < commands.length; i++)
+        {
+            if(CLASSPATH.equals(commands[i].toLowerCase()) || CP.equals(commands[i].toLowerCase()))
+            {
+                commands[i+1] = expandWildcardClasspath( commands[i+1] );
+            }
+        }
+        return Arrays.asList(commands);
+    }
+
+    protected static String expandWildcardClasspath(String classpath)
+    {
+        String[] classpathParts = classpath.split(CLASSPATH_SEPARATOR);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(String classpathPart:classpathParts)
+        {
+            if(classpathPart.contains(WILDCARD))
+            {
+                Path file = Paths.get(classpathPart);
+
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString()))
+                {
+                    for (Path path: stream)
+                    {
+                        stringBuilder.append(path.toString());
+                    }
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException("Unable to expand wildcard classpath", e);
+                }
+            }
+            else
+            {
+                stringBuilder.append(classpathPart);
+            }
+
+            stringBuilder.append(CLASSPATH_SEPARATOR);
+        }
+
+        return stringBuilder.toString();
+    }
+
+}
