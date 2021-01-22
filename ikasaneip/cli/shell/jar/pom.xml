@@ -63,7 +63,6 @@
             <version>${version.kryo.cli}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -113,10 +112,6 @@
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
 
     </dependencies>
