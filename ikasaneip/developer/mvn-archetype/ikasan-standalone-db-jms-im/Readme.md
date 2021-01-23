@@ -121,12 +121,14 @@ To relocate the persistence directory via a symlink firstly ensure the processes
 mv persistence /someother/location
 ln -s /someother/location persistence
 ```
-#### Relocating Persistence via application.properties
-To change the persistence directory location via the application.properties 
-you need to update both the H2 Java command and the Integration Module Java 
-command property '-Dspring.jta.logDir'.
+
+#### Relocating Standard Directories via application.properties
+Although recommended as default values, both the persistence and lib directory can be changed by updating the following application.properties,
+
 ```java
-module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=160m -Dspring.jta.logDir=./persistence/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
+# standard dirs
+persistence.dir=./persistence
+lib.dir=./lib
 ```
  
 

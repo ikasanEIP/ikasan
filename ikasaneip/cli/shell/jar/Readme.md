@@ -34,12 +34,14 @@ The following properties are used by the Ikasan CLI Shell and should be set as p
 
 ```
 # Ikasan Shell process commands
-h2.java.command=java -Dmodule.name=${module.name} -classpath ${lib.dir}/h2-1.4.200.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
-module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=${persistence.dir}/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ./lib/${module.name}-1.0.0-SNAPSHOT.jar
+h2.java.command=java -Dmodule.name=${module.name} -classpath ${lib.dir}/h2-*.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
+module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=${persistence.dir}/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ${lib.dir}/${module.name}-*.jar
 ```
 
-- ```h2.java.command``` - Java command line required to start the Integration Module;s H2 JVM process
+- ```h2.java.command``` - Java command line required to start the Integration Module's H2 JVM process
 - ```module.java.command``` - Java command line required to start the Integration Module JVM process
+
+Note: Both the classpath and the jar can be specified as wildcards to save changing the specific configured version on subsequent upgrades.
 
 ### Non-Interactive Shell
 The Ikasan CLI Shell can be run non-interactively as follows.
