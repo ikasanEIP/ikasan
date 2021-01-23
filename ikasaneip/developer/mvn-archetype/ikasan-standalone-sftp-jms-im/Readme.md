@@ -73,18 +73,34 @@ Copy the created zip image from to the required destination, unzip and navigate 
 The unzipped distribution contains the following,
 ```unix
 config
-ikasan.sh
-ikasan.bat
-env.sh
-env.bat
+ikasan-config-service.sh
+config-service-env.sh
+ikasan-config-service.bat
+config-service-env.bat
+ikasan-simple.sh
+simple-env.sh
+ikasan-simple.bat
+simple-env.bat
 lib
 ```
 - ```config``` directory contains the runtime application.properties
-- ```ikasan.sh``` is the shell script for managing the stopping and starting of the Integration Module and h2 processes
-- ```env.sh``` user environment customisations to be picked up by the ikasan.sh script
-- ```ikasan.bat``` Windows equivalent script
-- ```env.bat``` Windows equivalent env script
+- ```ikasan-config-service.sh``` is the Spring config service based shell script for managing the stopping and starting of the Integration Module and h2 processes
+- ```config-service-env.sh``` user environment customisations to be picked up by the ikasan-config-service.sh script
+- ```ikasan-config-service.bat``` Windows equivalent script
+- ```config-service-env.bat``` Windows equivalent env script
+- ```ikasan-simple.sh``` is the application.properties based shell script for managing the stopping and starting of the Integration Module and h2 processes
+- ```simple-env.sh``` user environment customisations to be picked up by the ikasan-simple.sh script
+- ```ikasan-simple.bat``` Windows equivalent script
+- ```simple-env.bat``` Windows equivalent env script
 - ```lib``` directory contains all binaries required to run the Integration Module
+
+It is recommended you create a Windows shortcut or UNIX symlink to your selected script (either ikasan-simple or ikasan-config-service) called ```ikasan.sh``` or ```ikasan.bat``` as appropriate,
+
+For example in UNIX,
+
+```
+ln -s ikasan-simple.sh ikasan.sh
+```
 
 The following additional directories are created on first startup of the Integration Module.
 - ```logs``` directory contains the runtime output logs (std.out, std.err redirected) for the Integration Module and h2 database
@@ -103,12 +119,14 @@ To relocate the persistence directory via a symlink firstly ensure the processes
 mv persistence /someother/location
 ln -s /someother/location persistence
 ```
-#### Relocating Persistence via application.properties
-To change the persistence directory location via the application.properties you need to update the following properties which refer to the relative location of './persistence'.
-```java
-com.arjuna.ats.arjuna.objectstore.objectStoreDir=./persistence/${artifactId}-ObjectStore
 
-datasource.url=jdbc:h2:tcp://localhost:${h2.db.port}/./persistence/${module.name}-db/esb;IFEXISTS=FALSE
+#### Relocating Standard Directories via application.properties
+Although recommended as default values, both the persistence and lib directory can be changed by updating the following application.properties,
+
+```java
+# standard dirs
+persistence.dir=./persistence
+lib.dir=./lib
 ```
  
 
