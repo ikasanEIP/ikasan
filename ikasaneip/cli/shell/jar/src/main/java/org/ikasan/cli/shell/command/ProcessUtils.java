@@ -43,6 +43,8 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.ikasan.cli.shell.reporting.ProcessInfos;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +58,12 @@ import java.util.Optional;
 public class ProcessUtils
 {
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String CLASSPATH_SEPARATOR = System.getProperty("path.separator");
     public static String MINUS_D_MODULE_NAME = "-Dmodule.name=";
+    public static String CLASSPATH = "-classpath";
+    public static String CP = "-cp";
+    public static String JAR = "-jar";
+    public static String WILDCARD = "*";
 
     public static String getProcessInfo(Process process, String name)
     {
@@ -134,5 +141,54 @@ public class ProcessUtils
             return new ArrayList<String>();
         }
 
-        return Arrays.asList(commandStr.split("\\s+"));
-    }}
+        String[] commands = commandStr.split("\\s+");
+        for(int i = 0; i < commands.length; i++)
+        {
+            if(CLASSPATH.equals(commands[i].toLowerCase()) || CP.equals(commands[i].toLowerCase()))
+            {
+                commands[i+1] = expandWildcardNotation( commands[i+1].split(CLASSPATH_SEPARATOR) );
+            }
+            else if(JAR.equals(commands[i].toLowerCase()))
+            {
+                commands[i+1] = expandWildcardNotation( commands[i+1] );
+            }
+        }
+        return Arrays.asList(commands);
+    }
+
+    protected static String expandWildcardNotation(String wildcardNotation)
+    {
+        if(wildcardNotation.contains(WILDCARD))
+        {
+            Path file = Paths.get(wildcardNotation);
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString()))
+            {
+                for (Path path: stream)
+                {
+                    // return the first as there should only be one match
+                    return path.toString();
+                }
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Unable to expand wildcard notation for " + wildcardNotation, e);
+            }
+        }
+
+        return wildcardNotation;
+    }
+
+    protected static String expandWildcardNotation(String[] wildcardNotationParts)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String wildcardNotationPart:wildcardNotationParts)
+        {
+            stringBuilder.append( expandWildcardNotation(wildcardNotationPart) );
+            stringBuilder.append(CLASSPATH_SEPARATOR);
+        }
+
+        return stringBuilder.toString();
+    }
+
+}
