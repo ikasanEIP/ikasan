@@ -13,7 +13,7 @@ ikasan-shell-<version>.jar
 The Ikasan CLI Shell is shipped with all generated Integration Module Maven archetypes along with support for both UNIX and Windows.
 
 ## Ikasan CLI Shells
-The following UNIX and Windows scripts are provided as simple property based scripts and Spring Config Service based scropts.
+The following UNIX and Windows scripts are provided as simple property based scripts and Spring Config Service based scripts.
 
 ### Ikasan Simple Scripts
 ```ikasan-simple.sh``` - UNIX script driven by standard application.properties of the Integration Module
