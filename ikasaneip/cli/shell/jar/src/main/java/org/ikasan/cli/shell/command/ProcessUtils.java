@@ -43,6 +43,7 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.ikasan.cli.shell.reporting.ProcessInfos;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -160,9 +161,13 @@ public class ProcessUtils
     {
         if(wildcardNotation.contains(WILDCARD))
         {
-            Path file = Paths.get(wildcardNotation);
+            // Do not use NIO for sourcing file systems as a full path as any wildcards cause issues
 
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString()))
+            File file = new File(wildcardNotation);
+            String parent = file.getParent();
+            String name = file.getName();
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(parent), name))
             {
                 for (Path path: stream)
                 {
