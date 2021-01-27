@@ -2,30 +2,30 @@
 ![Ikasan](quickstart-images/Ikasan-title-transparent.png)
 # Release
 
-- Create new branch 'release/3.1.X-branch'
+- Create new branch 'release/3.1.0'
   ```
   git branch -a -vvv
   warning: ignoring broken ref refs/remotes/origin/HEAD
     3.0.x-h2                                                                         376512eec [origin/3.0.x: ahead 5, behind 43] IKASAN-1751 - fixing cherry pick issues
-  * 3.1.x  
+  * 3.1.0  
   
-  git checkout -b release/3.1.X-branch
+  git checkout -b release/3.1.0
   
-  Switched to a new branch 'release/3.1.X-branch'
+  Switched to a new branch 'release/3.1.0'
   
   git branch -a -vvv
   warning: ignoring broken ref refs/remotes/origin/HEAD
     3.1.x                                                                            93af4076d [origin/3.1.x] IKASAN-1827 removing commented out code.
-  * release/3.1.X-branch                                                             93af4076d IKASAN-1827 removing commented out code.
+  * release/3.1.0                                                             93af4076d IKASAN-1827 removing commented out code.
   
   ```
-- Update all references to 3.1.0-SNAPSHOT to version you are releasing ie. 3.1.0-gamma
+- Update all references to 3.1.0-SNAPSHOT to version you are releasing ie. 3.1.0
    - references in pom.xml
    - references in md files
    - check status 
    ```
   git status
-  On branch release/3.1.X-branch
+  On branch release/3.1.0
   Changes to be committed:
     (use "git reset HEAD <file>..." to unstage)
   
@@ -187,18 +187,18 @@
    ```
 - Commit all changes 
   ```
-    git commit -a -m 'Update references to 3.1.0-gamma'
-    [release/3.1.X-branch 6a7d68b76] Update references to 3.1.0-gamma
+    git commit -a -m 'Update references to 3.1.0'
+    [release/3.1.X-branch 6a7d68b76] Update references to 3.1.0
      149 files changed, 386 insertions(+), 187 deletions(-)
   
    ``` 
 - Tag your changes 
   ```
-    git tag -a ikasaneip-3.1.0-gamma -m "tag 3.1.0-gamma"
+    git tag -a ikasaneip-3.1.0 -m "tag 3.1.0"
     git tag --list
-    git push origin ikasaneip-3.1.0-gamma
+    git push origin ikasaneip-3.1.0
    ``` 
-- Update all references to 3.1.0-gamma to version you are releasing ie. 3.1.1-SNAPSHOT
+- Update all references to 3.1.0 to version you are releasing ie. 3.2.0-SNAPSHOT
     - references in pom.xml
     - references in md files
     - check status 
@@ -207,7 +207,7 @@
     ```
 - commit all changes
   ```
-  git commit -a -m 'Update references to 3.1.1-SNAPSHOT'
+  git commit -a -m 'Update references to 3.2.0-SNAPSHOT'
       
   ```
-- merge branch back to main branch 3.1.x  
+- merge branch back to main branch 3.1.x and rename it to 3.2.x  

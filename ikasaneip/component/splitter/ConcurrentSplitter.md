@@ -4,7 +4,7 @@
 ### Purpose
 
 <img src="../../developer/docs/quickstart-images/splitter.png" width="200px" align="left">Splits incoming event into a multiple events returned as a single list. Each event in the list can be processed concurrently by the downstream components.
-NOTE: At present it is not possible to wiretap components executed post concurrent splitter. This is fixed in IkasanESB 3.1.0.
+NOTE: At present it is not possible to wiretap components executed post concurrent splitter. This is fixed in IkasanESB 3.2.0.
 
 
 ### Pattern
