@@ -14,10 +14,12 @@ import org.ikasan.solr.model.IkasanSolrDocument;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,17 +54,24 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 
     private NodeConfig config;
 
+    private  Path tmppath;
+
     @Before
     public void setup()
     {
 
-        Path path = createTempDir();
+        tmppath = createTempDir();
 
-        SolrResourceLoader loader = new SolrResourceLoader(path);
+        SolrResourceLoader loader = new SolrResourceLoader(tmppath);
         config = new NodeConfig.NodeConfigBuilder("testnode", loader)
             .setConfigSetBaseDirectory(Paths.get(TEST_HOME()).resolve("configsets").toString()).build();
 
+    }
 
+    @After
+    public void teardown() throws IOException
+    {
+        FileSystemUtils.deleteRecursively(tmppath);
     }
 
     private void init(EmbeddedSolrServer server) throws IOException, SolrServerException
