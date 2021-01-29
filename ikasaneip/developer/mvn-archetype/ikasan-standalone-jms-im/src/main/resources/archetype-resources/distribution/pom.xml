@@ -27,10 +27,10 @@
             <artifactId>h2</artifactId>
             <version>${version.com.h2database}</version>
         </dependency>
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-shell-distribution</artifactId>
-            </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-shell-distribution</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
