@@ -499,6 +499,19 @@
             </dependency>
 
             <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-shell-distribution</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-validator</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>kryo</artifactId>
                 <version>${version.kryo}</version>
