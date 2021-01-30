@@ -58,7 +58,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -127,20 +129,14 @@ public class SftpToJmsFlowTest
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-        flowTestRule.sleep(1000L);
-        flowTestRule.fireScheduledConsumer();
-        flowTestRule.sleep(1000L);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
         flowTestRule.fireScheduledConsumer();
-        flowTestRule.sleep(1000L);
 
-        flowTestRule.fireScheduledConsumer();
-        flowTestRule.sleep(1000L);
-
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
         flowTestRule.assertIsSatisfied();
-
-        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
-
 
     }
 

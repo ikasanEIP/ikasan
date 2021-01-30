@@ -42,17 +42,19 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.broker.BrokerService;
 import org.h2.tools.Server;
-import org.ikasan.nonfunctional.test.util.SimpleTimer;
 import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -104,17 +108,6 @@ public class ApplicationTest
 
     // test utils
     WiretapTestUtil wiretapTestUtil;
-    SimpleTimer stopWatch;
-
-    // AMQ Broker
-    BrokerService broker;
-
-    // Arjuna transaction logs
-    String objectStoreDir = "./ObjectStore";
-
-    // AMQ persistence
-    String amqPersistenceBaseDir = "./activemq-data";
-    String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
 
     @BeforeClass
     public static void setup() throws SQLException
@@ -126,7 +119,6 @@ public class ApplicationTest
     @Before
     public void start() throws Exception
     {
-        stopWatch = SimpleTimer.getInstance();
         wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
@@ -147,7 +139,8 @@ public class ApplicationTest
         for (int i = 0; i < ModuleConfig.EVENT_GENERATOR_COUNT; i++)
         {
             splitterFlowTestRule.consumer("Event Generating Consumer")
-                    .producer("Logging Producer");
+                                .splitter("splitter")
+                                .producer("Logging Producer");
         }
 
         wiretapTestUtil.addWiretapTrigger("Component Stress Test Module", "splitter stress flow",
@@ -157,37 +150,28 @@ public class ApplicationTest
         splitterFlowTestRule.startFlow();
 
         // wait for event generating flows to complete
-        stopWatch.start();
         logger.info("Waiting for 'splitter stress flow' flow to complete (circa  seconds).");
-        while (splitterFlowTestRule.getFlowState().equals(Flow.RUNNING))
-        {
-            // log if it takes longer than 70 seconds
-            if(stopWatch.elapsedInSeconds() > 70)
-            {
-                logger.info("Still waiting for 'configurationUpdaterFlow' flow to complete. Waiting for " + stopWatch.elapsedInSeconds() + " seconds");
-            }
-            Thread.sleep(2000);
-        }
 
-        // wait for things to catch up
-        int waitCounter = 0;
-        PagedSearchResult<WiretapEvent> wiretaps = null;
-        while( waitCounter < 10 &&
-            (wiretaps = wiretapTestUtil.getWiretaps("Component Stress Test Module",
+        with().pollInterval(2, TimeUnit.SECONDS).and().with().pollDelay(10, TimeUnit.SECONDS).await()
+              .atMost(40, TimeUnit.SECONDS).untilAsserted(() -> {
+
+            PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Component Stress Test Module",
                 "splitter stress flow",
                 TriggerRelationship.BEFORE,
                 "Logging Producer",
-                ModuleConfig.EVENT_GENERATOR_COUNT)).getResultSize() != ModuleConfig.EVENT_GENERATOR_COUNT)
-        {
-            waitCounter++;
-            logger.info("Waiting for splitter stress flow flow to complete (circa 10 seconds). Waiting for " + waitCounter + " seconds");
-            Thread.sleep(2000);
-        }
+                ModuleConfig.EVENT_GENERATOR_COUNT);
+            logger.info("Expected 'splitter stress flow' flow wiretap count {} but found {}",
+                ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
+                       );
+
+            assertTrue("Expected 'splitter stress flow' flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
+                    + " but found " + wiretaps.getResultSize(),
+                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
+                      );
+
+        });
 
         splitterFlowTestRule.stopFlow();
-
-        assertTrue("Expected " + "splitter stress flow" + " flow wiretap count "
-                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
 
     }
 }
