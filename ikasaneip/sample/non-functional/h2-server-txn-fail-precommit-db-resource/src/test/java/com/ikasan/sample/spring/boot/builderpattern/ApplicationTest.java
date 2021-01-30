@@ -51,10 +51,10 @@ import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -69,8 +69,11 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -103,7 +106,7 @@ public class ApplicationTest
     private String brokerUrl;
 
     // Arjuna transaction logs
-    String objectStoreDir = "./ObjectStore";
+    String objectStoreDir = "./transaction-logs";
 
     // AMQ persistence
     String amqPersistenceBaseDir = "./activemq-data";
@@ -183,7 +186,7 @@ public class ApplicationTest
 
         // start flows right to left
         flow3TestRule.startFlow();
-        Thread.sleep(2000);
+        Thread.sleep(500);
 
         // publish 10 events
         List<String> messages = new ArrayList<>();
@@ -209,6 +212,24 @@ public class ApplicationTest
             Thread.sleep(2000);
         }
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
+            PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil
+                .getWiretaps("Transaction Test Module",
+                    "jmsToDevNullFlow1",
+                    TriggerRelationship.AFTER,
+                    "JMS Consumer", testMessageCount
+                            );
+            logger.info("Expected jmsToDevNullFlow1 flow wiretap count {} but found {}",
+                testMessageCount-1, wiretaps.getResultSize()
+                       );
+            assertTrue("Expected jmsToDevNullFlow1 flow wiretap count " + testMessageCount
+                    + " but found " + wiretaps.getResultSize(),
+                wiretaps.getResultSize() == testMessageCount-1
+                      );
+        });
+
+
         Destination dlq = broker.getBroker().getDestinationMap().get(new ActiveMQQueue("ActiveMQ.DLQ"));
         if(dlq != null)
         {
@@ -222,10 +243,6 @@ public class ApplicationTest
         {
             Assert.fail("dlq should exist");
         }
-
-        PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", testMessageCount);
-        assertTrue("Expected " + "jmsToDevNullFlow1" + " flow wiretap count "
-                + (testMessageCount-1) + " but found " + wiretaps.getResultSize(), wiretaps.getResultSize() == (testMessageCount-1) );
 
         flow3TestRule.assertIsSatisfied();
     }

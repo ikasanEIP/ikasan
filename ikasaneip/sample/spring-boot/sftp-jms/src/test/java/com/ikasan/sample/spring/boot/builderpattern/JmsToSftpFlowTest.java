@@ -64,7 +64,9 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -140,9 +142,8 @@ public class JmsToSftpFlowTest
             }
         });
 
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
 

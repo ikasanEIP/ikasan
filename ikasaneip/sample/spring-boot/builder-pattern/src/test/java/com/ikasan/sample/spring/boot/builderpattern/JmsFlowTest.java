@@ -57,8 +57,10 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.awaitility.Awaitility.with;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
@@ -127,11 +129,17 @@ public class JmsFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
+
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
+
+            assertTrue("Expected jms Message " + 1
+                    + " but found " + messageListenerVerifier.getCaptureResults().size(),
+                messageListenerVerifier.getCaptureResults().size() == 1
+                      );
+        });
 
         flowTestRule.assertIsSatisfied();
-
-        assertEquals(1,messageListenerVerifier.getCaptureResults().size());
 
     }
 

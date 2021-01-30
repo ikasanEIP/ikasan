@@ -110,8 +110,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import javax.jms.TextMessage;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>JmsSampleFlow</code> class.
@@ -205,14 +208,12 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(1000L);
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+        assertEquals(((TextMessage) messageListenerVerifier.getCaptureResults().get(0)).getText(), SAMPLE_MESSAGE);
 
         flowTestRule.assertIsSatisfied();
-
-        assertEquals(1, messageListenerVerifier.getCaptureResults().size());
-        assertEquals(((TextMessage)messageListenerVerifier.getCaptureResults().get(0)).getText(),
-            SAMPLE_MESSAGE);
-
 
     }
 
@@ -238,10 +239,8 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
@@ -282,10 +281,8 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
@@ -344,10 +341,8 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
@@ -408,8 +403,9 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-        assertEquals("recovering",flowTestRule.getFlowState());
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
 
         flowTestRule.assertIsSatisfied();
 
@@ -453,18 +449,15 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(1000L);
-        assertEquals("recovering",flowTestRule.getFlowState());
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
-        assertEquals(1, errors.size());
+        assertTrue( errors.size()>=1);
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(SampleScheduledRecoveryGeneratedException.class.getName(), error.getExceptionClass());
         assertEquals("ScheduledRetry (cronExpression=0/5 * * * * ?, maxRetries=10)", error.getAction());
@@ -473,13 +466,12 @@ public class JmsSampleFlowTest
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
 
-
-        flowTestRule.sleep(1000L);
         exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(false);
 
         // Decrease this time
-        flowTestRule.sleep(5000L);
-        assertEquals("running",flowTestRule.getFlowState());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
         assertEquals(1, messageListenerVerifier.getCaptureResults().size());
 
     }
@@ -510,9 +502,8 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-        assertEquals("stoppedInError",flowTestRule.getFlowState());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() ->  assertEquals("stoppedInError",flowTestRule.getFlowState()));
 
         flowTestRule.assertIsSatisfied();
 

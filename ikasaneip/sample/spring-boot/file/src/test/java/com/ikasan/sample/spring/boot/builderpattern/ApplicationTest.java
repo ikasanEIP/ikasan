@@ -65,7 +65,9 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -133,20 +135,31 @@ public class ApplicationTest
             .converter("File Converter")
             .producer("JMS Producer");
 
-
         flowTestRule.startFlow();
-        flowTestRule.sleep(1000L);
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+            assertEquals("running",flowTestRule.getFlowState()));
+
         flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
+
+            assertTrue("Expected jms Message " + 1
+                    + " but found " + messageListenerVerifierTarget.getCaptureResults().size(),
+                messageListenerVerifierTarget.getCaptureResults().size() >= 1
+                      );
+        });
 
         flowTestRule.assertIsSatisfied();
 
         // Set expectation
-        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
             FILE_CONSUMER_FILE_NAME);
+
+
     }
 
     @Test
@@ -168,16 +181,18 @@ public class ApplicationTest
             .producer("File Producer");
 
         flowTestRule.startFlow();
-        flowTestRule.sleep(1000L);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+            assertEquals("running",flowTestRule.getFlowState()));
 
         // Prepare test data
         String message = "Random Text";
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("private.file.queue.test", message);
 
-        flowTestRule.sleep(1000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+              .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+            flowTestRule.assertIsSatisfied());
 
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
 
