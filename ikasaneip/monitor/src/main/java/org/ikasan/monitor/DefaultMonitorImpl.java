@@ -119,7 +119,7 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
 
             if(this.notifiers == null || this.notifiers.size() == 0)
             {
-                logger.warn("Monitor [" + monitorName + "] has no registered notifiers");
+                logger.info("Monitor [" + monitorName + "] has no registered notifiers");
                 return;
             }
 
