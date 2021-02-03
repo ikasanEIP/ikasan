@@ -1,7 +1,12 @@
 View = draw2d.Canvas.extend({
 
+    leftMouseX:0,
+    leftMouseY:0,
+    rightMouseX:0,
+    rightMouseY:0,
+
     init:function(app, id){
-        var _this = this;
+        let _this = this;
 
         this._super(id, 16000, 16000);
         this.clippboardFigure=null;
@@ -25,6 +30,20 @@ View = draw2d.Canvas.extend({
                 return con;
             }
         }));
+
+        let policy = new draw2d.policy.canvas.CanvasPolicy();
+        policy.onClick = function(canvas, mouseX, mouseY) {
+            console.log("Mouse click:" + mouseX + "," + mouseY);
+            _this.setLeftMouseX(mouseX);
+            _this.setLeftMouseY(mouseY);
+        }
+
+        policy.onRightMouseDown = function(canvas, mouseX, mouseY) {
+            console.log("Right Mouse click:" + mouseX + "," + mouseY);
+            _this.setRightMouseX(mouseX);
+            _this.setRightMouseY(mouseY);
+        }
+        this.installEditPolicy(policy);
 
         Mousetrap.bind(['left'],function (event) {
             var diff = _this.getZoom()<0.5?0.5:1;
@@ -261,6 +280,46 @@ View = draw2d.Canvas.extend({
         var c = $("#canvas");
         c.scrollTop((center.y- c.height()/2));
         c.scrollLeft((center.x- c.width()/2));
+    },
+
+    getLeftMouseX: function()
+    {
+        return this.leftMouseX;
+    },
+
+    getLeftMouseY: function()
+    {
+        return this.leftMouseY;
+    },
+
+    getRightMouseX: function()
+    {
+        return this.rightMouseX;
+    },
+
+    getRightMouseY: function()
+    {
+        return this.rightMouseY;
+    },
+
+    setLeftMouseX: function(x)
+    {
+        this.leftMouseX = x;
+    },
+
+    setLeftMouseY: function(y)
+    {
+        this.leftMouseY = y;
+    },
+
+    setRightMouseX: function(x)
+    {
+        this.rightMouseX = x;
+    },
+
+    setRightMouseY: function(y)
+    {
+        this.rightMouseY = y;
     }
 
 });

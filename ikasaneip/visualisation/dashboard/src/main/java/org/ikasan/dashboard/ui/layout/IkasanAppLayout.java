@@ -169,7 +169,7 @@ public class IkasanAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftHybri
 
         this.businessStreamDesignerMenuItem = new LeftNavigationItem("Designer", VaadinIcon.PALETE.create(), BusinessStreamDesignerView.class);
         this.businessStreamDesignerMenuItem.setId("businessStreamDesignerMenuItem");
-        leftSubMenuBuilder = leftSubMenuBuilder.add(this.businessStreamDesignerMenuItem);
+//        leftSubMenuBuilder = leftSubMenuBuilder.add(this.businessStreamDesignerMenuItem);
 
         if(leftSubMenuBuilder != null)
         {

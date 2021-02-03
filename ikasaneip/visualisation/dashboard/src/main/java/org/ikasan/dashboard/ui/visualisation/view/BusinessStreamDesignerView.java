@@ -8,9 +8,7 @@ import com.github.appreciated.layout.FluentGridLayout;
 import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.componentfactory.TooltipAlignment;
 import com.vaadin.componentfactory.TooltipPosition;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.DetailsVariant;
@@ -19,8 +17,10 @@ import com.vaadin.flow.component.dnd.DropTarget;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -28,12 +28,12 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.ikasan.dashboard.broadcast.FlowStateBroadcaster;
-import org.ikasan.dashboard.ui.general.component.Divider;
 import org.ikasan.dashboard.ui.general.component.SearchResults;
 import org.ikasan.dashboard.ui.general.component.TooltipHelper;
 import org.ikasan.dashboard.ui.layout.IkasanAppLayout;
 import org.ikasan.dashboard.ui.visualisation.component.BusinessStreamFilteringGrid;
 import org.ikasan.dashboard.ui.visualisation.component.ModuleFilteringGrid;
+import org.ikasan.designer.ColorPicker;
 import org.ikasan.designer.Designer;
 import org.ikasan.designer.DesignerPaletteImage;
 import org.ikasan.designer.DesignerPaletteImageType;
@@ -203,20 +203,49 @@ public class BusinessStreamDesignerView extends VerticalLayout implements Before
         toBackButton.getElement().appendChild(IronIcons.FLIP_TO_BACK.create().getElement());
 
         actions.add(toBackButton, getDivider());
+
+//        TextField rotateAngle = new TextField("Angle");
+//        actions.add(rotateAngle);
         Button undoButton = new Button();
         undoButton.getElement().appendChild(IronIcons.UNDO.create().getElement());
+        undoButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//            designer.rotateSelected(-Integer.valueOf(rotateAngle.getValue()));
+        });
         actions.add(undoButton);
         Button redoButton = new Button();
         redoButton.getElement().appendChild(IronIcons.REDO.create().getElement());
+        redoButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//            designer.rotateSelected(Integer.valueOf(rotateAngle.getValue()));
+        });
         actions.add(redoButton, getDivider());
         Button zoomInButton = new Button();
         zoomInButton.getElement().appendChild(IronIcons.ZOOM_IN.create().getElement());
+        zoomInButton.setId("canvas_zoom_in");
         actions.add(zoomInButton);
         Button zoomOutButton = new Button();
         zoomOutButton.getElement().appendChild(IronIcons.ZOOM_OUT.create().getElement());
+        zoomOutButton.setId("canvas_zoom_out");
         actions.add(zoomOutButton, getDivider());
-        Button paintButton = new Button();
-        paintButton.getElement().appendChild(EditorIcons.FORMAT_COLOR_FILL.create().getElement());
+
+        ColorPicker paintButton = new ColorPicker();
+        paintButton.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextField, String>>)
+            textFieldStringComponentValueChangeEvent -> {
+            designer.setBackgroundColor(textFieldStringComponentValueChangeEvent.getValue());
+        });
+
+//        paintButton.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextField, String>>)
+//            textFieldStringComponentValueChangeEvent -> {
+//            icon.getStyle().set("background-color", textFieldStringComponentValueChangeEvent.getValue());
+//        });
+//        paintButton.addInputListener((ComponentEventListener<InputEvent>) inputEvent -> {
+//            icon.getStyle().set("background-color", paintButton.getValue());
+//        });
+//        paintButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//           ColorPicker colorPicker = new ColorPicker();
+//
+//        });
+
+
         actions.add(paintButton, getDivider());
         Button copyButton = new Button();
         copyButton.getElement().appendChild(IronIcons.CONTENT_COPY.create().getElement());

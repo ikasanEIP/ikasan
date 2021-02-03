@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
@@ -357,6 +358,33 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
         this.populateModulesGrid();
         this.populateBusinessStreamGrid();
 
+        try {
+            List<BusinessStreamMetaData> businessStreamMetaDataList = this.businessStreamGrid.getDataProvider()
+                .fetch(new Query<>())
+                .collect(Collectors.toList());
+
+            if (businessStreamMetaDataList.size() > 0) {
+                this.createBusinessStreamGraph(businessStreamMetaDataList.get(0).getName(), businessStreamMetaDataList.get(0));
+                this.moduleLabel.setText(businessStreamMetaDataList.get(0).getName());
+                this.moduleVisualisation = null;
+            }
+            else {
+                List<ModuleMetaData> moduleMetaData = this.modulesGrid.getDataProvider()
+                    .fetch(new Query<>())
+                    .collect(Collectors.toList());
+
+                if (moduleMetaData.size() > 0) {
+                    this.createModuleVisualisation(moduleMetaData.get(0));
+                    this.moduleLabel.setText(businessStreamMetaDataList.get(0).getName());
+                    this.businessStreamVisualisation = null;
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.warn("An error has occurred loading visualisation." , e);
+        }
+
+
         if(uploadBusinssStreamButtonTooltip != null && this.uploadBusinssStreamButton != null)
         {
             this.uploadBusinssStreamButtonTooltip.attachToComponent(this.uploadBusinssStreamButton);
@@ -490,7 +518,7 @@ public class GraphView extends VerticalLayout implements BeforeEnterObserver, Se
 
 
         toolSlider = new SlideTabBuilder(card)
-            .expanded(false)
+            .expanded(true)
             .mode(SlideMode.RIGHT)
             .caption("Tools")
             .tabPosition(SlideTabPosition.MIDDLE)
