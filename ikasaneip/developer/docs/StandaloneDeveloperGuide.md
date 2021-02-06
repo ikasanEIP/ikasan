@@ -52,7 +52,7 @@ We will be using IntelliJ for the rest of this demonstration.
 ## Create a Project
 In IntelliJ select `File/New/Project...`
 
-Select maven (blank archetype). Ensure you select JDK 1.8 as the SDK for this new project.
+Select maven (blank archetype). Ensure you select JDK 11 as the SDK for this new project.
 ![Login](quickstart-images/IntelliJ-new-project-screen1.png) 
 
 Specify your project Maven coordinates such as GroupId, ArtefactId, and Version.
@@ -109,8 +109,11 @@ In this case we are adding the ikasan-eip-standalone main library; an h2 standal
     <!-- Add project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.0.0</version.ikasan>
-        <version.org.springboot>2.0.9.RELEASE</version.org.springboot>
+        <version.ikasan>3.1.0</version.ikasan>
+        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
+        <version.com.h2database>1.4.200</version.com.h2database>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <!-- Add project dependencies -->
@@ -164,73 +167,58 @@ an Ikasan bill of materials (bom) as project dependency management.
         ...
 
     <!-- Add project build plugins -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${version.org.springboot}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules><dependencyConvergence /></rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+     <!-- build plugins -->
+     <build>
+         <plugins>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+                 <version>3.8.1</version>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-javadoc-plugin</artifactId>
+                 <version>3.0.1</version>
+                 <executions>
+                     <execution>
+                         <id>attach-javadocs</id>
+                         <goals>
+                             <goal>jar</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-source-plugin</artifactId>
+                 <version>2.1.2</version>
+                 <executions>
+                     <execution>
+                         <id>attach-sources</id>
+                         <goals>
+                             <goal>jar</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-enforcer-plugin</artifactId>
+                 <version>1.4.1</version>
+                 <executions>
+                     <execution>
+                         <id>enforce-versions</id>
+                         <goals>
+                             <goal>enforce</goal>
+                         </goals>
+                         <configuration>
+                             <rules><dependencyConvergence /></rules>
+                         </configuration>
+                     </execution>
+                 </executions>
+             </plugin>
+         </plugins>
+     </build>
 
     <!-- Add SCM URLS -->
     <scm>
@@ -292,39 +280,71 @@ public class MyModule
 
 Provide some configuration properties for the module by creating a resources/application.properties
 ```properties
+module.name=example-im
+
+# standard dirs
+persistence.dir=./persistence
+lib.dir=./lib
+
 # Logging levels across packages (optional)
-logging.level.com.arjuna=INFO
-logging.level.org.springframework=INFO
+logging.level.root=WARN
+logging.level.org.ikasan=INFO
 
 # Blue console servlet settings (optional)
 server.error.whitelabel.enabled=false
 
 # Web Bindings
-server.port=8090
+h2.db.port=8082
+server.port=8080
 server.address=localhost
 server.servlet.context-path=/example-im
 server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
 
-# Spring config
-spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
-spring.liquibase.change-log=classpath:db-changelog.xml
+# Ikasan Shell process start commands
+h2.java.command=java -Dmodule.name=${module.name} -classpath ${lib.dir}/h2-*.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
+module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=${persistence.dir}/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ${lib.dir}/${module.name}-*.jar
+
+spring.liquibase.change-log=classpath:db-changelog-master.xml
 spring.liquibase.enabled=true
 
 # health probs and remote management (optional)
-management.endpoints.web.expose=*
-management.server.servlet.context-path=/manage
+management.endpoints.enabled-by-default=false
+management.endpoint.info.enabled=true
+management.endpoint.health.enabled=true
+management.endpoint.logfile.enabled=true
+management.endpoints.web.exposure.include=info,health,logfile
 management.endpoint.shutdown.enabled=true
+#management.endpoints.web.base-path=/rest
+
+#management.endpoint.health.probes.enabled=true
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
+management.health.jms.enabled=false
 
 # Ikasan persistence store
 datasource.username=sa
 datasource.password=sa
 datasource.driver-class-name=org.h2.Driver
 datasource.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
-datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+datasource.url=jdbc:h2:tcp://localhost:${h2.db.port}/${persistence.dir}/${module.name}-db/esb;IFEXISTS=FALSE
+#datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
 datasource.dialect=org.hibernate.dialect.H2Dialect
 datasource.show-sql=false
 datasource.hbm2ddl.auto=none
 datasource.validationQuery=select 1
+
+# Dashboard data extraction settings
+ikasan.dashboard.extract.enabled=false
+ikasan.dashboard.extract.base.url=http://localhost:9080/ikasan-dashboard
+ikasan.dashboard.extract.username=
+ikasan.dashboard.extract.password=
+
+ikasan.exceptions.retry-configs.[0].className=org.ikasan.spec.component.endpoint.EndpointException
+ikasan.exceptions.retry-configs.[0].delayInMillis=5000
+ikasan.exceptions.retry-configs.[0].maxRetries=-1
+
+ikasan.exceptions.excludedClasses[0]=org.ikasan.spec.component.transformation.TransformationException
 ```
 
 Build and run the application.
