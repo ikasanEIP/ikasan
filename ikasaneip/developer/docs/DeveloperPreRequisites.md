@@ -59,9 +59,6 @@ IkasanEIP will support any language which compiles to bytecode and runs within t
 For more details on Java see [http://www.oracle.com/technetwork/java](http://www.oracle.com/technetwork/java)
 
 ### Version
-
-IkasanEIP version 3.0.x requires Java 8.x.
-
 IkasanEIP version 3.1.x requires Java 11.x.
 
 
@@ -100,12 +97,6 @@ This should reflect the Java JDK version you have just installed.
 
 For instance – the line in bold depicts the important information.
 
-Expected JDK 11 version output
-```
-java version "1.8.0_31"
-Java(TM) SE Runtime Environment (build 1.8.0_31-b13)
-Java HotSpot(TM) 64-Bit Server VM (build 25.31-b07, mixed mode)
-```
 Expected JDK 11 version output
 ```
 openjdk version "11.0.8" 2020-07-14
@@ -161,8 +152,8 @@ For instance – the bold output depicts the important information,
 Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0
 Apache Maven 3.5.3 (3383c37e1f9e9b3bc3df5050c29c8aff9f295297; 2018-02-24T19:49:05Z)
 Maven home: /opt/platform/maven-platform/apache-maven-3.5.3
-Java version: 1.8.0_141, vendor: Oracle Corporation
-Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_141.jdk/Contents/Home/jre
+Java version: 11.0.8, vendor: AdoptOpenJDK
+Java home: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
 Default locale: en_GB, platform encoding: UTF-8
 OS name: "mac os x", version: "10.13.3", arch: "x86_64", family: "mac"
 ```
