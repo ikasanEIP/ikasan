@@ -121,6 +121,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
@@ -375,6 +376,13 @@ public class JmsSampleFlowTest {
             });
     }
 
+    private void assertErrorsWithWait(Consumer<List<Object>> errorsAssert) {
+        with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+                errorsAssert.accept(errors);
+            });
+    }
 
     private void assertExclusionsWithWait(int expectedNumberOfExclusions) {
         with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
@@ -521,9 +529,8 @@ public class JmsSampleFlowTest {
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
-        assertErrorsWithWait(1);
+        assertErrorsWithWait(errors->assertTrue(errors.size()>=1));
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
-        assertTrue(errors.size() >= 1);
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(SampleScheduledRecoveryGeneratedException.class.getName(), error.getExceptionClass());
         assertEquals("ScheduledRetry (cronExpression=0/5 * * * * ?, maxRetries=10)", error.getAction());
