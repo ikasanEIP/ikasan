@@ -1,40 +1,40 @@
-/* 
+/*
  * $Id: SchedulerFactoryTest.java 3629 2011-04-18 10:00:52Z mitcje $
  * $URL: http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler/src/test/java/org/ikasan/scheduler/SchedulerFactoryTest.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -80,6 +80,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.h2.jdbcx.JdbcDataSource;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
@@ -90,15 +91,18 @@ import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.client.ResubmissionService;
+import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
@@ -108,7 +112,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -118,15 +128,14 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>JmsSampleFlow</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class JmsSampleFlowTest
-{
+@FixMethodOrder(MethodSorters.JVM)
+public class JmsSampleFlowTest {
     protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
     protected final static String MODULE_REST_PASSWORD_PROPERTY = "rest.module.password";
 
@@ -155,42 +164,47 @@ public class JmsSampleFlowTest
 
     private IkasanFlowTestRule flowTestRule;
 
-    private MessageListenerVerifier messageListenerVerifier;
+    private static MessageListenerVerifier messageListenerVerifier;
+
+    @Resource
+    @Autowired
+    @Qualifier("ikasan.xads")
+    private DataSource ikasanxads;
 
     @LocalServerPort
     private int randomServerPort;
 
     @Before
-    public void setup(){
+    public void setup() {
 
         flowTestRule = new IkasanFlowTestRule();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
 
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
-        messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        if (messageListenerVerifier == null) {
+            messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
+        }
         messageListenerVerifier.start();
     }
 
     @After
-    public void teardown(){
-
-
-        // consume messages from source queue if any were left
-        MessageListenerVerifier mlv = new MessageListenerVerifier(brokerUrl, "source", registry);
-        mlv.start();
-        flowTestRule.sleep(1000L);
-        mlv.stop();
-
-        messageListenerVerifier.stop();
-        flowTestRule.stopFlow();
-
+    public void teardown() throws Exception {
+        removeAllMessages();
+        clearDatabase();
+        clearMessageVerifier();
+        resetExceptionGeneratingBroker();
     }
 
-    @DirtiesContext
+    private void clearMessageVerifier() {
+        if (messageListenerVerifier != null) {
+            messageListenerVerifier.getCaptureResults().clear();
+        }
+    }
+
+
     @Test
-    public void test_Jms_Sample_Flow() throws Exception
-    {
+    public void test_Jms_Sample_Flow() throws Exception {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -210,17 +224,49 @@ public class JmsSampleFlowTest
         // wait for a brief while to let the flow complete
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+            .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
         assertEquals(((TextMessage) messageListenerVerifier.getCaptureResults().get(0)).getText(), SAMPLE_MESSAGE);
 
         flowTestRule.assertIsSatisfied();
 
     }
 
-    @DirtiesContext
+    /**
+     * On retry the original message is rolled back - this leaves the message on the consumer destination, this can interfere
+     * with tests that follow if they are waiting for messages to be *produced* on that destination -
+     * contrary to popular belief the AMQBroker is outside the control of Spring
+     * so there is no AMQ restart between tests regardless what DirtiesContext is set to.
+     *
+     * @throws JMSException
+     */
+    private void removeAllMessages() throws Exception {
+        flowTestRule.stopFlow();
+        new ActiveMqHelper().removeAllMessages();
+    }
+
+    private void clearDatabase() throws SQLException {
+        Connection connection = ikasanxads.getConnection();
+        PreparedStatement deleteErrors = connection
+            .prepareStatement("DELETE FROM PUBLIC.ERROROCCURRENCE");
+        int errorUpdateNo = deleteErrors.executeUpdate();
+        PreparedStatement deleteExclusionEvents = connection
+            .prepareStatement("DELETE FROM PUBLIC.EXCLUSIONEVENT");
+        int exclusionUpdateNo = deleteExclusionEvents.executeUpdate();
+        connection.commit();
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(0, errors.size());
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+    }
+
+    private void resetExceptionGeneratingBroker() {
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule
+            .getComponent("Exception Generating Broker");
+        exceptionGenerationgBroker.reset();
+    }
+
     @Test
-    public void test_exclusion()
-    {
+    public void test_exclusion() {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -240,12 +286,13 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
@@ -253,16 +300,16 @@ public class JmsSampleFlowTest
         assertEquals("ExcludeEvent", error.getAction());
 
         // Verify the exclusion was stored to DB was stored in DB
+        assertExclusionsWithWait(1);
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(1, exclusions.size());
         ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
         assertEquals(error.getUri(), exclusionEvent.getErrorUri());
     }
 
-    @DirtiesContext
+
     @Test
-    public void test_exclusion_followed_by_resubmission()
-    {
+    public void test_exclusion_followed_by_resubmission() {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -282,19 +329,20 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
-        assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
         assertEquals("ExcludeEvent", error.getAction());
 
         // Verify the exclusion was stored to DB was stored in DB
+        assertExclusionsWithWait(1);
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(1, exclusions.size());
         ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
@@ -311,7 +359,7 @@ public class JmsSampleFlowTest
         this.flowTestRule.startFlow();
 
         boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
-            "Jms Sample Flow", "resubmit",  exclusionEvent.getErrorUri());
+            "Jms Sample Flow", "resubmit", exclusionEvent.getErrorUri());
 
         assertEquals(true, result);
 
@@ -319,10 +367,26 @@ public class JmsSampleFlowTest
         assertEquals(0, exclusions.size());
     }
 
-    @DirtiesContext
+    private void assertErrorsWithWait(int expectedNumberOfErrors) {
+        with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+                assertEquals(expectedNumberOfErrors, errors.size());
+            });
+    }
+
+
+    private void assertExclusionsWithWait(int expectedNumberOfExclusions) {
+        with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+                assertEquals(expectedNumberOfExclusions, exclusions.size());
+            });
+    }
+
+
     @Test
-    public void test_exclusion_followed_by_ignore()
-    {
+    public void test_exclusion_followed_by_ignore() {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -342,12 +406,13 @@ public class JmsSampleFlowTest
         flowTestRule.startFlow();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
@@ -355,6 +420,7 @@ public class JmsSampleFlowTest
         assertEquals("ExcludeEvent", error.getAction());
 
         // Verify the exclusion was stored to DB was stored in DB
+        assertExclusionsWithWait(1);
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(1, exclusions.size());
         ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
@@ -371,7 +437,7 @@ public class JmsSampleFlowTest
         this.flowTestRule.startFlow();
 
         boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
-            "Jms Sample Flow", "ignore",  exclusionEvent.getErrorUri());
+            "Jms Sample Flow", "ignore", exclusionEvent.getErrorUri());
 
         assertEquals(true, result);
 
@@ -379,10 +445,9 @@ public class JmsSampleFlowTest
         assertEquals(0, exclusions.size());
     }
 
-    @DirtiesContext
+
     @Test
-    public void test_flow_in_recovery()
-    {
+    public void test_flow_in_recovery() {
 
 
         // Prepare test data
@@ -405,7 +470,7 @@ public class JmsSampleFlowTest
         // wait for a brief while to let the flow complete
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+            .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
 
         flowTestRule.assertIsSatisfied();
 
@@ -413,6 +478,7 @@ public class JmsSampleFlowTest
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
@@ -426,10 +492,9 @@ public class JmsSampleFlowTest
 
     }
 
-    @DirtiesContext
+
     @Test
-    public void test_flow_in_scheduled_recovery()
-    {
+    public void test_flow_in_scheduled_recovery() {
 
 
         // Prepare test data
@@ -444,20 +509,21 @@ public class JmsSampleFlowTest
         //Setup component expectations
 
         flowTestRule.consumer("JMS Consumer")
-                    .broker("Exception Generating Broker");
+            .broker("Exception Generating Broker");
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+            .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
 
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
-        assertTrue( errors.size()>=1);
+        assertTrue(errors.size() >= 1);
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(SampleScheduledRecoveryGeneratedException.class.getName(), error.getExceptionClass());
         assertEquals("ScheduledRetry (cronExpression=0/5 * * * * ?, maxRetries=10)", error.getAction());
@@ -470,22 +536,15 @@ public class JmsSampleFlowTest
 
         // Decrease this time
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+            .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
 
         assertEquals(1, messageListenerVerifier.getCaptureResults().size());
 
     }
 
-    @DirtiesContext
+
     @Test
-    public void test_flow_stopped_in_error()
-    {
-
-
-        // Prepare test data
-        String message = SAMPLE_MESSAGE;
-        logger.info("Sending a JMS message.[" + message + "]");
-        jmsTemplate.convertAndSend("source", message);
+    public void test_flow_stopped_in_error() {
 
 
         // setup custom broker to throw an exception
@@ -502,15 +561,22 @@ public class JmsSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() ->  assertEquals("stoppedInError",flowTestRule.getFlowState()));
+            .untilAsserted(() -> assertEquals("stoppedInError", flowTestRule.getFlowState()));
 
         flowTestRule.assertIsSatisfied();
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());
-        
+
         // Verify the error was stored in DB
+        assertErrorsWithWait(1);
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
@@ -524,10 +590,10 @@ public class JmsSampleFlowTest
 
     }
 
-    @DirtiesContext
+
     @Test
-    public void test_transaction_timeout_stopped_in_error()
-    {
+    @Ignore
+    public void test_transaction_timeout_stopped_in_error() {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -550,7 +616,7 @@ public class JmsSampleFlowTest
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(15000L);
 
-       // flowTestRule.assertIsSatisfied();
+        // flowTestRule.assertIsSatisfied();
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());

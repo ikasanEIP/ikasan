@@ -783,6 +783,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
             if(this.exclusionService.isBlackListed(originalEventLifeIdentifier))
             {
+                logger.debug("Persisting exclusion event now");
                 this.exclusionService.park(event, originalEventLifeIdentifier);
                 if(this.exclusionFlowConfiguration != null)
                 {
