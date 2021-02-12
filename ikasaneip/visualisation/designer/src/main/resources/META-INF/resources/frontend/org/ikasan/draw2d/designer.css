@@ -12,7 +12,7 @@ div#canvas-wrapper {
 }
 
 div#canvas-tools {
-    border:1px solid #E0E0E0;
+    /*border:1px solid #E0E0E0;*/
     padding: 0px;
     margin: 0px;
     position: absolute;
@@ -21,11 +21,11 @@ div#canvas-tools {
     left: 15px;
     bottom: 15px;
     overflow: scroll;
-    background-color: #FFFFFF;
+    /*background-color: #FFFFFF;*/
 }
 
 div#canvas-actions {
-    border:1px solid #E0E0E0;
+    /*border:1px solid #E0E0E0;*/
     padding: 0px;
     margin: 0px;
     position: absolute;
@@ -35,5 +35,5 @@ div#canvas-actions {
     left: 15px;
     right: 15px;
     overflow: scroll;
-    background-color: #FFFFFF;
+    /*background-color: #FFFFFF;*/
 }

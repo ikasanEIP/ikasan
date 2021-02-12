@@ -29,14 +29,14 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
             this._super(
                 extend({
                     // set some good defaults
-                    bgColor: "rgb(232, 201, 19)",
+                    bgColor: "#FDFDFD",
                     stroke: 0.5,
                     width:10,
                     height:10,
                     minWidth:0.3,
                     minHeight:0.3,
                     color: "#a0a0a0",
-                    radius: 100,
+                    radius: 1,
                     selectable:false
                     // and allow to override them
                 }, attr),
@@ -64,9 +64,42 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
             this.origHeight = this.height
             this.origStroke = this.stroke
 
+            this.oldRotationAngle = 0
 
+            this.ax = null
+            this.ay = null
+            this.bx = null
+            this.by = null
+            this.cx = null
+            this.cy = null
+
+            this.mouseX = null
+            this.mouseY = null
+
+            let _self = this;
+
+            $(document).ready(function () {
+                $("#canvas-wrapper").mousemove(function (e) {
+                    _self.setMouseX(e.offsetX);
+                    _self.setMouseY(e.offsetY);
+                });
+            });
+
+            this.isRotation = false
         },
 
+
+        isRotationAction: function () {
+            return this.isRotation;
+        },
+
+        setMouseX: function (x) {
+            this.mouseX = x;
+        },
+
+        setMouseY: function (y) {
+            this.mouseY = y;
+        },
 
         /**
          *
@@ -254,14 +287,24 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
                 return
             }
 
-            let oldX = this.getAbsoluteX()
-            let oldY = this.getAbsoluteY()
+            console.log("before this.x: " + this.x + " this.y: " + this.y)
+            this.setPosition(this.getAbsoluteX(), this.getAbsoluteY())
+            console.log("after this.x: " + this.x + " this.y: " + this.y)
+
+            let oldX = this.x
+            let oldY = this.y
 
             // call the super.drag method with all snapTo### handler and adjustments
             this._super(dx, dy, dx2, dy2)
 
-            let diffX = this.getAbsoluteX() - oldX
-            let diffY = this.getAbsoluteY() - oldY
+            // console.log("before this.x: " + this.x + " this.y: " + this.y)
+            // this.setPosition(this.getAbsoluteX(), this.getAbsoluteY())
+            // console.log("after this.x: " + this.x + " this.y: " + this.y)
+
+            console.log("this.x: " + this.x + " oldX:  " + oldX + " this.y: " + this.y + " oldY:  " + oldY)
+
+            let diffX = this.x - oldX
+            let diffY = this.y - oldY
 
             let obj = this.owner
             let objPosX = obj.getAbsoluteX()
@@ -272,85 +315,161 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
             let newX = null
             let newY = null
             let corrPos = null
+
+            console.log("(obj.getRotationAngle(): " + obj.getRotationAngle())
+
+            if((obj.getRotationAngle() > 0 && obj.getRotationAngle() <= 90 ) || (obj.getRotationAngle() < 0 && obj.getRotationAngle() >= -90 )) {
+                diffX = diffX *-1
+                diffY = diffY *-1
+            }
+
+            console.log("diffX: " + diffX + " diffY:  " + diffY)
+
             switch (this.type) {
                 case 1:
+                    console.log("case1 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth - diffX, objHeight - diffY)
                     newX = objPosX + (objWidth - obj.getWidth())
                     newY = objPosY + (objHeight - obj.getHeight())
+
+                    this.isRotation = false;
+
                     obj.setPosition(newX, newY)
                     break
                 case 2:
+                    console.log("case2 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth, objHeight - diffY)
                     newX = objPosX
                     newY = objPosY + (objHeight - obj.getHeight())
+
+                    this.isRotation = false;
+
                     obj.setPosition(newX, newY)
                     break
                 case 3:
+                    console.log("case3 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth + diffX, objHeight - diffY)
                     newX = objPosX
                     newY = objPosY + (objHeight - obj.getHeight())
+
+                    this.isRotation = false;
+
                     obj.setPosition(newX, newY)
                     break
                 case 4:
+                    console.log("case4 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth + diffX, objHeight)
+
+                    this.isRotation = false;
+
                     break
                 case 5:
+                    console.log("case5 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth + diffX, objHeight + diffY)
+
+                    this.isRotation = false;
+
                     break
                 case 6:
+                    console.log("case6 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth, objHeight + diffY)
+
+                    this.isRotation = false;
+
                     break
                 case 7:
+                    console.log("case7 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth - diffX, objHeight + diffY)
                     newX = objPosX + (objWidth - obj.getWidth())
                     newY = objPosY
                     obj.setPosition(newX, newY)
+
+                    this.isRotation = false;
+
                     break
                 case 8:
+                    console.log("case8 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
                     obj.setDimension(objWidth - diffX, objHeight)
                     newX = objPosX + (objWidth - obj.getWidth())
                     newY = objPosY
                     obj.setPosition(newX, newY)
+
+                    this.isRotation = false;
+
                     break
                 case 69:
-                    console.log('dx:' + dx + ' dy:' +  dy + ' dx2: ' + dx2 + ' dy2: ' + dy2)
-                    if(dx2 < 0 || dy2 < 0) {
-                        obj.setRotationAngle((obj.getRotationAngle() + -1) %360)
-                    }
-                    else if(dx2 > 0 || dy2 > 0) {
-                        obj.setRotationAngle((obj.getRotationAngle() + 1) %360)
-                    }
-
-                    console.log('this.x:' + this.getAbsoluteX() + ' this.y:' +  this.getAbsoluteY() + ' obj.getRotationAngle(): ' + obj.getRotationAngle())
-                    console.log('objPosX:' +objPosX + ' objPosY:' +  objPosY)
+                    console.log("case69 dx: " + dx + " dy:  " + dy + " dx2: " +  dx2 + " dy2 " + dy2)
+                    let clockwise = null
 
                     let centreX = objPosX + (objWidth / 2);
                     let centreY = objPosY + (objHeight / 2);
 
-                    console.log('centreX:' + centreX + ' centreY:' +  centreY)
+                    // let angle = Math.atan2(this.mouseY-centreY, this.mouseX-centreX);
+                    // let radians = (angle * 180 / Math.PI);
+
+                    let radians = Math.atan2(this.mouseX-centreX, this.mouseY-centreY);
+                    // let degree = (radians * (180 / Math.PI) * -1) + 90;
+                    let degree = (radians * (180 / Math.PI) * -1) ;
 
 
-                    let relativeX = objPosX+objWidth + 50 - centreX;
-                    let relativeY = objPosY - 50 - centreY;
 
-                    console.log('relativeX:' + relativeX + ' relativeY:' +  relativeY)
+                    // let diffX = centreX - this.mouseX;
+                    // let diffY = centreY - this.mouseY;
+                    // let tan = diffY / diffX;
+                    //
+                    // let atan = Math.atan(tan)* 180 / Math.PI;;
+                    // if(diffY > 0 && diffX > 0) {
+                    //     atan += 180;
+                    // }
+                    // else if(diffY < 0 && diffX > 0) {
+                    //     atan -= 180;
+                    // }
 
-                    let cosRotationAngle = this.dTrig(Math.cos, obj.getRotationAngle());
-                    let sinRotationAngle = this.dTrig(Math.sin, obj.getRotationAngle());
+                    console.log('degree:' + degree + ' mouseX: ' + this.mouseX + ' mouseY: '
+                        + this.mouseY + ' centreX: ' + centreX + ' centreY' + centreY);
 
-                    console.log('cosRotationAngle:' + cosRotationAngle + ' sinRotationAngle:' +  sinRotationAngle)
+                    obj.setRotationAngle(degree)
 
-                    let newXx = (relativeX * cosRotationAngle) - (relativeY * sinRotationAngle)
-                    let newYy = (relativeX * sinRotationAngle) + (relativeY * cosRotationAngle)
+                    // if(this.ax == null && this.ay == null) {
+                    //     this.ax = this.mouseX;
+                    //     this.ay = this.mouseY;
+                    //
+                    //     // console.log('ax:' + this.ax + ' ay:' +  this.ay)
+                    // }
+                    // else if(this.bx == null && this.by == null && this.ax != this.mouseX && this.ay != this.mouseY) {
+                    //     this.bx = this.mouseX;
+                    //     this.by = this.mouseY;
+                    //     // console.log('bx:' + this.bx + ' by:' +  this.by)
+                    // }
+                    // else if(this.cx == null && this.cy == null && this.bx != null && this.by != null && this.bx != this.mouseX && this.by != this.mouseY) {
+                    //     this.cx = this.mouseX;
+                    //     this.cy = this.mouseY;
+                    //     // console.log('cx:' + this.cx + ' cy:' +  this.cy)
+                    //
+                    //     clockwise = this.mouseDirection(centreX, centreY, this.bx, this.by, this.cx, this.cy)
+                    //
+                    //     console.log('clockwise:' + clockwise)
+                    //
+                    //     this.ax = null;
+                    //     this.ay = null;
+                    //     this.bx = null;
+                    //     this.by = null;
+                    //     this.cx = null;
+                    //     this.cy = null;
+                    // }
+                    //
+                    //
+                    // if(clockwise != null && clockwise > 0) {
+                    //     obj.setRotationAngle((obj.getRotationAngle() + -1) %360)
+                    //     clockwise = null
+                    // }
+                    // else if(clockwise != null && clockwise < 0) {
+                    //     obj.setRotationAngle((obj.getRotationAngle() + 1) %360)
+                    //     clockwise = null
+                    // }
 
-                    console.log('newXx:' + newXx + ' newYy:' +  newYy)
-
-                    let newPositionX = centreX + newXx;
-                    let newPositionY = centreY + newYy;
-
-                    console.log('newPositionX:' + newPositionX + ' newPositionY:' +  newPositionY )
-
-                    this.setPosition(newPositionX, newPositionY)
+                    this.isRotation = true;
+                    this.setPosition(this.x, this.y)
                     break
             }
 
@@ -365,8 +484,45 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
             }
         },
 
+
+        mouseDirection: function(ax, ay, bx, by, cx, cy) {
+            let area2 = (bx - ax)*(cy - ay) - (by - ay)*(cx - ax);
+            if (area2 < 0) return -1; // clockwise
+            if (area2 > 0) return +1; // counter-clockwise
+            return 0; // collinear
+        },
+
         dTrig: function (trigFunc, angle) {
             return trigFunc(angle * Math.PI / 180);
+        },
+
+        calculatePointsAfterRotation: function (relativeX, relativeY, centreX, centreY ) {
+            let rotationAngle = 0;
+
+            if(this.owner.getRotationAngle() > 0) {
+                rotationAngle = this.owner.getRotationAngle() - 180;
+            }
+            else if (this.owner.getRotationAngle() < 0) {
+                rotationAngle = 180 + this.owner.getRotationAngle();
+            }
+
+            let cosRotationAngle = this.dTrig(Math.cos, rotationAngle);
+            let sinRotationAngle = this.dTrig(Math.sin, rotationAngle);
+
+            // console.log('cosRotationAngle:' + cosRotationAngle + ' sinRotationAngle:' + sinRotationAngle)
+
+            let newXx = (relativeX * cosRotationAngle) - (relativeY * sinRotationAngle)
+            let newYy = (relativeX * sinRotationAngle) + (relativeY * cosRotationAngle)
+
+            // console.log('newXx:' + newXx + ' newYy:' + newYy)
+
+            let newPositionX = centreX + newXx;
+            let newPositionY = centreY + newYy;
+
+            // console.log('newPositionX:' + newPositionX + ' newPositionY:' + newPositionY)
+
+            this.x = newPositionX;
+            this.y = newPositionY;
         },
 
         /**
@@ -410,56 +566,111 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
          * @param {Number} y The new y coordinate of the figure
          **/
         setPosition: function (x, y) {
-            // don't call base implementation. Base implementation will show
-            // ResizeHandles...but I'm the ResizeHandle
-            // if (x instanceof draw2d.geo.Point) {
-            //     this.x = x.x
-            //     this.y = x.y
+            let obj = this.owner
+            let objPosX = obj.getAbsoluteX()
+            let objPosY = obj.getAbsoluteY()
+            let objWidth = obj.getWidth()
+            let objHeight = obj.getHeight()
+
+            let centreX = objPosX + (objWidth / 2) - (this.getWidth() / 2);
+            let centreY = objPosY + (objHeight / 2) - (this.getHeight() / 2);
+
+            if (x instanceof draw2d.geo.Point) {
+                this.x = x.x
+                this.y = x.y
+            }
+            else {
+                this.x = x
+                this.y = y
+            }
+
+
+            // if(this.isRotationAction()) {
+                if (this.type === 1) {
+
+                    // console.log('this.x:' + this.getAbsoluteX() + ' this.y:' + this.getAbsoluteY() + ' obj.getRotationAngle(): ' + obj.getRotationAngle())
+                    // console.log('objPosX:' + objPosX + ' objPosY:' + objPosY)
+                    //
+                    // console.log('centreX:' + centreX + ' centreY:' + centreY)
+
+                    // let relativeX = objPosX - this.getWidth() - centreX;
+                    // let relativeY = objPosY - this.getHeight() - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 2) {
+                    // let relativeX = objPosX + (objWidth / 2) - (this.getWidth() / 2) - centreX;
+                    // let relativeY = objPosY - this.getHeight() - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 3) {
+                    // let relativeX = objPosX + objWidth - centreX;
+                    // let relativeY = objPosY - this.getHeight() - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 4) {
+                    // let relativeX = objPosX + objWidth - centreX;
+                    // let relativeY = objPosY + (objHeight / 2) - (this.getHeight() / 2) - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - (this.getHeight() / 2) - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 5) {
+                    // let relativeX = objPosX + objWidth - centreX;
+                    // let relativeY = objPosY + objHeight - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 6) {
+                    // let relativeX = objPosX + (objWidth / 2) - (this.getWidth() / 2) - centreX;
+                    // let relativeY = objPosY + objHeight - centreY;
+
+                    let relativeX = this.x - (this.getWidth() / 2) - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 7) {
+                    // let relativeX = objPosX - this.getWidth() - centreX;
+                    // let relativeY = objPosY + objHeight - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 8) {
+                    // let relativeX = objPosX - this.getWidth() - centreX;
+                    // let relativeY = objPosY + (objHeight / 2) - (this.getHeight() / 2) - centreY;
+
+                    let relativeX = this.x - centreX;
+                    let relativeY = this.y - (this.getHeight() / 2) - centreY;
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                } else if (this.type === 69) {
+
+                    // console.log('this.x:' + this.getAbsoluteX() + ' this.y:' + this.getAbsoluteY() + ' obj.getRotationAngle(): ' + obj.getRotationAngle())
+                    // console.log('objPosX:' + objPosX + ' objPosY:' + objPosY)
+                    //
+                    // console.log('centreX:' + centreX + ' centreY:' + centreY)
+
+
+                    let relativeX = objPosX + (objWidth / 2) - (this.getWidth() / 2) - centreX;
+                    let relativeY = objPosY - 50 - centreY - (this.getHeight() / 2);
+
+                    this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                }
             // }
-            // else {
-            //     this.x = x
-            //     this.y = y
-            // }y
-
-            if(this.type === 69) {
-                let obj = this.owner
-                let objPosX = obj.getAbsoluteX()
-                let objPosY = obj.getAbsoluteY()
-                let objWidth = obj.getWidth()
-                let objHeight = obj.getHeight()
-
-                console.log('this.x:' + this.getAbsoluteX() + ' this.y:' + this.getAbsoluteY() + ' obj.getRotationAngle(): ' + obj.getRotationAngle())
-                console.log('objPosX:' + objPosX + ' objPosY:' + objPosY)
-
-                let centreX = objPosX + (objWidth / 2);
-                let centreY = objPosY + (objHeight / 2);
-
-                console.log('centreX:' + centreX + ' centreY:' + centreY)
-
-
-                let relativeX = objPosX + objWidth + 50 - centreX;
-                let relativeY = objPosY - 50 - centreY;
-
-                console.log('relativeX:' + relativeX + ' relativeY:' + relativeY)
-
-                let cosRotationAngle = this.dTrig(Math.cos, obj.getRotationAngle());
-                let sinRotationAngle = this.dTrig(Math.sin, obj.getRotationAngle());
-
-                console.log('cosRotationAngle:' + cosRotationAngle + ' sinRotationAngle:' + sinRotationAngle)
-
-                let newXx = (relativeX * cosRotationAngle) - (relativeY * sinRotationAngle)
-                let newYy = (relativeX * sinRotationAngle) + (relativeY * cosRotationAngle)
-
-                console.log('newXx:' + newXx + ' newYy:' + newYy)
-
-                let newPositionX = centreX + newXx;
-                let newPositionY = centreY + newYy;
-
-                console.log('newPositionX:' + newPositionX + ' newPositionY:' + newPositionY)
-
-                this.x = newPositionX;
-                this.y = newPositionY;
-            } else {
+            /*else {
                 if (x instanceof draw2d.geo.Point) {
                     this.x = x.x
                     this.y = x.y
@@ -468,7 +679,23 @@ RotateHandle = draw2d.shape.basic.Rectangle.extend(
                     this.x = x
                     this.y = y
                 }
-            }
+                // if (this.type === 1) {
+                //
+                //     console.log('this.x:' + this.getAbsoluteX() + ' this.y:' + this.getAbsoluteY() + ' obj.getRotationAngle(): ' + obj.getRotationAngle())
+                //     console.log('objPosX:' + objPosX + ' objPosY:' + objPosY)
+                //
+                //     console.log('centreX:' + centreX + ' centreY:' + centreY)
+                //
+                //     let relativeX = this.x - centreX;
+                //     let relativeY = this.y - this.getHeight() - centreY;
+                //
+                //     this.calculatePointsAfterRotation(relativeX, relativeY, centreX, centreY);
+                // }
+                // else {
+                //     this.x = x
+                //     this.y = y
+                // }
+            }*/
 
             if (this.repaintBlocked === true || this.shape === null) {
                 return this

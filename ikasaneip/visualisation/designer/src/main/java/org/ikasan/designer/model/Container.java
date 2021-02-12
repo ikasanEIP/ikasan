@@ -6,6 +6,8 @@ public class Container {
     private ArrayList<Figure> figures;
     private int x;
     private int y;
+    private int windowx;
+    private int windowy;
 
     public ArrayList<Figure> getFigures() {
         return figures;
@@ -29,5 +31,21 @@ public class Container {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getWindowx() {
+        return windowx;
+    }
+
+    public void setWindowx(int windowx) {
+        this.windowx = windowx;
+    }
+
+    public int getWindowy() {
+        return windowy;
+    }
+
+    public void setWindowy(int windowy) {
+        this.windowy = windowy;
     }
 }

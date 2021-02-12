@@ -1,149 +1,261 @@
 package org.ikasan.designer;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowingcode.vaadin.addons.fontawesome.FontAwesome;
+import com.flowingcode.vaadin.addons.ironicons.IronIcons;
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dnd.DropTarget;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.function.SerializableConsumer;
-import org.ikasan.designer.model.Container;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import org.ikasan.designer.event.CanvasItemDoubleClickEventListener;
+import org.ikasan.designer.event.CanvasItemRightClickEventListener;
+import org.ikasan.designer.pallet.DesignerPalletItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Wraps a visjs network diagram. See http://visjs.org/network_examples.html
- */
-@SuppressWarnings("serial")
-@Tag("div")
-@StyleSheet("./org/ikasan/draw2d/designer.css")
-public class Designer extends VerticalLayout implements HasSize {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Designer extends VerticalLayout implements BeforeEnterObserver
+{
     Logger logger = LoggerFactory.getLogger(Designer.class);
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private DesignerCanvas designerCanvas;
+    private Accordion toolAccordion = new Accordion();
+    private List<ItemPallet> itemPalettes;
 
 
+    private boolean initialised = false;
 
-    public Designer() {
-        super();
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/jquery.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/jquery-ui.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/draw2d.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/designer-connector-flow.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/mousetrap.min.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/view.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/RotateRectangleFeedbackSelectionPolicy.js");
-        UI.getCurrent().getPage().addJavaScript("./org/ikasan/draw2d/RotateHandle.js");
+    /**
+     * Constructor
+     */
+    public Designer()
+    {
+        this.setMargin(false);
+        this.setSpacing(false);
 
-        // Dont transfer empty options.
-        mapper.setSerializationInclusion(Include.NON_EMPTY);
-        // Dont transfer getter and setter
-        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
-            .withGetterVisibility(Visibility.NONE).withSetterVisibility(Visibility.NONE)
-            .withIsGetterVisibility(Visibility.NONE).withFieldVisibility(Visibility.ANY));
-        // remains utf8 escaped chars
-        mapper.configure(Feature.ESCAPE_NON_ASCII, true);
+        this.setHeight("100%");
+        this.setWidth("100%");
 
-        this.setId("canvas-wrapper");
 
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.setTarget(this);
-
-        getElement().addEventListener("vaadin-context-menu-before-open", e -> {
-            contextMenu.setVisible(false);
-            populateContextMenu();
-        });
+        this.itemPalettes = new ArrayList<>();
+        init();
     }
 
-    private void initConnector() {
-        getUI()
-            .orElseThrow(() -> new IllegalStateException(
-                "Connector can only be initialized for an attached Designer"))
-            .getPage()
-            .executeJs("window.Vaadin.Flow.designerConnector.initLazy($0)",
-                getElement());
+    private void init()
+    {
+        this.designerCanvas = new DesignerCanvas();
+        this.designerCanvas.setSizeUndefined();
+
+        DropTarget<DesignerCanvas> dropTarget = DropTarget.create(this.designerCanvas);
+
+        dropTarget.addDropListener(event -> {
+            // move the dragged component to inside the drop target component
+            event.getDragSourceComponent().ifPresent(action -> {
+                ((DesignerPalletItem)action).executeCanvasAddAction();
+                designerCanvas.addPalletItem(((DesignerPalletItem)action));
+                switch(((DesignerPalletItem)action).getDesignerPalletItemType()) {
+                    case ICON:
+                        designerCanvas.addIcon(((DesignerPalletItem)action).getIdentifier(), ((DesignerPalletItem)action).getSrc(), 62, 62);
+                        break;
+                    case RECTANGLE:
+                        designerCanvas.addBoundary(100, 300);
+                        break;
+                    case TRIANGLE:
+                        designerCanvas.addTriangleBoundary(300, 300);
+                        break;
+                    case OVAL:
+                        designerCanvas.addOval(300, 300);
+                        break;
+                    case CIRCLE:
+                        designerCanvas.addCircle();
+                        break;
+                    case LABEL:
+                        designerCanvas.addLabel();
+                        break;
+                }
+            });
+        });
+
+        this.toolAccordion = new Accordion();
+        this.toolAccordion.getElement().getStyle().set("font-size", "8pt");
+        this.toolAccordion.setWidthFull();
+        this.toolAccordion.close();
+
+        VerticalLayout toolLayout = new VerticalLayout();
+        toolLayout.setSpacing(false);
+        toolLayout.setMargin(false);
+        toolLayout.setWidthFull();
+        toolLayout.add(toolAccordion);
+        toolLayout.getElement().getThemeList().remove("padding");
+
+        HorizontalLayout designerLayout = new HorizontalLayout();
+        designerLayout.setSizeUndefined();
+        designerLayout.getElement().getThemeList().remove("padding");
+        Div actions = new Div();
+        actions.setId("canvas-actions");
+        Button groupButton = new Button();
+        groupButton.addClickListener(buttonClickEvent -> {
+            this.designerCanvas.group();
+        });
+        groupButton.getElement().appendChild(FontAwesome.Regular.OBJECT_GROUP.create().getElement());
+        actions.add(groupButton);
+        Button ungroupButton = new Button();
+        ungroupButton.addClickListener(buttonClickEvent -> {
+            this.designerCanvas.ungroup();
+        });
+        ungroupButton.getElement().appendChild(FontAwesome.Regular.OBJECT_UNGROUP.create().getElement());
+        actions.add(ungroupButton);
+        Button toFrontButton = new Button();
+        toFrontButton.addClickListener(buttonClickEvent -> {
+            this.designerCanvas.bringToFront();
+        });
+        toFrontButton.getElement().appendChild(IronIcons.FLIP_TO_FRONT.create().getElement());
+        actions.add(toFrontButton);
+        Button toBackButton = new Button();
+        toBackButton.addClickListener(buttonClickEvent -> {
+            this.designerCanvas.sendToBack();
+        });
+        toBackButton.getElement().appendChild(IronIcons.FLIP_TO_BACK.create().getElement());
+
+        actions.add(toBackButton, getDivider());
+
+//        TextField rotateAngle = new TextField("Angle");
+//        actions.add(rotateAngle);
+        Button undoButton = new Button();
+        undoButton.getElement().appendChild(IronIcons.UNDO.create().getElement());
+        undoButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//            designer.rotateSelected(-Integer.valueOf(rotateAngle.getValue()));
+        });
+        actions.add(undoButton);
+        Button redoButton = new Button();
+        redoButton.getElement().appendChild(IronIcons.REDO.create().getElement());
+        redoButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//            designer.rotateSelected(Integer.valueOf(rotateAngle.getValue()));
+        });
+        actions.add(redoButton, getDivider());
+        Button zoomInButton = new Button();
+        zoomInButton.getElement().appendChild(IronIcons.ZOOM_IN.create().getElement());
+        zoomInButton.setId("canvas_zoom_in");
+        actions.add(zoomInButton);
+        Button zoomOutButton = new Button();
+        zoomOutButton.getElement().appendChild(IronIcons.ZOOM_OUT.create().getElement());
+        zoomOutButton.setId("canvas_zoom_out");
+        actions.add(zoomOutButton, getDivider());
+
+        ColorPicker paintButton = new ColorPicker();
+        paintButton.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextField, String>>)
+            textFieldStringComponentValueChangeEvent -> {
+                this.designerCanvas.setBackgroundColor(textFieldStringComponentValueChangeEvent.getValue());
+        });
+
+//        paintButton.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextField, String>>)
+//            textFieldStringComponentValueChangeEvent -> {
+//            icon.getStyle().set("background-color", textFieldStringComponentValueChangeEvent.getValue());
+//        });
+//        paintButton.addInputListener((ComponentEventListener<InputEvent>) inputEvent -> {
+//            icon.getStyle().set("background-color", paintButton.getValue());
+//        });
+//        paintButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
+//           ColorPicker colorPicker = new ColorPicker();
+//
+//        });
+
+
+        actions.add(paintButton, getDivider());
+        Button copyButton = new Button();
+        copyButton.getElement().appendChild(IronIcons.CONTENT_COPY.create().getElement());
+        actions.add(copyButton);
+        Button pasteButton = new Button();
+        pasteButton.getElement().appendChild(IronIcons.CONTENT_PASTE.create().getElement());
+        actions.add(pasteButton);
+
+        Div tools = new Div();
+        tools.setId("canvas-tools");
+        tools.add(toolLayout);
+
+        designerLayout.add(actions, tools, this.designerCanvas);
+        this.add(designerLayout);
+
+        this.initialised = true;
+    }
+
+    private Image getDivider() {
+        Image divider = new Image("frontend/images/separator.png", "");
+        divider.setWidth("5px");
+        divider.setHeight("20px");
+        divider.getStyle().set("display", "inline-block");
+        divider.getStyle().set("vertical-align", "middle");
+
+        return divider;
+    }
+
+    public void addItemPallet(ItemPallet itemPallet) {
+        this.itemPalettes.add(itemPallet);
+        this.toolAccordion.add(itemPallet.getSummary(), itemPallet.getPallet());
     }
 
     @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        initConnector();
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent)
+    {
+        if(!initialised)
+        {
+            this.init();
+            initialised = true;
+        }
     }
 
     @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        super.onDetach(detachEvent);
-        // FIXME does not work this.diagamDestroy();
+    protected void onAttach(AttachEvent attachEvent)
+    {
+        UI ui = attachEvent.getUI();
+
+//        broadcasterRegistration = FlowStateBroadcaster.register(flowState ->
+//        {
+//            ui.access(() ->
+//            {
+//                // do something interesting here.
+//                logger.debug("Received flow state: " + flowState);
+//            });
+//        });
+
     }
 
-    public void addIcon(String image, double h, double w) {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.addIcon", image, h, w));
+    @Override
+    protected void onDetach(DetachEvent detachEvent)
+    {
+//        broadcasterRegistration.remove();
+//        broadcasterRegistration = null;
     }
 
-    public void addBoundary(double h, double w) {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.addBoundary", h, w));
+    public void setLineType(String pattern) {
+        designerCanvas.setLineType(pattern);
     }
 
-    public void populateContextMenu() {
-
-        getElement().callJsFunction("$connector.getSelected").then(String.class, result -> {
-            Dialog dialog = new Dialog();
-            dialog.add(new Text(result));
-
-
-            try {
-                Container container = mapper.readValue(result, Container.class);
-                dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", "align-self", "flex-start");
-                dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", "position", "absolute");
-                dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", "left", container.getX()+"px");
-                dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", "top", container.getY()+"px");
-                dialog.open();
-            }
-            catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        });
+    public void setRadius(double radius) {
+        designerCanvas.setRadius(radius);
     }
 
-    public void bringToFront() {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.bringToFront"));
+    public void addCanvasItemRightClickEventListener(CanvasItemRightClickEventListener listener) {
+        this.designerCanvas.addCanvasItemRightClickEventListener(listener);
     }
 
-    public void sendToBack() {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.sendToBack"));
+    public void addCanvasItemDoubleClickEventListener(CanvasItemDoubleClickEventListener listener) {
+        this.designerCanvas.addCanvasItemDoubleClickEventListener(listener);
     }
 
-    public void group() {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.group"));
-    }
-
-    public void ungroup() {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.ungroup"));
-    }
-
-    public void setBackgroundColor(String color) {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.setBackgroundColor", color));
-    }
-
-    public void rotateSelected(int angle) {
-        runBeforeClientResponse(
-            ui -> getElement().callJsFunction("$connector.rotate", angle));
-    }
-
-    void runBeforeClientResponse(SerializableConsumer<UI> command) {
-        getElement().getNode()
-            .runWhenAttached(ui -> ui.beforeClientResponse(this, context -> command.accept(ui)));
+    public void exportJson(){
+        this.designerCanvas.exportJson();
     }
 }
+

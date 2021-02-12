@@ -150,7 +150,8 @@ RotateRectangleSelectionFeedbackPolicy = draw2d.policy.figure.RectangleSelection
             r7.setPosition(xPos-r7.getWidth(),yPos+objHeight);
 
             let r69 = figure.selectionHandles.find(handle => handle.type === 69)
-            r69.setPosition(xPos+objWidth+50,yPos-50);
+            r69.setPosition(xPos+(objWidth/2)-(r69.getWidth()/2),yPos-50);
+
 
             if (!figure.getKeepAspectRatio() && figure.isResizeable()) {
                 let r2 = figure.selectionHandles.find(handle => handle.type === 2)
@@ -176,7 +177,8 @@ RotateRectangleSelectionFeedbackPolicy = draw2d.policy.figure.RectangleSelection
         },
 
         createResizeHandle: function (owner, type){
-            return new draw2d.ResizeHandle({ owner:owner, type:type, width:10, height:10 });
+            // return new draw2d.ResizeHandle({ owner:owner, type:type, width:10, height:10 });
+            return new RotateHandle({ owner:owner, type:type, width:10, height:10 });
         },
 
         createRotateHandle: function (owner, type){

@@ -53,7 +53,7 @@
 
     <modules>
         <module>vis.js</module>
-        <module>designer</module>
+        <module>designerCanvas</module>
         <module>dashboard</module>
         <module>dashboard-dist</module>
     </modules>

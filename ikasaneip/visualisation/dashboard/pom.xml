@@ -225,7 +225,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>designer</artifactId>
+            <artifactId>designerCanvas</artifactId>
         </dependency>
 
         <dependency>
@@ -364,7 +364,7 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>designer</artifactId>
+            <artifactId>designerCanvas</artifactId>
             <version>3.1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

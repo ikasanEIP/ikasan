@@ -26,36 +26,50 @@ window.Vaadin.Flow.designerConnector = {
         let x=100;
         let y=100;
 
+        let canvasRightClickX=0;
+        let canvasRightClickY=0;
+        let rightClickX=0;
+        let rightClickY=0;
 
         $(document).ready(function () {
             $("#canvas-wrapper").mouseover(function (e) {
                 x=e.offsetX;
                 y=e.offsetY;
             });
+            $("#canvas-wrapper").on("contextmenu", function(e){
+                canvasRightClickX=e.offsetX;
+                canvasRightClickY=e.offsetY;
+                rightClickX=e.pageX;
+                rightClickY=e.pageY;
+                return false;
+            });
         });
 
-        let rightClickX=0;
-        let rightClickY=0;
-        $(document).on("contextmenu", function(e){
-            rightClickX=e.pageX;
-            rightClickY=e.pageY
-            return false;
-        });
+
+        // $(document).on("contextmenu", function(e){
+        //     rightClickX=e.pageX;
+        //     rightClickY=e.pageY
+        //     return false;
+        // });
 
         class FigureLite {
-            constructor(name, x, y) {
-                this.image = name;
+            constructor(name, x, y, width, height) {
+                this.identifier = name;
                 this.x = x;
                 this.y = y;
+                this.width = width;
+                this.height= height;
             }
 
         }
 
         class Container {
-            constructor(figures, x, y) {
+            constructor(figures, x, y, windowx, windowy) {
                 this.figures = figures;
                 this.x = x;
                 this.y = y;
+                this.windowx = windowx;
+                this.windowy = windowy;
             }
 
         }
@@ -65,18 +79,18 @@ window.Vaadin.Flow.designerConnector = {
             let figures = new Array();
 
             _this.getFigures().each((i, figure)=>{
-                figures.push(new FigureLite(figure.getId(), figure.x, figure.y));
+                figures.push(new FigureLite(figure.getId(), figure.x, figure.y, figure.getWidth(), figure.getHeight()));
             });
 
-            let container = new Container(figures, rightClickX, rightClickY);
+            let container = new Container(figures, canvasRightClickX, canvasRightClickY, rightClickX, rightClickY);
 
             console.log(JSON.stringify(container));
             return JSON.stringify(container);
         }
 
-        designer.$connector.addIcon = function (image, h, w) {
+        designer.$connector.addIcon = function (identifier, image, h, w) {
             debugger;
-            let messageChannel = new draw2d.shape.basic.Image({id: "test", path: image, width:w, height:h, x:x, y:y, keepAspectRatio: true});
+            let messageChannel = new draw2d.shape.basic.Image({id: identifier, path: image, width:w, height:h, x:x, y:y, keepAspectRatio: true});
             messageChannel.createPort("input");
             messageChannel.createPort("output");
 
@@ -152,6 +166,59 @@ window.Vaadin.Flow.designerConnector = {
             designer.$connector.designer.add(boundary);
         }
 
+        designer.$connector.designer.on("dblclick", function(emitter, event){
+            let figure = event.figure;
+            let figureLite = new FigureLite(figure.getId(), figure.x, figure.y, figure.getWidth(), figure.getHeight());
+            let element = document.getElementById("canvas-wrapper");
+            element.$server.doubleClickEvent(JSON.stringify(figureLite));
+        });
+
+        // designer.$connector.designer.on("contextmenu", function(emitter, event){
+        //     let figure = event.figure;
+        //     let figureLite = new FigureLite(figure.getId(), figure.getX(), figure.getY(), figure.getWidth(), figure.getHeight());
+        //     let element = document.getElementById("canvas-wrapper");
+        //     debugger;
+        //     element.$server.rightClickEvent(JSON.stringify(figureLite), event.pageX, event.pageY);
+        // });
+
+        designer.$connector.addTriangle = function (h, w) {
+            let triangle = new TriangleFigure({x: x, y:y, width:w, height:h});
+
+            designer.$connector.designer.add(triangle);
+        }
+
+
+        designer.$connector.addOval = function (h, w) {
+            let oval =  new draw2d.shape.basic.Oval({width:w,height:h, x:x, y:y});
+
+            designer.$connector.designer.add(oval);
+        }
+
+        designer.$connector.addCircle = function () {
+            let circle =new draw2d.shape.basic.Circle({diameter:80, x:x, y:y, bgColor:"rgba(255,0,100,0.5)"});
+
+            designer.$connector.designer.add(circle);
+        }
+
+        designer.$connector.addLabel = function () {
+            let label = new draw2d.shape.basic.Label({
+                text:"Double click to edit!",
+                color:"rgba(255,255,255,0)",
+                fontColor:"#0d0d0d",
+                bgColor:"rgba(255,255,255,0)",
+                outlineColor:"rgba(255,255,255,0)",
+                fontFamily: "Trebuchet MS",
+                fontSize: "18pt",
+                x:x, y:y
+            });
+
+
+            label.installEditor(new draw2d.ui.LabelInplaceEditor());
+
+            designer.$connector.designer.add(label);
+        }
+
+
         designer.$connector.setBackgroundColor = function (color) {
             debugger;
             _this.getFigures().each((i, figure)=>{
@@ -163,5 +230,37 @@ window.Vaadin.Flow.designerConnector = {
             });
         }
 
+        designer.$connector.setLineType = function (pattern) {
+            debugger;
+            _this.getFigures().each((i, figure)=>{
+                debugger;
+                if(figure.isSelected()) {
+                    debugger;
+                    figure.setDashArray(pattern);
+                }
+            });
+        }
+
+        designer.$connector.setRadius = function (radius) {
+            debugger;
+            _this.getFigures().each((i, figure)=>{
+                debugger;
+                if(figure.isSelected()) {
+                    debugger;
+                    figure.setRadius(radius);
+                }
+            });
+        }
+
+        designer.$connector.exportJson = function () {
+            debugger
+            let writer = new draw2d.io.json.Writer();
+            let result = null;
+            writer.marshal(designer.$connector.designer, function(json){
+                result = JSON.stringify(json,null,2);
+            });
+
+            return result;
+        }
     }
 }
