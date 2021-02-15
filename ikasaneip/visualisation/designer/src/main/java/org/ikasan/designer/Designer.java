@@ -5,6 +5,7 @@ import com.flowingcode.vaadin.addons.ironicons.IronIcons;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dnd.DropTarget;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -180,6 +181,12 @@ public class Designer extends VerticalLayout implements BeforeEnterObserver
         pasteButton.getElement().appendChild(IronIcons.CONTENT_PASTE.create().getElement());
         actions.add(pasteButton);
 
+        Checkbox readOnly = new Checkbox("Read Only");
+        readOnly.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>>)
+            checkboxBooleanComponentValueChangeEvent -> this.designerCanvas.setReadonly(checkboxBooleanComponentValueChangeEvent.getValue()));
+
+        actions.add(readOnly);
+
         Div tools = new Div();
         tools.setId("canvas-tools");
         tools.add(toolLayout);
@@ -244,6 +251,14 @@ public class Designer extends VerticalLayout implements BeforeEnterObserver
 
     public void setRadius(double radius) {
         designerCanvas.setRadius(radius);
+    }
+
+    public void setStroke(int width) {
+        this.designerCanvas.setStroke(width);
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.designerCanvas.setReadonly(readonly);
     }
 
     public void addCanvasItemRightClickEventListener(CanvasItemRightClickEventListener listener) {

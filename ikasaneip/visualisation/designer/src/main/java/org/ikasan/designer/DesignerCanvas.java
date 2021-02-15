@@ -185,6 +185,16 @@ public class DesignerCanvas extends VerticalLayout implements HasSize {
             ui -> getElement().callJsFunction("$connector.setRadius", radius));
     }
 
+    public void setStroke(int width) {
+        runBeforeClientResponse(
+            ui -> getElement().callJsFunction("$connector.setStroke", width));
+    }
+
+    public void setReadonly(boolean readonly) {
+        runBeforeClientResponse(
+            ui -> getElement().callJsFunction("$connector.setReadOnly", readonly));
+    }
+
     public void rotateSelected(int angle) {
         runBeforeClientResponse(
             ui -> getElement().callJsFunction("$connector.rotate", angle));

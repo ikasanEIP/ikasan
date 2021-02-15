@@ -252,6 +252,17 @@ window.Vaadin.Flow.designerConnector = {
             });
         }
 
+        designer.$connector.setStroke = function (width) {
+            debugger;
+            _this.getFigures().each((i, figure)=>{
+                debugger;
+                if(figure.isSelected()) {
+                    debugger;
+                    figure.setStroke(width);
+                }
+            });
+        }
+
         designer.$connector.exportJson = function () {
             debugger
             let writer = new draw2d.io.json.Writer();
@@ -262,5 +273,25 @@ window.Vaadin.Flow.designerConnector = {
 
             return result;
         }
+
+        designer.$connector.setReadOnly = function (readonly) {
+            if(readonly === true){
+                designer.$connector.designer.uninstallEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
+                designer.$connector.designer.uninstallEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
+                designer.$connector.designer.uninstallEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
+                designer.$connector.designer.uninstallEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
+                designer.$connector.designer.installEditPolicy( new draw2d.policy.canvas.ReadOnlySelectionPolicy());
+            }
+            else {
+                designer.$connector.designer.installEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
+                designer.$connector.designer.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
+                designer.$connector.designer.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
+                designer.$connector.designer.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
+                designer.$connector.designer.uninstallEditPolicy( new draw2d.policy.canvas.ReadOnlySelectionPolicy());
+            }
+        }
+
+
+
     }
 }

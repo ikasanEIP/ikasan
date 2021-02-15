@@ -35,19 +35,26 @@ public class ShapeContextMenu extends Dialog {
         select.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<Image>, Image>>)
             selectImageComponentValueChangeEvent -> designer.setLineType(""));
 
-        NumberField numberField = new NumberField();
+        NumberField numberField = new NumberField("Corner Radius");
         numberField.setHasControls(true);
         numberField.setValue(0d);
 
         numberField.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<NumberField, Double>>)
             numberFieldDoubleComponentValueChangeEvent -> designer.setRadius(numberFieldDoubleComponentValueChangeEvent.getValue()));
 
+        NumberField strokeField = new NumberField("Line Width");
+        strokeField.setHasControls(true);
+        strokeField.setValue(0d);
+
+        strokeField.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<NumberField, Double>>)
+            numberFieldDoubleComponentValueChangeEvent -> designer.setStroke(numberFieldDoubleComponentValueChangeEvent.getValue().intValue()));
+
         Button button = new Button("Export");
         button.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> {
             designer.exportJson();
         });
 
-        this.add(select, numberField, button);
+        this.add(select, numberField, strokeField, button);
 
     }
 }
