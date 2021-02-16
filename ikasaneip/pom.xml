@@ -339,12 +339,6 @@
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
         <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
-
-        <version.vaadin>14.4.4</version.vaadin>
-        <version.org.vaadin.tabs>1.2.0</version.org.vaadin.tabs>
-        <version.com.vaadin.componentfactory>1.2.2</version.com.vaadin.componentfactory>
-        <version.org.vaadin.olli>3.0.1</version.org.vaadin.olli>
-        <version.org.vaadin.erik>2.1.1</version.org.vaadin.erik>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>23.0</version.com.google.guava>
         <version.tomcat>9.0.35</version.tomcat>
@@ -354,15 +348,10 @@
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
         <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
-        <version.ace.editor>1.0.3-Beta</version.ace.editor>
-        <version.thymeleaf>3.0.11.RELEASE</version.thymeleaf>
         <version.jacoco>0.8.1</version.jacoco>
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
-        <version.app.layout.addon>4.0.0</version.app.layout.addon>
-        <version.vaadin.css.grid>2.0.0.beta3</version.vaadin.css.grid>
-        <version.karibu.testing.v10>1.2.6</version.karibu.testing.v10>
     </properties>
 
     <!-- Distribution for releases -->
@@ -742,7 +731,6 @@
                 <module>persistence</module>
                 <module>cli</module>
                 <module>sample</module>
-                <module>visualisation</module>
             </modules>
 
         </profile>
@@ -792,7 +780,6 @@
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
-                <module>visualisation</module>
                 <module>developer</module>
                 <module>sample</module>
                 <module>transaction</module>
@@ -1357,12 +1344,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-visualisation</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>kryo</artifactId>
                 <version>${version.kryo}</version>
@@ -1916,62 +1897,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${version.com.fasterxml.jackson.core}</version>
-            </dependency>
-
-            <!-- Vaadin -->
-
-            <dependency>
-                <groupId>org.vaadin.olli</groupId>
-                <artifactId>file-download-wrapper</artifactId>
-                <version>${version.org.vaadin.olli}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-text</artifactId>
-                <version>${version.commons-text}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.appreciated</groupId>
-                <artifactId>app-layout-addon</artifactId>
-                <version>${version.app.layout.addon}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.appreciated</groupId>
-                <artifactId>vaadin-css-grid</artifactId>
-                <version>${version.vaadin.css.grid}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.mvysny.kaributesting</groupId>
-                <artifactId>karibu-testing-v10-spring</artifactId>
-                <version>${version.karibu.testing.v10}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.vaadin.erik</groupId>
-                <artifactId>slidetab</artifactId>
-                <version>${version.org.vaadin.erik}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.vaadin.tabs</groupId>
-                <artifactId>paged-tabs</artifactId>
-                <version>${version.org.vaadin.tabs}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin.componentfactory</groupId>
-                <artifactId>tooltip</artifactId>
-                <version>${version.com.vaadin.componentfactory}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.ciesielskis</groupId>
-                <artifactId>ace-editor</artifactId>
-                <version>${version.ace.editor}</version>
             </dependency>
 
             <dependency>
