@@ -75,7 +75,6 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:hospital-conf.xml",
         "classpath:exclusion-service-conf.xml",
         "classpath:topology-conf.xml",
-        "classpath:topology-tx-conf.xml",
         "classpath:datasource-conf.xml",
         "classpath:security-service-boot-conf.xml",
         "classpath:springapp-servlet-boot.xml",
