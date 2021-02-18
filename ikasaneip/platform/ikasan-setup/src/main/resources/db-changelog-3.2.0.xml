@@ -28,6 +28,8 @@
     <include file="db/drop/db-changeLog-dropNotification.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropPointToPointFlow.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropPointToPointFlowProfile.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropErrorCategorisationLink.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropErrorCategorisation.xml" relativeToChangelogFile="true" />
 
     <!-- 3.2.x table modify -->
 
