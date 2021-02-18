@@ -67,7 +67,7 @@ For instance,
 Select the directory/workspace to create this project.
 ![Login](quickstart-images/IntelliJ-new-project-screen3.png) 
 
-Thats it! 
+That's it! 
 
 Your project will be created and look something like this.
 ![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
