@@ -23,17 +23,7 @@
     </bean>
 
     <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
-        <property name="sessionFactory" ref="exclusionEventHibernateSessionFactory"/>
-    </bean>
-
-    <bean id="exclusionEventHibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.xads" />
-        <property name="mappingResources">
-            <list>
-                <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <property name="sessionFactory" ref="ikasanXAAllSessionFactory"/>
     </bean>
 
 </beans>

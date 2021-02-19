@@ -81,44 +81,19 @@
 		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <constructor-arg value="true"/>
         <constructor-arg value="1000"/>
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+		<property name="sessionFactory" ref="ikasanXAAllSessionFactory" />
 	</bean>
 
 	<bean id="triggerDao"
 		class="org.ikasan.trigger.dao.HibernateTriggerDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+		<property name="sessionFactory" ref="ikasanXAAllSessionFactory" />
 	</bean>
 
     <bean id="messageHistoryDao"
           class="org.ikasan.history.dao.HibernateMessageHistoryDao">
-        <property name="sessionFactory" ref="messageHistoryXaHibernateSessionFactory"/>
+        <property name="sessionFactory" ref="ikasanXAAllSessionFactory"/>
     </bean>
 
-	<bean id="messageHistoryXaHibernateSessionFactory"
-          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.xads" />
-        <property name="mappingResources">
-            <list>
-                <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
-                <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
-                <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
-                <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
-
-    <bean id="wiretapHibernateSessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
-		<property name="mappingResources">
-			<list>
-                <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
-				<value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
     
     <bean id="jobsMap" class="java.util.HashMap">
         <constructor-arg>

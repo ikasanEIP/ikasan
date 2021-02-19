@@ -57,21 +57,11 @@
     
     <bean id="systemEventDao"
         class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
-        <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
+        <property name="sessionFactory" ref="ikasanXAAllSessionFactory" />
         <constructor-arg value="true"/>
         <constructor-arg value="100"/>
         <constructor-arg value="1000"/>
     </bean>
-    
-    <bean id="systemEventHibernateSessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
-		<property name="mappingResources">
-			<list>
-				<value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
+
 	
 </beans>

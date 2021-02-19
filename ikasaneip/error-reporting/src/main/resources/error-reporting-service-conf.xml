@@ -21,32 +21,15 @@
     </bean>
 
 	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
-        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+        <property name="sessionFactory" ref="ikasanNonXAAllSessionFactory"/>
     </bean>
     
     <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
-        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+        <property name="sessionFactory" ref="ikasanNonXAAllSessionFactory"/>
     </bean>
     
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
-        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
-    </bean>
-
-    <bean id="errorReportingSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.ds" />
-        <property name="mappingResources">
-            <list>
-                <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/Link.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
-                <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <property name="sessionFactory" ref="ikasanNonXAAllSessionFactory"/>
     </bean>
 
     <aop:config>

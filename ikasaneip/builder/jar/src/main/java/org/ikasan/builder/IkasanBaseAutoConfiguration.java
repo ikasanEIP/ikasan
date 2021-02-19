@@ -52,11 +52,19 @@ import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 @ImportResource( {
@@ -129,6 +137,105 @@ public class IkasanBaseAutoConfiguration
                                                                                     ));
         }
         return builder.build();
+    }
+
+
+
+    @Autowired
+    @Qualifier("ikasan.ds")
+    DataSource ikasands;
+
+    @Autowired
+    @Qualifier("ikasan.xads")
+    DataSource ikasanxads;
+
+    @Resource
+    Map platformHibernateProperties;
+
+    @Bean
+    public LocalSessionFactoryBean ikasanNonXAAllSessionFactory(
+                                                         )
+    {
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+        sessionFactoryBean.setDataSource(ikasands);
+        sessionFactoryBean.setMappingResources(
+            "/org/ikasan/security/model/Principal.hbm.xml",
+            "/org/ikasan/security/model/Role.hbm.xml",
+            "/org/ikasan/security/model/Policy.hbm.xml",
+            "/org/ikasan/security/model/User.hbm.xml",
+            "/org/ikasan/security/model/Authority.hbm.xml",
+            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
+            "/org/ikasan/security/model/PolicyLink.hbm.xml",
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
+            "/org/ikasan/security/model/RoleModule.hbm.xml",
+
+
+            "/org/ikasan/configurationService/model/Configuration.hbm.xml",
+
+
+             "/org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml",
+             "/org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml",
+             "/org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml",
+             "/org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml",
+             "/org/ikasan/error/reporting/model/Link.hbm.xml",
+             "/org/ikasan/error/reporting/model/Note.hbm.xml",
+             "/org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml",
+             "/org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml"
+
+            );
+        Properties properties = new Properties();
+        properties.putAll(platformHibernateProperties);
+        sessionFactoryBean.setHibernateProperties(properties);
+
+        return sessionFactoryBean;
+    }
+
+    @Bean
+    public LocalSessionFactoryBean ikasanXAAllSessionFactory(
+                                                               )
+    {
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+        sessionFactoryBean.setDataSource(ikasanxads);
+        sessionFactoryBean.setMappingResources(
+            "/org/ikasan/security/model/Principal.hbm.xml",
+            "/org/ikasan/security/model/Role.hbm.xml",
+            "/org/ikasan/security/model/Policy.hbm.xml",
+            "/org/ikasan/security/model/User.hbm.xml",
+            "/org/ikasan/security/model/Authority.hbm.xml",
+            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
+            "/org/ikasan/security/model/PolicyLink.hbm.xml",
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
+            "/org/ikasan/security/model/RoleModule.hbm.xml",
+
+            "/org/ikasan/configurationService/model/Configuration.hbm.xml",
+
+            "/org/ikasan/exclusion/model/ExclusionEvent.hbm.xml",
+
+            "/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml",
+
+            "/org/ikasan/replay/model/ReplayEvent.hbm.xml",
+			"/org/ikasan/replay/model/ReplayAudit.hbm.xml",
+			"/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml",
+
+            "/org/ikasan/systemevent/model/SystemEvent.hbm.xml",
+
+
+
+            "/org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml",
+            "/org/ikasan/trigger/model/Trigger.hbm.xml",
+            "/org/ikasan/history/model/ComponentInvocationMetric.hbm.xml",
+            "/org/ikasan/history/model/CustomMetric.hbm.xml",
+            "/org/ikasan/history/model/MetricEvent.hbm.xml",
+            "/org/ikasan/history/model/FlowInvocationMetric.hbm.xml",
+
+            "/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml"
+
+            );
+        Properties properties = new Properties();
+        properties.putAll(platformHibernateProperties);
+        sessionFactoryBean.setHibernateProperties(properties);
+
+        return sessionFactoryBean;
     }
 
 }

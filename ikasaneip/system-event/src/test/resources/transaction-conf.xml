@@ -42,34 +42,46 @@
  */
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-       
-       <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		    <property name="sessionFactory">
-		        <ref bean="systemEventHibernateSessionFactory"/>
-		    </property>
-		</bean>
-		
-		<aop:config>
-	        <aop:pointcut id="daoMethods"
-	                expression="execution(* org.ikasan.systemevent.dao.*.*(..))"/>
 
-	                
-	        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
 
-	    </aop:config>
-	
-	    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-	        <tx:attributes>
-	            <tx:method name="*" propagation="REQUIRED"/>
-	        </tx:attributes>
-	    </tx:advice>
+    <bean id="ikasanXAAllSessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads"/>
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory">
+            <ref bean="ikasanXAAllSessionFactory"/>
+        </property>
+    </bean>
+
+    <aop:config>
+        <aop:pointcut id="daoMethods"
+                      expression="execution(* org.ikasan.systemevent.dao.*.*(..))"/>
+
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
 
 </beans>

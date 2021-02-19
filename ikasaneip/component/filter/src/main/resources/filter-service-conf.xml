@@ -19,18 +19,7 @@
 
     <bean id="duplicateFilterDao"
           class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
-        <property name="sessionFactory" ref="filterHibernateSessionFactory" />
-    </bean>
-
-    <bean id="filterHibernateSessionFactory"
-          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.xads" />
-        <property name="mappingResources">
-            <list>
-                <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties" />
+        <property name="sessionFactory" ref="ikasanXAAllSessionFactory" />
     </bean>
 
 </beans>
