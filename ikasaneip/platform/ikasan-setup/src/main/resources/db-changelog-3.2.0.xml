@@ -15,6 +15,8 @@
     <!-- 3.2.x index creation -->
 
     <!-- 3.2.x table drop -->
+    <include file="db/drop/db-changeLog-dropRoleFilter.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropFilter.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropFilterComponent.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropComponent.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropFlow.xml" relativeToChangelogFile="true" />
