@@ -56,17 +56,5 @@
         <module>dashboard</module>
     </modules>
 
-    <!-- Required otherwise Maven enforcer will fail due to Dependency convergence errors for com.vaadin & org.webjars.bowergithub.vaadin -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>${version.vaadin}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>
