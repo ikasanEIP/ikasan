@@ -68,4 +68,8 @@ public class DelayGenerationBroker implements Broker
     {
         this.brokerDelay = brokerDelay;
     }
+
+    public void reset(){
+        this.brokerDelay = 0l;
+    }
 }
