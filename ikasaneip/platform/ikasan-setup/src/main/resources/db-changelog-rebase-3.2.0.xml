@@ -338,26 +338,6 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="ikasan" id="1613830373215-20">
-        <createTable tableName="FILTER">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="FILTERPK"/>
-            </column>
-            <column name="NAME" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="DESCRIPTION" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATEDBY" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
-        </createTable>
-    </changeSet>
     <changeSet author="ikasan" id="1613830373215-21">
         <createTable tableName="FLOWEVENTTRIGGER">
             <column autoIncrement="true" name="ID" type="BIGINT(19)">
@@ -987,16 +967,6 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="ikasan" id="1613830373215-53">
-        <createTable tableName="ROLEFILTER">
-            <column name="ROLEID" type="DECIMAL(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FILTERID" type="DECIMAL(18)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet author="ikasan" id="1613830373215-54">
         <createTable tableName="ROLEMODULE">
             <column autoIncrement="true" name="ID" type="BIGINT(19)">
@@ -1182,9 +1152,6 @@
     <changeSet author="ikasan" id="1613830373215-66">
         <addPrimaryKey columnNames="REPLAYAUDITID, REPLAYEVENTID" constraintName="REPLAYAUDITEVENTPK" tableName="REPLAYAUDITEVENT"/>
     </changeSet>
-    <changeSet author="ikasan" id="1613830373215-67">
-        <addPrimaryKey columnNames="ROLEID, FILTERID" constraintName="ROLEFILTERPK" tableName="ROLEFILTER"/>
-    </changeSet>
     <changeSet author="ikasan" id="1613830373215-68">
         <addPrimaryKey columnNames="ROLEID, POLICYID" constraintName="ROLEPOLICY_14713412752" tableName="ROLEPOLICY"/>
     </changeSet>
@@ -1265,11 +1232,6 @@
     <changeSet author="ikasan" id="1613830373215-84">
         <createIndex indexName="EXCLEVENTACTION_ERRORURI" tableName="EXCLUSIONEVENTACTION">
             <column name="ERRORURI"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="ikasan" id="1613830373215-85">
-        <createIndex indexName="FILTERNAMEU" tableName="FILTER" unique="true">
-            <column name="NAME"/>
         </createIndex>
     </changeSet>
     <changeSet author="ikasan" id="1613830373215-86">
@@ -1550,11 +1512,6 @@
             <column name="IDENTIFIER"/>
         </createIndex>
     </changeSet>
-    <changeSet author="ikasan" id="1613830373215-137">
-        <createIndex indexName="ROLEFILTERFK_INDEX_9" tableName="ROLEFILTER">
-            <column name="FILTERID"/>
-        </createIndex>
-    </changeSet>
     <changeSet author="ikasan" id="1613830373215-138">
         <createIndex indexName="ROLEMODULE_ROLEID_IDX" tableName="ROLEMODULE">
             <column name="ROLEID"/>
@@ -1662,9 +1619,6 @@
     </changeSet>
     <changeSet author="ikasan" id="1613830373215-165">
         <addForeignKeyConstraint baseColumnNames="REPLAYAUDITID" baseTableName="REPLAYAUDITEVENT" constraintName="REPLAYAUDITEVENTFK1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="REPLAYAUDIT"/>
-    </changeSet>
-    <changeSet author="ikasan" id="1613830373215-166">
-        <addForeignKeyConstraint baseColumnNames="FILTERID" baseTableName="ROLEFILTER" constraintName="ROLEFILTERFK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FILTER"/>
     </changeSet>
     <changeSet author="ikasan" id="1613830373215-167">
         <addForeignKeyConstraint baseColumnNames="ROLEID" baseTableName="ROLEMODULE" constraintName="ROLEMODULE_ROLE_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYROLE"/>
