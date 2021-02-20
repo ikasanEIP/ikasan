@@ -40,20 +40,13 @@
  */
 package org.ikasan.error.reporting.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.ModuleErrorCount;
-import org.ikasan.error.reporting.model.Note;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.persistence.BatchInsert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,6 +55,10 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
@@ -85,7 +82,7 @@ public class ErrorReportingManagementServiceImplTest {
     ErrorReportingServiceDao<ErrorOccurrenceImpl, String> errorReportingServiceDao;
 
     @Resource 
-    ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
+    ErrorReportingManagementService<ErrorOccurrenceImpl, ModuleErrorCount> errorReportingManagementService;
 
     Exception exception = new Exception("failed error occurence msg");
 
@@ -107,24 +104,6 @@ public class ErrorReportingManagementServiceImplTest {
 
     }
 
-    @Test
-    @DirtiesContext
-    public void test_close_error_occurrences() {
-
-        errorReportingManagementService.close(uris, "this is a note", "username");
-
-        List<String> moduleNames = new ArrayList<>();
-        moduleNames.add("moduleName");
-
-        List<String> flowNames = new ArrayList<>();
-        flowNames.add("flowName");
-
-        List<String> flowElementNames = new ArrayList<>();
-        flowElementNames.add("flowElementName");
-
-        int numberOfErrorsFound = errorReportingServiceDao.find(moduleNames, flowNames, flowElementNames, null, null, 1000).size();
-        Assert.assertTrue("Expected 0 errors after closing them all, got " + numberOfErrorsFound, numberOfErrorsFound == 0);
-    }
 
     /**
      * Test save of errorOccurrence

@@ -40,10 +40,6 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
-import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 import java.util.Date;
@@ -56,11 +52,6 @@ import java.util.List;
  */
 public interface ErrorManagementDao
 {
-	/**
-	 * 
-	 * @param errorOccurrenceAction
-	 */
-	public void saveErrorOccurrenceAction(ErrorOccurrenceAction errorOccurrenceAction);
 
 	/**
 	 *
@@ -68,31 +59,7 @@ public interface ErrorManagementDao
      */
 	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence);
 	
-	/**
-	 * 
-	 * @param note
-	 */
-	public void saveNote(Note note);
-	
-	/**
-	 * 
-	 * @param note
-	 */
-	public void deleteNote(Note note);
-	
-	
-	/**
-	 * 
-	 * @param errorOccurrenceLink
-	 */
-	public void saveErrorOccurrenceLink(ErrorOccurrenceLink errorOccurrenceLink);
-	
-	/**
-	 * 
-	 * @param errorOccurrenceNote
-	 */
-	public void saveErrorOccurrenceNote(ErrorOccurrenceNote errorOccurrenceNote);
-	
+
 	/**
 	 * 
 	 * @param errorOccurrence
@@ -105,29 +72,7 @@ public interface ErrorManagementDao
 	 * @return
 	 */
 	public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris);
-	
-	
-	/**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(String errorUri);
-	
-	/**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<Note> getNotesByErrorUri(String errorUri);
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<String> getAllErrorUrisWithNote();
-	
+
 	/**
 	 * 
 	 * @param uris
@@ -146,12 +91,7 @@ public interface ErrorManagementDao
 	 */
     public List<ErrorOccurrence> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
 															Date startDate, Date endDate);
-    /**
-     * 
-     * @return
-     */
-    public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions();
-    
+
     /**
      *
      * @param moduleName

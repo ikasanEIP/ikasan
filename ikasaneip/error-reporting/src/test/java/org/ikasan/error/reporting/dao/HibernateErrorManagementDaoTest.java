@@ -41,8 +41,6 @@
 package org.ikasan.error.reporting.dao;
 
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
@@ -82,61 +80,7 @@ public class HibernateErrorManagementDaoTest
     Exception exception = new Exception("error message");
 
    
-    /**
-     * Test save of errorOccurrence
-     */
-    @DirtiesContext
-    @Test
-    public void test_save_find_and_delete_note()
-    {
-    	Note note = new Note("some notes", "user");
-    	
-    	this.errorManagementDao.saveNote(note);
-    	
-    	ErrorOccurrenceNote eoNote = new ErrorOccurrenceNote("uri", note);
 
-    	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
-    	
-    	List<ErrorOccurrenceNote> eonotes = this.errorManagementDao.getErrorOccurrenceNotesByErrorUri("uri");
-    	
-    	Assert.assertTrue(eonotes.size() == 1);
-    	
-    	Assert.assertTrue(eonotes.get(0).getNote().getNote().equals("some notes"));
-    	
-    	note = new Note("some notes", "user");
-    	
-    	this.errorManagementDao.saveNote(note);
-    	
-    	eoNote = new ErrorOccurrenceNote("uri", note);
-
-    	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
-    	
-    	List<Note> notes = this.errorManagementDao.getNotesByErrorUri("uri");
-    	
-    	Assert.assertTrue(notes.size() == 2);
-    	
-    	note = new Note("some notes", "user");
-    	
-    	this.errorManagementDao.saveNote(note);
-    	
-    	eoNote = new ErrorOccurrenceNote("uri", note);
-
-    	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
-    	
-    	notes = this.errorManagementDao.getNotesByErrorUri("uri");
-    	
-    	Assert.assertTrue(notes.size() == 3);
-    	
-    	this.errorManagementDao.deleteNote(note);
-    	
-    	notes = this.errorManagementDao.getNotesByErrorUri("uri");
-    	
-    	Assert.assertTrue(notes.size() == 2);
-    	
-    	List<String> uris = this.errorManagementDao.getAllErrorUrisWithNote();
-    	
-    	Assert.assertTrue(uris.size() == 2);
-    }
     
     /**
      * Test save of errorOccurrence
