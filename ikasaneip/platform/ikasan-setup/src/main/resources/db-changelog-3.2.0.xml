@@ -26,7 +26,8 @@
     <include file="db/drop/db-changeLog-dropUserBusinessStream.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropBusinessStreamFlow.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropBusinessStream.xml" relativeToChangelogFile="true" />
-<!--    <include file="db/drop/db-changeLog-dropNote.xml" relativeToChangelogFile="true" />-->
+    <include file="db/drop/db-changeLog-dropErrorOccurrenceNote.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropNote.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropNotification.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropPointToPointFlow.xml" relativeToChangelogFile="true" />
     <include file="db/drop/db-changeLog-dropPointToPointFlowProfile.xml" relativeToChangelogFile="true" />
