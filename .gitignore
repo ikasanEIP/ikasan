@@ -32,3 +32,6 @@ ikasaneip/component/endpoint/filetransfer/sftp/hostkey.ser
 ikasaneip/dashboard/boot/src/main/resources/VAADIN/widgetsets/
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/AppWidgetset/deferredjs/
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/
+ikasaneip/visualisation/dashboard/node_modules
+**/KahaDB/
+esb.mv.db
