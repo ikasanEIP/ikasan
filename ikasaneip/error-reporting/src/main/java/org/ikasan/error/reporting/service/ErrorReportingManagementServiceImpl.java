@@ -40,29 +40,28 @@
  */
 package org.ikasan.error.reporting.service;
 
+import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.error.reporting.dao.ErrorOccurrenceConverter;
+import org.ikasan.error.reporting.model.ModuleErrorCount;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.housekeeping.HousekeepService;
+import org.ikasan.spec.persistence.BatchInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.ikasan.error.reporting.dao.ErrorOccurrenceConverter;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.persistence.BatchInsert;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.error.reporting.dao.ErrorManagementDao;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.ModuleErrorCount;
-import org.ikasan.error.reporting.model.Note;
-import org.ikasan.spec.harvest.HarvestService;
-import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, ModuleErrorCount>,
 		HousekeepService, HarvestService<ErrorOccurrence>, BatchInsert<ErrorOccurrence>
 {
 	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
@@ -100,67 +99,6 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
         this.errorOccurrenceConverter = new ErrorOccurrenceConverter();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#update(java.util.List, java.lang.String)
-	 */
-	@Override
-	public void update(List<String> uris, String noteString, String user) {
-		Note note = null;
-
-		if (noteString != null && noteString.length() > 0) {
-			note = new Note(noteString, user);
-			this.errorManagementDao.saveNote(note);
-		}
-
-		for (String uri : uris) {
-			if (note != null) {
-				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
-
-				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#close(java.util.List, java.lang.String)
-	 */
-	@Override
-	public void close(List<String> uris, String noteString, String user) {
-		Note note = null;
-
-		if (noteString != null && noteString.length() > 0) {
-			note = new Note(noteString, user);
-			this.errorManagementDao.saveNote(note);
-		}
-
-
-		for (String uri : uris) {
-			ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
-
-			this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
-		}
-
-		for (int i = 0; i < uris.size(); ) {
-			List<String> batchUris = new ArrayList<String>();
-			int endMarker = 0;
-
-			if (i + batchSize < uris.size()) {
-				endMarker = i + batchSize;
-			} else {
-				endMarker = uris.size();
-			}
-
-			batchUris.addAll(uris.subList(i, endMarker));
-
-			this.errorManagementDao.close(batchUris, user);
-
-			if (i + batchSize < uris.size()) {
-				i = i + batchSize;
-			} else {
-				i = uris.size();
-			}
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
@@ -179,48 +117,6 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	public void setTimeToLive(Long timeToLive) {
 		// TODO Auto-generated method stub
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#deleteNote(java.lang.Object)
-	 */
-	@Override
-	public void deleteNote(Note note) {
-		this.errorManagementDao.deleteNote(note);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#updateNote(java.lang.Object)
-	 */
-	@Override
-	public void updateNote(Note note) {
-		this.errorManagementDao.saveNote(note);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithNote()
-	 */
-	@Override
-	public List<String> getAllErrorUrisWithNote() {
-		return this.errorManagementDao.getAllErrorUrisWithNote();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getNotesByErrorUri(java.lang.String)
-	 */
-	@Override
-	public List<Note> getNotesByErrorUri(String errorUri) {
-		return this.errorManagementDao.getNotesByErrorUri(errorUri);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getErrorOccurrenceNotesByErrorUri(java.lang.String)
-	 */
-	@Override
-	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
-			String errorUri) {
-		return this.errorManagementDao.getErrorOccurrenceNotesByErrorUri(errorUri);
 	}
 
 	/**
