@@ -2,7 +2,6 @@ package org.ikasan.dashboard.ui.visualisation.model.flow;
 
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.FlowElementMetaData;
-import org.ikasan.topology.model.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
