@@ -50,42 +50,11 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCCURRENCE_NOTE, MODULE_ERROR_COUNT>
+public interface ErrorReportingManagementService<ACTIONED_EVENT, MODULE_ERROR_COUNT>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
 
-    /**
-     * This message will associate a note with the errors referenced by the uris.
-     * 
-     * @param uris
-     * @param note
-     */
-    public void update(List<String> uris, String note, String user);
-    
-    /**
-     * This method will close errors and associate a note with them.
-     * 
-     * @param uris
-     * @param note
-     * @param user
-     */
-    public void close(List<String> uris, String note, String user);
-
-    /**
-     * Delete a note
-     * 
-     * @param note
-     */
-    public void deleteNote(NOTE note);
-    
-    /**
-     * Update a note
-     * 
-     * @param note
-     */
-    public void updateNote(NOTE note);
-    
     /**
      * Find an actioned error reporting events based on a list of moduleName, flowName and flowElementName
      * as well as a date range.
@@ -100,12 +69,7 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCC
     public List<ACTIONED_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
     		Date startDate, Date endDate);
     
-	/**
-	 * Method to return all error uris that have a note.
-	 * 
-	 * @return
-	 */
-	public List<String> getAllErrorUrisWithNote();
+
 
 
     /**
@@ -120,22 +84,7 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCC
      * Housekeep expired exclusionEvents.
      */
     public void housekeep();
-    
-    /**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<NOTE> getNotesByErrorUri(String errorUri);
-	
-	
-	/**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<ERROR_OCCURRENCE_NOTE> getErrorOccurrenceNotesByErrorUri(String errorUri);
-	
+
 	/**
 	 * 
 	 * @param moduleName
