@@ -8,8 +8,8 @@
             </pattern>
         </encoder>
     </appender>
-    <logger name="org.springframework" level="INFO"/>
-    <logger name="org.ikasan" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.ikasan" level="WARN"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.springframework.core.env.StandardEnvironment" level="OFF"/>
 
