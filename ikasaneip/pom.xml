@@ -720,7 +720,6 @@
                 <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
-                <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
                 <module>rest</module>
@@ -763,7 +762,6 @@
                 <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
-                <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
                 <module>test</module>
