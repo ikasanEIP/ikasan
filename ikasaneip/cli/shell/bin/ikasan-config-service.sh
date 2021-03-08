@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # /*
 #  * $Id$
 #  * $URL$
@@ -41,8 +43,7 @@
 #  * ====================================================================
 #  */
 
-#!/bin/bash
-#set -u
+
 # This script assumes you are running with a spring config service to source application properties
 # Do not change this script, change the config-service-env.bat script fpr you custom environment settings.
 
