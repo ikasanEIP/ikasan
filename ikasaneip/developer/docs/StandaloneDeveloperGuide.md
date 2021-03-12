@@ -52,20 +52,38 @@ We will be using IntelliJ for the rest of this demonstration.
 ## Create a Project
 In IntelliJ select `File/New/Project...`
 
-Select maven (blank archetype). Ensure you select JDK 11 as the SDK for this new project.
+Ensure you select JDK 11 as the SDK for this new project.
+Select Maven, tick the checkbox "Create from archetype", then select "Add Archetype".
 ![Login](quickstart-images/IntelliJ-new-project-screen1.png) 
 
+Add the coordinates of the archetype to use, for this example we will use a vanilla Ikasan archetype
+based on Ikasan version 3.1.0. 
+If you are using a different version ensure you specify the correct Ikasan version.
+Select Ok.
+For instance, 
+- GroupId --> `org.ikasan`
+- ArtefactId --> `ikasan-standalone-vanilla-im-maven-plugin`
+- Version --> `3.1.0`
+![Login](quickstart-images/IntelliJ-new-vanilla-archetype-screen1.png) 
+
+Select Next.
+![Login](quickstart-images/IntelliJ-new-vanilla-archetype-screen2.png) 
+
+Select the directory/workspace to create this project and expand the Artefact Coordinates.
 Specify your project Maven coordinates such as GroupId, ArtefactId, and Version.
 
 For instance, 
 - GroupId --> `com.ikasan.example`
 - ArtefactId --> `MyIntegrationModule`
 - Version --> `1.0.0-SNAPSHOT`
-
-![Login](quickstart-images/IntelliJ-new-project-screen2.png) 
-
-Select the directory/workspace to create this project.
 ![Login](quickstart-images/IntelliJ-new-project-screen3.png) 
+Select Next.
+
+![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
+
+Select Finish.
+
+From here the Maven archetype will be created.
 
 That's it! 
 
