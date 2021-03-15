@@ -83,9 +83,20 @@ Select Next.
 
 Select Finish.
 
+You will be prompted to Open Project, select New Window.
+![Login](quickstart-images/IntelliJ-new-project-screen5.png) 
+
 From here the Maven archetype will be created.
 
 That's it! 
+Lets have a look at what has been created.
+
+TO HERE
+The created project is a standard Java Maven project containing,
+`pom.xml`
+`bin`
+`distribution`
+`jar`
 
 Your project will be created and look something like this.
 ![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
