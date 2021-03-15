@@ -1,5 +1,5 @@
 ![Problem Domain](./quickstart-images/Ikasan-title-transparent.png)
-# Ikasan Standalone Developer Guide
+# Ikasan Developer Guide
 
 # Introduction
 
@@ -38,7 +38,8 @@ Typically the problem domain addressed by IkasanESB requires the sourcing of bus
 various conversions, orchestrations, and delivery to other downstream applications.
 
 # Design
-We will create an Ikasan Integration Module which consists of a single flow containing two component operations.
+We will create an Ikasan Integration Module which consists 
+of a single flow containing two component operations, a consumer and a producer.
 
     IntegrationModule
     - Flow
@@ -57,20 +58,27 @@ Select Maven, tick the checkbox "Create from archetype", then select "Add Archet
 ![Login](quickstart-images/IntelliJ-new-project-screen1.png) 
 
 Add the coordinates of the archetype to use, for this example we will use a vanilla Ikasan archetype
-based on Ikasan version 3.1.0. 
-If you are using a different version ensure you specify the correct Ikasan version.
-Select Ok.
+based on Ikasan version 3.1.0. See [Ikasan Maven Archetypes](#ikasan-maven-archetypes) at the end of this page for a full list. 
+
+If you are using a different Ikasan version ensure you specify the correct version.
+
 For instance, 
 - GroupId --> `org.ikasan`
 - ArtefactId --> `ikasan-standalone-vanilla-im-maven-plugin`
 - Version --> `3.1.0`
-![Login](quickstart-images/IntelliJ-new-vanilla-archetype-screen1.png) 
 
-Select Next.
+![Login](quickstart-images/IntelliJ-new-vanilla-archetype-screen1.png)
+Select Ok.
+
 ![Login](quickstart-images/IntelliJ-new-vanilla-archetype-screen2.png) 
+Select Next from the New Project dialogue.
 
-Select the directory/workspace to create this project and expand the Artefact Coordinates.
-Specify your project Maven coordinates such as GroupId, ArtefactId, and Version.
+Now specify the project name and the directory/workspace to create this project. 
+Here we have named it ```MyIntegrationModule``` and will create the project in a working directory 
+```~/dev/examples/MyIntegrationModule```
+
+You will need to expand the Artefact Coordinates to specify your project's
+ Maven coordinates such as GroupId, ArtefactId, and Version.
 
 For instance, 
 - GroupId --> `com.ikasan.example`
@@ -81,9 +89,9 @@ Select Next.
 
 ![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
 
-Select Finish.
+Finally select Finish.
 
-You will be prompted to Open Project, select New Window.
+You will be prompted as to how you wish to open the new project, we recommend selecting ```New Window```.
 ![Login](quickstart-images/IntelliJ-new-project-screen5.png) 
 
 From here the Maven archetype will be created.
@@ -92,6 +100,8 @@ That's it!
 Lets have a look at what has been created.
 
 TO HERE
+
+
 The created project is a standard Java Maven project containing,
 `pom.xml`
 `bin`
