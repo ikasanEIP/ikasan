@@ -40,19 +40,29 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import com.ikasan.component.factory.IkasanComponent;
+import com.ikasan.component.factory.IkasanComponentFactory;
+import liquibase.pro.packaged.T;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.component.endpoint.SftpProducerBuilderImpl;
+import org.ikasan.component.converter.xml.XsltConverter;
+import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
+import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.env.ConfigurableEnvironment;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 
@@ -66,45 +76,59 @@ public class ModuleConfig
     @Resource
     private BuilderFactory builderFactory;
 
-    @Value("${jms.provider.url}")
-    private String brokerUrl;
+    @Resource
+    private IkasanComponentFactory ikasanComponentFactory;
+
+    @IkasanComponent(prefix="sample.jms", factoryPrefix = "sample.jms.consumer")
+    private JmsContainerConsumer sampleJmsConsumer;
+
+    @IkasanComponent(prefix="sample.jms", factoryPrefix = "sample.jms.producer")
+    private JmsTemplateProducer sampleJmsProducer;
 
     @Bean
     public Module getModule(){
 
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
-
         FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
-
-        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
-                .setConnectionFactory(consumerConnectionFactory)
-                .setDestinationJndiName("source")
-                .setAutoContentConversion(true)
-                .setConfiguredResourceId("jmsConsumer")
-                .build();
-
-
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-
-        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
-                .setConnectionFactory(producerConnectionFactory)
-                .setDestinationJndiName("target")
-                .setConfiguredResourceId("jmsProducer")
-                .build();
 
         Flow flow = fb
                 .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
-                .consumer("JMS Consumer", jmsConsumer)
+                .consumer("JMS Consumer", sampleJmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .broker( "Delay Generating Broker", new DelayGenerationBroker())
-                .producer("JMS Producer", jmsProducer)
+                .producer("JMS Producer", sampleJmsProducer)
                 .build();
 
         Module module = mb.withDescription("Sample Module")
             .addFlow(flow)
             .build();
         return module;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @PostConstruct
+    public void processAnnotation(){
+        ikasanComponentFactory.populateAnnotations(this);
     }
 
 }

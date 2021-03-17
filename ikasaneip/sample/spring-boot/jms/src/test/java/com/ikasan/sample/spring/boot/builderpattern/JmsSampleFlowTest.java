@@ -80,8 +80,9 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import liquibase.pro.packaged.D;
-import org.h2.jdbcx.JdbcDataSource;
+import com.ikasan.component.factory.IkasanComponentFactory;
+import com.ikasan.component.factory.JmsConsumerComponentFactory;
+import com.ikasan.component.factory.JmsProducerComponentFactory;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
@@ -95,32 +96,24 @@ import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
-import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -135,7 +128,7 @@ import static org.junit.Assert.assertTrue;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {JmsProducerComponentFactory.class, JmsConsumerComponentFactory.class, IkasanComponentFactory.class, Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsSampleFlowTest {
     protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
     protected final static String MODULE_REST_PASSWORD_PROPERTY = "rest.module.password";
@@ -215,7 +208,7 @@ public class JmsSampleFlowTest {
 
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(1, browseMessagesOnQueueVerifier.getCaptureResults().size()));
-        assertEquals(((TextMessage) browseMessagesOnQueueVerifier.getCaptureResults().get(0)).getText(), SAMPLE_MESSAGE);
+        assertEquals("Hello world!",((TextMessage) browseMessagesOnQueueVerifier.getCaptureResults().get(0)).getText() );
 
         flowTestRule.assertIsSatisfied();
 
