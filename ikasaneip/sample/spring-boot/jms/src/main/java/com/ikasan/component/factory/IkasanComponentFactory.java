@@ -1,6 +1,8 @@
 package com.ikasan.component.factory;
 
 
+import com.sample.spring.component.custom.CustomConverter;
+import com.sample.spring.component.custom.CustomConverterFactory;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.slf4j.Logger;
@@ -31,7 +33,21 @@ public class IkasanComponentFactory {
     @Resource
     private JmsProducerComponentFactory jmsProducerComponentFactory;
 
+    @Resource
+    private CustomConverterFactory customConverterFactory;
 
+
+    /**
+     * TODO - Replace this code with a spring applicationContext call that searches for all beans of type
+     * TODO - IkasanComponentFactory allowing Custom Component Factories to be dynamically discovered at run time.
+     *
+     * @param suffix
+     * @param prefix
+     * @param factoryConfigPrefix
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public <T> T create(String suffix, String prefix, String factoryConfigPrefix, Class<T> clazz) {
         if (JmsContainerConsumer.class.equals(clazz)) {
             return (T)(jmsConsumerComponentFactory.create(suffix, prefix, factoryConfigPrefix));
@@ -43,6 +59,9 @@ public class IkasanComponentFactory {
             throw new RuntimeException("No factory found for class " + clazz.toString());
         }
     }
+
+
+
 
 //    JmsContainerConsumer sampleJmsConsumer = ikasanComponentFactory.create("sampleJmsConsumer", "sample.jms", "sample.jms.consumer", JmsContainerConsumer.class);
 //    JmsTemplateProducer jmsTemplateProducer = ikasanComponentFactory.create("sampleJmsProducer", "sample.jms", "sample.jms.producer", JmsTemplateProducer.class);

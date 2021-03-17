@@ -42,14 +42,17 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.ikasan.component.factory.IkasanComponent;
 import com.ikasan.component.factory.IkasanComponentFactory;
+import com.sample.spring.component.custom.CustomConverter;
 import liquibase.pro.packaged.T;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
 
+import org.ikasan.builder.component.endpoint.FtpConsumerBuilderImpl;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
@@ -78,12 +81,32 @@ public class ModuleConfig
     @Resource
     private IkasanComponentFactory ikasanComponentFactory;
 
+    /**
+     * NOTE 1 - Full Type is used by component following practice of using Full Type at creation (so the user
+     * knows what they are actually using - rather than having to search builder code buried deep in Ikasan).
+     *
+     * NOTE 2 - The Module and Flow and ComponentFactories in *all* are modules are spring annotated / dependent on spring.
+     * The IkasanComponentFactory interface and the @IkasanComponent *ARE NOT* dependent on spring.
+     *
+     * NOTE 3 - Use of the annotation is equivalent to :-
+     *
+     *
+     *
+     */
     @IkasanComponent(prefix="sample.jms", factoryPrefix = "sample.jms.consumer")
     private JmsContainerConsumer sampleJmsConsumer;
 
     @IkasanComponent(prefix="sample.jms", factoryPrefix = "sample.jms.producer")
     private JmsTemplateProducer sampleJmsProducer;
 
+//    @IkasanComponent(prefix="sample.ftp.consumer")
+//    private ScheduledConsumer ftpConsumer;
+//
+//    @IkasanComponent()
+//    private SimpleCustomComponent simpleCustomComponent;
+//
+//    @IkasanComponent(prefix="custom.converter")
+//    private CustomConverter customConverter;
 
 
     @Bean
@@ -107,7 +130,10 @@ public class ModuleConfig
     }
 
 
-
+    /**
+     * TODO -  hide this from view by moving into Ikasan (need to hook into bean creation lifecyle)
+     * TODO -  the user will not have to *worry* about this call;
+     */
     @PostConstruct
     public void processAnnotation(){
         ikasanComponentFactory.populateAnnotations(this);

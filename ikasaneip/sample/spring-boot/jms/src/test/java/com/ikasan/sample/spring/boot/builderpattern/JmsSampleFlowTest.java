@@ -83,6 +83,7 @@ package com.ikasan.sample.spring.boot.builderpattern;
 import com.ikasan.component.factory.IkasanComponentFactory;
 import com.ikasan.component.factory.JmsConsumerComponentFactory;
 import com.ikasan.component.factory.JmsProducerComponentFactory;
+import com.sample.spring.component.custom.CustomConverterFactory;
 import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
@@ -128,7 +129,7 @@ import static org.junit.Assert.assertTrue;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {JmsProducerComponentFactory.class, JmsConsumerComponentFactory.class, IkasanComponentFactory.class, Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {CustomConverterFactory.class, JmsProducerComponentFactory.class, JmsConsumerComponentFactory.class, IkasanComponentFactory.class, Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsSampleFlowTest {
     protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
     protected final static String MODULE_REST_PASSWORD_PROPERTY = "rest.module.password";

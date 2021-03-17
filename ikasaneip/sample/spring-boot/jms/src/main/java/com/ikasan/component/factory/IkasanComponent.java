@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 @Target({java.lang.annotation.ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IkasanComponent {
-    String prefix();
+    String prefix() default "";
 
     String factoryPrefix() default "";
 
