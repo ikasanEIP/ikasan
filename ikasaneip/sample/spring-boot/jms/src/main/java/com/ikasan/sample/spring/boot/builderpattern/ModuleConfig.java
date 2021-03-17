@@ -86,7 +86,6 @@ public class ModuleConfig
 
 
 
-
     @Bean
     public Module getModule(){
 
@@ -94,7 +93,7 @@ public class ModuleConfig
         FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
 
         Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+                .withDescription("Flow demonstrates usage of JMS Consumer and JMS Producer")
                 .consumer("JMS Consumer", sampleJmsConsumer)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .broker( "Delay Generating Broker", new DelayGenerationBroker())
@@ -106,25 +105,6 @@ public class ModuleConfig
             .build();
         return module;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
