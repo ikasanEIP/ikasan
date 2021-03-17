@@ -47,8 +47,7 @@ import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.component.endpoint.SftpProducerBuilderImpl;
-import org.ikasan.component.converter.xml.XsltConverter;
+
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -84,6 +83,9 @@ public class ModuleConfig
 
     @IkasanComponent(prefix="sample.jms", factoryPrefix = "sample.jms.producer")
     private JmsTemplateProducer sampleJmsProducer;
+
+
+
 
     @Bean
     public Module getModule(){
