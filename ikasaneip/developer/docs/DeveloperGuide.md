@@ -96,36 +96,186 @@ You will be prompted as to how you wish to open the new project, we recommend se
 
 From here the Maven archetype will be created.
 
-That's it! 
-Lets have a look at what has been created.
+That's it, your project has been created.
 
-TO HERE
+Lets build it!
 
+## Building the Project
+All Ikasan projects are just standard Java Maven project containing,
+- `pom.xml` - parent Maven build pom
+- `bin` - standard Ikasan command line scripts
+- `distribution` - standard Maven packaging to create a distributable Ikasan module
+- `jar` - all the Java code for this module
 
-The created project is a standard Java Maven project containing,
-`pom.xml`
-`bin`
-`distribution`
-`jar`
+Open the ```Terminal``` window from within IntelliJ. 
+This will open a command line at the root directory of the project.
+To build and package into the binary simply run the following Maven command,
+```bash
+mvn clean package
+```
+This will build and package the application in to a distributed zip file. 
+On completion of the build you should see similar output as that below in the terminal window.
+![Login](quickstart-images/IntelliJ-project-build-screen1.png) 
 
-Your project will be created and look something like this.
-![Login](quickstart-images/IntelliJ-new-project-screen4.png) 
+The deployable zip can be found under ```distribution/target``` and will be named
+```MyIntegrationModule-distribution-1.0.0-SNAPSHOT-dist.zip```.
 
-We now have a blank Java project based on a Maven project structure.
-Next we need to update the Maven pom.xml to set the application packaging to create a Jar.
+This zip can be copied to anywhere, unzipped, and run as a Java progress.
+for instance, 
+
+On Linux,
+```linux
+unzip MyIntegrationModule-distribution-1.0.0-SNAPSHOT-dist.zip
+cd MyIntegrationModule-distribution-1.0.0-SNAPSHOT
+./ikasan-simple.sh start
+```
+On Windows,
+
+Unzip the image using the tool of your choice.
+
+```windows
+cd MyIntegrationModule-distribution-1.0.0-SNAPSHOT
+.\ikasan-simple.bat start
+```
+
+You should now be able to open a browser and access the Integration Module at 
+```http://localhost:8080/MyIntegrationModule``` 
+
+![Login](quickstart-images/new-project-embeddedConsole-screen1.png) 
+
+Login with the default credential admin:admin.
+This will give you the default home page.
+![Login](quickstart-images/new-project-embeddedConsole-screen2.png) 
+
+Selecting 'Modules' will show the Vanilla Integration Module created in this example.
+![Login](quickstart-images/new-project-embeddedConsole-screen3.png) 
+
+Selecting 'Vanilla Integration Module' will show you the flows within this module.
+![Login](quickstart-images/new-project-embeddedConsole-screen4.png) 
+
+We haven't actually named the flow yet, so it just says 'flow name', 
+but you can still start the flow. Try it and you will see the flow status
+change from stopped to running.
+![Login](quickstart-images/new-project-embeddedConsole-screen5.png) 
+
+From here you can pause, resume, or stop.
+
+Congratulations, you have created, built, packaged, and run your Integration Module.
+
+We will now have a look at what is in the project.
+
+## Ikasan Projects
+At the end of the day Ikasan projects are just Java projects based on Maven
+build and dependency management. So if you are familiar with Java and Maven then 
+the Ikasan projects will look familiar.
+
+Lets look in the IDE at what has been created.
+![Login](quickstart-images/new-project-anatomy-screen1.png) 
+
+### Parent pom.xml
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-      <project xmlns="http://maven.apache.org/POM/4.0.0"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-          <modelVersion>4.0.0</modelVersion>
-      
-          <groupId>com.ikasan.example</groupId>
-          <artifactId>MyIntegrationModule</artifactId>
-          <version>1.0.0-SNAPSHOT</version>
-          <packaging>jar</packaging>        <!-- Add packaging type to create a jar -->
-      
-      </project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Maven coordinates for your project -->
+    <groupId>org.example</groupId>
+    <artifactId>MyIntegrationModule-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>MyIntegrationModule Integration Module Parent POM</name>
+    <description>Describe the purpose of this Integration Module</description>
+
+    <!-- build plugins -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules><dependencyConvergence /></rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- standard modules -->
+    <modules>
+        <module>jar</module>
+        <module>distribution</module>
+    </modules>
+
+    <!-- SCM URLS -->
+    <scm>
+        <developerConnection><!-- scm:svn: developer connection URL --></developerConnection>
+        <url><!-- SCM connection URL --></url>
+        <connection><!-- scm:svn: connection URL --></connection>
+    </scm>
+
+    <!-- project properties including the Ikasan version to use -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.ikasan>3.1.0</version.ikasan>
+        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
+        <version.com.h2database>1.4.200</version.com.h2database>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <!-- standard Ikasan bill of materials -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-eip-standalone-bom</artifactId>
+                <version>${version.ikasan}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
 ```
 
 Now add the first Ikasan Application dependency to the Maven pom.xml.
@@ -398,15 +548,6 @@ If successful run the application
 ```
 java -jar target/MyIntegrationModule-1.0.0-SNAPSHOT.jar
 ```
-
-Try accessing the application through a browser at ```http://localhost:8090/example-im``` (user:admin password:admin)
-![Login](quickstart-images/new-project-embeddedConsole-screen5.png) 
-
-Logging in will give you the default home page.
-![Login](quickstart-images/new-project-embeddedConsole-screen6.png) 
-
-Selecting 'Modules' will show the Integration Module for this example, but as we haven't defined one you just see a fairly empty screen.
-![Login](quickstart-images/new-project-embeddedConsole-screen7.png) 
  
 Lets create a module.
 
