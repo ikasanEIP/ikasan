@@ -39,7 +39,7 @@ public class JmsConsumerComponentFactory extends JmsComponentFactory implements 
             .setDurable(true)
             .setPubSubDomain(pubSub)
             .setDurableSubscriptionName(componentName)
-            .setAutoContentConversion(factoryConfiguration.isAutoConversion())
+            .setAutoContentConversion(factoryConfiguration.isAutoContentConversion())
             .setConfiguredResourceId(componentName)
             .build();
         return jmsContainerConsumer;

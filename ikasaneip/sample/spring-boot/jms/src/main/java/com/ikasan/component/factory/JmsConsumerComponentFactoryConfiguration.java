@@ -4,7 +4,7 @@ public class JmsConsumerComponentFactoryConfiguration {
 
     private String destination;
 
-    private boolean autoConversion;
+    private boolean autoContentConversion;
 
     public String getDestination() {
         return destination;
@@ -14,12 +14,12 @@ public class JmsConsumerComponentFactoryConfiguration {
         this.destination = destination;
     }
 
-    public boolean isAutoConversion() {
-        return autoConversion;
+    public boolean isAutoContentConversion() {
+        return autoContentConversion;
     }
 
-    public void setAutoConversion(boolean autoConversion) {
-        this.autoConversion = autoConversion;
+    public void setAutoContentConversion(boolean autoContentConversion) {
+        this.autoContentConversion = autoContentConversion;
     }
 
 }

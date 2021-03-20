@@ -198,6 +198,7 @@ public class JmsSampleFlowTest {
         //Setup component expectations
 
         flowTestRule.consumer("JMS Consumer")
+            .converter("Custom Converter")
             .broker("Exception Generating Broker")
             .broker("Delay Generating Broker")
             .producer("JMS Producer");

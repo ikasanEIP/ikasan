@@ -105,8 +105,8 @@ public class ModuleConfig
 //    @IkasanComponent()
 //    private SimpleCustomComponent simpleCustomComponent;
 //
-//    @IkasanComponent(prefix="custom.converter")
-//    private CustomConverter customConverter;
+    @IkasanComponent(prefix="custom.converter")
+    private CustomConverter customConverter;
 
 
     @Bean
@@ -118,6 +118,7 @@ public class ModuleConfig
         Flow flow = fb
                 .withDescription("Flow demonstrates usage of JMS Consumer and JMS Producer")
                 .consumer("JMS Consumer", sampleJmsConsumer)
+                .converter("Custom Converter", customConverter)
                 .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
                 .broker( "Delay Generating Broker", new DelayGenerationBroker())
                 .producer("JMS Producer", sampleJmsProducer)

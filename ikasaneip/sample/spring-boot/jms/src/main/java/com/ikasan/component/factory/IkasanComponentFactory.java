@@ -8,6 +8,7 @@ import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetSource;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -22,7 +23,7 @@ import java.util.Set;
  * prefix
  */
 @Component
-public class IkasanComponentFactory {
+public class IkasanComponentFactory  {
 
     private static Logger logger = LoggerFactory.getLogger(IkasanComponentFactory.class);
 
@@ -54,6 +55,8 @@ public class IkasanComponentFactory {
         }
         if (JmsTemplateProducer.class.equals(clazz)) {
             return (T)(jmsProducerComponentFactory.create(suffix, prefix, factoryConfigPrefix));
+        } if (CustomConverter.class.equals(clazz)){
+            return (T)(customConverterFactory.create(suffix, prefix, factoryConfigPrefix));
         }
         else {
             throw new RuntimeException("No factory found for class " + clazz.toString());
