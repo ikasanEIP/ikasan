@@ -1,40 +1,40 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * =============================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
@@ -73,9 +73,9 @@ import org.xml.sax.InputSource;
 
 /**
  * Test class for {@link org.ikasan.component.converter.xml.XsltConverter}
- * 
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
 @SuppressWarnings("unqualified-field-access")
 public class XsltConverterTest
@@ -138,7 +138,7 @@ public class XsltConverterTest
     /**
      * Test successful transformation using configured stylesheet where use of translets
      * is switched on. No extra parameters are set on transformer.
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -176,7 +176,7 @@ public class XsltConverterTest
     /**
      * Test successful transformation using configured stylesheet where use of translets
      * is switched off. No extra parameters are set on transformer.
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -215,7 +215,7 @@ public class XsltConverterTest
     /**
      * Test successful transformation using the default configuration but with
      * extra transformation parameters to be set on {@link javax.xml.transform.Transformer}
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -264,7 +264,7 @@ public class XsltConverterTest
      * Sometimes the default URIResolver provided by implementation cannot be used
      * to resolve resources from classpath. Therefore, a custom URIResolver implementation
      * must be configured on created {@link javax.xml.transform.Transformer} instance
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -309,7 +309,7 @@ public class XsltConverterTest
 
     /**
      * Transformation fail
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test(expected=TransformationException.class)
@@ -350,7 +350,7 @@ public class XsltConverterTest
     /**
      * If the configured stylesheet is not found, creating a {@link javax.xml.transform.Transformer} instance
      * will fail
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test(expected=TransformationException.class)
@@ -406,7 +406,7 @@ public class XsltConverterTest
     /**
      * If the configured stylesheet is not found, creating a {@link javax.xml.transform.Transformer} instance
      * will fail
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test(expected=TransformationException.class)
@@ -440,7 +440,7 @@ public class XsltConverterTest
 
     /**
      * Test successful actual stylesheet transformation for Xml to XML.
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -452,7 +452,7 @@ public class XsltConverterTest
         XsltConverterConfiguration.setStylesheetLocation(CLASSPATH_URL_PREFIX + "testXmlToXml.xsl");
         uut.setConfiguration(XsltConverterConfiguration);
 
-        final byte[] inboundPayloadContent = 
+        final byte[] inboundPayloadContent =
             new String("<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value</sourceElement2></sourceRoot>").getBytes();
         String outboundPayloadContent =
             new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><targetRoot><targetElement1>element1Value</targetElement1><targetElement2>element2Value</targetElement2></targetRoot>");
@@ -470,7 +470,7 @@ public class XsltConverterTest
 
     /**
      * Test successful actual stylesheet transformation for Xml to XML.
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -496,7 +496,42 @@ public class XsltConverterTest
 
     /**
      * Test successful actual stylesheet transformation for Xml to XML.
-     * 
+     *
+     * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transform_testXmlToText_xsl_with_configuration_transformation_params_and_instance_transformer() throws TransformerException
+    {
+        // setup test
+        XsltConverter<String,String> uut = new XsltConverter<String,String>(org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance());
+        XsltConverterConfiguration xsltConverterConfiguration = new XsltConverterConfiguration();
+        xsltConverterConfiguration.setStylesheetLocation(CLASSPATH_URL_PREFIX + "testXmlToXmlWithParam.xsl");
+        Map<String,String>transformationParameters = new HashMap<>();
+        transformationParameters.put("schemaLocation", "http://www.ikasan.org/xsd/ikasan.xsd");
+        xsltConverterConfiguration.setConfigurationTransformationParameters(transformationParameters);
+        xsltConverterConfiguration.setSingleTransformer(true);
+        uut.setConfiguration(xsltConverterConfiguration);
+
+        String inboundPayloadContent =
+            new String("<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value"
+                + "</sourceElement2></sourceRoot>");
+        String outboundPayloadContent = new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<targetRoot><xsi:attribute xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+            + "name=\"xsi:noNamespaceSchemaLocation\">http://www.ikasan.org/xsd/ikasan.xsd</xsi:attribute>"
+            + "<targetElement1>element1Value</targetElement1><targetElement2>element2Value"
+            + "</targetElement2></targetRoot>");
+
+        // run test
+        uut.startManagedResource();
+        String result = uut.convert(inboundPayloadContent);
+
+        // Make assertions
+        Assert.assertEquals(outboundPayloadContent, result);
+    }
+
+    /**
+     * Test successful actual stylesheet transformation for Xml to XML.
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -509,8 +544,8 @@ public class XsltConverterTest
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream xslInputStream = classLoader.getResourceAsStream(this.stripClasspathScheme(xslPath));
         StreamSource xsltSource = new StreamSource(xslInputStream);
-        
-        // create transformer 
+
+        // create transformer
         Transformer transformer = transformerFactory.newTransformer(xsltSource);
 
         // setup input
@@ -527,13 +562,13 @@ public class XsltConverterTest
 
         // check result
         byte[] outputBytes = outputDataStream.toByteArray();
-        
+
         Assert.assertEquals(expectedOutput, new String(outputBytes));
     }
 
     /**
      * Test successful actual stylesheet transformation for Xml to XML.
-     * 
+     *
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
@@ -546,8 +581,8 @@ public class XsltConverterTest
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream xslInputStream = classLoader.getResourceAsStream(this.stripClasspathScheme(xslPath));
         StreamSource xsltSource = new StreamSource(xslInputStream);
-        
-        // create transformer 
+
+        // create transformer
         Transformer transformer = transformerFactory.newTransformer(xsltSource);
 
         // setup input
@@ -564,7 +599,7 @@ public class XsltConverterTest
 
         // check result
         byte[] outputBytes = outputDataStream.toByteArray();
-        
+
         Assert.assertEquals(expectedOutput, new String(outputBytes));
     }
 

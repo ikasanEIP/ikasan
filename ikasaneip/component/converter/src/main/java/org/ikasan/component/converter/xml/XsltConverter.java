@@ -46,14 +46,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Map;
-
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -63,6 +56,8 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -173,6 +168,9 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     private Converter<XsltConverterConfiguration, Map<String,String>> configurationParameterConverter;
 
+    /** The transformer that is instantiated once at component startup - not at each invocation **/
+    private Transformer instanceTransformer;
+
     /**
      * Constructor
      *
@@ -241,7 +239,7 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.ikasan.framework.configuration.ConfiguredResource#setConfiguration(java.lang.Object)
      */
     @Override
@@ -275,6 +273,8 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
         return transformer;
     }
 
+    private static Logger logger = LoggerFactory.getLogger(XsltConverter.class);
+
     /**
      * Configure {@link javax.xml.transform.Transformer} instance created with any extra parameters and/or optional
      * custom attributes, e.g.: URIResolver, ErrorListener ..etc.
@@ -291,7 +291,12 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
         if (configurationParameterConverter != null) {
             this.addTransformationParameters(transformer, configurationParameterConverter.convert(configuration));
         }
-
+        // or parameters can be set directly against the configuration
+        if (configuration.getConfigurationTransformationParameters() != null){
+            logger.debug("Configuration has transformation parameters [{}] will set",
+                configuration.getConfigurationTransformationParameters());
+            this.addTransformationParameters(transformer, configuration.getConfigurationTransformationParameters());
+        }
         if (this.uriResolver != null)
         {
             transformer.setURIResolver(this.uriResolver);
@@ -335,9 +340,15 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
             javax.xml.transform.Transformer transformer;
             try
             {
-                transformer = this.createNewConfiguredTransformer();
-                // add transformation parameters set against the source
-                addTransformationParameters(transformer, sourceParameters);
+                if (!configuration.isSingleTransformer()){
+                    transformer = this.createNewConfiguredTransformer();
+                    // add transformation parameters set against the source
+                    addTransformationParameters(transformer, sourceParameters);
+                }
+                else {
+                    transformer = instanceTransformer;
+                }
+
                 // Transform away...
                 transformer.transform(sourceXml, new StreamResult(transformedDataStream));
             }
@@ -388,7 +399,7 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.ikasan.framework.flow.ManagedResource#stopManagedResource()
      */
     @Override
@@ -423,7 +434,7 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.ikasan.framework.flow.ManagedResource#startManagedResource()
      */
     @Override
@@ -442,6 +453,16 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
             catch (TransformerConfigurationException e)
             {
                 throw new RuntimeException(e);
+            }
+        }
+        if (this.configuration.isSingleTransformer()){
+            try
+            {
+                logger.debug("Configuration has singleTransformer set to true will ensure only one transformer for all "
+                    + "invocations");
+                instanceTransformer = this.createNewConfiguredTransformer();
+            } catch (TransformerConfigurationException te){
+                throw new TransformationException(te);
             }
         }
     }
