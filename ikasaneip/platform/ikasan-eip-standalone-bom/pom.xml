@@ -242,6 +242,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-component-factory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-resubmission</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -447,6 +453,18 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-builder</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-component-factory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-component-factory-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

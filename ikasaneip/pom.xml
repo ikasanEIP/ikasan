@@ -720,6 +720,7 @@
                 <module>component</module>
                 <module>platform</module>
                 <module>builder</module>
+                <module>component-factory</module>
                 <module>compatibility</module>
                 <module>mapping</module>
                 <module>hospital</module>
@@ -1045,6 +1046,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-component-factory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-resubmission</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1124,6 +1131,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-component-converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-component-validator</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1249,6 +1262,18 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-builder-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-component-factory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-component-factory-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
