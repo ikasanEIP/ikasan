@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component.endpoint;
 
+import liquibase.pro.packaged.T;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
@@ -421,15 +422,19 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
 
         if(this.aopProxyProvider == null)
         {
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, getScheduledConsumerClass(), this.scheduledJobName, this.scheduledJobGroupName) );
         }
         else
         {
             Job pointcutJob = this.aopProxyProvider.applyPointcut(this.scheduledJobName, scheduledConsumer);
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, getScheduledConsumerClass(), this.scheduledJobName, this.scheduledJobGroupName) );
         }
 
         return scheduledConsumer;
+    }
+
+    protected Class<? extends ScheduledConsumer> getScheduledConsumerClass(){
+        return ScheduledConsumer.class;
     }
 
     @Override

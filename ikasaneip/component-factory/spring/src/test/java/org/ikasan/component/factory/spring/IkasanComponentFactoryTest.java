@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class) @SpringBootTest(classes = { IkasanComponentFactory.class,
+@SpringBootTest(classes = { IkasanComponentFactory.class,
     CustomConverterComponentFactory.class, MultipleFactoryConverterFactoryOne.class,
     MultipleFactoryConverterFactoryTwo.class }) public class IkasanComponentFactoryTest
 {

@@ -15,7 +15,8 @@ import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class) @SpringBootTest(classes = { IkasanComponentFactory.class,
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = { IkasanComponentFactory.class,
     XmlValidatorFactory.class,})
 public class XmlValidatorFactoryTest
 {
