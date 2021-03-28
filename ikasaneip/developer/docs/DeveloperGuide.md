@@ -103,7 +103,7 @@ Lets build it!
 ## Building the Project
 All Ikasan projects are just standard Java Maven project containing,
 - `pom.xml` - parent Maven build pom
-- `bin` - standard Ikasan command line scripts
+- `bin` - standard Ikasan command line environment scripts
 - `distribution` - standard Maven packaging to create a distributable Ikasan module
 - `jar` - all the Java code for this module
 
@@ -141,20 +141,22 @@ cd MyIntegrationModule-distribution-1.0.0-SNAPSHOT
 You should now be able to open a browser and access the Integration Module at 
 ```http://localhost:8080/MyIntegrationModule``` 
 
+Login with the default credential admin:admin.
 ![Login](quickstart-images/new-project-embeddedConsole-screen1.png) 
 
-Login with the default credential admin:admin.
 This will give you the default home page.
+Selecting 'Modules' will show the Vanilla Integration Module created in this example.
 ![Login](quickstart-images/new-project-embeddedConsole-screen2.png) 
 
-Selecting 'Modules' will show the Vanilla Integration Module created in this example.
+Selecting 'Vanilla Integration Module' will show you the flows within this module.
 ![Login](quickstart-images/new-project-embeddedConsole-screen3.png) 
 
-Selecting 'Vanilla Integration Module' will show you the flows within this module.
+This will show the flows within this Integration Module.
+We haven't actually named the flow yet, so it just says 'flow name', 
+but you can still start the flow. 
 ![Login](quickstart-images/new-project-embeddedConsole-screen4.png) 
 
-We haven't actually named the flow yet, so it just says 'flow name', 
-but you can still start the flow. Try it and you will see the flow status
+Try it and you will see the flow status
 change from stopped to running.
 ![Login](quickstart-images/new-project-embeddedConsole-screen5.png) 
 
@@ -173,6 +175,8 @@ Lets look in the IDE at what has been created.
 ![Login](quickstart-images/new-project-anatomy-screen1.png) 
 
 ### Parent pom.xml
+This is a standard Ikasan parent pom.xml containing the coordinates, properties, and build dependencies for 
+an Ikasan module.
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -277,169 +281,38 @@ Lets look in the IDE at what has been created.
 
 </project>
 ```
+### Bin Directory
+The bin directory contains both Windows and Linux environment properties scripts which you
+can customise as befits your environment. Two types of environment scripts are shipped by default,
+- ```simple-env``` - for sourcing runtime properties on start-up from application.properties
+- ```config-service-env``` - for sourcing runtime properties on start-up from Spring Cloud Config Server
 
-Now add the first Ikasan Application dependency to the Maven pom.xml.
- 
-Edit the pom.xml and add the following properties and dependencies section.
-This is best practice layout. It keeps all your application versions in one place and defines the dependencies.
-In this case we are adding the ikasan-eip-standalone main library; an h2 standalone persistence library; and two Ikasan test libraries.
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-   <project xmlns="http://maven.apache.org/POM/4.0.0"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-       <modelVersion>4.0.0</modelVersion>
-   
-       <groupId>com.ikasan.example</groupId>
-       <artifactId>MyIntegrationModule</artifactId>
-       <version>1.0.0-SNAPSHOT</version>
-       <packaging>jar</packaging>
-   
-    <!-- Add project properties -->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.1.0</version.ikasan>
-        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
-        <version.com.h2database>1.4.200</version.com.h2database>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+Typically these do not need changing.
 
-    <!-- Add project dependencies -->
-    <dependencies>
+### Distribution Directory
+The distribution directory contains standard Maven configuration for packaging the Ikasan Module 
+as a deployable zip file. 
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip-standalone</artifactId>
-            <version>${version.ikasan}</version>
-        </dependency>
+### Java Directory
+The java directory contains all the source, configuration, and test classes required to create 
+the Ikansa Integration module in a standard Maven layout.
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${version.ikasan}</version>
-        </dependency>
+Lets look at the key classes.
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test-endpoint</artifactId>
-            <version>${version.ikasan}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test</artifactId>
-            <scope>test</scope>
-            <version>${version.ikasan}</version>
-        </dependency>
-
-    </dependencies>
-    
-</project>
-```
-
-Next we need to add some standard Maven project build features; your SCM (optional); and 
-an Ikasan bill of materials (bom) as project dependency management.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-   <project xmlns="http://maven.apache.org/POM/4.0.0"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-       <modelVersion>4.0.0</modelVersion>
-   
-       <groupId>com.ikasan.example</groupId>
-       <artifactId>MyIntegrationModule</artifactId>
-       <version>1.0.0-SNAPSHOT</version>
-       <packaging>jar</packaging>
-   
-        ...
-
-    <!-- Add project build plugins -->
-     <!-- build plugins -->
-     <build>
-         <plugins>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-compiler-plugin</artifactId>
-                 <version>3.8.1</version>
-             </plugin>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-javadoc-plugin</artifactId>
-                 <version>3.0.1</version>
-                 <executions>
-                     <execution>
-                         <id>attach-javadocs</id>
-                         <goals>
-                             <goal>jar</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-             </plugin>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-source-plugin</artifactId>
-                 <version>2.1.2</version>
-                 <executions>
-                     <execution>
-                         <id>attach-sources</id>
-                         <goals>
-                             <goal>jar</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-             </plugin>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-enforcer-plugin</artifactId>
-                 <version>1.4.1</version>
-                 <executions>
-                     <execution>
-                         <id>enforce-versions</id>
-                         <goals>
-                             <goal>enforce</goal>
-                         </goals>
-                         <configuration>
-                             <rules><dependencyConvergence /></rules>
-                         </configuration>
-                     </execution>
-                 </executions>
-             </plugin>
-         </plugins>
-     </build>
-
-    <!-- Add SCM URLS -->
-    <scm>
-        <developerConnection><!-- scm:svn: developer connection URL --></developerConnection>
-        <url><!-- SCM connection URL --></url>
-        <connection><!-- scm:svn: connection URL --></connection>
-    </scm>
-
-    <!-- Add project dependency management -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-eip-standalone-bom</artifactId>
-                <version>${version.ikasan}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-</project>
-```
-Now create a class with a fully qualified name of ```com.ikasan.example.Application``` - this is the entry point for Springboot.
-
-Copy and paste the entirety of the code below replacing the content of that class.
+#### Application.java
+This is the boot class for Ikasan. 
+It is a very small, but important class which leverages Springboot to boot the Ikasan Module.
 ```java
-package com.ikasan.example;
+package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Vanilla integration module implementation.
+ *
+ * @author Ikasan Development Team
+ */
 @SpringBootApplication
 public class Application
 {
@@ -449,314 +322,69 @@ public class Application
     }
 }
 ```
-Create a class for your Ikasan Module with a fully qualified name of ```com.ikasan.example.MyModule```.
 
-Copy and paste the entirety of the code below replacing the content of that class.
-```java
-package com.ikasan.example;
+#### MyModule.java
+This is the main class which defines and creates the Integration Module.
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml"
-} )
-public class MyModule
-{
-}   
-```
-
-Provide some configuration properties for the module by creating a resources/application.properties
-```properties
-module.name=example-im
-
-# standard dirs
-persistence.dir=./persistence
-lib.dir=./lib
-
-# Logging levels across packages (optional)
-logging.level.root=WARN
-logging.level.org.ikasan=INFO
-
-# Blue console servlet settings (optional)
-server.error.whitelabel.enabled=false
-
-# Web Bindings
-h2.db.port=8082
-server.port=8080
-server.address=localhost
-server.servlet.context-path=/example-im
-server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar
-spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
-
-# Ikasan Shell process start commands
-h2.java.command=java -Dmodule.name=${module.name} -classpath ${lib.dir}/h2-*.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort ${h2.db.port}
-module.java.command=java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=${persistence.dir}/${module.name}-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=${module.name} -jar ${lib.dir}/${module.name}-*.jar
-
-spring.liquibase.change-log=classpath:db-changelog-master.xml
-spring.liquibase.enabled=true
-
-# health probs and remote management (optional)
-management.endpoints.enabled-by-default=false
-management.endpoint.info.enabled=true
-management.endpoint.health.enabled=true
-management.endpoint.logfile.enabled=true
-management.endpoints.web.exposure.include=info,health,logfile
-management.endpoint.shutdown.enabled=true
-#management.endpoints.web.base-path=/rest
-
-#management.endpoint.health.probes.enabled=true
-management.endpoint.health.show-details=always
-management.endpoint.health.show-components=always
-management.health.jms.enabled=false
-
-# Ikasan persistence store
-datasource.username=sa
-datasource.password=sa
-datasource.driver-class-name=org.h2.Driver
-datasource.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
-datasource.url=jdbc:h2:tcp://localhost:${h2.db.port}/${persistence.dir}/${module.name}-db/esb;IFEXISTS=FALSE
-#datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-datasource.dialect=org.hibernate.dialect.H2Dialect
-datasource.show-sql=false
-datasource.hbm2ddl.auto=none
-datasource.validationQuery=select 1
-
-# Dashboard data extraction settings
-ikasan.dashboard.extract.enabled=false
-ikasan.dashboard.extract.base.url=http://localhost:9080/ikasan-dashboard
-ikasan.dashboard.extract.username=
-ikasan.dashboard.extract.password=
-
-ikasan.exceptions.retry-configs.[0].className=org.ikasan.spec.component.endpoint.EndpointException
-ikasan.exceptions.retry-configs.[0].delayInMillis=5000
-ikasan.exceptions.retry-configs.[0].maxRetries=-1
-
-ikasan.exceptions.excludedClasses[0]=org.ikasan.spec.component.transformation.TransformationException
-```
-
-Build and run the application.
-From IntelliJ just right click on Application and select run ```Application.main()```
-
-Alternatively to run from the command line ensure you are in the project root directory i.e. MyIntegrationModule then run a Maven clean install
-```
-mvn clean install
-```
-
-If successful run the application
-```
-java -jar target/MyIntegrationModule-1.0.0-SNAPSHOT.jar
-```
- 
-Lets create a module.
-
-Go back to IntelliJ open the MyModule class. So far this class just loads the persistence configuration via the ImportResource, but we now want to use this class to define our Ikasan Integration Module. Replace the entirety of this class with the code below.  
-```java
-package com.ikasan.example;
-
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.component.ComponentBuilder;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
-
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
-public class MyModule
-{
-    @Resource BuilderFactory builderFactory;
-
-    @Bean
-    public Module myModule()
-    {
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
-
-        // Create a component builder from the builder factory
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-        // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
-                .producer("My Target Producer", componentBuilder.logProducer())
-                .build();
-
-        // Add the created flow to the module builder and create the module
-        Module module = moduleBuilder
-                .addFlow(eventGeneratingFlow)
-                .build();
-        return module;
-    }
-}
-```
-
-Build and run the application again.
-
-From IntelliJ just right click on Application and select run ```Application.main()```
-
-Alternatively to run from the command line ensure you are in the project root directory i.e. MyIntegrationModule then run a Maven clean install
-```
-mvn clean install
-```
-
-Refresh your browser at ```http://localhost:8090/example-im```, login and select 'Modules' - you now see your new module.
-![Login](quickstart-images/new-project-embeddedConsole-screen9.png)
-
-Selecting the module will show you the flows within this module 
-which can be started, stopped, paused/resumed. The component 'Type' may have a different $Proxy value, dont worry about this for now.
-![Login](quickstart-images/new-project-embeddedConsole-screen10.png)
-
-Start the flow - you will see the state change from 'stopped' to 'running'. 
-![Login](quickstart-images/new-project-embeddedConsole-screen11.png)
-
-View the application logs (either in IntelliJ or the command line, depending on how the application was started).
-```less
-2019-05-24 20:31:39.300  INFO 98339 --- [0.1-8080-exec-2] o.i.module.service.ModuleServiceImpl     : startFlow : My Integration Module.Event Generating Flow requested by [admin]
-2019-05-24 20:31:39.304  INFO 98339 --- [0.1-8080-exec-2] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
-2019-05-24 20:31:39.306  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Source Consumer_1165847135_I]. Default programmatic dao will be used.
-2019-05-24 20:31:39.306  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_1165847135_I]. Default programmatic dao will be used.
-2019-05-24 20:31:39.307  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Source Consumer_1165847135_I]. Default programmatic dao will be used.
-2019-05-24 20:31:39.307  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_1165847135_I]. Default programmatic dao will be used.
-2019-05-24 20:31:39.308  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module_Event Generating Flow_My Target Producer_729287509_C]. Default programmatic dao will be used.
-2019-05-24 20:31:39.308  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration ModuleEvent Generating FlowMy Source Consumer_element]. Default programmatic dao will be used.
-2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration ModuleEvent Generating FlowMy Target Producer_element]. Default programmatic dao will be used.
-2019-05-24 20:31:39.309  WARN 98339 --- [0.1-8080-exec-2] s.ConfiguredResourceConfigurationService : No persisted dao for configuredResource [My Integration Module-Event Generating Flow]. Default programmatic dao will be used.
-2019-05-24 20:31:39.310  INFO 98339 --- [0.1-8080-exec-2] o.i.f.v.VisitingInvokerFlow              : Started Flow[Event Generating Flow] in Module[My Integration Module]
-2019-05-24 20:31:39.312  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131690, relatedIdentifier=null, timestamp=1558726299311, payload=Test Message 1]
-2019-05-24 20:31:40.317  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131691, relatedIdentifier=null, timestamp=1558726300317, payload=Test Message 2]
-2019-05-24 20:31:41.318  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131692, relatedIdentifier=null, timestamp=1558726301318, payload=Test Message 3]
-2019-05-24 20:31:42.323  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131693, relatedIdentifier=null, timestamp=1558726302323, payload=Test Message 4]
-2019-05-24 20:31:43.328  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131694, relatedIdentifier=null, timestamp=1558726303328, payload=Test Message 5]
-2019-05-24 20:31:44.334  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131695, relatedIdentifier=null, timestamp=1558726304334, payload=Test Message 6]
-2019-05-24 20:31:45.338  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131696, relatedIdentifier=null, timestamp=1558726305338, payload=Test Message 7]
-2019-05-24 20:31:46.343  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131697, relatedIdentifier=null, timestamp=1558726306343, payload=Test Message 8]
-2019-05-24 20:31:47.344  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131698, relatedIdentifier=null, timestamp=1558726307344, payload=Test Message 9]
-2019-05-24 20:31:48.345  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131699, relatedIdentifier=null, timestamp=1558726308345, payload=Test Message 10]
-2019-05-24 20:31:49.347  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131700, relatedIdentifier=null, timestamp=1558726309347, payload=Test Message 11]
-2019-05-24 20:31:50.352  INFO 98339 --- [pool-2-thread-1] o.i.c.e.util.producer.LogProducer        : GenericFlowEvent [identifier=1200131701, relatedIdentifier=null, timestamp=1558726310352, payload=Test Message 12]
-```
-Congratulations - your first working Ikasan Integration Module, but what is it doing...
-
-Lets go back to the code, specifically the ```MyModule``` class to understand what we just implemented and ran.
-
-```java
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
-public class MyModule
-{
-    @Resource BuilderFactory builderFactory;
-    ...
-}
-```
-Firstly, we can see we have added an extra line to the ImportResource 
-for ```classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml```.
- This tells Ikasan that we want our flow to be transactional and 
- to guarantee that all operations successfully complete or rollback 
- to a consistent state in the event of a failure. 
- This configuration changes based on the Consumer protocol 
- being implemented. For this example we are using an 
- EventGeneratingConsumer to which this config will be applied. 
- Transactions are complex and will be covered in detail later.
+As this is just Java the code can be created any number of different ways, but what
+we are showing here is a fairly standard approach.
 
 All Ikasan artefacts can be created from a single instance of a ```builderFactory``` from Spring context. The builderFactory is the base factory class from which all Ikasan constructs such as modules, flows, and components are created.
 
-Next we create a ```moduleBuilder``` from the ```builderFactory```. When we create the ```moduleBuilder``` we provide the name we are going to assign to the module.
+Next we create a ```moduleBuilder``` from the ```builderFactory```. 
+When we create the ```moduleBuilder``` we provide the name we are going to assign to the module.
 We can also set other properties on the module through this ```moduleBuilder``` such as description.
 
-```java
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
-public class MyModule
-{
-    @Resource BuilderFactory builderFactory;
-
-    @Bean
-    public Module myModule()
-    {
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
-       ...
-       }
-} 
-```
 Next, get a ```componentBuilder``` instance from the ```builderFactory``` - we will be using this in the ```flowBuilder```.
-```java
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
-public class MyModule
-{
-    @Resource BuilderFactory builderFactory;
-
-    @Bean
-    public Module myModule()
-    {
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
-
-        // Create a component builder from the builder factory
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-        ...
-    }
-}
-```
 
 Now on to the interesting parts.
 
 We use the ```moduleBuilder``` to get a ```flowBuilder``` and specify the name of the flow.
 The components within the flow are then added as ```consumer``` and ```producer```, both from the ```componentBuilder```.
-Each component is given a name and a functional class that does the work. The component classes below are off-the-shelf 
+Each component is given a name and a functional class that does the work. 
+The component classes shown are off-the-shelf 
 Ikasan components, however, your own components can be easily written and added as shown later.
+
 ```java
+package com.ikasan.sample.spring.boot.builderpattern;
+
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.OnException;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
+
 @Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
 public class MyModule
 {
-    @Resource BuilderFactory builderFactory;
+    @Resource
+    BuilderFactory builderFactory;
+    @Resource
+    ComponentFactory componentFactory;
 
     @Bean
     public Module myModule()
     {
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
+        // get the module builder
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Vanilla Integration Module")
+                .withDescription("Vanilla Integration Module.");
 
-        // Create a component builder from the builder factory
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+        Flow flow = moduleBuilder.getFlowBuilder("flow name")
+            .withDescription("Vanilla source flow")
+            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
+            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())
+            .consumer("Event Generating Consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer())
+            .converter("Event Converter", componentFactory.getConverter())
+            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer()).build();
 
-        // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
-                .producer("My Target Producer", componentBuilder.logProducer())
-                .build();
-
-        // Add the created flow to the module builder and create the module
         Module module = moduleBuilder
-                .addFlow(eventGeneratingFlow)
-                .build();
+            .addFlow(flow)
+            .build();
+
         return module;
     }
 }
@@ -770,44 +398,14 @@ The event from the consumer to the producer is a simple string message with an i
 
 Each off-the-shelf component can optionally have a ```build()``` method called against it which tells the builder pattern to create this instance, as does the flow. Typically, this is optional against components when created inline like this as the Ikasan builder will call this if not called explicitly.
  
-```java
-@Configuration("ModuleFactory")
-@ImportResource( {
-        "classpath:h2-datasource-conf.xml",
-        "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
-} )
-public class MyModule
-{
-    @Resource BuilderFactory builderFactory;
-
-    @Bean
-    public Module myModule()
-    {
-        // Create a module builder from the builder factory
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("My Integration Module")
-                .withDescription("My first integration module.");
-
-        // Create a component builder from the builder factory
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-
-        // create a flow from the module builder and add required orchestration components
-        Flow eventGeneratingFlow = moduleBuilder.getFlowBuilder("Event Generating Flow")
-                .consumer("My Source Consumer", componentBuilder.eventGeneratingConsumer())
-                .producer("My Target Producer", componentBuilder.logProducer())
-                .build();
-
-        // Add the created flow to the module builder and create the module
-        Module module = moduleBuilder
-                .addFlow(eventGeneratingFlow)
-                .build();
-        return module;
-    }
-}
-```
 Finally we have the flow we can add it to the moduleBuilder and ```build()``` the module.
  
 That is how every Ikasan Application Integration Module is created regardless of how simple or complex the operations.
 
+#### ComponentFactory.java
+This class creates your individual custom components.
+
+TO HERE
 ## Adding your own Components
 Lets add a custom Converter between the Consumer and Producer components.
 
