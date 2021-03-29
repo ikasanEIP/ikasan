@@ -14,7 +14,8 @@ import java.lang.annotation.Target;
  * {@link org.ikasan.component.factory.spring.IkasanComponentFactory} bean along with the class of the annotated
  * field.</p><p></p><p></p>
  *
- * <p>The method {@link org.ikasan.component.factory.spring.IkasanComponentFactory#populateAnnotations(Object)} is used
+ * <p>The method {@link
+ * org.ikasan.component.factory.spring.IkasanComponentAnnotationProcessor#populateAnnotations(Object)} is used
  * to instantiate and set the annotated field</p>
  *
  * <p><p></p>Example Usage :-
