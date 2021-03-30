@@ -1,24 +1,12 @@
 package org.ikasan.component.factory.spring;
 
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
-import org.ikasan.component.factory.spring.annotation.IkasanComponent;
-import org.ikasan.component.factory.spring.endpoint.JmsConsumerComponentFactory;
-import org.ikasan.component.factory.spring.endpoint.JmsProducerComponentFactory;
 import org.ikasan.spec.component.factory.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.TargetSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.Resource;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

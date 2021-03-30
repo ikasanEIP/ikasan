@@ -66,9 +66,10 @@
       <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
- 
+
     <modules>
         <module>ikasaneip</module>
+        <module>component-factory</module>
     </modules>
 
     <!--

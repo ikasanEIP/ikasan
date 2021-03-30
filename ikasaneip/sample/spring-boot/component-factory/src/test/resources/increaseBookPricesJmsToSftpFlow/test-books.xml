@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<books xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xsi:noNamespaceSchemaLocation="urn:books http://www.bookprices.com/xsd/book-prices.xsd">
+    <book id="bk001">
+        <author>Writer</author>
+        <title>The First Book</title>
+        <genre>Fiction</genre>
+        <price>44.95</price>
+        <pub_date>2000-10-01</pub_date>
+        <review>An amazing story of nothing.</review>
+    </book>
+    <book id="bk002">
+        <author>Poet</author>
+        <title>The Poet's First Poem</title>
+        <genre>Poem</genre>
+        <price>24.95</price>
+        <pub_date>2000-10-01</pub_date>
+        <review>Least poetic poems.</review>
+    </book>
+</books>
