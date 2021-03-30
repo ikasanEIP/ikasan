@@ -6,9 +6,11 @@ import org.ikasan.endpoint.sftp.consumer.SftpConsumer;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.producer.SftpProducer;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Component
 public class SftpConsumerComponentFactory extends BaseComponentFactory<SftpConsumer>
 {
 

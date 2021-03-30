@@ -17,7 +17,7 @@ public class BindConfigurationHelper
             Binder binder = new Binder(sources, new PropertySourcesPlaceholdersResolver(env));
             return binder.bind(prefix, clazz).orElseGet(() -> { throw new
             IkasanComponentFactoryException("Unable to bind properties with prefix " + prefix + " to configuration "
-            + " of type [{}] " + clazz.getSimpleName()
+            + " of type " + clazz.getSimpleName()
             + ". Please ensure you have defined properties for your component"); });
 
     }

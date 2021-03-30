@@ -3,8 +3,13 @@ package org.ikasan.component.factory.spring;
 import org.ikasan.spec.component.factory.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -15,14 +20,13 @@ import java.util.Set;
  * Used to create any ikasan component given a class, config prefix and factory config
  * prefix provided that ikasan component has defined a bean that implements the {@link ComponentFactory} interface
  */
-@Component public class IkasanComponentFactory
+@Component public class IkasanComponentFactory implements ApplicationContextAware
 {
     private static Logger logger = LoggerFactory.getLogger(IkasanComponentFactory.class);
 
-    /**
-     * All the component factory beans in the application
-     */
-    @Autowired private List<ComponentFactory> componentFactories;
+    private ApplicationContext applicationContext;
+
+
 
     /**
      * This is used to create any component that has an associated {@link ComponentFactory} e.g.
@@ -66,14 +70,12 @@ import java.util.Set;
     private <T> ComponentFactory<T> getComponentFactory(Class<T> clazz)
     {
         Set<ComponentFactory<T>> candidates = new LinkedHashSet<>();
-        for (ComponentFactory componentFactory : componentFactories)
+        String[] beanNamesForType = applicationContext.getBeanNamesForType(ResolvableType.forClassWithGenerics(ComponentFactory.class, clazz));
+
+        for (String beanName : beanNamesForType)
         {
-            Class<?> componentClass = GenericTypeResolver
-                .resolveTypeArgument(componentFactory.getClass(), ComponentFactory.class);
-            if (componentClass.equals(clazz))
-            {
-                candidates.add(componentFactory);
-            }
+            ComponentFactory<T> componentFactory = (ComponentFactory<T>) applicationContext.getBean(beanName);
+            candidates.add(componentFactory);
         }
         if (candidates.size() > 1)
         {
@@ -91,4 +93,8 @@ import java.util.Set;
     }
 
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
