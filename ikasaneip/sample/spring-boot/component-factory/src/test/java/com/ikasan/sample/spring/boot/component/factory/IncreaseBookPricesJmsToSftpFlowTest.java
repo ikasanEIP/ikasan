@@ -6,10 +6,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,9 +59,11 @@ public class IncreaseBookPricesJmsToSftpFlowTest
     @Test
     public void test() throws IOException
     {
+        flowTestRule.withFlow(flow);
         flowTestRule.consumer("Increase Book Prices Jms Consumer")
             .converter("Increase Book Prices Xslt Converter")
             .converter("Increase Book Prices Xml Validator")
+            .converter("Increase Book Prices Xml to Sftp Payload Converter")
             .producer("Increase Book Prices Sftp Producer");
         flowTestRule.startFlow();
         sendMessage(consumerQueue,
@@ -98,6 +97,7 @@ public class IncreaseBookPricesJmsToSftpFlowTest
         sftpRule.start();
     }
 
+    @Before
     public void setup()
     {
         flow = moduleUnderTest.getFlow(flowUnderTestName);

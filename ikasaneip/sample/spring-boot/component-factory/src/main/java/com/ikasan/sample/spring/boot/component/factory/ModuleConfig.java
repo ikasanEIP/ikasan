@@ -58,7 +58,7 @@ import javax.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml",
+        "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
 } )
 public class ModuleConfig
@@ -69,40 +69,15 @@ public class ModuleConfig
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
+    @Resource
+    private Flow increaseBookPricesJmsToSftpFlow;
+
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
-
-        FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
-
-        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
-                .setConnectionFactory(consumerConnectionFactory)
-                .setDestinationJndiName("source")
-                .setAutoContentConversion(true)
-                .setConfiguredResourceId("jmsConsumer")
-                .build();
-
-
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-
-        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
-                .setConnectionFactory(producerConnectionFactory)
-                .setDestinationJndiName("target")
-                .setConfiguredResourceId("jmsProducer")
-                .build();
-
-        Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
-                .consumer("JMS Consumer", jmsConsumer)
-                .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
-                .broker( "Delay Generating Broker", new DelayGenerationBroker())
-                .producer("JMS Producer", jmsProducer)
-                .build();
-
-        Module module = mb.withDescription("Sample Module")
-            .addFlow(flow)
+        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-component-factory");
+        Module module = mb.withDescription("Sample Component Factory Module")
+            .addFlow(increaseBookPricesJmsToSftpFlow)
             .build();
         return module;
     }

@@ -56,7 +56,10 @@ import java.util.Set;
     public <T> T create(String suffix, String prefix, String factoryConfigPrefix, Class<T> clazz)
     {
         ComponentFactory<T> componentFactory = getComponentFactory(clazz);
-        return componentFactory.create(suffix, prefix, factoryConfigPrefix);
+        T component = componentFactory.create(suffix, prefix, factoryConfigPrefix);
+        logger.info("Created component of type [{}] with property prefix [{}], factoryConfigPrefix[{}].",
+            clazz.getSimpleName(), prefix, factoryConfigPrefix);
+        return component;
     }
 
     /**
