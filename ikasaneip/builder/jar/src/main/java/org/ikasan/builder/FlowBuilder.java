@@ -68,6 +68,7 @@ import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -95,6 +96,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -656,6 +659,28 @@ public class FlowBuilder implements ApplicationContextAware
                 }
             }
 
+            // if the POJO is a configured then check to ensure the configuration class has been set
+            // if not then create and set it
+            if(flowElement.getFlowComponent() instanceof Configured)
+            {
+                Configured configured = ((Configured)flowElement.getFlowComponent());
+                if(configured.getConfiguration() == null)
+                {
+                    logger.info(flowElement.getComponentName() + " configured component without a configuration instance set. Will try to create...");
+                    Object conf = generateConfiguredInstance(configured);
+                    if(conf != null)
+                    {
+                        configured.setConfiguration(conf);
+                        logger.info(conf.getClass().getName() + " configuration created and set on component " + flowElement.getComponentName());
+                    }
+                    else
+                    {
+                        configured.setConfiguration(conf);
+                        logger.info("Failed to create configuration for component " + flowElement.getComponentName());
+                    }
+                }
+            }
+
             if (flowElement.getFlowComponent() instanceof Consumer)
             {
                 Consumer consumer = (Consumer) flowElement.getFlowComponent();
@@ -715,6 +740,32 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         return nextFlowElement;
+    }
+
+    protected Object generateConfiguredInstance(Configured configured)
+    {
+        Type[] types = configured.getClass().getGenericInterfaces();
+        for(Type type:types)
+        {
+            String[] interfaceParts = type.getTypeName().split("<|>");
+            // there should be two parts to the interface
+            // first part is the interface name ie Configured or ConfiguredResource
+            // second part is the generic type defining the configuration
+            if(interfaceParts.length == 2 &&
+                (interfaceParts[0].equals(Configured.class.getName()) || interfaceParts[0].equals(ConfiguredResource.class.getName())))
+            {
+                try
+                {
+                    return Class.forName(interfaceParts[1]).getConstructor().newInstance();
+                }
+                catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e)
+                {
+                    // ignore and move on
+                }
+            }
+        }
+
+        return null;
     }
 
     protected String generateIdentifier(String moduleName, String flowName, String componentName, String fqClassName, String type)
