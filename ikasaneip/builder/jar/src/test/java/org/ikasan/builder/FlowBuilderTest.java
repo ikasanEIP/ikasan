@@ -47,6 +47,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.sample.MyConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -58,6 +59,7 @@ import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.EventFactory;
@@ -2045,6 +2047,26 @@ public class FlowBuilderTest
 
     /**
      * Test successful flow creation.
+     * This test is to ensure we can pass monitor with explicit instance or builder instance
+     */
+    @Test
+    public void test_successful_generateConfiguredInstance()
+    {
+        FlowBuilder flowBuilder = ikasanApplication.getBuilderFactory().getFlowBuilder("moduleName", "flowName");
+
+        // test configured instance with specific configuration bean
+        Configured configured = new ConfiguredWithMyConfiguration();
+        Object object = flowBuilder.generateConfiguredInstance(configured);
+        Assert.assertTrue("object is not an instanceof KyConfiguration", object instanceof MyConfiguration);
+
+        // test configured instance with generic configuration bean
+        configured = new ConfiguredWithT();
+        object = flowBuilder.generateConfiguredInstance(configured);
+        Assert.assertNull(object);
+    }
+
+    /**
+     * Test successful flow creation.
      */
     @Test
     public void test_successful_consumer_implied_and_explicit_builds()
@@ -2180,4 +2202,35 @@ public class FlowBuilderTest
             return recorded;
         }
     }
+
+    class ConfiguredWithMyConfiguration implements Configured<MyConfiguration>
+    {
+        @Override
+        public MyConfiguration getConfiguration()
+        {
+            return null;
+        }
+
+        @Override
+        public void setConfiguration(MyConfiguration configuration)
+        {
+
+        }
+    }
+
+    class ConfiguredWithT<T> implements Configured<T>
+    {
+        @Override
+        public T getConfiguration()
+        {
+            return null;
+        }
+
+        @Override
+        public void setConfiguration(T configuration)
+        {
+
+        }
+    }
+
 }
