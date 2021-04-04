@@ -23,7 +23,7 @@ Include the ikasan-component-factory-spring library in your pom.xml
 ```
 
 In your Flow Class use the [@IkasanComponent](spring/src/main/java/org/ikasan/component/factory/spring/annotation/IkasanComponent.java)
-to create your components :-
+ annotation to create your components :-
 
 ```java
     @IkasanComponent(prefix="jms.esb.broker.shared", factoryPrefix = "increase.book.prices.jms.consumer")
@@ -42,22 +42,23 @@ to create your components :-
     private SftpProducer increaseBookPricesSftpProducer;
 ```
 
-The annotation attributes allow your component to be configured from your spring ```application.properties```. 
-Your flow can then be defined in the normal way :-
+The annotation attributes allows the component to be configured from the spring ```application.properties```. 
+The flow can then be defined in the normal way :-
 
 ```java
 @Bean
-public Flow increaseBookPricesJmsToSftpFlow(){
-ModuleBuilder mb = builderFactory.getModuleBuilder(moduleName);
-return mb.getFlowBuilder("Increase Book Prices Jms to Sftp Flow")
-.withDescription("Increases received book prices by 10% then uploads to a sftp directory")
-.withExceptionResolver(exceptionResolver)
-.consumer("Increase Book Prices Jms Consumer", increaseBookPricesJmsConsumer)
-.converter("Increase Book Prices Xslt Converter", increaseBookPricesXsltConverter)
-.converter("Increase Book Prices Xml Validator", increaseBookPricesXmlValidator)
-.converter("Increase Book Prices Xml to Sftp Payload Converter", stringToPayloadConverter)
-.producer("Increase Book Prices Sftp Producer", increaseBookPricesSftpProducer)
-.build();
+public Flow increaseBookPricesJmsToSftpFlow()
+{
+    ModuleBuilder mb = builderFactory.getModuleBuilder(moduleName);
+    return mb.getFlowBuilder("Increase Book Prices Jms to Sftp Flow")
+    .withDescription("Increases received book prices by 10% then uploads to a sftp directory")
+    .withExceptionResolver(exceptionResolver)
+    .consumer("Increase Book Prices Jms Consumer", increaseBookPricesJmsConsumer)
+    .converter("Increase Book Prices Xslt Converter", increaseBookPricesXsltConverter)
+    .converter("Increase Book Prices Xml Validator", increaseBookPricesXmlValidator)
+    .converter("Increase Book Prices Xml to Sftp Payload Converter", stringToPayloadConverter)
+    .producer("Increase Book Prices Sftp Producer", increaseBookPricesSftpProducer)
+    .build();
 }
 ```
 
@@ -65,19 +66,19 @@ return mb.getFlowBuilder("Increase Book Prices Jms to Sftp Flow")
 
 This is configured via 3 attributes none of which are mandatory
 
-* ```suffix``` this is used to create the ikasan configured resource id name when the components configuration is saved. 
+* ```suffix``` used to create the ikasan configured resource id name when the components configuration is saved. 
 It is concatenated to the ```"${module.name}-"```. By default this will be the name of the annotated field. You should 
   rarely need to specify this.
-* ```prefix``` - this is the prefix of the component configuration properties in the spring properties file. You should
+* ```prefix``` the prefix of the component configuration properties in the spring properties file. You should
   only specify this if your component has configuration.
-* ```factoryPrefix``` - this is the prefix of the factory configuration properties in the spring properties file. You should
+* ```factoryPrefix``` the prefix of the factory configuration properties in the spring properties file. You should
 only specify this if your component factory has configuration.
 
-Hopefully the use of prefix to wire in the components properties is obvious and follows the same pattern as the 
+The use of prefix to wire in the components properties is straight forward and follows the same pattern as the 
 spring ```@ComponentProperties``` annotation.  The ```factoryPrefix``` needs further explanation. As well as the component,
-the component factory itself can have a configuration that is used for each component creation. One useful
+the factory itself can have a configuration that is used for each component's creation. One useful
 side effect of this is you can separate shared component properties from those that are specific to each instantiation. 
-The ```JmsContainerConsumer``` and ```JmsTemplateProducer``` factories are good examples of this :-
+The ```JmsContainerConsumer``` and ```JmsTemplateProducer``` components and their factories are good examples of this :-
 
 ```java
 @IkasanComponent(prefix="jms.esb.broker.shared", factoryPrefix = "increased.book.prices.internal.jms.consumer")
@@ -119,8 +120,8 @@ increased.book.prices.external.jms.producer.destination=dynamicQueues/book.price
 ```
 ## Custom Components
 
-To develop a custom component in addition to defining your component and configuration (if required) classes you will need
-to create a component factory class that implements the [ComponentFactory](../spec/component-factory/src/main/java/org/ikasan/spec/component/factory/ComponentFactory.java)
+To develop a custom component in addition to defining your component and configuration classes you will need
+to create a factory class that implements the [ComponentFactory](../spec/component-factory/src/main/java/org/ikasan/spec/component/factory/ComponentFactory.java)
  interface. A simple custom component factory is shown below :-
 
 ```java
@@ -133,7 +134,7 @@ public class PayloadToStringConverterComponentFactory implements ComponentFactor
     }
 }
 ```
-In the case of a configured component the BaseComponentFactory provides useful methods to configure the component :-
+In the case of a configured component the ```BaseComponentFactory``` class provides useful methods to configure the component :-
 ```java
 @Component
 public class StringToPayloadConverterComponentFactory extends BaseComponentFactory<StringToPayloadConverter> {
@@ -219,12 +220,12 @@ the annotated components using the ```IkasanComponentFactory``` bean.
 
 ## Spring Auto-Configuration
 
-This spring project defines a [spring.factories](spring/src/main/resources/META-INF/spring.factories) file which  
-automatically creates the ```IkasanComponentFactory```, all the Component Factory beans and the ```IkasanComponentAnnoationProcessor```.
+This spring project defines a [spring.factories](spring/src/main/resources/META-INF/spring.factories) file 
+which automatically creates the ```IkasanComponentFactory```, all the Component Factory beans and the ```IkasanComponentAnnoationProcessor```.
 
 ## Dependency Management
 
-This project is home to multiple implementations of ikasan component factories for different components. 
+The ```spring``` project is home to multiple implementations of ikasan component factories for different components. 
 To prevent an explosion of transitive dependencies when this project's library is used by a module all component libraries 
 are specified with their ```optional``` tag set to ```true```. It is then up to the module to specify the
 component dependencies it requires. Optional dependencies in the [pom.xml](spring/pom.xml) are shown below :- 
