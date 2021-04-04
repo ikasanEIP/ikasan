@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.awaitility.core.ThrowingRunnable;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
@@ -115,5 +116,11 @@ public class IncreasedBookPricesInternalJmsToExternalJmsFlowTest
         browseMessagesOnQueueVerifier.start();
         flow = moduleUnderTest.getFlow(flowUnderTestName);
         flowTestRule.withFlow(flow);
+    }
+
+    @After
+    public void after(){
+        browseMessagesOnQueueVerifier.stop();
+        new ActiveMqHelper().removeAllMessages();
     }
 }

@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.awaitility.core.ThrowingRunnable;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.joda.time.DateTime;
@@ -146,6 +147,11 @@ public class IncreaseBookPricesJmsToSftpFlowTest
     public static void tearDown()
     {
         sftpRule.stop();
+    }
+
+    @After
+    public void after(){
+        new ActiveMqHelper().removeAllMessages();
     }
 
     static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>
