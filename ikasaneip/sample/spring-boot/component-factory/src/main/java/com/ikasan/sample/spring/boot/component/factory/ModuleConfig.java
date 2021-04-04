@@ -66,11 +66,14 @@ public class ModuleConfig
     @Resource
     private BuilderFactory builderFactory;
 
-    @Value("${jms.provider.url}")
-    private String brokerUrl;
-
     @Resource
     private Flow increaseBookPricesJmsToSftpFlow;
+
+    @Resource
+    private Flow increasedBookPricesSftpToJmsFlow;
+
+    @Resource
+    private Flow increasedBookPricesInternalJmsToExternalFlow;
 
     @Bean
     public Module getModule(){
@@ -78,6 +81,8 @@ public class ModuleConfig
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-component-factory");
         Module module = mb.withDescription("Sample Component Factory Module")
             .addFlow(increaseBookPricesJmsToSftpFlow)
+            .addFlow(increasedBookPricesSftpToJmsFlow)
+            .addFlow(increasedBookPricesInternalJmsToExternalFlow)
             .build();
         return module;
     }

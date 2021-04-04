@@ -35,3 +35,4 @@ ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/
 ikasaneip/visualisation/dashboard/node_modules
 **/KahaDB/
 esb.mv.db
+**/transaction-logs/

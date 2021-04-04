@@ -49,7 +49,7 @@ import org.springframework.jms.core.JmsTemplate;
 @Configuration
 public class ModuleTestConfig
 {
-    @Value("${jms.provider.url}")
+    @Value("${jms.esb.broker.shared.provider.url}")
     private String brokerUrl;
 
     @Bean
