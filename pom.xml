@@ -69,7 +69,6 @@
 
     <modules>
         <module>ikasaneip</module>
-        <module>component-factory</module>
     </modules>
 
     <!--
