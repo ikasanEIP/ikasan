@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import liquibase.pro.packaged.T;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
