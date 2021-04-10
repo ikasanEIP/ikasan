@@ -7,6 +7,8 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * Writes from the local file system to an amazon s3 bucket
  */
@@ -21,6 +23,10 @@ public class AmazonS3FileProducer extends AbstractAmazonS3Producer<AmazonS3FileP
     @Override
     public void invoke(AmazonS3FilePayload payload) throws EndpointException {
         super.invoke(payload);
+        if (!new File(payload.getFilePath()).exists()){
+            throw new InvalidAmazonS3PayloadException("File at path " + payload.getFilePath()
+                + " does not exist");
+        }
         s3Client.uploadFile(payload.getFilePath(), getKeyName(payload), getBucketName(payload));
     }
 }

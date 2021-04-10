@@ -32,7 +32,7 @@ On failure of these checks an ```EndpointException``` will get thrown. When ```s
 ### Sample Usage
 
 Two Producers are provided. The ```AmazonS3ByteArrayProducer``` is used to upload byte[] data to an 
-S3 bucket. It needs to be invoked with a ```AmazonS3ByteArrayPayload``` which specify the contents and the key to write
+S3 bucket. It needs to be invoked with a ```AmazonS3ByteArrayPayload``` which contains the contents and the key to write
 the data to in the bucket. This class is shown below, note a ```InvalidAmazonS3PayloadException``` will get thrown if
 the contents field or keyName field is null.
 
@@ -81,7 +81,8 @@ when the components ```startManagedResource``` is called by Ikasan.
 
 For larger data sets data should be streamed from the file system and the ```AmazonS3FileProducer``` used. In this case
 the full file path to the data should be specified in the payload as well as the key. 
-Note a ```InvalidAmazonS3PayloadException``` will get thrown if the filePath or keyName field is null.
+Note a ```InvalidAmazonS3PayloadException``` will get thrown if the filePath or keyName field is null or if the file
+path does not exist on the local filesystem.
 
 ```java
 /**

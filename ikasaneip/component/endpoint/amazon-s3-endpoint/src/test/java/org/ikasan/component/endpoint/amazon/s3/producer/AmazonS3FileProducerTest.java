@@ -34,8 +34,8 @@ public class AmazonS3FileProducerTest {
         amazonS3FileProducer = new AmazonS3FileProducer(new AmazonS3Client());
         amazonS3FileProducer.setConfiguration(configuration);
         amazonS3FilePayload = new AmazonS3FilePayload();
-        amazonS3FilePayload.setFilePath("src/test/resources/temp_2GB_file.txt");
-        amazonS3FilePayload.setKeyName("temp_2GB_file.txt");
+        amazonS3FilePayload.setFilePath("src/test/resources/test-file.txt");
+        amazonS3FilePayload.setKeyName("test-file.txt");
     }
 
     @Test
@@ -50,8 +50,8 @@ public class AmazonS3FileProducerTest {
 
         verify(amazonS3Client).setConfiguration(configuration);
         verify(amazonS3Client).startup();
-        verify(amazonS3Client).uploadFile("src/test/resources/temp_2GB_file.txt",
-            "temp_2GB_file.txt", BUCKET_NAME);
+        verify(amazonS3Client).uploadFile("src/test/resources/test-file.txt",
+            "test-file.txt", BUCKET_NAME);
         verify(amazonS3Client).shutdown();
     }
 
@@ -75,6 +75,15 @@ public class AmazonS3FileProducerTest {
             "violations :- [filePath may not be null, keyName may not be null]");
         amazonS3FilePayload.setKeyName(null);
         amazonS3FilePayload.setFilePath(null);
+        amazonS3FileProducer.invoke(amazonS3FilePayload);
+    }
+
+    @Test
+    public void testWithFileNotExists() {
+        expectedException.expect(InvalidAmazonS3PayloadException.class);
+        expectedException.expectMessage("File at path idontexist does not exist");
+        amazonS3FilePayload.setKeyName("iwontbeused");
+        amazonS3FilePayload.setFilePath("idontexist");
         amazonS3FileProducer.invoke(amazonS3FilePayload);
     }
 
