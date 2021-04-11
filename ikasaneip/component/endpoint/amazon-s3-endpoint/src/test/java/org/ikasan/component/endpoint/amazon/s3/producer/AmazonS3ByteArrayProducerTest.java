@@ -64,7 +64,7 @@ public class AmazonS3ByteArrayProducerTest {
     public void testWithNonNullConfigurationPropertiesMissing(){
         expectedException.expect(EndpointException.class);
         expectedException.expectMessage("Instance of AmazonS3Configuration has the following " +
-            "constraint violations :- [accessKey may not be null, defaultBucketName may not be null, secretKey may not be null]");
+            "constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]");
         AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
         producerConfiguration.setRegion("Region");
         amazonS3ByteArrayProducer.setConfiguration(producerConfiguration);
@@ -74,7 +74,7 @@ public class AmazonS3ByteArrayProducerTest {
     public void testWithNonNullPayloadPropertiesMissing(){
         expectedException.expect(InvalidAmazonS3PayloadException.class);
         expectedException.expectMessage("Instance of AmazonS3ByteArrayPayload has the following constraint " +
-            "violations :- [contents may not be null, keyName may not be null]");
+            "violations :- [contents must not be null, keyName must not be null]");
         amazonS3ByteArrayPayload.setKeyName(null);
         amazonS3ByteArrayPayload.setContents(null);
         amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);

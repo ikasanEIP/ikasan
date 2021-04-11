@@ -226,7 +226,6 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${version.org.hibernate-validator}</version>
         </dependency>
 
         <!-- web console -->

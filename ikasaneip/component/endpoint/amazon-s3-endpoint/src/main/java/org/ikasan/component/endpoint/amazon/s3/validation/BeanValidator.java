@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class BeanValidator<T> {
 
     /**
-     * Validates a bean with JSR 380 Annotations and throws an exception using the passed in supplier if validation fails
+     * Validates a bean with JSR 380 Annotations and throws an exception using the passed in consumer if validation fails
      * Uses the Hibernate validator implementation ( the reference implementation ) .
      *
      * @param validatableBean he bean to validate

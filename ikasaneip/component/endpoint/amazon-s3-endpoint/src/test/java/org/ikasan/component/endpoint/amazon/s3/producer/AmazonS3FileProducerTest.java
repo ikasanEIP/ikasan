@@ -62,7 +62,7 @@ public class AmazonS3FileProducerTest {
     public void testWithNonNullConfigurationPropertiesMissing() {
         expectedException.expect(EndpointException.class);
         expectedException.expectMessage("Instance of AmazonS3Configuration has the following " +
-            "constraint violations :- [accessKey may not be null, defaultBucketName may not be null, secretKey may not be null]");
+            "constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]");
         AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
         producerConfiguration.setRegion("Region");
         amazonS3FileProducer.setConfiguration(producerConfiguration);
@@ -72,7 +72,7 @@ public class AmazonS3FileProducerTest {
     public void testWithNonNullPayloadPropertiesMissing() {
         expectedException.expect(InvalidAmazonS3PayloadException.class);
         expectedException.expectMessage("Instance of AmazonS3FilePayload has the following constraint " +
-            "violations :- [filePath may not be null, keyName may not be null]");
+            "violations :- [filePath must not be null, keyName must not be null]");
         amazonS3FilePayload.setKeyName(null);
         amazonS3FilePayload.setFilePath(null);
         amazonS3FileProducer.invoke(amazonS3FilePayload);
