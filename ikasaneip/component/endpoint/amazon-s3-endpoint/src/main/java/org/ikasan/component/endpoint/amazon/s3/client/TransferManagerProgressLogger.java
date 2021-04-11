@@ -1,4 +1,4 @@
-package org.ikasan.component.endpoint.amazon.s3.producer;
+package org.ikasan.component.endpoint.amazon.s3.client;
 
 import com.amazonaws.services.s3.transfer.Transfer;
 import com.amazonaws.services.s3.transfer.TransferProgress;

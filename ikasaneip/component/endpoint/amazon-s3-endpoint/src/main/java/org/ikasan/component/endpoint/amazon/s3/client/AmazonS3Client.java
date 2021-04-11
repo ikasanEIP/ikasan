@@ -12,8 +12,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
-import org.ikasan.component.endpoint.amazon.s3.producer.AmazonS3FilePayload;
-import org.ikasan.component.endpoint.amazon.s3.producer.TransferManagerProgressLogger;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
