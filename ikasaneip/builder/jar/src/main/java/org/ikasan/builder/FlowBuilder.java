@@ -97,6 +97,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -744,27 +745,25 @@ public class FlowBuilder implements ApplicationContextAware
 
     protected Object generateConfiguredInstance(Configured configured)
     {
+        logger.warn("Component [{}] is configured but has no configuration instance set will attempt to instantiate",
+            configured.toString());
         Type[] types = configured.getClass().getGenericInterfaces();
         for(Type type:types)
         {
-            String[] interfaceParts = type.getTypeName().split("<|>");
-            // there should be two parts to the interface
-            // first part is the interface name ie Configured or ConfiguredResource
-            // second part is the generic type defining the configuration
-            if(interfaceParts.length == 2 &&
-                (interfaceParts[0].equals(Configured.class.getName()) || interfaceParts[0].equals(ConfiguredResource.class.getName())))
-            {
-                try
-                {
-                    return Class.forName(interfaceParts[1]).getConstructor().newInstance();
+            if (type instanceof ParameterizedType && Configured.class.isAssignableFrom(
+                (Class)((ParameterizedType) type).getRawType())) {
+                Type configurationType = ((ParameterizedType) type).getActualTypeArguments()[0];
+                try {
+                    if (configurationType instanceof Class)
+                        return ((Class)configurationType).getConstructor().newInstance();
+                } catch (InvocationTargetException | InstantiationException | IllegalAccessException
+                    | NoSuchMethodException e) {
                 }
-                catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e)
-                {
-                    // ignore and move on
-                }
+
             }
         }
 
+        logger.warn("Unable to instantiate configuration for component [{}]", configured);
         return null;
     }
 
