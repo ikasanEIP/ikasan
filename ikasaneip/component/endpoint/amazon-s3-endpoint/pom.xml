@@ -51,18 +51,6 @@
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Amazon S3 endpoint</name>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-bom</artifactId>
-                <version>${version.aws.java.sdk}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- Amazon S3 dependencies as per https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/java/example_code/s3/pom.xml -->
 
