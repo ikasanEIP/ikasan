@@ -54,6 +54,7 @@
     <name>Ikasan Enterprise Integration Off the Shelf Endpoints</name>
 
     <modules>
+        <module>amazon-s3-endpoint</module>
         <module>utility-endpoint</module>
         <module>jms-client</module>
         <module>jms-spring</module>

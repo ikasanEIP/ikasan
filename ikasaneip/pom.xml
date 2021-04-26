@@ -44,7 +44,8 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ikasan</groupId>
@@ -307,7 +308,8 @@
         <version.commons-text>1.8</version.commons-text>
         <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
-        <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
+        <version.org.apache.directory.server.apached-server-unit>1.5.5
+        </version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
@@ -352,6 +354,10 @@
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
+        <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
+        <version.bouncycastle>1.45</version.bouncycastle>
+        <version.javax.validation.api>2.0.1.Final</version.javax.validation.api>
+        <version.glassfish.javax.el>3.0.0</version.glassfish.javax.el>
     </properties>
 
     <!-- Distribution for releases -->
@@ -565,12 +571,16 @@
                             <goal>enforce</goal>
                         </goals>
                         <configuration>
-                            <rules><dependencyConvergence /></rules>
+                            <rules>
+                                <dependencyConvergence/>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <rules><dependencyConvergence /></rules>
+                    <rules>
+                        <dependencyConvergence/>
+                    </rules>
                 </configuration>
 
             </plugin>
@@ -1386,12 +1396,6 @@
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${version.org.hibernate-validator}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jboss.logging</groupId>
-                        <artifactId>jboss-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -2651,6 +2655,34 @@
                 <artifactId>jsonassert</artifactId>
                 <version>${version.json.assert}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>${version.aws.java.sdk}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk16</artifactId>
+                <version>${version.bouncycastle}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${version.javax.validation.api}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${version.glassfish.javax.el}</version>
+            </dependency>
+
+
 
         </dependencies>
     </dependencyManagement>
