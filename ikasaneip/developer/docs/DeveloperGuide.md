@@ -101,7 +101,7 @@ That's it, your project has been created.
 Lets build it!
 
 ## Building the Project
-All Ikasan projects are just standard Java Maven project containing,
+All Ikasan projects are just standard Java Maven projects containing,
 - `pom.xml` - parent Maven build pom
 - `bin` - standard Ikasan command line environment scripts
 - `distribution` - standard Maven packaging to create a distributable Ikasan module
@@ -151,7 +151,6 @@ Selecting 'Modules' will show the Vanilla Integration Module created in this exa
 Selecting 'Vanilla Integration Module' will show you the flows within this module.
 ![Login](quickstart-images/new-project-embeddedConsole-screen3.png) 
 
-This will show the flows within this Integration Module.
 We haven't actually named the flow yet, so it just says 'flow name', 
 but you can still start the flow. 
 ![Login](quickstart-images/new-project-embeddedConsole-screen4.png) 
@@ -171,8 +170,10 @@ At the end of the day Ikasan projects are just Java projects based on Maven
 build and dependency management. So if you are familiar with Java and Maven then 
 the Ikasan projects will look familiar.
 
-Lets look in the IDE at what has been created.
-![Login](quickstart-images/new-project-anatomy-screen1.png) 
+Lets look in the IDE at what has been created. At the root we can see there is a bin directory; a distribution directory; a jar direcotry; 
+and lastly a pom.xml which is the parent pom of the project.
+
+Lets look at these in turn.
 
 ### Parent pom.xml
 This is a standard Ikasan parent pom.xml containing the coordinates, properties, and build dependencies for 
@@ -295,7 +296,7 @@ as a deployable zip file.
 
 ### Java Directory
 The java directory contains all the source, configuration, and test classes required to create 
-the Ikansa Integration module in a standard Maven layout.
+the Ikasan Integration module in a standard Maven layout.
 
 Lets look at the key classes.
 
@@ -405,7 +406,6 @@ That is how every Ikasan Application Integration Module is created regardless of
 #### ComponentFactory.java
 This class creates your individual custom components.
 
-TO HERE
 ## Adding your own Components
 Lets add a custom Converter between the Consumer and Producer components.
 
