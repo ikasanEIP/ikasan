@@ -343,7 +343,7 @@
         <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>23.0</version.com.google.guava>
-        <version.tomcat>9.0.35</version.tomcat>
+        <version.tomcat>10.0.5</version.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.solr>8.5.1</version.org.apache.solr>
         <version.org.apache.httpcomponents>4.5.10</version.org.apache.httpcomponents>
