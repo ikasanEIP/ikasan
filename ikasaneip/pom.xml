@@ -317,7 +317,7 @@
         <version.org.liquibase>3.8.5</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.25</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>9.4.24.v20191120</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>11.0.2</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
