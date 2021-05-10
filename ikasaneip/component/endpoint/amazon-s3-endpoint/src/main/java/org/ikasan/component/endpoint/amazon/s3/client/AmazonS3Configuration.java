@@ -37,6 +37,10 @@ public class AmazonS3Configuration {
      */
     private String keyPrefix;
 
+    /**
+     * Allows this component to be enabled or disabled if Amazon S3 not yet setup
+     */
+    private Boolean enabled = true;
 
     public String getDefaultBucketName() {
         return defaultBucketName;
@@ -78,6 +82,14 @@ public class AmazonS3Configuration {
         this.keyPrefix = keyPrefix;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return "AmazonS3ProducerConfiguration{" +
@@ -86,6 +98,7 @@ public class AmazonS3Configuration {
             ", secretKey='********" + '\'' +
             ", region='" + region + '\'' +
             ", keyPrefix='" + keyPrefix + '\'' +
+            ", enabled='" + enabled + '\'' +
             '}';
     }
 }

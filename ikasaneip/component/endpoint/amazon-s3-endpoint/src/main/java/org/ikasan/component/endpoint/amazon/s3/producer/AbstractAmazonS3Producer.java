@@ -90,15 +90,21 @@ public abstract class AbstractAmazonS3Producer<T extends AbstractAmazonS3Payload
 
     @Override
     public void startManagedResource() {
-        logger.debug("Starting Amazon S3 Producer with configuration [{}]", configuration);
-        this.s3Client.setConfiguration(configuration);
-        s3Client.startup();
+        if (configuration.getEnabled()) {
+            logger.debug("Starting Amazon S3 Producer with configuration [{}]", configuration);
+            this.s3Client.setConfiguration(configuration);
+            s3Client.startup();
+        } else {
+            logger.debug("Not starting Amazon S3 Producer as configuration states its not to be enabled");
+        }
     }
 
     @Override
     public void stopManagedResource() {
-        logger.debug("Shutting down Amazon S3 Producer");
-        s3Client.shutdown();
+        if (configuration.getEnabled()) {
+            logger.debug("Shutting down Amazon S3 Producer");
+            s3Client.shutdown();
+        }
     }
 
     @Override
