@@ -22,11 +22,15 @@ public class AmazonS3FileProducer extends AbstractAmazonS3Producer<AmazonS3FileP
 
     @Override
     public void invoke(AmazonS3FilePayload payload) throws EndpointException {
-        super.invoke(payload);
-        if (!new File(payload.getFilePath()).exists()){
-            throw new InvalidAmazonS3PayloadException("File at path " + payload.getFilePath()
-                + " does not exist");
+        if (configuration.getEnabled()) {
+            super.invoke(payload);
+            if (!new File(payload.getFilePath()).exists()) {
+                throw new InvalidAmazonS3PayloadException("File at path " + payload.getFilePath()
+                    + " does not exist");
+            }
+            s3Client.uploadFile(payload.getFilePath(), getKeyName(payload), getBucketName(payload));
+        } else {
+            logger.debug("Configuration is not enabled, so component will do nothing");
         }
-        s3Client.uploadFile(payload.getFilePath(), getKeyName(payload), getBucketName(payload));
     }
 }

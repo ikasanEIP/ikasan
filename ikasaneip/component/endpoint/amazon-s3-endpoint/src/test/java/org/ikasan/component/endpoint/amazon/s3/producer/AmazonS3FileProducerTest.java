@@ -97,6 +97,17 @@ public class AmazonS3FileProducerTest {
         amazonS3FileProducer.startManagedResource();
     }
 
+    @Test
+    public void testWithComponentDisabled() {
+        configuration.setSecretKey("wrong");
+        configuration.setAccessKey("wrong");
+        configuration.setRegion("Region");
+        configuration.setEnabled(false);
+        amazonS3FileProducer.startManagedResource();
+        amazonS3FileProducer.invoke(amazonS3FilePayload);
+        amazonS3FileProducer.stopManagedResource();
+    }
+
     /**
      * The tests below are for testing against a LIVE Amazon S3 Account - and are ignored for this reason
      * Please provide details below and unignore if you want to test this. You should create a test bucket called

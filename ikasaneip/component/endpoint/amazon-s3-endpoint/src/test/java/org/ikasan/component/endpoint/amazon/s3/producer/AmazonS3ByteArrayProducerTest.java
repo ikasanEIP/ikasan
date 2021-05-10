@@ -90,6 +90,19 @@ public class AmazonS3ByteArrayProducerTest {
         amazonS3ByteArrayProducer.startManagedResource();
     }
 
+    @Test
+    public void testWithComponentDisabled() {
+        configuration.setSecretKey("wrong");
+        configuration.setAccessKey("wrong");
+        configuration.setRegion("Region");
+        configuration.setEnabled(false);
+        amazonS3ByteArrayProducer.startManagedResource();
+        amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
+        amazonS3ByteArrayProducer.stopManagedResource();
+    }
+
+
+
     /**
      *  The tests below are for testing against a LIVE Amazon S3 Account - and are ignored for this reason
      *  Please provide details below and unignore if you want to test this

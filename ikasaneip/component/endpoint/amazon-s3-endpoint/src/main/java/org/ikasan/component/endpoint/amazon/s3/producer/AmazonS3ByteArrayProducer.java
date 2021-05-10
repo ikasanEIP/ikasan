@@ -28,7 +28,11 @@ public class AmazonS3ByteArrayProducer extends AbstractAmazonS3Producer<AmazonS3
 
     @Override
     public void invoke(AmazonS3ByteArrayPayload payload) throws EndpointException {
-        super.invoke(payload);
-        s3Client.uploadByteArray(payload.getContents(), getKeyName(payload), getBucketName(payload));
+        if (configuration.getEnabled()) {
+            super.invoke(payload);
+            s3Client.uploadByteArray(payload.getContents(), getKeyName(payload), getBucketName(payload));
+        } else {
+            logger.debug("Configuration is not enabled, so component will do nothing");
+        }
     }
 }
