@@ -3,11 +3,17 @@ package org.ikasan.rest.client;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.rest.client.ReplayRestServiceImpl;
+import org.ikasan.rest.client.dto.TriggerDto;
+import org.ikasan.spec.trigger.TriggerRelationship;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +23,7 @@ public class ReplayRestServiceImplTest
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
-    private ReplayRestServiceImpl uut = new ReplayRestServiceImpl();
+    private ReplayRestServiceImpl uut = new ReplayRestServiceImpl(new HttpComponentsClientHttpRequestFactory());
 
     private String contexBaseUrl;
 
@@ -82,5 +88,26 @@ public class ReplayRestServiceImplTest
         assertEquals(false, result);
 
 
+    }
+
+    @Test
+    public void testTimeout() {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
+            = new HttpComponentsClientHttpRequestFactory();
+
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
+
+        uut = new ReplayRestServiceImpl(httpComponentsClientHttpRequestFactory);
+
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).withRequestBody(
+                containing(
+                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
+            .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(200).withFixedDelay(2000)));
+
+        Assert.assertFalse(uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes()));
     }
 }

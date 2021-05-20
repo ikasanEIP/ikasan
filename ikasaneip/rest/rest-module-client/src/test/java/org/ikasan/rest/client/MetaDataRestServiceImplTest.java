@@ -2,8 +2,10 @@ package org.ikasan.rest.client;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.ikasan.rest.client.dto.ModuleDto;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.Optional;
 
@@ -30,7 +33,7 @@ public class MetaDataRestServiceImplTest {
     {
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
         Environment environment = new StandardEnvironment();
-        uut = new MetaDataRestServiceImpl(environment);
+        uut = new MetaDataRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
     }
 
@@ -1253,5 +1256,140 @@ public class MetaDataRestServiceImplTest {
         Optional<ModuleMetaData> result = uut.getModuleMetadata(contexBaseUrl,"moduleName");
         assertEquals(false, result.isPresent());
 
+    }
+
+    @Test
+    public void testTimeout() {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
+            = new HttpComponentsClientHttpRequestFactory();
+
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
+
+        Environment environment = new StandardEnvironment();
+        uut = new MetaDataRestServiceImpl(environment, httpComponentsClientHttpRequestFactory);
+
+        stubFor(get(urlEqualTo("/rest/metadata/flow/moduleName/flowName"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("{\n" +
+                    "      \"name\": \"Wriggle Request Inbound Flow\",\n" +
+                    "      \"consumer\": {\n" +
+                    "        \"componentName\": \"JMS Consumer\",\n" +
+                    "        \"description\": null,\n" +
+                    "        \"componentType\": \"org.ikasan.spec.component.endpoint.Consumer\",\n" +
+                    "        \"implementingClass\": \"org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer\",\n" +
+                    "        \"configurationId\": \"wriggle-im-inboundRequestConsumer\",\n" +
+                    "        \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_JMS Consumer_1165847135_I\",\n" +
+                    "        \"decorators\": [\n" +
+                    "          {\n" +
+                    "            \"type\": \"Wiretap\",\n" +
+                    "            \"name\": \"BEFORE JMS Consumer\",\n" +
+                    "            \"configurationId\": \"39\",\n" +
+                    "            \"configurable\": true\n" +
+                    "          }\n" +
+                    "        ],\n" +
+                    "        \"configurable\": true\n" +
+                    "      },\n" +
+                    "      \"transitions\": [\n" +
+                    "        {\n" +
+                    "          \"from\": \"Internal Request to JSON Converter\",\n" +
+                    "          \"to\": \"Internal Request JMS Producer\",\n" +
+                    "          \"name\": \"default\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"from\": \"Inbound Request Splitter\",\n" +
+                    "          \"to\": \"Internal Request to JSON Converter\",\n" +
+                    "          \"name\": \"default\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"from\": \"JSON to Wriggle Inbound Request Converter\",\n" +
+                    "          \"to\": \"Inbound Request Splitter\",\n" +
+                    "          \"name\": \"default\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"from\": \"JMS Consumer\",\n" +
+                    "          \"to\": \"JSON to Wriggle Inbound Request Converter\",\n" +
+                    "          \"name\": \"default\"\n" +
+                    "        }\n" +
+                    "      ],\n" +
+                    "      \"flowElements\": [\n" +
+                    "        {\n" +
+                    "          \"componentName\": \"Internal Request JMS Producer\",\n" +
+                    "          \"description\": null,\n" +
+                    "          \"componentType\": \"org.ikasan.spec.component.endpoint.Producer\",\n" +
+                    "          \"implementingClass\": \"org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer\",\n" +
+                    "          \"configurationId\": \"wriggle-im-splitInboundRequestProducer\",\n" +
+                    "          \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_Internal Request JMS Producer_1165847135_I\",\n" +
+                    "          \"decorators\": [\n" +
+                    "            {\n" +
+                    "              \"type\": \"Wiretap\",\n" +
+                    "              \"name\": \"BEFORE Internal Request JMS Producer\",\n" +
+                    "              \"configurationId\": \"1\",\n" +
+                    "              \"configurable\": true\n" +
+                    "            }\n" +
+                    "          ],\n" +
+                    "          \"configurable\": true\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"componentName\": \"Internal Request to JSON Converter\",\n" +
+                    "          \"description\": null,\n" +
+                    "          \"componentType\": \"org.ikasan.spec.component.transformation.Converter\",\n" +
+                    "          \"implementingClass\": \"au.com.waddle.wriggle.components.converter.WriggleInternalRequestToJsonConverter\",\n" +
+                    "          \"configurationId\": null,\n" +
+                    "          \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_Internal Request to JSON Converter_1165847135_I\",\n" +
+                    "          \"decorators\": null,\n" +
+                    "          \"configurable\": false\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"componentName\": \"Inbound Request Splitter\",\n" +
+                    "          \"description\": null,\n" +
+                    "          \"componentType\": \"org.ikasan.spec.component.splitting.Splitter\",\n" +
+                    "          \"implementingClass\": \"au.com.waddle.wriggle.components.splitter.InboundRequestSplitter\",\n" +
+                    "          \"configurationId\": null,\n" +
+                    "          \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_Inbound Request Splitter_-91481914_I\",\n" +
+                    "          \"decorators\": null,\n" +
+                    "          \"configurable\": false\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"componentName\": \"JSON to Wriggle Inbound Request Converter\",\n" +
+                    "          \"description\": null,\n" +
+                    "          \"componentType\": \"org.ikasan.spec.component.transformation.Converter\",\n" +
+                    "          \"implementingClass\": \"au.com.waddle.wriggle.components.converter.InboundJsonToWriggleInboundRequestConverter\",\n" +
+                    "          \"configurationId\": null,\n" +
+                    "          \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_JSON to Wriggle Inbound Request Converter_1165847135_I\",\n" +
+                    "          \"decorators\": null,\n" +
+                    "          \"configurable\": false\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "          \"componentName\": \"JMS Consumer\",\n" +
+                    "          \"description\": null,\n" +
+                    "          \"componentType\": \"org.ikasan.spec.component.endpoint.Consumer\",\n" +
+                    "          \"implementingClass\": \"org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer\",\n" +
+                    "          \"configurationId\": \"wriggle-im-inboundRequestConsumer\",\n" +
+                    "          \"invokerConfigurationId\": \"wriggle-im_Wriggle Request Inbound Flow_JMS Consumer_1165847135_I\",\n" +
+                    "          \"decorators\": [\n" +
+                    "            {\n" +
+                    "              \"type\": \"Wiretap\",\n" +
+                    "              \"name\": \"BEFORE JMS Consumer\",\n" +
+                    "              \"configurationId\": \"39\",\n" +
+                    "              \"configurable\": true\n" +
+                    "            }\n" +
+                    "          ],\n" +
+                    "          \"configurable\": true\n" +
+                    "        }\n" +
+                    "      ],\n" +
+                    "      \"configurationId\": \"wriggle-im-Wriggle Request Inbound Flow\"\n" +
+                    "    }")
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .withStatus(200)
+                .withFixedDelay(2000)
+            ));
+
+        Optional<FlowMetaData> result = uut.getFlowMetadata(contexBaseUrl,"moduleName","flowName");
+
+        Assert.assertFalse(result.isPresent());
     }
 }
