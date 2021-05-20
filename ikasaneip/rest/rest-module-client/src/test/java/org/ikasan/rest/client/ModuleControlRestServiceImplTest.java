@@ -6,6 +6,7 @@ import org.ikasan.rest.client.ModuleControlRestServiceImpl;
 import org.ikasan.rest.client.dto.FlowDto;
 import org.ikasan.rest.client.dto.FlowStartupTypeDto;
 import org.ikasan.rest.client.dto.ModuleDto;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ public class ModuleControlRestServiceImplTest
     {
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
         Environment environment = new StandardEnvironment();
-        uut = new ModuleControlRestServiceImpl(environment);
+        uut = new ModuleControlRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
     }
 
@@ -185,5 +187,32 @@ public class ModuleControlRestServiceImplTest
 
         Optional<FlowStartupTypeDto> result = uut.getFlowStartupType(contexBaseUrl,"testModuleName","flowTest");
         assertEquals(false, result.isPresent());
+    }
+
+    @Test
+    public void testTimeout() {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
+            = new HttpComponentsClientHttpRequestFactory();
+
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
+
+        Environment environment = new StandardEnvironment();
+        uut = new ModuleControlRestServiceImpl(environment, httpComponentsClientHttpRequestFactory);
+
+        stubFor(get(urlEqualTo("/rest/moduleControl/test%20Module%20Name"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("{\"name\":\"test Module Name\",\"flows\":[{\"name\":\"flow test\",\"state\":\"running\"}]}")
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .withStatus(200)
+                .withFixedDelay(2000)
+            ));
+
+        Optional<ModuleDto> result = uut.getFlowStates(contexBaseUrl,"test Module Name");
+
+        Assert.assertFalse(result.isPresent());
     }
 }
