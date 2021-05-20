@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 
 import java.util.HashMap;
@@ -19,9 +20,9 @@ public class TriggerRestServiceImpl extends ModuleRestService
     protected final static String PUT_TRIGGER_URL = "/rest/wiretap/trigger";
     protected final static String DELETE_TRIGGER_URL = "/rest/wiretap/trigger/{triggerId}";
 
-    public TriggerRestServiceImpl(Environment environment)
-    {
-        super(environment);
+    public TriggerRestServiceImpl(Environment environment,
+                                  HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
+        super(environment, httpComponentsClientHttpRequestFactory);
     }
 
 

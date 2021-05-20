@@ -1,8 +1,10 @@
 package org.ikasan.rest.client;
 
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import javax.annotation.Resource;
 
@@ -16,28 +18,39 @@ public class ModuleRestClientAutoConfiguration
     private JsonConfigurationMetaDataProvider jsonConfigurationMetaDataProvider;
 
     @Bean
-    public ConfigurationRestServiceImpl configurationRestService(Environment environment){
-        return new ConfigurationRestServiceImpl(environment, this.jsonConfigurationMetaDataProvider);
+    @ConfigurationProperties(prefix = "module.rest.connection")
+    public HttpComponentsClientHttpRequestFactory customHttpRequestFactory()
+    {
+        return new HttpComponentsClientHttpRequestFactory();
     }
 
     @Bean
-    public ReplayRestServiceImpl replayRestService(){
-        return new ReplayRestServiceImpl();
+    public ConfigurationRestServiceImpl configurationRestService(Environment environment
+        ,HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory){
+        return new ConfigurationRestServiceImpl(environment, this.jsonConfigurationMetaDataProvider,
+            httpComponentsClientHttpRequestFactory);
     }
 
     @Bean
-    public ResubmissionRestServiceImpl resubmissionRestService(Environment environment){
-        return new ResubmissionRestServiceImpl(environment);
+    public ReplayRestServiceImpl replayRestService(HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory){
+        return new ReplayRestServiceImpl(httpComponentsClientHttpRequestFactory);
     }
 
     @Bean
-    public ModuleControlRestServiceImpl moduleControlRestService(Environment environment){
-        return new ModuleControlRestServiceImpl(environment);
+    public ResubmissionRestServiceImpl resubmissionRestService(Environment environment
+    , HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory){
+        return new ResubmissionRestServiceImpl(environment, httpComponentsClientHttpRequestFactory);
     }
 
     @Bean
-    public TriggerRestServiceImpl triggerRestService(Environment environment){
-        return new TriggerRestServiceImpl(environment);
+    public ModuleControlRestServiceImpl moduleControlRestService(Environment environment
+        , HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory){
+        return new ModuleControlRestServiceImpl(environment, httpComponentsClientHttpRequestFactory);
     }
 
+    @Bean
+    public TriggerRestServiceImpl triggerRestService(Environment environment
+    , HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory){
+        return new TriggerRestServiceImpl(environment, httpComponentsClientHttpRequestFactory);
+    }
 }
