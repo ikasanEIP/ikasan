@@ -5,18 +5,21 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
 
 public class ReplayRestServiceImplTest
 {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
-    private ReplayRestServiceImpl uut = new ReplayRestServiceImpl();
+    private ReplayRestServiceImpl uut = new ReplayRestServiceImpl(new HttpComponentsClientHttpRequestFactory());
 
     private String contexBaseUrl;
 
@@ -36,7 +39,7 @@ public class ReplayRestServiceImplTest
                     "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(200)));
         boolean result = uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes());
-        assertEquals(true, result);
+        Assert.assertEquals(true, result);
     }
 
     @Test
@@ -49,7 +52,7 @@ public class ReplayRestServiceImplTest
                     "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(400)));
         boolean result = uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes());
-        assertEquals(false, result);
+        Assert.assertEquals(false, result);
     }
 
     @Test
@@ -62,7 +65,7 @@ public class ReplayRestServiceImplTest
                     "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
                     .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(404)));
         boolean result = uut.replay(contexBaseUrl,  null, null,"test Module Name", "flow Test", "resubmit".getBytes());
-        assertEquals(false, result);
+        Assert.assertEquals(false, result);
     }
 
     @Test
@@ -78,8 +81,29 @@ public class ReplayRestServiceImplTest
                                     .withStatus(500)
                                ));
         boolean result = uut.replay(contexBaseUrl, null, null,"test Module Name","flow Test","resubmit".getBytes());
-        assertEquals(false, result);
+        Assert.assertEquals(false, result);
 
 
+    }
+
+    @Test
+    public void testTimeout() {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
+            = new HttpComponentsClientHttpRequestFactory();
+
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
+
+        uut = new ReplayRestServiceImpl(httpComponentsClientHttpRequestFactory);
+
+        stubFor(put(urlEqualTo(ReplayRestServiceImpl.REPLAY_URL))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).withRequestBody(
+                containing(
+                    "{\"moduleName\":\"test Module Name\",\"flowName\":\"flow Test\",\"event\":\"cmVzdWJtaXQ=\"}"))
+            .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()).withStatus(200).withFixedDelay(2000)));
+
+        Assert.assertFalse(uut.replay(contexBaseUrl, null, null, "test Module Name", "flow Test", "resubmit".getBytes()));
     }
 }

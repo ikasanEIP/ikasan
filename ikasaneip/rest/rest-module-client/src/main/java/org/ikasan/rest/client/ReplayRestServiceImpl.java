@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -23,9 +24,9 @@ public class ReplayRestServiceImpl
 
     private RestTemplate restTemplate;
 
-    public ReplayRestServiceImpl()
+    public ReplayRestServiceImpl(HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
-        restTemplate = new RestTemplate();
+        restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
