@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
@@ -39,15 +40,17 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 
     private boolean isEnabled;
 
-    public DashboardRestServiceImpl(Environment environment, String path, Converter converter)
+    public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
+                                    String path, Converter converter)
     {
-        this(environment, path);
+        this(environment, httpComponentsClientHttpRequestFactory, path);
         this.converter = converter;
     }
 
-    public DashboardRestServiceImpl(Environment environment, String path)
+    public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
+                                    String path)
     {
-        restTemplate = new RestTemplate();
+        restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
