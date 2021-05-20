@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 
 import java.util.HashMap;
@@ -27,9 +28,10 @@ public class MetaDataRestServiceImpl extends ModuleRestService implements MetaDa
     private JsonFlowMetaDataProvider jsonFlowMetaDataProvider;
     private JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
 
-    public MetaDataRestServiceImpl(Environment environment)
+    public MetaDataRestServiceImpl(Environment environment,
+                                   HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
-        super(environment);
+        super(environment, httpComponentsClientHttpRequestFactory);
         this.jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         this.jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(this.jsonFlowMetaDataProvider);
     }

@@ -5,6 +5,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +21,10 @@ public abstract class ModuleRestService
 
     protected String basicToken;
 
-    public ModuleRestService(Environment environment)
+    public ModuleRestService(Environment environment
+        , HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
-        restTemplate = new RestTemplate();
+        restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);

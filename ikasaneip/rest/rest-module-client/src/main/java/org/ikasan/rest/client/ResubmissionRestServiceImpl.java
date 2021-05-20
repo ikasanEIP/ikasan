@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 public class ResubmissionRestServiceImpl extends ModuleRestService implements ResubmissionService
 {
@@ -16,9 +17,9 @@ public class ResubmissionRestServiceImpl extends ModuleRestService implements Re
     protected final static String RESUBMSSION_URL = "/rest/resubmission";
 
 
-    public ResubmissionRestServiceImpl(Environment environment)
-    {
-        super(environment);
+    public ResubmissionRestServiceImpl(Environment environment,
+                                       HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
+        super(environment, httpComponentsClientHttpRequestFactory);
     }
 
     @Override
