@@ -29,7 +29,7 @@ ikasan.dashboard.extract.username=
 ikasan.dashboard.extract.password=
 ```
 
-Http connection time can be set using the following properties:
+Http connection time outs can be set using the following properties:
 
 ```properties
 dashboard.rest.connection.readTimeout=5000
