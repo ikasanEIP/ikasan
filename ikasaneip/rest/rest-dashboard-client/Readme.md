@@ -8,4 +8,11 @@ The REST Module Client is able to interact with Module REST endpoints.
 - replay recorded events 
 - get and update module/flow/component/flowInvoker configuration 
 - get and update module runtime information like state
- 
+
+Http connection time can be set using the following properties:
+
+```properties
+module.rest.connection.readTimeout=5000
+module.rest.connection.connectTimeout=5000
+module.rest.connection.connectionRequestTimeout=5000
+```
