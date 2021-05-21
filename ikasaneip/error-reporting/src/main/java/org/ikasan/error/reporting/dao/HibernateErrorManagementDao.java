@@ -77,81 +77,17 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
     public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrenceImpl eo " +
             " where eo.uri in(:" + EVENT_IDS + ")";
 
-    public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
-
-    public static final String NOTES_DELETE_QUERY = "delete Note n " +
-            " where n.id in(:" + EVENT_IDS + ")";
-
-    public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
-
     public static final String UPDATE_HARVESTED_QUERY = "update ErrorOccurrenceImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = 1" +
         " where w.id in(:" + EVENT_IDS + ")";
 
     private boolean isHarvestQueryOrdered = false;
 
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
-     */
-    @Override
-    public void saveErrorOccurrenceAction(
-            ErrorOccurrenceAction errorOccurrenceAction)
-    {
-        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceAction);
-    }
 
 	@Override
 	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence)
 	{
 		this.getHibernateTemplate().saveOrUpdate(errorOccurrence);
 	}
-
-	/* (non-Javadoc)
-         * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
-         */
-	@Override
-	public void saveNote(Note note)
-	{
-		this.getHibernateTemplate().saveOrUpdate(note);
-	}
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.window.Note)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void deleteNote(final Note note)
-    {
-        this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(ErrorManagementDaoConstants.DELETE_NOTE);
-                query.setParameter(ErrorManagementDaoConstants.NOTE_ID, note.getId());
-                query.executeUpdate();
-                return null;
-            }
-        });
-        this.getHibernateTemplate().delete(note);
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceLink(org.ikasan.error.reporting.window.ErrorOccurrenceLink)
-     */
-    @Override
-    public void saveErrorOccurrenceLink(ErrorOccurrenceLink errorOccurrenceLink)
-    {
-        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceLink);
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceNote(org.ikasan.error.reporting.window.ErrorOccurrenceNote)
-     */
-    @Override
-    public void saveErrorOccurrenceNote(ErrorOccurrenceNote errorOccurrenceNote)
-    {
-        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceNote);
-    }
 
     /* (non-Javadoc)
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.window.ErrorOccurrence)
@@ -185,24 +121,6 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
         });
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNotesByErrorUri(java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Note> getNotesByErrorUri(final String errorUri)
-    {
-        return (List<Note>) this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(ErrorManagementDaoConstants.GET_NOTE_BY_ERROR_URI);
-                query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
-                return (List<Note>) query.list();
-            }
-        });
-    }
 
     /* (non-Javadoc)
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrenceActions(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
@@ -260,53 +178,6 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
             return rowList;
 
-        });
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#houseKeepErrorOccurrenceActions()
-     */
-    @Override
-    public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions()
-    {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithNote()
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<String> getAllErrorUrisWithNote()
-    {
-        return (List<String>) this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery("select ecn.id.errorUri from ErrorOccurrenceNote ecn");
-                return (List<String>) query.list();
-            }
-        });
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getErrorOccurrenceNotesByErrorUri(java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
-            final String errorUri)
-    {
-        return (List<ErrorOccurrenceNote>) this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(ErrorManagementDaoConstants.GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI);
-                query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
-                return (List<ErrorOccurrenceNote>) query.list();
-            }
         });
     }
 
@@ -403,21 +274,6 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
 
 				if(errorUris.size() > 0)
 				{
-					query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
-					query.setParameterList(EVENT_IDS, errorUris);
-					query.executeUpdate();
-
-					query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
-					query.setParameterList(EVENT_IDS, errorUris);
-
-					List<Long> errorOccurenceNotesIds = (List<Long>)query.list();
-
-					if(errorOccurenceNotesIds.size() > 0)
-					{
-						query = session.createQuery(NOTES_DELETE_QUERY);
-						query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
-						query.executeUpdate();
-					}
 
 					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);

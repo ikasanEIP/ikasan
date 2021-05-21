@@ -1,0 +1,1358 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="ikasan" id="1613856763872-1">
+        <createTable tableName="AUTHENTICATIONMETHOD">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="AUTHENTICA_16633419592"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="METHOD" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHORDER" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LASTSYNCHRONISED" type="TIMESTAMP"/>
+            <column defaultValueBoolean="true" name="ENABLED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LDAPSERVERURL" type="VARCHAR(256)"/>
+            <column name="LDAPBINDUSERDN" type="VARCHAR(256)"/>
+            <column name="LDAPBINDUSERPASSWORD" type="VARCHAR(256)"/>
+            <column name="LDAPUSERSEARCHBASEDN" type="VARCHAR(256)"/>
+            <column name="LDAPUSERSEARCHFILTER" type="VARCHAR(256)"/>
+            <column name="EMAILATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="USERACCNAMEATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="ACCOUNTTYPEATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="APPSECBASEDN" type="VARCHAR(256)"/>
+            <column name="APPSECGROUPATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="FIRSTNAMEATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="SURNAMEATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="DEPARTMENTATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="APPSECDESCATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="LDAPUSERDESCATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column name="MEMBEROFATTRIBUTENAME" type="VARCHAR(256)"/>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+            <column defaultValue="" name="USERSYNCHRONISATIONFILTER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="GROUPSYNCHRONISATIONFILTER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="0" name="SCHEDULED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="SYNCHRONISATIONCRONEXPRESSION" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-2">
+        <createTable tableName="AUTHORITIES">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="AUTHORITIE_ID_10720038192"/>
+            </column>
+            <column name="AUTHORITY" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-3">
+        <createTable tableName="COMPONENTINVOCATIONMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="MESSAGEHISTORYPK"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BEFOREEVENTIDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BEFORERELATEDEVENTIDENTIFIER" type="VARCHAR(255)"/>
+            <column name="AFTEREVENTIDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AFTERRELATEDEVENTIDENTIFIER" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="STARTTIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="ENDTIME" type="DECIMAL(18)"/>
+            <column name="FLOWINVOCATIONMETRICID" type="DECIMAL(18)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-4">
+        <createTable tableName="CONFIGURATION">
+            <column name="CONFIGURATIONID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-5">
+        <createTable tableName="CONFIGURATIONPARAMETER">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONFIGURATIONPARAMETERPK"/>
+            </column>
+            <column name="CONFIGURATIONIDENTIFIER" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POSITIONREF" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-6">
+        <createTable tableName="CONFPARAMBOOLEAN">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="VALUE" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-7">
+        <createTable tableName="CONFPARAMINTEGER">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="DECIMAL(18)"/>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-8">
+        <createTable tableName="CONFPARAMLIST">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-9">
+        <createTable tableName="CONFPARAMLISTSTRING">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POSITIONREF" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(2048)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-10">
+        <createTable tableName="CONFPARAMLONG">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="DECIMAL(18)"/>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-11">
+        <createTable tableName="CONFPARAMMAP">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-12">
+        <createTable tableName="CONFPARAMMAPSTRING">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPKEY" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(2048)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-13">
+        <createTable tableName="CONFPARAMMASKEDSTRING">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="CLOB"/>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-14">
+        <createTable tableName="CONFPARAMSTRING">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(2048)"/>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-15">
+        <createTable tableName="CUSTOMMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="METRICPK"/>
+            </column>
+            <column name="COMPINVOCATIONMETRICID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-16">
+        <createTable tableName="ERROROCCURRENCE">
+            <column name="URI" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWELEMENTNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERRORDETAIL" type="CLOB"/>
+            <column name="EVENTLIFEIDENTIFIER" type="VARCHAR(255)"/>
+            <column name="EVENTRELATEDIDENTIFIER" type="VARCHAR(255)"/>
+            <column name="ACTION" type="VARCHAR(255)"/>
+            <column name="EVENT" type="BLOB"/>
+            <column defaultValueNumeric="0" name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERRORMESSAGE" type="CLOB"/>
+            <column name="EXCEPTIONCLASS" type="VARCHAR(512)"/>
+            <column name="USERACTION" type="VARCHAR(32)"/>
+            <column name="ACTIONEDBY" type="VARCHAR(32)"/>
+            <column defaultValueNumeric="0" name="USERACTIONTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTASSTRING" type="CLOB"/>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-17">
+        <createTable tableName="EXCLUSIONEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="EXCLUSIONEVENTPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENT" type="BLOB"/>
+            <column name="ERRORURI" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)"/>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-18">
+        <createTable tableName="EXCLUSIONEVENTACTION">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="EXCLUSIONE_19193428713"/>
+            </column>
+            <column name="ERRORURI" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTIONEDBY" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTION" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENT" type="BLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-19">
+        <createTable tableName="FLOWEVENTTRIGGER">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FLOWEVENTTRIGGERPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATIONSHIP" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWELEMENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="JOBNAME" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-20">
+        <createTable tableName="FLOWEVENTTRIGGERPARAMETERS">
+            <column name="TRIGGERID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMVALUE" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-21">
+        <createTable tableName="FLOWINVOCATIONMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FLOWINVOCATIONPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FINALACTION" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="STARTTIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="ENDTIME" type="DECIMAL(18)"/>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERRORURI" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-22">
+        <createTable tableName="FTCHECKSUMCOMMAND">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESTRUCTIVE" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHECKSUMFILEPATH" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-23">
+        <createTable tableName="FTCLEANUPCHUNKSCOMMAND">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILECHUNKHEADERID" type="DECIMAL(18)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-24">
+        <createTable tableName="FTDELIVERBATCHCOMMAND">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OUTPUTDIRECTORY" type="VARCHAR(255)"/>
+            <column name="TEMPDIRECTORY" type="VARCHAR(255)"/>
+            <column name="BATCHFOLDER" type="VARCHAR(255)"/>
+            <column name="PUTATTEMPTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-25">
+        <createTable tableName="FTDELIVERFILECOMMAND">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILENAME" type="VARCHAR(255)"/>
+            <column name="TEMPFILENAME" type="VARCHAR(255)"/>
+            <column name="OUTPUTDIRECTORY" type="VARCHAR(255)"/>
+            <column name="OVERWRITEEXISTING" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUTATTEMPTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-26">
+        <createTable tableName="FTFILECHUNK">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FTFILECHUNK01U"/>
+            </column>
+            <column name="CONTENT" type="BLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ORDINAL" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MD5HASH" type="CHAR(32)"/>
+            <column name="FILECHUNKHEADERID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-27">
+        <createTable tableName="FTFILECHUNKHEADER">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FTFILECHUNKHEADER01U"/>
+            </column>
+            <column name="SEQUENCELENGTH" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INTERNALMD5HASH" type="CHAR(32)"/>
+            <column name="EXTERNALMD5HASH" type="CHAR(32)"/>
+            <column name="FILENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHUNKTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CLIENTID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-28">
+        <createTable tableName="FTFILEFILTER">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FTFILEFILTER01U"/>
+            </column>
+            <column name="CLIENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CRITERIA" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LASTMODIFIED" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="LASTACCESSED" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SIZE" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-29">
+        <createTable tableName="FTRETRIEVEFILECOMMAND">
+            <column name="ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESTRUCTIVE" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RENAMEONSUCCESS" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RENAMEEXTENSION" type="VARCHAR(255)"/>
+            <column name="MOVEONSUCCESS" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MOVENEWPATH" type="VARCHAR(255)"/>
+            <column name="SOURCEPATH" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-30">
+        <createTable tableName="FTTRANSACTIONALRESOURCECOMMAND">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="TRANSRESCOMMAND01U"/>
+            </column>
+            <column name="STATE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="XID_ID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXECUTIONTIMESTAMP" type="CHAR(24)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-31">
+        <createTable tableName="FTXID">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FTXID01U"/>
+            </column>
+            <column name="STATE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GLOBALTRANSACTIONID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BRANCHQUALIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMATID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CLIENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LASTUPDATEDDATETIME" type="DECIMAL(18)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-32">
+        <createTable tableName="IKASANWIRETAP">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="IKASANWIRETAPPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATEDEVENTID" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EVENTTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOADCONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-33">
+        <createTable tableName="MESSAGEFILTER">
+            <column defaultValueNumeric="0" name="CRITERIA" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CLIENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CRITERIADESCRIPTION" type="VARCHAR(512)"/>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-34">
+        <createTable tableName="METRICEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="METRICEVENTPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATEDEVENTID" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EVENTTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOADCONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-35">
+        <createTable tableName="POLICYLINK">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="POLICYLINK_13857689632"/>
+            </column>
+            <column name="POLICYLINKTYPEID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGETID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-36">
+        <createTable tableName="POLICYLINKTYPE">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="POLICYLINK_12897686214"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TABLENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-37">
+        <createTable tableName="PRINCIPALROLE">
+            <column name="PRINCIPALID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLEID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-38">
+        <createTable tableName="REPLAYAUDIT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="REPLAYAUDITPK"/>
+            </column>
+            <column name="REPLAYUSER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGETSERVER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REASON" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-39">
+        <createTable tableName="REPLAYAUDITEVENT">
+            <column name="REPLAYAUDITID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPLAYEVENTID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="SUCCESS" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RESULTMESSAGE" type="VARCHAR(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(255)"/>
+            <column name="FLOWNAME" type="VARCHAR(255)"/>
+            <column name="EVENTID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-40">
+        <createTable tableName="REPLAYEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="REPLAYEVENTPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENT" type="BLOB"/>
+            <column defaultValueNumeric="0" name="TIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTASSTRING" type="CLOB"/>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-41">
+        <createTable tableName="ROLEMODULE">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="ROLEMODULE_PK"/>
+            </column>
+            <column name="ROLEID" type="DECIMAL(18)"/>
+            <column name="MODULENAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-42">
+        <createTable tableName="ROLEPOLICY">
+            <column name="ROLEID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POLICYID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-43">
+        <createTable tableName="SECURITYPOLICY">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="SECURITYPO_11673401923"/>
+            </column>
+            <column name="POLICYLINKID" type="DECIMAL(18)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-44">
+        <createTable tableName="SECURITYPRINCIPAL">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="SECURITYPR_9593394513"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRINCIPALTYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-45">
+        <createTable tableName="SECURITYROLE">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="SECURITYRO_10713398503"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-46">
+        <createTable tableName="STARTUPCONTROL">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="STARTUPCONTROLPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STARTUPTYPE" type="VARCHAR(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMENT" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-47">
+        <createTable tableName="SYSTEMEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="SYSTEMEVENTPK"/>
+            </column>
+            <column name="SUBJECT" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTION" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTOR" type="VARCHAR(64)"/>
+            <column name="TIMESTAMP" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="TIMESTAMP"/>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-48">
+        <createTable tableName="USERPRINCIPAL">
+            <column name="USERID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRINCIPALID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_DATE" name="CREATEDDATETIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATEDDATETIME" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-49">
+        <createTable tableName="USERS">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="USERS_ID_10080035912"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="2665f9cd19cc9946cf921623d4cab834b221e4" name="PASSWORD" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL" type="VARCHAR(255)"/>
+            <column name="ENABLED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRSTNAME" type="VARCHAR(50)"/>
+            <column name="SURNAME" type="VARCHAR(50)"/>
+            <column name="DEPARTMENT" type="VARCHAR(50)"/>
+            <column defaultValueNumeric="0" name="PREVIOUSACCESS" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NEWPASSWORD" type="VARCHAR(255)"/>
+            <column defaultValueComputed="0" name="REQUIRESPASSWORDCHANGE" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-50">
+        <createTable tableName="USERSAUTHORITIES">
+            <column name="USERID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHORITYID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-51">
+        <addPrimaryKey columnNames="PRINCIPALID, ROLEID" constraintName="PRINCIPALR_13753409332" tableName="PRINCIPALROLE"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-52">
+        <addPrimaryKey columnNames="REPLAYAUDITID, REPLAYEVENTID" constraintName="REPLAYAUDITEVENTPK" tableName="REPLAYAUDITEVENT"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-53">
+        <addPrimaryKey columnNames="ROLEID, POLICYID" constraintName="ROLEPOLICY_14713412752" tableName="ROLEPOLICY"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-54">
+        <addPrimaryKey columnNames="USERID, PRINCIPALID" constraintName="USERPRINCI_12793405912" tableName="USERPRINCIPAL"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-55">
+        <addPrimaryKey columnNames="USERID, AUTHORITYID" constraintName="USERSAUTHO_11360040472" tableName="USERSAUTHORITIES"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-56">
+        <createIndex indexName="AUTHORITIE_AUTHOR_10720038193" tableName="AUTHORITIES" unique="true">
+            <column name="AUTHORITY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-57">
+        <createIndex indexName="CONFIGURATION01U" tableName="CONFIGURATION" unique="true">
+            <column name="CONFIGURATIONID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-58">
+        <createIndex indexName="CONFIGURATIONPARAMETER01U" tableName="CONFIGURATIONPARAMETER" unique="true">
+            <column name="CONFIGURATIONIDENTIFIER"/>
+            <column name="POSITIONREF"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-59">
+        <createIndex indexName="CONFPARAMBOOLEAN01U" tableName="CONFPARAMBOOLEAN" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-60">
+        <createIndex indexName="CONFPARAMINTEGER01U" tableName="CONFPARAMINTEGER" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-61">
+        <createIndex indexName="CONFPARAMLIST01U" tableName="CONFPARAMLIST" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-62">
+        <createIndex indexName="CONFPARAMLISTSTRING01U" tableName="CONFPARAMLISTSTRING" unique="true">
+            <column name="ID"/>
+            <column name="POSITIONREF"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-63">
+        <createIndex indexName="CONFPARAMLONG01U" tableName="CONFPARAMLONG" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-64">
+        <createIndex indexName="CONFPARAMMAP01U" tableName="CONFPARAMMAP" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-65">
+        <createIndex indexName="CONFPARAMMAPSTRING01U" tableName="CONFPARAMMAPSTRING" unique="true">
+            <column name="ID"/>
+            <column name="MAPKEY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-66">
+        <createIndex indexName="CONFPARAMMASKEDSTRING01U" tableName="CONFPARAMMASKEDSTRING" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-67">
+        <createIndex indexName="CONFPARAMSTRING01U" tableName="CONFPARAMSTRING" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-68">
+        <createIndex indexName="EXCLEVENTACTION_ERRORURI" tableName="EXCLUSIONEVENTACTION">
+            <column name="ERRORURI"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-69">
+        <createIndex indexName="FLOWEVENTTRIGGERPARAM_ID_FK_INDEX_F" tableName="FLOWEVENTTRIGGERPARAMETERS">
+            <column name="TRIGGERID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-70">
+        <createIndex indexName="FTCHECKSUMCOMMAND01U" tableName="FTCHECKSUMCOMMAND" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-71">
+        <createIndex indexName="FTCLEANUPCHUNKSCOMMAND01U" tableName="FTCLEANUPCHUNKSCOMMAND" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-72">
+        <createIndex indexName="FTDELIVERBATCHCOMMAND01U" tableName="FTDELIVERBATCHCOMMAND" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-73">
+        <createIndex indexName="FTDELIVERFILECOMMAND01U" tableName="FTDELIVERFILECOMMAND" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-74">
+        <createIndex indexName="FTFILECHUN_FILECH_FK_INDEX_3" tableName="FTFILECHUNK">
+            <column name="FILECHUNKHEADERID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-75">
+        <createIndex indexName="FTFILEFILTER02U" tableName="FTFILEFILTER" unique="true">
+            <column name="CLIENTID"/>
+            <column name="CRITERIA"/>
+            <column name="LASTMODIFIED"/>
+            <column name="SIZE"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-76">
+        <createIndex indexName="FTFILEFILTER03U" tableName="FTFILEFILTER">
+            <column name="CLIENTID"/>
+            <column name="CREATEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-77">
+        <createIndex indexName="FTRETRIEVEFILECOMMAND01U" tableName="FTRETRIEVEFILECOMMAND" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-78">
+        <createIndex indexName="FTTRANSACT_XID_ID_FK_INDEX_D" tableName="FTTRANSACTIONALRESOURCECOMMAND">
+            <column name="XID_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-79">
+        <createIndex indexName="FTXID02U" tableName="FTXID" unique="true">
+            <column name="GLOBALTRANSACTIONID"/>
+            <column name="BRANCHQUALIFIER"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-80">
+        <createIndex indexName="IKASANERROROCCURRENCE01U" tableName="ERROROCCURRENCE" unique="true">
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+            <column name="FLOWELEMENTNAME"/>
+            <column name="URI"/>
+            <column name="TIMESTAMP"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-81">
+        <createIndex indexName="IKASANEXCLUSIONEVENT01U" tableName="EXCLUSIONEVENT" unique="true">
+            <column name="ID"/>
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+            <column name="IDENTIFIER"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-82">
+        <createIndex indexName="IX_ERROROCCURRENCE_EXPIRY" tableName="ERROROCCURRENCE">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-83">
+        <createIndex indexName="IX_ERROROCCURRENCE_HARVESTEDDATETIME" tableName="ERROROCCURRENCE">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-84">
+        <createIndex indexName="IX_EXCLUSIONEVENT_HARVESTEDDATETIME" tableName="EXCLUSIONEVENT">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-85">
+        <createIndex indexName="IX_FLOWINVOCATIONMETRIC_HARVESTEDDATETIME" tableName="FLOWINVOCATIONMETRIC">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-86">
+        <createIndex indexName="IX_FLOWINVOCATION_EXPIRY" tableName="FLOWINVOCATIONMETRIC">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-87">
+        <createIndex indexName="IX_FLOWINVOCATION_STARTTIMEMODULEFLOW" tableName="FLOWINVOCATIONMETRIC">
+            <column name="STARTTIME"/>
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-88">
+        <createIndex indexName="IX_IKASANWIRETAP_CREATEDDATETIME" tableName="IKASANWIRETAP">
+            <column name="CREATEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-89">
+        <createIndex indexName="IX_IKASANWIRETAP_EVENTID" tableName="IKASANWIRETAP">
+            <column name="EVENTID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-90">
+        <createIndex indexName="IX_IKASANWIRETAP_EXPIRY" tableName="IKASANWIRETAP">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-91">
+        <createIndex indexName="IX_IKASANWIRETAP_HARVESTEDDATETIME" tableName="IKASANWIRETAP">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-92">
+        <createIndex indexName="IX_IKASANWIRETAP_SEARCH" tableName="IKASANWIRETAP">
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+            <column name="COMPONENTNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-93">
+        <createIndex indexName="IX_METRICEVENT_EVENTID" tableName="METRICEVENT">
+            <column name="EVENTID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-94">
+        <createIndex indexName="IX_METRICEVENT_EXPIRY" tableName="METRICEVENT">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-95">
+        <createIndex indexName="IX_METRIC_MESSAGEHISTORYID" tableName="CUSTOMMETRIC">
+            <column name="COMPINVOCATIONMETRICID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-96">
+        <createIndex indexName="IX_REPLAYEVENT_HARVESTEDDATETIME" tableName="REPLAYEVENT">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-97">
+        <createIndex indexName="IX_SYSTEMEVENT_HARVESTEDDATETIME" tableName="SYSTEMEVENT">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-98">
+        <createIndex indexName="MESSAGEFILTER01U" tableName="MESSAGEFILTER" unique="true">
+            <column name="CRITERIA"/>
+            <column name="CLIENTID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-99">
+        <createIndex indexName="MHFLOWINVOCATION_FK_INDEX_1" tableName="COMPONENTINVOCATIONMETRIC">
+            <column name="FLOWINVOCATIONMETRICID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-100">
+        <createIndex indexName="POLICYLINK_1449769191_INDEX_7" tableName="POLICYLINK">
+            <column name="POLICYLINKTYPEID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-101">
+        <createIndex indexName="POLICYLINK_NAME_12897686212" tableName="POLICYLINKTYPE" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-102">
+        <createIndex indexName="POLICYLINK_TABLEN_12897686213" tableName="POLICYLINKTYPE" unique="true">
+            <column name="TABLENAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-103">
+        <createIndex indexName="POLICY_NAME" tableName="SECURITYPOLICY">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-104">
+        <createIndex indexName="PRINCIPALR_1439341161_INDEX_4" tableName="PRINCIPALROLE">
+            <column name="PRINCIPALID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-105">
+        <createIndex indexName="PRINCIPALR_1455341218_INDEX_4" tableName="PRINCIPALROLE">
+            <column name="ROLEID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-106">
+        <createIndex indexName="PRINCIPAL_TYPE" tableName="SECURITYPRINCIPAL">
+            <column name="PRINCIPALTYPE"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-107">
+        <createIndex indexName="REPLAYAUDITEVENTFK1_INDEX_1" tableName="REPLAYAUDITEVENT">
+            <column name="REPLAYAUDITID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-108">
+        <createIndex indexName="REPLAYAUDITTIMESTAMPIDX" tableName="REPLAYAUDIT">
+            <column name="TIMESTAMP"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-109">
+        <createIndex indexName="REPLAYEVENT01U" tableName="REPLAYEVENT" unique="true">
+            <column name="ID"/>
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+            <column name="IDENTIFIER"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-110">
+        <createIndex indexName="ROLEMODULE_ROLEID_IDX" tableName="ROLEMODULE">
+            <column name="ROLEID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-111">
+        <createIndex indexName="ROLEPOLICY_1535341503_INDEX_A" tableName="ROLEPOLICY">
+            <column name="POLICYID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-112">
+        <createIndex indexName="ROLEPOLICY_1551341560_INDEX_A" tableName="ROLEPOLICY">
+            <column name="ROLEID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-113">
+        <createIndex indexName="SECURITYPR_NAME_9593394512" tableName="SECURITYPRINCIPAL" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-114">
+        <createIndex indexName="SECURITYRO_NAME_10713398502" tableName="SECURITYROLE" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-115">
+        <createIndex indexName="USERPRINCI_1343340819_INDEX_4" tableName="USERPRINCIPAL">
+            <column name="PRINCIPALID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-116">
+        <createIndex indexName="USERPRINCI_1359340876_INDEX_4" tableName="USERPRINCIPAL">
+            <column name="USERID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-117">
+        <createIndex indexName="USERS_USERNA_10080035913" tableName="USERS" unique="true">
+            <column name="USERNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-118">
+        <createIndex indexName="USER_AUTH_AUTH_FK1_INDEX_7" tableName="USERSAUTHORITIES">
+            <column name="AUTHORITYID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-119">
+        <createIndex indexName="USER_AUTH_USER_FK2_INDEX_7" tableName="USERSAUTHORITIES">
+            <column name="USERID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-120">
+        <addForeignKeyConstraint baseColumnNames="TRIGGERID" baseTableName="FLOWEVENTTRIGGERPARAMETERS" constraintName="FLOWEVENTTRIGGERPARAM_ID_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FLOWEVENTTRIGGER"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-121">
+        <addForeignKeyConstraint baseColumnNames="FILECHUNKHEADERID" baseTableName="FTFILECHUNK" constraintName="FTFILECHUN_FILECH_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FTFILECHUNKHEADER"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-122">
+        <addForeignKeyConstraint baseColumnNames="XID_ID" baseTableName="FTTRANSACTIONALRESOURCECOMMAND" constraintName="FTTRANSACT_XID_ID_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FTXID"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-123">
+        <addForeignKeyConstraint baseColumnNames="COMPINVOCATIONMETRICID" baseTableName="CUSTOMMETRIC" constraintName="MESSAGEHISTORYFK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="COMPONENTINVOCATIONMETRIC"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-124">
+        <addForeignKeyConstraint baseColumnNames="FLOWINVOCATIONMETRICID" baseTableName="COMPONENTINVOCATIONMETRIC" constraintName="MHFLOWINVOCATION_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FLOWINVOCATIONMETRIC"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-125">
+        <addForeignKeyConstraint baseColumnNames="POLICYLINKTYPEID" baseTableName="POLICYLINK" constraintName="POLICYLINK_1449769191" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="POLICYLINKTYPE"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-126">
+        <addForeignKeyConstraint baseColumnNames="PRINCIPALID" baseTableName="PRINCIPALROLE" constraintName="PRINCIPALR_1439341161" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYPRINCIPAL"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-127">
+        <addForeignKeyConstraint baseColumnNames="ROLEID" baseTableName="PRINCIPALROLE" constraintName="PRINCIPALR_1455341218" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYROLE"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-128">
+        <addForeignKeyConstraint baseColumnNames="REPLAYAUDITID" baseTableName="REPLAYAUDITEVENT" constraintName="REPLAYAUDITEVENTFK1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="REPLAYAUDIT"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-129">
+        <addForeignKeyConstraint baseColumnNames="ROLEID" baseTableName="ROLEMODULE" constraintName="ROLEMODULE_ROLE_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYROLE"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-130">
+        <addForeignKeyConstraint baseColumnNames="POLICYID" baseTableName="ROLEPOLICY" constraintName="ROLEPOLICY_1535341503" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYPOLICY"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-131">
+        <addForeignKeyConstraint baseColumnNames="ROLEID" baseTableName="ROLEPOLICY" constraintName="ROLEPOLICY_1551341560" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYROLE"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-132">
+        <addForeignKeyConstraint baseColumnNames="PRINCIPALID" baseTableName="USERPRINCIPAL" constraintName="USERPRINCI_1343340819" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="SECURITYPRINCIPAL"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-133">
+        <addForeignKeyConstraint baseColumnNames="USERID" baseTableName="USERPRINCIPAL" constraintName="USERPRINCI_1359340876" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="USERS"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-134">
+        <addForeignKeyConstraint baseColumnNames="AUTHORITYID" baseTableName="USERSAUTHORITIES" constraintName="USER_AUTH_AUTH_FK1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="AUTHORITIES"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-135">
+        <addForeignKeyConstraint baseColumnNames="USERID" baseTableName="USERSAUTHORITIES" constraintName="USER_AUTH_USER_FK2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="USERS"/>
+    </changeSet>
+</databaseChangeLog>

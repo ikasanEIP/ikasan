@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!-- 3.2.x table creation -->
+
+    <!-- 3.2.x table alterations -->
+
+    <!-- 3.2.x cardinality creation -->
+
+    <!-- 3.2.x data creation -->
+
+    <!-- 3.2.x index creation -->
+
+    <!-- 3.2.x table drop -->
+    <include file="db/drop/db-changeLog-dropRoleFilter.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropFilter.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropFilterComponent.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropComponent.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropFlow.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropIkasanModule.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropServer.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropModule.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropUserBusinessStream.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropBusinessStreamFlow.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropBusinessStream.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropErrorOccurrenceNote.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropNote.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropNotification.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropPointToPointFlow.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropPointToPointFlowProfile.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropErrorCategorisationLink.xml" relativeToChangelogFile="true" />
+    <include file="db/drop/db-changeLog-dropErrorCategorisation.xml" relativeToChangelogFile="true" />
+
+    <!-- 3.2.x table modify -->
+
+
+
+
+</databaseChangeLog>

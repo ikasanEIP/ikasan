@@ -94,4 +94,11 @@ public class ExceptionGenerationgBroker implements Broker
     {
         this.shouldThrowStoppedInErrorException = shouldThrowStoppedInErrorException;
     }
+
+    public void reset(){
+        shouldThrowExclusionException = false;
+        shouldThrowRecoveryException = false;
+        shouldThrowScheduledRecoveryException = false;
+        shouldThrowStoppedInErrorException = false;
+    }
 }

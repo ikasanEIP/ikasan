@@ -65,11 +65,6 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Bean
-    public DiscoveryApplication discoveryApplication(){
-        return new DiscoveryApplication();
-    }
-
-    @Bean
     public ModuleControlApplication moduleControlApplication(){
         return new ModuleControlApplication();
     }
