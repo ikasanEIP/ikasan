@@ -1,40 +1,40 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -43,11 +43,12 @@ package org.ikasan.builder.component.endpoint;
 import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumer;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpMessageProvider;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -108,7 +109,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_configuration_provided() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -121,7 +122,7 @@ public class SftpConsumerBuilderTest
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
@@ -140,7 +141,7 @@ public class SftpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a SftpConsumer", scheduledConsumer instanceof SftpConsumer);
 
         SftpConsumerConfiguration configuration = ((ConfiguredResource<SftpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
@@ -157,7 +158,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_configuration_sftp_conf_provided() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -171,7 +172,7 @@ public class SftpConsumerBuilderTest
 
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
@@ -217,7 +218,7 @@ public class SftpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a SftpConsumer", scheduledConsumer instanceof SftpConsumer);
 
         SftpConsumerConfiguration configuration = ((ConfiguredResource<SftpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
@@ -260,7 +261,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_configuration_sftp_conf_provided_and_default_sftpMessageProvider_notsupplied() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -273,7 +274,7 @@ public class SftpConsumerBuilderTest
 
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
@@ -293,7 +294,7 @@ public class SftpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a SftpConsumer", scheduledConsumer instanceof SftpConsumer);
 
         SftpConsumerConfiguration configuration = ((ConfiguredResource<SftpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
@@ -314,7 +315,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_no_aop_proxy() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, null);
 
@@ -324,7 +325,7 @@ public class SftpConsumerBuilderTest
             {
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with("testjob"),
                         with("testGroup"));
                 will(returnValue(jobDetail));
@@ -340,7 +341,7 @@ public class SftpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a SftpConsumer", scheduledConsumer instanceof SftpConsumer);
 
         SftpConsumerConfiguration configuration = ((ConfiguredResource<SftpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
@@ -354,7 +355,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_jobName_and_jobGroup_set() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -366,7 +367,7 @@ public class SftpConsumerBuilderTest
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with(any(String.class)),
                         with(any(String.class)));
                 will(returnValue(jobDetail));
@@ -382,7 +383,7 @@ public class SftpConsumerBuilderTest
                 .setMessageProvider(messageProvider)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a SftpConsumer", scheduledConsumer instanceof SftpConsumer);
 
         SftpConsumerConfiguration configuration = ((ConfiguredResource<SftpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
@@ -394,7 +395,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_jobName_not_set() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -407,7 +408,7 @@ public class SftpConsumerBuilderTest
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with(any(String.class)),
                         with(any(String.class)));
                 will(returnValue(jobDetail));
@@ -426,7 +427,7 @@ public class SftpConsumerBuilderTest
     @Test
     public void sftpConsumer_build_when_jobGroupName_not_set() {
 
-        final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
+        final SftpConsumer emptyScheduleConsumer =  new SftpConsumer(scheduler);
         SftpConsumerBuilder sftpConsumerBuilder = new ExtendedSftpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
                 scheduledJobFactory, aopProxyProvider);
 
@@ -439,7 +440,7 @@ public class SftpConsumerBuilderTest
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
-                        with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
+                        with(is(CoreMatchers.equalTo(SftpConsumer.class))),
                         with(any(String.class)),
                         with(any(String.class)));
                 will(returnValue(jobDetail));
@@ -458,40 +459,40 @@ public class SftpConsumerBuilderTest
      */
     class ExtendedSftpConsumerBuilderImpl extends SftpConsumerBuilderImpl
     {
-        ScheduledConsumer scheduledConsumer;
+        SftpConsumer sftpConsumer;
 
         /**
          * Constructor
-         * @param scheduledConsumer
+         * @param sftpConsumer
          * @param scheduler
          * @param scheduledJobFactory
          * @param aopProxyProvider
          */
-        public ExtendedSftpConsumerBuilderImpl(ScheduledConsumer scheduledConsumer,
+        public ExtendedSftpConsumerBuilderImpl(SftpConsumer sftpConsumer,
                                                Scheduler scheduler,
                                                ScheduledJobFactory scheduledJobFactory,
                                                AopProxyProvider aopProxyProvider)
         {
             super(scheduler, scheduledJobFactory, aopProxyProvider, null, null, null, null);
-            this.scheduledConsumer = scheduledConsumer;
+            this.sftpConsumer = sftpConsumer;
         }
 
         /**
          * Factory method to return a vanilla scheduled consumer to aid testing
          * @return
          */
-        protected ScheduledConsumer getScheduledConsumer()
+        protected SftpConsumer getScheduledConsumer()
         {
-            return scheduledConsumer;
+            return sftpConsumer;
         }
 
         /**
          * Factory method to return a callback scheduled consumer to aid testing
          * @return
          */
-        protected ScheduledConsumer getCallbackScheduledConsumer()
+        protected SftpConsumer getCallbackScheduledConsumer()
         {
-            return scheduledConsumer;
+            return sftpConsumer;
         }
 
     }

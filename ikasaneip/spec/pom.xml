@@ -53,6 +53,7 @@
 
     <modules>
         <module>component</module>
+        <module>component-factory</module>
         <module>event</module>
         <module>flow</module>
         <module>module</module>

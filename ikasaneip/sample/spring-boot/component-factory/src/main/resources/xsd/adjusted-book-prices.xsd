@@ -1,0 +1,25 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="AdjustedBooks" type="BooksForm"/>
+
+    <xsd:complexType name="BooksForm">
+        <xsd:sequence>
+            <xsd:element name="AdjustedBook"
+                         type="BookForm"
+                         minOccurs="0"
+                         maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BookForm">
+        <xsd:sequence>
+            <xsd:element name="Author"   type="xsd:string"/>
+            <xsd:element name="Title"    type="xsd:string"/>
+            <xsd:element name="Genre"    type="xsd:string"/>
+            <xsd:element name="Price"    type="xsd:float" />
+            <xsd:element name="PubDate" type="xsd:date" />
+            <xsd:element name="Review"   type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="id"   type="xsd:string"/>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AdjustedBooks xmlns:x="http://www.bookprices.com/xsd/book-prices.xsd"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.bookprices.com/xsd/adjusted-book-prices.xsd">
+    <AdjustedBook id="bk001">
+        <Author>Writer</Author>
+        <Title>The First Book</Title>
+        <Genre>Fiction</Genre>
+        <Price>49.45</Price>
+        <PubDate>2000-10-01</PubDate>
+        <Review>An amazing story of nothing.</Review>
+    </AdjustedBook>
+    <AdjustedBook id="bk002">
+        <Author>Poet</Author>
+        <Title>The Poet's First Poem</Title>
+        <Genre>Poem</Genre>
+        <Price>27.44</Price>
+        <PubDate>2000-10-01</PubDate>
+        <Review>Least poetic poems.</Review>
+    </AdjustedBook>
+</AdjustedBooks>

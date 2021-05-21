@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.ikasan.component.factory.spring.IkasanComponentFactoryAutoConfiguration,\
+org.ikasan.component.factory.spring.IkasanComponentAnnotationProcessor

@@ -57,6 +57,7 @@
         <module>file</module>
         <module>sftp-jms</module>
         <module>ftp-jms</module>
+        <module>component-factory</module>
     </modules>
 
 </project>

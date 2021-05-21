@@ -17,6 +17,7 @@
     - [Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md) 
     - [Developer Guide](ikasaneip/developer/docs/DeveloperGuide.md) 
     - [Component Guide](ikasaneip/component/Readme.md)
+    - [Component Factory Guide](ikasaneip/component-factory/Readme.md)
     - [Dashboard Guide](ikasaneip/visualisation/dashboard/README.md)
     
  - Samples overview

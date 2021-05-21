@@ -1,0 +1,4 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <system systemId="http://www.bookprices.com/xsd/book-prices.xsd" uri="xsd/book-prices.xsd"/>
+    <system systemId="http://www.bookprices.com/xsd/adjusted-book-prices.xsd" uri="xsd/adjusted-book-prices.xsd"/>
+</catalog>

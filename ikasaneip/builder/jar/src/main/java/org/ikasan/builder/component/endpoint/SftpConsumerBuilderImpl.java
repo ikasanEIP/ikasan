@@ -42,10 +42,12 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.RequiresAopProxy;
+import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumer;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpMessageProvider;
 import org.ikasan.framework.factory.DirectoryURLFactory;
@@ -376,20 +378,45 @@ public class SftpConsumerBuilderImpl
     }
 
     /**
+     * WARNING this is used to override the consumer used for testing purposes only - BEWARE of USE
+     * @return
+     */
+    protected SftpConsumer getScheduledConsumer()
+    {
+        return new SftpConsumer(scheduler);
+    }
+
+    protected Class<? extends ScheduledConsumer> getScheduledConsumerClass(){
+        return SftpConsumer.class;
+    }
+
+
+    protected SftpConsumer _build()
+    {
+        SftpConsumer sftpConsumer;
+        sftpConsumer = getScheduledConsumer();
+        if (messageProvider != null)
+        {
+            sftpConsumer.setMessageProvider(messageProvider);
+        }
+        return sftpConsumer;
+    }
+
+    /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
      * @return
      */
-    public ScheduledConsumer build()
+    public SftpConsumer build()
     {
-        ScheduledConsumer scheduledConsumer = super.build();
-        SftpConsumerConfiguration configuration = (SftpConsumerConfiguration)scheduledConsumer.getConfiguration();
+        SftpConsumer sftpConsumer = (SftpConsumer)super.build();
+        SftpConsumerConfiguration configuration = (SftpConsumerConfiguration)sftpConsumer.getConfiguration();
 
         if(messageProvider == null)
         {
             SftpMessageProvider sftpMessageProvider = new SftpMessageProvider(transactionManager,baseFileTransferDao,
                     fileChunkDao, transactionalResourceCommandDAO);
-            scheduledConsumer.setMessageProvider(sftpMessageProvider);
+            sftpConsumer.setMessageProvider(sftpMessageProvider);
         }
 
         if(sourceDirectory != null)
@@ -542,7 +569,7 @@ public class SftpConsumerBuilderImpl
             configuration.setPreferredKeyExchangeAlgorithm(preferredKeyExchangeAlgorithm);
         }
 
-        return scheduledConsumer;
+        return sftpConsumer;
     }
 }
 
