@@ -48,6 +48,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mock.env.MockEnvironment;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -78,7 +79,7 @@ public class DashboardNotifierTest
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
         environment.setProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "true");
         environment.setProperty(DASHBOARD_BASE_URL_PROPERTY, dashboardBaseUrl);
-        uut = new DashboardNotifier(new DashboardRestServiceImpl(environment, FLOW_STATES_CACHE_PATH));
+        uut = new DashboardNotifier(new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), FLOW_STATES_CACHE_PATH));
     }
 
     @Test
