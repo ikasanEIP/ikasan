@@ -271,7 +271,7 @@
         <version.spring.cloud.config.client>2.2.1.RELEASE</version.spring.cloud.config.client>
         <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
-        <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
+        <version.io.spingfox.swagger>2.10.5</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.30</version.org.slf4j>
