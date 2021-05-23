@@ -101,6 +101,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
@@ -306,7 +307,7 @@ public class JmsSampleFlowTest
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
         mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
-        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment);
+        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
         exceptionGenerationgBroker.setShouldThrowExclusionException(false);
@@ -368,7 +369,7 @@ public class JmsSampleFlowTest
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
         mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
-        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment);
+        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
         exceptionGenerationgBroker.setShouldThrowExclusionException(false);
