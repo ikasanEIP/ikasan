@@ -295,7 +295,7 @@
         <version.xmlunit>1.5</version.xmlunit>
         <version.net.sf.json-lib>2.4</version.net.sf.json-lib>
         <version.org.json>20201115</version.org.json>
-        <version.xerces>2.12.0</version.xerces>
+        <version.xerces>2.12.1</version.xerces>
         <version.com.io7m.xom>1.2.10</version.com.io7m.xom>
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
