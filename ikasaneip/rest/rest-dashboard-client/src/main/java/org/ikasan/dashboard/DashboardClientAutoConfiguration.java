@@ -99,6 +99,15 @@ public class DashboardClientAutoConfiguration
     }
 
     @Bean
+    public DashboardRestService moduleMetadataDashboardRestService(Environment environment, ModuleMetaDataProvider<String> jsonModuleMetaDataProvider
+        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    {
+        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, METADATA_PATH,
+            (Converter<Module, String>) module -> jsonModuleMetaDataProvider.describeModule(module));
+
+    }
+
+    @Bean
     public DashboardRestService configurationMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
         ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
