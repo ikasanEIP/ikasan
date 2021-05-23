@@ -5,7 +5,9 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
+import org.ikasan.rest.client.dto.ModuleDto;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,6 +24,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -47,7 +51,7 @@ public class ConfigurationRestServiceImplTest
     {
         contexBaseUrl = "http://localhost:" + wireMockRule.port();
         Environment environment = new StandardEnvironment();
-        uut = new ConfigurationRestServiceImpl(environment, jsonConfigurationMetaDataProvider);
+        uut = new ConfigurationRestServiceImpl(environment, jsonConfigurationMetaDataProvider, new HttpComponentsClientHttpRequestFactory());
 
     }
 
@@ -229,6 +233,30 @@ public class ConfigurationRestServiceImplTest
 
         assertEquals(false, result);
 
+    }
+
+    @Test
+    public void testTimeout() throws IOException {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
+            = new HttpComponentsClientHttpRequestFactory();
+
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
+
+        Environment environment = new StandardEnvironment();
+        uut = new ConfigurationRestServiceImpl(environment, jsonConfigurationMetaDataProvider, httpComponentsClientHttpRequestFactory);
+
+        stubFor(get(urlEqualTo(ConfigurationRestServiceImpl.COMPONENTS_CONFIGURATION_URL))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(HttpHeaders.ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString())).willReturn(
+                aResponse().withBody(loadDataFile(CONFIGURATION_METADATA_JSON))
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                    .withStatus(200).withFixedDelay(2000)));
+
+        List<ConfigurationMetaData> result = uut.getComponents(contexBaseUrl);
+
+        Assert.assertFalse(result.size() > 0);
     }
 
 

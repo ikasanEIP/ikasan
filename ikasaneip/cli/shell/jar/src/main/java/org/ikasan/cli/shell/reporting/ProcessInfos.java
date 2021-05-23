@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +54,7 @@ import java.util.Map;
  */
 public class ProcessInfos
 {
-    Map<Long,ProcessInfo> processInfos = new HashMap<Long,ProcessInfo>();
+    Map<Long,ProcessInfo> processInfos = new LinkedHashMap<Long,ProcessInfo>();
 
     public ProcessInfos add(ProcessInfo processInfo)
     {

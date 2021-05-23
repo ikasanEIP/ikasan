@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 
 import java.util.Collections;
@@ -34,9 +35,10 @@ public class ConfigurationRestServiceImpl extends ModuleRestService implements C
     ConfigurationMetaDataProvider<String> configurationMetaDataProvider;
 
     public ConfigurationRestServiceImpl(Environment environment,
-                                        ConfigurationMetaDataProvider<String> configurationMetaDataProvider)
+                                        ConfigurationMetaDataProvider<String> configurationMetaDataProvider,
+                                        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
-        super(environment);
+        super(environment, httpComponentsClientHttpRequestFactory);
         this.configurationMetaDataProvider = configurationMetaDataProvider;
     }
 

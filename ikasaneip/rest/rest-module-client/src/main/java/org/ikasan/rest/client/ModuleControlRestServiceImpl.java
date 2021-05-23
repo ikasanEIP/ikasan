@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 
 import java.util.HashMap;
@@ -26,9 +27,9 @@ public class ModuleControlRestServiceImpl extends ModuleRestService implements M
     protected final static String SINGLE_FLOW_STATUS_URL= "/rest/moduleControl/{moduleName}/{flowName}";
 
 
-    public ModuleControlRestServiceImpl(Environment environment)
-    {
-        super(environment);
+    public ModuleControlRestServiceImpl(Environment environment,
+                                        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
+        super(environment, httpComponentsClientHttpRequestFactory);
     }
 
     @Override

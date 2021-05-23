@@ -27,7 +27,14 @@ ikasan.dashboard.extract.enabled=true
 ikasan.dashboard.extract.base.url=http://localhost:9080/ikasan-dashboard
 ikasan.dashboard.extract.username=
 ikasan.dashboard.extract.password=
+```
 
+Http connection time outs can be set using the following properties:
+
+```properties
+dashboard.rest.connection.readTimeout=5000
+dashboard.rest.connection.connectTimeout=5000
+dashboard.rest.connection.connectionRequestTimeout=5000
 ```
 
 <br/>

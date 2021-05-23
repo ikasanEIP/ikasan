@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # /*
 #  * $Id$
 #  * $URL$
@@ -40,9 +42,6 @@
 #  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  * ====================================================================
 #  */
-
-#!/bin/bash
-#set -u
 
 # Do not change this script, change the env.sh script for you custom environment settings.
 # this script assumes you are using the filesystem for application.properties
