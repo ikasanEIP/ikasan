@@ -33,7 +33,7 @@ public class SchematronValidatorTest
     public static void startJetty() throws Exception
     {
         // prevent logging
-        Log.setLog(null);
+       // Log.setLog(null);
         server = new Server(0);
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(0);

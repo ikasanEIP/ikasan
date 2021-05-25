@@ -200,7 +200,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             Callable<SplitFlowElement> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListeners, moduleName, flowName, asyncTaskFlowInvocationContext, asyncFlowEvent);
             final ListenableFuture<SplitFlowElement> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
-            Futures.addCallback(listenableFuture, splitFlowCallback);
+            Futures.addCallback(listenableFuture, splitFlowCallback,executorService);
 
             if(callbackException != null)
             {

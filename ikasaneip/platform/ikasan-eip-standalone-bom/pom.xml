@@ -260,18 +260,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-solr-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-solr-security</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-xml-marshaller</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1025,7 +1013,7 @@
 
 
             <dependency>
-                <groupId>dom4j</groupId>
+                <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${version.dom4j.dom4j}</version>
                 <exclusions>

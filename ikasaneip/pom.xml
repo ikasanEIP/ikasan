@@ -270,7 +270,7 @@
         <version.spring.cloud.config.client>2.2.1.RELEASE</version.spring.cloud.config.client>
         <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
-        <version.io.spingfox.swagger>2.9.2</version.io.spingfox.swagger>
+        <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.30</version.org.slf4j>
@@ -294,7 +294,7 @@
         <version.xmlunit>1.5</version.xmlunit>
         <version.net.sf.json-lib>2.4</version.net.sf.json-lib>
         <version.org.json>20201115</version.org.json>
-        <version.xerces>2.12.0</version.xerces>
+        <version.xerces>2.12.1</version.xerces>
         <version.com.io7m.xom>1.2.10</version.com.io7m.xom>
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
@@ -310,50 +310,50 @@
         <version.org.apache.directory.server.apached-server-unit>1.5.5
         </version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
-        <version.org.quartz-scheduler>2.2.1</version.org.quartz-scheduler>
+        <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.liquibase>3.8.5</version.org.liquibase>
-        <version.org.yaml.snakeyaml>1.25</version.org.yaml.snakeyaml>
+        <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>9.4.24.v20191120</version.org.eclipse.jetty>
-        <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
+        <version.org.eclipse.jetty>9.4.41.v20210516</version.org.eclipse.jetty>
+        <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.0.2</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
         <version.org.aspectj>1.9.5</version.org.aspectj>
         <version.org.aspectjrt>1.9.5</version.org.aspectjrt>
         <version.javax.servlet>4.0.1</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
-        <version.activemq>5.15.11</version.activemq>
+        <version.activemq>5.16.2</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
         <version.org.jboss.narayana.jta>5.9.8.Final</version.org.jboss.narayana.jta>
         <version.me.snowdrop.narayana>2.2.0</version.me.snowdrop.narayana>
         <version.commons.net>3.3</version.commons.net>
-        <version.com.thoughtworks.xstream>1.4.16</version.com.thoughtworks.xstream>
+        <version.com.thoughtworks.xstream>1.4.17</version.com.thoughtworks.xstream>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
         <version.org.jboss.logging.jboss-logging>3.3.2.Final</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
-        <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
+        <version.dom4j.dom4j>2.1.3</version.dom4j.dom4j>
         <version.com.jcraft.jsch>0.1.55</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
-        <version.com.fasterxml.jackson.core>2.10.0</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.10.5</version.com.fasterxml.jackson.core>
         <version.finbugs>1.3.9</version.finbugs>
-        <version.com.google.guava>23.0</version.com.google.guava>
-        <version.tomcat>9.0.35</version.tomcat>
+        <version.com.google.guava>30.0-jre</version.com.google.guava>
+        <version.tomcat>9.0.46</version.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
         <version.org.apache.httpcomponents>4.5.10</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
         <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
-        <version.jacoco>0.8.1</version.jacoco>
+        <version.jacoco>0.8.7</version.jacoco>
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
-        <version.bouncycastle>1.45</version.bouncycastle>
+        <version.bouncycastle>1.46</version.bouncycastle>
         <version.javax.validation.api>2.0.1.Final</version.javax.validation.api>
         <version.glassfish.javax.el>3.0.0</version.glassfish.javax.el>
         <version.commons-io>2.8.0</version.commons-io>
@@ -2329,7 +2329,7 @@
             </dependency>
 
             <dependency>
-                <groupId>dom4j</groupId>
+                <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${version.dom4j.dom4j}</version>
                 <exclusions>
