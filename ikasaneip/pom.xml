@@ -738,6 +738,7 @@
                 <module>replay</module>
                 <module>persistence</module>
                 <module>cli</module>
+                <module>ootb</module>
                 <module>sample</module>
             </modules>
 
@@ -773,6 +774,7 @@
                 <module>replay</module>
                 <module>persistence</module>
                 <module>cli</module>
+                <module>ootb</module>
             </modules>
         </profile>
 
