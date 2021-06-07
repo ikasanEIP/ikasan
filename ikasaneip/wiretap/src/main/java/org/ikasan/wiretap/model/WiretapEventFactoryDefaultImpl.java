@@ -86,7 +86,7 @@ public class WiretapEventFactoryDefaultImpl implements WiretapEventFactory
     public WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
             final FlowEvent<String,Object> event, final long expiry)
     {
-        return new WiretapFlowEvent(moduleName, flowName, componentName, event.getIdentifier(), event.getRelatedIdentifier(), event.getTimestamp(),
+        return new WiretapFlowEvent(moduleName, flowName, componentName, event.getIdentifier(), event.getRelatedIdentifier(), System.currentTimeMillis(),
                 getSerialiser(componentName).serialise(event.getPayload()), expiry);
     }
 
