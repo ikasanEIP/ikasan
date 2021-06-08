@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.ikasan.rest.dashboard.SwaggerConfig,\
-  org.ikasan.rest.dashboard.IkasanRestAutoConfiguration
