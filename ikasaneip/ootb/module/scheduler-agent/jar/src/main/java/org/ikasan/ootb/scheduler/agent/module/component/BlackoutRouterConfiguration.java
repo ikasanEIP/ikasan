@@ -44,14 +44,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Blackout Reouter configuration.
+ * Blackout Router configuration.
  *
  * @author Ikasan Development Team
  */
 public class BlackoutRouterConfiguration
 {
     List<String> cronExpressions;
-    Map<String,String> toFromDateTimes;
+    Map<Long,Long> dateTimeRanges;
 
     public List<String> getCronExpressions()
     {
@@ -63,13 +63,13 @@ public class BlackoutRouterConfiguration
         this.cronExpressions = cronExpressions;
     }
 
-    public Map<String, String> getToFromDateTimes()
+    public Map<Long,Long> getDateTimeRanges()
     {
-        return toFromDateTimes;
+        return dateTimeRanges;
     }
 
-    public void setToFromDateTimes(Map<String, String> toFromDateTimes)
+    public void setDateTimeRanges(Map<Long,Long> dateTimeRanges)
     {
-        this.toFromDateTimes = toFromDateTimes;
+        this.dateTimeRanges = dateTimeRanges;
     }
 }

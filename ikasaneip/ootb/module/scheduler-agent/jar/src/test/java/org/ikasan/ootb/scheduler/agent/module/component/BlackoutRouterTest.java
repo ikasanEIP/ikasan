@@ -46,8 +46,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This test class supports the <code>BlackoutRouter</code>.
@@ -60,13 +59,13 @@ public class BlackoutRouterTest
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_no_blackout()
+    public void test_successful_router_cronExpression_outside_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         List<String> cronExpression = new ArrayList<String>();
-        cronExpression.add("*/5 * * * * ?");
+        cronExpression.add("0 15 10 * * ? 3000");
 
         SingleRecipientRouter blackoutRouter = new BlackoutRouter();
         BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
@@ -74,6 +73,114 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.VALID_SCHEDULE);
+        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
+    }
+
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_successful_router_cronExpression_inside_blackout_period()
+    {
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        List<String> cronExpression = new ArrayList<String>();
+        cronExpression.add("*/1 * * * * ?");
+
+        SingleRecipientRouter blackoutRouter = new BlackoutRouter();
+        BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
+        configuration.setCronExpressions(cronExpression);
+        ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
+        String result = blackoutRouter.route(scheduledProcessEvent);
+
+        Assert.assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
+    }
+
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_successful_router_dateRange_inside_blackout_period()
+    {
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        long inThePast = calendar.getTimeInMillis();
+
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        long inTheFuture = calendar.getTimeInMillis();
+
+        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
+        dateTimeRanges.put(inThePast, inTheFuture);
+
+        SingleRecipientRouter blackoutRouter = new BlackoutRouter();
+        BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
+        configuration.setDateTimeRanges(dateTimeRanges);
+        ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
+        String result = blackoutRouter.route(scheduledProcessEvent);
+
+        Assert.assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
+    }
+
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_successful_router_dateRange_outside_before_blackout_period()
+    {
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        long inTheFuture1 = calendar.getTimeInMillis();
+
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        long inTheFuture2 = calendar.getTimeInMillis();
+
+        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
+        dateTimeRanges.put(inTheFuture1, inTheFuture2);
+
+        SingleRecipientRouter blackoutRouter = new BlackoutRouter();
+        BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
+        configuration.setDateTimeRanges(dateTimeRanges);
+        ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
+        String result = blackoutRouter.route(scheduledProcessEvent);
+
+        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
+    }
+
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_successful_router_dateRange_outside_after_blackout_period()
+    {
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_YEAR, -2);
+        long inThePast1 = calendar.getTimeInMillis();
+
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        long inThePast2 = calendar.getTimeInMillis();
+
+        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
+        dateTimeRanges.put(inThePast1, inThePast2);
+
+        SingleRecipientRouter blackoutRouter = new BlackoutRouter();
+        BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
+        configuration.setDateTimeRanges(dateTimeRanges);
+        ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
+        String result = blackoutRouter.route(scheduledProcessEvent);
+
+        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
     }
 }

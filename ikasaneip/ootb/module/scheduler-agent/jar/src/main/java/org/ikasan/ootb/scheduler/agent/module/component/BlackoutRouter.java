@@ -64,8 +64,8 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(BlackoutRouter.class);
 
-    public static String VALID_SCHEDULE = "Valid Schedule";
-    public static String BLACKOUT_PERIOD = "Blackout Period";
+    public static String OUTSIDE_BLACKOUT_PERIOD = "Outside Blackout Period";
+    public static String INSIDE_BLACKOUT_PERIOD = "Inside Blackout Period";
     String configuredResourceId;
     BlackoutRouterConfiguration configuration;
 
@@ -73,6 +73,7 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
     public String route(ScheduledProcessEvent messageToRoute) throws RouterException
     {
         Date now = new Date();
+        System.out.println(now);
 
         if(configuration.cronExpressions != null && configuration.cronExpressions.size() > 0)
         {
@@ -83,7 +84,7 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
                     CronExpression cronExpressionObj = new CronExpression(cronExpression);
                     if(cronExpressionObj.isSatisfiedBy(now))
                     {
-                        return BLACKOUT_PERIOD;
+                        return INSIDE_BLACKOUT_PERIOD;
                     }
                 }
                 catch (ParseException e)
@@ -93,21 +94,21 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
             }
         }
 
-        if(configuration.toFromDateTimes != null && configuration.toFromDateTimes.size() > 0)
+        if(configuration.dateTimeRanges != null && configuration.dateTimeRanges.size() > 0)
         {
-            for(Map.Entry<String,String> toFromDateTimeEntry : configuration.toFromDateTimes.entrySet())
+            for(Map.Entry<Long,Long> dateRangeEntry : configuration.dateTimeRanges.entrySet())
             {
-                Date fromDate = new Date(toFromDateTimeEntry.getKey());
-                Date toDate = new Date(toFromDateTimeEntry.getValue());
-                if( (now.after(fromDate) || now.equals(fromDate))
-                    && (now.before(toDate) || now.equals(toDate)) )
+                long from = dateRangeEntry.getKey().longValue();
+                long to = dateRangeEntry.getValue().longValue();
+                long fireTime = messageToRoute.getFireTime();
+                if(fireTime >= from && fireTime <= to)
                 {
-                    return BLACKOUT_PERIOD;
+                    return INSIDE_BLACKOUT_PERIOD;
                 }
             }
         }
 
-        return VALID_SCHEDULE;
+        return OUTSIDE_BLACKOUT_PERIOD;
     }
 
     @Override
