@@ -153,7 +153,8 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
                             this.configuration.getFilterOnFilename().booleanValue(),
                             this.configuration.getFilterOnLastModifiedDate().booleanValue(),
                             this.configuration.getChronological().booleanValue(),
-                            this.configuration.getIsRecursive().booleanValue());
+                            this.configuration.getIsRecursive().booleanValue(),
+                            this.configuration.getProvideRelativePath());
                     if (payload != null)
                     {
                         return payload;

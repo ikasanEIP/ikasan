@@ -126,7 +126,7 @@ public class FtpProducerTest {
 		final String content = "content";
         final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
 		final String fileName = "fileName";
-		final String outputDirectory = "outputDirectory";
+		final String outputDirectory = "/outputDirectory";
 		final boolean overwrite = true;
 		final String renameExtension = "renameExtension";
 		final boolean checksumDelivered = false;
@@ -141,6 +141,8 @@ public class FtpProducerTest {
 				will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
+                oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                will(returnValue("testDirectory"));
 				oneOf(configuration).getOutputDirectory();
 				will(returnValue(outputDirectory));
 				oneOf(configuration).getOverwrite();
@@ -158,7 +160,7 @@ public class FtpProducerTest {
 				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
 						with(equal(contentInputStream)),
 						with(equal(fileName)),
-						with(equal(outputDirectory)),
+						with(equal("/outputDirectory/testDirectory")),
 						with(equal(overwrite)),
 						with(equal(renameExtension)),
 						with(equal(checksumDelivered)),
@@ -207,6 +209,8 @@ public class FtpProducerTest {
 				will(returnValue(contentInputStream));
 				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
+                oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                will(returnValue(null));
 				oneOf(configuration).getOutputDirectory();
 				will(returnValue(outputDirectory));
 				oneOf(configuration).getOverwrite();
@@ -277,6 +281,8 @@ public class FtpProducerTest {
 				will(returnValue(contentInputStream));
 				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(fileName));
+                exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                will(returnValue(null));
 				exactly(2).of(configuration).getOutputDirectory();
 				will(returnValue(outputDirectory));
 				exactly(2).of(configuration).getOverwrite();

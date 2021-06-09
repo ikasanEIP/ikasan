@@ -59,10 +59,13 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.util.StringUtils;
 
 import javax.resource.ResourceException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.ikasan.filetransfer.util.FileUtil.removeDoubleSlashIfPresent;
 
 /**
  * FTP Implementation of a producer based on the JCA specification.
@@ -156,11 +159,18 @@ public class FtpProducer implements Producer<Payload>, ManagedResource, Configur
         {
             if (activeFileTransferConnectionTemplate != null)
             {
+                String relativePath = payload.getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                String outputDirectory = removeDoubleSlashIfPresent(configuration.getOutputDirectory());
+                if (!StringUtils.isEmpty(relativePath)){
+                    outputDirectory = outputDirectory + "/" + relativePath;
+                    logger.debug("relativePath is set on payload [{}] output directory will be [{}]", payload,
+                        outputDirectory);
+                }
                 try (InputStream inputStream = payload.getInputStream())
                 {
                     activeFileTransferConnectionTemplate
                         .deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME),
-                            configuration.getOutputDirectory(), configuration.getOverwrite(),
+                            outputDirectory, configuration.getOverwrite(),
                             configuration.getRenameExtension(), configuration.getChecksumDelivered(),
                             configuration.getUnzip(), configuration.getCreateParentDirectory(),
                             configuration.getTempFileName());
@@ -182,6 +192,7 @@ public class FtpProducer implements Producer<Payload>, ManagedResource, Configur
             throw new EndpointException(e);
         }
     }
+
 
     /**
      * Switch the active connection to the other connection template.

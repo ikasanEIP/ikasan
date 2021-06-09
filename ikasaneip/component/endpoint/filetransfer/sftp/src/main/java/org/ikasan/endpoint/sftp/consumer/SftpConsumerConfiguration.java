@@ -143,6 +143,9 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration im
 
     protected String preferredKeyExchangeAlgorithm;
 
+    /** Will add to the payload the path of the file being consumed relative to the source directory **/
+    private Boolean provideRelativePath = Boolean.FALSE;
+
     public String getPreferredKeyExchangeAlgorithm() {
         return preferredKeyExchangeAlgorithm;
     }
@@ -669,6 +672,22 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration im
     public void setIsRecursive(Boolean isRecursive)
     {
         this.isRecursive = isRecursive;
+    }
+
+    /**
+     *
+     * @return the provideRelativePath
+     */
+    public Boolean getProvideRelativePath() {
+        return provideRelativePath;
+    }
+
+    /**
+     *
+     * @param provideRelativePath the provideRelativePath flag to set
+     */
+    public void setProvideRelativePath(Boolean provideRelativePath) {
+        this.provideRelativePath = provideRelativePath;
     }
 
     public void validate() throws InvalidConfigurationException

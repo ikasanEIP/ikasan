@@ -1,5 +1,6 @@
 package org.ikasan.component.converter.filetransfer;
 
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.component.DefaultPayload;
 import org.ikasan.spec.component.transformation.Converter;
@@ -19,69 +20,59 @@ public class MapMessageToPayloadConverter
 
     private MapMessageToPayloadConverterConfiguration configuration = new MapMessageToPayloadConverterConfiguration();
 
-    @Override public Payload convert(MapMessage message) throws TransformationException
-    {
+    @Override
+    public Payload convert(MapMessage message) throws TransformationException {
         Payload payload = null;
-        try
-        {
+        try {
             String id = message.getString(configuration.getIdAttributeName());
             Object contentObject = message.getObject(configuration.getContentAttributeName());
-            if (contentObject != null)
-            {
-                if (contentObject instanceof String)
-                {
+            if (contentObject != null) {
+                if (contentObject instanceof String) {
                     payload = new DefaultPayload(id, ((String) contentObject).getBytes());
-                }
-                else if (contentObject instanceof byte[])
-                {
+                } else if (contentObject instanceof byte[]) {
                     payload = new DefaultPayload(id, (byte[]) contentObject);
-                }
-                else
-                {
+                } else {
                     throw new TransformationException(
                         "Message property [" + configuration.getContentAttributeName() + "] type is not supported.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new TransformationException(
                     "Message property [" + configuration.getContentAttributeName() + "] is empty.");
             }
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             throw new TransformationException(
                 "Error encountered when processing JMS message. Unable to extract file contents.", e);
         }
-        try
-        {
+        try {
             String fileName = message.getString(configuration.getFileNameAttributeName());
+            String referencePayload = message.getString("referencePayload");
+            String relativePath = message.getString("relativePath");
             payload.setAttribute("fileName", fileName);
+            payload.setAttribute("referencePayload", referencePayload);
+            payload.setAttribute(FilePayloadAttributeNames.RELATIVE_PATH, relativePath);
             return payload;
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             return payload;
         }
     }
 
-    @Override public String getConfiguredResourceId()
-    {
+    @Override
+    public String getConfiguredResourceId() {
         return configuredResourceId;
     }
 
-    @Override public void setConfiguredResourceId(String configuredResourceId)
-    {
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId) {
         this.configuredResourceId = configuredResourceId;
     }
 
-    @Override public MapMessageToPayloadConverterConfiguration getConfiguration()
-    {
+    @Override
+    public MapMessageToPayloadConverterConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override public void setConfiguration(MapMessageToPayloadConverterConfiguration configuration)
-    {
+    @Override
+    public void setConfiguration(MapMessageToPayloadConverterConfiguration configuration) {
         this.configuration = configuration;
     }
 }

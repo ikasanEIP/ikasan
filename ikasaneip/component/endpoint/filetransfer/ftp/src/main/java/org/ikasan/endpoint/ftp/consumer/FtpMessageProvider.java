@@ -178,7 +178,8 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
                             this.configuration.getFilterOnFilename().booleanValue(),
                             this.configuration.getFilterOnLastModifiedDate().booleanValue(),
                             this.configuration.getChronological().booleanValue(),
-                            this.configuration.getIsRecursive().booleanValue());
+                            this.configuration.getIsRecursive().booleanValue(),
+                            this.configuration.getProvideRelativePath().booleanValue());
                     if (payload != null)
                     {
                         return payload;
