@@ -40,14 +40,20 @@
  */
 package org.ikasan.connector.basefiletransfer.net;
 
+import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.sshd.client.subsystem.sftp.SftpPath;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
+import org.ikasan.filetransfer.util.FileUtil;
 
 /**
  * The <code>ClientListEntry</code> class holds information reflecting a
@@ -596,6 +602,28 @@ public class ClientListEntry
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Get the relativePath of the base directory to the directory containing the target file
+     *
+     * e.g if base = /base and filePath = /base/reports/20210608/file.txt then relativePath = reports/20210608
+     *
+     * @param baseDirectory - the base directory to get the relative path from
+     * @return the relativePath from the base directory to the directory containing the file
+     */
+    public String evalRelativePath(String baseDirectory){
+        String parent = convertToUnix(Paths.get(fullPath).getParent().toString());
+        return convertToUnix(Path.of(convertToUnix(baseDirectory)).relativize(Path.of(parent)).toString());
+    }
+
+    private String convertToUnix(String path)
+    {
+        String p = FilenameUtils.separatorsToUnix(path);
+        if (path.charAt(1) == ':') {
+            p = "/" + path.charAt(0) + p.substring(2);
+        }
+        return FileUtil.removeDoubleSlashIfPresent(p);
     }
 
     /**

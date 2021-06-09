@@ -187,6 +187,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
      * @param filterOnLastModifedDate - Whether we filter duplicates based on file name
      * @param chronological - Whether we pickup files in age order
      * @param isRecursive - Whether we pickup files and all subdirectories
+     * @param provideRelativePath - Provide relative path of file in payload
      *
      * @return The discovered file as a Payload
      * @throws ResourceException - Exception if the JCA connector fails
@@ -194,7 +195,8 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
     public Payload getDiscoveredFile(final String sourceDir, final String filenamePattern, final boolean renameOnSuccess,
                                      final String renameOnSuccessExtension, final boolean moveOnSuccess, final String moveOnSuccessNewPath, final boolean chunking, final int chunkSize,
                                      final boolean checksum, final long minAge, final boolean destructive,
-                                     final boolean filterDuplicates, final boolean filterOnFilename, final boolean filterOnLastModifedDate, final boolean chronological, final boolean isRecursive) throws ResourceException
+                                     final boolean filterDuplicates, final boolean filterOnFilename, final boolean filterOnLastModifedDate, final boolean chronological,
+                                     final boolean isRecursive, final boolean provideRelativePath) throws ResourceException
     {
         return (Payload) execute(new ConnectionCallback()
         {
@@ -204,7 +206,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
                 Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir,
                         filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath,
                         chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename,
-                        filterOnLastModifedDate, chronological,isRecursive);
+                        filterOnLastModifedDate, chronological,isRecursive, provideRelativePath);
                 return discoveredFile;
             }
         });

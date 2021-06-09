@@ -55,4 +55,6 @@ public class FilePayloadAttributeNames {
 	private FilePayloadAttributeNames(){}
 	
 	public static final String FILE_NAME = "fileName";
+
+	public static final String RELATIVE_PATH = "relativePath";
 }

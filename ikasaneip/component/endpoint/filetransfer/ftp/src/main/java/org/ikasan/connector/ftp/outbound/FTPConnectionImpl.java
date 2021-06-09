@@ -69,6 +69,8 @@ import javax.resource.ResourceException;
 import java.util.Collections;
 import java.util.List;
 
+import static org.ikasan.filetransfer.FilePayloadAttributeNames.RELATIVE_PATH;
+
 /**
  * This class implements the virtual connection to the FTP server.<br>
  * An instance of this class is returned to the clients via the getConnection()
@@ -213,7 +215,8 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
     @SuppressWarnings("unchecked")
     public Payload getDiscoveredFile(String sourceDir, String filenamePattern, boolean renameOnSuccess, String renameOnSuccessExtension, boolean moveOnSuccess,
             String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum, long minAge, boolean destructive, boolean filterDuplicates,
-            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological, boolean isRecursive) throws ResourceException
+            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological, boolean isRecursive,
+                                     boolean provideRelativePath) throws ResourceException
     {
         Payload result = null;
         ExecutionContext executionContext = new ExecutionContext();
@@ -247,6 +250,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
             }
             result = sourceFile(entry, this.clientId, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, fullMovePath, chunking, chunkSize, checksum,
                 destructive, baseFileTransferDao);
+            result.setAttribute(RELATIVE_PATH, entry.evalRelativePath(sourceDir));
 
         }
         return result;

@@ -171,9 +171,11 @@ public class SftpMessageProviderTest
                 will(returnValue(false));
                 exactly(1).of(configuration).getIsRecursive();
                 will(returnValue(false));
+                exactly(1).of(configuration).getProvideRelativePath();
+                will(returnValue(false));
 
                 exactly(1).of(activeFileTransferConnectionTemplate).getDiscoveredFile("directory", "filenamePattern", true
-                        , ".tmp", false, "moveOnSuccessPath", false, 10, false, 10L, false, false, false, false, false,false);
+                        , ".tmp", false, "moveOnSuccessPath", false, 10, false, 10L, false, false, false, false, false,false, false);
                 will(returnValue(payload));
 
             }
@@ -232,9 +234,10 @@ public class SftpMessageProviderTest
                 will(returnValue(false));
                 exactly(1).of(configuration).getIsRecursive();
                 will(returnValue(false));
-
+                exactly(1).of(configuration).getProvideRelativePath();
+                will(returnValue(false));
                 exactly(1).of(activeFileTransferConnectionTemplate).getDiscoveredFile("directory", "filenamePattern", true
-                        , ".tmp", false, "moveOnSuccessPath", false, 10, false, 10L, false, false, false, false, false,false);
+                        , ".tmp", false, "moveOnSuccessPath", false, 10, false, 10L, false, false, false, false, false,false, false);
                 will(returnValue(null));
 
                 exactly(1).of(configuration).getMaxRows();

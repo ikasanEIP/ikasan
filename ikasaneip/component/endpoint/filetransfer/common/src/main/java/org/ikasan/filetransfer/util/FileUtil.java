@@ -21,4 +21,19 @@ public class FileUtil {
 
     }
 
+    /**
+     * A double slash can happen if a directory has been appended to a base directory in the properties file
+     * but the base directory is root
+     *
+     * @param outputDirectory
+     * @return
+     */
+    public static String removeDoubleSlashIfPresent(String outputDirectory) {
+        if(outputDirectory.startsWith("//")){
+            return outputDirectory.substring(1);
+        }
+        return outputDirectory;
+    }
+
+
 }

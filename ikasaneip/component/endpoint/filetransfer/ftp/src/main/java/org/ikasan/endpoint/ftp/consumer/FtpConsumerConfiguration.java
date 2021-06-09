@@ -160,6 +160,9 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration imp
     private String  ftpsKeyStoreFilePath = "";
     private String  ftpsKeyStoreFilePassword = "";
 
+    /** Will add to the payload the path of the file being consumed relative to the source directory **/
+    private Boolean provideRelativePath = Boolean.FALSE;
+
     /** Logger instance */
     private final static Logger logger = LoggerFactory.getLogger(FtpConsumerConfiguration.class);
 
@@ -778,5 +781,21 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration imp
     public void setPasswordFilePath(String passwordFilePath)
     {
         this.passwordFilePath = passwordFilePath;
+    }
+
+    /**
+     *
+     * @return the provideRelativePath
+     */
+    public Boolean getProvideRelativePath() {
+        return provideRelativePath;
+    }
+
+    /**
+     *
+     * @param provideRelativePath the provideRelativePath flag to set
+     */
+    public void setProvideRelativePath(Boolean provideRelativePath) {
+        this.provideRelativePath = provideRelativePath;
     }
 }
