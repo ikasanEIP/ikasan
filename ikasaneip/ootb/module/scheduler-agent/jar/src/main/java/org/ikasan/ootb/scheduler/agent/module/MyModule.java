@@ -74,7 +74,7 @@ public class MyModule
                 .setCronExpression("*/5 * * * * ?"))
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBackoutRouter())
-                .when(BlackoutRouter.VALID_SCHEDULE, builderFactory.getRouteBuilder()
+                .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
                     .broker("Process Execution Broker", componentFactory.getProcessExecutionbroker())
                     .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
                 .otherwise(builderFactory.getRouteBuilder()
