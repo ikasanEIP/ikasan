@@ -40,21 +40,18 @@
  */
 package org.ikasan.flow.visitorPattern;
 
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementConfiguration;
-import org.ikasan.spec.flow.FlowElementInvoker;
 
 /**
  * Simple implementation of <code>FlowElement</code>
  * 
  * @author Ikasan Development Team
  */
-public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>, ConfiguredResource<FlowElementConfiguration>
+public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
 {
     /** <code>FlowComponent</code> being wrapped and given flow context */
     private COMPONENT flowComponent;
@@ -72,11 +69,7 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>, Confi
      * Human readable description of this FlowElement
      */
     private String description;
-    
-    /** 
-     * The flow element configuration.
-     */
-    private FlowElementConfiguration configuration = new FlowElementPersistentConfiguration();
+
 
     /**
      * The configured resource id.
@@ -232,40 +225,4 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>, Confi
         }
         return result;
     }
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
-	 */
-	@Override
-	public FlowElementConfiguration getConfiguration() 
-	{
-		return this.configuration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
-	 */
-	@Override
-	public void setConfiguration(FlowElementConfiguration configuration) 
-	{
-		this.configuration = configuration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
-	 */
-	@Override
-	public String getConfiguredResourceId() 
-	{
-		return this.configuredResourceId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
-	 */
-	@Override
-	public void setConfiguredResourceId(String id) 
-	{
-		this.configuredResourceId = id;
-	}
 }

@@ -51,6 +51,28 @@ public class InvokerConfiguration
 {
     /** allow dynamic configuration be turned on or off - default off */
     private boolean dynamicConfiguration = false;
+    private boolean captureMetrics = false;
+    private boolean snapEvent = false;
+
+    public boolean getCaptureMetrics()
+    {
+        return captureMetrics;
+    }
+
+    public void setCaptureMetrics(boolean captureMetrics)
+    {
+        this.captureMetrics = captureMetrics;
+    }
+
+    public boolean getSnapEvent()
+    {
+        return snapEvent;
+    }
+
+    public void setSnapEvent(boolean snapEvent)
+    {
+        this.snapEvent = snapEvent;
+    }
 
     public boolean isDynamicConfiguration()
     {

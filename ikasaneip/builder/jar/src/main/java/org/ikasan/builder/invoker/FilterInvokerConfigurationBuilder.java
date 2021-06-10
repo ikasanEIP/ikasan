@@ -69,6 +69,18 @@ public class FilterInvokerConfigurationBuilder
         return this;
     }
 
+    public FilterInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.filterInvokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public FilterInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.filterInvokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     public FilterInvokerConfigurationBuilder withApplyFilter(boolean applyFilter)
     {
         this.filterInvokerConfiguration.setApplyFilter(applyFilter);

@@ -64,6 +64,12 @@ public class TranslatorInvokerConfigurationBuilderTest
         Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("TranslatorInvokerConfiguration should be false", ticb.withApplyTranslator(false).build().isApplyTranslator());
         Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withApplyTranslator(true).build().isApplyTranslator());
+
+        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
+        Assert.assertTrue("TranslatorInvokerConfiguration should be false", ticb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
+        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
+        Assert.assertTrue("TranslatorInvokerConfiguration should be false", ticb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+
     }
 
 }

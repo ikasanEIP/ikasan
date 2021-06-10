@@ -65,6 +65,18 @@ public class SplitterInvokerConfigurationBuilder
         return this;
     }
 
+    public SplitterInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.splitterInvokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public SplitterInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.splitterInvokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     public SplitterInvokerConfigurationBuilder withSplitAsEventWithListOfPayloads()
     {
         this.splitterInvokerConfiguration.setSplitEventToListOfPayloads();

@@ -77,6 +77,12 @@ public class SplitterInvokerConfigurationBuilderTest
         Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSplitAsEventWithListOfEvents().build().isSplitEventToListOfEvents());
         Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfPayloads());
         Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToIndividualEvents());
+
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
+        Assert.assertTrue("SplitterInvokerConfiguration should be false", sicb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
+        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
+        Assert.assertTrue("SplitterInvokerConfiguration should be false", sicb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+
     }
 
 }

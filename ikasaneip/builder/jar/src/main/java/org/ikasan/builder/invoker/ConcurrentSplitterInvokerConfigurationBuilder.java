@@ -69,6 +69,18 @@ public class ConcurrentSplitterInvokerConfigurationBuilder
         return this;
     }
 
+    public ConcurrentSplitterInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.concurrentSplitterInvokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public ConcurrentSplitterInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.concurrentSplitterInvokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     public ConcurrentSplitterInvokerConfigurationBuilder withSendSplitsAsSinglePayload(boolean sendSplitsAsSinglePayload)
     {
         this.concurrentSplitterInvokerConfiguration.setSendSplitsAsSinglePayload(sendSplitsAsSinglePayload);

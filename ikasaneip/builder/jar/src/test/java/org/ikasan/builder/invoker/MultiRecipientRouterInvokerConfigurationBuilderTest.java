@@ -64,6 +64,11 @@ public class MultiRecipientRouterInvokerConfigurationBuilderTest
         Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withCloneEventPerRoute(false).build().isCloneEventPerRoute());
         Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withCloneEventPerRoute(true).build().isCloneEventPerRoute());
+        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
+        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
+        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
+        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+
     }
 
 }

@@ -61,28 +61,4 @@ public class TestFlowElement implements FlowElement
     {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public String getConfiguredResourceId()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setConfiguredResourceId(String id)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getConfiguration()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setConfiguration(Object configuration)
-    {
-        throw new UnsupportedOperationException();
-    }
 }

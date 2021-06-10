@@ -52,7 +52,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
  * 
  * @author Ikasan Development Team
  */
-public interface FlowElement<COMPONENT> extends ConfiguredResource<FlowElementConfiguration>
+public interface FlowElement<COMPONENT>
 {
     /** Name of the default transition for components that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";

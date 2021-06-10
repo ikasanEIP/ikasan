@@ -62,6 +62,12 @@ public class VanillaInvokerConfigurationBuilderTest
         Assert.assertTrue("InvokerConfiguration should have 1 property", TestUtils.getFields(InvokerConfiguration.class).size() == 1);
         Assert.assertFalse("InvokerConfiguration should be false", ticb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("InvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
+
+        Assert.assertTrue("InvokerConfiguration should be true", ticb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
+        Assert.assertTrue("InvokerConfiguration should be false", ticb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
+        Assert.assertTrue("InvokerConfiguration should be true", ticb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
+        Assert.assertTrue("InvokerConfiguration should be false", ticb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+
     }
 
 }

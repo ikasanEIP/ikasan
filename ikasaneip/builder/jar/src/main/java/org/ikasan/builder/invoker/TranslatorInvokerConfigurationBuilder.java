@@ -69,6 +69,18 @@ public class TranslatorInvokerConfigurationBuilder
         return this;
     }
 
+    public TranslatorInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.translatorInvokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public TranslatorInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.translatorInvokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     public TranslatorInvokerConfigurationBuilder withApplyTranslator(boolean applyTranslator)
     {
         this.translatorInvokerConfiguration.setApplyTranslator(applyTranslator);

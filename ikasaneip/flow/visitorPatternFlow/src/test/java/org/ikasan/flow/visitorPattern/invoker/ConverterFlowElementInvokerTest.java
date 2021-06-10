@@ -41,7 +41,6 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -103,9 +102,6 @@ public class ConverterFlowElementInvokerTest
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
 
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-
                 exactly(1).of(flowEvent).setPayload(payload);
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
@@ -142,9 +138,6 @@ public class ConverterFlowElementInvokerTest
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
 
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(flowEvent).setPayload(payload);
@@ -180,9 +173,6 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converterInvocationAware));
-
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(converterInvocationAware).convert(payload);
@@ -224,9 +214,6 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converterInvocationAware));
-
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(converterInvocationAware).convert(payload);
@@ -272,9 +259,6 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
-
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
