@@ -101,4 +101,11 @@ public interface FlowElementInvoker<COMPONENT>
      */
     public String getInvokerType();
 
+    /**
+     * Get the invoker configuration
+     *
+     * @return
+     */
+    public Object getConfiguration();
+
 }

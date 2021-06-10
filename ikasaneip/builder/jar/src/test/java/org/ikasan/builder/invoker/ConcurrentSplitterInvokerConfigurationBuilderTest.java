@@ -59,14 +59,17 @@ public class ConcurrentSplitterInvokerConfigurationBuilderTest
     {
         ConcurrentSplitterInvokerConfigurationBuilder csicb = new ConcurrentSplitterInvokerConfigurationBuilder(new ConcurrentSplitterInvokerConfiguration());
 
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should have 3 properties", TestUtils.getFields(ConcurrentSplitterInvokerConfiguration.class).size() == 3);
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should have 5 properties", TestUtils.getFields(ConcurrentSplitterInvokerConfiguration.class).size() == 5);
         Assert.assertFalse("ConcurrentSplitterInvokerConfiguration should be false", csicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("ConcurrentSplitterInvokerConfiguration should be false", csicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload());
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload());
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 5", csicb.build().getConcurrentThreads() == 5);
         Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 2", csicb.setConcurrentThreads(2).build().getConcurrentThreads() == 2);
-
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be false", csicb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
+        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be false", csicb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
     }
 
 }

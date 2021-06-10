@@ -41,7 +41,6 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.*;
@@ -101,9 +100,6 @@ public class TranslatorFlowElementInvokerTest
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(translator));
 
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(translator).translate(payload);
@@ -141,9 +137,6 @@ public class TranslatorFlowElementInvokerTest
                 will(returnValue(translatorInvocationAware));
                 exactly(1).of(translatorInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(translatorInvocationAware).translate(payload);
@@ -180,9 +173,6 @@ public class TranslatorFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(translator));
-
-                exactly(2).of(flowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));

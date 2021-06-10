@@ -191,8 +191,8 @@ public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResourc
      */
     protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
     {
-        if(flowElement.getConfiguration() != null && ((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
-                ((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
+        if(this.configuration != null && ((InvokerConfiguration)this.configuration).getSnapEvent() &&
+                ((InvokerConfiguration)this.configuration).getCaptureMetrics())
         {
             if (flowInvocationContextListeners != null && this.invokeContextListeners)
             {
@@ -265,6 +265,5 @@ public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResourc
     {
         this.configuration = configuration;
     }
-
 }
 

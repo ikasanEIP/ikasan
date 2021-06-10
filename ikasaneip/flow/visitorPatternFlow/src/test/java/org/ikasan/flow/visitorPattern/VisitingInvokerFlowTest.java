@@ -40,9 +40,9 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -1643,9 +1643,9 @@ public class VisitingInvokerFlowTest
 
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -1713,6 +1713,7 @@ public class VisitingInvokerFlowTest
         Mockito.verify(flowElementInvoker, Mockito.times(1)).setFlowInvocationContextListeners(null);
         Mockito.verify(flowElementInvoker, Mockito.times(1))
                .invoke(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(flowElementInvoker, Mockito.times(1)).getConfiguration();
 
         Mockito.verifyNoMoreInteractions(flowElementInvoker);
 
@@ -1754,13 +1755,14 @@ public class VisitingInvokerFlowTest
 
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        FlowElementPersistentConfiguration configuration = new FlowElementPersistentConfiguration();
+        InvokerConfiguration configuration = new InvokerConfiguration();
         configuration.setCaptureMetrics(true);
         configuration.setSnapEvent(true);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(configuration);
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(configuration);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(configuration);
+        Mockito.when(flowElementInvoker.getConfiguration()).thenReturn(configuration);
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(configuration);
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
                 consumerFlowElement
@@ -1826,6 +1828,7 @@ public class VisitingInvokerFlowTest
         Mockito.verify(flowElementInvoker, Mockito.times(1)).setFlowInvocationContextListeners(Mockito.anyList());
         Mockito.verify(flowElementInvoker, Mockito.times(1))
                .invoke(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(flowElementInvoker, Mockito.times(1)).getConfiguration();
 
         Mockito.verifyNoMoreInteractions(flowElementInvoker);
 
@@ -1925,7 +1928,7 @@ public class VisitingInvokerFlowTest
         Mockito.when(configuredResource.getConfiguredResourceId()).thenReturn("id");
         //        Mockito.spy(flowConfiguration).configure(configuredResource);
 
-        Mockito.when(configuredResourceFlowElement.getConfiguredResourceId()).thenReturn("id");
+//        Mockito.when(configuredResourceFlowElement.getConfiguredResourceId()).thenReturn("id");
 
         //Mockito.spy(flowConfiguration).configure(configuredResourceFlowElement);
 
@@ -1980,9 +1983,9 @@ public class VisitingInvokerFlowTest
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
-
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2100,7 +2103,7 @@ public class VisitingInvokerFlowTest
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2334,7 +2337,7 @@ public class VisitingInvokerFlowTest
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2446,7 +2449,7 @@ public class VisitingInvokerFlowTest
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2560,7 +2563,7 @@ public class VisitingInvokerFlowTest
         // invoke the flow elements
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2635,6 +2638,7 @@ public class VisitingInvokerFlowTest
                .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
                    consumerFlowElement
                       );
+        Mockito.verify(flowElementInvoker).getConfiguration();
         Mockito.verifyNoMoreInteractions(flowElementInvoker);
 
         Mockito.verify(consumer, Mockito.times(4)).isRunning();
@@ -2684,7 +2688,7 @@ public class VisitingInvokerFlowTest
         Mockito.when(flowConfiguration.getConsumerFlowElement()).thenReturn(consumerFlowElement);
         Mockito.when(consumerFlowElement.getFlowElementInvoker()).thenReturn(flowElementInvoker);
 
-        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
+//        Mockito.when(consumerFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
 
         Mockito.when(flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
@@ -2758,6 +2762,7 @@ public class VisitingInvokerFlowTest
                .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent,
                    consumerFlowElement
                       );
+        Mockito.verify(flowElementInvoker).getConfiguration();
         Mockito.verifyNoMoreInteractions(flowElementInvoker);
 
         Mockito.verify(consumer, Mockito.times(4)).isRunning();

@@ -69,6 +69,18 @@ public class MultiRecipientRouterInvokerConfigurationBuilder
         return this;
     }
 
+    public MultiRecipientRouterInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.multiRecipientRouterInvokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public MultiRecipientRouterInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.multiRecipientRouterInvokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     public MultiRecipientRouterInvokerConfigurationBuilder withCloneEventPerRoute(boolean cloneEventPerRoute)
     {
         this.multiRecipientRouterInvokerConfiguration.setCloneEventPerRoute(cloneEventPerRoute);

@@ -41,7 +41,6 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.flow.*;
 import org.junit.Test;
@@ -51,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Supports testing of the SplitterFlowElementInvoker
@@ -116,8 +114,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
         Mockito.when(subFlowElement.getFlowComponent()).thenReturn(splitter);
 
-        Mockito.when(subFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
-
         Mockito.when(splitter.split(flowEvent)).thenThrow(new ClassCastException());
         Mockito.when(flowEvent.getPayload()).thenReturn(payload);
         Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
@@ -137,7 +133,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
         Mockito.spy(flowEvent).setPayload(payload);
         Mockito.spy(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
-        Mockito.when(mainFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
         Mockito.spy(flowEventListener)
                .afterFlowElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(FlowElement.class),
                    Mockito.any(FlowEvent.class)
@@ -176,8 +171,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
         Mockito.spy(splitterInvocationAware).setFlowElementInvocation(Mockito.any(FlowElementInvocation.class));
 
-        Mockito.when(subFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
-
         Mockito.when(splitterInvocationAware.split(flowEvent)).thenThrow(new ClassCastException());
         Mockito.when(flowEvent.getPayload()).thenReturn(payload);
         Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
@@ -199,7 +192,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
         Mockito.spy(flowEvent).setPayload(payload);
         Mockito.spy(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
-        Mockito.when(mainFlowElement.getConfiguration()).thenReturn(new FlowElementPersistentConfiguration());
         Mockito.spy(flowEventListener)
                .afterFlowElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(FlowElement.class),
                    Mockito.any(FlowEvent.class)

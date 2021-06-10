@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -391,9 +392,6 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
 
             final List<FlowElement<?>> flowElements = this.flowConfiguration.getFlowElements();
-
-            // configure the flow elements
-            configureFlowElements(flowElements);
             
             // configure the flow itself
             this.flowConfiguration.configure(this);
@@ -460,24 +458,6 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             }
 
             this.flowConfiguration.configure(configuredResource);
-        }
-    }
-
-    /**
-     * Configure the given list of configured flowElements
-     * @param flowElements
-     */
-    private void configureFlowElements(List<FlowElement<?>> flowElements)
-    {
-        for(FlowElement<?> flowElement:flowElements)
-        {
-            // set the default configured resource id if none previously set.
-            if(flowElement.getConfiguredResourceId() == null)
-            {
-                flowElement.setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName() + "_element");
-            }
-
-            this.flowConfiguration.configure(flowElement);
         }
     }
 
@@ -943,9 +923,9 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     {
     	try
     	{
-	    	if(flowElement.getConfiguration() != null)
+	    	if(flowElement.getFlowElementInvoker() != null)
 	    	{
-	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(!((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics());
+	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(!((InvokerConfiguration)flowElement.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
 	    	}
 	    	else
 	    	{

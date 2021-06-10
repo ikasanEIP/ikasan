@@ -76,6 +76,18 @@ public class VanillaInvokerConfigurationBuilder
         return this;
     }
 
+    public VanillaInvokerConfigurationBuilder withCaptureMetrics(boolean captureMetrics)
+    {
+        this.invokerConfiguration.setCaptureMetrics(captureMetrics);
+        return this;
+    }
+
+    public VanillaInvokerConfigurationBuilder withSnapMetricsEvent(boolean snapMetricsEvent)
+    {
+        this.invokerConfiguration.setSnapEvent(snapMetricsEvent);
+        return this;
+    }
+
     /**
      * Return an instance of the built InvokerConfiguration
      * @return
