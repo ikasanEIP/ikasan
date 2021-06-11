@@ -64,6 +64,8 @@ public class ScheduledProcessTest implements Job
     {
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         Scheduler scheduler = schedulerFactory.getScheduler();
+
+
         scheduler.start();
 
         JobDetail job = JobBuilder.newJob(ScheduledProcessTest.class)
