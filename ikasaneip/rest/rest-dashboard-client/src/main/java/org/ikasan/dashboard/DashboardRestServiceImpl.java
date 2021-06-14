@@ -18,25 +18,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
+public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl implements DashboardRestService<T>
 {
     Logger logger = LoggerFactory.getLogger(DashboardRestServiceImpl.class);
 
     private Converter converter;
 
-    private RestTemplate restTemplate;
-
     private String url;
 
-    private String authenticateUrl;
-
     private String moduleName;
-
-    private String username;
-
-    private String password;
-
-    private String token;
 
     private boolean isEnabled;
 
@@ -58,7 +48,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
         if ( isEnabled )
         {
             this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
-            this.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
+            super.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
             this.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
             this.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
@@ -77,7 +67,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
     private boolean callHttp(T events, boolean isFirst)
     {
         logger.debug("Pushing events [{}] to dashboard [{}]", events, url);
-        HttpHeaders headers = createHttpHeaders();
+        HttpHeaders headers = createHttpHeaders(this.moduleName);
         HttpEntity<List<HarvestEvent>> entity;
         if ( converter != null )
         {
@@ -100,7 +90,7 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
             if ( e.getRawStatusCode() == 401 && isFirst )
             {
                 this.token = null;
-                if ( authenticate() )
+                if ( authenticate(this.moduleName) )
                 { return callHttp(events, false); }
             }
             logger.warn("Issue while publishing events to dashboard [{}] with response [{}] [{}]", url,
@@ -114,39 +104,5 @@ public class DashboardRestServiceImpl<T> implements DashboardRestService<T>
 
             return false;
         }
-    }
-
-    private boolean authenticate()
-    {
-        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password), createHttpHeaders());
-        try
-        {
-            if ( username != null && password != null )
-            {
-                ResponseEntity<JwtResponse> response = restTemplate
-                    .exchange(authenticateUrl, HttpMethod.POST, entity, JwtResponse.class);
-                this.token = response.getBody().getToken();
-                return true;
-            }
-            return false;
-        }
-        catch (HttpClientErrorException e)
-        {
-            logger.warn("Issue while authenticating to dashboard [" + authenticateUrl + "] with response [{" + e
-                .getResponseBodyAsString() + "}]", e);
-            return false;
-        }
-    }
-
-    private HttpHeaders createHttpHeaders()
-    {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.USER_AGENT, moduleName);
-        if ( token != null )
-        {
-            headers.add("Authorization", "Bearer " + token);
-        }
-        return headers;
     }
 }

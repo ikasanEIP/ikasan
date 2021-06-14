@@ -6,6 +6,7 @@ import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
+import org.ikasan.spec.metrics.MetricsService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,23 +22,25 @@ import java.util.List;
  */
 public class DashboardClientAutoConfiguration
 {
-    private String ERROR_PATH = "/rest/harvest/errors";
+    public static final String ERROR_PATH = "/rest/harvest/errors";
 
-    private String EXCLUSION_PATH = "/rest/harvest/exclusions";
+    public static final String EXCLUSION_PATH = "/rest/harvest/exclusions";
 
-    private String METRICS_PATH = "/rest/harvest/metrics";
+    public static final String METRICS_PATH = "/rest/harvest/metrics";
 
-    private String REPLAY_PATH = "/rest/harvest/replay";
+    public static final String REPLAY_PATH = "/rest/harvest/replay";
 
-    private String WIRETAP_PATH = "/rest/harvest/wiretaps";
+    public static final String WIRETAP_PATH = "/rest/harvest/wiretaps";
 
-    private String SYSTEM_EVENTS_PATH = "/rest/harvest/systemevents";
+    public static final String SYSTEM_EVENTS_PATH = "/rest/harvest/systemevents";
 
-    private String METADATA_PATH = "/rest/module/metadata";
+    public static final String METADATA_PATH = "/rest/module/metadata";
 
-    private String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
+    public static final String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
 
-    private String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
+    public static final String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
+
+    public static final String METRICS_CONSUME_PATH = "/rest/metrics";
 
     @Bean
     @ConfigurationProperties(prefix = "module.rest.connection")
