@@ -38,7 +38,7 @@
     <dependencySet>
         <!-- Enable access to all projects in the current multimodule build! -->
         <useProjectArtifact>false</useProjectArtifact>
-        <!-- contains lib\hell,jar and ikasan.sh -->
+        <!-- contains lib\shell.jar and ikasan.sh -->
         <includes>
             <include>org.ikasan:ikasan-shell-distribution:zip:${version.ikasan}</include>
         </includes>

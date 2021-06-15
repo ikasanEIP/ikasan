@@ -49,95 +49,122 @@ package org.ikasan.ootb.scheduler.agent.model;
  */
 public class ScheduledProcessEvent
 {
+    String agentName;
+    String jobName;
+    String jobGroup;
     String commandLine;
-    String stdOut;
-    String stdErr;
+    int result;
+    String resultOutput;
+    String resultError;
+//    String stdOut;  // not sure if this is needed here - maybe a url to the stdOut log
+//    String stdErr;  // not sure if this is needed here - maybe a url to the stdErr log
     long pid;
     String user;
     long fireTime;
     long nextFireTime;
 
-    public String getCommandLine()
-    {
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public String getJobGroup() {
+        return jobGroup;
+    }
+
+    public void setJobGroup(String jobGroup) {
+        this.jobGroup = jobGroup;
+    }
+
+    public String getCommandLine() {
         return commandLine;
     }
 
-    public void setCommandLine(String commandLine)
-    {
+    public void setCommandLine(String commandLine) {
         this.commandLine = commandLine;
     }
 
-    public String getStdOut()
-    {
-        return stdOut;
+    public int getResult() {
+        return result;
     }
 
-    public void setStdOut(String stdOut)
-    {
-        this.stdOut = stdOut;
+    public void setResult(int result) {
+        this.result = result;
     }
 
-    public String getStdErr()
-    {
-        return stdErr;
+    public String getResultOutput() {
+        return resultOutput;
     }
 
-    public void setStdErr(String stdErr)
-    {
-        this.stdErr = stdErr;
+    public void setResultOutput(String resultOutput) {
+        this.resultOutput = resultOutput;
     }
 
-    public long getPid()
-    {
+    public String getResultError() {
+        return resultError;
+    }
+
+    public void setResultError(String resultError) {
+        this.resultError = resultError;
+    }
+
+    public long getPid() {
         return pid;
     }
 
-    public void setPid(long pid)
-    {
+    public void setPid(long pid) {
         this.pid = pid;
     }
 
-    public String getUser()
-    {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(String user)
-    {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public long getFireTime()
-    {
+    public long getFireTime() {
         return fireTime;
     }
 
-    public void setFireTime(long fireTime)
-    {
+    public void setFireTime(long fireTime) {
         this.fireTime = fireTime;
     }
 
-    public long getNextFireTime()
-    {
+    public long getNextFireTime() {
         return nextFireTime;
     }
 
-    public void setNextFireTime(long nextFireTime)
-    {
+    public void setNextFireTime(long nextFireTime) {
         this.nextFireTime = nextFireTime;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ScheduledProcessEvent{" +
-            "commandLine='" + commandLine + '\'' +
-            ", stdOut='" + stdOut + '\'' +
-            ", stdErr='" + stdErr + '\'' +
-            ", pid=" + pid +
-            ", user='" + user + '\'' +
-            ", fireTime=" + fireTime +
-            ", nextFireTime=" + nextFireTime +
-            '}';
+                "agentName='" + agentName + '\'' +
+                ", jobName='" + jobName + '\'' +
+                ", jobGroup='" + jobGroup + '\'' +
+                ", commandLine='" + commandLine + '\'' +
+                ", result=" + result +
+                ", resultOutput='" + resultOutput + '\'' +
+                ", resultError='" + resultError + '\'' +
+                ", pid=" + pid +
+                ", user='" + user + '\'' +
+                ", fireTime=" + fireTime +
+                ", nextFireTime=" + nextFireTime +
+                '}';
     }
 }
