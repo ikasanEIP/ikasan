@@ -50,7 +50,7 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+        <property name="sessionFactory" ref="hibernateSessionFactory"/>
     </bean>
 
     <aop:config>
@@ -65,15 +65,25 @@
         </tx:attributes>
     </tx:advice>
 
+    <bean id="scheduledProcessEventService"
+          class="org.ikasan.scheduled.service.ScheduledProcessServiceImpl">
+        <constructor-arg name="scheduledProcessEventDao" ref="scheduledProcessEventDao"/>
+    </bean>
+
+    <bean id="scheduledProcessEventDao"
+          class="org.ikasan.scheduled.dao.HibernateScheduledProcessEventDao">
+        <property name="sessionFactory" ref="hibernateSessionFactory" />
+    </bean>
+
     <bean id="wiretapEvent"
           class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <constructor-arg value="true"/>
         <constructor-arg value="1000"/>
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+        <property name="sessionFactory" ref="hibernateSessionFactory"/>
     </bean>
 
     <bean id="messageHistoryDao" class="org.ikasan.history.dao.HibernateMessageHistoryDao">
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+        <property name="sessionFactory" ref="hibernateSessionFactory"/>
         <property name="batchHousekeepDelete" value="true"></property>
         <property name="housekeepingBatchSize" value="500"></property>
         <property name="transactionBatchSize" value="5000"></property>
@@ -82,10 +92,10 @@
 
     <bean id="triggerDao"
           class="org.ikasan.trigger.dao.HibernateTriggerDao">
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+        <property name="sessionFactory" ref="hibernateSessionFactory" />
     </bean>
 
-    <bean id="wiretapHibernateSessionFactory"
+    <bean id="hibernateSessionFactory"
           class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads"/>
         <property name="mappingResources">
@@ -96,6 +106,7 @@
                 <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
                 <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
                 <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+                <value>org/ikasan/scheduled/model/ScheduledProcessEventImpl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

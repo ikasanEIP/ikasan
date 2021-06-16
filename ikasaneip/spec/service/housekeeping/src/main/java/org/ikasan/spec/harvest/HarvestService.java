@@ -8,10 +8,9 @@ import java.util.List;
 public interface HarvestService<RECORD>
 {
     /**
-     * This method performs a non-destructive read of RECORDs
+     * This method performs a non-destructive read of RECORDS
      * from the underlying data store, returning  a List
-     * of RECORDs that were non-destructively read. RECORDs should
-     * be marked as house kept.
+     * of RECORDS. RECORDS should be marked as house kept.
      *
      * @param transactionBatchSize
      * @return
@@ -33,7 +32,7 @@ public interface HarvestService<RECORD>
     public void saveHarvestedRecord(RECORD harvestedRecord);
 
     /**
-     * Update entity as being harvested.
+     * Update entities as being harvested.
      *
      * @param events
      */
