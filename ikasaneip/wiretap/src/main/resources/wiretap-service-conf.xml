@@ -49,6 +49,26 @@
   xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <bean id="scheduledProcessEventService"
+          class="org.ikasan.scheduled.service.ScheduledProcessServiceImpl">
+        <constructor-arg name="scheduledProcessEventDao" ref="scheduledProcessEventDao"/>
+    </bean>
+
+    <bean id="scheduledProcessEventDao"
+          class="org.ikasan.scheduled.dao.HibernateScheduledProcessEventDao">
+        <property name="sessionFactory" ref="scheduledProcessEventHibernateSessionFactory" />
+    </bean>
+
+    <bean id="scheduledProcessEventHibernateSessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/scheduled/model/ScheduledProcessEventImpl.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
     <bean id="wiretapFlowEventListener"
         class="org.ikasan.wiretap.listener.JobAwareFlowEventListener" depends-on="liquibase">
