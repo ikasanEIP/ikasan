@@ -73,5 +73,6 @@
         <module>persistence</module>
         <module>cache</module>
         <module>metrics</module>
+        <module>scheduled</module>
     </modules>
 </project>

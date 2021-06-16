@@ -71,7 +71,6 @@ import java.util.stream.Collectors;
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
     public static final String EVENT_IDS = "eventIds";
-
     public static final String NOW = "now";
 
     /** Use batch housekeeping mode? */
@@ -395,7 +394,6 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     @Override
     public boolean harvestableRecordsExist()
     {
-
         return getHibernateTemplate().execute((session) -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -416,7 +414,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             }
 
             logger.debug(rowCount+", FlowInvocation harvestable records exist");
-            return new Boolean(rowCount>0);
+            return rowCount>0;
         });
     }
 
