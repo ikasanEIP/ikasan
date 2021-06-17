@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 
 /**
- * Harvesting  related configuration required by every module.
+ * Harvesting related configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
 public class HarvestingAutoConfiguration
@@ -66,9 +66,12 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingJob systemEventJob(HarvestService systemEventService, Environment environment, DashboardRestService systemEventsDashboardRestService)
     {
-
         return new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
     }
 
-
+    @Bean
+    public HarvestingJob scheduledProcessEventJob(HarvestService scheduledProcessEventService, Environment environment, DashboardRestService scheduleProcessEventsDashboardRestService)
+    {
+        return new HarvestingJobImpl("scheduledProcessEventJob", scheduledProcessEventService, environment, scheduleProcessEventsDashboardRestService);
+    }
 }
