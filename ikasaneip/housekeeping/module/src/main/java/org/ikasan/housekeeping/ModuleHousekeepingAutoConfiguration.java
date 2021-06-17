@@ -5,6 +5,7 @@ import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -60,5 +61,11 @@ public class ModuleHousekeepingAutoConfiguration
     public HousekeepingJob messageHistoryHousekeepingJob(HousekeepService messageHistoryService, Environment environment)
     {
         return new HousekeepingJobImpl("messageHistoryHousekeepingJob", messageHistoryService, environment);
+    }
+
+    @Bean
+    public HousekeepingJob scheduledProcessEventHousekeepingJob(HousekeepService scheduledProceessEventService, Environment environment)
+    {
+        return new HousekeepingJobImpl("scheduledProcessEventHousekeepingJob", scheduledProceessEventService, environment);
     }
 }
