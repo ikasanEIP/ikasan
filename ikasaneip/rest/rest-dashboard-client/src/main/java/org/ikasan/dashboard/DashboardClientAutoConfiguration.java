@@ -36,6 +36,8 @@ public class DashboardClientAutoConfiguration
 
     public static final String METADATA_PATH = "/rest/module/metadata";
 
+    public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";
+
     public static final String CONFIGURATION_METADATA_PATH = "/rest/configuration/metadata";
 
     public static final String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
@@ -99,6 +101,13 @@ public class DashboardClientAutoConfiguration
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SYSTEM_EVENTS_PATH);
+    }
+
+    @Bean
+    public DashboardRestService scheduleProcessEventsDashboardRestService(Environment environment
+        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    {
+        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENTS_PATH);
     }
 
     @Bean
