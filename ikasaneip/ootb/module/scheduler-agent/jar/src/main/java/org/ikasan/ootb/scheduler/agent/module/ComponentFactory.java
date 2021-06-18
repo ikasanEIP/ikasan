@@ -80,14 +80,18 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
+import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.*;
 import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+
+import javax.annotation.Resource;
 
 /**
  * Scheduler Agent component factory.
@@ -100,6 +104,10 @@ import org.springframework.context.annotation.ImportResource;
 } )
 public class ComponentFactory
 {
+    @Resource
+    BuilderFactory builderFactory;
+
+
     SingleRecipientRouter getBackoutRouter()
     {
         return new BlackoutRouter();
@@ -121,4 +129,5 @@ public class ComponentFactory
     }
 
     Converter getJobExecutionConverter() { return new JobExecutionConverter(); }
+
 }

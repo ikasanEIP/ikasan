@@ -1,0 +1,20 @@
+{
+  "_class": "org.ikasan.configurationService.service.SampleSchedulerAgentConfiguration",
+  "agentName": "secretAgentMan",
+  "sampleScheduleConfigurations": [
+    "java.util.ArrayList",
+    [
+      {
+        "_class": "org.ikasan.configurationService.service.SampleSchedulerConfiguration",
+        "jobName": "jobName",
+        "jobGroup": "jobGroup",
+        "cron": "cron command",
+        "timezone": "BST",
+        "commandLine": "command line",
+        "stdOut": "stdOut.out",
+        "stdErr": "stdErr.out",
+        "threshold": 1000
+      }
+    ]
+  ]
+}

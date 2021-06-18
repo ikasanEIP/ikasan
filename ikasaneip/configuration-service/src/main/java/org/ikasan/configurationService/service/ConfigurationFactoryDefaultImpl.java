@@ -40,6 +40,10 @@
  */
 package org.ikasan.configurationService.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import org.ikasan.configurationService.model.*;
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.spec.configuration.*;
@@ -64,6 +68,15 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
     private static Logger logger = LoggerFactory.getLogger(ConfigurationFactoryDefaultImpl.class);
 
     private static ConfigurationFactory configurationFactory = new ConfigurationFactoryDefaultImpl();
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
+//    {
+//        {        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator
+//                .builder()
+//                .build();
+//            objectMapper.activateDefaultTypingAsProperty(ptv, ObjectMapper.DefaultTyping.EVERYTHING,"_class");
+//        }
+//    };
 
     /**
      * Get an instance of the configurationFactory. This is a thread-safe
@@ -98,6 +111,17 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
         }
 
         Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<ConfigurationParameter>());
+
+//        try
+//        {
+//            String json = objectMapper.writeValueAsString(runtimeConfiguration);
+//            configuration.getParameters().add(new ConfigurationParameterJsonStringImpl("json", json));
+//            return configuration;
+//        }
+//        catch(JsonProcessingException e)
+//        {
+//            throw new RuntimeException(e);  // TODO - FIXME
+//        }
 
         Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(runtimeConfiguration);
         // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several

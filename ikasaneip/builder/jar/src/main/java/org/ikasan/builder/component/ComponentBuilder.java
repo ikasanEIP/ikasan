@@ -107,6 +107,13 @@ public class ComponentBuilder
         return scheduledConsumerBuilder;
     }
 
+    public SchedulerAgentConsumer schedulerAgentConsumer()
+    {
+        SchedulerAgentConsumer schedulerAgentConsumer = new SchedulerAgentConsumer(
+                this.applicationContext.getBean(Scheduler.class));
+        return schedulerAgentConsumer;
+    }
+
     /**
      * Get an instance of an Ikasan default scheduledConsumer using scheduledJobName and defaulted job group based on the scheduled job name
      * @param scheduledJobName

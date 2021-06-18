@@ -43,6 +43,9 @@ package org.ikasan.ootb.scheduler.agent.module;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.OnException;
+import org.ikasan.builder.component.endpoint.SchedulerAgentConfiguration;
+import org.ikasan.builder.component.endpoint.SchedulerAgentConsumer;
+import org.ikasan.builder.component.endpoint.SchedulerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -66,12 +69,19 @@ public class MyModule
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Scheduler Agent Integration Module")
                 .withDescription("Scheduler Agent Integration Module.");
 
+        SchedulerAgentConsumer schedulerAgentConsumer = builderFactory.getComponentBuilder().schedulerAgentConsumer();
+        SchedulerAgentConfiguration schedulerAgentConfiguration = new SchedulerAgentConfiguration();
+        SchedulerConfiguration schedulerConfiguration = new SchedulerConfiguration();
+        schedulerConfiguration.setCron("cron");
+        schedulerAgentConfiguration.setAgentName("MySchedulerAgent");
+        schedulerAgentConfiguration.getScheduleConfigurations().add(schedulerConfiguration);
+        schedulerAgentConsumer.setConfiguration(schedulerAgentConfiguration);
+
         Flow flow = moduleBuilder.getFlowBuilder("Scheduler Flow")
             .withDescription("Scheduler Agent flow")
             .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
             .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())
-            .consumer("Scheduled Consumer", builderFactory.getComponentBuilder().scheduledConsumer()
-                .setCronExpression("*/5 * * * * ?"))
+            .consumer("Scheduled Consumer", schedulerAgentConsumer)
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBackoutRouter())
                 .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()

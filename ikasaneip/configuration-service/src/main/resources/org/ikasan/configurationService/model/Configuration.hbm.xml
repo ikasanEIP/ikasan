@@ -91,7 +91,21 @@
                       column="Description"  not-null="false" />
 
         </joined-subclass>
-        
+
+        <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterJsonStringImpl"
+                         table="ConfParamString">
+
+            <key column="Id" />
+
+            <property name="name"           type="java.lang.String"
+                      column="Name"         not-null="true" />
+            <property name="value"          type="java.lang.String"
+                      column="Value"        not-null="false" />
+            <property name="description"    type="java.lang.String"
+                      column="Description"  not-null="false" />
+
+        </joined-subclass>
+
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
                table="ConfParamMaskedString">
 
