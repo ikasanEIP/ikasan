@@ -84,7 +84,7 @@
         <property name="result"
                   type="int"
                   column="Result"
-                  not-null="true" />
+                  not-null="false" />
         <property name="resultOutput"
                   type="java.lang.String"
                   column="ResultOutput"
@@ -105,6 +105,10 @@
                   type="long"
                   column="FireTime"
                   not-null="true" />
+        <property name="processCompletionTime"
+                  type="long"
+                  column="ProcessCompletionTime"
+                  not-null="false" />
         <property name="nextFireTime"
                   type="long"
                   column="NextFireTime"

@@ -1,6 +1,6 @@
 package org.ikasan.spec.scheduled;
 
-public interface ScheduledProcessService {
+public interface ScheduledProcessEventService {
 
     /**
      * Save the event.

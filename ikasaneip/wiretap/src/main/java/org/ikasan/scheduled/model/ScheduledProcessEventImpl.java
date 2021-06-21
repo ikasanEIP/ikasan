@@ -63,6 +63,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     private long pid;
     private String user;
     private long fireTime;
+    private long processCompletionTime;
     private long nextFireTime;
     private boolean harvested;
     private long harvestedDateTime;
@@ -185,6 +186,16 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     @Override
     public void setFireTime(long fireTime) {
         this.fireTime = fireTime;
+    }
+
+    @Override
+    public long getProcessCompletionTime() {
+        return this.processCompletionTime;
+    }
+
+    @Override
+    public void setProcessCompletionTime(long processCompletionTime) {
+        this.processCompletionTime = processCompletionTime;
     }
 
     @Override

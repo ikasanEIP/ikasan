@@ -45,6 +45,10 @@ public interface ScheduledProcessEvent {
 
     public void setFireTime(long fireTime);
 
+    public long getProcessCompletionTime();
+
+    public void setProcessCompletionTime(long processCompletionTime);
+
     public long getNextFireTime();
 
     public void setNextFireTime(long nextFireTime);
