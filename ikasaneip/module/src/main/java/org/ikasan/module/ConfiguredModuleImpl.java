@@ -40,78 +40,103 @@
  */
 package org.ikasan.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.flow.FlowFactory;
 import org.ikasan.spec.module.Module;
 
 /**
- * A simple representation of a Module
+ * A configured resource representation of a Module
  * 
  * @author Ikasan Development Team
  */
-public class SimpleModule extends AbstractModule implements Module
+public class ConfiguredModuleImpl extends AbstractModule implements Module, FlowFactoryCapable, ConfiguredResource<ConfiguredModuleConfiguration>
 {
-    /**
-     * Constructor
-     * 
-     * @param name The name of the module
-     * @param flows A list of Flows for the module
-     */
-    public SimpleModule(String name, List<Flow> flows)
-    {
-        super(name, flows);
-    }
+    /** handle to the flow factory for generation of flow instances */
+    FlowFactory flowFactory;
+
+    /** configured resource identifier */
+    String configuredResourceId;
+
+    /** configuration instance */
+    ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
 
     /**
      * Constructor
      *
      * @param name The name of the module
-     * @param version version of the module
-     * @param flows A list of Flows for the module
+     * @param flowFactory factory for the generation of flow instances
      */
-    public SimpleModule(String name, String version, List<Flow> flows)
-    {
-        super(name, flows, version);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param name The name of the module
-     * @param version version of the module
-     * @param flows A list of Flows for the module
-     */
-    public SimpleModule(String name, String version, List<Flow> flows, String url)
-    {
-        super(name, flows, version, url);
-    }
-
-    public SimpleModule(String name, String version, String url)
-    {
-        super(name, version, url);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param name Name of the module
-     */
-    public SimpleModule(String name)
+    public ConfiguredModuleImpl(String name, FlowFactory flowFactory)
     {
         super(name);
+        this.flowFactory = flowFactory;
+        if(flowFactory == null)
+        {
+            throw new IllegalArgumentException("flowFactory cannot be 'null'");
+        }
     }
 
     /**
      * Constructor
      *
-     * @param name Name of the module
+     * @param name The name of the module
      * @param version version of the module
+     * @param flowFactory factory for the generation of flow instances
      */
-    public SimpleModule(String name, String version)
+    public ConfiguredModuleImpl(String name, String version, FlowFactory flowFactory)
     {
         super(name, version);
+        this.flowFactory = flowFactory;
+        if(flowFactory == null)
+        {
+            throw new IllegalArgumentException("flowFactory cannot be 'null'");
+        }
     }
 
+    /**
+     * Constructor
+     *
+     * @param name The name of the module
+     * @param version version of the module
+     * @param flowFactory factory for the generation of flow instances
+     */
+    public ConfiguredModuleImpl(String name, String version, FlowFactory flowFactory, String url)
+    {
+        super(name, version, url);
+        this.flowFactory = flowFactory;
+        if(flowFactory == null)
+        {
+            throw new IllegalArgumentException("flowFactory cannot be 'null'");
+        }
+    }
+
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public ConfiguredModuleConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(ConfiguredModuleConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public FlowFactory getFlowFactory()
+    {
+        return this.flowFactory;
+    }
 }
