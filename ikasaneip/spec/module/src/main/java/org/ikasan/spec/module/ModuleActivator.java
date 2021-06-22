@@ -59,17 +59,4 @@ public interface ModuleActivator<T>
      * @param module
      */
     void deactivate(Module<T> module);
-
-    /**
-     * Provision the module with any configuration or other set-up required prior to activation.
-     * @param module
-     */
-    void provision(Module<T> module);
-
-    /**
-     * Deprovision the module from any configuration or other set-up after deactivation.
-     *
-     * @param module
-     */
-    void deprovision(Module<T> module);
 }
