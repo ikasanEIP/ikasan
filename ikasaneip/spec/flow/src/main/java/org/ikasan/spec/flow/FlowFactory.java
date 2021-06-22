@@ -38,38 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.module;
+package org.ikasan.spec.flow;
 
 /**
- * Provide a contract allowing for different implementations of a module's 
- * activation and deactivation at runtime.
- * @author Ikasan Development Team
+ * Interface representing a factory for flow creation.
  *
+ * @author Ikasan Development Team
  */
-public interface ModuleActivator<T>
+public interface FlowFactory
 {
-    /**
-     * Active the specified module
-     * @param module
-     */
-    void activate(Module<T> module);
-    
-    /**
-     * Deactive the specified module
-     * @param module
-     */
-    void deactivate(Module<T> module);
-
-    /**
-     * Provision the module with any configuration or other set-up required prior to activation.
-     * @param module
-     */
-    void provision(Module<T> module);
-
-    /**
-     * Deprovision the module from any configuration or other set-up after deactivation.
-     *
-     * @param module
-     */
-    void deprovision(Module<T> module);
+    Flow newInstance(String moduleName, String flowName);
 }

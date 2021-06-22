@@ -58,9 +58,14 @@
                 </th>
                 <td>
                     <c:out value="${module.name}" />
+                    <c:url var="configurationLink" value="/moduleConfiguration.htm">
+                        <c:param name="moduleName" value="${moduleName}"/>
+                    </c:url>
+                    <a href="<c:out value="${configurationLink}" escapeXml="true" />">
+                        <c:out value=" (configure)" />
+                    </a>
                 </td>
             </tr>
-
 
         </table>
 

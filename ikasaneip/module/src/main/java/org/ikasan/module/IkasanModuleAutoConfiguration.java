@@ -47,6 +47,7 @@ import org.ikasan.module.service.ModuleServiceImpl;
 import org.ikasan.module.service.StartupControlServiceImpl;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
@@ -69,6 +70,8 @@ import java.util.Properties;
 @Configuration
 public class IkasanModuleAutoConfiguration
 {
+    @Autowired
+    ConfigurationService configurationService;
 
     @Resource Map platformHibernateProperties;
     @Autowired
@@ -102,7 +105,7 @@ public class IkasanModuleAutoConfiguration
 
     @Bean
     public ModuleActivator moduleActivator(StartupControlDao startupControlDao) {
-        return new ModuleActivatorDefaultImpl(startupControlDao);
+        return new ModuleActivatorDefaultImpl(configurationService, startupControlDao);
     }
 
     @Bean
