@@ -91,12 +91,10 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         }
     }
 
-    /**
-     * Provisions configuration for this module.
-     *
-     * @param module
+    /* (non-Javadoc)
+     * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
      */
-    public void provision(Module<Flow> module)
+    public void activate(Module<Flow> module)
     {
         // load module configuration
         if(module instanceof ConfiguredResource)
@@ -116,13 +114,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                 }
             }
         }
-    }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
-     */
-    public void activate(Module<Flow> module)
-    {
         // start flows
         for(Flow flow:module.getFlows())
         {
@@ -145,11 +137,10 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         }
     }
 
-    /**
-     * Deprovisions configuration of this module.
-     * @param module
+    /* (non-Javadoc)
+     * @see org.ikasan.module.service.ModuleActivation#deactivate(org.ikasan.spec.module.Module)
      */
-    public void deprovision(Module<Flow> module)
+    public void deactivate(Module<Flow> module)
     {
         // stop flows
         for(Flow flow:module.getFlows())
@@ -172,24 +163,6 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                         module.getFlows().remove(flowname);
                     }
                 }
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.module.service.ModuleActivation#deactivate(org.ikasan.spec.module.Module)
-     */
-    public void deactivate(Module<Flow> module)
-    {
-        // stop flows
-        for(Flow flow:module.getFlows())
-        {
-            // destroy any managed services used by the flow
-            FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
-            List<ManagedService> managedServices = flowConfiguration.getManagedServices();
-            for(ManagedService managedService:managedServices)
-            {
-                managedService.destroy();
             }
         }
     }
