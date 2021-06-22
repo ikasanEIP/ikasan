@@ -43,8 +43,10 @@ package org.ikasan.module.service;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -270,7 +272,6 @@ public class ModuleInitialisationServiceImpl
             // intialise config into db
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
-            this.moduleActivator.provision(module);
             this.moduleActivator.activate(module);
             this.housekeepingSchedulerService.registerJobs();
             this.harvestingSchedulerService.registerJobs();
@@ -290,10 +291,24 @@ public class ModuleInitialisationServiceImpl
         List<String> modulesToRemove = new ArrayList<>();
         for (Module<Flow> module : this.moduleContainer.getModules())
         {
+            // stop flows
             this.moduleActivator.deactivate(module);
-            this.moduleActivator.deprovision(module);
+
+            // destroy
+            for(Flow flow:module.getFlows())
+            {
+                // destroy any managed services used by the flow
+                FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
+                List<ManagedService> managedServices = flowConfiguration.getManagedServices();
+                for(ManagedService managedService:managedServices)
+                {
+                    managedService.destroy();
+                }
+            }
+
             modulesToRemove.add(module.getName());
         }
+
         // remove all modules from container
         for (String moduleToRemove : modulesToRemove)
         {
