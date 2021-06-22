@@ -40,9 +40,13 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.module.SimpleModule;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowFactory;
 import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +95,13 @@ public class ModuleBuilder
 
     EventFactory eventFactory;
 
-	/**
+    /** allow registration of a flow factory for dynamically instantiated flows */
+    FlowFactory flowFactory;
+
+    /** configuration */
+    ConfiguredModuleConfiguration configuration;
+
+    /**
 	 * Constructor
 	 * @param name
 	 */
@@ -140,6 +150,18 @@ public class ModuleBuilder
 		return this;
 	}
 
+	public ModuleBuilder withFlowFactory(FlowFactory flowFactory)
+    {
+        this.flowFactory = flowFactory;
+        return this;
+    }
+
+    public ModuleBuilder setConfiguration(ConfiguredModuleConfiguration configuration)
+    {
+        this.configuration = configuration;
+        return this;
+    }
+
 	/**
 	 * Add description to the module
 	 * @param version
@@ -164,9 +186,30 @@ public class ModuleBuilder
 	
 	public Module build()
 	{
-		Module module = new SimpleModule(this.name, this.version, this.flows, getUrl());
-		module.setDescription(this.description);
-		return module;
+        Module module;
+	    if(flowFactory != null)
+        {
+            module = new ConfiguredModuleImpl(this.name, this.version, this.flowFactory, getUrl());
+            if(module instanceof ConfiguredResource)
+            {
+                ((ConfiguredResource)module).setConfiguredResourceId(this.name);
+                if(configuration != null)
+                {
+                    ((ConfiguredResource)module).setConfiguration(configuration);
+                }
+                else
+                {
+                    ((ConfiguredResource)module).setConfiguration( new ConfiguredModuleConfiguration() );
+                }
+            }
+        }
+	    else
+        {
+            module = new SimpleModule(this.name, this.version, this.flows, getUrl());
+        }
+
+        module.setDescription(this.description);
+        return module;
 	}
 
 	public FlowBuilder getFlowBuilder(String flowName)

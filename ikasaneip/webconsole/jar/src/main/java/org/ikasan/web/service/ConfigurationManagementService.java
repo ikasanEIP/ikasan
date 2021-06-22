@@ -117,7 +117,19 @@ public class ConfigurationManagementService
         this.mapper.registerModule(m);
 
     }
-   
+
+    /**
+     * Is this moduleName/flowName/flowElementName referencing a component that
+     * is marked as a ConfiguredResource.
+     * @param moduleName
+     * @return boolean
+     */
+    public boolean isConfiguredResource(String moduleName)
+    {
+        Module<Flow> module = moduleService.getModule(moduleName);
+        return ( module instanceof ConfiguredResource );
+    }
+
     /**
      * Is this moduleName/flowName/flowElementName referencing a component that
      * is marked as a ConfiguredResource.
@@ -150,6 +162,29 @@ public class ConfigurationManagementService
      * Find the configuration instance for this moduleName/flowName/flowElementName.
      * Report any issues back via the RequestContext.
      * @param moduleName
+     * @param context
+     * @return Configuration
+     */
+    public Configuration findConfiguration(String moduleName, RequestContext context)
+    {
+        try
+        {
+            ConfiguredResource configuredResource = getModuleConfiguredResource(moduleName);
+            return this.configurationManagement.getConfiguration(configuredResource);
+        }
+        catch(RuntimeException e)
+        {
+            context.getMessageContext().addMessage(new MessageBuilder().error().source("findConfiguration").defaultText(
+                    e.getMessage()).build());
+        }
+        
+        return null;
+    }
+
+    /**
+     * Find the configuration instance for this moduleName/flowName/flowElementName.
+     * Report any issues back via the RequestContext.
+     * @param moduleName
      * @param flowName
      * @param flowElementName
      * @param context
@@ -165,9 +200,9 @@ public class ConfigurationManagementService
         catch(RuntimeException e)
         {
             context.getMessageContext().addMessage(new MessageBuilder().error().source("findConfiguration").defaultText(
-                    e.getMessage()).build());
+                e.getMessage()).build());
         }
-        
+
         return null;
     }
 
@@ -218,6 +253,29 @@ public class ConfigurationManagementService
                     e.getMessage()).build());
         }
         
+        return null;
+    }
+
+    /**
+     * Create a new configuration instance for this moduleName/flowName/flowElementName.
+     * Report any issues back via the RequestContext.
+     * @param moduleName
+     * @param context
+     * @return Configuration
+     */
+    public Configuration createConfiguration(String moduleName, RequestContext context)
+    {
+        try
+        {
+            ConfiguredResource configuredResource = getModuleConfiguredResource(moduleName);
+            return configurationManagement.createConfiguration(configuredResource);
+        }
+        catch(RuntimeException e)
+        {
+            context.getMessageContext().addMessage(new MessageBuilder().error().source("createConfiguration").defaultText(
+                e.getMessage()).build());
+        }
+
         return null;
     }
 
@@ -350,6 +408,25 @@ public class ConfigurationManagementService
         else
         {
             throw new UnsupportedOperationException("Component must be of type 'ConfiguredResource' to support component configuration");
+        }
+    }
+
+    /**
+     * Utility method for locating and returning the ConfiguredResource instance based on the given
+     * moduleName/flowName/flowElementName.
+     * @param moduleName
+     * @return ConfiguredResource
+     */
+    private ConfiguredResource getModuleConfiguredResource(String moduleName)
+    {
+        Module<Flow> module = moduleService.getModule(moduleName);
+        if(module instanceof ConfiguredResource)
+        {
+            return (ConfiguredResource)module;
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Module must be of type 'ConfiguredResource' to support module configuration");
         }
     }
 

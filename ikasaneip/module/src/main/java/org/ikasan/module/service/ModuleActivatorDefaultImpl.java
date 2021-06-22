@@ -40,6 +40,10 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.module.FlowFactoryCapable;
+import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
@@ -62,6 +66,9 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** logger instance */
     private static final Logger logger = LoggerFactory.getLogger(ModuleActivatorDefaultImpl.class);
 
+    /** handle to the configuration service */
+    private ConfigurationService configurationService;
+
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;
 
@@ -69,20 +76,54 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
      * Constructor
      * @param startupControlDao
      */
-    public ModuleActivatorDefaultImpl(StartupControlDao startupControlDao)
+    public ModuleActivatorDefaultImpl(ConfigurationService configurationService, StartupControlDao startupControlDao)
     {
+        this.configurationService = configurationService;
+        if(configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be 'null'");
+        }
+
         this.startupControlDao = startupControlDao;
         if(startupControlDao == null)
         {
             throw new IllegalArgumentException("startupControlDao cannot be 'null'");
         }
     }
-    
+
+    /**
+     * Provisions configuration for this module.
+     *
+     * @param module
+     */
+    public void provision(Module<Flow> module)
+    {
+        // load module configuration
+        if(module instanceof ConfiguredResource)
+        {
+            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = (ConfiguredResource)module;
+            configurationService.configure(configuredModule);
+
+            if(module instanceof FlowFactoryCapable)
+            {
+                ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+                if(configuration.getFlowNames() != null)
+                {
+                    for(String flowname:configuration.getFlowNames())
+                    {
+                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().newInstance(module.getName(), flowname) );
+                    }
+                }
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
      */
     public void activate(Module<Flow> module)
     {
+        // start flows
         for(Flow flow:module.getFlows())
         {
             StartupControl flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
@@ -104,16 +145,45 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         }
     }
 
+    /**
+     * Deprovisions configuration of this module.
+     * @param module
+     */
+    public void deprovision(Module<Flow> module)
+    {
+        // stop flows
+        for(Flow flow:module.getFlows())
+        {
+            // stop flow and associated components
+            flow.stop();
+        }
+
+        // remove any flows created from configuration as part of activation
+        if(module instanceof ConfiguredResource)
+        {
+            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = (ConfiguredResource)module;
+            if(module instanceof FlowFactoryCapable)
+            {
+                ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+                if(configuration.getFlowNames() != null)
+                {
+                    for(String flowname:configuration.getFlowNames())
+                    {
+                        module.getFlows().remove(flowname);
+                    }
+                }
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.module.service.ModuleActivation#deactivate(org.ikasan.spec.module.Module)
      */
     public void deactivate(Module<Flow> module)
     {
+        // stop flows
         for(Flow flow:module.getFlows())
         {
-            // stop flow and associated components
-            flow.stop();
-
             // destroy any managed services used by the flow
             FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
             List<ManagedService> managedServices = flowConfiguration.getManagedServices();
@@ -122,6 +192,5 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                 managedService.destroy();
             }
         }
-
     }
 }

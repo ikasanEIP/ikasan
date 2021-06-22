@@ -270,6 +270,7 @@ public class ModuleInitialisationServiceImpl
             // intialise config into db
             this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
+            this.moduleActivator.provision(module);
             this.moduleActivator.activate(module);
             this.housekeepingSchedulerService.registerJobs();
             this.harvestingSchedulerService.registerJobs();
@@ -290,6 +291,7 @@ public class ModuleInitialisationServiceImpl
         for (Module<Flow> module : this.moduleContainer.getModules())
         {
             this.moduleActivator.deactivate(module);
+            this.moduleActivator.deprovision(module);
             modulesToRemove.add(module.getName());
         }
         // remove all modules from container
