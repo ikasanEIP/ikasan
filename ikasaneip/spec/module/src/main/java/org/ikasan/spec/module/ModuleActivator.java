@@ -59,4 +59,10 @@ public interface ModuleActivator<T>
      * @param module
      */
     void deactivate(Module<T> module);
+
+    /**
+     * Has the module been activated
+     * @return isActivated
+     */
+    boolean isActivated();
 }
