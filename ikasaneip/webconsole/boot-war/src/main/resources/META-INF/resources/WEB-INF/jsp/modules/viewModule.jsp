@@ -65,6 +65,28 @@
                         <c:out value=" (configure)" />
                     </a>
                 </td>
+                <td>
+                    <c:choose>
+                        <c:when test="${flow.state.equalsIgnoreCase('running')}">
+                            <c:url var="startControlFlowLink" value="flow.htm">
+                                <c:param name="moduleName" value="${moduleName}"/>
+                                <c:param name="action" value="deactivate"/>
+                            </c:url>
+                            <form:form method="post">
+                                <input type="submit" formaction="${startControlFlowLink}" value="Deactivate" class="controlButton"/>
+                            </form:form>
+                        </c:when>
+                        <c:otherwise>
+                            <c:url var="startPauseControlFlowLink" value="flow.htm">
+                                <c:param name="moduleName" value="${moduleName}"/>
+                                <c:param name="action" value="activate"/>
+                            </c:url>
+                            <form:form method="post">
+                                <input type="submit" formaction="${startPauseControlFlowLink}" value="Activate" class="controlButton"/>
+                            </form:form>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
             </tr>
 
         </table>

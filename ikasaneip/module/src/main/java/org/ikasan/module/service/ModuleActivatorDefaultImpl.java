@@ -47,14 +47,10 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
-
-import java.util.List;
 
 /**
  * Simple implementation of the default activation of a module.
@@ -71,6 +67,9 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
 
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;
+
+    /** hold state on whether activated or not */
+    boolean activated;
 
     /**
      * Constructor
@@ -135,6 +134,8 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                 logger.info("Module [" + module.getName() + "] Flow ["+ flow.getName() + "] startup is set to [" + flowStartupControl.getStartupType().name() + "]. Not automatically started!");
             }
         }
+
+        this.activated = true;
     }
 
     /* (non-Javadoc)
@@ -165,5 +166,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                 }
             }
         }
+
+        this.activated = false;
+    }
+
+    public boolean isActivated()
+    {
+        return this.activated;
     }
 }
