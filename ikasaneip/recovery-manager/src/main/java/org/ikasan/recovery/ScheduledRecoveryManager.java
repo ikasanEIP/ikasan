@@ -661,10 +661,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             else
             {
                 this.consumer.start();
-            }
-            if(!isEventBaseRecovery)
-            {
-                cancelAll();
+                if(!isEventBaseRecovery)
+                {
+                    cancelAll();
+                }
             }
         }
         catch(Throwable throwable)
