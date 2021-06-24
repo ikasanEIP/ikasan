@@ -52,6 +52,9 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Simple implementation of the default activation of a module.
  * @author Ikasan Development Team
@@ -68,8 +71,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;
 
-    /** hold state on whether activated or not */
-    boolean activated;
+    List<Module> activatedModuleNames = new ArrayList<Module>();
 
     /**
      * Constructor
@@ -135,7 +137,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             }
         }
 
-        this.activated = true;
+        this.activatedModuleNames.add(module);
     }
 
     /* (non-Javadoc)
@@ -167,11 +169,16 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             }
         }
 
-        this.activated = false;
+        this.activatedModuleNames.remove(module);
     }
 
-    public boolean isActivated()
+    /**
+     * Has this module been activated.
+     * @param module
+     * @return
+     */
+    public boolean isActivated(Module<Flow> module)
     {
-        return this.activated;
+        return this.activatedModuleNames.contains(module);
     }
 }
