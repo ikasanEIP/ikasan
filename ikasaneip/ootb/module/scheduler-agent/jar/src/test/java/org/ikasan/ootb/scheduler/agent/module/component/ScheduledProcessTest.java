@@ -40,7 +40,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class ScheduledProcessTest implements Job
             .build();
 
         scheduler.addJob(job, true);
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
         configuration.dropOnBlackout = false;
 

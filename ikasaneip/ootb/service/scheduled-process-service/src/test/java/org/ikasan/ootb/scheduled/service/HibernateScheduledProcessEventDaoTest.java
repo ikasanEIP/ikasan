@@ -1,13 +1,10 @@
-package org.ikasan.scheduled.service;
+package org.ikasan.ootb.scheduled.service;
 
-import org.ikasan.scheduled.dao.HibernateScheduledProcessEventDao;
-import org.ikasan.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

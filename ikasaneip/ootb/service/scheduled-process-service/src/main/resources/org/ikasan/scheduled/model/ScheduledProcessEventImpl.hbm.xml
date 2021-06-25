@@ -48,13 +48,13 @@
 # //
 -->
 <!--
-    This is the hibernate mapping configuration for wiretapEvent persistence.
+    This is the hibernate mapping configuration for ScheduledProcessEvent persistence.
     @author Ikasan Development Team
  -->
 <hibernate-mapping>
 
     <class
-        name="org.ikasan.scheduled.model.ScheduledProcessEventImpl"
+        name="org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl"
         table="ScheduledProcessEvent">
 
         <id name="id" type="java.lang.Long" column="Id">
@@ -76,15 +76,15 @@
         <property name="jobDescription"
                   type="java.lang.String"
                   column="JobDescription"
-                  not-null="true" />
+                  not-null="false" />
         <property name="commandLine"
                   type="java.lang.String"
                   column="CommandLine"
-                  not-null="true" />
+                  not-null="false" />
         <property name="result"
                   type="int"
                   column="Result"
-                  not-null="true" />
+                  not-null="false" />
         <property name="resultOutput"
                   type="java.lang.String"
                   column="ResultOutput"
@@ -96,11 +96,11 @@
         <property name="pid"
                   type="long"
                   column="Pid"
-                  not-null="true" />
+                  not-null="false" />
         <property name="user"
                   type="java.lang.String"
                   column="User"
-                  not-null="true" />
+                  not-null="false" />
         <property name="fireTime"
                   type="long"
                   column="FireTime"
@@ -108,7 +108,7 @@
         <property name="nextFireTime"
                   type="long"
                   column="NextFireTime"
-                  not-null="true" />
+                  not-null="false" />
         <property name="harvested"
                   type="boolean"
                   column="Harvested"

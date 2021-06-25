@@ -40,7 +40,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class ScheduledProcessEventFilterTest
     @Test
     public void test_no_drop_on_blackout()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
         configuration.dropOnBlackout = false;
 
@@ -73,7 +74,7 @@ public class ScheduledProcessEventFilterTest
     @Test
     public void test_drop_on_blackout()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
         configuration.dropOnBlackout = true;
 

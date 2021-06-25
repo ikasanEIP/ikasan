@@ -38,21 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.scheduled.dao;
+package org.ikasan.ootb.scheduled.dao;
 
 import com.google.common.collect.Lists;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.ikasan.history.model.CustomMetric;
-import org.ikasan.history.model.FlowInvocationMetricImpl;
-import org.ikasan.history.model.MetricEvent;
-import org.ikasan.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.spec.history.ComponentInvocationMetric;
-import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.ScheduledProcessEventDao;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.HibernateCallback;
@@ -62,7 +54,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
