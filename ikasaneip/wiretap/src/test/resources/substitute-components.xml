@@ -65,16 +65,6 @@
         </tx:attributes>
     </tx:advice>
 
-    <bean id="scheduledProcessEventService"
-          class="ScheduledProcessServiceImpl">
-        <constructor-arg name="scheduledProcessEventDao" ref="scheduledProcessEventDao"/>
-    </bean>
-
-    <bean id="scheduledProcessEventDao"
-          class="HibernateScheduledProcessEventDao">
-        <property name="sessionFactory" ref="hibernateSessionFactory" />
-    </bean>
-
     <bean id="wiretapEvent"
           class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <constructor-arg value="true"/>
@@ -106,7 +96,6 @@
                 <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
                 <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
                 <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
-                <value>org/ikasan/scheduled/model/ScheduledProcessEventImpl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

@@ -45,6 +45,7 @@ import org.ikasan.module.SimpleModule;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
@@ -95,6 +96,8 @@ public class ModuleInitialisationServiceImplTest {
     SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class);
     ExclusionService exclusionService = mockery.mock(ExclusionService.class);
     ApplicationContext platformContext = mockery.mock(ApplicationContext.class);
+    Flow flow1 = mockery.mock(Flow.class, "flow1");
+    FlowConfiguration flow1Configuration = mockery.mock(FlowConfiguration.class, "flow1Configuration");
 
     Module module = mockery.mock(Module.class);
 
@@ -160,6 +163,15 @@ public class ModuleInitialisationServiceImplTest {
             will(returnValue(Arrays.asList(module)));
 
             oneOf(moduleActivator).deactivate(module);
+
+            oneOf(module).getFlows();
+            will(returnValue(List.of(flow1)));
+
+            oneOf(flow1).getFlowConfiguration();
+            will(returnValue(flow1Configuration));
+
+            oneOf(flow1Configuration).getManagedServices();
+            will(returnValue(List.of()));
 
             oneOf(module).getName();
             will(returnValue(MODULE_NAME));
