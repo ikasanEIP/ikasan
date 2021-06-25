@@ -41,7 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component;
 
 import ch.qos.logback.core.util.FileUtil;
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -65,7 +65,7 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
     ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
 
     @Override
-    public ScheduledProcessEvent invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
+    public ScheduledProcessEvent invoke(ScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
@@ -111,7 +111,6 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
             processBuilder.redirectError();
         }
 
-
         try
         {
             Process process = processBuilder.start();
@@ -120,16 +119,19 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
                 throw new EndpointException("Failed command line [" + configuration.getCommandLine() + "]");
             }
 
-            scheduledStatusEvent.setUser( process.info().user().get() );
-            scheduledStatusEvent.setCommandLine( process.info().commandLine().get() );
-            scheduledStatusEvent.setPid( process.pid() );
+            scheduledProcessEvent.setResult(process.exitValue());
+            scheduledProcessEvent.setUser( process.info().user().get() );
+            scheduledProcessEvent.setCommandLine( process.info().commandLine().get() );
+            scheduledProcessEvent.setPid( process.pid() );
+
+            // TODO - what to do with stdout and stderr - do we want that inthe scheduledProcessEvent ?
         }
         catch (IOException e)
         {
             throw new EndpointException(e);
         }
 
-        return scheduledStatusEvent;
+        return scheduledProcessEvent;
     }
 
     String[] getCommandLineArgs(String commandLine)

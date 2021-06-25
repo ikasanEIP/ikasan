@@ -269,10 +269,12 @@ public class ModuleInitialisationServiceImpl
     {
         try
         {
-            // intialise config into db
-            this.initialiseModuleMetaData(module);
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
+
+            // intialise config into db - must happen after the activation
+            this.initialiseModuleMetaData(module);
+
             this.housekeepingSchedulerService.registerJobs();
             this.harvestingSchedulerService.registerJobs();
         }

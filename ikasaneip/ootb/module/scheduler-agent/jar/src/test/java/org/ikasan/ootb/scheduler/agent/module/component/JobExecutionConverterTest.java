@@ -40,7 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

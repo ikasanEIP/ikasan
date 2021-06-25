@@ -64,5 +64,5 @@ public interface ModuleActivator<T>
      * Has the module been activated
      * @return isActivated
      */
-    boolean isActivated();
+    boolean isActivated(Module<T> module);
 }
