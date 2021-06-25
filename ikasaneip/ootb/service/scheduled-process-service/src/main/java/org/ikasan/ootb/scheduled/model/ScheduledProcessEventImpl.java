@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.scheduled.model;
+package org.ikasan.ootb.scheduled.model;
 
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;

@@ -40,7 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.configuration.ConfiguredResource;

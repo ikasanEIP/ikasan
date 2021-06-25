@@ -1,4 +1,4 @@
-package org.ikasan.scheduled.service;
+package org.ikasan.ootb.scheduled.service;
 
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.housekeeping.HousekeepService;

@@ -28,12 +28,11 @@
             <version>${version.ikasan}</version>
         </dependency>
 
-<!--        &lt;!&ndash; TODO - remove me &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.ikasan</groupId>-->
-<!--            <artifactId>ikasan-spec-scheduled</artifactId>-->
-<!--            <version>${version.ikasan}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>scheduled-process-service</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>

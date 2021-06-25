@@ -1,6 +1,6 @@
-package org.ikasan.scheduled.dao;
+package org.ikasan.ootb.scheduled.dao;
 
-import org.ikasan.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.ScheduledProcessEventDao;
 import org.junit.Assert;
