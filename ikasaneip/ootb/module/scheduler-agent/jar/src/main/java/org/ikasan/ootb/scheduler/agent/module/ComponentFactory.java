@@ -83,14 +83,13 @@ package org.ikasan.ootb.scheduler.agent.module;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.*;
 import org.ikasan.spec.component.endpoint.Broker;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-
+import org.ikasan.spec.scheduled.ScheduledProcessService;
 import javax.annotation.Resource;
 
 /**
@@ -106,6 +105,9 @@ public class ComponentFactory
 {
     @Resource
     BuilderFactory builderFactory;
+
+    @Resource
+    ScheduledProcessService scheduledProcessService;
 
     SingleRecipientRouter getBackoutRouter()
     {
@@ -123,7 +125,7 @@ public class ComponentFactory
 
     Producer getScheduledStatusProducer()
     {
-        return new ScheduledProcessEventProducer();
+        return new ScheduledProcessEventProducer(scheduledProcessService);
     }
 
     Filter getScheduledStatusFilter()
