@@ -19,11 +19,6 @@
             <artifactId>ikasan-eip-standalone</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.ikasan</groupId>-->
-<!--            <artifactId>ikasan-h2-standalone-persistence</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test-endpoint</artifactId>
