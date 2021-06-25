@@ -42,6 +42,7 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.FlowFactoryCapable;
+import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ import org.ikasan.spec.module.StartupType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple implementation of the default activation of a module.
@@ -71,10 +73,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;
 
-    List<Module> activatedModuleNames = new ArrayList<Module>();
+    /** internal list of modules activated */
+    private List<Module> activatedModuleNames = new ArrayList<Module>();
 
     /**
      * Constructor
+     * @param configurationService
      * @param startupControlDao
      */
     public ModuleActivatorDefaultImpl(ConfigurationService configurationService, StartupControlDao startupControlDao)
@@ -106,10 +110,14 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             if(module instanceof FlowFactoryCapable)
             {
                 ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
-                if(configuration.getFlowNames() != null)
+                if(configuration.getFlowDefinitions() != null)
                 {
-                    for(String flowname:configuration.getFlowNames())
+                    for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
+                        String flowname = flowDefinition.getKey();
+                        StartupControl startupControl = new StartupControlImpl(module.getName(), flowname);
+                        startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
+                        this.startupControlDao.save(startupControl);
                         module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().newInstance(module.getName(), flowname) );
                     }
                 }
@@ -159,11 +167,11 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             if(module instanceof FlowFactoryCapable)
             {
                 ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
-                if(configuration.getFlowNames() != null)
+                if(configuration.getFlowDefinitions() != null)
                 {
-                    for(String flowname:configuration.getFlowNames())
+                    for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
-                        module.getFlows().remove(flowname);
+                        module.getFlows().remove(flowDefinition.getKey());
                     }
                 }
             }

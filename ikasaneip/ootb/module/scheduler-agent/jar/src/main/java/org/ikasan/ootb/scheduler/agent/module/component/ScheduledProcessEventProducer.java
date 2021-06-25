@@ -40,9 +40,10 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +57,20 @@ public class ScheduledProcessEventProducer implements Producer<ScheduledProcessE
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventProducer.class);
 
+    ScheduledProcessService scheduledProcessService;
+
+    public ScheduledProcessEventProducer(ScheduledProcessService scheduledProcessService)
+    {
+        this.scheduledProcessService = scheduledProcessService;
+        if(scheduledProcessService == null)
+        {
+            throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
+        }
+    }
+
     @Override
     public void invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
     {
-        /** logger */
-        logger.info(scheduledStatusEvent.toString());
+        this.scheduledProcessService.save(scheduledStatusEvent);
     }
 }

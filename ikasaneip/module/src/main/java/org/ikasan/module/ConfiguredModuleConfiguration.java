@@ -40,8 +40,8 @@
  */
 package org.ikasan.module;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration for a module where flows are configured at runtime.
@@ -50,15 +50,15 @@ import java.util.List;
  */
 public class ConfiguredModuleConfiguration
 {
-    List<String> flowNames = new ArrayList<>();
+    Map<String,String> flowDefinitions = new HashMap();
 
-    public List<String> getFlowNames()
+    public Map<String,String> getFlowDefinitions()
     {
-        return flowNames;
+        return flowDefinitions;
     }
 
-    public void setFlowNames(List<String> flowNames)
+    public void setFlowDefinitions(Map<String,String> flowDefinitions)
     {
-        this.flowNames = flowNames;
+        this.flowDefinitions = flowDefinitions;
     }
 }

@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.StartupType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -51,6 +52,7 @@ import javax.annotation.Resource;
 @Configuration("ModuleFactory")
 public class MyModule
 {
+    public static String MODULE_NAME = "Scheduler Agent Integration Module";
     @Resource
     BuilderFactory builderFactory;
     @Resource
@@ -60,13 +62,13 @@ public class MyModule
     public Module myModule()
     {
         ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
-        configuration.getFlowNames().add("flow 1");
-        configuration.getFlowNames().add("flow 2");
-        configuration.getFlowNames().add("flow 3");
-        configuration.getFlowNames().add("flow 4");
+        configuration.getFlowDefinitions().put("flow 1", StartupType.MANUAL.name());
+        configuration.getFlowDefinitions().put("flow 2", StartupType.MANUAL.name());
+        configuration.getFlowDefinitions().put("flow 3", StartupType.MANUAL.name());
+        configuration.getFlowDefinitions().put("flow 4", StartupType.MANUAL.name());
 
         // get the module builder
-        return builderFactory.getModuleBuilder("Scheduler Agent Integration Module")
+        return builderFactory.getModuleBuilder(MODULE_NAME)
                 .withDescription("Scheduler Agent Integration Module.")
                 .withFlowFactory( new MyFlowFactory(builderFactory, componentFactory) )
                 .setConfiguration(configuration)

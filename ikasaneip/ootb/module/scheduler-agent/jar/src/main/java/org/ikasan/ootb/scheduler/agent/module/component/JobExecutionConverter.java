@@ -40,9 +40,11 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.ootb.scheduler.agent.module.MyModule;
+import org.ikasan.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.quartz.JobExecutionContext;
 
 /**
@@ -55,13 +57,27 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
     @Override
     public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
     {
-        ScheduledProcessEvent scheduledStatusEvent = new ScheduledProcessEvent();
-        scheduledStatusEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
+        ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+        scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
+        scheduledProcessEvent.setAgentName(MyModule.MODULE_NAME);
+        scheduledProcessEvent.setJobDescription(jobExecutionContext.getJobDetail().getDescription());
+        scheduledProcessEvent.setJobName(jobExecutionContext.getJobDetail().getKey().getName());
+        scheduledProcessEvent.setJobGroup(jobExecutionContext.getJobDetail().getKey().getGroup());
         if(jobExecutionContext.getNextFireTime() != null)
         {
-            scheduledStatusEvent.setNextFireTime( jobExecutionContext.getNextFireTime().getTime() );
+            scheduledProcessEvent.setNextFireTime( jobExecutionContext.getNextFireTime().getTime() );
         }
 
-        return scheduledStatusEvent;
+        return scheduledProcessEvent;
+    }
+
+    /**
+     * Factory method to aid testing.
+     *
+     * @return
+     */
+    protected ScheduledProcessEvent getScheduledProcessEvent()
+    {
+        return new ScheduledProcessEventImpl();
     }
 }
