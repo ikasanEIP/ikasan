@@ -66,12 +66,12 @@
     </tx:advice>
 
     <bean id="scheduledProcessEventService"
-          class="org.ikasan.scheduled.service.ScheduledProcessServiceImpl">
+          class="ScheduledProcessServiceImpl">
         <constructor-arg name="scheduledProcessEventDao" ref="scheduledProcessEventDao"/>
     </bean>
 
     <bean id="scheduledProcessEventDao"
-          class="org.ikasan.scheduled.dao.HibernateScheduledProcessEventDao">
+          class="HibernateScheduledProcessEventDao">
         <property name="sessionFactory" ref="hibernateSessionFactory" />
     </bean>
 

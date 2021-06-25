@@ -40,7 +40,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduler.agent.model.ScheduledProcessEvent;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;
@@ -61,7 +62,7 @@ public class BlackoutRouterTest
     @Test
     public void test_successful_router_cronExpression_outside_blackout_period()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         List<String> cronExpression = new ArrayList<String>();
@@ -82,7 +83,7 @@ public class BlackoutRouterTest
     @Test
     public void test_successful_router_cronExpression_inside_blackout_period()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         List<String> cronExpression = new ArrayList<String>();
@@ -103,7 +104,7 @@ public class BlackoutRouterTest
     @Test
     public void test_successful_router_dateRange_inside_blackout_period()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         Calendar calendar = Calendar.getInstance();
@@ -132,7 +133,7 @@ public class BlackoutRouterTest
     @Test
     public void test_successful_router_dateRange_outside_before_blackout_period()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         Calendar calendar = Calendar.getInstance();
@@ -161,7 +162,7 @@ public class BlackoutRouterTest
     @Test
     public void test_successful_router_dateRange_outside_after_blackout_period()
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEvent();
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
 
         Calendar calendar = Calendar.getInstance();

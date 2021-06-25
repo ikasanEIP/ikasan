@@ -156,5 +156,9 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-history</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-scheduled</artifactId>
+        </dependency>
     </dependencies>
 </project>

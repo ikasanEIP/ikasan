@@ -40,11 +40,13 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
+import org.ikasan.ootb.scheduled.service.ScheduledProcessServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.MyModule;
-import org.ikasan.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.quartz.JobExecutionContext;
 
 /**
