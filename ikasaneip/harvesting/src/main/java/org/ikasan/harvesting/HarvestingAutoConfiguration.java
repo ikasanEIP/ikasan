@@ -70,8 +70,8 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob scheduledProcessEventJob(HarvestService scheduledProcessEventService, Environment environment, DashboardRestService scheduleProcessEventsDashboardRestService)
+    public HarvestingJob scheduledProcessEventJob(HarvestService scheduledProcessService, Environment environment, DashboardRestService scheduleProcessEventsDashboardRestService)
     {
-        return new HarvestingJobImpl("scheduledProcessEventJob", scheduledProcessEventService, environment, scheduleProcessEventsDashboardRestService);
+        return new HarvestingJobImpl("scheduledProcessEventJob", scheduledProcessService, environment, scheduleProcessEventsDashboardRestService);
     }
 }

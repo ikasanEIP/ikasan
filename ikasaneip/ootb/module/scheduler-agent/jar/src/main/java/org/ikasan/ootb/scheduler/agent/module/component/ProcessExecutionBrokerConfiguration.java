@@ -50,6 +50,7 @@ public class ProcessExecutionBrokerConfiguration
     String commandLine;
     String stdErr;
     String stdOut;
+    boolean retryOnFail;
 
     public String getCommandLine()
     {
@@ -81,14 +82,24 @@ public class ProcessExecutionBrokerConfiguration
         this.stdOut = stdOut;
     }
 
+    public boolean isRetryOnFail()
+    {
+        return retryOnFail;
+    }
+
+    public void setRetryOnFail(boolean retryOnFail)
+    {
+        this.retryOnFail = retryOnFail;
+    }
+
     @Override
     public String toString()
     {
-        return "MyProducerConfiguration{" +
+        return "ProcessExecutionBrokerConfiguration{" +
             "commandLine='" + commandLine + '\'' +
             ", stdErr='" + stdErr + '\'' +
             ", stdOut='" + stdOut + '\'' +
+            ", retryOnFail=" + retryOnFail +
             '}';
     }
-
 }

@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Process Execution Broker implementation for the execution of the command line process.
@@ -114,14 +115,38 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         try
         {
             Process process = processBuilder.start();
-            if(!process.isAlive())
+
+            try
             {
-                throw new EndpointException("Failed command line [" + configuration.getCommandLine() + "]");
+                boolean b = process.waitFor(10, TimeUnit.SECONDS);
+                if(b)
+                {
+                    scheduledProcessEvent.setResult(process.exitValue());
+                }
+                else
+                {
+                    scheduledProcessEvent.setResult(process.exitValue());
+                }
+            }
+            catch(InterruptedException e)
+            {
+
             }
 
-            scheduledProcessEvent.setResult(process.exitValue());
-            scheduledProcessEvent.setUser( process.info().user().get() );
-            scheduledProcessEvent.setCommandLine( process.info().commandLine().get() );
+            ProcessHandle.Info info = process.info();
+            if(info != null)
+            {
+                if(!info.user().isEmpty())
+                {
+                    scheduledProcessEvent.setUser( info.user().get() );
+                }
+
+                if(!info.commandLine().isEmpty())
+                {
+                    scheduledProcessEvent.setUser( info.commandLine().get() );
+                }
+            }
+
             scheduledProcessEvent.setPid( process.pid() );
 
             // TODO - what to do with stdout and stderr - do we want that inthe scheduledProcessEvent ?

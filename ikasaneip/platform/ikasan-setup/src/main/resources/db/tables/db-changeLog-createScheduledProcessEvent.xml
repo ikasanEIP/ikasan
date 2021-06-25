@@ -67,31 +67,31 @@
                 <constraints nullable="false"/>
             </column>
             <column name="JobDescription" type="VARCHAR(512)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="CommandLine" type="TEXT">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="Result" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultOutput" type="TEXT">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultError" type="TEXT">
                 <constraints nullable="true"/>
             </column>
             <column name="Pid" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="User" type="VARCHAR(256)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="FireTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
             <column name="NextFireTime" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column defaultValueNumeric="0" name="Harvested" type="BIT">
                 <constraints nullable="false"/>
@@ -138,31 +138,31 @@
                 <constraints nullable="false"/>
             </column>
             <column name="JobDescription" type="VARCHAR(512)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="CommandLine" type="UNITEXT">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="Result" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultOutput" type="UNITEXT">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultError" type="UNITEXT">
                 <constraints nullable="true"/>
             </column>
             <column name="Pid" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="User" type="VARCHAR(256)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="FireTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
             <column name="NextFireTime" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column defaultValueNumeric="0" name="Harvested" type="BIT">
                 <constraints nullable="false"/>
@@ -209,31 +209,31 @@
                 <constraints nullable="false"/>
             </column>
             <column name="JobDescription" type="VARCHAR(512)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="CommandLine" type="VARCHAR(MAX)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="Result" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultOutput" type="VARCHAR(MAX)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ResultError" type="VARCHAR(MAX)">
                 <constraints nullable="true"/>
             </column>
             <column name="Pid" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="User" type="VARCHAR(256)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="FireTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
             <column name="NextFireTime" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column defaultValueNumeric="0" name="Harvested" type="BIT">
                 <constraints nullable="false"/>
