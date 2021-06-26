@@ -77,9 +77,6 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-@ImportResource( {
-        "classpath:builder-conf.xml"
-} )
 public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 {
  	/** logger */

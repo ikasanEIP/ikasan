@@ -79,6 +79,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-system-event</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
@@ -96,10 +102,23 @@
              <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 		<dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-              <scope>test</scope>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+           <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
