@@ -73,6 +73,7 @@ public class ScheduledProcessTest implements Job
             .withIdentity("myJob", "group1")
             .usingJobData("jobSays", "Hello World!")
             .usingJobData("myFloatValue", 3.141f)
+            .storeDurably(true)
             .build();
 
         scheduler.addJob(job, true);

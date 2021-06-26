@@ -19,11 +19,6 @@
             <artifactId>ikasan-eip-standalone</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.ikasan</groupId>-->
-<!--            <artifactId>ikasan-h2-standalone-persistence</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test-endpoint</artifactId>
@@ -44,6 +39,24 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

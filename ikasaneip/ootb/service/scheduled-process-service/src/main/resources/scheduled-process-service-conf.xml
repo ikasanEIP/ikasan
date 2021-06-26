@@ -62,7 +62,7 @@
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>
-                <value>org/ikasan/scheduled/model/ScheduledProcessEventImpl.hbm.xml</value>
+                <value>org/ikasan/ootb/scheduled/model/ScheduledProcessEventImpl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

@@ -1,4 +1,5 @@
-/*
+<!--
+ /*
  * $Id$
  * $URL$
  *
@@ -38,59 +39,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent;
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+    <!-- =================================================================== -->
+    <!-- H2 provides an in-memory database                                   -->
+    <!-- =================================================================== -->
+    
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create-drop"/>
+        <entry key="hibernate.flushMode" value="commit"/>
+        <entry key="hibernate.jdbc.batch_size" value="5"/>
+    </util:map>
 
-import javax.annotation.Resource;
-
-import static org.junit.Assert.assertEquals;
-
-/**
- * This test class supports the <code>vanilla integration module</code> application.
- *
- * @author Ikasan Development Team
- */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {Application.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ApplicationTest
-{
-    @Resource
-    private Module<Flow> moduleUnderTest;
-
-    @Before
-    public void setup()
-    {
-        // pre-test setup
-    }
-
-    /**
-     * Test simple invocation.
-     */
-    @Test
-    public void test_createModule_start_and_stop_flow() throws Exception
-    {
-        Flow flow = moduleUnderTest.getFlow("flow 1");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-    }
-
-    @After
-    public void teardown()
-    {
-        // post-test teardown
-    }
-
-}
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
+    </bean>
+  
+</beans>

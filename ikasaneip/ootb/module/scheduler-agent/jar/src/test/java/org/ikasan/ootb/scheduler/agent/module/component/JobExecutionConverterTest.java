@@ -47,7 +47,9 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 
 import java.util.Date;
 
@@ -67,6 +69,8 @@ public class JobExecutionConverterTest
     }};
 
     JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class,"mockJobExecutionContext");
+    JobDetail jobDetail = mockery.mock(JobDetail.class,"mockJobDetail");
+    JobKey jobKey = new JobKey("name", "group");
 
     /**
      * Test simple invocation.
@@ -84,7 +88,25 @@ public class JobExecutionConverterTest
                 exactly(1).of(jobExecutionContext).getFireTime();
                 will(returnValue(currentFireDate));
 
-                exactly(1).of(jobExecutionContext).getNextFireTime();
+                exactly(1).of(jobExecutionContext).getJobDetail();
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getDescription();
+                will(returnValue("job detail"));
+
+                exactly(1).of(jobExecutionContext).getJobDetail();
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(jobExecutionContext).getJobDetail();
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(2).of(jobExecutionContext).getNextFireTime();
                 will(returnValue(nextFireDate));
             }
         });
