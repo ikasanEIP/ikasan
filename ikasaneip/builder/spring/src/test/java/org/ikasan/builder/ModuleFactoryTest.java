@@ -40,18 +40,13 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.dashboard.DashboardClientAutoConfiguration;
-import org.ikasan.harvesting.HarvestingAutoConfiguration;
-import org.ikasan.housekeeping.ModuleHousekeepingAutoConfiguration;
-import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
@@ -60,11 +55,9 @@ import javax.annotation.Resource;
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration( classes = {TestConfiguration.class, IkasanWebAutoConfiguration.class,
-    IkasanModuleAutoConfiguration.class, ModuleHousekeepingAutoConfiguration.class,
-    HarvestingAutoConfiguration.class, DashboardClientAutoConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {MyApplication.class},
+                webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ModuleFactoryTest
 {
     @Resource
