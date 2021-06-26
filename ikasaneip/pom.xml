@@ -739,6 +739,7 @@
                 <module>persistence</module>
                 <module>cli</module>
                 <module>sample</module>
+                <module>ootb</module>
             </modules>
 
         </profile>
