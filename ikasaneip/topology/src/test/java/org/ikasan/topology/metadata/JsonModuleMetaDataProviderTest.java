@@ -5,6 +5,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.module.ModuleType;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.trigger.Trigger;
@@ -81,6 +82,7 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());

@@ -50,6 +50,20 @@ import java.util.List;
 public interface Module<FLOW>
 {
     /**
+     * Set the module type on the metadata.
+     *
+     * @param moduleType
+     */
+    public void setType(ModuleType moduleType);
+
+    /**
+     * Get the module type.
+     *
+     * @return
+     */
+    public ModuleType getType();
+
+    /**
      * Returns the url of the module.
      *
      * @return

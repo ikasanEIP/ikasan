@@ -2,6 +2,7 @@ package org.ikasan.configurationService.metadata.module;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,16 @@ import java.util.List;
 public class TestModule implements Module<Flow>
 {
     private List<Flow> flows;
+
+    @Override
+    public void setType(ModuleType moduleType) {
+
+    }
+
+    @Override
+    public ModuleType getType() {
+        return ModuleType.INTEGRATION_MODULE;
+    }
 
     @Override
     public String getVersion()

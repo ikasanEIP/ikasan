@@ -1,9 +1,25 @@
 package org.ikasan.spec.metadata;
 
+import org.ikasan.spec.module.ModuleType;
+
 import java.util.List;
 
 public interface ModuleMetaData
 {
+    /**
+     * Set the module type on the metadata.
+     *
+     * @param moduleType
+     */
+    public void setType(ModuleType moduleType);
+
+    /**
+     * Get the module type.
+     *
+     * @return
+     */
+    public ModuleType getType();
+
     /**
      * Returns the url of the module.
      *

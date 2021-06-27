@@ -1,5 +1,7 @@
 package org.ikasan.systemevent.model;
 
+import org.ikasan.spec.module.ModuleType;
+
 import java.util.List;
 
 public class TestModule implements org.ikasan.spec.module.Module {
@@ -15,6 +17,16 @@ public class TestModule implements org.ikasan.spec.module.Module {
         this.name = name;
         this.flows = flows;
         this.description = description;
+    }
+
+    @Override
+    public void setType(ModuleType moduleType) {
+
+    }
+
+    @Override
+    public ModuleType getType() {
+        return ModuleType.INTEGRATION_MODULE;
     }
 
     @Override

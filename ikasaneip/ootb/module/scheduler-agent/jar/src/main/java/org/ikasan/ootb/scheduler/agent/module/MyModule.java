@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleType;
 import org.ikasan.spec.module.StartupType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,6 +71,7 @@ public class MyModule
         // get the module builder
         return builderFactory.getModuleBuilder(MODULE_NAME)
                 .withDescription("Scheduler Agent Integration Module.")
+                .withType(ModuleType.SCHEDULER_AGENT)
                 .withFlowFactory( new MyFlowFactory(builderFactory, componentFactory) )
                 .setConfiguration(configuration)
             .build();
