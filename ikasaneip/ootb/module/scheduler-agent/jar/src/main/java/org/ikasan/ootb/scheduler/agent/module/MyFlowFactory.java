@@ -69,7 +69,7 @@ public class MyFlowFactory implements FlowFactory
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter(moduleName, flowName))
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
-                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
+                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker(moduleName, flowName))
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
             .otherwise(builderFactory.getRouteBuilder()
                 .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
