@@ -310,7 +310,7 @@
         <version.org.apache.directory.server.apached-server-unit>1.5.5
         </version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
-        <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
+        <version.org.quartz-scheduler>2.3.2</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.liquibase>3.8.5</version.org.liquibase>
