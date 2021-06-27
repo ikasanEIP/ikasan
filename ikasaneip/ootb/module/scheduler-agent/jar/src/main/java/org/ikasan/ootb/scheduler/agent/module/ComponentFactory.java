@@ -109,16 +109,21 @@ public class ComponentFactory
     @Resource
     ScheduledProcessService scheduledProcessService;
 
-    SingleRecipientRouter getBackoutRouter()
+    SingleRecipientRouter getBlackoutRouter(String moduleName, String flowName)
     {
-        return new BlackoutRouter();
+        BlackoutRouter blackoutRouter = new BlackoutRouter();
+        blackoutRouter.setConfiguredResourceId(moduleName+"-"+flowName+"-blackOutRouter");
+        blackoutRouter.setConfiguration(new BlackoutRouterConfiguration());
+
+        return blackoutRouter;
     }
 
-    Broker getProcessExecutionbroker()
+    Broker getProcessExecutionBroker(String moduleName, String flowName)
     {
         ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
         ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
         configuration.setCommandLine("pwd");
+        processExecutionBroker.setConfiguredResourceId(moduleName+"-"+flowName+"-processExecutionBroker");
         processExecutionBroker.setConfiguration(configuration);
         return new ProcessExecutionBroker();
     }
