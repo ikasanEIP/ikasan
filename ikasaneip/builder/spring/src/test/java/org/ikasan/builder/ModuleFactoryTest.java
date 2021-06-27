@@ -72,5 +72,6 @@ public class ModuleFactoryTest
     	Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
     	Assert.assertTrue("module description should be 'moduleDescription'", "moduleDescription".equals(module.getDescription()));
     	Assert.assertNotNull("module should contain a flow named 'flowName''", module.getFlow("flowName"));
+    	Assert.assertNotNull("module should contain a flow named 'scheduledBuilderFlow''", module.getFlow("scheduledBuilderFlow"));
     }
 }

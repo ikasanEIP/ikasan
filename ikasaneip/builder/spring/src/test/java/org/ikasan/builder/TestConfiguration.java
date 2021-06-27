@@ -1,7 +1,12 @@
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.spec.flow.Flow;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+
+import javax.annotation.Resource;
 
 @Configuration
 @ImportResource(locations = {
@@ -14,4 +19,25 @@ import org.springframework.context.annotation.ImportResource;
 
 public class TestConfiguration
 {
+    @Resource
+    BuilderFactory builderFactory;
+
+    @Bean
+    public Flow scheduledBuilderFlow()
+    {
+
+        FlowBuilder flowBuilder = builderFactory.getModuleBuilder("moduleName")
+                                                .withDescription("Example module with pattern builder")
+                                                .getFlowBuilder("scheduledBuilderFlow");
+        return flowBuilder.withDescription("scheduled flow description")
+                          .consumer("consumer", builderFactory.getComponentBuilder().scheduledConsumer()
+                                                              .setCronExpression("0/5 * * * * ?")
+                                                              .setConfiguredResourceId("configuredResourceId")
+                                                                .setScheduledJobGroupName("scheduledJobGroupName")
+                                                              .setScheduledJobName("scheduledJobName")
+                                                              .build())
+                          .producer("producer", builderFactory.getComponentBuilder()
+                                                              .devNullProducer().build())
+                          .build();
+    }
 }
