@@ -2,17 +2,29 @@ package org.ikasan.topology.metadata.model;
 
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.module.ModuleType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleMetaDataImpl implements ModuleMetaData
 {
+    private ModuleType moduleType;
     private String url;
     private String name;
     private String description;
     private String version;
     private List<FlowMetaData> flows;
+
+    @Override
+    public void setType(ModuleType moduleType) {
+        this.moduleType = moduleType;
+    }
+
+    @Override
+    public ModuleType getType() {
+        return this.moduleType;
+    }
 
     @Override
     public void setName(String name)

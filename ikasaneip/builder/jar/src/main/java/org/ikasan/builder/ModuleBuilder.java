@@ -48,6 +48,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -77,6 +78,9 @@ public class ModuleBuilder
     public static final String DEFAULT_HOST = "localhost";
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleBuilder.class);
+
+    /** The type of module **/
+    ModuleType moduleType;
 
     /** name of the module being instantiated */
 	String name;
@@ -139,6 +143,19 @@ public class ModuleBuilder
 			throw new IllegalArgumentException("module name cannot be 'null'");
 		}
 	}
+
+    /**
+     * Add the module type.
+     *
+     * @param type
+     * @return
+     */
+    public ModuleBuilder withType(ModuleType type)
+    {
+        this.moduleType = type;
+        return this;
+    }
+
     /**
 	 * Add description to the module
 	 * @param description
@@ -209,6 +226,11 @@ public class ModuleBuilder
         }
 
         module.setDescription(this.description);
+
+	    if(this.moduleType != null) {
+	        module.setType(this.moduleType);
+        }
+
         return module;
 	}
 

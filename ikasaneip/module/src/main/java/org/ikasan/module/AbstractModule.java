@@ -42,6 +42,7 @@ package org.ikasan.module;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,9 @@ import java.util.List;
  */
 public abstract class AbstractModule implements Module
 {
+    // default to integration module
+    private ModuleType moduleType = ModuleType.INTEGRATION_MODULE;
+
     /** The url of the module */
     private String url;
 
@@ -164,6 +168,16 @@ public abstract class AbstractModule implements Module
         }
 
         this.version = version;
+    }
+
+    @Override
+    public void setType(ModuleType moduleType) {
+        this.moduleType = moduleType;
+    }
+
+    @Override
+    public ModuleType getType() {
+        return this.moduleType;
     }
 
     /**

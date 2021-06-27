@@ -47,6 +47,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             moduleMetaData.setName(module.getName());
             moduleMetaData.setDescription(module.getDescription());
             moduleMetaData.setVersion(module.getVersion());
+            moduleMetaData.setType(module.getType());
 
             for(Flow flow: module.getFlows())
             {
