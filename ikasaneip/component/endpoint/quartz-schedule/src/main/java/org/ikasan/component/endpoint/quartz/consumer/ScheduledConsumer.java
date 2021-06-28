@@ -61,6 +61,7 @@ import org.quartz.*;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -156,15 +157,35 @@ public class ScheduledConsumer<T>
     {
         try
         {
-
             JobKey jobkey = jobDetail.getKey();
-            TriggerBuilder triggerBuilder = newTriggerFor(jobkey.getName(), jobkey.getGroup());
+            String jobName = jobkey.getName();
+            if(getConfiguration().getJobName() != null)
+            {
+                jobName = getConfiguration().getJobName();
+            }
+
+            String jobGroupName = jobkey.getGroup();
+            if(getConfiguration().getJobGroupName() != null)
+            {
+                jobGroupName = getConfiguration().getJobGroupName();
+            }
+
+            TriggerBuilder triggerBuilder = newTriggerFor(jobName, jobGroupName);
             Trigger trigger = getBusinessTrigger(triggerBuilder);
+            if(getConfiguration().getPassthroughProperties() != null)
+            {
+                for(Map.Entry<String,String> entry:getConfiguration().getPassthroughProperties().entrySet())
+                {
+                    trigger.getJobDataMap().put(entry.getKey(), entry.getValue());
+                }
+            }
+
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
             logger.info("Scheduled consumer for flow ["
                     + jobkey.getName()
                     + "] module [" + jobkey.getGroup()
-                    + "] starting at [" + scheduledDate + "]");
+                    + "] starting at [" + scheduledDate
+                    + "] description [" + trigger.getDescription() + "]");
         }
         catch (SchedulerException | ParseException e)
         {
@@ -174,7 +195,7 @@ public class ScheduledConsumer<T>
 
     protected TriggerBuilder newTriggerFor(String name, String group)
     {
-        return newTrigger().withIdentity(name, group);
+        return newTrigger().withIdentity(name, group).withDescription(getConfiguration().getDescription());
     }
 
     /**
@@ -434,6 +455,14 @@ public class ScheduledConsumer<T>
         {
             Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder());
             newTrigger.getJobDataMap().clear();
+
+            if(getConfiguration().getPassthroughProperties() != null)
+            {
+                for (Map.Entry<String, String> entry : getConfiguration().getPassthroughProperties().entrySet())
+                {
+                    newTrigger.getJobDataMap().put(entry.getKey(), entry.getValue());
+                }
+            }
 
             Date scheduledDate;
             if(this.scheduler.checkExists(oldTrigger.getKey()))

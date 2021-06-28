@@ -55,6 +55,8 @@ import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * Ikasan abstract implementation for a scheduled consumer builder.
  *
@@ -119,6 +121,12 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
 
     /** allow timezone override */
     String timezone;
+
+    /** allow description override */
+    String description;
+
+    /** allow pass through properties override */
+    Map<String,String> passthroughProperties;
 
     /**
      * Constructor
@@ -285,6 +293,21 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
         return (BUILDER)this;
     }
 
+
+    @Override
+    public BUILDER setDescription(String description)
+    {
+        this.description = description;
+        return (BUILDER)this;
+    }
+
+    @Override
+    public BUILDER setPassthroughProperties(Map<String, String> passthroughProperties)
+    {
+        this.passthroughProperties = passthroughProperties;
+        return (BUILDER)this;
+    }
+
     /**
      * Factory method to return a vanilla scheduled consumer to aid testing
      * @return
@@ -417,6 +440,16 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
         {
             this.scheduledJobGroupName = scheduledConsumer.getConfiguration().hashCode() + "-" + System.currentTimeMillis();
             logger.info("scheduledJobGroupName not specified. Defaulted to '" + this.scheduledJobGroupName + "'");
+        }
+
+        if(description != null)
+        {
+            scheduledConsumer.getConfiguration().setDescription(description);
+        }
+
+        if(passthroughProperties != null)
+        {
+            scheduledConsumer.getConfiguration().setPassthroughProperties(passthroughProperties);
         }
 
         if(this.aopProxyProvider == null)

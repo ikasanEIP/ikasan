@@ -132,6 +132,26 @@ public class CallbackMessageProviderImplTest
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
+                // get configuration job name
+                exactly(2).of(consumerConfiguration).getJobName();
+                will(returnValue("jobName"));
+
+                // get configuration job group name
+                exactly(2).of(consumerConfiguration).getJobGroupName();
+                will(returnValue("jobGroupName"));
+
+                // get configuration schediler description
+                exactly(1).of(consumerConfiguration).getDescription();
+                will(returnValue("description"));
+
+                // get configuration scheduler pass-through properties
+                exactly(1).of(consumerConfiguration).getPassthroughProperties();
+                will(returnValue(null));
+
+                // log the description off the trigger
+                exactly(1).of(trigger).getDescription();
+                will(returnValue("description"));
+
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));

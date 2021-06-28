@@ -47,6 +47,8 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
+import java.util.Map;
+
 /**
  * Contract for an abstract scheduled consumer builder.
  *
@@ -79,5 +81,9 @@ public interface AbstractScheduledConsumerBuilder<BUILDER> extends Builder<Consu
     BUILDER setScheduledJobGroupName(String scheduledJobGroupName);
 
     BUILDER setScheduledJobName(String scheduledJobName);
+
+    BUILDER setDescription(String description);
+
+    BUILDER setPassthroughProperties(Map<String,String> scheduledPassthroughProperties);
 }
 
