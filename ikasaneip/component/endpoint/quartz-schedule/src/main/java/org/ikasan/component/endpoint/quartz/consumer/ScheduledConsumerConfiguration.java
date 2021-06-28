@@ -44,6 +44,9 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import org.ikasan.spec.configuration.IsValidationAware;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Scheduled consumer configuration bean.
  * 
@@ -51,6 +54,15 @@ import org.ikasan.spec.configuration.InvalidConfigurationException;
  */
 public class ScheduledConsumerConfiguration implements IsValidationAware
 {
+    /** name for this schedule */
+    private String jobName;
+
+    /** group name for this schedule */
+    private String jobGroupName;
+
+    /** description for this schedule */
+    private String description;
+
     /** cron based expression for this schedule */
     private String cronExpression;
 
@@ -66,6 +78,49 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
     /** a valid optional timezone to set on the scheduled job
      *  a default of blank or null will use the JVM's timezone */
     private String timezone;
+
+    /** generic properties to be passed into the job at schedule time and subsequently passed back on schedule execution */
+    private Map<String,String> passthroughProperties = new HashMap<String,String>();
+
+    public String getJobName()
+    {
+        return jobName;
+    }
+
+    public void setJobName(String jobName)
+    {
+        this.jobName = jobName;
+    }
+
+    public String getJobGroupName()
+    {
+        return jobGroupName;
+    }
+
+    public void setJobGroupName(String jobGroupName)
+    {
+        this.jobGroupName = jobGroupName;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public Map<String, String> getPassthroughProperties()
+    {
+        return passthroughProperties;
+    }
+
+    public void setPassthroughProperties(Map<String, String> passthroughProperties)
+    {
+        this.passthroughProperties = passthroughProperties;
+    }
 
     public String getCronExpression()
     {

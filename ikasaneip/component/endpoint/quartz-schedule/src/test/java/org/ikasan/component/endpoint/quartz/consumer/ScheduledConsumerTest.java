@@ -134,6 +134,22 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
+                // get configuration job name
+                exactly(2).of(consumerConfiguration).getJobName();
+                will(returnValue("jobName"));
+
+                // get configuration job group name
+                exactly(2).of(consumerConfiguration).getJobGroupName();
+                will(returnValue("jobGroupName"));
+
+                // get configuration scheduler pass-through properties
+                exactly(1).of(consumerConfiguration).getPassthroughProperties();
+                will(returnValue(null));
+
+                // log the description off the trigger
+                exactly(1).of(trigger).getDescription();
+                will(returnValue("description"));
+
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
                 will(returnValue("* * * * * ?"));
@@ -396,6 +412,10 @@ public class ScheduledConsumerTest
                 will(returnValue(true));
 
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(null));
+
+                // get configuration scheduler pass-through properties
+                exactly(1).of(consumerConfiguration).getPassthroughProperties();
                 will(returnValue(null));
 
                 exactly(1).of(consumerConfiguration).getCronExpression();
