@@ -45,17 +45,26 @@ import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.ikasan.spec.module.StartupType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
+/**
+ * Module implementation.
+ *
+ * @author Ikasan Development Team
+ */
 @Configuration("ModuleFactory")
 public class MyModule
 {
-    public static String MODULE_NAME = "Scheduler Agent Integration Module";
+    @Value( "${module.name}" )
+    String moduleName;
+
     @Resource
     BuilderFactory builderFactory;
+
     @Resource
     ComponentFactory componentFactory;
 
@@ -63,13 +72,10 @@ public class MyModule
     public Module myModule()
     {
         ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
-        configuration.getFlowDefinitions().put("flow 1", StartupType.MANUAL.name());
-        configuration.getFlowDefinitions().put("flow 2", StartupType.MANUAL.name());
-        configuration.getFlowDefinitions().put("flow 3", StartupType.MANUAL.name());
-        configuration.getFlowDefinitions().put("flow 4", StartupType.MANUAL.name());
+        configuration.getFlowDefinitions().put("Scheduler Flow 1", StartupType.MANUAL.name());
 
         // get the module builder
-        return builderFactory.getModuleBuilder(MODULE_NAME)
+        return builderFactory.getModuleBuilder(moduleName)
                 .withDescription("Scheduler Agent Integration Module.")
                 .withType(ModuleType.SCHEDULER_AGENT)
                 .withFlowFactory( new MyFlowFactory(builderFactory, componentFactory) )

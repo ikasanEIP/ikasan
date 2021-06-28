@@ -40,13 +40,10 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
-import org.ikasan.ootb.scheduled.service.ScheduledProcessServiceImpl;
-import org.ikasan.ootb.scheduler.agent.module.MyModule;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.quartz.JobExecutionContext;
 
 /**
@@ -56,12 +53,27 @@ import org.quartz.JobExecutionContext;
  */
 public class JobExecutionConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>
 {
+    String moduleName;
+
+    /**
+     * Constructor
+     * @param moduleName
+     */
+    public JobExecutionConverter(String moduleName)
+    {
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+    }
+
     @Override
     public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
     {
         ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
-        scheduledProcessEvent.setAgentName(MyModule.MODULE_NAME);
+        scheduledProcessEvent.setAgentName(moduleName);
         scheduledProcessEvent.setJobDescription(jobExecutionContext.getJobDetail().getDescription());
         scheduledProcessEvent.setJobName(jobExecutionContext.getJobDetail().getKey().getName());
         scheduledProcessEvent.setJobGroup(jobExecutionContext.getJobDetail().getKey().getGroup());

@@ -87,6 +87,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.ikasan.spec.scheduled.ScheduledProcessService;
@@ -103,28 +104,22 @@ import javax.annotation.Resource;
 } )
 public class ComponentFactory
 {
+    @Value( "${module.name}" )
+    String moduleName;
+
     @Resource
     BuilderFactory builderFactory;
 
     @Resource
     ScheduledProcessService scheduledProcessService;
 
-    SingleRecipientRouter getBlackoutRouter(String moduleName, String flowName)
+    SingleRecipientRouter getBlackoutRouter()
     {
-        BlackoutRouter blackoutRouter = new BlackoutRouter();
-        blackoutRouter.setConfiguredResourceId(moduleName+"-"+flowName+"-blackOutRouter");
-        blackoutRouter.setConfiguration(new BlackoutRouterConfiguration());
-
-        return blackoutRouter;
+        return new BlackoutRouter();
     }
 
-    Broker getProcessExecutionBroker(String moduleName, String flowName)
+    Broker getProcessExecutionBroker()
     {
-        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
-        ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
-        configuration.setCommandLine("pwd");
-        processExecutionBroker.setConfiguredResourceId(moduleName+"-"+flowName+"-processExecutionBroker");
-        processExecutionBroker.setConfiguration(configuration);
         return new ProcessExecutionBroker();
     }
 
@@ -138,6 +133,6 @@ public class ComponentFactory
         return new ScheduledProcessEventFilter();
     }
 
-    Converter getJobExecutionConverter() { return new JobExecutionConverter(); }
+    Converter getJobExecutionConverter() { return new JobExecutionConverter(moduleName); }
 
 }
