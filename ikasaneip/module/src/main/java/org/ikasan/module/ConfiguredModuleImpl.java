@@ -42,7 +42,6 @@ package org.ikasan.module;
 
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowFactory;
-import org.ikasan.spec.module.ConfiguredModule;
 import org.ikasan.spec.module.Module;
 
 /**
