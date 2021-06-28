@@ -78,7 +78,7 @@ public class JobExecutionConverterTest
     @Test
     public void test_successful_converter()
     {
-        Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter();
+        Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter("moduleName");
         Date currentFireDate = new Date();
         Date nextFireDate = new Date();
 

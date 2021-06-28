@@ -67,7 +67,7 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
     public static String OUTSIDE_BLACKOUT_PERIOD = "Outside Blackout Period";
     public static String INSIDE_BLACKOUT_PERIOD = "Inside Blackout Period";
     String configuredResourceId;
-    BlackoutRouterConfiguration configuration;
+    BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
 
     @Override
     public String route(ScheduledProcessEvent messageToRoute) throws RouterException

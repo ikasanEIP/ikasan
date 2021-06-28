@@ -79,7 +79,7 @@ public class ApplicationTest
     @Test
     public void test_createModule_start_and_stop_flow() throws Exception
     {
-        Flow flow = moduleUnderTest.getFlow("flow 1");
+        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 1");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 

@@ -46,6 +46,11 @@ import org.ikasan.ootb.scheduler.agent.module.component.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
 
+/**
+ * Flow factory implemnentation.
+ *
+ * @author Ikasan Development Team
+ */
 public class MyFlowFactory implements FlowFactory
 {
     BuilderFactory builderFactory;
@@ -67,9 +72,9 @@ public class MyFlowFactory implements FlowFactory
             .consumer("Scheduled Consumer", builderFactory.getComponentBuilder().scheduledConsumer()
                 .setCronExpression("*/5 * * * * ?"))
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
-            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter(moduleName, flowName))
+            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
-                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker(moduleName, flowName))
+                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
             .otherwise(builderFactory.getRouteBuilder()
                 .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
