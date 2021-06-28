@@ -53,6 +53,14 @@ public interface ConfigurationService
     public List<ConfigurationMetaData> getFlowInvokers(String contextUrl, String moduleName, String flowName);
 
     /**
+     * Get the module configuration.
+     *
+     * @param contextUrl
+     * @return
+     */
+    public ConfigurationMetaData getModuleConfiguration(String contextUrl);
+
+    /**
      * Get a flow configuration metadata for a specific flow in a module.
      * @param contextUrl
      * @param moduleName

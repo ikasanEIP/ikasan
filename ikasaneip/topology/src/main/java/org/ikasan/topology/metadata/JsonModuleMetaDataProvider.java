@@ -2,6 +2,7 @@ package org.ikasan.topology.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.module.Module;
@@ -48,6 +49,10 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             moduleMetaData.setDescription(module.getDescription());
             moduleMetaData.setVersion(module.getVersion());
             moduleMetaData.setType(module.getType());
+
+            if(module instanceof ConfiguredResource) {
+                moduleMetaData.setConfiguredResourceId(((ConfiguredResource)module).getConfiguredResourceId());
+            }
 
             for(Flow flow: module.getFlows())
             {

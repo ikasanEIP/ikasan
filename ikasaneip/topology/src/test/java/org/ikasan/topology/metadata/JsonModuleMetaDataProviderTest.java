@@ -14,6 +14,7 @@ import org.ikasan.topology.metadata.components.*;
 import org.ikasan.topology.metadata.flow.TestFlow;
 import org.ikasan.topology.metadata.flow.TestFlowConfiguration;
 import org.ikasan.topology.metadata.flow.TestFlowElement;
+import org.ikasan.topology.metadata.module.TestConfiguredModule;
 import org.ikasan.topology.metadata.module.TestModule;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -89,7 +90,33 @@ public class JsonModuleMetaDataProviderTest
     }
 
     @Test
-    public void test_module_json_to_object_disabled_statup_types() throws IOException
+    public void test_configured_module_json_to_object() throws IOException
+    {
+        JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
+        JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
+
+        TestConfiguredModule testModule = new TestConfiguredModule();
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 1"));
+        testModule.getFlows().add(createSimpleFlow("Simple Flow 2"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 1"));
+        testModule.getFlows().add(createMultiRecipientListFlow("Multi Flow 2"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 1"));
+        testModule.getFlows().add(createSingleRecipientListFlow("Single Flow 2"));
+
+        String json = jsonModuleMetaDataProvider.describeModule(testModule, new HashMap<>());
+
+        ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
+
+        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
+        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
+        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
+        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        Assert.assertEquals("Configured resource id equals!", "configurationId", moduleMetaData.getConfiguredResourceId());
+    }
+
+    @Test
+    public void test_module_json_to_object_disabled_startup_types() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
