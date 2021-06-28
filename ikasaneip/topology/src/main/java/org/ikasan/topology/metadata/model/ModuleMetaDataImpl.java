@@ -15,6 +15,7 @@ public class ModuleMetaDataImpl implements ModuleMetaData
     private String description;
     private String version;
     private List<FlowMetaData> flows;
+    private String configuredResourceId;
 
     @Override
     public void setType(ModuleType moduleType) {
@@ -89,5 +90,15 @@ public class ModuleMetaDataImpl implements ModuleMetaData
     public void setUrl(String url)
     {
         this.url = url;
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configuredResourceId = id;
     }
 }

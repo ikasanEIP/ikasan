@@ -181,6 +181,21 @@ public class ConfigurationApplication
     }
 
     @RequestMapping(method = RequestMethod.GET,
+        value = "/module")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getModuleConfiguration()
+    {
+        Module<Flow> module = moduleService.getModules().get(0);
+
+        if(module instanceof ConfiguredResource) {
+            ConfigurationMetaData configuredResource = configurationMetaDataExtractor.getConfiguration((ConfiguredResource)module);
+            return new ResponseEntity(configuredResource, HttpStatus.OK);
+        }
+
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
                     value = "/{moduleName}/{flowName}/flow",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

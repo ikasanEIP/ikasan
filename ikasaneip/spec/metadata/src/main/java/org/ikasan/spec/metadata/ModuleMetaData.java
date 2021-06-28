@@ -89,4 +89,18 @@ public interface ModuleMetaData
      * @return
      */
     public List<FlowMetaData> getFlows();
+
+    /**
+     * Get the configured resource id for the module.
+     *
+     * @return
+     */
+    public String getConfiguredResourceId();
+
+    /**
+     * Set the configured resource id for the module.
+     *
+     * @param id
+     */
+    public void setConfiguredResourceId(String id);
 }

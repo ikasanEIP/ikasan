@@ -366,7 +366,6 @@ public class ModuleInitialisationServiceImpl
     {
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
-
     }
 
 

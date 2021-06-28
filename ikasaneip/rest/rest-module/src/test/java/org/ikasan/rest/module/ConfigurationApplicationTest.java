@@ -4,6 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
+import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.model.TestFlowConfiguration;
@@ -13,6 +15,7 @@ import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.flow.FlowFactory;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.module.ModuleService;
@@ -72,6 +75,9 @@ public class ConfigurationApplicationTest
     protected SystemEventService systemEventService;
 
     @MockBean
+    protected FlowFactory flowFactory;
+
+    @MockBean
     protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
     @MockBean
@@ -123,6 +129,41 @@ public class ConfigurationApplicationTest
 
         Mockito.verify(moduleService).getModules();
         Mockito.verify(configurationMetaDataExtractor).getFlowsConfiguration(module);
+        Mockito.verifyNoMoreInteractions(moduleService, configurationMetaDataExtractor);
+
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testFindModule() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        ConfiguredModuleConfiguration configuredModuleConfiguration = new ConfiguredModuleConfiguration();
+        module.setConfiguration(configuredModuleConfiguration);
+        module.setConfiguredResourceId("id");
+
+        Mockito.when(moduleService.getModules()).thenReturn(Arrays.asList(module));
+
+        ConfigurationMetaData configurationMetaData = new ConfigurationMetaDataImpl("test_id", "test descript",
+            "TestClass", new ArrayList<>()
+        );
+
+        Mockito.when(configurationMetaDataExtractor.getConfiguration(module))
+            .thenReturn(configurationMetaData);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/configuration/module")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"configurationId\":\"test_id\",\"description\":\"test descript\","
+                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}",
+            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
+        );
+
+        Mockito.verify(moduleService).getModules();
+        Mockito.verify(configurationMetaDataExtractor).getConfiguration(module);
         Mockito.verifyNoMoreInteractions(moduleService, configurationMetaDataExtractor);
 
     }
