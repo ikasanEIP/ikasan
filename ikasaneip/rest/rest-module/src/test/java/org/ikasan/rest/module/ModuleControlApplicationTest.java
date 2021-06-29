@@ -3,6 +3,7 @@ package org.ikasan.rest.module;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.IsInstanceOf;
+import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.module.dto.ChangeFlowStateDto;
@@ -10,6 +11,8 @@ import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowFactory;
+import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
@@ -25,6 +28,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -56,6 +60,12 @@ public class ModuleControlApplicationTest
 
     @MockBean
     protected ModuleService moduleService;
+
+    @MockBean
+    protected ModuleActivator moduleActivator;
+
+    @MockBean
+    protected FlowFactory flowFactory;
 
     @MockBean
     private DashboardRestService moduleMetadataDashboardRestService;
@@ -165,6 +175,110 @@ public class ModuleControlApplicationTest
         Mockito.verifyNoMoreInteractions(moduleService);
         assertEquals(200, result.getResponse().getStatus());
 
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void moduleActivate() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/activate")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleActivator).activate(module);
+        Mockito.verifyNoMoreInteractions(moduleActivator);
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void moduleDeactivate() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/deactivate")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleActivator).deactivate(module);
+        Mockito.verifyNoMoreInteractions(moduleActivator);
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void moduleActivatorBadAction() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/bad-action")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito.verifyNoMoreInteractions(moduleActivator);
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getModuleIsActivated() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/isActivated/testModule")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleActivator.isActivated(module))
+            .thenReturn(true);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("\"activated\"", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getModuleIsNotActivated() throws Exception
+    {
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/isActivated/testModule")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Mockito
+            .when(moduleActivator.isActivated(module))
+            .thenReturn(false);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("\"deactivated\"", result.getResponse().getContentAsString());
     }
 
     @Test
