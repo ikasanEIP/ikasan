@@ -3,13 +3,11 @@ package org.ikasan.rest.module;
 import org.ikasan.rest.module.dto.*;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.*;
+import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleService;
-import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +32,9 @@ public class ModuleControlApplication
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private ModuleActivator moduleActivator;
 
 
     /**
@@ -291,5 +292,43 @@ public class ModuleControlApplication
         return new ResponseEntity("Context Listeners state changed successfully!", HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.PUT,
+        value = "/activator/{moduleName}/{action}")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity activator(@PathVariable("moduleName") String moduleName,
+                                    @PathVariable("action") String action)
+    {
+        try
+        {
+            Module<Flow> module = moduleService.getModule(moduleName);
+
+            if (action.equalsIgnoreCase("activate"))
+            {
+                this.moduleActivator.activate(module);
+            }
+            else if (action.equalsIgnoreCase("deactivate"))
+            {
+                this.moduleActivator.deactivate(module);
+            }
+            else
+            {
+                return new ResponseEntity("Unknown module activation action [" + action + "].", HttpStatus.FORBIDDEN);
+            }
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity(String.format("Module action[%s] successfully applied!", action), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/isActivated/{moduleName}")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public String isActivated(@PathVariable("moduleName") String moduleName)
+    {
+        Module<Flow> module = moduleService.getModule(moduleName);
+        return this.moduleActivator.isActivated(module) ? "activated" : "deactivated";
+    }
 
 }
