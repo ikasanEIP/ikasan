@@ -45,6 +45,7 @@ import org.ikasan.module.FlowFactoryCapable;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
@@ -70,6 +71,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** handle to the configuration service */
     private ConfigurationService configurationService;
 
+    /** handle to the module metadata dashboard service */
+    private DashboardRestService moduleMetadataDashboardRestService;
+
+    /** handle to the configuration metadata dashboard service */
+    private DashboardRestService configurationMetadataDashboardRestService;
+
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;
 
@@ -81,7 +88,8 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
      * @param configurationService
      * @param startupControlDao
      */
-    public ModuleActivatorDefaultImpl(ConfigurationService configurationService, StartupControlDao startupControlDao)
+    public ModuleActivatorDefaultImpl(ConfigurationService configurationService, StartupControlDao startupControlDao
+        , DashboardRestService moduleMetadataDashboardRestService, DashboardRestService configurationMetadataDashboardRestService)
     {
         this.configurationService = configurationService;
         if(configurationService == null)
@@ -93,6 +101,18 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         if(startupControlDao == null)
         {
             throw new IllegalArgumentException("startupControlDao cannot be 'null'");
+        }
+
+        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
+        if(moduleMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("moduleMetadataDashboardRestService cannot be 'null'");
+        }
+
+        this.configurationMetadataDashboardRestService = configurationMetadataDashboardRestService;
+        if(configurationMetadataDashboardRestService == null)
+        {
+            throw new IllegalArgumentException("configurationMetadataDashboardRestService cannot be 'null'");
         }
     }
 
@@ -110,6 +130,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             if(module instanceof FlowFactoryCapable)
             {
                 ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+                module.getFlows().clear();
                 if(configuration.getFlowDefinitions() != null)
                 {
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
@@ -146,6 +167,8 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         }
 
         this.activatedModuleNames.add(module);
+
+        this.initialiseModuleMetaData(module);
     }
 
     /* (non-Javadoc)
@@ -188,5 +211,16 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     public boolean isActivated(Module<Flow> module)
     {
         return this.activatedModuleNames.contains(module);
+    }
+
+    /**
+     * Publishes the module metadata to the dashboard!
+     *
+     * @param module - The module
+     */
+    private void initialiseModuleMetaData(Module module)
+    {
+        moduleMetadataDashboardRestService.publish(module);
+        configurationMetadataDashboardRestService.publish(module);
     }
 }

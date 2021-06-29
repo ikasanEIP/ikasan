@@ -82,13 +82,11 @@ public class IkasanModuleAutoConfiguration
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
         HousekeepingSchedulerService housekeepingSchedulerService,
-        HarvestingSchedulerService harvestingSchedulerService,
-        DashboardRestService moduleMetadataDashboardRestService,
-        DashboardRestService configurationMetadataDashboardRestService
+        HarvestingSchedulerService harvestingSchedulerService
     )
     {
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-             moduleMetadataDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+             housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean
@@ -104,8 +102,10 @@ public class IkasanModuleAutoConfiguration
 
 
     @Bean
-    public ModuleActivator moduleActivator(StartupControlDao startupControlDao) {
-        return new ModuleActivatorDefaultImpl(configurationService, startupControlDao);
+    public ModuleActivator moduleActivator(StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService,
+                                           DashboardRestService configurationMetadataDashboardRestService) {
+        return new ModuleActivatorDefaultImpl(configurationService, startupControlDao, moduleMetadataDashboardRestService,
+            configurationMetadataDashboardRestService);
     }
 
     @Bean

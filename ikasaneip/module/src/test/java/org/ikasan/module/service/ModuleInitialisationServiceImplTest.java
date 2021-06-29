@@ -86,15 +86,8 @@ public class ModuleInitialisationServiceImplTest {
      */
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
-    SecurityService securityService = mockery.mock(SecurityService.class);
-    DashboardRestService moduleDashboardRestService = mockery.mock(DashboardRestService.class,"moduleDashboardRestService");
-    DashboardRestService configurationMetadataDashboardRestService = mockery.mock(DashboardRestService.class,"configurationMetadataDashboardRestService");
     HousekeepingSchedulerService housekeepingSchedulerService = mockery.mock(HousekeepingSchedulerService.class);
     HarvestingSchedulerService harvestingSchedulerService = mockery.mock(HarvestingSchedulerService.class);
-    FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class);
-    RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class);
-    SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class);
-    ExclusionService exclusionService = mockery.mock(ExclusionService.class);
     ApplicationContext platformContext = mockery.mock(ApplicationContext.class);
     Flow flow1 = mockery.mock(Flow.class, "flow1");
     FlowConfiguration flow1Configuration = mockery.mock(FlowConfiguration.class, "flow1Configuration");
@@ -102,8 +95,6 @@ public class ModuleInitialisationServiceImplTest {
     Module module = mockery.mock(Module.class);
 
     private static final String MODULE_NAME = "moduleName";
-    private static final String FLOW_NAME = "flowName";
-    private static final String ACTOR = "actor";
 
     /**
      * Class under test
@@ -112,7 +103,7 @@ public class ModuleInitialisationServiceImplTest {
     @Before
     public void setup(){
         uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            moduleDashboardRestService,configurationMetadataDashboardRestService,housekeepingSchedulerService,harvestingSchedulerService);
+           housekeepingSchedulerService,harvestingSchedulerService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
@@ -121,38 +112,26 @@ public class ModuleInitialisationServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
         new ModuleInitialisationServiceImpl(null, moduleActivator,
-            moduleDashboardRestService, configurationMetadataDashboardRestService, housekeepingSchedulerService, harvestingSchedulerService);
+            housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_systemEventService() {
+    public void test_constructor_null_module_activator() {
         new ModuleInitialisationServiceImpl(moduleContainer, null,
-            moduleDashboardRestService, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_dashboard() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            null, configurationMetadataDashboardRestService,housekeepingSchedulerService, harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_configurationMetadataDashboardRestService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            moduleDashboardRestService, null,housekeepingSchedulerService, harvestingSchedulerService);
+            housekeepingSchedulerService, harvestingSchedulerService);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_housekeeping() {
         new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            moduleDashboardRestService, configurationMetadataDashboardRestService,null, harvestingSchedulerService);
+            null, harvestingSchedulerService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_harvestion() {
         new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            moduleDashboardRestService,configurationMetadataDashboardRestService, housekeepingSchedulerService, null);
+            housekeepingSchedulerService, null);
     }
 
 
@@ -189,24 +168,15 @@ public class ModuleInitialisationServiceImplTest {
         mockery.assertIsSatisfied();
     }
 
-
     @Test
-    public void initialiseModuleMetaData() throws Exception {
-
-        // Setup test data
-
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("sampleFlow",MODULE_NAME,flowConfiguration,recoveryManager,exclusionService,serialiserFactory);
-        Module<org.ikasan.spec.flow.Flow> module = new SimpleModule(MODULE_NAME,Arrays.asList(flow));
-
+    public void register() throws Exception {
         mockery.checking(new Expectations() {{
-
-
-            oneOf(moduleDashboardRestService).publish(with(any(Module.class)));
-            oneOf(configurationMetadataDashboardRestService).publish(with(any(Module.class)));
+            oneOf(moduleContainer).add(module);
+            oneOf(moduleActivator).activate(module);
+            oneOf(housekeepingSchedulerService).registerJobs();
+            oneOf(harvestingSchedulerService).registerJobs();
         }});
-
-        uut.initialiseModuleMetaData(module);
+        uut.register(module);
         mockery.assertIsSatisfied();
     }
-
 }
