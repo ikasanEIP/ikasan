@@ -98,16 +98,6 @@ public class ModuleInitialisationServiceImpl
     private ApplicationContext platformContext;
 
     /**
-     * Module Metadata dashboard rest client
-     */
-    private DashboardRestService moduleMetadataDashboardRestService;
-
-    /**
-     * Configuration Metadata dashboard rest client
-     */
-    private DashboardRestService configurationMetadataDashboardRestService;
-
-    /**
      * HousekeepingSchedulerService provides access to starting off house keeping processes
      */
     private HousekeepingSchedulerService housekeepingSchedulerService;
@@ -121,14 +111,10 @@ public class ModuleInitialisationServiceImpl
      *
      * @param moduleContainer
      * @param moduleActivator
-     * @param moduleMetadataDashboardRestService
-     * @param configurationMetadataDashboardRestService
      * @param housekeepingSchedulerService
      * @param harvestingSchedulerService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-        DashboardRestService moduleMetadataDashboardRestService,
-        DashboardRestService configurationMetadataDashboardRestService,
         HousekeepingSchedulerService housekeepingSchedulerService,
         HarvestingSchedulerService harvestingSchedulerService)
     {
@@ -142,16 +128,6 @@ public class ModuleInitialisationServiceImpl
         if (moduleActivator == null)
         {
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
-        }
-        this.moduleMetadataDashboardRestService = moduleMetadataDashboardRestService;
-        if (moduleMetadataDashboardRestService == null)
-        {
-            throw new IllegalArgumentException("moduleMetadataDashboardRestService cannot be 'null'");
-        }
-        this.configurationMetadataDashboardRestService = configurationMetadataDashboardRestService;
-        if (configurationMetadataDashboardRestService == null)
-        {
-            throw new IllegalArgumentException("configurationMetadataDashboardRestService cannot be 'null'");
         }
         this.housekeepingSchedulerService = housekeepingSchedulerService;
         if (housekeepingSchedulerService == null)
@@ -272,9 +248,6 @@ public class ModuleInitialisationServiceImpl
             this.moduleContainer.add(module);
             this.moduleActivator.activate(module);
 
-            // intialise config into db - must happen after the activation
-            this.initialiseModuleMetaData(module);
-
             this.housekeepingSchedulerService.registerJobs();
             this.harvestingSchedulerService.registerJobs();
         }
@@ -355,18 +328,4 @@ public class ModuleInitialisationServiceImpl
             }
         }
     }
-
-
-    /**
-     * Creates the Module metadata in IkasanModule DB table for the module or updates existing metadata
-     *
-     * @param module - The module
-     */
-    public void initialiseModuleMetaData(Module module)
-    {
-        moduleMetadataDashboardRestService.publish(module);
-        configurationMetadataDashboardRestService.publish(module);
-    }
-
-
 }
