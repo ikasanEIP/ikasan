@@ -120,7 +120,12 @@ public class ComponentFactory
 
     Broker getProcessExecutionBroker()
     {
-        return new ProcessExecutionBroker();
+        ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
+        configuration.setCommandLine("pwd");
+
+        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
+        processExecutionBroker.setConfiguration(configuration);
+        return processExecutionBroker;
     }
 
     Producer getScheduledStatusProducer()

@@ -72,7 +72,10 @@
             <column name="CommandLine" type="TEXT">
                 <constraints nullable="true"/>
             </column>
-            <column name="Result" type="numeric(18)">
+            <column name="ReturnCode" type="numeric(18)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Successful" type="BIT">
                 <constraints nullable="true"/>
             </column>
             <column name="ResultOutput" type="TEXT">
@@ -88,6 +91,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="FireTime" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CompletionTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
             <column name="NextFireTime" type="numeric(18)">

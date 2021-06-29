@@ -40,6 +40,9 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Process Execution Broker Configuration.
  *
@@ -48,9 +51,42 @@ package org.ikasan.ootb.scheduler.agent.module.component;
 public class ProcessExecutionBrokerConfiguration
 {
     String commandLine;
+    String workingDirectory;
+    List<Integer> successfulReturnCodes = new ArrayList<Integer>();
+    long secondsToWaitForProcessStart = 10L;
     String stdErr;
     String stdOut;
     boolean retryOnFail;
+
+    public List<Integer> getSuccessfulReturnCodes()
+    {
+        return successfulReturnCodes;
+    }
+
+    public void setSuccessfulReturnCodes(List<Integer> successfulReturnCodes)
+    {
+        this.successfulReturnCodes = successfulReturnCodes;
+    }
+
+    public long getSecondsToWaitForProcessStart()
+    {
+        return secondsToWaitForProcessStart;
+    }
+
+    public void setSecondsToWaitForProcessStart(long secondsToWaitForProcessStart)
+    {
+        this.secondsToWaitForProcessStart = secondsToWaitForProcessStart;
+    }
+
+    public String getWorkingDirectory()
+    {
+        return workingDirectory;
+    }
+
+    public void setWorkingDirectory(String workingDirectory)
+    {
+        this.workingDirectory = workingDirectory;
+    }
 
     public String getCommandLine()
     {

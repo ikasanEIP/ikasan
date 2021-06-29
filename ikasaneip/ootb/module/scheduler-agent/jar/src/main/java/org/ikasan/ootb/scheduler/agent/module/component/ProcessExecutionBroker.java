@@ -45,6 +45,8 @@ import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +62,9 @@ import java.util.concurrent.TimeUnit;
 public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, ScheduledProcessEvent>,
     ConfiguredResource<ProcessExecutionBrokerConfiguration>
 {
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ProcessExecutionBroker.class);
+
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     String configuredResourceId;
@@ -70,6 +75,13 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
     {
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
+
+        // allow change of the new process working directory
+        if(configuration.getWorkingDirectory() != null && configuration.getWorkingDirectory().length() > 0)
+        {
+            File workingDirectory = new File(configuration.getWorkingDirectory());
+            processBuilder.directory(workingDirectory);
+        }
 
         String formattedDate = formatter.format(LocalDateTime.now());
         if(configuration.getStdOut() != null && configuration.getStdOut().length() > 0)
@@ -82,10 +94,12 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
 
             FileUtil.createMissingParentDirectories(outputLog);
             processBuilder.redirectOutput(outputLog);
+            scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
 
             if(configuration.getStdOut().equals(configuration.getStdErr()))
             {
                 processBuilder.redirectError(outputLog);
+                scheduledProcessEvent.setResultError(outputLog.getAbsolutePath());
             }
         }
         else
@@ -105,6 +119,7 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
 
                 FileUtil.createMissingParentDirectories(errorLog);
                 processBuilder.redirectError(errorLog);
+                scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
             }
         }
         else
@@ -118,38 +133,65 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
 
             try
             {
-                boolean b = process.waitFor(10, TimeUnit.SECONDS);
-                if(b)
+                boolean processFinished = process.waitFor(configuration.getSecondsToWaitForProcessStart(), TimeUnit.SECONDS);
+                if(processFinished)
                 {
-                    scheduledProcessEvent.setResult(process.exitValue());
+                    scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+                    scheduledProcessEvent.setReturnCode(process.exitValue());
+                    if( (configuration.getSuccessfulReturnCodes() == null || configuration.getSuccessfulReturnCodes().size() == 0))
+                    {
+                        if(scheduledProcessEvent.getReturnCode() == 0)
+                        {
+                            scheduledProcessEvent.setSuccessful(true);
+                        }
+                        else
+                        {
+                            scheduledProcessEvent.setSuccessful(false);
+                        }
+                    }
+                    else
+                    {
+                        scheduledProcessEvent.setSuccessful(false);
+                        for(Integer returnCode:configuration.getSuccessfulReturnCodes())
+                        {
+                            if(returnCode.intValue() == scheduledProcessEvent.getReturnCode())
+                            {
+                                scheduledProcessEvent.setSuccessful(true);
+                                break;
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    scheduledProcessEvent.setResult(process.exitValue());
+                    scheduledProcessEvent.setSuccessful(false);
+                    if(process.isAlive())
+                    {
+                        scheduledProcessEvent.setSuccessful(true);
+                    }
                 }
             }
             catch(InterruptedException e)
             {
-
+                logger.debug("process.waitFor interrupted", e);
             }
 
             ProcessHandle.Info info = process.info();
-            if(info != null)
+            if(info != null && !info.user().isEmpty())
             {
-                if(!info.user().isEmpty())
-                {
-                    scheduledProcessEvent.setUser( info.user().get() );
-                }
+                scheduledProcessEvent.setUser( info.user().get() );
+            }
 
-                if(!info.commandLine().isEmpty())
-                {
-                    scheduledProcessEvent.setUser( info.commandLine().get() );
-                }
+            if(info != null && !info.commandLine().isEmpty())
+            {
+                scheduledProcessEvent.setCommandLine( info.commandLine().get() );
+            }
+            else
+            {
+                scheduledProcessEvent.setCommandLine( configuration.getCommandLine() );
             }
 
             scheduledProcessEvent.setPid( process.pid() );
-
-            // TODO - what to do with stdout and stderr - do we want that inthe scheduledProcessEvent ?
         }
         catch (IOException e)
         {

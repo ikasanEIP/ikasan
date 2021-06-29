@@ -1,51 +1,60 @@
 package org.ikasan.spec.scheduled;
 
-public interface ScheduledProcessEvent {
-    public String getAgentName();
+public interface ScheduledProcessEvent
+{
+    String getAgentName();
 
-    public void setAgentName(String agentName);
+    void setAgentName(String agentName);
 
-    public String getJobName() ;
+    String getJobName() ;
 
-    public void setJobName(String jobName);
+    void setJobName(String jobName);
 
-    public String getJobDescription() ;
+    String getJobDescription() ;
 
-    public void setJobDescription(String jobDescription);
+    void setJobDescription(String jobDescription);
 
-    public String getJobGroup();
+    String getJobGroup();
 
-    public void setJobGroup(String jobGroup);
+    void setJobGroup(String jobGroup);
 
-    public String getCommandLine();
+    String getCommandLine();
 
-    public void setCommandLine(String commandLine);
+    void setCommandLine(String commandLine);
 
-    public int getResult();
+    int getReturnCode();
 
-    public void setResult(int result) ;
+    void setReturnCode(int result);
 
-    public String getResultOutput();
+    boolean isSuccessful();
 
-    public void setResultOutput(String resultOutput);
+    void setSuccessful(boolean successful);
 
-    public String getResultError();
+    String getResultOutput();
 
-    public void setResultError(String resultError);
+    void setResultOutput(String resultOutput);
 
-    public long getPid();
+    String getResultError();
 
-    public void setPid(long pid);
+    void setResultError(String resultError);
 
-    public String getUser();
+    long getPid();
 
-    public void setUser(String user);
+    void setPid(long pid);
 
-    public long getFireTime();
+    String getUser();
 
-    public void setFireTime(long fireTime);
+    void setUser(String user);
 
-    public long getNextFireTime();
+    long getFireTime();
 
-    public void setNextFireTime(long nextFireTime);
+    void setFireTime(long fireTime);
+
+    long getNextFireTime();
+
+    void setNextFireTime(long nextFireTime);
+
+    long getCompletionTime();
+
+    void setCompletionTime(long completionTime);
 }

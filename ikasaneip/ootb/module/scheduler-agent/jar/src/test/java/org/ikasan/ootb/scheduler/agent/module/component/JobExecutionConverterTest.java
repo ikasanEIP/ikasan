@@ -94,15 +94,6 @@ public class JobExecutionConverterTest
                 exactly(1).of(jobDetail).getDescription();
                 will(returnValue("job detail"));
 
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
-
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
-
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
-
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
 
@@ -114,6 +105,8 @@ public class JobExecutionConverterTest
         ScheduledProcessEvent scheduledProcessEvent = converter.convert(jobExecutionContext);
 
         Assert.assertEquals(scheduledProcessEvent.getFireTime(),currentFireDate.getTime());
+        Assert.assertEquals("moduleName", scheduledProcessEvent.getAgentName());
+        Assert.assertEquals("job detail", scheduledProcessEvent.getJobDescription());
         Assert.assertEquals(scheduledProcessEvent.getNextFireTime(),nextFireDate.getTime());
         Assert.assertNull(scheduledProcessEvent.getCommandLine());
         Assert.assertTrue(scheduledProcessEvent.getPid() == 0);
