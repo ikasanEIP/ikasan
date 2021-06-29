@@ -50,20 +50,23 @@ import org.ikasan.spec.scheduled.ScheduledProcessEvent;
  * @author Ikasan Development Team
  *
  */
-public class ScheduledProcessEventImpl implements ScheduledProcessEvent, HarvestEvent {
+public class ScheduledProcessEventImpl implements ScheduledProcessEvent, HarvestEvent
+{
     private Long id;
     private String agentName;
     private String jobName;
     private String jobGroup;
     private String jobDescription;
     private String commandLine;
-    private int result;
+    private int returnCode;
+    private boolean successful;
     private String resultOutput;
     private String resultError;
     private long pid;
     private String user;
     private long fireTime;
     private long nextFireTime;
+    private long completionTime;
     private boolean harvested;
     private long harvestedDateTime;
 
@@ -125,16 +128,6 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     @Override
     public void setCommandLine(String commandLine) {
         this.commandLine = commandLine;
-    }
-
-    @Override
-    public int getResult() {
-        return result;
-    }
-
-    @Override
-    public void setResult(int result) {
-        this.result = result;
     }
 
     @Override
@@ -215,19 +208,62 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     }
 
     @Override
-    public String toString() {
-        return "ScheduledProcessEvent{" +
-                "agentName='" + agentName + '\'' +
-                ", jobName='" + jobName + '\'' +
-                ", jobGroup='" + jobGroup + '\'' +
-                ", commandLine='" + commandLine + '\'' +
-                ", result=" + result +
-                ", resultOutput='" + resultOutput + '\'' +
-                ", resultError='" + resultError + '\'' +
-                ", pid=" + pid +
-                ", user='" + user + '\'' +
-                ", fireTime=" + fireTime +
-                ", nextFireTime=" + nextFireTime +
-                '}';
+    public int getReturnCode()
+    {
+        return returnCode;
+    }
+
+    @Override
+    public void setReturnCode(int returnCode)
+    {
+        this.returnCode = returnCode;
+    }
+
+    @Override
+    public boolean isSuccessful()
+    {
+        return successful;
+    }
+
+    @Override
+    public void setSuccessful(boolean successful)
+    {
+        this.successful = successful;
+    }
+
+    @Override
+    public long getCompletionTime()
+    {
+        return completionTime;
+    }
+
+    @Override
+    public void setCompletionTime(long completionTime)
+    {
+        this.completionTime = completionTime;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ScheduledProcessEventImpl{" +
+            "id=" + id +
+            ", agentName='" + agentName + '\'' +
+            ", jobName='" + jobName + '\'' +
+            ", jobGroup='" + jobGroup + '\'' +
+            ", jobDescription='" + jobDescription + '\'' +
+            ", commandLine='" + commandLine + '\'' +
+            ", returnCode=" + returnCode +
+            ", successful=" + successful +
+            ", resultOutput='" + resultOutput + '\'' +
+            ", resultError='" + resultError + '\'' +
+            ", pid=" + pid +
+            ", user='" + user + '\'' +
+            ", fireTime=" + fireTime +
+            ", nextFireTime=" + nextFireTime +
+            ", completionTime=" + completionTime +
+            ", harvested=" + harvested +
+            ", harvestedDateTime=" + harvestedDateTime +
+            '}';
     }
 }

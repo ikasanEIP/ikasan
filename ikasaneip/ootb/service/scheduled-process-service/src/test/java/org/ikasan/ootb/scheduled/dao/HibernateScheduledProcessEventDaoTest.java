@@ -93,7 +93,9 @@ public class HibernateScheduledProcessEventDaoTest {
         scheduledProcessEvent.setJobName("jobName");
         scheduledProcessEvent.setPid(111111);
         scheduledProcessEvent.setResultOutput("output");
-        scheduledProcessEvent.setResult(1);
+        scheduledProcessEvent.setReturnCode(1);
+        scheduledProcessEvent.setSuccessful(false);
+        scheduledProcessEvent.setCompletionTime(3000L);
         scheduledProcessEvent.setUser("user");
 
         return scheduledProcessEvent;

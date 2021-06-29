@@ -42,59 +42,46 @@ package org.ikasan.ootb.scheduler.agent.module.component;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Assert;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-
-import java.util.Map;
 
 /**
- * This test class supports the <code>ScheduledProcessEventFilter</code>.
+ * This test class supports the <code>ScheduledProcessEventProducer</code>.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessTest implements Job
+public class ScheduledProcessEventProducerTest
 {
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+
+    ScheduledProcessService scheduledProcessService = mockery.mock(ScheduledProcessService.class,"mockScheduledProcessService");
+
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_no_drop_on_blackout() throws SchedulerException
+    public void test_publish()
     {
-        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-        Scheduler scheduler = schedulerFactory.getScheduler();
+        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessService);
+        ScheduledProcessEvent event = new ScheduledProcessEventImpl();
 
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(scheduledProcessService).save(event);
+            }
+        });
 
-        scheduler.start();
-
-        JobDetail job = JobBuilder.newJob(ScheduledProcessTest.class)
-            .withIdentity("myJob", "group1")
-            .usingJobData("jobSays", "Hello World!")
-            .usingJobData("myFloatValue", 3.141f)
-            .storeDurably(true)
-            .build();
-
-        scheduler.addJob(job, true);
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
-        ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
-        configuration.dropOnBlackout = false;
-
-        ScheduledProcessEventFilter filter = new ScheduledProcessEventFilter();
-        ((ConfiguredResource) filter).setConfiguration(configuration);
-        Assert.assertNotNull(filter.filter(scheduledProcessEvent));
-    }
-
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
-    {
-//        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
-//        for(Map.Entry<String, Object> entry : jobDataMap.entrySet())
-//        {
-//            entry.
-//        }
-//        scheduledProcessEvent.getCommandLine();
-//        scheduledProcessEvent.getFireTime();
+        producer.invoke(event);
+        mockery.assertIsSatisfied();
     }
 }
