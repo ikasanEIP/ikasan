@@ -1,5 +1,7 @@
 package org.ikasan.spec.module.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ModuleControlService<M, F, C>
@@ -61,5 +63,26 @@ public interface ModuleControlService<M, F, C>
      * @return
      */
     public Optional<C> getFlowStartupType(String contextUrl, String moduleName, String flowName);
+
+
+    /**
+     * Change the module activation state of a module.
+     *
+     * @param contextUrl - url of service to call
+     * @param moduleName - the name of the module
+     * @param action - 'activate' or 'deactivate'
+     * @return true if successful otherwise false
+     */
+    public boolean changeModuleActivationState(String contextUrl, String moduleName, String action);
+
+
+    /**
+     * Get the module activation state.
+     *
+     * @param contextUrl - url of service to call
+     * @param moduleName - the name of the module
+     * @return 'activated' or 'deactivated'
+     */
+    public Optional<String> getModuleActivationState(String contextUrl, String moduleName);
 
 }
