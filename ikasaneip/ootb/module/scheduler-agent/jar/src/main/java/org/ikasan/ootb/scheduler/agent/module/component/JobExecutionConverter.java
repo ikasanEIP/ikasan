@@ -44,9 +44,7 @@ import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
+import org.quartz.*;
 
 /**
  * Quartz Job Execution Context converter to Scheduled Process Event.
@@ -77,16 +75,16 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
         scheduledProcessEvent.setAgentName(moduleName);
 
-        JobDetail jobDetail = jobExecutionContext.getJobDetail();
-        if(jobDetail != null)
+        Trigger jobTrigger = jobExecutionContext.getTrigger();
+        if(jobTrigger != null)
         {
-            scheduledProcessEvent.setJobDescription(jobDetail.getDescription());
+            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
 
-            JobKey jobKey = jobDetail.getKey();
-            if(jobKey != null)
+            TriggerKey triggerKey = jobTrigger.getKey();
+            if(triggerKey != null)
             {
-                scheduledProcessEvent.setJobName(jobKey.getName());
-                scheduledProcessEvent.setJobGroup(jobKey.getGroup());
+                scheduledProcessEvent.setJobName(triggerKey.getName());
+                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
             }
         }
 
