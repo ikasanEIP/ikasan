@@ -68,7 +68,7 @@ public class MyFlowFactory implements FlowFactory
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
             .withDescription("Scheduler Agent flow")
             .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
-            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())
+            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().withDashboardNotifier())
             .consumer("Scheduled Consumer", builderFactory.getComponentBuilder().scheduledConsumer()
                 .setCronExpression("*/5 * * * * ?"))
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
