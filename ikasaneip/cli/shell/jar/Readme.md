@@ -92,7 +92,7 @@ The CLI Shell will start and display the following,
  _| |_  | |\ \  |  ___  |  __\ \ |  ___  | | |\ ' |
 |_____| |_| \_\ |_|   |_| /____/ |_|   |_| |_| \__|
 ===================================================
-IkasanEIP  (v3.1.0)
+IkasanEIP  (v3.1.1)
 Ikasan Shell:> 
 ```
 

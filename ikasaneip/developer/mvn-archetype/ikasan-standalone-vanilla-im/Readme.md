@@ -36,7 +36,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-vanilla-im-maven-plugin 
-    \-DarchetypeVersion=3.1.0    
+    \-DarchetypeVersion=3.1.1    
     \-DgroupId=com.sample     
     \-DartifactId=vanilla-im     
     \-Dversion=1.0.0-SNAPSHOT     
