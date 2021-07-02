@@ -220,7 +220,6 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      */
     public void update(ConfiguredResource configuredResource)
     {
-        boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
         Configuration<List<ConfigurationParameter>> persistedConfiguration = this.dynamicConfigurationDao
             .findByConfigurationId(configuredResource.getConfiguredResourceId());
@@ -235,46 +234,24 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
                     if(!configurationParameter.getValue().equals(runtimeAsJson))
                     {
                         configurationParameter.setValue(runtimeAsJson);
+                        this.dynamicConfigurationDao.save(persistedConfiguration);
                     }
                 }
                 else
                 {
+                    // effectively converts the configuration from older style to JSON
                     persistedConfiguration.getParameters().clear();
                     persistedConfiguration.getParameters().add(new ConfigurationParameterJsonStringImpl(ConfigurationParameter.JSON, runtimeAsJson));
+                    this.dynamicConfigurationDao.save(persistedConfiguration);
                 }
-
-                configurationUpdated = true;
             }
             catch (JsonProcessingException e)
             {
                 throw new ConfigurationException(e);
             }
-//            for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
-//            {
-//                Object runtimeParameterValue;
-//                try
-//                {
-//                    runtimeParameterValue = ReflectionUtils.getProperty( runtimeConfiguration,
-//                            persistedConfigurationParameter.getName() );
-//                }
-//                catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
-//                {
-//                    throw new ConfigurationException(e);
-//                }
-//
-//                if ((runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null)
-//                        || (runtimeParameterValue != null && !(runtimeParameterValue
-//                            .equals(persistedConfigurationParameter.getValue()))))
-//                {
-//                    configurationUpdated = true;
-//                    persistedConfigurationParameter.setValue(runtimeParameterValue);
-//                }
-//            }
-            if (configurationUpdated)
-            {
-                this.dynamicConfigurationDao.save(persistedConfiguration);
-            }
-        } else {
+        }
+        else
+        {
             logger.debug("Update being attempted without the configuration ever having been persisted, will persist now");
             this.dynamicConfigurationDao.save(this.createConfiguration(configuredResource));            
         }

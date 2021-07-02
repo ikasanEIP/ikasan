@@ -45,7 +45,8 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 /**
- * ObjectMapperFactory.
+ * ObjectMapperFactory is a factory class to provide a singleton instance of the JSON ObjectMapper.
+ * The ObjectMapper is really expensive to create and thread safe, just create once and re-use that instance.
  *
  * @author Ikasan Development Team
  */

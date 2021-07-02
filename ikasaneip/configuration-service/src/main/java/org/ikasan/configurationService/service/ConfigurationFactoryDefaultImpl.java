@@ -107,7 +107,7 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
         }
         catch(JsonProcessingException e)
         {
-            throw new RuntimeException(e);  // TODO - FIXME
+            throw new RuntimeException(e);  // TODO - is RuntimeException sufficient or should we be more specific?
         }
 
 //        Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(runtimeConfiguration);
