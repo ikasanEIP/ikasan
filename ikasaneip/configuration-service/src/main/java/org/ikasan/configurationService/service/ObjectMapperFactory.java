@@ -38,69 +38,31 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration;
+package org.ikasan.configurationService.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 /**
- * Individual configuration parameter window contract.
- * 
- * @author Ikasan Development Team
+ * ObjectMapperFactory.
  *
+ * @author Ikasan Development Team
  */
-@SuppressWarnings("serial")
-public interface ConfigurationParameter<T>
+public class ObjectMapperFactory
 {
-    String JSON = "fullConfigAsJson";
-
-    default boolean isJSON()
+    private static ObjectMapper objectMapper = new ObjectMapper();
+    static
     {
-        return (getName().equals(JSON));
+        {
+            PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator
+                .builder()
+                .build();
+            objectMapper.activateDefaultTypingAsProperty(ptv, ObjectMapper.DefaultTyping.EVERYTHING,"_class");
+        }
+    };
+
+    public static ObjectMapper getInstance() {
+        return objectMapper;
     }
-
-    /**
-     * Required by ORM
-     * @return
-     */
-    public Long getId();
-
-    /**
-     * Required by ORM
-     * @param id
-     */
-    public void setId(Long id);
-
-    /**
-     * Get the configuration parameter name
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Set the configuration parameter name
-     * @param name
-     */
-    public void setName(String name);
-
-    /**
-     * Get the configuration parameter value
-     * @return
-     */
-    public T getValue();
-
-    /**
-     * Set the configuration parameter value
-     * @param value
-     */
-    public void setValue(T value);
-
-    /**
-     * Get the configuration parameter description
-     * @return
-     */
-    public String getDescription();
-
-    /**
-     * Set the configuration parameter description
-     * @param description
-     */
-    public void setDescription(String description);
 }

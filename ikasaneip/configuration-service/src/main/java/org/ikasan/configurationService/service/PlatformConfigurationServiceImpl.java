@@ -1,40 +1,40 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -42,6 +42,8 @@ package org.ikasan.configurationService.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
@@ -49,18 +51,19 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.PlatformConfigurationConstants;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 
 /**
- * 
+ *
  * @author Ikasan Development Team
  *
  */
 public class PlatformConfigurationServiceImpl implements PlatformConfigurationService
 {
-	protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
-	
+	private ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
+
+    protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+
 	public PlatformConfigurationServiceImpl(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		this.configurationManagement = configurationManagement;
@@ -77,33 +80,54 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 	public String getConfigurationValue(String paramName)
 	{
 		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-        
-        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
 
-        if(configuration == null) {
+        Configuration<List<ConfigurationParameter>> configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+        if(configuration == null)
+        {
             platformConfigurationConfiguredResource.setConfiguration(new PlatformConfiguration());
             configuration = this.configurationManagement.createConfiguration(platformConfigurationConfiguredResource);
 
             this.configurationManagement.saveConfiguration(configuration);
         }
-        
-        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-        
+
         ConfigurationParameterMapImpl parameterMap = null;
-        
+
+        final List<ConfigurationParameter> parameters = configuration.getParameters();
+
         for(ConfigurationParameter parameter: parameters)
         {
-        	if(parameter instanceof ConfigurationParameterMapImpl)
-        	{
-        		parameterMap = (ConfigurationParameterMapImpl)parameter;
-        	}
+            if(parameter.isJSON())
+            {
+                try
+                {
+                    PlatformConfiguration platformConfiguration = objectMapper.readValue((String)parameter.getValue(), PlatformConfiguration.class);
+                    if(platformConfiguration.getConfigurationMap() == null)
+                    {
+                        throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
+                    }
+
+                    return platformConfiguration.getConfigurationMap().get(paramName) == null ? "":platformConfiguration.getConfigurationMap().get(paramName);
+                }
+                catch (JsonProcessingException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+            else
+            {
+                if(parameter instanceof ConfigurationParameterMapImpl)
+                {
+                    parameterMap = (ConfigurationParameterMapImpl)parameter;
+                }
+            }
         }
-        
+
         if(parameterMap == null)
         {
         	throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
         }
-        
+
         return parameterMap.getValue().get(paramName) == null ? "":parameterMap.getValue().get(paramName);
 	}
 

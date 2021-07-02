@@ -38,69 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration;
+package org.ikasan.configurationService.model;
+
+import java.io.Serializable;
 
 /**
- * Individual configuration parameter window contract.
+ * JSON String based configuration parameter.
  * 
  * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("serial")
-public interface ConfigurationParameter<T>
+public class ConfigurationParameterJsonStringImpl extends AbstractComponentParameter<String> implements Serializable
 {
-    String JSON = "fullConfigAsJson";
-
-    default boolean isJSON()
+    /**
+     * Constructor
+     * @param name
+     * @param value
+     */
+    public ConfigurationParameterJsonStringImpl(String name, String value)
     {
-        return (getName().equals(JSON));
+        this(name, value, null);
     }
 
     /**
-     * Required by ORM
-     * @return
-     */
-    public Long getId();
-
-    /**
-     * Required by ORM
-     * @param id
-     */
-    public void setId(Long id);
-
-    /**
-     * Get the configuration parameter name
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Set the configuration parameter name
+     * Constructor
      * @param name
-     */
-    public void setName(String name);
-
-    /**
-     * Get the configuration parameter value
-     * @return
-     */
-    public T getValue();
-
-    /**
-     * Set the configuration parameter value
      * @param value
-     */
-    public void setValue(T value);
-
-    /**
-     * Get the configuration parameter description
-     * @return
-     */
-    public String getDescription();
-
-    /**
-     * Set the configuration parameter description
      * @param description
      */
-    public void setDescription(String description);
+    public ConfigurationParameterJsonStringImpl(String name, String value, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.value = value;
+        this.description = description;
+    }
+
+    /**
+     * Constructor
+     */
+    protected ConfigurationParameterJsonStringImpl()
+    {
+        // required by ORM
+    }
 }

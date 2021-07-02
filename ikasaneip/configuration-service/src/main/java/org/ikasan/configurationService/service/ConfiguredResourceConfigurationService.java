@@ -43,8 +43,11 @@ package org.ikasan.configurationService.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
+import org.ikasan.configurationService.model.ConfigurationParameterJsonStringImpl;
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.spec.configuration.*;
 import org.slf4j.Logger;
@@ -70,6 +73,8 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
 
     /** Default factory for the creation of configurations and configuration parameters */
     private ConfigurationFactory configurationFactory = ConfigurationFactoryDefaultImpl.getInstance();
+
+    private ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
 
     /**
      * Default configuration service returns a cached based instance.
@@ -141,10 +146,17 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         {
             try
             {
-                for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
+                for (ConfigurationParameter<String> persistedConfigurationParameter : persistedConfiguration.getParameters())
                 {
-                    ReflectionUtils.setProperty( runtimeConfiguration, persistedConfigurationParameter.getName(),
+                    if(persistedConfigurationParameter.isJSON())
+                    {
+                        runtimeConfiguration = objectMapper.readValue(persistedConfigurationParameter.getValue(), runtimeConfiguration.getClass());
+                    }
+                    else
+                    {
+                        ReflectionUtils.setProperty( runtimeConfiguration, persistedConfigurationParameter.getName(),
                             persistedConfigurationParameter.getValue() );
+                    }
                 }
 
                 Configured.validate(runtimeConfiguration);
@@ -162,6 +174,10 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
             {
                 throw new ConfigurationException("Failed dao for configuredResource ["
                         + configuredResource.getConfiguredResourceId() + "] " + e.getMessage(), e);
+            }
+            catch (JsonProcessingException e)
+            {
+                throw new ConfigurationException(e);
             }
         }
         else
@@ -210,27 +226,50 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
             .findByConfigurationId(configuredResource.getConfiguredResourceId());
         if (persistedConfiguration != null)
         {
-            for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
+            try
             {
-                Object runtimeParameterValue;
-                try
+                String runtimeAsJson = objectMapper.writeValueAsString(runtimeConfiguration);
+                ConfigurationParameter configurationParameter = persistedConfiguration.getParameters().get(0);
+                if(configurationParameter.isJSON())
                 {
-                    runtimeParameterValue = ReflectionUtils.getProperty( runtimeConfiguration,
-                            persistedConfigurationParameter.getName() );
+                    if(!configurationParameter.getValue().equals(runtimeAsJson))
+                    {
+                        configurationParameter.setValue(runtimeAsJson);
+                    }
                 }
-                catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
+                else
                 {
-                    throw new ConfigurationException(e);
+                    persistedConfiguration.getParameters().clear();
+                    persistedConfiguration.getParameters().add(new ConfigurationParameterJsonStringImpl(ConfigurationParameter.JSON, runtimeAsJson));
                 }
 
-                if ((runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null)
-                        || (runtimeParameterValue != null && !(runtimeParameterValue
-                            .equals(persistedConfigurationParameter.getValue()))))
-                {
-                    configurationUpdated = true;
-                    persistedConfigurationParameter.setValue(runtimeParameterValue);
-                }
+                configurationUpdated = true;
             }
+            catch (JsonProcessingException e)
+            {
+                throw new ConfigurationException(e);
+            }
+//            for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
+//            {
+//                Object runtimeParameterValue;
+//                try
+//                {
+//                    runtimeParameterValue = ReflectionUtils.getProperty( runtimeConfiguration,
+//                            persistedConfigurationParameter.getName() );
+//                }
+//                catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e)
+//                {
+//                    throw new ConfigurationException(e);
+//                }
+//
+//                if ((runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null)
+//                        || (runtimeParameterValue != null && !(runtimeParameterValue
+//                            .equals(persistedConfigurationParameter.getValue()))))
+//                {
+//                    configurationUpdated = true;
+//                    persistedConfigurationParameter.setValue(runtimeParameterValue);
+//                }
+//            }
             if (configurationUpdated)
             {
                 this.dynamicConfigurationDao.save(persistedConfiguration);
