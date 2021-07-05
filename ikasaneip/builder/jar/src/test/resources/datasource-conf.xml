@@ -53,6 +53,7 @@
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="false"/>
         <entry key="hibernate.hbm2ddl.auto" value="none"/>
+        <entry key="hibernate.criteria.literal_handling_mode" value="BIND"/>
     </util:map>
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"
