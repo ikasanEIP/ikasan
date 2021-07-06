@@ -46,6 +46,12 @@
             <version>${version.ikasan}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.victools</groupId>
+            <artifactId>jsonschema-generator</artifactId>
+            <version>4.18.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

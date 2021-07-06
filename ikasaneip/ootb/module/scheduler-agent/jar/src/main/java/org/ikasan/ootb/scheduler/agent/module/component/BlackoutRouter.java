@@ -94,10 +94,10 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
 
         if(configuration.dateTimeRanges != null && configuration.dateTimeRanges.size() > 0)
         {
-            for(Map.Entry<Long,Long> dateRangeEntry : configuration.dateTimeRanges.entrySet())
+            for(Map.Entry<String,String> dateRangeEntry : configuration.dateTimeRanges.entrySet())
             {
-                long from = dateRangeEntry.getKey().longValue();
-                long to = dateRangeEntry.getValue().longValue();
+                long from = Long.parseLong(dateRangeEntry.getKey());
+                long to = Long.parseLong(dateRangeEntry.getValue());
                 long fireTime = messageToRoute.getFireTime();
                 if(fireTime >= from && fireTime <= to)
                 {

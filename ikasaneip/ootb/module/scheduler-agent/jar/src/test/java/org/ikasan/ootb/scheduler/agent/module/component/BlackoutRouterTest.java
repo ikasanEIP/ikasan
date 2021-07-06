@@ -115,8 +115,8 @@ public class BlackoutRouterTest
         calendar.add(Calendar.DAY_OF_YEAR, 2);
         long inTheFuture = calendar.getTimeInMillis();
 
-        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
-        dateTimeRanges.put(inThePast, inTheFuture);
+        Map<String,String> dateTimeRanges = new HashMap<>();
+        dateTimeRanges.put(String.valueOf(inThePast), String.valueOf(inTheFuture));
 
         SingleRecipientRouter blackoutRouter = new BlackoutRouter();
         BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
@@ -144,8 +144,8 @@ public class BlackoutRouterTest
         calendar.add(Calendar.DAY_OF_YEAR, 2);
         long inTheFuture2 = calendar.getTimeInMillis();
 
-        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
-        dateTimeRanges.put(inTheFuture1, inTheFuture2);
+        Map<String,String> dateTimeRanges = new HashMap<>();
+        dateTimeRanges.put(String.valueOf(inTheFuture1), String.valueOf(inTheFuture2));
 
         SingleRecipientRouter blackoutRouter = new BlackoutRouter();
         BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();
@@ -173,8 +173,8 @@ public class BlackoutRouterTest
         calendar.add(Calendar.DAY_OF_YEAR, -1);
         long inThePast2 = calendar.getTimeInMillis();
 
-        Map<Long,Long> dateTimeRanges = new HashMap<Long,Long>();
-        dateTimeRanges.put(inThePast1, inThePast2);
+        Map<String,String> dateTimeRanges = new HashMap<>();
+        dateTimeRanges.put(String.valueOf(inThePast1), String.valueOf(inThePast2));
 
         SingleRecipientRouter blackoutRouter = new BlackoutRouter();
         BlackoutRouterConfiguration configuration = new BlackoutRouterConfiguration();

@@ -41,7 +41,9 @@
 package org.ikasan.ootb.scheduler.agent.module.component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Process Execution Broker Configuration.
@@ -52,18 +54,19 @@ public class ProcessExecutionBrokerConfiguration
 {
     String commandLine;
     String workingDirectory;
-    List<Integer> successfulReturnCodes = new ArrayList<Integer>();
+    List<String> successfulReturnCodes = new ArrayList<String>();
     long secondsToWaitForProcessStart = 10L;
     String stdErr;
     String stdOut;
     boolean retryOnFail;
 
-    public List<Integer> getSuccessfulReturnCodes()
+
+    public List<String> getSuccessfulReturnCodes()
     {
         return successfulReturnCodes;
     }
 
-    public void setSuccessfulReturnCodes(List<Integer> successfulReturnCodes)
+    public void setSuccessfulReturnCodes(List<String> successfulReturnCodes)
     {
         this.successfulReturnCodes = successfulReturnCodes;
     }
