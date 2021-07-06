@@ -143,8 +143,10 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
             {
                 for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
                 {
-                    ReflectionUtils.setProperty( runtimeConfiguration, persistedConfigurationParameter.getName(),
-                            persistedConfigurationParameter.getValue() );
+                    if(persistedConfigurationParameter.getValue() != null) {
+                        ReflectionUtils.setProperty(runtimeConfiguration, persistedConfigurationParameter.getName(),
+                            persistedConfigurationParameter.getValue());
+                    }
                 }
 
                 Configured.validate(runtimeConfiguration);

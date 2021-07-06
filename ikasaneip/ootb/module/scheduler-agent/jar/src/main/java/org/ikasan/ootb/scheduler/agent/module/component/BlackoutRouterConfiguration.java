@@ -40,6 +40,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +52,9 @@ import java.util.Map;
  */
 public class BlackoutRouterConfiguration
 {
-    List<String> cronExpressions;
-    Map<Long,Long> dateTimeRanges;
+    List<String> cronExpressions = new ArrayList<>();
+    Map<String,String> dateTimeRanges = new HashMap<>();
+
 
     public List<String> getCronExpressions()
     {
@@ -63,12 +66,12 @@ public class BlackoutRouterConfiguration
         this.cronExpressions = cronExpressions;
     }
 
-    public Map<Long,Long> getDateTimeRanges()
+    public Map<String,String> getDateTimeRanges()
     {
         return dateTimeRanges;
     }
 
-    public void setDateTimeRanges(Map<Long,Long> dateTimeRanges)
+    public void setDateTimeRanges(Map<String,String> dateTimeRanges)
     {
         this.dateTimeRanges = dateTimeRanges;
     }

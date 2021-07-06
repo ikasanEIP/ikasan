@@ -72,7 +72,7 @@ public class MyModule
     public Module myModule()
     {
         ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
-        configuration.getFlowDefinitions().put("Scheduler Flow 1", StartupType.MANUAL.name());
+//        configuration.getFlowDefinitions().put("Scheduler Flow 1", StartupType.MANUAL.name());
 
         // get the module builder
         return builderFactory.getModuleBuilder(moduleName)

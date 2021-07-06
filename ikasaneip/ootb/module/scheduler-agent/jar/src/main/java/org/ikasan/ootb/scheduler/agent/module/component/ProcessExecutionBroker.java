@@ -152,9 +152,9 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
                     else
                     {
                         scheduledProcessEvent.setSuccessful(false);
-                        for(Integer returnCode:configuration.getSuccessfulReturnCodes())
+                        for(String returnCode:configuration.getSuccessfulReturnCodes())
                         {
-                            if(returnCode.intValue() == scheduledProcessEvent.getReturnCode())
+                            if(Integer.parseInt(returnCode) == scheduledProcessEvent.getReturnCode())
                             {
                                 scheduledProcessEvent.setSuccessful(true);
                                 break;
