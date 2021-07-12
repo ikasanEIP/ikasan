@@ -40,14 +40,13 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.SchedulerException;
+
+import static org.junit.Assert.*;
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
@@ -63,6 +62,7 @@ public class ScheduledConsumerConfigurationTest
     public void test_mutators() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
+        assertNotNull("Timezone Id cannopt be null", consumerConfiguration.getTimezone());
         assertNull("initial cronExpression should be null", consumerConfiguration.getCronExpression());
         consumerConfiguration.setCronExpression("cronExpression");
         assertEquals("cronExpression should be populated with 'cronExpression'", "cronExpression", consumerConfiguration.getCronExpression());
@@ -75,6 +75,7 @@ public class ScheduledConsumerConfigurationTest
     public void test_maxEagerCallbacks() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
+        assertNotNull("Timezone Id cannopt be null", consumerConfiguration.getTimezone());
         assertEquals("initial maxEagerCallbacks should be 0", 0, consumerConfiguration.getMaxEagerCallbacks());
         consumerConfiguration.setMaxEagerCallbacks(2);
         assertEquals("maxEagerCallbacks should be populated with '2'", 2, consumerConfiguration.getMaxEagerCallbacks());
