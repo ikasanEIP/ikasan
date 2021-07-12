@@ -46,6 +46,7 @@ import org.ikasan.spec.configuration.InvalidConfigurationException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Scheduled consumer configuration bean.
@@ -77,7 +78,7 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
 
     /** a valid optional timezone to set on the scheduled job
      *  a default of blank or null will use the JVM's timezone */
-    private String timezone;
+    private String timezone = TimeZone.getDefault().getID();
 
     /** generic properties to be passed into the job at schedule time and subsequently passed back on schedule execution */
     private Map<String,String> passthroughProperties = new HashMap<String,String>();
