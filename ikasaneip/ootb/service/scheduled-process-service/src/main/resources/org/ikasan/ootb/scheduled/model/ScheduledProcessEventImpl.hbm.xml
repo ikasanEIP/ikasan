@@ -89,6 +89,10 @@
                   type="boolean"
                   column="Successful"
                   not-null="false" />
+        <property name="outcome"
+                  type="java.lang.String"
+                  column="Outcome"
+                  not-null="false" />
         <property name="resultOutput"
                   type="java.lang.String"
                   column="ResultOutput"

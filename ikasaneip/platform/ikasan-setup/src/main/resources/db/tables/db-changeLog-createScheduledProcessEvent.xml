@@ -78,6 +78,9 @@
             <column name="Successful" type="BIT">
                 <constraints nullable="true"/>
             </column>
+            <column name="Outcome" type="VARCHAR(512)">
+                <constraints nullable="true"/>
+            </column>
             <column name="ResultOutput" type="TEXT">
                 <constraints nullable="true"/>
             </column>
@@ -152,6 +155,9 @@
             <column name="Result" type="numeric(18)">
                 <constraints nullable="true"/>
             </column>
+            <column name="Outcome" type="VARCHAR(512)">
+                <constraints nullable="true"/>
+            </column>
             <column name="ResultOutput" type="UNITEXT">
                 <constraints nullable="true"/>
             </column>
@@ -221,6 +227,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="Result" type="numeric(18)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Outcome" type="VARCHAR(512)">
                 <constraints nullable="true"/>
             </column>
             <column name="ResultOutput" type="VARCHAR(MAX)">

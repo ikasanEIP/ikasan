@@ -1,12 +1,24 @@
 package org.ikasan.spec.scheduled;
 
-public interface ScheduledProcessEvent
+public interface ScheduledProcessEvent<OUTCOME>
 {
+    /**
+     * Get descriptive outcome of the scheduled process flow
+     * @return
+     */
+    OUTCOME getOutcome();
+
+    /**
+     * Set descriptive outcome of the scheduled process flow
+     * @param outcome
+     */
+    void setOutcome(OUTCOME outcome);
+
     String getAgentName();
 
     void setAgentName(String agentName);
 
-    String getJobName() ;
+    String getJobName();
 
     void setJobName(String jobName);
 
