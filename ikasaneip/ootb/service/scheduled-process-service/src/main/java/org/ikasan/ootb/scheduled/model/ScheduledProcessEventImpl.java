@@ -50,7 +50,7 @@ import org.ikasan.spec.scheduled.ScheduledProcessEvent;
  * @author Ikasan Development Team
  *
  */
-public class ScheduledProcessEventImpl implements ScheduledProcessEvent, HarvestEvent
+public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>, HarvestEvent
 {
     private Long id;
     private String agentName;
@@ -60,6 +60,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     private String commandLine;
     private int returnCode;
     private boolean successful;
+    private Outcome outcome;
     private String resultOutput;
     private String resultError;
     private long pid;
@@ -79,6 +80,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     {
         this.id = id;
     }
+
 
     @Override
     public String getAgentName() {
@@ -232,6 +234,18 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
     }
 
     @Override
+    public Outcome getOutcome()
+    {
+        return outcome;
+    }
+
+    @Override
+    public void setOutcome(Outcome outcome)
+    {
+        this.outcome = outcome;
+    }
+
+    @Override
     public long getCompletionTime()
     {
         return completionTime;
@@ -255,6 +269,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent, Harvest
             ", commandLine='" + commandLine + '\'' +
             ", returnCode=" + returnCode +
             ", successful=" + successful +
+            ", outcome=" + outcome.name() +
             ", resultOutput='" + resultOutput + '\'' +
             ", resultError='" + resultError + '\'' +
             ", pid=" + pid +

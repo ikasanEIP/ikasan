@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component;
 
+import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.RouterException;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
@@ -82,6 +83,7 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
                     CronExpression cronExpressionObj = new CronExpression(cronExpression);
                     if(cronExpressionObj.isSatisfiedBy(now))
                     {
+                        messageToRoute.setOutcome(Outcome.EXECUTION_IGNORED_INSIDE_BLACKOUT_WINDOW);
                         return INSIDE_BLACKOUT_PERIOD;
                     }
                 }
@@ -101,6 +103,7 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
                 long fireTime = messageToRoute.getFireTime();
                 if(fireTime >= from && fireTime <= to)
                 {
+                    messageToRoute.setOutcome(Outcome.EXECUTION_IGNORED_INSIDE_BLACKOUT_WINDOW);
                     return INSIDE_BLACKOUT_PERIOD;
                 }
             }
